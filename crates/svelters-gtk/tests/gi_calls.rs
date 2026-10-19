@@ -214,11 +214,9 @@ fn unsupported_features_are_rejected_with_clear_errors() {
         // callbacks (with their user_data and notify)
         let e = h.call_args(label, "add_tick_callback", &[V::Null, V::Null, V::Null]).unwrap_err();
         assert!(e.contains("callback"), "{e}");
-        // out parameters
-        let e = h.call_args(label, "measure", &[s("horizontal"), V::I64(-1)]).unwrap_err();
-        assert!(e.contains("out and inout"), "{e}");
-        // unions and arrays that are not string arrays: GtkWidget.size_allocate takes a struct by
-        // pointer (supported), but measure above has out parameters; gtk_widget_get_css_classes is fine
+        // out parameters are supported since NT0: measure answers [ret, minimum, natural, ...]
+        let V::List(m) = h.call_args(label, "measure", &[s("horizontal"), V::I64(-1)]).unwrap() else { panic!("outs") };
+        assert_eq!(m.len(), 5);
         let e = h.call_args(label, "get_allocation_not_a_method", &[]).unwrap_err();
         assert!(e.contains("unknown method"), "{e}");
         // static functions are not methods
@@ -244,8 +242,8 @@ fn string_arrays_and_boxed_values() {
         // a nullable boxed argument (PangoAttrList)
         assert_eq!(h.call_args(label, "set_attributes", &[V::Null]).unwrap(), V::Null);
         assert_eq!(h.call_args(label, "get_attributes", &[]).unwrap(), V::Null);
-        // an object that is not a widget comes back as an opaque BOXED value
+        // an object that is not a widget comes back as a SHARED handle
         let layout = h.call_args(label, "create_pango_layout", &[s("hi")]).unwrap();
-        assert!(matches!(layout, V::Boxed(_)), "{layout:?}");
+        assert!(matches!(layout, V::Handle(_)), "{layout:?}");
     });
 }

@@ -44,6 +44,8 @@ pub const SVL_T_TIME: u32 = 7;
 pub const SVL_T_DATETIME: u32 = 8;
 pub const SVL_T_VARIANT: u32 = 9;
 pub const SVL_T_TYPED_VARIANT: u32 = 10;
+/// ABI v2.5: `STR` carrying a native type name (a GType, QMetaType or Class).
+pub const SVL_T_TYPE: u32 = 11;
 pub const SVL_T_FIRST_BACKEND: u32 = 0x10000;
 
 // ---- descriptor flags ----
@@ -61,6 +63,10 @@ pub const SVL_M_THROWS: u32 = 1;
 pub const SVL_M_ASYNC: u32 = 2;
 pub const SVL_M_SYNC_SAFE: u32 = 4;
 pub const SVL_M_BLOCKING: u32 = 8;
+/// ABI v2.5: reached through `call_static` only.
+pub const SVL_M_STATIC: u32 = 16;
+/// ABI v2.5: with `SVL_M_STATIC`, returns a new reference.
+pub const SVL_M_CTOR: u32 = 32;
 
 pub const SVL_CB_CALL: u16 = 1;
 pub const SVL_CB_ASYNC: u16 = 2;
@@ -105,6 +111,8 @@ pub const SVL_LIFE_OWNED: u32 = 1;
 pub const SVL_LIFE_TOPLEVEL: u32 = 2;
 pub const SVL_LIFE_BORROWED: u32 = 3;
 pub const SVL_LIFE_VALUE: u32 = 4;
+/// ABI v2.5: a strong reference to a refcounted object outside the widget tree.
+pub const SVL_LIFE_SHARED: u32 = 5;
 
 pub const SVL_GONE_UNKNOWN: u32 = 0;
 pub const SVL_GONE_CLOSED: u32 = 1;
@@ -300,6 +308,13 @@ pub struct svl_backend {
     /// ABI v2.3: styling (classes, widget name, inline declarations, opacity, sheets, scheme). Optional.
     /// `v` is `SVL_STR` or `SVL_NULL`; the result is `>= 0` on success (`SVL_STYLE_TARGET` returns the dialect).
     pub style: Option<unsafe extern "C" fn(*mut c_void, u32, svl_handle, *const svl_value) -> c_int>,
+    /// ABI v2.5: create an instance with construct-time properties. Optional.
+    pub construct: Option<
+        unsafe extern "C" fn(*mut c_void, svl_id, *const svl_id, *const svl_value, usize, *mut svl_value) -> c_int,
+    >,
+    /// ABI v2.5: call a static function or constructor function of a kind. Optional.
+    pub call_static:
+        Option<unsafe extern "C" fn(*mut c_void, svl_id, svl_id, *const svl_value, usize, *mut svl_value) -> c_int>,
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.

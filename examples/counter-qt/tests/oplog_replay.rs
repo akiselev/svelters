@@ -103,6 +103,7 @@ fn unsupported(b: &BackendRef, log: &str) -> Option<String> {
         match parts[0] {
             "sync" | "result" => return Some("sync handlers".into()),
             "gone" => return Some("native deaths (gone)".into()),
+            "construct" | "static" => return Some("non-GUI types (construct/static, N2)".into()),
             "create" => {
                 let k = b.resolve(NameKind::Kind, 0, parts[1]);
                 if k == 0 {

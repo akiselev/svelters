@@ -27,6 +27,19 @@ pub trait Env {
     fn borrow_object(&self, _o: &glib::Object) -> u64 {
         0
     }
+    /// A GType from a native type name (`Gio.ListStore`, `GListStore`) for `SVL_T_TYPE` values.
+    fn type_by_name(&self, name: &str) -> Option<Type> {
+        Type::from_name(name).filter(|t| *t != Type::INVALID)
+    }
+    /// The native type name of a GType.
+    fn type_name(&self, t: Type) -> String {
+        t.name().to_string()
+    }
+}
+
+/// The value type of a GType-valued property (`G_TYPE_GTYPE`).
+pub fn gtype_gtype() -> Type {
+    <Type as StaticType>::static_type()
 }
 
 fn units16<'a>(v: &'a svl_value) -> &'a [u16] {
@@ -586,6 +599,15 @@ pub unsafe fn to_value(vt: Type, v: &svl_value, env: &dyn Env) -> Result<glib::V
                 t => return Err(format!("expected flags, got tag {t}")),
             }
             .ok_or_else(|| format!("invalid {} value", vt.name()))?
+        } else if vt == gtype_gtype() {
+            match v.tag {
+                SVL_NULL => Type::INVALID.to_value(),
+                SVL_STR => {
+                    let name = as_str(v).ok_or("invalid utf-8")?;
+                    env.type_by_name(&name).ok_or_else(|| format!("unknown type {name:?}"))?.to_value()
+                }
+                t => return Err(format!("expected a type name, got tag {t}")),
+            }
         } else if vt == Type::VARIANT {
             match v.tag {
                 SVL_NULL => None::<glib::Variant>.to_value(),
@@ -737,6 +759,16 @@ pub fn from_value(v: &glib::Value, env: &dyn Env, buf: &mut StrBuf) -> svl_value
     if t.is_a(Type::FLAGS) {
         let n = unsafe { glib::gobject_ffi::g_value_get_flags(v.to_glib_none().0) };
         return svl_value::typed(SVL_FLAGS, env.type_id(t), svl_value_u { u: n as u64 });
+    }
+    if t == gtype_gtype() {
+        return match v.get::<Type>() {
+            Ok(g) if g != Type::INVALID => {
+                let mut s = buf.str_value(&env.type_name(g));
+                s.type_ = SVL_T_TYPE;
+                s
+            }
+            _ => null_value(),
+        };
     }
     if t == Type::VARIANT {
         return match v.get::<Option<glib::Variant>>() {

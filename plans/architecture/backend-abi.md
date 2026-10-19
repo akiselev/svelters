@@ -104,6 +104,10 @@ interface SveltersHost {
   getProp(h: Handle, name: string): unknown;
   call(h: Handle, method: string, args: unknown[]): unknown;
   listen(h: Handle, signal: string, on: boolean): void;
+  // ABI v2.5 (optional on a backend):
+  construct(kind: string, props?: Record<string, unknown>): Handle;
+  callStatic(kind: string, method: string, args: unknown[]): unknown;
+  typeChain(h: Handle): string[];
 }
 // events: globalThis.__svelters_dispatch(h, signal, args) is invoked at checkpoints
 ```
@@ -160,6 +164,8 @@ event #<h> <signal> <json-args-array>        # an injected native event, logged 
 sync #<h> <signal> <json-args-array>         # an injected sync signal, logged before its handlers run
 result #<h> <json>|busy|error                # what call_sync returned, logged after the handlers' own ops
 gone #<h> <reason>                           # the native object died (ABI v2), logged when it happens
+construct #<h> <Kind> <json-props-object>    # ABI v2.5: a new instance with construct-time properties
+static <Kind>.<method> <json-args-array> [#<h>]  # ABI v2.5: a static call; new/new_*/from_* answer a fresh handle #h
 ```
 
 Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}` and `{"checkpoint": true}` steps.
@@ -448,6 +454,19 @@ Later ABI additions, not part of v2:
 - `listen` flags `once` and `sync` (reserved bit 4);
 - the foreign-runtime hooks;
 - the value-model changes from the serdes research.
+
+### ABI v2.5 additive (NT0: SHARED handles, construct, call_static, type values)
+
+Everything here is additive within v3; a backend that implements none of it keeps working (the new members are `NULL`).
+
+- **Lifetime class `SVL_LIFE_SHARED = 5`.** A strong reference to a refcounted object outside the widget tree (GObject non-widgets, later COM and ARC objects). One handle per object (identity: a GTK qdata tag, safe to key because the reference is strong). `destroy` drops only our reference, never disposes or closes the object. The host may call `destroy` when the JS wrapper is garbage collected, so GC release covers `SHARED`, `VALUE` and `BORROWED` handles, never `OWNED` or `TOPLEVEL`. Transfer-none returns of non-widget objects are `SHARED` (decision Q1); widgets keep `OWNED` / `BORROWED`.
+- **Every GObject crosses as a `HANDLE`,** never `BOXED`. The handle's `kind` is the generated kind when the type has one, else a reflected kind minted from the GType (`handle_info` answers it). `BOXED` stays the `VALUE` class for boxed structs; a `VALUE` handle now has a kind too and takes `call` (read-only members; mutators are hidden by the JS modules, not by the ABI).
+- **`describe(SVL_KIND, 0, kind)`** answers the kind itself: `name` is the qualified native name (`Gio.ListStore`), `ret.type` the id of the nearest bound ancestor kind (0 at the root). The host reads it for `host.typeChain(h)`.
+- **`construct(self, kind, props, values, n, out)`** (nullable) creates an instance with construct-time properties. GTK: `g_object_new_with_properties`, so construct-only properties work; widgets get `OWNED` / `TOPLEVEL` handles like `create`, other objects `SHARED`. `create(kind)` is `construct` with no props. The new handle is written to `out` as an `SVL_HANDLE`.
+- **`call_static(self, kind, method, args, n, out)`** (nullable) calls a static function or constructor function (`g_file_new_for_path`, `pango_font_description_from_string`). `resolve(SVL_METHOD, kind, name)` gives the id; the member descriptor carries `SVL_M_STATIC`, and `SVL_M_CTOR` when it returns a new reference. Out parameters follow the S2 convention (`LIST [ret, outs...]`).
+- **`SVL_T_TYPE = 11`:** a `STR` slot (or value) carrying a native type name (`Gio.ListStore`, or the GType name), for GType-valued properties and parameters (`Gio.ListStore:item-type`, `g_list_store_new`). JS passes the generated class; the module turns it into its `native` name.
+- **Host ops** `host.construct(kind, props)`, `host.callStatic(kind, method, args)` and `host.typeChain(h)`. The op log has two new lines, `construct #h Kind {json}` and `static Kind.method [json]`; a constructor-shaped method name (`new`, `new_*`, `from_*`) answers a fresh handle and the line ends with ` #h`. The Node TestHost and the log backend both implement them.
+- **GTK invoker** (`crates/svelters-gtk/src/gi.rs`) now loads the Gtk, Gdk, Gsk, Gio, GLib, GObject, Pango and Graphene typelibs and dispatches on the receiver's GType (objects, boxed values, interfaces the runtime class implements). It marshals out and inout parameters, caller-allocated out structs, `GList` / `GSList` and C arrays of strings, objects, boxed values and numbers (length arguments hidden), `GType`, `gunichar`, statics and constructors. Still refused with a clear error: callbacks and async pairs (N1), `GVariant`, hash tables, `GArray` / `GPtrArray`, fundamental classes, unions, structs passed by value.
 
 ## ABI v3: value model (M3)
 

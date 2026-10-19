@@ -87,6 +87,8 @@ export function cases() {
     'borrowed-walk': {},
     // FX1: setter-rule precedence (explicit > style:/style= > rules > native), the same on both pipelines
     'style-precedence': {},
+    // NT0: non-UI types imported from svelters:gtk/gtk and svelters:gtk/gio (named exports, construct / static ops)
+    'gtk-types': {},
   };
   for (const [name, rejectOn] of Object.entries(jsOnly)) {
     out.push({

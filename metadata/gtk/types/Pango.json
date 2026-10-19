@@ -1,0 +1,3647 @@
+{
+ "namespace": "Pango",
+ "schema": "svelters-types/v1",
+ "toolkit": "gtk",
+ "types": {
+  "AttrIterator": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoAttrIterator",
+   "hidden": [
+    "destroy",
+    "next"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "get",
+     "name": "get",
+     "params": [
+      {
+       "js": "type",
+       "name": "type",
+       "type": {
+        "k": "enum",
+        "t": "Pango.AttrType"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.Attribute"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getAttrs",
+     "name": "get_attrs",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "boxed",
+       "t": "Pango.Attribute"
+      },
+      "k": "list",
+      "slist": true
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getFont",
+     "name": "get_font",
+     "params": [
+      {
+       "js": "desc",
+       "name": "desc",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "language",
+       "name": "language",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Language"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "extraAttrs",
+       "name": "extra_attrs",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "boxed",
+         "t": "Pango.Attribute"
+        },
+        "k": "list",
+        "slist": true
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "range",
+     "name": "range",
+     "params": [
+      {
+       "dir": "out",
+       "js": "start",
+       "name": "start",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "end",
+       "name": "end",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "AttrIterator",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.AttrIterator",
+   "refs": [
+    "Pango.AttrType",
+    "Pango.Attribute",
+    "Pango.FontDescription",
+    "Pango.Language"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "AttrList": {
+   "abstract": false,
+   "blocked": {
+    "filter": "callback"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.AttrList"
+     }
+    }
+   ],
+   "curated": true,
+   "gtype": "PangoAttrList",
+   "hidden": [
+    "change",
+    "insert",
+    "insert_before",
+    "splice",
+    "update"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "otherList",
+       "name": "other_list",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.AttrList"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.46"
+    },
+    {
+     "js": "getAttributes",
+     "name": "get_attributes",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "boxed",
+       "t": "Pango.Attribute"
+      },
+      "k": "list",
+      "slist": true
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "getIterator",
+     "name": "get_iterator",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.AttrIterator"
+     }
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "1.50"
+    }
+   ],
+   "name": "AttrList",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.AttrList",
+   "refs": [
+    "Pango.AttrIterator",
+    "Pango.Attribute"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "fromString",
+     "name": "from_string",
+     "params": [
+      {
+       "js": "text",
+       "name": "text",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.AttrList"
+     },
+     "ret_nullable": true,
+     "since": "1.50"
+    }
+   ],
+   "undecided": []
+  },
+  "Attribute": {
+   "abstract": false,
+   "blocked": {
+    "as_color": "type:needs-override:Pango.AttrColor",
+    "as_float": "type:needs-override:Pango.AttrFloat",
+    "as_font_desc": "type:needs-override:Pango.AttrFontDesc",
+    "as_font_features": "type:needs-override:Pango.AttrFontFeatures",
+    "as_int": "type:needs-override:Pango.AttrInt",
+    "as_language": "type:needs-override:Pango.AttrLanguage",
+    "as_shape": "type:needs-override:Pango.AttrShape",
+    "as_size": "type:needs-override:Pango.AttrSize",
+    "as_string": "type:needs-override:Pango.AttrString",
+    "init": "type:needs-override:Pango.AttrClass"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoAttribute",
+   "hidden": [
+    "destroy"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "attr2",
+       "name": "attr2",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Attribute"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Attribute",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Attribute",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Context": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Context"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "PangoContext",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "changed",
+     "name": "changed",
+     "params": [],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.32.4"
+    },
+    {
+     "js": "getBaseDir",
+     "name": "get_base_dir",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Direction"
+     }
+    },
+    {
+     "js": "getBaseGravity",
+     "name": "get_base_gravity",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Gravity"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "getFontDescription",
+     "name": "get_font_description",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getFontMap",
+     "name": "get_font_map",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontMap"
+     },
+     "ret_nullable": true,
+     "since": "1.6"
+    },
+    {
+     "js": "getGravity",
+     "name": "get_gravity",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Gravity"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "getGravityHint",
+     "name": "get_gravity_hint",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.GravityHint"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "getLanguage",
+     "name": "get_language",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.Language"
+     }
+    },
+    {
+     "js": "getMatrix",
+     "name": "get_matrix",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.Matrix"
+     },
+     "ret_nullable": true,
+     "since": "1.6"
+    },
+    {
+     "js": "getMetrics",
+     "name": "get_metrics",
+     "params": [
+      {
+       "js": "desc",
+       "name": "desc",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      },
+      {
+       "js": "language",
+       "name": "language",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Language"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontMetrics"
+     }
+    },
+    {
+     "js": "getRoundGlyphPositions",
+     "name": "get_round_glyph_positions",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "getSerial",
+     "name": "get_serial",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "1.32.4"
+    },
+    {
+     "js": "listFamilies",
+     "name": "list_families",
+     "params": [
+      {
+       "dir": "out",
+       "js": "families",
+       "name": "families",
+       "type": {
+        "elem": {
+         "k": "object",
+         "t": "Pango.FontFamily"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "nFamilies",
+       "name": "n_families",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "loadFont",
+     "name": "load_font",
+     "params": [
+      {
+       "js": "desc",
+       "name": "desc",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Font"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "loadFontset",
+     "name": "load_fontset",
+     "params": [
+      {
+       "js": "desc",
+       "name": "desc",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      },
+      {
+       "js": "language",
+       "name": "language",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Language"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Fontset"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "setBaseDir",
+     "name": "set_base_dir",
+     "params": [
+      {
+       "js": "direction",
+       "name": "direction",
+       "type": {
+        "k": "enum",
+        "t": "Pango.Direction"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setBaseGravity",
+     "name": "set_base_gravity",
+     "params": [
+      {
+       "js": "gravity",
+       "name": "gravity",
+       "type": {
+        "k": "enum",
+        "t": "Pango.Gravity"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "setFontDescription",
+     "name": "set_font_description",
+     "params": [
+      {
+       "js": "desc",
+       "name": "desc",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setFontMap",
+     "name": "set_font_map",
+     "params": [
+      {
+       "js": "fontMap",
+       "name": "font_map",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Pango.FontMap"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setGravityHint",
+     "name": "set_gravity_hint",
+     "params": [
+      {
+       "js": "hint",
+       "name": "hint",
+       "type": {
+        "k": "enum",
+        "t": "Pango.GravityHint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "setLanguage",
+     "name": "set_language",
+     "params": [
+      {
+       "js": "language",
+       "name": "language",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Language"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setMatrix",
+     "name": "set_matrix",
+     "params": [
+      {
+       "js": "matrix",
+       "name": "matrix",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.6"
+    },
+    {
+     "js": "setRoundGlyphPositions",
+     "name": "set_round_glyph_positions",
+     "params": [
+      {
+       "js": "roundPositions",
+       "name": "round_positions",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.44"
+    }
+   ],
+   "name": "Context",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Context",
+   "refs": [
+    "Pango.Direction",
+    "Pango.Font",
+    "Pango.FontDescription",
+    "Pango.FontFamily",
+    "Pango.FontMap",
+    "Pango.FontMetrics",
+    "Pango.Fontset",
+    "Pango.Gravity",
+    "Pango.GravityHint",
+    "Pango.Language",
+    "Pango.Matrix"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Coverage": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Coverage"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "PangoCoverage",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "get",
+     "name": "get",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.CoverageLevel"
+     }
+    },
+    {
+     "js": "set",
+     "name": "set",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "level",
+       "name": "level",
+       "type": {
+        "k": "enum",
+        "t": "Pango.CoverageLevel"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "Coverage",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Coverage",
+   "refs": [
+    "Pango.CoverageLevel"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Font": {
+   "abstract": true,
+   "blocked": {
+    "get_features": "unknown type HarfBuzz.feature_t",
+    "get_glyph_extents": "type:needs-override:Pango.Rectangle"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoFont",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "describe",
+     "name": "describe",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     }
+    },
+    {
+     "js": "describeWithAbsoluteSize",
+     "name": "describe_with_absolute_size",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     },
+     "since": "1.14"
+    },
+    {
+     "js": "getCoverage",
+     "name": "get_coverage",
+     "params": [
+      {
+       "js": "language",
+       "name": "language",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Language"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Coverage"
+     }
+    },
+    {
+     "js": "getFace",
+     "name": "get_face",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontFace"
+     },
+     "ret_nullable": true,
+     "since": "1.46"
+    },
+    {
+     "js": "getFontMap",
+     "name": "get_font_map",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontMap"
+     },
+     "ret_nullable": true,
+     "since": "1.10"
+    },
+    {
+     "js": "getLanguages",
+     "name": "get_languages",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "boxed",
+       "t": "Pango.Language"
+      },
+      "k": "array",
+      "len": "zero"
+     },
+     "ret_nullable": true,
+     "since": "1.50"
+    },
+    {
+     "js": "getMetrics",
+     "name": "get_metrics",
+     "params": [
+      {
+       "js": "language",
+       "name": "language",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Language"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontMetrics"
+     }
+    },
+    {
+     "js": "hasChar",
+     "name": "has_char",
+     "params": [
+      {
+       "js": "wc",
+       "name": "wc",
+       "type": {
+        "k": "unichar"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "serialize",
+     "name": "serialize",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "1.50"
+    }
+   ],
+   "name": "Font",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Font",
+   "refs": [
+    "GLib.Bytes",
+    "Pango.Context",
+    "Pango.Coverage",
+    "Pango.FontDescription",
+    "Pango.FontFace",
+    "Pango.FontMap",
+    "Pango.FontMetrics",
+    "Pango.Language"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "deserialize",
+     "name": "deserialize",
+     "params": [
+      {
+       "js": "context",
+       "name": "context",
+       "type": {
+        "k": "object",
+        "t": "Pango.Context"
+       }
+      },
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Font"
+     },
+     "ret_nullable": true,
+     "since": "1.50",
+     "throws": true
+    }
+   ],
+   "undecided": []
+  },
+  "FontDescription": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     }
+    }
+   ],
+   "curated": true,
+   "gtype": "PangoFontDescription",
+   "hidden": [
+    "merge",
+    "merge_static",
+    "set_absolute_size",
+    "set_color",
+    "set_family",
+    "set_family_static",
+    "set_features",
+    "set_features_static",
+    "set_gravity",
+    "set_size",
+    "set_stretch",
+    "set_style",
+    "set_variant",
+    "set_variations",
+    "set_variations_static",
+    "set_weight",
+    "unset_fields"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "betterMatch",
+     "name": "better_match",
+     "params": [
+      {
+       "js": "oldMatch",
+       "name": "old_match",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      },
+      {
+       "js": "newMatch",
+       "name": "new_match",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "copyStatic",
+     "name": "copy_static",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "desc2",
+       "name": "desc2",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getColor",
+     "name": "get_color",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.FontColor"
+     },
+     "since": "1.57"
+    },
+    {
+     "js": "getFamily",
+     "name": "get_family",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getFeatures",
+     "name": "get_features",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "1.56"
+    },
+    {
+     "js": "getGravity",
+     "name": "get_gravity",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Gravity"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "getSetFields",
+     "name": "get_set_fields",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "Pango.FontMask"
+     }
+    },
+    {
+     "js": "getSize",
+     "name": "get_size",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getSizeIsAbsolute",
+     "name": "get_size_is_absolute",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.8"
+    },
+    {
+     "js": "getStretch",
+     "name": "get_stretch",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Stretch"
+     }
+    },
+    {
+     "js": "getStyle",
+     "name": "get_style",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Style"
+     }
+    },
+    {
+     "js": "getVariant",
+     "name": "get_variant",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Variant"
+     }
+    },
+    {
+     "js": "getVariations",
+     "name": "get_variations",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "1.42"
+    },
+    {
+     "js": "getWeight",
+     "name": "get_weight",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Weight"
+     }
+    },
+    {
+     "js": "hash",
+     "name": "hash",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    },
+    {
+     "js": "toFilename",
+     "name": "to_filename",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    }
+   ],
+   "name": "FontDescription",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.FontDescription",
+   "refs": [
+    "Pango.FontColor",
+    "Pango.FontMask",
+    "Pango.Gravity",
+    "Pango.Stretch",
+    "Pango.Style",
+    "Pango.Variant",
+    "Pango.Weight"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "fromString",
+     "name": "from_string",
+     "params": [
+      {
+       "js": "str",
+       "name": "str",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     }
+    }
+   ],
+   "undecided": []
+  },
+  "FontFace": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoFontFace",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "describe",
+     "name": "describe",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     }
+    },
+    {
+     "js": "getFaceName",
+     "name": "get_face_name",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getFamily",
+     "name": "get_family",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontFamily"
+     },
+     "since": "1.46"
+    },
+    {
+     "js": "isSynthesized",
+     "name": "is_synthesized",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.18"
+    },
+    {
+     "js": "listSizes",
+     "name": "list_sizes",
+     "params": [
+      {
+       "dir": "out",
+       "js": "sizes",
+       "name": "sizes",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "gint"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "nSizes",
+       "name": "n_sizes",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    }
+   ],
+   "name": "FontFace",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.FontFace",
+   "refs": [
+    "Pango.FontDescription",
+    "Pango.FontFamily"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "FontFamily": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "model",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoFontFamily",
+   "hidden": [],
+   "interfaces": [
+    "Gio.ListModel"
+   ],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getFace",
+     "name": "get_face",
+     "params": [
+      {
+       "js": "name",
+       "name": "name",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontFace"
+     },
+     "ret_nullable": true,
+     "since": "1.46"
+    },
+    {
+     "js": "getName",
+     "name": "get_name",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "isMonospace",
+     "name": "is_monospace",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "isVariable",
+     "name": "is_variable",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "listFaces",
+     "name": "list_faces",
+     "params": [
+      {
+       "dir": "out",
+       "js": "faces",
+       "name": "faces",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "object",
+         "t": "Pango.FontFace"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "nFaces",
+       "name": "n_faces",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "FontFamily",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "isMonospace",
+     "name": "is-monospace",
+     "readable": true,
+     "since": "1.52",
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "isVariable",
+     "name": "is-variable",
+     "readable": true,
+     "since": "1.52",
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "itemType",
+     "name": "item-type",
+     "readable": true,
+     "since": "1.52",
+     "type": {
+      "k": "gtype"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "nItems",
+     "name": "n-items",
+     "readable": true,
+     "since": "1.52",
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "name",
+     "name": "name",
+     "readable": true,
+     "since": "1.52",
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Pango.FontFamily",
+   "refs": [
+    "Pango.FontFace"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "FontMap": {
+   "abstract": true,
+   "blocked": {},
+   "builder": false,
+   "category": "model",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoFontMap",
+   "hidden": [],
+   "interfaces": [
+    "Gio.ListModel"
+   ],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "addFontFile",
+     "name": "add_font_file",
+     "params": [
+      {
+       "js": "filename",
+       "name": "filename",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.56",
+     "throws": true
+    },
+    {
+     "js": "changed",
+     "name": "changed",
+     "params": [],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.34"
+    },
+    {
+     "js": "createContext",
+     "name": "create_context",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Context"
+     },
+     "since": "1.22"
+    },
+    {
+     "js": "getFamily",
+     "name": "get_family",
+     "params": [
+      {
+       "js": "name",
+       "name": "name",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontFamily"
+     },
+     "ret_nullable": true,
+     "since": "1.46"
+    },
+    {
+     "js": "getSerial",
+     "name": "get_serial",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "1.32.4"
+    },
+    {
+     "js": "listFamilies",
+     "name": "list_families",
+     "params": [
+      {
+       "dir": "out",
+       "js": "families",
+       "name": "families",
+       "type": {
+        "elem": {
+         "k": "object",
+         "t": "Pango.FontFamily"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "nFamilies",
+       "name": "n_families",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "loadFont",
+     "name": "load_font",
+     "params": [
+      {
+       "js": "context",
+       "name": "context",
+       "type": {
+        "k": "object",
+        "t": "Pango.Context"
+       }
+      },
+      {
+       "js": "desc",
+       "name": "desc",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Font"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "loadFontset",
+     "name": "load_fontset",
+     "params": [
+      {
+       "js": "context",
+       "name": "context",
+       "type": {
+        "k": "object",
+        "t": "Pango.Context"
+       }
+      },
+      {
+       "js": "desc",
+       "name": "desc",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      },
+      {
+       "js": "language",
+       "name": "language",
+       "type": {
+        "k": "boxed",
+        "t": "Pango.Language"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Fontset"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "reloadFont",
+     "name": "reload_font",
+     "params": [
+      {
+       "js": "font",
+       "name": "font",
+       "type": {
+        "k": "object",
+        "t": "Pango.Font"
+       }
+      },
+      {
+       "js": "scale",
+       "name": "scale",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "context",
+       "name": "context",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Pango.Context"
+       }
+      },
+      {
+       "js": "variations",
+       "name": "variations",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Font"
+     },
+     "since": "1.52"
+    }
+   ],
+   "name": "FontMap",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "itemType",
+     "name": "item-type",
+     "readable": true,
+     "since": "1.52",
+     "type": {
+      "k": "gtype"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "nItems",
+     "name": "n-items",
+     "readable": true,
+     "since": "1.52",
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Pango.FontMap",
+   "refs": [
+    "Pango.Context",
+    "Pango.Font",
+    "Pango.FontDescription",
+    "Pango.FontFamily",
+    "Pango.Fontset",
+    "Pango.Language"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "FontMetrics": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoFontMetrics",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getApproximateCharWidth",
+     "name": "get_approximate_char_width",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getApproximateDigitWidth",
+     "name": "get_approximate_digit_width",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getAscent",
+     "name": "get_ascent",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getDescent",
+     "name": "get_descent",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getHeight",
+     "name": "get_height",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "getStrikethroughPosition",
+     "name": "get_strikethrough_position",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.6"
+    },
+    {
+     "js": "getStrikethroughThickness",
+     "name": "get_strikethrough_thickness",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.6"
+    },
+    {
+     "js": "getUnderlinePosition",
+     "name": "get_underline_position",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.6"
+    },
+    {
+     "js": "getUnderlineThickness",
+     "name": "get_underline_thickness",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.6"
+    }
+   ],
+   "name": "FontMetrics",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.FontMetrics",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Fontset": {
+   "abstract": true,
+   "blocked": {
+    "foreach": "callback"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoFontset",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getFont",
+     "name": "get_font",
+     "params": [
+      {
+       "js": "wc",
+       "name": "wc",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Font"
+     }
+    },
+    {
+     "js": "getMetrics",
+     "name": "get_metrics",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontMetrics"
+     }
+    }
+   ],
+   "name": "Fontset",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Fontset",
+   "refs": [
+    "Pango.Font",
+    "Pango.FontMetrics"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Language": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoLanguage",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getSampleString",
+     "name": "get_sample_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getScripts",
+     "name": "get_scripts",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "numScripts",
+       "name": "num_scripts",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "enum",
+       "t": "Pango.Script"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "ret_nullable": true,
+     "since": "1.22"
+    },
+    {
+     "js": "includesScript",
+     "name": "includes_script",
+     "params": [
+      {
+       "js": "script",
+       "name": "script",
+       "type": {
+        "k": "enum",
+        "t": "Pango.Script"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "matches",
+     "name": "matches",
+     "params": [
+      {
+       "js": "rangeList",
+       "name": "range_list",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    }
+   ],
+   "name": "Language",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Language",
+   "refs": [
+    "Pango.Script"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "fromString",
+     "name": "from_string",
+     "params": [
+      {
+       "js": "language",
+       "name": "language",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.Language"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getDefault",
+     "name": "get_default",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.Language"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "getPreferred",
+     "name": "get_preferred",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "boxed",
+       "t": "Pango.Language"
+      },
+      "k": "array",
+      "len": "zero"
+     },
+     "ret_nullable": true,
+     "since": "1.48"
+    }
+   ],
+   "undecided": []
+  },
+  "Layout": {
+   "abstract": false,
+   "blocked": {
+    "get_caret_pos": "type:needs-override:Pango.Rectangle",
+    "get_cursor_pos": "type:needs-override:Pango.Rectangle",
+    "get_extents": "type:needs-override:Pango.Rectangle",
+    "get_iter": "unbound:Pango.LayoutIter",
+    "get_log_attrs": "type:needs-override:Pango.LogAttr",
+    "get_log_attrs_readonly": "type:needs-override:Pango.LogAttr",
+    "get_pixel_extents": "type:needs-override:Pango.Rectangle",
+    "index_to_pos": "type:needs-override:Pango.Rectangle"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "context",
+       "name": "context",
+       "type": {
+        "k": "object",
+        "t": "Pango.Context"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Layout"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "PangoLayout",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "contextChanged",
+     "name": "context_changed",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getAlignment",
+     "name": "get_alignment",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Alignment"
+     }
+    },
+    {
+     "js": "getAttributes",
+     "name": "get_attributes",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.AttrList"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getAutoDir",
+     "name": "get_auto_dir",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getBaseline",
+     "name": "get_baseline",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.22"
+    },
+    {
+     "js": "getCharacterCount",
+     "name": "get_character_count",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.30"
+    },
+    {
+     "js": "getContext",
+     "name": "get_context",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Context"
+     }
+    },
+    {
+     "js": "getDirection",
+     "name": "get_direction",
+     "params": [
+      {
+       "js": "index",
+       "name": "index",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Direction"
+     },
+     "since": "1.46"
+    },
+    {
+     "js": "getEllipsize",
+     "name": "get_ellipsize",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.EllipsizeMode"
+     },
+     "since": "1.6"
+    },
+    {
+     "js": "getFontDescription",
+     "name": "get_font_description",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     },
+     "ret_nullable": true,
+     "since": "1.8"
+    },
+    {
+     "js": "getHeight",
+     "name": "get_height",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.20"
+    },
+    {
+     "js": "getIndent",
+     "name": "get_indent",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getJustify",
+     "name": "get_justify",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getJustifyLastLine",
+     "name": "get_justify_last_line",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "getLine",
+     "name": "get_line",
+     "params": [
+      {
+       "js": "line",
+       "name": "line",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.LayoutLine"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getLineCount",
+     "name": "get_line_count",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getLineReadonly",
+     "name": "get_line_readonly",
+     "params": [
+      {
+       "js": "line",
+       "name": "line",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.LayoutLine"
+     },
+     "ret_nullable": true,
+     "since": "1.16"
+    },
+    {
+     "js": "getLineSpacing",
+     "name": "get_line_spacing",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "getLines",
+     "name": "get_lines",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "boxed",
+       "t": "Pango.LayoutLine"
+      },
+      "k": "list",
+      "slist": true
+     }
+    },
+    {
+     "js": "getLinesReadonly",
+     "name": "get_lines_readonly",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "boxed",
+       "t": "Pango.LayoutLine"
+      },
+      "k": "list",
+      "slist": true
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "getPixelSize",
+     "name": "get_pixel_size",
+     "params": [
+      {
+       "dir": "out",
+       "js": "width",
+       "name": "width",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "height",
+       "name": "height",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getSerial",
+     "name": "get_serial",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "1.32.4"
+    },
+    {
+     "js": "getSingleParagraphMode",
+     "name": "get_single_paragraph_mode",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getSize",
+     "name": "get_size",
+     "params": [
+      {
+       "dir": "out",
+       "js": "width",
+       "name": "width",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "height",
+       "name": "height",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getSpacing",
+     "name": "get_spacing",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getTabs",
+     "name": "get_tabs",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.TabArray"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getText",
+     "name": "get_text",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getUnknownGlyphsCount",
+     "name": "get_unknown_glyphs_count",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "getWidth",
+     "name": "get_width",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getWrap",
+     "name": "get_wrap",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.WrapMode"
+     }
+    },
+    {
+     "js": "indexToLineX",
+     "name": "index_to_line_x",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "trailing",
+       "name": "trailing",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "line",
+       "name": "line",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "xPos",
+       "name": "x_pos",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "isEllipsized",
+     "name": "is_ellipsized",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "isWrapped",
+     "name": "is_wrapped",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "moveCursorVisually",
+     "name": "move_cursor_visually",
+     "params": [
+      {
+       "js": "strong",
+       "name": "strong",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "js": "oldIndex",
+       "name": "old_index",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "oldTrailing",
+       "name": "old_trailing",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "direction",
+       "name": "direction",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "newIndex",
+       "name": "new_index",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "newTrailing",
+       "name": "new_trailing",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "serialize",
+     "name": "serialize",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Pango.LayoutSerializeFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "setAlignment",
+     "name": "set_alignment",
+     "params": [
+      {
+       "js": "alignment",
+       "name": "alignment",
+       "type": {
+        "k": "enum",
+        "t": "Pango.Alignment"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setAttributes",
+     "name": "set_attributes",
+     "params": [
+      {
+       "js": "attrs",
+       "name": "attrs",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.AttrList"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setAutoDir",
+     "name": "set_auto_dir",
+     "params": [
+      {
+       "js": "autoDir",
+       "name": "auto_dir",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "setEllipsize",
+     "name": "set_ellipsize",
+     "params": [
+      {
+       "js": "ellipsize",
+       "name": "ellipsize",
+       "type": {
+        "k": "enum",
+        "t": "Pango.EllipsizeMode"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.6"
+    },
+    {
+     "js": "setFontDescription",
+     "name": "set_font_description",
+     "params": [
+      {
+       "js": "desc",
+       "name": "desc",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setHeight",
+     "name": "set_height",
+     "params": [
+      {
+       "js": "height",
+       "name": "height",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.20"
+    },
+    {
+     "js": "setIndent",
+     "name": "set_indent",
+     "params": [
+      {
+       "js": "indent",
+       "name": "indent",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setJustify",
+     "name": "set_justify",
+     "params": [
+      {
+       "js": "justify",
+       "name": "justify",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setJustifyLastLine",
+     "name": "set_justify_last_line",
+     "params": [
+      {
+       "js": "justify",
+       "name": "justify",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "setLineSpacing",
+     "name": "set_line_spacing",
+     "params": [
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "setMarkup",
+     "name": "set_markup",
+     "params": [
+      {
+       "js": "markup",
+       "name": "markup",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setMarkupWithAccel",
+     "name": "set_markup_with_accel",
+     "params": [
+      {
+       "js": "markup",
+       "name": "markup",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "accelMarker",
+       "name": "accel_marker",
+       "type": {
+        "k": "unichar"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "accelChar",
+       "name": "accel_char",
+       "nullable": true,
+       "type": {
+        "k": "unichar"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setSingleParagraphMode",
+     "name": "set_single_paragraph_mode",
+     "params": [
+      {
+       "js": "setting",
+       "name": "setting",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setSpacing",
+     "name": "set_spacing",
+     "params": [
+      {
+       "js": "spacing",
+       "name": "spacing",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setTabs",
+     "name": "set_tabs",
+     "params": [
+      {
+       "js": "tabs",
+       "name": "tabs",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.TabArray"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setText",
+     "name": "set_text",
+     "params": [
+      {
+       "js": "text",
+       "name": "text",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setWidth",
+     "name": "set_width",
+     "params": [
+      {
+       "js": "width",
+       "name": "width",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setWrap",
+     "name": "set_wrap",
+     "params": [
+      {
+       "js": "wrap",
+       "name": "wrap",
+       "type": {
+        "k": "enum",
+        "t": "Pango.WrapMode"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "writeToFile",
+     "name": "write_to_file",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Pango.LayoutSerializeFlags"
+       }
+      },
+      {
+       "js": "filename",
+       "name": "filename",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.50",
+     "throws": true
+    },
+    {
+     "js": "xyToIndex",
+     "name": "xy_to_index",
+     "params": [
+      {
+       "js": "x",
+       "name": "x",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "y",
+       "name": "y",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "trailing",
+       "name": "trailing",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Layout",
+   "ns": "Pango",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Layout",
+   "refs": [
+    "GLib.Bytes",
+    "Pango.Alignment",
+    "Pango.AttrList",
+    "Pango.Context",
+    "Pango.Direction",
+    "Pango.EllipsizeMode",
+    "Pango.FontDescription",
+    "Pango.LayoutDeserializeFlags",
+    "Pango.LayoutLine",
+    "Pango.LayoutSerializeFlags",
+    "Pango.TabArray",
+    "Pango.WrapMode"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "deserialize",
+     "name": "deserialize",
+     "params": [
+      {
+       "js": "context",
+       "name": "context",
+       "type": {
+        "k": "object",
+        "t": "Pango.Context"
+       }
+      },
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Pango.LayoutDeserializeFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.Layout"
+     },
+     "ret_nullable": true,
+     "since": "1.50",
+     "throws": true
+    }
+   ],
+   "undecided": []
+  },
+  "LayoutLine": {
+   "abstract": false,
+   "blocked": {
+    "get_extents": "type:needs-override:Pango.Rectangle",
+    "get_pixel_extents": "type:needs-override:Pango.Rectangle"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoLayoutLine",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getHeight",
+     "name": "get_height",
+     "params": [
+      {
+       "dir": "out",
+       "js": "height",
+       "name": "height",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.44"
+    },
+    {
+     "js": "getLength",
+     "name": "get_length",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "getResolvedDirection",
+     "name": "get_resolved_direction",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Direction"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "getStartIndex",
+     "name": "get_start_index",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "getXRanges",
+     "name": "get_x_ranges",
+     "params": [
+      {
+       "js": "startIndex",
+       "name": "start_index",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "endIndex",
+       "name": "end_index",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "ranges",
+       "name": "ranges",
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "gint"
+        },
+        "k": "array",
+        "len": 3
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "nRanges",
+       "name": "n_ranges",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "indexToX",
+     "name": "index_to_x",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "trailing",
+       "name": "trailing",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "xPos",
+       "name": "x_pos",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "isParagraphStart",
+     "name": "is_paragraph_start",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "xToIndex",
+     "name": "x_to_index",
+     "params": [
+      {
+       "js": "xPos",
+       "name": "x_pos",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "trailing",
+       "name": "trailing",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "LayoutLine",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.LayoutLine",
+   "refs": [
+    "Pango.Direction"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Matrix": {
+   "abstract": false,
+   "blocked": {
+    "transform_pixel_rectangle": "type:needs-override:Pango.Rectangle",
+    "transform_rectangle": "type:needs-override:Pango.Rectangle"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "PangoMatrix",
+   "hidden": [
+    "concat",
+    "rotate",
+    "scale",
+    "translate"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getFontScaleFactor",
+     "name": "get_font_scale_factor",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.12"
+    },
+    {
+     "js": "getFontScaleFactors",
+     "name": "get_font_scale_factors",
+     "params": [
+      {
+       "dir": "out",
+       "js": "xscale",
+       "name": "xscale",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "yscale",
+       "name": "yscale",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.38"
+    },
+    {
+     "js": "getSlantRatio",
+     "name": "get_slant_ratio",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "transformDistance",
+     "name": "transform_distance",
+     "params": [
+      {
+       "dir": "inout",
+       "js": "dx",
+       "name": "dx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "inout",
+       "js": "dy",
+       "name": "dy",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.16"
+    },
+    {
+     "js": "transformPoint",
+     "name": "transform_point",
+     "params": [
+      {
+       "dir": "inout",
+       "js": "x",
+       "name": "x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "inout",
+       "js": "y",
+       "name": "y",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.16"
+    }
+   ],
+   "name": "Matrix",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.Matrix",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.6",
+   "statics": [],
+   "undecided": []
+  },
+  "TabArray": {
+   "abstract": false,
+   "blocked": {
+    "get_tabs": "array without length"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "initialSize",
+       "name": "initial_size",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "positionsInPixels",
+       "name": "positions_in_pixels",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.TabArray"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "PangoTabArray",
+   "hidden": [
+    "resize",
+    "set_decimal_point",
+    "set_positions_in_pixels",
+    "set_tab",
+    "sort"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getDecimalPoint",
+     "name": "get_decimal_point",
+     "params": [
+      {
+       "js": "tabIndex",
+       "name": "tab_index",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "unichar"
+     },
+     "since": "1.50"
+    },
+    {
+     "js": "getPositionsInPixels",
+     "name": "get_positions_in_pixels",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getSize",
+     "name": "get_size",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "getTab",
+     "name": "get_tab",
+     "params": [
+      {
+       "js": "tabIndex",
+       "name": "tab_index",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "alignment",
+       "name": "alignment",
+       "nullable": true,
+       "type": {
+        "k": "enum",
+        "t": "Pango.TabAlign"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "location",
+       "name": "location",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "1.50"
+    }
+   ],
+   "name": "TabArray",
+   "ns": "Pango",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Pango.TabArray",
+   "refs": [
+    "Pango.TabAlign"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "fromString",
+     "name": "from_string",
+     "params": [
+      {
+       "js": "text",
+       "name": "text",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.TabArray"
+     },
+     "ret_nullable": true,
+     "since": "1.50"
+    }
+   ],
+   "undecided": []
+  }
+ },
+ "version": "1.0"
+}

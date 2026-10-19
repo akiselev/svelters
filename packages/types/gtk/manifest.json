@@ -1,0 +1,4587 @@
+{
+ "modules": {
+  "svelters:gtk/gdk": {
+   "dir": "gdk",
+   "exports": {
+    "AppLaunchContext": {
+     "category": "object",
+     "extends": "Gio.AppLaunchContext",
+     "file": "gdk/AppLaunchContext.js",
+     "implements": [],
+     "imports": [
+      "Gio.AppLaunchContext",
+      "Gdk.Display"
+     ],
+     "native": "Gdk.AppLaunchContext",
+     "signature": [
+      "Gdk.Display",
+      "Gio.Icon"
+     ]
+    },
+    "CairoContext": {
+     "category": "object",
+     "extends": "Gdk.DrawContext",
+     "file": "gdk/CairoContext.js",
+     "implements": [],
+     "imports": [
+      "Gdk.DrawContext"
+     ],
+     "native": "Gdk.CairoContext",
+     "signature": []
+    },
+    "CicpParams": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/CicpParams.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.ColorState"
+     ],
+     "native": "Gdk.CicpParams",
+     "signature": [
+      "Gdk.CicpRange",
+      "Gdk.ColorState"
+     ]
+    },
+    "Clipboard": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Clipboard.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.ContentFormats",
+      "Gdk.ContentProvider",
+      "Gdk.Display"
+     ],
+     "native": "Gdk.Clipboard",
+     "signature": [
+      "Gdk.ContentFormats",
+      "Gdk.ContentProvider",
+      "Gdk.Display"
+     ]
+    },
+    "ColorState": {
+     "category": "value",
+     "extends": null,
+     "file": "gdk/ColorState.js",
+     "implements": [],
+     "imports": [
+      "Gdk.CicpParams"
+     ],
+     "native": "Gdk.ColorState",
+     "signature": [
+      "Gdk.CicpParams"
+     ]
+    },
+    "ContentFormats": {
+     "category": "value",
+     "extends": null,
+     "file": "gdk/ContentFormats.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gdk.ContentFormats",
+     "signature": [
+      "GLib.String"
+     ]
+    },
+    "ContentProvider": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/ContentProvider.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.ContentFormats"
+     ],
+     "native": "Gdk.ContentProvider",
+     "signature": [
+      "GLib.Bytes",
+      "Gdk.ContentFormats"
+     ]
+    },
+    "Cursor": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Cursor.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Texture"
+     ],
+     "native": "Gdk.Cursor",
+     "signature": [
+      "Gdk.Texture"
+     ]
+    },
+    "Device": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Device.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.DeviceTool",
+      "Gdk.Display",
+      "Gdk.Seat",
+      "Gdk.Surface"
+     ],
+     "native": "Gdk.Device",
+     "signature": [
+      "Gdk.DeviceTool",
+      "Gdk.Display",
+      "Gdk.InputSource",
+      "Gdk.ModifierType",
+      "Gdk.Seat",
+      "Gdk.Surface",
+      "Pango.Direction"
+     ]
+    },
+    "DeviceTool": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/DeviceTool.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gdk.DeviceTool",
+     "signature": [
+      "Gdk.AxisFlags",
+      "Gdk.DeviceToolType"
+     ]
+    },
+    "Display": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Display.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.AppLaunchContext",
+      "Gdk.Clipboard",
+      "Gdk.DmabufFormats",
+      "Gdk.GLContext",
+      "Gdk.Monitor",
+      "Gdk.Seat",
+      "Gio.ListModel"
+     ],
+     "native": "Gdk.Display",
+     "signature": [
+      "Gdk.AppLaunchContext",
+      "Gdk.Clipboard",
+      "Gdk.Device",
+      "Gdk.DmabufFormats",
+      "Gdk.GLContext",
+      "Gdk.ModifierType",
+      "Gdk.Monitor",
+      "Gdk.Seat",
+      "Gdk.Surface",
+      "Gio.ListModel"
+     ]
+    },
+    "DmabufFormats": {
+     "category": "value",
+     "extends": null,
+     "file": "gdk/DmabufFormats.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gdk.DmabufFormats",
+     "signature": []
+    },
+    "Drag": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Drag.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.ContentFormats",
+      "Gdk.ContentProvider",
+      "Gdk.Device",
+      "Gdk.Display",
+      "Gdk.Surface"
+     ],
+     "native": "Gdk.Drag",
+     "signature": [
+      "Gdk.ContentFormats",
+      "Gdk.ContentProvider",
+      "Gdk.Device",
+      "Gdk.Display",
+      "Gdk.DragAction",
+      "Gdk.DragCancelReason",
+      "Gdk.Surface"
+     ]
+    },
+    "DrawContext": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/DrawContext.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Surface"
+     ],
+     "native": "Gdk.DrawContext",
+     "signature": [
+      "Gdk.Display",
+      "Gdk.Surface"
+     ]
+    },
+    "Drop": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Drop.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.ContentFormats",
+      "Gdk.Device",
+      "Gdk.Display",
+      "Gdk.Drag",
+      "Gdk.Surface"
+     ],
+     "native": "Gdk.Drop",
+     "signature": [
+      "Gdk.ContentFormats",
+      "Gdk.Device",
+      "Gdk.Display",
+      "Gdk.Drag",
+      "Gdk.DragAction",
+      "Gdk.Surface"
+     ]
+    },
+    "EventSequence": {
+     "category": "value",
+     "extends": null,
+     "file": "gdk/EventSequence.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gdk.EventSequence",
+     "signature": []
+    },
+    "FrameClock": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/FrameClock.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.FrameTimings"
+     ],
+     "native": "Gdk.FrameClock",
+     "signature": [
+      "Gdk.FrameClockPhase",
+      "Gdk.FrameTimings"
+     ]
+    },
+    "FrameTimings": {
+     "category": "value",
+     "extends": null,
+     "file": "gdk/FrameTimings.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gdk.FrameTimings",
+     "signature": []
+    },
+    "GLContext": {
+     "category": "object",
+     "extends": "Gdk.DrawContext",
+     "file": "gdk/GLContext.js",
+     "implements": [],
+     "imports": [
+      "Gdk.DrawContext",
+      "Gdk.Display",
+      "Gdk.Surface"
+     ],
+     "native": "Gdk.GLContext",
+     "signature": [
+      "Gdk.Display",
+      "Gdk.GLAPI",
+      "Gdk.Surface"
+     ]
+    },
+    "Monitor": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Monitor.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Display"
+     ],
+     "native": "Gdk.Monitor",
+     "signature": [
+      "Gdk.Display",
+      "Gdk.SubpixelLayout"
+     ]
+    },
+    "Paintable": {
+     "category": "object",
+     "extends": null,
+     "file": "gdk/Paintable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gdk.Paintable",
+     "signature": [
+      "Gdk.PaintableFlags",
+      "Gdk.Snapshot"
+     ]
+    },
+    "Seat": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Seat.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Device",
+      "Gdk.DeviceTool",
+      "Gdk.Display"
+     ],
+     "native": "Gdk.Seat",
+     "signature": [
+      "Gdk.Device",
+      "Gdk.DeviceTool",
+      "Gdk.Display",
+      "Gdk.SeatCapabilities"
+     ]
+    },
+    "Snapshot": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Snapshot.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gdk.Snapshot",
+     "signature": []
+    },
+    "Surface": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Surface.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Cursor",
+      "Gdk.FrameClock",
+      "Gdk.DrawContext"
+     ],
+     "native": "Gdk.Surface",
+     "signature": [
+      "Gdk.Cursor",
+      "Gdk.Device",
+      "Gdk.Display",
+      "Gdk.FrameClock",
+      "Gdk.GLContext",
+      "Gdk.ModifierType",
+      "Gdk.Monitor"
+     ]
+    },
+    "Texture": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gdk/Texture.js",
+     "implements": [
+      "Gdk.Paintable",
+      "Gio.Icon",
+      "Gio.LoadableIcon"
+     ],
+     "imports": [
+      "GObject.Object",
+      "GLib.Bytes",
+      "Gdk.ColorState",
+      "Gdk.Paintable",
+      "Gio.InputStream"
+     ],
+     "native": "Gdk.Texture",
+     "signature": [
+      "GLib.Bytes",
+      "Gdk.ColorState",
+      "Gdk.MemoryFormat",
+      "Gdk.Paintable",
+      "Gdk.PaintableFlags",
+      "Gdk.Snapshot",
+      "Gio.Cancellable",
+      "Gio.File",
+      "Gio.Icon",
+      "Gio.InputStream"
+     ]
+    }
+   }
+  },
+  "svelters:gtk/gio": {
+   "dir": "gio",
+   "exports": {
+    "Action": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/Action.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.Action",
+     "signature": []
+    },
+    "ActionGroup": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/ActionGroup.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.ActionGroup",
+     "signature": []
+    },
+    "ActionMap": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/ActionMap.js",
+     "implements": [],
+     "imports": [
+      "Gio.Action"
+     ],
+     "native": "Gio.ActionMap",
+     "signature": [
+      "Gio.Action"
+     ]
+    },
+    "AppInfo": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/AppInfo.js",
+     "implements": [],
+     "imports": [
+      "Gio.Icon"
+     ],
+     "native": "Gio.AppInfo",
+     "signature": [
+      "Gio.AppInfoCreateFlags",
+      "Gio.AppLaunchContext",
+      "Gio.File",
+      "Gio.Icon"
+     ]
+    },
+    "AppLaunchContext": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/AppLaunchContext.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.AppLaunchContext",
+     "signature": [
+      "Gio.AppInfo",
+      "Gio.File"
+     ]
+    },
+    "Application": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/Application.js",
+     "implements": [
+      "Gio.ActionGroup",
+      "Gio.ActionMap"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.Action",
+      "Gio.ApplicationCommandLine",
+      "Gio.DBusConnection",
+      "Gio.File"
+     ],
+     "native": "Gio.Application",
+     "signature": [
+      "GLib.OptionArg",
+      "GLib.OptionFlags",
+      "GLib.OptionGroup",
+      "GObject.Object",
+      "Gio.Action",
+      "Gio.ApplicationCommandLine",
+      "Gio.ApplicationFlags",
+      "Gio.Cancellable",
+      "Gio.DBusConnection",
+      "Gio.File",
+      "Gio.Notification"
+     ]
+    },
+    "ApplicationCommandLine": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/ApplicationCommandLine.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "GLib.VariantDict",
+      "Gio.File",
+      "Gio.InputStream"
+     ],
+     "native": "Gio.ApplicationCommandLine",
+     "signature": [
+      "GLib.VariantDict",
+      "Gio.File",
+      "Gio.InputStream"
+     ]
+    },
+    "AsyncInitable": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/AsyncInitable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.AsyncInitable",
+     "signature": []
+    },
+    "Cancellable": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/Cancellable.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.Cancellable",
+     "signature": [
+      "GLib.PollFD"
+     ]
+    },
+    "Credentials": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/Credentials.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.Credentials",
+     "signature": []
+    },
+    "DBusAnnotationInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/DBusAnnotationInfo.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.DBusAnnotationInfo",
+     "signature": []
+    },
+    "DBusArgInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/DBusArgInfo.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.DBusArgInfo",
+     "signature": []
+    },
+    "DBusAuthObserver": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/DBusAuthObserver.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.Credentials",
+      "Gio.IOStream"
+     ],
+     "native": "Gio.DBusAuthObserver",
+     "signature": [
+      "Gio.Credentials",
+      "Gio.IOStream"
+     ]
+    },
+    "DBusConnection": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/DBusConnection.js",
+     "implements": [
+      "Gio.AsyncInitable",
+      "Gio.Initable"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.Credentials",
+      "Gio.DBusAuthObserver",
+      "Gio.DBusMessage",
+      "Gio.IOStream"
+     ],
+     "native": "Gio.DBusConnection",
+     "signature": [
+      "Gio.ActionGroup",
+      "Gio.Cancellable",
+      "Gio.Credentials",
+      "Gio.DBusAuthObserver",
+      "Gio.DBusCapabilityFlags",
+      "Gio.DBusConnectionFlags",
+      "Gio.DBusMessage",
+      "Gio.DBusSendMessageFlags",
+      "Gio.IOStream",
+      "Gio.MenuModel"
+     ]
+    },
+    "DBusInterfaceInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/DBusInterfaceInfo.js",
+     "implements": [],
+     "imports": [
+      "Gio.DBusMethodInfo",
+      "Gio.DBusPropertyInfo",
+      "Gio.DBusSignalInfo"
+     ],
+     "native": "Gio.DBusInterfaceInfo",
+     "signature": [
+      "GLib.String",
+      "Gio.DBusMethodInfo",
+      "Gio.DBusPropertyInfo",
+      "Gio.DBusSignalInfo"
+     ]
+    },
+    "DBusMessage": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/DBusMessage.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.UnixFDList"
+     ],
+     "native": "Gio.DBusMessage",
+     "signature": [
+      "Gio.DBusCapabilityFlags",
+      "Gio.DBusMessageByteOrder",
+      "Gio.DBusMessageFlags",
+      "Gio.DBusMessageType",
+      "Gio.UnixFDList"
+     ]
+    },
+    "DBusMethodInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/DBusMethodInfo.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.DBusMethodInfo",
+     "signature": []
+    },
+    "DBusPropertyInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/DBusPropertyInfo.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.DBusPropertyInfo",
+     "signature": []
+    },
+    "DBusSignalInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/DBusSignalInfo.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.DBusSignalInfo",
+     "signature": []
+    },
+    "Drive": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/Drive.js",
+     "implements": [],
+     "imports": [
+      "Gio.Icon",
+      "Gio.Volume"
+     ],
+     "native": "Gio.Drive",
+     "signature": [
+      "Gio.DriveStartStopType",
+      "Gio.Icon",
+      "Gio.Volume"
+     ]
+    },
+    "File": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/File.js",
+     "implements": [],
+     "imports": [
+      "GLib.Bytes",
+      "Gio.AppInfo",
+      "Gio.FileAttributeInfoList",
+      "Gio.FileEnumerator",
+      "Gio.FileIOStream",
+      "Gio.FileInfo",
+      "Gio.FileInputStream",
+      "Gio.FileMonitor",
+      "Gio.FileOutputStream",
+      "Gio.Mount"
+     ],
+     "native": "Gio.File",
+     "signature": [
+      "GLib.Bytes",
+      "Gio.AppInfo",
+      "Gio.Cancellable",
+      "Gio.FileAttributeInfoList",
+      "Gio.FileCopyFlags",
+      "Gio.FileCreateFlags",
+      "Gio.FileEnumerator",
+      "Gio.FileIOStream",
+      "Gio.FileInfo",
+      "Gio.FileInputStream",
+      "Gio.FileMonitor",
+      "Gio.FileMonitorFlags",
+      "Gio.FileOutputStream",
+      "Gio.FileQueryInfoFlags",
+      "Gio.FileType",
+      "Gio.Mount"
+     ]
+    },
+    "FileAttributeInfoList": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/FileAttributeInfoList.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.FileAttributeInfoList",
+     "signature": []
+    },
+    "FileAttributeMatcher": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/FileAttributeMatcher.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.FileAttributeMatcher",
+     "signature": []
+    },
+    "FileEnumerator": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/FileEnumerator.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.File",
+      "Gio.FileInfo"
+     ],
+     "native": "Gio.FileEnumerator",
+     "signature": [
+      "Gio.Cancellable",
+      "Gio.File",
+      "Gio.FileInfo"
+     ]
+    },
+    "FileIOStream": {
+     "category": "object",
+     "extends": "Gio.IOStream",
+     "file": "gio/FileIOStream.js",
+     "implements": [
+      "Gio.Seekable"
+     ],
+     "imports": [
+      "Gio.IOStream",
+      "Gio.FileInfo"
+     ],
+     "native": "Gio.FileIOStream",
+     "signature": [
+      "GLib.SeekType",
+      "Gio.Cancellable",
+      "Gio.FileInfo"
+     ]
+    },
+    "FileIcon": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/FileIcon.js",
+     "implements": [
+      "Gio.Icon",
+      "Gio.LoadableIcon"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.File",
+      "Gio.InputStream"
+     ],
+     "native": "Gio.FileIcon",
+     "signature": [
+      "Gio.Cancellable",
+      "Gio.File",
+      "Gio.Icon",
+      "Gio.InputStream"
+     ]
+    },
+    "FileInfo": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/FileInfo.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "GLib.DateTime",
+      "Gio.Icon"
+     ],
+     "native": "Gio.FileInfo",
+     "signature": [
+      "GLib.DateTime",
+      "GObject.Object",
+      "Gio.FileAttributeMatcher",
+      "Gio.FileAttributeStatus",
+      "Gio.FileAttributeType",
+      "Gio.FileType",
+      "Gio.Icon"
+     ]
+    },
+    "FileInputStream": {
+     "category": "object",
+     "extends": "Gio.InputStream",
+     "file": "gio/FileInputStream.js",
+     "implements": [
+      "Gio.Seekable"
+     ],
+     "imports": [
+      "Gio.InputStream",
+      "Gio.FileInfo"
+     ],
+     "native": "Gio.FileInputStream",
+     "signature": [
+      "GLib.SeekType",
+      "Gio.Cancellable",
+      "Gio.FileInfo"
+     ]
+    },
+    "FileMonitor": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/FileMonitor.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.File"
+     ],
+     "native": "Gio.FileMonitor",
+     "signature": [
+      "Gio.File",
+      "Gio.FileMonitorEvent"
+     ]
+    },
+    "FileOutputStream": {
+     "category": "object",
+     "extends": "Gio.OutputStream",
+     "file": "gio/FileOutputStream.js",
+     "implements": [
+      "Gio.Seekable"
+     ],
+     "imports": [
+      "Gio.OutputStream",
+      "Gio.FileInfo"
+     ],
+     "native": "Gio.FileOutputStream",
+     "signature": [
+      "GLib.SeekType",
+      "Gio.Cancellable",
+      "Gio.FileInfo"
+     ]
+    },
+    "IOStream": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/IOStream.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.InputStream",
+      "Gio.OutputStream"
+     ],
+     "native": "Gio.IOStream",
+     "signature": [
+      "Gio.Cancellable",
+      "Gio.InputStream",
+      "Gio.OutputStream"
+     ]
+    },
+    "Icon": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/Icon.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.Icon",
+     "signature": []
+    },
+    "Initable": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/Initable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.Initable",
+     "signature": [
+      "Gio.Cancellable"
+     ]
+    },
+    "InputStream": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/InputStream.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "GLib.Bytes"
+     ],
+     "native": "Gio.InputStream",
+     "signature": [
+      "GLib.Bytes",
+      "Gio.Cancellable"
+     ]
+    },
+    "ListModel": {
+     "category": "model",
+     "extends": null,
+     "file": "gio/ListModel.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.ListModel",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "ListStore": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gio/ListStore.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.ListStore",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "LoadableIcon": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/LoadableIcon.js",
+     "implements": [
+      "Gio.Icon"
+     ],
+     "imports": [
+      "Gio.InputStream"
+     ],
+     "native": "Gio.LoadableIcon",
+     "signature": [
+      "Gio.Cancellable",
+      "Gio.Icon",
+      "Gio.InputStream"
+     ]
+    },
+    "Menu": {
+     "category": "object",
+     "extends": "Gio.MenuModel",
+     "file": "gio/Menu.js",
+     "implements": [],
+     "imports": [
+      "Gio.MenuModel"
+     ],
+     "native": "Gio.Menu",
+     "signature": [
+      "Gio.MenuItem",
+      "Gio.MenuModel"
+     ]
+    },
+    "MenuAttributeIter": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/MenuAttributeIter.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.MenuAttributeIter",
+     "signature": []
+    },
+    "MenuItem": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/MenuItem.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.MenuModel"
+     ],
+     "native": "Gio.MenuItem",
+     "signature": [
+      "Gio.Icon",
+      "Gio.MenuModel"
+     ]
+    },
+    "MenuLinkIter": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/MenuLinkIter.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.MenuModel"
+     ],
+     "native": "Gio.MenuLinkIter",
+     "signature": [
+      "Gio.MenuModel"
+     ]
+    },
+    "MenuModel": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/MenuModel.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.MenuAttributeIter",
+      "Gio.MenuLinkIter"
+     ],
+     "native": "Gio.MenuModel",
+     "signature": [
+      "Gio.MenuAttributeIter",
+      "Gio.MenuLinkIter"
+     ]
+    },
+    "Mount": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/Mount.js",
+     "implements": [],
+     "imports": [
+      "Gio.Drive",
+      "Gio.File",
+      "Gio.Icon",
+      "Gio.Volume"
+     ],
+     "native": "Gio.Mount",
+     "signature": [
+      "Gio.Cancellable",
+      "Gio.Drive",
+      "Gio.File",
+      "Gio.Icon",
+      "Gio.Volume"
+     ]
+    },
+    "MountOperation": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/MountOperation.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.MountOperation",
+     "signature": [
+      "Gio.AskPasswordFlags",
+      "Gio.MountOperationResult",
+      "Gio.PasswordSave"
+     ]
+    },
+    "Notification": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/Notification.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.Notification",
+     "signature": [
+      "Gio.Icon",
+      "Gio.NotificationPriority"
+     ]
+    },
+    "OutputStream": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/OutputStream.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.OutputStream",
+     "signature": [
+      "GLib.Bytes",
+      "Gio.Cancellable",
+      "Gio.InputStream",
+      "Gio.OutputStreamSpliceFlags"
+     ]
+    },
+    "Permission": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/Permission.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.Permission",
+     "signature": [
+      "Gio.Cancellable"
+     ]
+    },
+    "Seekable": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/Seekable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.Seekable",
+     "signature": [
+      "GLib.SeekType",
+      "Gio.Cancellable"
+     ]
+    },
+    "Settings": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/Settings.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.Action",
+      "Gio.SettingsBackend"
+     ],
+     "native": "Gio.Settings",
+     "signature": [
+      "GObject.Object",
+      "Gio.Action",
+      "Gio.SettingsBackend",
+      "Gio.SettingsBindFlags",
+      "Gio.SettingsSchema"
+     ]
+    },
+    "SettingsBackend": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/SettingsBackend.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.SettingsBackend",
+     "signature": []
+    },
+    "SettingsSchema": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/SettingsSchema.js",
+     "implements": [],
+     "imports": [
+      "Gio.SettingsSchemaKey"
+     ],
+     "native": "Gio.SettingsSchema",
+     "signature": [
+      "Gio.SettingsSchemaKey"
+     ]
+    },
+    "SettingsSchemaKey": {
+     "category": "value",
+     "extends": null,
+     "file": "gio/SettingsSchemaKey.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gio.SettingsSchemaKey",
+     "signature": []
+    },
+    "SimpleAction": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/SimpleAction.js",
+     "implements": [
+      "Gio.Action"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.SimpleAction",
+     "signature": []
+    },
+    "SimpleActionGroup": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/SimpleActionGroup.js",
+     "implements": [
+      "Gio.ActionGroup",
+      "Gio.ActionMap"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.Action"
+     ],
+     "native": "Gio.SimpleActionGroup",
+     "signature": [
+      "Gio.Action"
+     ]
+    },
+    "ThemedIcon": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/ThemedIcon.js",
+     "implements": [
+      "Gio.Icon"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.ThemedIcon",
+     "signature": [
+      "Gio.Icon"
+     ]
+    },
+    "UnixFDList": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gio/UnixFDList.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gio.UnixFDList",
+     "signature": []
+    },
+    "Volume": {
+     "category": "object",
+     "extends": null,
+     "file": "gio/Volume.js",
+     "implements": [],
+     "imports": [
+      "Gio.Drive",
+      "Gio.File",
+      "Gio.Icon",
+      "Gio.Mount"
+     ],
+     "native": "Gio.Volume",
+     "signature": [
+      "Gio.Drive",
+      "Gio.File",
+      "Gio.Icon",
+      "Gio.Mount"
+     ]
+    }
+   }
+  },
+  "svelters:gtk/glib": {
+   "dir": "glib",
+   "exports": {
+    "Bytes": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/Bytes.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.Bytes",
+     "signature": []
+    },
+    "DateTime": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/DateTime.js",
+     "implements": [],
+     "imports": [
+      "GLib.TimeZone"
+     ],
+     "native": "GLib.DateTime",
+     "signature": [
+      "GLib.TimeZone"
+     ]
+    },
+    "Error": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/Error.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.Error",
+     "signature": []
+    },
+    "HashTable": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/HashTable.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.HashTable",
+     "signature": []
+    },
+    "KeyFile": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/KeyFile.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.KeyFile",
+     "signature": [
+      "GLib.Bytes",
+      "GLib.KeyFileFlags"
+     ]
+    },
+    "OptionGroup": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/OptionGroup.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.OptionGroup",
+     "signature": []
+    },
+    "PollFD": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/PollFD.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.PollFD",
+     "signature": []
+    },
+    "String": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/String.js",
+     "implements": [],
+     "imports": [
+      "GLib.Bytes"
+     ],
+     "native": "GLib.String",
+     "signature": [
+      "GLib.Bytes"
+     ]
+    },
+    "TimeZone": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/TimeZone.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.TimeZone",
+     "signature": [
+      "GLib.TimeType"
+     ]
+    },
+    "Tree": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/Tree.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.Tree",
+     "signature": []
+    },
+    "Uri": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/Uri.js",
+     "implements": [],
+     "imports": [
+      "GLib.Bytes"
+     ],
+     "native": "GLib.Uri",
+     "signature": [
+      "GLib.Bytes",
+      "GLib.UriFlags",
+      "GLib.UriHideFlags"
+     ]
+    },
+    "Variant": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/Variant.js",
+     "implements": [],
+     "imports": [
+      "GLib.Bytes"
+     ],
+     "native": "GLib.Variant",
+     "signature": [
+      "GLib.Bytes",
+      "GLib.VariantClass"
+     ]
+    },
+    "VariantBuilder": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/VariantBuilder.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.VariantBuilder",
+     "signature": []
+    },
+    "VariantDict": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/VariantDict.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.VariantDict",
+     "signature": []
+    },
+    "VariantType": {
+     "category": "value",
+     "extends": null,
+     "file": "glib/VariantType.js",
+     "implements": [],
+     "imports": [],
+     "native": "GLib.VariantType",
+     "signature": []
+    }
+   }
+  },
+  "svelters:gtk/gobject": {
+   "dir": "gobject",
+   "exports": {
+    "InitiallyUnowned": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gobject/InitiallyUnowned.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "GObject.InitiallyUnowned",
+     "signature": []
+    },
+    "Object": {
+     "category": "object",
+     "extends": null,
+     "file": "gobject/Object.js",
+     "implements": [],
+     "imports": [],
+     "native": "GObject.Object",
+     "signature": []
+    },
+    "Value": {
+     "category": "value",
+     "extends": null,
+     "file": "gobject/Value.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "GObject.Value",
+     "signature": [
+      "GObject.Object"
+     ]
+    }
+   }
+  },
+  "svelters:gtk/graphene": {
+   "dir": "graphene",
+   "exports": {
+    "Box": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Box.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Point3D",
+      "Graphene.Sphere",
+      "Graphene.Vec3"
+     ],
+     "native": "Graphene.Box",
+     "signature": [
+      "Graphene.Point3D",
+      "Graphene.Sphere",
+      "Graphene.Vec3"
+     ]
+    },
+    "Euler": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Euler.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Matrix",
+      "Graphene.Quaternion",
+      "Graphene.Vec3"
+     ],
+     "native": "Graphene.Euler",
+     "signature": [
+      "Graphene.EulerOrder",
+      "Graphene.Matrix",
+      "Graphene.Quaternion",
+      "Graphene.Vec3"
+     ]
+    },
+    "Matrix": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Matrix.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Box",
+      "Graphene.Point3D",
+      "Graphene.Quad",
+      "Graphene.Quaternion",
+      "Graphene.Ray",
+      "Graphene.Sphere",
+      "Graphene.Vec3",
+      "Graphene.Vec4"
+     ],
+     "native": "Graphene.Matrix",
+     "signature": [
+      "Graphene.Box",
+      "Graphene.Point3D",
+      "Graphene.Quad",
+      "Graphene.Quaternion",
+      "Graphene.Ray",
+      "Graphene.Sphere",
+      "Graphene.Vec3",
+      "Graphene.Vec4"
+     ]
+    },
+    "Plane": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Plane.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Vec3"
+     ],
+     "native": "Graphene.Plane",
+     "signature": [
+      "Graphene.Matrix",
+      "Graphene.Point3D",
+      "Graphene.Vec3"
+     ]
+    },
+    "Point3D": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Point3D.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Vec3"
+     ],
+     "native": "Graphene.Point3D",
+     "signature": [
+      "Graphene.Vec3"
+     ]
+    },
+    "Quad": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Quad.js",
+     "implements": [],
+     "imports": [],
+     "native": "Graphene.Quad",
+     "signature": []
+    },
+    "Quaternion": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Quaternion.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Matrix",
+      "Graphene.Vec3",
+      "Graphene.Vec4"
+     ],
+     "native": "Graphene.Quaternion",
+     "signature": [
+      "Graphene.Matrix",
+      "Graphene.Vec3",
+      "Graphene.Vec4"
+     ]
+    },
+    "Ray": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Ray.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Point3D",
+      "Graphene.Vec3"
+     ],
+     "native": "Graphene.Ray",
+     "signature": [
+      "Graphene.Box",
+      "Graphene.Plane",
+      "Graphene.Point3D",
+      "Graphene.RayIntersectionKind",
+      "Graphene.Sphere",
+      "Graphene.Triangle",
+      "Graphene.Vec3"
+     ]
+    },
+    "Sphere": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Sphere.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Box",
+      "Graphene.Point3D"
+     ],
+     "native": "Graphene.Sphere",
+     "signature": [
+      "Graphene.Box",
+      "Graphene.Point3D"
+     ]
+    },
+    "Triangle": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Triangle.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Box",
+      "Graphene.Plane",
+      "Graphene.Point3D",
+      "Graphene.Vec2",
+      "Graphene.Vec3"
+     ],
+     "native": "Graphene.Triangle",
+     "signature": [
+      "Graphene.Box",
+      "Graphene.Plane",
+      "Graphene.Point3D",
+      "Graphene.Vec2",
+      "Graphene.Vec3"
+     ]
+    },
+    "Vec2": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Vec2.js",
+     "implements": [],
+     "imports": [],
+     "native": "Graphene.Vec2",
+     "signature": []
+    },
+    "Vec3": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Vec3.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Vec2",
+      "Graphene.Vec4"
+     ],
+     "native": "Graphene.Vec3",
+     "signature": [
+      "Graphene.Vec2",
+      "Graphene.Vec4"
+     ]
+    },
+    "Vec4": {
+     "category": "value",
+     "extends": null,
+     "file": "graphene/Vec4.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Vec2",
+      "Graphene.Vec3"
+     ],
+     "native": "Graphene.Vec4",
+     "signature": [
+      "Graphene.Vec2",
+      "Graphene.Vec3"
+     ]
+    }
+   }
+  },
+  "svelters:gtk/gsk": {
+   "dir": "gsk",
+   "exports": {
+    "ComponentTransfer": {
+     "category": "value",
+     "extends": null,
+     "file": "gsk/ComponentTransfer.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gsk.ComponentTransfer",
+     "signature": []
+    },
+    "Path": {
+     "category": "value",
+     "extends": null,
+     "file": "gsk/Path.js",
+     "implements": [],
+     "imports": [
+      "Gsk.PathPoint"
+     ],
+     "native": "Gsk.Path",
+     "signature": [
+      "GLib.String",
+      "Gsk.FillRule",
+      "Gsk.PathPoint",
+      "Gsk.Stroke"
+     ]
+    },
+    "PathMeasure": {
+     "category": "value",
+     "extends": null,
+     "file": "gsk/PathMeasure.js",
+     "implements": [],
+     "imports": [
+      "Gsk.Path",
+      "Gsk.PathPoint"
+     ],
+     "native": "Gsk.PathMeasure",
+     "signature": [
+      "Gsk.Path",
+      "Gsk.PathPoint"
+     ]
+    },
+    "PathPoint": {
+     "category": "value",
+     "extends": null,
+     "file": "gsk/PathPoint.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Vec2"
+     ],
+     "native": "Gsk.PathPoint",
+     "signature": [
+      "Graphene.Vec2",
+      "Gsk.Path",
+      "Gsk.PathDirection",
+      "Gsk.PathMeasure"
+     ]
+    },
+    "Renderer": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gsk/Renderer.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Surface"
+     ],
+     "native": "Gsk.Renderer",
+     "signature": [
+      "Gdk.Display",
+      "Gdk.Surface"
+     ]
+    },
+    "Stroke": {
+     "category": "value",
+     "extends": null,
+     "file": "gsk/Stroke.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gsk.Stroke",
+     "signature": [
+      "Gsk.LineCap",
+      "Gsk.LineJoin"
+     ]
+    },
+    "Transform": {
+     "category": "value",
+     "extends": null,
+     "file": "gsk/Transform.js",
+     "implements": [],
+     "imports": [
+      "Graphene.Matrix"
+     ],
+     "native": "Gsk.Transform",
+     "signature": [
+      "GLib.String",
+      "Graphene.Matrix",
+      "Graphene.Point3D",
+      "Graphene.Vec3",
+      "Gsk.TransformCategory"
+     ]
+    }
+   }
+  },
+  "svelters:gtk/gtk": {
+   "dir": "gtk",
+   "exports": {
+    "ATContext": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ATContext.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Display",
+      "Gtk.Accessible"
+     ],
+     "native": "Gtk.ATContext",
+     "signature": [
+      "Gdk.Display",
+      "Gtk.Accessible",
+      "Gtk.AccessibleRole"
+     ]
+    },
+    "Accessible": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Accessible.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ATContext"
+     ],
+     "native": "Gtk.Accessible",
+     "signature": [
+      "Gtk.ATContext",
+      "Gtk.AccessibleAnnouncementPriority",
+      "Gtk.AccessiblePlatformState",
+      "Gtk.AccessibleProperty",
+      "Gtk.AccessibleRelation",
+      "Gtk.AccessibleRole",
+      "Gtk.AccessibleState"
+     ]
+    },
+    "AccessibleHyperlink": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/AccessibleHyperlink.js",
+     "implements": [
+      "Gtk.Accessible"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gtk.ATContext",
+      "Gtk.Accessible"
+     ],
+     "native": "Gtk.AccessibleHyperlink",
+     "signature": [
+      "Gtk.ATContext",
+      "Gtk.Accessible",
+      "Gtk.AccessibleAnnouncementPriority",
+      "Gtk.AccessiblePlatformState",
+      "Gtk.AccessibleProperty",
+      "Gtk.AccessibleRelation",
+      "Gtk.AccessibleRole",
+      "Gtk.AccessibleState"
+     ]
+    },
+    "AccessibleHypertext": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/AccessibleHypertext.js",
+     "implements": [
+      "Gtk.Accessible"
+     ],
+     "imports": [
+      "Gtk.ATContext",
+      "Gtk.Accessible"
+     ],
+     "native": "Gtk.AccessibleHypertext",
+     "signature": [
+      "Gtk.ATContext",
+      "Gtk.Accessible",
+      "Gtk.AccessibleAnnouncementPriority",
+      "Gtk.AccessiblePlatformState",
+      "Gtk.AccessibleProperty",
+      "Gtk.AccessibleRelation",
+      "Gtk.AccessibleRole",
+      "Gtk.AccessibleState"
+     ]
+    },
+    "AccessibleList": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/AccessibleList.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Accessible"
+     ],
+     "native": "Gtk.AccessibleList",
+     "signature": [
+      "Gtk.Accessible"
+     ]
+    },
+    "AccessibleRange": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/AccessibleRange.js",
+     "implements": [
+      "Gtk.Accessible"
+     ],
+     "imports": [
+      "Gtk.ATContext",
+      "Gtk.Accessible"
+     ],
+     "native": "Gtk.AccessibleRange",
+     "signature": [
+      "Gtk.ATContext",
+      "Gtk.Accessible",
+      "Gtk.AccessibleAnnouncementPriority",
+      "Gtk.AccessiblePlatformState",
+      "Gtk.AccessibleProperty",
+      "Gtk.AccessibleRelation",
+      "Gtk.AccessibleRole",
+      "Gtk.AccessibleState"
+     ]
+    },
+    "AccessibleText": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/AccessibleText.js",
+     "implements": [
+      "Gtk.Accessible"
+     ],
+     "imports": [
+      "Gtk.ATContext",
+      "Gtk.Accessible"
+     ],
+     "native": "Gtk.AccessibleText",
+     "signature": [
+      "Gtk.ATContext",
+      "Gtk.Accessible",
+      "Gtk.AccessibleAnnouncementPriority",
+      "Gtk.AccessiblePlatformState",
+      "Gtk.AccessibleProperty",
+      "Gtk.AccessibleRelation",
+      "Gtk.AccessibleRole",
+      "Gtk.AccessibleState",
+      "Gtk.AccessibleTextContentChange"
+     ]
+    },
+    "Actionable": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Actionable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.Actionable",
+     "signature": []
+    },
+    "ActivateAction": {
+     "category": "object",
+     "extends": "Gtk.ShortcutAction",
+     "file": "gtk/ActivateAction.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutAction"
+     ],
+     "native": "Gtk.ActivateAction",
+     "signature": []
+    },
+    "Adjustment": {
+     "category": "object",
+     "extends": "GObject.InitiallyUnowned",
+     "file": "gtk/Adjustment.js",
+     "implements": [],
+     "imports": [
+      "GObject.InitiallyUnowned"
+     ],
+     "native": "Gtk.Adjustment",
+     "signature": []
+    },
+    "AlertDialog": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/AlertDialog.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.AlertDialog",
+     "signature": []
+    },
+    "AlternativeTrigger": {
+     "category": "object",
+     "extends": "Gtk.ShortcutTrigger",
+     "file": "gtk/AlternativeTrigger.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutTrigger"
+     ],
+     "native": "Gtk.AlternativeTrigger",
+     "signature": [
+      "Gtk.ShortcutTrigger"
+     ]
+    },
+    "AnyFilter": {
+     "category": "model",
+     "extends": "Gtk.MultiFilter",
+     "file": "gtk/AnyFilter.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "Gtk.MultiFilter"
+     ],
+     "native": "Gtk.AnyFilter",
+     "signature": []
+    },
+    "Application": {
+     "category": "object",
+     "extends": "Gio.Application",
+     "file": "gtk/Application.js",
+     "implements": [
+      "Gio.ActionGroup",
+      "Gio.ActionMap"
+     ],
+     "imports": [
+      "Gio.Application",
+      "Gio.Menu",
+      "Gio.MenuModel"
+     ],
+     "native": "Gtk.Application",
+     "signature": [
+      "Gio.ApplicationFlags",
+      "Gio.Menu",
+      "Gio.MenuModel"
+     ]
+    },
+    "BinLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/BinLayout.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.BinLayout",
+     "signature": [
+      "Gtk.LayoutManager"
+     ]
+    },
+    "Bitset": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/Bitset.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.Bitset",
+     "signature": []
+    },
+    "BookmarkList": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/BookmarkList.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.BookmarkList",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "BoolFilter": {
+     "category": "object",
+     "extends": "Gtk.Filter",
+     "file": "gtk/BoolFilter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Filter"
+     ],
+     "native": "Gtk.BoolFilter",
+     "signature": []
+    },
+    "BoxLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/BoxLayout.js",
+     "implements": [
+      "Gtk.Orientable"
+     ],
+     "imports": [
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.BoxLayout",
+     "signature": [
+      "Gtk.BaselinePosition",
+      "Gtk.LayoutManager",
+      "Gtk.Orientation"
+     ]
+    },
+    "Buildable": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Buildable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.Buildable",
+     "signature": []
+    },
+    "Builder": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Builder.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.BuilderScope"
+     ],
+     "native": "Gtk.Builder",
+     "signature": [
+      "GObject.Object",
+      "Gtk.BuilderScope"
+     ]
+    },
+    "BuilderCScope": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/BuilderCScope.js",
+     "implements": [
+      "Gtk.BuilderScope"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.BuilderCScope",
+     "signature": []
+    },
+    "BuilderListItemFactory": {
+     "category": "object",
+     "extends": "Gtk.ListItemFactory",
+     "file": "gtk/BuilderListItemFactory.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ListItemFactory",
+      "GLib.Bytes",
+      "Gtk.BuilderScope"
+     ],
+     "native": "Gtk.BuilderListItemFactory",
+     "signature": [
+      "GLib.Bytes",
+      "Gtk.BuilderScope",
+      "Gtk.ListItemFactory"
+     ]
+    },
+    "BuilderScope": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/BuilderScope.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.BuilderScope",
+     "signature": []
+    },
+    "CallbackAction": {
+     "category": "object",
+     "extends": "Gtk.ShortcutAction",
+     "file": "gtk/CallbackAction.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutAction"
+     ],
+     "native": "Gtk.CallbackAction",
+     "signature": []
+    },
+    "CenterLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/CenterLayout.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.CenterLayout",
+     "signature": [
+      "Gtk.BaselinePosition",
+      "Gtk.LayoutManager",
+      "Gtk.Orientation"
+     ]
+    },
+    "ColorDialog": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ColorDialog.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ColorDialog",
+     "signature": []
+    },
+    "ColumnViewCell": {
+     "category": "object",
+     "extends": "Gtk.ListItem",
+     "file": "gtk/ColumnViewCell.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ListItem",
+      "GObject.Object"
+     ],
+     "native": "Gtk.ColumnViewCell",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "ColumnViewColumn": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ColumnViewColumn.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.MenuModel",
+      "Gtk.ListItemFactory",
+      "Gtk.Sorter"
+     ],
+     "native": "Gtk.ColumnViewColumn",
+     "signature": [
+      "Gio.MenuModel",
+      "Gtk.ListItemFactory",
+      "Gtk.Sorter"
+     ]
+    },
+    "ColumnViewRow": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ColumnViewRow.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ColumnViewRow",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "ColumnViewSorter": {
+     "category": "object",
+     "extends": "Gtk.Sorter",
+     "file": "gtk/ColumnViewSorter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Sorter",
+      "Gtk.ColumnViewColumn"
+     ],
+     "native": "Gtk.ColumnViewSorter",
+     "signature": [
+      "Gtk.ColumnViewColumn",
+      "Gtk.SortType"
+     ]
+    },
+    "Constraint": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Constraint.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.ConstraintTarget"
+     ],
+     "native": "Gtk.Constraint",
+     "signature": [
+      "Gtk.ConstraintAttribute",
+      "Gtk.ConstraintRelation",
+      "Gtk.ConstraintTarget"
+     ]
+    },
+    "ConstraintGuide": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ConstraintGuide.js",
+     "implements": [
+      "Gtk.ConstraintTarget"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ConstraintGuide",
+     "signature": [
+      "Gtk.ConstraintStrength"
+     ]
+    },
+    "ConstraintLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/ConstraintLayout.js",
+     "implements": [
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "Gtk.LayoutManager",
+      "Gio.ListModel"
+     ],
+     "native": "Gtk.ConstraintLayout",
+     "signature": [
+      "Gio.ListModel",
+      "Gtk.Constraint",
+      "Gtk.ConstraintGuide",
+      "Gtk.LayoutManager"
+     ]
+    },
+    "ConstraintLayoutChild": {
+     "category": "object",
+     "extends": "Gtk.LayoutChild",
+     "file": "gtk/ConstraintLayoutChild.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutChild"
+     ],
+     "native": "Gtk.ConstraintLayoutChild",
+     "signature": []
+    },
+    "ConstraintTarget": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/ConstraintTarget.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.ConstraintTarget",
+     "signature": []
+    },
+    "CssProvider": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/CssProvider.js",
+     "implements": [
+      "Gtk.StyleProvider"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.CssProvider",
+     "signature": [
+      "GLib.Bytes",
+      "Gio.File",
+      "Gtk.InterfaceColorScheme",
+      "Gtk.InterfaceContrast",
+      "Gtk.ReducedMotion"
+     ]
+    },
+    "CssSection": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/CssSection.js",
+     "implements": [],
+     "imports": [
+      "GLib.Bytes",
+      "Gio.File"
+     ],
+     "native": "Gtk.CssSection",
+     "signature": [
+      "GLib.Bytes",
+      "GLib.String",
+      "Gio.File"
+     ]
+    },
+    "CustomFilter": {
+     "category": "object",
+     "extends": "Gtk.Filter",
+     "file": "gtk/CustomFilter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Filter"
+     ],
+     "native": "Gtk.CustomFilter",
+     "signature": []
+    },
+    "CustomLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/CustomLayout.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.CustomLayout",
+     "signature": []
+    },
+    "CustomSorter": {
+     "category": "object",
+     "extends": "Gtk.Sorter",
+     "file": "gtk/CustomSorter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Sorter"
+     ],
+     "native": "Gtk.CustomSorter",
+     "signature": []
+    },
+    "DirectoryList": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/DirectoryList.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.File"
+     ],
+     "native": "Gtk.DirectoryList",
+     "signature": [
+      "GObject.Object",
+      "Gio.File"
+     ]
+    },
+    "DragSource": {
+     "category": "object",
+     "extends": "Gtk.GestureSingle",
+     "file": "gtk/DragSource.js",
+     "implements": [],
+     "imports": [
+      "Gtk.GestureSingle",
+      "Gdk.ContentProvider",
+      "Gdk.Drag"
+     ],
+     "native": "Gtk.DragSource",
+     "signature": [
+      "Gdk.ContentProvider",
+      "Gdk.Drag",
+      "Gdk.DragAction",
+      "Gdk.DragCancelReason",
+      "Gdk.Paintable"
+     ]
+    },
+    "DropControllerMotion": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/DropControllerMotion.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController",
+      "Gdk.Drop"
+     ],
+     "native": "Gtk.DropControllerMotion",
+     "signature": [
+      "Gdk.Drop",
+      "Gtk.EventController"
+     ]
+    },
+    "DropTarget": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/DropTarget.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController",
+      "Gdk.ContentFormats",
+      "Gdk.Drop"
+     ],
+     "native": "Gtk.DropTarget",
+     "signature": [
+      "Gdk.ContentFormats",
+      "Gdk.DragAction",
+      "Gdk.Drop"
+     ]
+    },
+    "DropTargetAsync": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/DropTargetAsync.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController",
+      "Gdk.ContentFormats",
+      "Gdk.Drop"
+     ],
+     "native": "Gtk.DropTargetAsync",
+     "signature": [
+      "Gdk.ContentFormats",
+      "Gdk.DragAction",
+      "Gdk.Drop"
+     ]
+    },
+    "Editable": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Editable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.Editable",
+     "signature": [
+      "Gtk.AccessiblePlatformState"
+     ]
+    },
+    "EntryBuffer": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/EntryBuffer.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.EntryBuffer",
+     "signature": []
+    },
+    "EventController": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/EventController.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Device"
+     ],
+     "native": "Gtk.EventController",
+     "signature": [
+      "Gdk.Device",
+      "Gdk.ModifierType",
+      "Gtk.PropagationLimit",
+      "Gtk.PropagationPhase"
+     ]
+    },
+    "EventControllerFocus": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/EventControllerFocus.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController"
+     ],
+     "native": "Gtk.EventControllerFocus",
+     "signature": [
+      "Gtk.EventController"
+     ]
+    },
+    "EventControllerKey": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/EventControllerKey.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController",
+      "Gtk.IMContext"
+     ],
+     "native": "Gtk.EventControllerKey",
+     "signature": [
+      "Gdk.ModifierType",
+      "Gtk.EventController",
+      "Gtk.IMContext"
+     ]
+    },
+    "EventControllerLegacy": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/EventControllerLegacy.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController"
+     ],
+     "native": "Gtk.EventControllerLegacy",
+     "signature": [
+      "Gtk.EventController"
+     ]
+    },
+    "EventControllerMotion": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/EventControllerMotion.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController"
+     ],
+     "native": "Gtk.EventControllerMotion",
+     "signature": [
+      "Gtk.EventController"
+     ]
+    },
+    "EventControllerScroll": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/EventControllerScroll.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController"
+     ],
+     "native": "Gtk.EventControllerScroll",
+     "signature": [
+      "Gdk.ScrollUnit",
+      "Gtk.EventController",
+      "Gtk.EventControllerScrollFlags"
+     ]
+    },
+    "EveryFilter": {
+     "category": "model",
+     "extends": "Gtk.MultiFilter",
+     "file": "gtk/EveryFilter.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "Gtk.MultiFilter"
+     ],
+     "native": "Gtk.EveryFilter",
+     "signature": []
+    },
+    "ExpressionWatch": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/ExpressionWatch.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.ExpressionWatch",
+     "signature": []
+    },
+    "FileDialog": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/FileDialog.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.File",
+      "Gio.ListModel",
+      "Gtk.FileFilter"
+     ],
+     "native": "Gtk.FileDialog",
+     "signature": [
+      "Gio.File",
+      "Gio.ListModel",
+      "Gtk.FileFilter"
+     ]
+    },
+    "FileFilter": {
+     "category": "object",
+     "extends": "Gtk.Filter",
+     "file": "gtk/FileFilter.js",
+     "implements": [
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "Gtk.Filter"
+     ],
+     "native": "Gtk.FileFilter",
+     "signature": []
+    },
+    "FileLauncher": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/FileLauncher.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.File"
+     ],
+     "native": "Gtk.FileLauncher",
+     "signature": [
+      "Gio.File"
+     ]
+    },
+    "Filter": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Filter.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.Filter",
+     "signature": [
+      "GObject.Object",
+      "Gtk.FilterChange",
+      "Gtk.FilterMatch"
+     ]
+    },
+    "FilterListModel": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/FilterListModel.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Filter"
+     ],
+     "native": "Gtk.FilterListModel",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Filter"
+     ]
+    },
+    "FixedLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/FixedLayout.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.FixedLayout",
+     "signature": [
+      "Gtk.LayoutManager"
+     ]
+    },
+    "FixedLayoutChild": {
+     "category": "object",
+     "extends": "Gtk.LayoutChild",
+     "file": "gtk/FixedLayoutChild.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutChild",
+      "Gsk.Transform"
+     ],
+     "native": "Gtk.FixedLayoutChild",
+     "signature": [
+      "Gsk.Transform"
+     ]
+    },
+    "FlattenListModel": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/FlattenListModel.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ],
+     "native": "Gtk.FlattenListModel",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ]
+    },
+    "FontDialog": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/FontDialog.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.Filter",
+      "Pango.FontMap",
+      "Pango.Language"
+     ],
+     "native": "Gtk.FontDialog",
+     "signature": [
+      "Gtk.Filter",
+      "Pango.FontMap",
+      "Pango.Language"
+     ]
+    },
+    "Gesture": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/Gesture.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController",
+      "Gdk.Device",
+      "Gdk.EventSequence"
+     ],
+     "native": "Gtk.Gesture",
+     "signature": [
+      "Gdk.Device",
+      "Gdk.EventSequence",
+      "Gtk.EventSequenceState"
+     ]
+    },
+    "GestureClick": {
+     "category": "object",
+     "extends": "Gtk.GestureSingle",
+     "file": "gtk/GestureClick.js",
+     "implements": [],
+     "imports": [
+      "Gtk.GestureSingle",
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GestureClick",
+     "signature": [
+      "Gtk.Gesture"
+     ]
+    },
+    "GestureDrag": {
+     "category": "object",
+     "extends": "Gtk.GestureSingle",
+     "file": "gtk/GestureDrag.js",
+     "implements": [],
+     "imports": [
+      "Gtk.GestureSingle",
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GestureDrag",
+     "signature": [
+      "Gtk.Gesture"
+     ]
+    },
+    "GestureLongPress": {
+     "category": "object",
+     "extends": "Gtk.GestureSingle",
+     "file": "gtk/GestureLongPress.js",
+     "implements": [],
+     "imports": [
+      "Gtk.GestureSingle",
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GestureLongPress",
+     "signature": [
+      "Gtk.Gesture"
+     ]
+    },
+    "GesturePan": {
+     "category": "object",
+     "extends": "Gtk.GestureDrag",
+     "file": "gtk/GesturePan.js",
+     "implements": [],
+     "imports": [
+      "Gtk.GestureDrag",
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GesturePan",
+     "signature": [
+      "Gtk.Gesture",
+      "Gtk.Orientation",
+      "Gtk.PanDirection"
+     ]
+    },
+    "GestureRotate": {
+     "category": "object",
+     "extends": "Gtk.Gesture",
+     "file": "gtk/GestureRotate.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GestureRotate",
+     "signature": [
+      "Gtk.Gesture"
+     ]
+    },
+    "GestureSingle": {
+     "category": "object",
+     "extends": "Gtk.Gesture",
+     "file": "gtk/GestureSingle.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Gesture",
+      "Gdk.EventSequence"
+     ],
+     "native": "Gtk.GestureSingle",
+     "signature": [
+      "Gdk.EventSequence"
+     ]
+    },
+    "GestureStylus": {
+     "category": "object",
+     "extends": "Gtk.GestureSingle",
+     "file": "gtk/GestureStylus.js",
+     "implements": [],
+     "imports": [
+      "Gtk.GestureSingle",
+      "Gdk.DeviceTool",
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GestureStylus",
+     "signature": [
+      "Gdk.AxisUse",
+      "Gdk.DeviceTool",
+      "Gtk.Gesture"
+     ]
+    },
+    "GestureSwipe": {
+     "category": "object",
+     "extends": "Gtk.GestureSingle",
+     "file": "gtk/GestureSwipe.js",
+     "implements": [],
+     "imports": [
+      "Gtk.GestureSingle",
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GestureSwipe",
+     "signature": [
+      "Gtk.Gesture"
+     ]
+    },
+    "GestureZoom": {
+     "category": "object",
+     "extends": "Gtk.Gesture",
+     "file": "gtk/GestureZoom.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Gesture"
+     ],
+     "native": "Gtk.GestureZoom",
+     "signature": [
+      "Gtk.Gesture"
+     ]
+    },
+    "GridLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/GridLayout.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.GridLayout",
+     "signature": [
+      "Gtk.BaselinePosition",
+      "Gtk.LayoutManager"
+     ]
+    },
+    "GridLayoutChild": {
+     "category": "object",
+     "extends": "Gtk.LayoutChild",
+     "file": "gtk/GridLayoutChild.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutChild"
+     ],
+     "native": "Gtk.GridLayoutChild",
+     "signature": []
+    },
+    "IMContext": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/IMContext.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Pango.AttrList"
+     ],
+     "native": "Gtk.IMContext",
+     "signature": [
+      "Gdk.Device",
+      "Gdk.ModifierType",
+      "Gdk.Surface",
+      "Gtk.InputHints",
+      "Gtk.InputPurpose",
+      "Pango.AttrList"
+     ]
+    },
+    "IMContextSimple": {
+     "category": "object",
+     "extends": "Gtk.IMContext",
+     "file": "gtk/IMContextSimple.js",
+     "implements": [],
+     "imports": [
+      "Gtk.IMContext"
+     ],
+     "native": "Gtk.IMContextSimple",
+     "signature": [
+      "Gtk.IMContext"
+     ]
+    },
+    "IMMulticontext": {
+     "category": "object",
+     "extends": "Gtk.IMContext",
+     "file": "gtk/IMMulticontext.js",
+     "implements": [],
+     "imports": [
+      "Gtk.IMContext"
+     ],
+     "native": "Gtk.IMMulticontext",
+     "signature": [
+      "Gtk.IMContext"
+     ]
+    },
+    "IconPaintable": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/IconPaintable.js",
+     "implements": [
+      "Gdk.Paintable",
+      "Gtk.SymbolicPaintable"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Paintable",
+      "Gio.File"
+     ],
+     "native": "Gtk.IconPaintable",
+     "signature": [
+      "Gdk.Paintable",
+      "Gdk.PaintableFlags",
+      "Gdk.Snapshot",
+      "Gio.File"
+     ]
+    },
+    "IconTheme": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/IconTheme.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Display",
+      "Gtk.IconPaintable"
+     ],
+     "native": "Gtk.IconTheme",
+     "signature": [
+      "Gdk.Display",
+      "Gio.Icon",
+      "Gtk.IconLookupFlags",
+      "Gtk.IconPaintable",
+      "Gtk.TextDirection"
+     ]
+    },
+    "KeyvalTrigger": {
+     "category": "object",
+     "extends": "Gtk.ShortcutTrigger",
+     "file": "gtk/KeyvalTrigger.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutTrigger"
+     ],
+     "native": "Gtk.KeyvalTrigger",
+     "signature": [
+      "Gdk.ModifierType",
+      "Gtk.ShortcutTrigger"
+     ]
+    },
+    "LayoutChild": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/LayoutChild.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.LayoutChild",
+     "signature": [
+      "Gtk.LayoutManager"
+     ]
+    },
+    "LayoutManager": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/LayoutManager.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.LayoutManager",
+     "signature": [
+      "Gtk.SizeRequestMode"
+     ]
+    },
+    "ListHeader": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ListHeader.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ListHeader",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "ListItem": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ListItem.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ListItem",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "ListItemFactory": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ListItemFactory.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ListItemFactory",
+     "signature": []
+    },
+    "MapListModel": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/MapListModel.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ],
+     "native": "Gtk.MapListModel",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ]
+    },
+    "MediaFile": {
+     "category": "object",
+     "extends": "Gtk.MediaStream",
+     "file": "gtk/MediaFile.js",
+     "implements": [
+      "Gdk.Paintable"
+     ],
+     "imports": [
+      "Gtk.MediaStream",
+      "Gio.File",
+      "Gio.InputStream"
+     ],
+     "native": "Gtk.MediaFile",
+     "signature": [
+      "Gio.File",
+      "Gio.InputStream"
+     ]
+    },
+    "MediaStream": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/MediaStream.js",
+     "implements": [
+      "Gdk.Paintable"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Paintable"
+     ],
+     "native": "Gtk.MediaStream",
+     "signature": [
+      "Gdk.Paintable",
+      "Gdk.PaintableFlags",
+      "Gdk.Snapshot",
+      "Gdk.Surface"
+     ]
+    },
+    "MnemonicAction": {
+     "category": "object",
+     "extends": "Gtk.ShortcutAction",
+     "file": "gtk/MnemonicAction.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutAction"
+     ],
+     "native": "Gtk.MnemonicAction",
+     "signature": []
+    },
+    "MnemonicTrigger": {
+     "category": "object",
+     "extends": "Gtk.ShortcutTrigger",
+     "file": "gtk/MnemonicTrigger.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutTrigger"
+     ],
+     "native": "Gtk.MnemonicTrigger",
+     "signature": []
+    },
+    "MountOperation": {
+     "category": "object",
+     "extends": "Gio.MountOperation",
+     "file": "gtk/MountOperation.js",
+     "implements": [],
+     "imports": [
+      "Gio.MountOperation",
+      "Gdk.Display"
+     ],
+     "native": "Gtk.MountOperation",
+     "signature": [
+      "Gdk.Display"
+     ]
+    },
+    "MultiFilter": {
+     "category": "model",
+     "extends": "Gtk.Filter",
+     "file": "gtk/MultiFilter.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "Gtk.Filter",
+      "GObject.Object"
+     ],
+     "native": "Gtk.MultiFilter",
+     "signature": [
+      "GObject.Object",
+      "Gtk.Filter"
+     ]
+    },
+    "MultiSelection": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/MultiSelection.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel",
+      "Gtk.SelectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Bitset"
+     ],
+     "native": "Gtk.MultiSelection",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Bitset"
+     ]
+    },
+    "MultiSorter": {
+     "category": "model",
+     "extends": "Gtk.Sorter",
+     "file": "gtk/MultiSorter.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "Gtk.Sorter",
+      "GObject.Object"
+     ],
+     "native": "Gtk.MultiSorter",
+     "signature": [
+      "GObject.Object",
+      "Gtk.Sorter"
+     ]
+    },
+    "NamedAction": {
+     "category": "object",
+     "extends": "Gtk.ShortcutAction",
+     "file": "gtk/NamedAction.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutAction"
+     ],
+     "native": "Gtk.NamedAction",
+     "signature": []
+    },
+    "Native": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Native.js",
+     "implements": [],
+     "imports": [
+      "Gdk.Surface",
+      "Gsk.Renderer"
+     ],
+     "native": "Gtk.Native",
+     "signature": [
+      "Gdk.Surface",
+      "Gsk.Renderer"
+     ]
+    },
+    "NativeDialog": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/NativeDialog.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.NativeDialog",
+     "signature": []
+    },
+    "NeverTrigger": {
+     "category": "object",
+     "extends": "Gtk.ShortcutTrigger",
+     "file": "gtk/NeverTrigger.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutTrigger"
+     ],
+     "native": "Gtk.NeverTrigger",
+     "signature": []
+    },
+    "NoSelection": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/NoSelection.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel",
+      "Gtk.SelectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Bitset"
+     ],
+     "native": "Gtk.NoSelection",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Bitset"
+     ]
+    },
+    "NotebookPage": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/NotebookPage.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.NotebookPage",
+     "signature": []
+    },
+    "NothingAction": {
+     "category": "object",
+     "extends": "Gtk.ShortcutAction",
+     "file": "gtk/NothingAction.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutAction"
+     ],
+     "native": "Gtk.NothingAction",
+     "signature": []
+    },
+    "NumericSorter": {
+     "category": "object",
+     "extends": "Gtk.Sorter",
+     "file": "gtk/NumericSorter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Sorter"
+     ],
+     "native": "Gtk.NumericSorter",
+     "signature": [
+      "Gtk.SortType"
+     ]
+    },
+    "Orientable": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Orientable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.Orientable",
+     "signature": [
+      "Gtk.Orientation"
+     ]
+    },
+    "OverlayLayout": {
+     "category": "object",
+     "extends": "Gtk.LayoutManager",
+     "file": "gtk/OverlayLayout.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutManager"
+     ],
+     "native": "Gtk.OverlayLayout",
+     "signature": [
+      "Gtk.LayoutManager"
+     ]
+    },
+    "OverlayLayoutChild": {
+     "category": "object",
+     "extends": "Gtk.LayoutChild",
+     "file": "gtk/OverlayLayoutChild.js",
+     "implements": [],
+     "imports": [
+      "Gtk.LayoutChild"
+     ],
+     "native": "Gtk.OverlayLayoutChild",
+     "signature": []
+    },
+    "PadController": {
+     "category": "object",
+     "extends": "Gtk.EventController",
+     "file": "gtk/PadController.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EventController",
+      "Gdk.Device",
+      "Gio.ActionGroup"
+     ],
+     "native": "Gtk.PadController",
+     "signature": [
+      "Gdk.Device",
+      "Gio.ActionGroup",
+      "Gtk.PadActionType"
+     ]
+    },
+    "PageSetup": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/PageSetup.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.PaperSize"
+     ],
+     "native": "Gtk.PageSetup",
+     "signature": [
+      "GLib.KeyFile",
+      "Gtk.PageOrientation",
+      "Gtk.PaperSize",
+      "Gtk.Unit"
+     ]
+    },
+    "PaperSize": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/PaperSize.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.PaperSize",
+     "signature": [
+      "GLib.KeyFile",
+      "Gtk.Unit"
+     ]
+    },
+    "PasswordEntryBuffer": {
+     "category": "object",
+     "extends": "Gtk.EntryBuffer",
+     "file": "gtk/PasswordEntryBuffer.js",
+     "implements": [],
+     "imports": [
+      "Gtk.EntryBuffer"
+     ],
+     "native": "Gtk.PasswordEntryBuffer",
+     "signature": [
+      "Gtk.EntryBuffer"
+     ]
+    },
+    "PrintContext": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/PrintContext.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.PageSetup",
+      "Pango.Context",
+      "Pango.FontMap",
+      "Pango.Layout"
+     ],
+     "native": "Gtk.PrintContext",
+     "signature": [
+      "Gtk.PageSetup",
+      "Pango.Context",
+      "Pango.FontMap",
+      "Pango.Layout"
+     ]
+    },
+    "PrintDialog": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/PrintDialog.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.PageSetup",
+      "Gtk.PrintSettings"
+     ],
+     "native": "Gtk.PrintDialog",
+     "signature": [
+      "Gtk.PageSetup",
+      "Gtk.PrintSettings"
+     ]
+    },
+    "PrintJob": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/PrintJob.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.PageSetup",
+      "Gtk.PrintSettings",
+      "Gtk.Printer"
+     ],
+     "native": "Gtk.PrintJob",
+     "signature": [
+      "Gtk.NumberUpLayout",
+      "Gtk.PageSet",
+      "Gtk.PageSetup",
+      "Gtk.PrintPages",
+      "Gtk.PrintSettings",
+      "Gtk.PrintStatus",
+      "Gtk.Printer"
+     ]
+    },
+    "PrintOperation": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/PrintOperation.js",
+     "implements": [
+      "Gtk.PrintOperationPreview"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gtk.PageSetup",
+      "Gtk.PrintContext",
+      "Gtk.PrintSettings"
+     ],
+     "native": "Gtk.PrintOperation",
+     "signature": [
+      "Gtk.PageSetup",
+      "Gtk.PrintContext",
+      "Gtk.PrintOperationResult",
+      "Gtk.PrintSettings",
+      "Gtk.PrintStatus",
+      "Gtk.Unit"
+     ]
+    },
+    "PrintOperationPreview": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/PrintOperationPreview.js",
+     "implements": [],
+     "imports": [
+      "Gtk.PageSetup",
+      "Gtk.PrintContext"
+     ],
+     "native": "Gtk.PrintOperationPreview",
+     "signature": [
+      "Gtk.PageSetup",
+      "Gtk.PrintContext"
+     ]
+    },
+    "PrintSettings": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/PrintSettings.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.PaperSize"
+     ],
+     "native": "Gtk.PrintSettings",
+     "signature": [
+      "GLib.KeyFile",
+      "Gtk.NumberUpLayout",
+      "Gtk.PageOrientation",
+      "Gtk.PageSet",
+      "Gtk.PaperSize",
+      "Gtk.PrintDuplex",
+      "Gtk.PrintPages",
+      "Gtk.PrintQuality",
+      "Gtk.Unit"
+     ]
+    },
+    "PrintSetup": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/PrintSetup.js",
+     "implements": [],
+     "imports": [
+      "Gtk.PageSetup",
+      "Gtk.PrintSettings"
+     ],
+     "native": "Gtk.PrintSetup",
+     "signature": [
+      "Gtk.PageSetup",
+      "Gtk.PrintSettings"
+     ]
+    },
+    "Printer": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Printer.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.PageSetup"
+     ],
+     "native": "Gtk.Printer",
+     "signature": [
+      "Gtk.PageSetup",
+      "Gtk.PaperSize",
+      "Gtk.PrintCapabilities"
+     ]
+    },
+    "RecentInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/RecentInfo.js",
+     "implements": [],
+     "imports": [
+      "GLib.DateTime",
+      "Gio.AppInfo",
+      "Gio.Icon"
+     ],
+     "native": "Gtk.RecentInfo",
+     "signature": [
+      "GLib.DateTime",
+      "Gio.AppInfo",
+      "Gio.Icon"
+     ]
+    },
+    "RecentManager": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/RecentManager.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.RecentInfo"
+     ],
+     "native": "Gtk.RecentManager",
+     "signature": [
+      "Gtk.RecentInfo"
+     ]
+    },
+    "Requisition": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/Requisition.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.Requisition",
+     "signature": []
+    },
+    "Root": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Root.js",
+     "implements": [
+      "Gtk.Native"
+     ],
+     "imports": [
+      "Gdk.Display",
+      "Gdk.Surface",
+      "Gsk.Renderer"
+     ],
+     "native": "Gtk.Root",
+     "signature": [
+      "Gdk.Display",
+      "Gdk.Surface",
+      "Gsk.Renderer"
+     ]
+    },
+    "ScrollInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/ScrollInfo.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.ScrollInfo",
+     "signature": []
+    },
+    "Scrollable": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/Scrollable.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Adjustment"
+     ],
+     "native": "Gtk.Scrollable",
+     "signature": [
+      "Gtk.Adjustment",
+      "Gtk.ScrollablePolicy"
+     ]
+    },
+    "SectionModel": {
+     "category": "model",
+     "extends": null,
+     "file": "gtk/SectionModel.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.SectionModel",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "SelectionFilterModel": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/SelectionFilterModel.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gtk.SelectionModel"
+     ],
+     "native": "Gtk.SelectionFilterModel",
+     "signature": [
+      "GObject.Object",
+      "Gtk.SelectionModel"
+     ]
+    },
+    "SelectionModel": {
+     "category": "model",
+     "extends": null,
+     "file": "gtk/SelectionModel.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gtk.Bitset"
+     ],
+     "native": "Gtk.SelectionModel",
+     "signature": [
+      "GObject.Object",
+      "Gtk.Bitset"
+     ]
+    },
+    "Settings": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Settings.js",
+     "implements": [
+      "Gtk.StyleProvider"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.Settings",
+     "signature": [
+      "Gdk.Display",
+      "Gtk.FontRendering",
+      "Gtk.InterfaceColorScheme",
+      "Gtk.InterfaceContrast",
+      "Gtk.ReducedMotion"
+     ]
+    },
+    "Shortcut": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Shortcut.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.ShortcutAction",
+      "Gtk.ShortcutTrigger"
+     ],
+     "native": "Gtk.Shortcut",
+     "signature": [
+      "Gtk.ShortcutAction",
+      "Gtk.ShortcutTrigger"
+     ]
+    },
+    "ShortcutAction": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ShortcutAction.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ShortcutAction",
+     "signature": [
+      "GLib.String"
+     ]
+    },
+    "ShortcutController": {
+     "category": "model",
+     "extends": "Gtk.EventController",
+     "file": "gtk/ShortcutController.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "Gtk.EventController",
+      "GObject.Object",
+      "Gio.ListModel"
+     ],
+     "native": "Gtk.ShortcutController",
+     "signature": [
+      "GObject.Object",
+      "Gdk.ModifierType",
+      "Gio.ListModel",
+      "Gtk.EventController",
+      "Gtk.Shortcut",
+      "Gtk.ShortcutScope"
+     ]
+    },
+    "ShortcutManager": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/ShortcutManager.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.ShortcutManager",
+     "signature": []
+    },
+    "ShortcutTrigger": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/ShortcutTrigger.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.ShortcutTrigger",
+     "signature": [
+      "GLib.String",
+      "Gdk.Display"
+     ]
+    },
+    "SignalAction": {
+     "category": "object",
+     "extends": "Gtk.ShortcutAction",
+     "file": "gtk/SignalAction.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ShortcutAction"
+     ],
+     "native": "Gtk.SignalAction",
+     "signature": []
+    },
+    "SignalListItemFactory": {
+     "category": "object",
+     "extends": "Gtk.ListItemFactory",
+     "file": "gtk/SignalListItemFactory.js",
+     "implements": [],
+     "imports": [
+      "Gtk.ListItemFactory",
+      "GObject.Object"
+     ],
+     "native": "Gtk.SignalListItemFactory",
+     "signature": [
+      "GObject.Object",
+      "Gtk.ListItemFactory"
+     ]
+    },
+    "SingleSelection": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/SingleSelection.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel",
+      "Gtk.SelectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Bitset"
+     ],
+     "native": "Gtk.SingleSelection",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Bitset"
+     ]
+    },
+    "SizeGroup": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/SizeGroup.js",
+     "implements": [
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.SizeGroup",
+     "signature": [
+      "Gtk.SizeGroupMode"
+     ]
+    },
+    "SliceListModel": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/SliceListModel.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ],
+     "native": "Gtk.SliceListModel",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ]
+    },
+    "Snapshot": {
+     "category": "object",
+     "extends": "Gdk.Snapshot",
+     "file": "gtk/Snapshot.js",
+     "implements": [],
+     "imports": [
+      "Gdk.Snapshot",
+      "Gdk.Paintable"
+     ],
+     "native": "Gtk.Snapshot",
+     "signature": [
+      "Gdk.Paintable",
+      "Gdk.Texture",
+      "Graphene.Matrix",
+      "Graphene.Point3D",
+      "Graphene.Vec3",
+      "Graphene.Vec4",
+      "Gsk.BlendMode",
+      "Gsk.ComponentTransfer",
+      "Gsk.FillRule",
+      "Gsk.Isolation",
+      "Gsk.MaskMode",
+      "Gsk.Path",
+      "Gsk.PorterDuff",
+      "Gsk.ScalingFilter",
+      "Gsk.Stroke",
+      "Gsk.Transform",
+      "Pango.Layout"
+     ]
+    },
+    "SortListModel": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/SortListModel.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.SectionModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Sorter"
+     ],
+     "native": "Gtk.SortListModel",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.Sorter"
+     ]
+    },
+    "Sorter": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Sorter.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.Sorter",
+     "signature": [
+      "GObject.Object",
+      "Gtk.Ordering",
+      "Gtk.SorterChange",
+      "Gtk.SorterOrder"
+     ]
+    },
+    "StackPage": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/StackPage.js",
+     "implements": [
+      "Gtk.Accessible"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gtk.ATContext",
+      "Gtk.Accessible"
+     ],
+     "native": "Gtk.StackPage",
+     "signature": [
+      "Gtk.ATContext",
+      "Gtk.Accessible",
+      "Gtk.AccessibleAnnouncementPriority",
+      "Gtk.AccessiblePlatformState",
+      "Gtk.AccessibleProperty",
+      "Gtk.AccessibleRelation",
+      "Gtk.AccessibleRole",
+      "Gtk.AccessibleState"
+     ]
+    },
+    "StringFilter": {
+     "category": "object",
+     "extends": "Gtk.Filter",
+     "file": "gtk/StringFilter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Filter"
+     ],
+     "native": "Gtk.StringFilter",
+     "signature": [
+      "Gtk.StringFilterMatchMode"
+     ]
+    },
+    "StringList": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/StringList.js",
+     "implements": [
+      "Gio.ListModel",
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.StringList",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "StringObject": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/StringObject.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.StringObject",
+     "signature": []
+    },
+    "StringSorter": {
+     "category": "object",
+     "extends": "Gtk.Sorter",
+     "file": "gtk/StringSorter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Sorter"
+     ],
+     "native": "Gtk.StringSorter",
+     "signature": [
+      "Gtk.Collation"
+     ]
+    },
+    "StyleProvider": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/StyleProvider.js",
+     "implements": [],
+     "imports": [],
+     "native": "Gtk.StyleProvider",
+     "signature": []
+    },
+    "Svg": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Svg.js",
+     "implements": [
+      "Gdk.Paintable",
+      "Gtk.SymbolicPaintable"
+     ],
+     "imports": [
+      "GObject.Object",
+      "GLib.Bytes",
+      "Gdk.Paintable"
+     ],
+     "native": "Gtk.Svg",
+     "signature": [
+      "GLib.Bytes",
+      "Gdk.FrameClock",
+      "Gdk.Paintable",
+      "Gdk.PaintableFlags",
+      "Gdk.Snapshot",
+      "Gtk.SvgFeatures"
+     ]
+    },
+    "SymbolicPaintable": {
+     "category": "object",
+     "extends": null,
+     "file": "gtk/SymbolicPaintable.js",
+     "implements": [
+      "Gdk.Paintable"
+     ],
+     "imports": [
+      "Gdk.Paintable"
+     ],
+     "native": "Gtk.SymbolicPaintable",
+     "signature": [
+      "Gdk.Paintable",
+      "Gdk.PaintableFlags",
+      "Gdk.Snapshot"
+     ]
+    },
+    "TextBuffer": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/TextBuffer.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Clipboard",
+      "Gdk.ContentProvider",
+      "Gtk.TextChildAnchor",
+      "Gtk.TextIter",
+      "Gtk.TextMark",
+      "Gtk.TextTagTable"
+     ],
+     "native": "Gtk.TextBuffer",
+     "signature": [
+      "Gdk.Clipboard",
+      "Gdk.ContentProvider",
+      "Gdk.Paintable",
+      "Gtk.TextChildAnchor",
+      "Gtk.TextIter",
+      "Gtk.TextMark",
+      "Gtk.TextTag",
+      "Gtk.TextTagTable"
+     ]
+    },
+    "TextChildAnchor": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/TextChildAnchor.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.TextChildAnchor",
+     "signature": []
+    },
+    "TextIter": {
+     "category": "value",
+     "extends": null,
+     "file": "gtk/TextIter.js",
+     "implements": [],
+     "imports": [
+      "Gdk.Paintable",
+      "Gtk.TextBuffer",
+      "Gtk.TextChildAnchor",
+      "Gtk.TextMark",
+      "Gtk.TextTag",
+      "Pango.Language"
+     ],
+     "native": "Gtk.TextIter",
+     "signature": [
+      "Gdk.Paintable",
+      "Gtk.TextBuffer",
+      "Gtk.TextChildAnchor",
+      "Gtk.TextMark",
+      "Gtk.TextSearchFlags",
+      "Gtk.TextTag",
+      "Pango.Language"
+     ]
+    },
+    "TextMark": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/TextMark.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gtk.TextBuffer"
+     ],
+     "native": "Gtk.TextMark",
+     "signature": [
+      "Gtk.TextBuffer"
+     ]
+    },
+    "TextTag": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/TextTag.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.TextTag",
+     "signature": [
+      "Gtk.Justification",
+      "Gtk.TextDirection",
+      "Gtk.WrapMode",
+      "Pango.Overline",
+      "Pango.ShowFlags",
+      "Pango.Stretch",
+      "Pango.Style",
+      "Pango.TextTransform",
+      "Pango.Underline",
+      "Pango.Variant"
+     ]
+    },
+    "TextTagTable": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/TextTagTable.js",
+     "implements": [
+      "Gtk.Buildable"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gtk.TextTag"
+     ],
+     "native": "Gtk.TextTagTable",
+     "signature": [
+      "Gtk.TextTag"
+     ]
+    },
+    "Tooltip": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/Tooltip.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.Tooltip",
+     "signature": [
+      "Gdk.Paintable",
+      "Gio.Icon"
+     ]
+    },
+    "TreeListModel": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/TreeListModel.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.TreeListRow"
+     ],
+     "native": "Gtk.TreeListModel",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel",
+      "Gtk.TreeListRow"
+     ]
+    },
+    "TreeListRow": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/TreeListRow.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ],
+     "native": "Gtk.TreeListRow",
+     "signature": [
+      "GObject.Object",
+      "Gio.ListModel"
+     ]
+    },
+    "TreeListRowSorter": {
+     "category": "object",
+     "extends": "Gtk.Sorter",
+     "file": "gtk/TreeListRowSorter.js",
+     "implements": [],
+     "imports": [
+      "Gtk.Sorter"
+     ],
+     "native": "Gtk.TreeListRowSorter",
+     "signature": [
+      "Gtk.Sorter"
+     ]
+    },
+    "UriLauncher": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/UriLauncher.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.UriLauncher",
+     "signature": []
+    },
+    "WidgetPaintable": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/WidgetPaintable.js",
+     "implements": [
+      "Gdk.Paintable"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Gdk.Paintable"
+     ],
+     "native": "Gtk.WidgetPaintable",
+     "signature": [
+      "Gdk.Paintable",
+      "Gdk.PaintableFlags",
+      "Gdk.Snapshot"
+     ]
+    },
+    "WindowGroup": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/WindowGroup.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.WindowGroup",
+     "signature": []
+    }
+   }
+  },
+  "svelters:gtk/pango": {
+   "dir": "pango",
+   "exports": {
+    "AttrIterator": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/AttrIterator.js",
+     "implements": [],
+     "imports": [
+      "Pango.Attribute",
+      "Pango.Language"
+     ],
+     "native": "Pango.AttrIterator",
+     "signature": [
+      "Pango.AttrType",
+      "Pango.Attribute",
+      "Pango.FontDescription",
+      "Pango.Language"
+     ]
+    },
+    "AttrList": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/AttrList.js",
+     "implements": [],
+     "imports": [
+      "Pango.AttrIterator",
+      "Pango.Attribute"
+     ],
+     "native": "Pango.AttrList",
+     "signature": [
+      "Pango.AttrIterator",
+      "Pango.Attribute"
+     ]
+    },
+    "Attribute": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/Attribute.js",
+     "implements": [],
+     "imports": [],
+     "native": "Pango.Attribute",
+     "signature": []
+    },
+    "Context": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "pango/Context.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Pango.Font",
+      "Pango.FontDescription",
+      "Pango.FontFamily",
+      "Pango.FontMap",
+      "Pango.FontMetrics",
+      "Pango.Fontset",
+      "Pango.Language",
+      "Pango.Matrix"
+     ],
+     "native": "Pango.Context",
+     "signature": [
+      "Pango.Direction",
+      "Pango.Font",
+      "Pango.FontDescription",
+      "Pango.FontFamily",
+      "Pango.FontMap",
+      "Pango.FontMetrics",
+      "Pango.Fontset",
+      "Pango.Gravity",
+      "Pango.GravityHint",
+      "Pango.Language",
+      "Pango.Matrix"
+     ]
+    },
+    "Coverage": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "pango/Coverage.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Pango.Coverage",
+     "signature": [
+      "Pango.CoverageLevel"
+     ]
+    },
+    "Font": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "pango/Font.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "GLib.Bytes",
+      "Pango.Coverage",
+      "Pango.FontDescription",
+      "Pango.FontFace",
+      "Pango.FontMap",
+      "Pango.FontMetrics",
+      "Pango.Language"
+     ],
+     "native": "Pango.Font",
+     "signature": [
+      "GLib.Bytes",
+      "Pango.Context",
+      "Pango.Coverage",
+      "Pango.FontDescription",
+      "Pango.FontFace",
+      "Pango.FontMap",
+      "Pango.FontMetrics",
+      "Pango.Language"
+     ]
+    },
+    "FontDescription": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/FontDescription.js",
+     "implements": [],
+     "imports": [],
+     "native": "Pango.FontDescription",
+     "signature": [
+      "Pango.FontColor",
+      "Pango.FontMask",
+      "Pango.Gravity",
+      "Pango.Stretch",
+      "Pango.Style",
+      "Pango.Variant",
+      "Pango.Weight"
+     ]
+    },
+    "FontFace": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "pango/FontFace.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Pango.FontDescription",
+      "Pango.FontFamily"
+     ],
+     "native": "Pango.FontFace",
+     "signature": [
+      "Pango.FontDescription",
+      "Pango.FontFamily"
+     ]
+    },
+    "FontFamily": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "pango/FontFamily.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Pango.FontFace"
+     ],
+     "native": "Pango.FontFamily",
+     "signature": [
+      "GObject.Object",
+      "Pango.FontFace"
+     ]
+    },
+    "FontMap": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "pango/FontMap.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object",
+      "Pango.Context",
+      "Pango.Font",
+      "Pango.FontFamily",
+      "Pango.Fontset"
+     ],
+     "native": "Pango.FontMap",
+     "signature": [
+      "GObject.Object",
+      "Pango.Context",
+      "Pango.Font",
+      "Pango.FontDescription",
+      "Pango.FontFamily",
+      "Pango.Fontset",
+      "Pango.Language"
+     ]
+    },
+    "FontMetrics": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/FontMetrics.js",
+     "implements": [],
+     "imports": [],
+     "native": "Pango.FontMetrics",
+     "signature": []
+    },
+    "Fontset": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "pango/Fontset.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "Pango.Font",
+      "Pango.FontMetrics"
+     ],
+     "native": "Pango.Fontset",
+     "signature": [
+      "Pango.Font",
+      "Pango.FontMetrics"
+     ]
+    },
+    "Language": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/Language.js",
+     "implements": [],
+     "imports": [],
+     "native": "Pango.Language",
+     "signature": [
+      "Pango.Script"
+     ]
+    },
+    "Layout": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "pango/Layout.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object",
+      "GLib.Bytes",
+      "Pango.AttrList",
+      "Pango.Context",
+      "Pango.FontDescription",
+      "Pango.LayoutLine",
+      "Pango.TabArray"
+     ],
+     "native": "Pango.Layout",
+     "signature": [
+      "GLib.Bytes",
+      "Pango.Alignment",
+      "Pango.AttrList",
+      "Pango.Context",
+      "Pango.Direction",
+      "Pango.EllipsizeMode",
+      "Pango.FontDescription",
+      "Pango.LayoutDeserializeFlags",
+      "Pango.LayoutLine",
+      "Pango.LayoutSerializeFlags",
+      "Pango.TabArray",
+      "Pango.WrapMode"
+     ]
+    },
+    "LayoutLine": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/LayoutLine.js",
+     "implements": [],
+     "imports": [],
+     "native": "Pango.LayoutLine",
+     "signature": [
+      "Pango.Direction"
+     ]
+    },
+    "Matrix": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/Matrix.js",
+     "implements": [],
+     "imports": [],
+     "native": "Pango.Matrix",
+     "signature": []
+    },
+    "TabArray": {
+     "category": "value",
+     "extends": null,
+     "file": "pango/TabArray.js",
+     "implements": [],
+     "imports": [],
+     "native": "Pango.TabArray",
+     "signature": [
+      "Pango.TabAlign"
+     ]
+    }
+   }
+  }
+ },
+ "schema": "svelters-types-manifest/v1",
+ "toolkit": "gtk"
+}

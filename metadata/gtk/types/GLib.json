@@ -1,0 +1,4239 @@
+{
+ "namespace": "GLib",
+ "schema": "svelters-types/v1",
+ "toolkit": "gtk",
+ "types": {
+  "Bytes": {
+   "abstract": false,
+   "blocked": {
+    "compare": "struct by value",
+    "equal": "struct by value",
+    "get_region": "gpointer",
+    "unref_to_array": "garray"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "data",
+       "name": "data",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "guint8"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "size",
+       "name": "size",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.32"
+    },
+    {
+     "js": "newFromBytes",
+     "name": "new_from_bytes",
+     "params": [
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      },
+      {
+       "js": "offset",
+       "name": "offset",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.32"
+    },
+    {
+     "js": "newTake",
+     "name": "new_take",
+     "params": [
+      {
+       "js": "data",
+       "name": "data",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "guint8"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "size",
+       "name": "size",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.32"
+    }
+   ],
+   "curated": false,
+   "gtype": "GBytes",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getSize",
+     "name": "get_size",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     },
+     "since": "2.32"
+    },
+    {
+     "js": "hash",
+     "name": "hash",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "2.32"
+    },
+    {
+     "js": "unrefToData",
+     "name": "unref_to_data",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "size",
+       "name": "size",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "int",
+       "t": "guint8"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.32"
+    }
+   ],
+   "name": "Bytes",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.Bytes",
+   "refs": [],
+   "scope": "root",
+   "signals": [],
+   "since": "2.32",
+   "statics": [],
+   "undecided": []
+  },
+  "DateTime": {
+   "abstract": false,
+   "blocked": {
+    "compare": "struct by value",
+    "equal": "struct by value"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "tz",
+       "name": "tz",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.TimeZone"
+       }
+      },
+      {
+       "js": "year",
+       "name": "year",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "month",
+       "name": "month",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "day",
+       "name": "day",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "hour",
+       "name": "hour",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "minute",
+       "name": "minute",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "seconds",
+       "name": "seconds",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "newFromIso8601",
+     "name": "new_from_iso8601",
+     "params": [
+      {
+       "js": "text",
+       "name": "text",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "defaultTz",
+       "name": "default_tz",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "GLib.TimeZone"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.56"
+    },
+    {
+     "js": "newFromUnixLocal",
+     "name": "new_from_unix_local",
+     "params": [
+      {
+       "js": "t",
+       "name": "t",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "newFromUnixLocalUsec",
+     "name": "new_from_unix_local_usec",
+     "params": [
+      {
+       "js": "usecs",
+       "name": "usecs",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.80"
+    },
+    {
+     "js": "newFromUnixUtc",
+     "name": "new_from_unix_utc",
+     "params": [
+      {
+       "js": "t",
+       "name": "t",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "newFromUnixUtcUsec",
+     "name": "new_from_unix_utc_usec",
+     "params": [
+      {
+       "js": "usecs",
+       "name": "usecs",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.80"
+    },
+    {
+     "js": "newLocal",
+     "name": "new_local",
+     "params": [
+      {
+       "js": "year",
+       "name": "year",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "month",
+       "name": "month",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "day",
+       "name": "day",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "hour",
+       "name": "hour",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "minute",
+       "name": "minute",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "seconds",
+       "name": "seconds",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "newNow",
+     "name": "new_now",
+     "params": [
+      {
+       "js": "tz",
+       "name": "tz",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.TimeZone"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "newNowLocal",
+     "name": "new_now_local",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "newNowUtc",
+     "name": "new_now_utc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "newUtc",
+     "name": "new_utc",
+     "params": [
+      {
+       "js": "year",
+       "name": "year",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "month",
+       "name": "month",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "day",
+       "name": "day",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "hour",
+       "name": "hour",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "minute",
+       "name": "minute",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "seconds",
+       "name": "seconds",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    }
+   ],
+   "curated": false,
+   "gtype": "GDateTime",
+   "hidden": [
+    "add",
+    "add_days",
+    "add_full",
+    "add_hours",
+    "add_minutes",
+    "add_months",
+    "add_seconds",
+    "add_weeks",
+    "add_years"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "difference",
+     "name": "difference",
+     "params": [
+      {
+       "js": "begin",
+       "name": "begin",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.DateTime"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "format",
+     "name": "format",
+     "params": [
+      {
+       "js": "format",
+       "name": "format",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "formatIso8601",
+     "name": "format_iso8601",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.62"
+    },
+    {
+     "js": "getDayOfMonth",
+     "name": "get_day_of_month",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getDayOfWeek",
+     "name": "get_day_of_week",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getDayOfYear",
+     "name": "get_day_of_year",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getHour",
+     "name": "get_hour",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getMicrosecond",
+     "name": "get_microsecond",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getMinute",
+     "name": "get_minute",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getMonth",
+     "name": "get_month",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getSecond",
+     "name": "get_second",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getSeconds",
+     "name": "get_seconds",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getTimezone",
+     "name": "get_timezone",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.TimeZone"
+     },
+     "since": "2.58"
+    },
+    {
+     "js": "getTimezoneAbbreviation",
+     "name": "get_timezone_abbreviation",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getUtcOffset",
+     "name": "get_utc_offset",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getWeekNumberingYear",
+     "name": "get_week_numbering_year",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getWeekOfYear",
+     "name": "get_week_of_year",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getYear",
+     "name": "get_year",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getYmd",
+     "name": "get_ymd",
+     "params": [
+      {
+       "dir": "out",
+       "js": "year",
+       "name": "year",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "month",
+       "name": "month",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "day",
+       "name": "day",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "hash",
+     "name": "hash",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "isDaylightSavings",
+     "name": "is_daylight_savings",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "toLocal",
+     "name": "to_local",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "toTimezone",
+     "name": "to_timezone",
+     "params": [
+      {
+       "js": "tz",
+       "name": "tz",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.TimeZone"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    },
+    {
+     "js": "toUnix",
+     "name": "to_unix",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "toUnixUsec",
+     "name": "to_unix_usec",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     },
+     "since": "2.80"
+    },
+    {
+     "js": "toUtc",
+     "name": "to_utc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.DateTime"
+     },
+     "ret_nullable": true,
+     "since": "2.26"
+    }
+   ],
+   "name": "DateTime",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.DateTime",
+   "refs": [
+    "GLib.TimeZone"
+   ],
+   "scope": "root",
+   "signals": [],
+   "since": "2.26",
+   "statics": [],
+   "undecided": []
+  },
+  "Error": {
+   "abstract": false,
+   "blocked": {
+    "domain_register": "callback",
+    "domain_register_static": "callback",
+    "new_literal": "gerror"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GError",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "matches",
+     "name": "matches",
+     "params": [
+      {
+       "js": "domain",
+       "name": "domain",
+       "type": {
+        "k": "int",
+        "t": "guint32"
+       }
+      },
+      {
+       "js": "code",
+       "name": "code",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "name": "Error",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.Error",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "HashTable": {
+   "abstract": false,
+   "blocked": {
+    "add": "hash table",
+    "contains": "hash table",
+    "destroy": "hash table",
+    "find": "hash table",
+    "foreach": "hash table",
+    "foreach_remove": "hash table",
+    "foreach_steal": "hash table",
+    "insert": "hash table",
+    "lookup": "hash table",
+    "lookup_extended": "hash table",
+    "new_similar": "hash table",
+    "remove": "hash table",
+    "remove_all": "hash table",
+    "replace": "hash table",
+    "size": "hash table",
+    "steal": "hash table",
+    "steal_all": "hash table",
+    "steal_extended": "hash table"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GHashTable",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [],
+   "name": "HashTable",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.HashTable",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "KeyFile": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.KeyFile"
+     },
+     "since": "2.6"
+    }
+   ],
+   "curated": false,
+   "gtype": "GKeyFile",
+   "hidden": [
+    "remove_comment",
+    "remove_group",
+    "remove_key",
+    "set_boolean",
+    "set_boolean_list",
+    "set_comment",
+    "set_double",
+    "set_double_list",
+    "set_int64",
+    "set_integer",
+    "set_integer_list",
+    "set_list_separator",
+    "set_locale_string",
+    "set_locale_string_list",
+    "set_string",
+    "set_string_list",
+    "set_uint64",
+    "set_value"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getBoolean",
+     "name": "get_boolean",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getBooleanList",
+     "name": "get_boolean_list",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "bool"
+      },
+      "k": "array",
+      "len": 2
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getComment",
+     "name": "get_comment",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getDouble",
+     "name": "get_double",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "2.12",
+     "throws": true
+    },
+    {
+     "js": "getDoubleList",
+     "name": "get_double_list",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "float"
+      },
+      "k": "array",
+      "len": 2
+     },
+     "since": "2.12",
+     "throws": true
+    },
+    {
+     "js": "getGroups",
+     "name": "get_groups",
+     "params": [
+      {
+       "dir": "out",
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "strv"
+     },
+     "since": "2.6"
+    },
+    {
+     "js": "getInt64",
+     "name": "get_int64",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     },
+     "since": "2.26",
+     "throws": true
+    },
+    {
+     "js": "getInteger",
+     "name": "get_integer",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getIntegerList",
+     "name": "get_integer_list",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "int",
+       "t": "gint"
+      },
+      "k": "array",
+      "len": 2
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getKeys",
+     "name": "get_keys",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "strv"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getLocaleForKey",
+     "name": "get_locale_for_key",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "locale",
+       "name": "locale",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.56"
+    },
+    {
+     "js": "getLocaleString",
+     "name": "get_locale_string",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "locale",
+       "name": "locale",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getLocaleStringList",
+     "name": "get_locale_string_list",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "locale",
+       "name": "locale",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 3
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getStartGroup",
+     "name": "get_start_group",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.6"
+    },
+    {
+     "js": "getString",
+     "name": "get_string",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getStringList",
+     "name": "get_string_list",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 2
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "getUint64",
+     "name": "get_uint64",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "guint64"
+     },
+     "since": "2.26",
+     "throws": true
+    },
+    {
+     "js": "getValue",
+     "name": "get_value",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "hasGroup",
+     "name": "has_group",
+     "params": [
+      {
+       "js": "groupName",
+       "name": "group_name",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.6"
+    },
+    {
+     "js": "loadFromBytes",
+     "name": "load_from_bytes",
+     "params": [
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.KeyFileFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.50",
+     "throws": true
+    },
+    {
+     "js": "loadFromData",
+     "name": "load_from_data",
+     "params": [
+      {
+       "js": "data",
+       "name": "data",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.KeyFileFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "loadFromDataDirs",
+     "name": "load_from_data_dirs",
+     "params": [
+      {
+       "js": "file",
+       "name": "file",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "fullPath",
+       "name": "full_path",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.KeyFileFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "loadFromDirs",
+     "name": "load_from_dirs",
+     "params": [
+      {
+       "js": "file",
+       "name": "file",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "searchDirs",
+       "name": "search_dirs",
+       "type": {
+        "k": "strv"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "fullPath",
+       "name": "full_path",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.KeyFileFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.14",
+     "throws": true
+    },
+    {
+     "js": "loadFromFile",
+     "name": "load_from_file",
+     "params": [
+      {
+       "js": "file",
+       "name": "file",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.KeyFileFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.6",
+     "throws": true
+    },
+    {
+     "js": "saveToFile",
+     "name": "save_to_file",
+     "params": [
+      {
+       "js": "filename",
+       "name": "filename",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.40",
+     "throws": true
+    },
+    {
+     "js": "toData",
+     "name": "to_data",
+     "params": [
+      {
+       "dir": "out",
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.6",
+     "throws": true
+    }
+   ],
+   "name": "KeyFile",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.KeyFile",
+   "refs": [
+    "GLib.Bytes",
+    "GLib.KeyFileFlags"
+   ],
+   "scope": "root",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "errorQuark",
+     "name": "error_quark",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint32"
+     }
+    }
+   ],
+   "undecided": []
+  },
+  "OptionGroup": {
+   "abstract": false,
+   "blocked": {
+    "add_entries": "type:needs-override:GLib.OptionEntry",
+    "new": "gpointer",
+    "set_translate_func": "callback"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GOptionGroup",
+   "hidden": [
+    "set_translation_domain"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [],
+   "name": "OptionGroup",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.OptionGroup",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "PollFD": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GPollFD",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [],
+   "name": "PollFD",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.PollFD",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "String": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "init",
+       "name": "init",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.String"
+     }
+    },
+    {
+     "js": "newLen",
+     "name": "new_len",
+     "params": [
+      {
+       "js": "init",
+       "name": "init",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "len",
+       "name": "len",
+       "type": {
+        "k": "int",
+        "t": "gssize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.String"
+     }
+    },
+    {
+     "js": "newTake",
+     "name": "new_take",
+     "params": [
+      {
+       "js": "init",
+       "name": "init",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.String"
+     },
+     "since": "2.78"
+    },
+    {
+     "js": "sizedNew",
+     "name": "sized_new",
+     "params": [
+      {
+       "js": "dflSize",
+       "name": "dfl_size",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.String"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "GString",
+   "hidden": [
+    "append",
+    "append_c",
+    "append_len",
+    "append_unichar",
+    "append_uri_escaped",
+    "ascii_down",
+    "ascii_up",
+    "assign",
+    "erase",
+    "insert",
+    "insert_c",
+    "insert_len",
+    "insert_unichar",
+    "overwrite",
+    "overwrite_len",
+    "prepend",
+    "prepend_c",
+    "prepend_len",
+    "prepend_unichar",
+    "replace",
+    "set_size",
+    "truncate"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.String"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "freeAndSteal",
+     "name": "free_and_steal",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.76"
+    },
+    {
+     "js": "freeToBytes",
+     "name": "free_to_bytes",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.34"
+    },
+    {
+     "js": "hash",
+     "name": "hash",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    }
+   ],
+   "name": "String",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.String",
+   "refs": [
+    "GLib.Bytes"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "TimeZone": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "newIdentifier",
+     "name": "new_identifier",
+     "params": [
+      {
+       "js": "identifier",
+       "name": "identifier",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.TimeZone"
+     },
+     "ret_nullable": true,
+     "since": "2.68"
+    },
+    {
+     "js": "newLocal",
+     "name": "new_local",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.TimeZone"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "newOffset",
+     "name": "new_offset",
+     "params": [
+      {
+       "js": "seconds",
+       "name": "seconds",
+       "type": {
+        "k": "int",
+        "t": "gint32"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.TimeZone"
+     },
+     "since": "2.58"
+    },
+    {
+     "js": "newUtc",
+     "name": "new_utc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.TimeZone"
+     },
+     "since": "2.26"
+    }
+   ],
+   "curated": false,
+   "gtype": "GTimeZone",
+   "hidden": [
+    "adjust_time"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "findInterval",
+     "name": "find_interval",
+     "params": [
+      {
+       "js": "type",
+       "name": "type",
+       "type": {
+        "k": "enum",
+        "t": "GLib.TimeType"
+       }
+      },
+      {
+       "js": "time",
+       "name": "time_",
+       "type": {
+        "k": "int",
+        "t": "gint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getAbbreviation",
+     "name": "get_abbreviation",
+     "params": [
+      {
+       "js": "interval",
+       "name": "interval",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getIdentifier",
+     "name": "get_identifier",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.58"
+    },
+    {
+     "js": "getOffset",
+     "name": "get_offset",
+     "params": [
+      {
+       "js": "interval",
+       "name": "interval",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint32"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "isDst",
+     "name": "is_dst",
+     "params": [
+      {
+       "js": "interval",
+       "name": "interval",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.26"
+    }
+   ],
+   "name": "TimeZone",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.TimeZone",
+   "refs": [
+    "GLib.TimeType"
+   ],
+   "scope": "root",
+   "signals": [],
+   "since": "2.26",
+   "statics": [],
+   "undecided": []
+  },
+  "Tree": {
+   "abstract": false,
+   "blocked": {
+    "foreach": "callback",
+    "foreach_node": "callback",
+    "insert": "gpointer",
+    "insert_node": "gpointer",
+    "lookup": "gpointer",
+    "lookup_extended": "gpointer",
+    "lookup_node": "gpointer",
+    "lower_bound": "gpointer",
+    "new_full": "callback",
+    "node_first": "type:needs-override:GLib.TreeNode",
+    "node_last": "type:needs-override:GLib.TreeNode",
+    "remove": "gpointer",
+    "replace": "gpointer",
+    "replace_node": "gpointer",
+    "search": "callback",
+    "search_node": "callback",
+    "steal": "gpointer",
+    "upper_bound": "gpointer"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GTree",
+   "hidden": [
+    "destroy",
+    "remove_all"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "height",
+     "name": "height",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    },
+    {
+     "js": "nnodes",
+     "name": "nnodes",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    }
+   ],
+   "name": "Tree",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.Tree",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Uri": {
+   "abstract": false,
+   "blocked": {
+    "parse_params": "hash table"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GUri",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getAuthParams",
+     "name": "get_auth_params",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "getFlags",
+     "name": "get_flags",
+     "params": [],
+     "ret": {
+      "k": "flags",
+      "t": "GLib.UriFlags"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "getFragment",
+     "name": "get_fragment",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "getHost",
+     "name": "get_host",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "getPassword",
+     "name": "get_password",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "getPath",
+     "name": "get_path",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "getPort",
+     "name": "get_port",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "getQuery",
+     "name": "get_query",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "getScheme",
+     "name": "get_scheme",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "getUser",
+     "name": "get_user",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "getUserinfo",
+     "name": "get_userinfo",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "parseRelative",
+     "name": "parse_relative",
+     "params": [
+      {
+       "js": "uriRef",
+       "name": "uri_ref",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Uri"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "toStringPartial",
+     "name": "to_string_partial",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriHideFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66"
+    }
+   ],
+   "name": "Uri",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.Uri",
+   "refs": [
+    "GLib.Bytes",
+    "GLib.UriFlags",
+    "GLib.UriHideFlags"
+   ],
+   "scope": "root",
+   "signals": [],
+   "since": "2.66",
+   "statics": [
+    {
+     "js": "build",
+     "name": "build",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      },
+      {
+       "js": "scheme",
+       "name": "scheme",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "userinfo",
+       "name": "userinfo",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "host",
+       "name": "host",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "port",
+       "name": "port",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "query",
+       "name": "query",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "fragment",
+       "name": "fragment",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Uri"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "buildWithUser",
+     "name": "build_with_user",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      },
+      {
+       "js": "scheme",
+       "name": "scheme",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "user",
+       "name": "user",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "password",
+       "name": "password",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "authParams",
+       "name": "auth_params",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "host",
+       "name": "host",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "port",
+       "name": "port",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "query",
+       "name": "query",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "fragment",
+       "name": "fragment",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Uri"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "errorQuark",
+     "name": "error_quark",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint32"
+     }
+    },
+    {
+     "js": "escapeBytes",
+     "name": "escape_bytes",
+     "params": [
+      {
+       "js": "unescaped",
+       "name": "unescaped",
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "guint8"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "reservedCharsAllowed",
+       "name": "reserved_chars_allowed",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "escapeString",
+     "name": "escape_string",
+     "params": [
+      {
+       "js": "unescaped",
+       "name": "unescaped",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "reservedCharsAllowed",
+       "name": "reserved_chars_allowed",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "allowUtf8",
+       "name": "allow_utf8",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.16"
+    },
+    {
+     "js": "isValid",
+     "name": "is_valid",
+     "params": [
+      {
+       "js": "uriString",
+       "name": "uri_string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "join",
+     "name": "join",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      },
+      {
+       "js": "scheme",
+       "name": "scheme",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "userinfo",
+       "name": "userinfo",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "host",
+       "name": "host",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "port",
+       "name": "port",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "query",
+       "name": "query",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "fragment",
+       "name": "fragment",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "joinWithUser",
+     "name": "join_with_user",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      },
+      {
+       "js": "scheme",
+       "name": "scheme",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "user",
+       "name": "user",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "password",
+       "name": "password",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "authParams",
+       "name": "auth_params",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "host",
+       "name": "host",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "port",
+       "name": "port",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "query",
+       "name": "query",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "fragment",
+       "name": "fragment",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66"
+    },
+    {
+     "js": "listExtractUris",
+     "name": "list_extract_uris",
+     "params": [
+      {
+       "js": "uriList",
+       "name": "uri_list",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "strv"
+     },
+     "since": "2.6"
+    },
+    {
+     "js": "parse",
+     "name": "parse",
+     "params": [
+      {
+       "js": "uriString",
+       "name": "uri_string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Uri"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "parseScheme",
+     "name": "parse_scheme",
+     "params": [
+      {
+       "js": "uri",
+       "name": "uri",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.16"
+    },
+    {
+     "js": "peekScheme",
+     "name": "peek_scheme",
+     "params": [
+      {
+       "js": "uri",
+       "name": "uri",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.66"
+    },
+    {
+     "js": "resolveRelative",
+     "name": "resolve_relative",
+     "params": [
+      {
+       "js": "baseUriString",
+       "name": "base_uri_string",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "uriRef",
+       "name": "uri_ref",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "split",
+     "name": "split",
+     "params": [
+      {
+       "js": "uriRef",
+       "name": "uri_ref",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "scheme",
+       "name": "scheme",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "userinfo",
+       "name": "userinfo",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "host",
+       "name": "host",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "port",
+       "name": "port",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "path",
+       "name": "path",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "query",
+       "name": "query",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "fragment",
+       "name": "fragment",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "splitNetwork",
+     "name": "split_network",
+     "params": [
+      {
+       "js": "uriString",
+       "name": "uri_string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "scheme",
+       "name": "scheme",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "host",
+       "name": "host",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "port",
+       "name": "port",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "splitWithUser",
+     "name": "split_with_user",
+     "params": [
+      {
+       "js": "uriRef",
+       "name": "uri_ref",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.UriFlags"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "scheme",
+       "name": "scheme",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "user",
+       "name": "user",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "password",
+       "name": "password",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "authParams",
+       "name": "auth_params",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "host",
+       "name": "host",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "port",
+       "name": "port",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "path",
+       "name": "path",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "query",
+       "name": "query",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "fragment",
+       "name": "fragment",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "unescapeBytes",
+     "name": "unescape_bytes",
+     "params": [
+      {
+       "js": "escapedString",
+       "name": "escaped_string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gssize"
+       }
+      },
+      {
+       "js": "illegalCharacters",
+       "name": "illegal_characters",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.66",
+     "throws": true
+    },
+    {
+     "js": "unescapeSegment",
+     "name": "unescape_segment",
+     "params": [
+      {
+       "js": "escapedString",
+       "name": "escaped_string",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "escapedStringEnd",
+       "name": "escaped_string_end",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "illegalCharacters",
+       "name": "illegal_characters",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.16"
+    },
+    {
+     "js": "unescapeString",
+     "name": "unescape_string",
+     "params": [
+      {
+       "js": "escapedString",
+       "name": "escaped_string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "illegalCharacters",
+       "name": "illegal_characters",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "ret_nullable": true,
+     "since": "2.16"
+    }
+   ],
+   "undecided": []
+  },
+  "Variant": {
+   "abstract": false,
+   "blocked": {
+    "byteswap": "variant",
+    "compare": "variant",
+    "equal": "variant",
+    "get_child_value": "variant",
+    "get_maybe": "variant",
+    "get_normal_form": "variant",
+    "get_variant": "variant",
+    "is_of_type": "variant",
+    "lookup_value": "variant",
+    "new_array": "variant",
+    "new_boolean": "variant",
+    "new_byte": "variant",
+    "new_bytestring": "variant",
+    "new_bytestring_array": "variant",
+    "new_dict_entry": "variant",
+    "new_double": "variant",
+    "new_fixed_array": "variant",
+    "new_from_bytes": "variant",
+    "new_from_data": "variant",
+    "new_handle": "variant",
+    "new_int16": "variant",
+    "new_int32": "variant",
+    "new_int64": "variant",
+    "new_maybe": "variant",
+    "new_object_path": "variant",
+    "new_objv": "variant",
+    "new_signature": "variant",
+    "new_string": "variant",
+    "new_strv": "variant",
+    "new_tuple": "variant",
+    "new_uint16": "variant",
+    "new_uint32": "variant",
+    "new_uint64": "variant",
+    "new_variant": "variant",
+    "parse": "variant",
+    "parse_error_print_context": "gerror",
+    "store": "gpointer",
+    "take_ref": "variant"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GVariant",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "checkFormatString",
+     "name": "check_format_string",
+     "params": [
+      {
+       "js": "formatString",
+       "name": "format_string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "copyOnly",
+       "name": "copy_only",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.34"
+    },
+    {
+     "js": "classify",
+     "name": "classify",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "GLib.VariantClass"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "dupBytestring",
+     "name": "dup_bytestring",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "int",
+       "t": "guint8"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "dupBytestringArray",
+     "name": "dup_bytestring_array",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "dupObjv",
+     "name": "dup_objv",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.30"
+    },
+    {
+     "js": "dupString",
+     "name": "dup_string",
+     "params": [
+      {
+       "dir": "out",
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "dupStrv",
+     "name": "dup_strv",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getBoolean",
+     "name": "get_boolean",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getByte",
+     "name": "get_byte",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint8"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getBytestring",
+     "name": "get_bytestring",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "int",
+       "t": "guint8"
+      },
+      "k": "array",
+      "len": "zero"
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getBytestringArray",
+     "name": "get_bytestring_array",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.26"
+    },
+    {
+     "js": "getDataAsBytes",
+     "name": "get_data_as_bytes",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.36"
+    },
+    {
+     "js": "getDouble",
+     "name": "get_double",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getHandle",
+     "name": "get_handle",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint32"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getInt16",
+     "name": "get_int16",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint16"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getInt32",
+     "name": "get_int32",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint32"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getInt64",
+     "name": "get_int64",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint64"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getObjv",
+     "name": "get_objv",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.30"
+    },
+    {
+     "js": "getSize",
+     "name": "get_size",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getString",
+     "name": "get_string",
+     "params": [
+      {
+       "dir": "out",
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getStrv",
+     "name": "get_strv",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "str"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getTypeString",
+     "name": "get_type_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getUint16",
+     "name": "get_uint16",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint16"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getUint32",
+     "name": "get_uint32",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint32"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "getUint64",
+     "name": "get_uint64",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint64"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "hash",
+     "name": "hash",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "isContainer",
+     "name": "is_container",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "isNormalForm",
+     "name": "is_normal_form",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "nChildren",
+     "name": "n_children",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "print",
+     "name": "print",
+     "params": [
+      {
+       "js": "typeAnnotate",
+       "name": "type_annotate",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "str"
+     },
+     "since": "2.24"
+    }
+   ],
+   "name": "Variant",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.Variant",
+   "refs": [
+    "GLib.Bytes",
+    "GLib.VariantClass"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "2.24",
+   "statics": [
+    {
+     "js": "isObjectPath",
+     "name": "is_object_path",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "isSignature",
+     "name": "is_signature",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.24"
+    },
+    {
+     "js": "parseErrorQuark",
+     "name": "parse_error_quark",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint32"
+     }
+    }
+   ],
+   "undecided": []
+  },
+  "VariantBuilder": {
+   "abstract": false,
+   "blocked": {
+    "add_value": "variant",
+    "end": "variant",
+    "new": "variant",
+    "open": "variant"
+   },
+   "builder": true,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GVariantBuilder",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "close",
+     "name": "close",
+     "params": [],
+     "ret": {
+      "k": "void"
+     },
+     "since": "2.24"
+    }
+   ],
+   "name": "VariantBuilder",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.VariantBuilder",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "VariantDict": {
+   "abstract": false,
+   "blocked": {
+    "end": "variant",
+    "insert_value": "variant",
+    "lookup_value": "variant",
+    "new": "variant"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GVariantDict",
+   "hidden": [
+    "clear",
+    "remove"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "contains",
+     "name": "contains",
+     "params": [
+      {
+       "js": "key",
+       "name": "key",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.40"
+    }
+   ],
+   "name": "VariantDict",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.VariantDict",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": "2.40",
+   "statics": [],
+   "undecided": []
+  },
+  "VariantType": {
+   "abstract": false,
+   "blocked": {
+    "checked_": "variant",
+    "element": "variant",
+    "equal": "variant",
+    "first": "variant",
+    "is_subtype_of": "variant",
+    "key": "variant",
+    "new": "variant",
+    "new_array": "variant",
+    "new_dict_entry": "variant",
+    "new_maybe": "variant",
+    "new_tuple": "variant",
+    "next": "variant",
+    "value": "variant"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GVariantType",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "dupString",
+     "name": "dup_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getStringLength",
+     "name": "get_string_length",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     }
+    },
+    {
+     "js": "hash",
+     "name": "hash",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    },
+    {
+     "js": "isArray",
+     "name": "is_array",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isBasic",
+     "name": "is_basic",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isContainer",
+     "name": "is_container",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isDefinite",
+     "name": "is_definite",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isDictEntry",
+     "name": "is_dict_entry",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isMaybe",
+     "name": "is_maybe",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isTuple",
+     "name": "is_tuple",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "isVariant",
+     "name": "is_variant",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "nItems",
+     "name": "n_items",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     }
+    }
+   ],
+   "name": "VariantType",
+   "ns": "GLib",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "GLib.VariantType",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": "2.24",
+   "statics": [
+    {
+     "js": "stringGetDepth",
+     "name": "string_get_depth_",
+     "params": [
+      {
+       "js": "typeString",
+       "name": "type_string",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     }
+    },
+    {
+     "js": "stringIsValid",
+     "name": "string_is_valid",
+     "params": [
+      {
+       "js": "typeString",
+       "name": "type_string",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "stringScan",
+     "name": "string_scan",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "limit",
+       "name": "limit",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "endptr",
+       "name": "endptr",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.24"
+    }
+   ],
+   "undecided": []
+  }
+ },
+ "version": "2.0"
+}

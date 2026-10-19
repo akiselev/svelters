@@ -34,6 +34,7 @@ use svelters_abi::{
 mod asyncs;
 mod callbacks;
 mod ops;
+mod statics;
 pub(crate) use callbacks::{CallbackEngine, CallbackRegistry, CbTable};
 pub(crate) use ops::{Name, OpError, OpKind};
 
@@ -265,7 +266,8 @@ struct CoreState {
     members: HashMap<(u32, svl_id, svl_id), Option<Rc<MemberDesc>>>,
     types: HashMap<svl_id, Option<Rc<TypeInfo>>>,
     /// Live boxed-value handles, and ones the JS side dropped (released at the next checkpoint).
-    boxed: HashSet<svl_handle>,
+    /// Value handles also remember their kind: VALUE handles take method calls (ABI v2.5).
+    boxed: HashMap<svl_handle, svl_id>,
     release_queue: Vec<svl_handle>,
     callbacks: CbTable,
     /// (kind id, signal id) → name, filled by `listen`

@@ -1,0 +1,1745 @@
+{
+ "namespace": "Gsk",
+ "schema": "svelters-types/v1",
+ "toolkit": "gtk",
+ "types": {
+  "ComponentTransfer": {
+   "abstract": false,
+   "blocked": {
+    "equal": "gpointer"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "newDiscrete",
+     "name": "new_discrete",
+     "params": [
+      {
+       "hidden": true,
+       "js": "n",
+       "name": "n",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      },
+      {
+       "js": "values",
+       "name": "values",
+       "type": {
+        "elem": {
+         "k": "float"
+        },
+        "k": "array",
+        "len": 0
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.ComponentTransfer"
+     },
+     "since": "4.20"
+    },
+    {
+     "js": "newGamma",
+     "name": "new_gamma",
+     "params": [
+      {
+       "js": "amp",
+       "name": "amp",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "exp",
+       "name": "exp",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "ofs",
+       "name": "ofs",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.ComponentTransfer"
+     },
+     "since": "4.20"
+    },
+    {
+     "js": "newIdentity",
+     "name": "new_identity",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.ComponentTransfer"
+     },
+     "since": "4.20"
+    },
+    {
+     "js": "newLevels",
+     "name": "new_levels",
+     "params": [
+      {
+       "js": "n",
+       "name": "n",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.ComponentTransfer"
+     },
+     "since": "4.20"
+    },
+    {
+     "js": "newLinear",
+     "name": "new_linear",
+     "params": [
+      {
+       "js": "m",
+       "name": "m",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.ComponentTransfer"
+     },
+     "since": "4.20"
+    },
+    {
+     "js": "newTable",
+     "name": "new_table",
+     "params": [
+      {
+       "hidden": true,
+       "js": "n",
+       "name": "n",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      },
+      {
+       "js": "values",
+       "name": "values",
+       "type": {
+        "elem": {
+         "k": "float"
+        },
+        "k": "array",
+        "len": 0
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.ComponentTransfer"
+     },
+     "since": "4.20"
+    }
+   ],
+   "curated": false,
+   "gtype": "GskComponentTransfer",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [],
+   "name": "ComponentTransfer",
+   "ns": "Gsk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gsk.ComponentTransfer",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.20",
+   "statics": [],
+   "undecided": []
+  },
+  "Path": {
+   "abstract": false,
+   "blocked": {
+    "foreach": "callback",
+    "foreach_intersection": "callback",
+    "to_cairo": "unbound:cairo.Context"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GskPath",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "path2",
+       "name": "path2",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.22"
+    },
+    {
+     "js": "getBounds",
+     "name": "get_bounds",
+     "params": [
+      {
+       "dir": "out",
+       "js": "bounds",
+       "name": "bounds",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getClosestPoint",
+     "name": "get_closest_point",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "js": "threshold",
+       "name": "threshold",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "result",
+       "name": "result",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "distance",
+       "name": "distance",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getEndPoint",
+     "name": "get_end_point",
+     "params": [
+      {
+       "dir": "out",
+       "js": "result",
+       "name": "result",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getNext",
+     "name": "get_next",
+     "params": [
+      {
+       "dir": "inout",
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.22"
+    },
+    {
+     "js": "getPrevious",
+     "name": "get_previous",
+     "params": [
+      {
+       "dir": "inout",
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.22"
+    },
+    {
+     "js": "getStartPoint",
+     "name": "get_start_point",
+     "params": [
+      {
+       "dir": "out",
+       "js": "result",
+       "name": "result",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getStrokeBounds",
+     "name": "get_stroke_bounds",
+     "params": [
+      {
+       "js": "stroke",
+       "name": "stroke",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Stroke"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "bounds",
+       "name": "bounds",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getTightBounds",
+     "name": "get_tight_bounds",
+     "params": [
+      {
+       "dir": "out",
+       "js": "bounds",
+       "name": "bounds",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.22"
+    },
+    {
+     "js": "inFill",
+     "name": "in_fill",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "js": "fillRule",
+       "name": "fill_rule",
+       "type": {
+        "k": "enum",
+        "t": "Gsk.FillRule"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "isClosed",
+     "name": "is_closed",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "isEmpty",
+     "name": "is_empty",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "print",
+     "name": "print",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.String"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "4.14"
+    }
+   ],
+   "name": "Path",
+   "ns": "Gsk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gsk.Path",
+   "refs": [
+    "GLib.String",
+    "Graphene.Point",
+    "Graphene.Rect",
+    "Gsk.FillRule",
+    "Gsk.PathPoint",
+    "Gsk.Stroke"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.14",
+   "statics": [
+    {
+     "js": "parse",
+     "name": "parse",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Path"
+     },
+     "ret_nullable": true,
+     "since": "4.14"
+    }
+   ],
+   "undecided": []
+  },
+  "PathMeasure": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.PathMeasure"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "newWithTolerance",
+     "name": "new_with_tolerance",
+     "params": [
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      },
+      {
+       "js": "tolerance",
+       "name": "tolerance",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.PathMeasure"
+     },
+     "since": "4.14"
+    }
+   ],
+   "curated": false,
+   "gtype": "GskPathMeasure",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getLength",
+     "name": "get_length",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getPath",
+     "name": "get_path",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Path"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getPoint",
+     "name": "get_point",
+     "params": [
+      {
+       "js": "distance",
+       "name": "distance",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "result",
+       "name": "result",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getTolerance",
+     "name": "get_tolerance",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    }
+   ],
+   "name": "PathMeasure",
+   "ns": "Gsk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gsk.PathMeasure",
+   "refs": [
+    "Gsk.Path",
+    "Gsk.PathPoint"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.14",
+   "statics": [],
+   "undecided": []
+  },
+  "PathPoint": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GskPathPoint",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "compare",
+     "name": "compare",
+     "params": [
+      {
+       "js": "point2",
+       "name": "point2",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "point2",
+       "name": "point2",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathPoint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getCurvature",
+     "name": "get_curvature",
+     "params": [
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      },
+      {
+       "js": "direction",
+       "name": "direction",
+       "type": {
+        "k": "enum",
+        "t": "Gsk.PathDirection"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "center",
+       "name": "center",
+       "nullable": true,
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getDistance",
+     "name": "get_distance",
+     "params": [
+      {
+       "js": "measure",
+       "name": "measure",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.PathMeasure"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getPosition",
+     "name": "get_position",
+     "params": [
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "position",
+       "name": "position",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getRotation",
+     "name": "get_rotation",
+     "params": [
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      },
+      {
+       "js": "direction",
+       "name": "direction",
+       "type": {
+        "k": "enum",
+        "t": "Gsk.PathDirection"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getTangent",
+     "name": "get_tangent",
+     "params": [
+      {
+       "js": "path",
+       "name": "path",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      },
+      {
+       "js": "direction",
+       "name": "direction",
+       "type": {
+        "k": "enum",
+        "t": "Gsk.PathDirection"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "tangent",
+       "name": "tangent",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.14"
+    }
+   ],
+   "name": "PathPoint",
+   "ns": "Gsk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gsk.PathPoint",
+   "refs": [
+    "Graphene.Point",
+    "Graphene.Vec2",
+    "Gsk.Path",
+    "Gsk.PathDirection",
+    "Gsk.PathMeasure"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.14",
+   "statics": [],
+   "undecided": []
+  },
+  "Renderer": {
+   "abstract": true,
+   "blocked": {
+    "render": "fundamental",
+    "render_texture": "fundamental"
+   },
+   "builder": false,
+   "category": "object",
+   "constructors": [
+    {
+     "js": "newForSurface",
+     "name": "new_for_surface",
+     "params": [
+      {
+       "js": "surface",
+       "name": "surface",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Surface"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gsk.Renderer"
+     },
+     "ret_nullable": true
+    }
+   ],
+   "curated": false,
+   "gtype": "GskRenderer",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getSurface",
+     "name": "get_surface",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "isRealized",
+     "name": "is_realized",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "realize",
+     "name": "realize",
+     "params": [
+      {
+       "js": "surface",
+       "name": "surface",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gdk.Surface"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
+     "js": "realizeForDisplay",
+     "name": "realize_for_display",
+     "params": [
+      {
+       "js": "display",
+       "name": "display",
+       "type": {
+        "k": "object",
+        "t": "Gdk.Display"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14",
+     "throws": true
+    },
+    {
+     "js": "unrealize",
+     "name": "unrealize",
+     "params": [],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
+   "name": "Renderer",
+   "ns": "Gsk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "realized",
+     "name": "realized",
+     "readable": true,
+     "type": {
+      "k": "bool"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "surface",
+     "name": "surface",
+     "readable": true,
+     "type": {
+      "k": "object",
+      "t": "Gdk.Surface"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gsk.Renderer",
+   "refs": [
+    "Gdk.Display",
+    "Gdk.Surface"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Stroke": {
+   "abstract": false,
+   "blocked": {
+    "equal": "gpointer",
+    "to_cairo": "unbound:cairo.Context"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "lineWidth",
+       "name": "line_width",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Stroke"
+     },
+     "since": "4.14"
+    }
+   ],
+   "curated": false,
+   "gtype": "GskStroke",
+   "hidden": [
+    "set_dash",
+    "set_dash_offset",
+    "set_line_cap",
+    "set_line_join",
+    "set_line_width",
+    "set_miter_limit"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "getDash",
+     "name": "get_dash",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "nDash",
+       "name": "n_dash",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "float"
+      },
+      "k": "array",
+      "len": 0
+     },
+     "ret_nullable": true,
+     "since": "4.14"
+    },
+    {
+     "js": "getDashOffset",
+     "name": "get_dash_offset",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getLineCap",
+     "name": "get_line_cap",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gsk.LineCap"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getLineJoin",
+     "name": "get_line_join",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gsk.LineJoin"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getLineWidth",
+     "name": "get_line_width",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    },
+    {
+     "js": "getMiterLimit",
+     "name": "get_miter_limit",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "4.14"
+    }
+   ],
+   "name": "Stroke",
+   "ns": "Gsk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gsk.Stroke",
+   "refs": [
+    "Gsk.LineCap",
+    "Gsk.LineJoin"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "4.14",
+   "statics": [],
+   "undecided": []
+  },
+  "Transform": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     }
+    }
+   ],
+   "curated": false,
+   "gtype": "GskTransform",
+   "hidden": [
+    "transform_bounds",
+    "transform_point"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "second",
+       "name": "second",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Transform"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "getCategory",
+     "name": "get_category",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gsk.TransformCategory"
+     }
+    },
+    {
+     "js": "invert",
+     "name": "invert",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "matrix",
+     "name": "matrix",
+     "params": [
+      {
+       "js": "matrix",
+       "name": "matrix",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     }
+    },
+    {
+     "js": "matrix2d",
+     "name": "matrix_2d",
+     "params": [
+      {
+       "js": "xx",
+       "name": "xx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "yx",
+       "name": "yx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "xy",
+       "name": "xy",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "yy",
+       "name": "yy",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "dx",
+       "name": "dx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "dy",
+       "name": "dy",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true,
+     "since": "4.20"
+    },
+    {
+     "js": "perspective",
+     "name": "perspective",
+     "params": [
+      {
+       "js": "depth",
+       "name": "depth",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     }
+    },
+    {
+     "js": "print",
+     "name": "print",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.String"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "rotate",
+     "name": "rotate",
+     "params": [
+      {
+       "js": "angle",
+       "name": "angle",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "rotate3d",
+     "name": "rotate_3d",
+     "params": [
+      {
+       "js": "angle",
+       "name": "angle",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "axis",
+       "name": "axis",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "factorX",
+       "name": "factor_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "factorY",
+       "name": "factor_y",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "scale3d",
+     "name": "scale_3d",
+     "params": [
+      {
+       "js": "factorX",
+       "name": "factor_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "factorY",
+       "name": "factor_y",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "factorZ",
+       "name": "factor_z",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "skew",
+     "name": "skew",
+     "params": [
+      {
+       "js": "skewX",
+       "name": "skew_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "skewY",
+       "name": "skew_y",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true,
+     "since": "4.6"
+    },
+    {
+     "js": "to2d",
+     "name": "to_2d",
+     "params": [
+      {
+       "dir": "out",
+       "js": "outXx",
+       "name": "out_xx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outYx",
+       "name": "out_yx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outXy",
+       "name": "out_xy",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outYy",
+       "name": "out_yy",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outDx",
+       "name": "out_dx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outDy",
+       "name": "out_dy",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "to2dComponents",
+     "name": "to_2d_components",
+     "params": [
+      {
+       "dir": "out",
+       "js": "outSkewX",
+       "name": "out_skew_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outSkewY",
+       "name": "out_skew_y",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outScaleX",
+       "name": "out_scale_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outScaleY",
+       "name": "out_scale_y",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outAngle",
+       "name": "out_angle",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outDx",
+       "name": "out_dx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outDy",
+       "name": "out_dy",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.6"
+    },
+    {
+     "js": "toAffine",
+     "name": "to_affine",
+     "params": [
+      {
+       "dir": "out",
+       "js": "outScaleX",
+       "name": "out_scale_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outScaleY",
+       "name": "out_scale_y",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outDx",
+       "name": "out_dx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outDy",
+       "name": "out_dy",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "toMatrix",
+     "name": "to_matrix",
+     "params": [
+      {
+       "dir": "out",
+       "js": "outMatrix",
+       "name": "out_matrix",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "toString",
+     "name": "to_string",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "toTranslate",
+     "name": "to_translate",
+     "params": [
+      {
+       "dir": "out",
+       "js": "outDx",
+       "name": "out_dx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outDy",
+       "name": "out_dy",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "transform",
+     "name": "transform",
+     "params": [
+      {
+       "js": "other",
+       "name": "other",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Transform"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "translate",
+     "name": "translate",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "translate3d",
+     "name": "translate_3d",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gsk.Transform"
+     },
+     "ret_nullable": true
+    }
+   ],
+   "name": "Transform",
+   "ns": "Gsk",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Gsk.Transform",
+   "refs": [
+    "GLib.String",
+    "Graphene.Matrix",
+    "Graphene.Point",
+    "Graphene.Point3D",
+    "Graphene.Vec3",
+    "Gsk.TransformCategory"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "parse",
+     "name": "parse",
+     "params": [
+      {
+       "js": "string",
+       "name": "string",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "outTransform",
+       "name": "out_transform",
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Transform"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    }
+   ],
+   "undecided": []
+  }
+ },
+ "version": "4.0"
+}

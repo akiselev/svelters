@@ -318,6 +318,7 @@ ingest (per toolkit, deterministic, checked in)              classify (rules, §
 - **Scope selection:**
   - **Dev:** whole namespaces in scope.
   - **Release:** the M6 binding linker narrows it to what the app imports. The module granularity (`svelters:gtk/gio`) gives the linker static roots.
+  - **Release retention (Q9):** every non-UI type is an ES module named export (`import { File } from 'svelters:gtk/gio'`), one file per class re-exported from the namespace module, `sideEffects: false`, no top-level registration (kinds resolve lazily on first use). The imported names are the linker's roots. It keeps the **signature closure** of each root: every type reachable through the params, returns, props and signals of an imported class. The generator writes `manifest.json` (per class: members and the types they mention) so the closure is computable from generated metadata. Dev builds stay fully reflective. Elements stay tags.
 - **Upstream updates** (new GTK/Qt/SDK): re-ingest, re-classify, then diff the classification report. New members in already-classified types need no human. New types either follow the rules or appear as needs-override in the report.
 
 ### 3.6 Hiding VALUE mutators (decision Q3)
@@ -558,6 +559,7 @@ These links weren't re-fetched in this session; the descriptions come from the p
 - **Q7 — objc2's generated sources are the primary Apple ingest** ("we are Rust anyway"). MAC1's SDK libclang pass supplements them on a Mac, for nullability and availability that objc2 doesn't carry as data.
 - **Q8 — WinUI threading was investigated (§4.1).** The winmd Threading/MarshalingBehavior attributes say Both/Agile for everything, including UIElement, so they can't be used. Thread class comes from the structural `DispatcherQueue` signal. Every runtime class is SHARED, the backend runs one UI thread, there is a `HasThreadAccess` check at minting (and on every call in debug builds), and completions hop to the UI thread before conversion.
 
+- **Q9 (user) — ES module named exports, import-driven tree shaking, signature-closure retention.** See §3.5 (release retention). N0 emits the manifest and tests the closure; the M6 linker consumes it later.
 - **Q2 — reactive getters need more research before deciding.** The model must work across GTK (`notify::`), Qt (NOTIFY), AppKit (KVO) and WinUI (DependencyProperty callbacks / INotifyPropertyChanged). The subscription contract (subscribe/unsubscribe per object+prop, which props are observable, delivery timing relative to the scheduler) is to be designed as part of the ABI, not bolted onto N3.
 - **Q4 — Qt overloads use runtime dispatch** (PySide-style): one JS name, the generated thunk picks the first overload whose arity and JS types match, in a fixed metadata-derived order, with a small rename list for the truly ambiguous ones (measured in N2).
 - **Q5 — one module per native namespace** (`svelters:gtk/gio`, `svelters:gtk/pango`, `svelters:qt/core`, `svelters:qt/gui`, ...).

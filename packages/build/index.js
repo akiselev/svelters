@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { typesAliases } from '@svelters/types/vite';
 import { stylePlugin } from './style-plugin.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -28,7 +29,7 @@ export function svelteConfig(root, backend = process.env.SVELTERS_BACKEND ?? 're
     root,
     resolve: {
       conditions: renderer ? ['custom-renderer', 'browser'] : ['browser'],
-      alias: { '@app': path.join(root, 'src/App.svelte') },
+      alias: [{ find: '@app', replacement: path.join(root, 'src/App.svelte') }, ...typesAliases()],
     },
     plugins: [
       ...(styles ? [styles.plugin] : []),
