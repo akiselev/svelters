@@ -325,6 +325,16 @@ impl JsEngine for QjsEngine {
         })
     }
 
+    fn dispatch_prop_changed(&mut self, handle: u64, prop: &str) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_prop_changed")?;
+            let Some(f) = f.as_function() else {
+                return Ok(());
+            };
+            f.call::<_, Value>((handle as f64, prop)).map(|_| ())
+        })
+    }
+
     fn fire_timer(&mut self, id: u32) -> Result<(), JsError> {
         self.call_guarded(|ctx| {
             let internal: Object = ctx.globals().get("__svelters_internal")?;
@@ -776,6 +786,21 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                     let h = handle_of(&ctx, h)?;
                     let flags = flags.0.unwrap_or(0);
                     let r = msg(&ctx, conv.with_name(&signal, |n| c.op_listen(h, n, on, flags)))?;
+                    op(&ctx, r)
+                },
+            )?,
+        )?;
+        let w = core.clone();
+        let cb = cbs.clone();
+        host.set(
+            "observe",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, h: f64, prop: Value<'js>, on: bool| -> Res<bool> {
+                    let c = core_of(&ctx, &w)?;
+                    let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
+                    let h = handle_of(&ctx, h)?;
+                    let r = msg(&ctx, conv.with_name(&prop, |n| c.op_observe(h, n, on)))?;
                     op(&ctx, r)
                 },
             )?,

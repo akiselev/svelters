@@ -316,4 +316,20 @@ Additive members for non-UI types (`Gio.File`, `Gtk.TextBuffer`, `Pango.FontDesc
 
 The JS side is the generated `svelters:gtk/<namespace>` modules, one named export per class; see [Non-UI types](/types/gtk/). The full text, including the op-log lines `construct` and `static`, is in `plans/architecture/backend-abi.md`.
 
+## ABI v2.6: property observation (mechanics only)
+
+Two nullable members let the host learn that a native property changed without a signal of its own. Only the mechanics are in: how the host coalesces, compares and delivers changes to Svelte is still open (`plans/research/REACTIVITY.md` §12), so nothing in the runtime or the generated getters uses it yet.
+
+- **`observe(h, prop, on)`** (backend, after `call_static`): start or stop watching one property natively. Calls nest per (handle, prop); `destroy` and the native death of the handle end every observation; an observation never keeps the object alive. A property with no change notification on the backend answers `SVL_OBSERVE_UNSUPPORTED` (-2).
+- **`prop_changed(h, prop)`** (host, after `frame`): "this property may have changed". It carries no value, so the reader reads it live.
+- **`SVL_M_OBSERVABLE = 64`** on a property descriptor: `observe` can watch it.
+
+| Backend | Mechanism | Refused |
+|---|---|---|
+| GTK | `notify::<prop>` on any GObject handle, widgets and non-widgets; a forwarded property (`GtkRange` `value`) on the object it lives on | computed props, construct-only props |
+| Qt | the property's NOTIFY signal (`QMetaProperty::notifySignal`) | props without NOTIFY (most `QWidget` props, `QLabel` `text`) |
+| AppKit, WinUI | not implemented (the member is `NULL`) | everything |
+
+The raw JS side: `__svelters_host.observe(h, prop, on)` refcounts per (handle, prop) and returns whether the property is observed afterwards; at the next checkpoint the host calls `globalThis.__svelters_prop_changed(h, prop)` once per notification. The op log gains `observe #h prop on|off` and `changed #h prop`, and scripts gain `{"changed": [h, prop]}` steps.
+
 Sources: `plans/architecture/backend-abi.md`, `crates/svelters-abi/include/svelters_backend.h`, `docs/notes/ownership-and-lifetimes.md`, `docs/notes/p2-host-lane.md`, `docs/notes/p5-integration.md`, `docs/notes/js-native-serdes.md`.

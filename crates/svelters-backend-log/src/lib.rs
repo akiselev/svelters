@@ -5,6 +5,8 @@
 //! 1. processes the script steps in order: `event` logs the event, posts it to the host and
 //!    calls `host.checkpoint` so it is delivered at once; `checkpoint` calls `host.checkpoint`
 //!    (what that drains is the host's business; see `HostConfig::scripted`);
+//!    `changed` logs `changed #h prop` and calls `host.prop_changed` (ABI v2.6), then
+//!    `host.checkpoint`;
 //! 2. before each step, and after the last, runs a checkpoint if the host called `wake` meanwhile;
 //! 3. then idles, running a checkpoint on every `wake`, and returns when `quit` is called or when
 //!    no wake arrives for [`LogOptions::settle`].
@@ -15,7 +17,7 @@ use std::sync::atomic::{AtomicI32, AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 use svelters_abi::{
-    Backend, BackendVtable, HostRef, MemberDesc, NameKind, SVL_BOOL, SVL_F64, SVL_GONE_PARENT, SVL_I64, SVL_LIFE_OWNED,
+    Backend, BackendVtable, HostRef, MemberDesc, NameKind, ObserveError, SVL_M_OBSERVABLE, SVL_BOOL, SVL_F64, SVL_GONE_PARENT, SVL_I64, SVL_LIFE_OWNED,
     SVL_LIFE_TOPLEVEL, SVL_STYLE_CLASSES, SVL_STYLE_INLINE, SVL_STYLE_NAME, SVL_STYLE_OPACITY, SVL_STYLE_SCHEME, SVL_STYLE_SEP, SVL_STYLE_SHEET, SVL_STYLE_TARGET, SVL_STYLE_TARGET_CSS, SlotDesc, Value, Waker, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
 };
 
@@ -43,6 +45,13 @@ pub enum Step {
         signal: String,
         args: Vec<Value>,
         flags: u32,
+    },
+    /// ABI v2.6: the toolkit announces that property `prop` of `handle` may have changed. Logs
+    /// `changed #h prop`, calls `host.prop_changed` and then `host.checkpoint` (the host ignores
+    /// it unless JS observes the property).
+    Changed {
+        handle: svl_handle,
+        prop: String,
     },
     Checkpoint,
 }
@@ -76,7 +85,8 @@ fn flags_from_word(w: &str) -> Result<u32, String> {
 }
 
 /// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args, flags?]}`
-/// (`flags` is `"after"`, `"capture"` or `"after+capture"`), `{"sync": [h, signal, args, flags?]}`, `{"gone": [h, reason]}` and `{"checkpoint": true}` steps.
+/// (`flags` is `"after"`, `"capture"` or `"after+capture"`), `{"sync": [h, signal, args, flags?]}`, `{"gone": [h, reason]}`,
+/// `{"changed": [h, prop]}` and `{"checkpoint": true}` steps.
 pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
     let root: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("script: {e}"))?;
     let steps = root.as_array().ok_or("script: expected a JSON array")?;
@@ -136,10 +146,15 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
         let name = g.get(1).and_then(|s| s.as_str()).ok_or("gone: bad reason")?;
         let reason = gone_from_name(name).ok_or_else(|| format!("gone: unknown reason `{name}`"))?;
         Ok(Step::Gone { handle, reason })
+    } else if let Some(c) = obj.get("changed") {
+        let c = c.as_array().ok_or("changed: expected [handle, prop]")?;
+        let handle = c.first().and_then(|h| h.as_u64()).ok_or("changed: bad handle")?;
+        let prop = c.get(1).and_then(|s| s.as_str()).ok_or("changed: bad prop")?.to_string();
+        Ok(Step::Changed { handle, prop })
     } else if obj.contains_key("checkpoint") {
         Ok(Step::Checkpoint)
     } else {
-        Err("unknown step (expected `event`, `sync`, `gone` or `checkpoint`)".into())
+        Err("unknown step (expected `event`, `sync`, `gone`, `changed` or `checkpoint`)".into())
     }
 }
 
@@ -549,7 +564,8 @@ impl Backend for LogBackend {
             name: name.clone(),
             params: vec![slot.clone()],
             ret: slot,
-            flags: 0,
+            // The log backend can "observe" anything: it only records the op.
+            flags: SVL_M_OBSERVABLE,
         })
     }
 
@@ -715,6 +731,19 @@ impl Backend for LogBackend {
         Ok(())
     }
 
+    fn supports_observe(&self) -> bool {
+        true
+    }
+
+    /// Records every call as `observe #h prop on|off` (the host only sends transitions).
+    fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> Result<(), ObserveError> {
+        self.check_live(h)?;
+        let mut st = self.shared.lock();
+        let name = st.names.name(prop).to_string();
+        let _ = writeln!(st.log, "observe #{h} {name} {}", if on { "on" } else { "off" });
+        Ok(())
+    }
+
     fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> Result<(), String> {
         self.check_live(h)?;
         let mut st = self.shared.lock();
@@ -858,6 +887,13 @@ impl Backend for LogBackend {
                         }
                         Err(_) => self.append(format_args!("result #{handle} error")),
                     }
+                }
+                Step::Changed { handle, prop } => {
+                    let kind = self.check_live(handle)?;
+                    let id = self.shared.lock().names.intern(NameKind::Prop as u32, kind, &prop);
+                    self.append(format_args!("changed #{handle} {prop}"));
+                    host.prop_changed(handle, id);
+                    self.checkpoint(host);
                 }
                 Step::Gone { handle, reason } => {
                     self.check_live(handle)?;

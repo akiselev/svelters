@@ -359,6 +359,8 @@ impl Core {
                 st.handles.remove(&h);
                 st.toplevels.remove(&h);
                 st.tree.remove(&h);
+                // The backend drops its native observations of `h` in `destroy`.
+                st.observed.retain(|k, _| k.0 != h);
                 st.dead.push(h, Death::Destroyed);
             }
             self.cb_release_owner(h);
@@ -640,6 +642,60 @@ impl Core {
             }
             self.backend.listen_ex(h, s, on, flags).map_err(|e| self.backend_err(e))
         })
+    }
+
+    /// ABI v2.6 `host.observe(h, prop, on)`: refcounted per (h, prop); the backend's `observe` is
+    /// called on the 0→1 and 1→0 transitions only. Returns whether (h, prop) is observed after the
+    /// call: `false` for `on` means the backend has no change notification for this property
+    /// (`SVL_OBSERVE_UNSUPPORTED`, or no `observe` member), which is not an error. `off` on a dead
+    /// handle or an unobserved prop is a no-op. Errors: a dead handle (for `on`), an unknown prop,
+    /// or a backend failure.
+    pub(crate) fn op_observe(&self, h: svl_handle, prop: Name<'_>, on: bool) -> Result<bool, OpError> {
+        self.timed(|| {
+            let k = match self.live_kind(h)? {
+                Some(k) => k,
+                None if !on => return Ok(false),
+                None => return Err(self.kind_of(h).unwrap_err().into()),
+            };
+            let p = self.resolve_name(NameKind::Prop, k, prop)?;
+            let count = self.st.borrow().observed.get(&(h, p)).map_or(0, |o| o.0);
+            if on {
+                if count > 0 {
+                    self.st.borrow_mut().observed.get_mut(&(h, p)).unwrap().0 += 1;
+                    return Ok(true);
+                }
+                let name = match prop {
+                    Name::Str(s) => s.to_string(),
+                    Name::Id(id) => self.member(NameKind::Prop, k, id).map(|d| d.name.clone()).unwrap_or_else(|| format!("#{id}")),
+                };
+                match self.backend.observe(h, p, true) {
+                    Ok(()) => {
+                        self.st.borrow_mut().observed.insert((h, p), (1, name));
+                        Ok(true)
+                    }
+                    Err(e) if e.code == SVL_OBSERVE_UNSUPPORTED => Ok(false),
+                    Err(e) => Err(self.backend_err(e)),
+                }
+            } else {
+                match count {
+                    0 => Ok(false),
+                    1 => {
+                        self.st.borrow_mut().observed.remove(&(h, p));
+                        self.backend.observe(h, p, false).map_err(|e| self.backend_err(e))?;
+                        Ok(false)
+                    }
+                    _ => {
+                        self.st.borrow_mut().observed.get_mut(&(h, p)).unwrap().0 -= 1;
+                        Ok(true)
+                    }
+                }
+            }
+        })
+    }
+
+    /// Number of (handle, prop) pairs observed natively (ABI v2.6).
+    pub(crate) fn observed_count(&self) -> usize {
+        self.st.borrow().observed.len()
     }
 
     // ---- boxed values ----

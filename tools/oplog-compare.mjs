@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Compares two op logs (plans/architecture/backend-abi.md "Op-log format") by the native state
 // they produce, not by their text: each log is replayed into a tree, and the states are compared
-// before every `event` / `sync` / `deferred` / `gone` line and at the end. A state is: live handles
-// with kind, props, children per slot (in order), child attributes (ABI v2.2 `attr`, cleared when
-// the child is removed), listened signals with their phase word, the methods called on them, and
+// before every `event` / `sync` / `deferred` / `gone` / `changed` line and at the end. A state is: live
+// handles with kind, props, children per slot (in order), child attributes (ABI v2.2 `attr`, cleared when
+// the child is removed), listened signals with their phase word, observed props (ABI v2.6 `observe`),
+// the methods called on them, and
 // the values JS returned for `sync` lines so far (`result` lines), and the widget name (`style #h
 // name`, kept as the prop `(name)`; other `style` lines are not compared).
 //
@@ -67,6 +68,16 @@ function parseLine(line) {
       const [, n, signal, rest] = sp(line, 4);
       const [on, flags] = rest.split(' ');
       return { op, h: h(n), signal: flags ? `${signal} ${flags}` : signal, on: on === 'on' };
+    }
+    case 'observe': {
+      // ABI v2.6: `observe #h prop on|off`
+      const [, n, prop, on] = sp(line, 4);
+      return { op, h: h(n), prop, on: on === 'on' };
+    }
+    case 'changed': {
+      // ABI v2.6: `changed #h prop` (the toolkit announced a change; no value)
+      const [, n, prop] = sp(line, 3);
+      return { op, h: h(n), prop };
     }
     case 'event':
     case 'sync':
@@ -138,6 +149,7 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
       );
       const slots = Object.fromEntries([...n.slots].sort(([a], [b]) => (a < b ? -1 : 1)));
       const node = { h, kind: n.kind, props, slots, listening: [...n.listening].sort(), calls: n.calls };
+      if (n.observing?.size) node.observing = [...n.observing].sort();
       if (n.attrs.size) node.attrs = Object.fromEntries([...n.attrs].sort(([a], [b]) => (a < b ? -1 : 1)));
       return node;
     });
@@ -211,6 +223,13 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
         if (o.on) get(o.h, line).listening.add(o.signal);
         else get(o.h, line).listening.delete(o.signal);
         break;
+      case 'observe': {
+        const n = get(o.h, line);
+        n.observing ??= new Set();
+        if (o.on) n.observing.add(camelProps ? camel(o.prop) : o.prop);
+        else n.observing.delete(camelProps ? camel(o.prop) : o.prop);
+        break;
+      }
       case 'attr': {
         const c = get(o.c, line);
         if (!c.parent || c.parent.h !== o.p) throw new Error(`attr on a non-child: ${line}`);
@@ -233,13 +252,14 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
       case 'event':
       case 'sync':
       case 'deferred':
+      case 'changed':
       case 'gone':
         boundaries.push({ line, state: snapshot() });
         if (o.op === 'gone') kill(o.h);
         break;
     }
   }
-  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|deferred|result|gone) /.test(l)).length };
+  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|deferred|result|gone|changed) /.test(l)).length };
 }
 
 function firstDiff(a, b) {

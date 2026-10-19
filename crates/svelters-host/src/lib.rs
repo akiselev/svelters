@@ -74,6 +74,13 @@ impl HostCallbacks for Callbacks {
         core::frame(&self.core, &self.engine);
     }
 
+    fn prop_changed(&self, h: svl_handle, prop: svl_id) {
+        // Delivered at the next checkpoint, like a posted signal (a live backend expects a wake).
+        if self.core.prop_changed(h, prop) && !self.core.cfg.scripted {
+            self.core.backend().wake();
+        }
+    }
+
     fn invoke_callback(&self, callback: u64, args: &[Value]) -> Result<Value, String> {
         self.core.invoke_callback(callback, args)
     }
@@ -197,6 +204,11 @@ impl<'a> Host<'a> {
     /// Number of callbacks that are still registered.
     pub fn live_callbacks(&self) -> usize {
         self.core.live_callbacks()
+    }
+
+    /// Number of (handle, prop) pairs observed natively through `host.observe` (ABI v2.6).
+    pub fn observed_props(&self) -> usize {
+        self.core.observed_count()
     }
 
     /// Number of live boxed values held by JS wrappers (released, disposed or collected ones excluded).

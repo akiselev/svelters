@@ -129,7 +129,7 @@ fn main() {
 
 fn demo() {
     let b = be();
-    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame };
+    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame, prop_changed: None };
 
     let kind = |name: &str| id(SVL_KIND, 0, name);
     let (k_window, k_box, k_label, k_button) = (kind("main-window"), kind("box-layout"), kind("label"), kind("push-button"));
