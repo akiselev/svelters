@@ -150,7 +150,7 @@ Commits: a123618d (crate, pack, resolver, output, tests, CLI.md Rust decision), 
 CLI.md §4.3, cli-research note), plus this record.
 
 Gates, observed locally on 2026-10-19 after the last code edit:
-- `tools/dev/cargo-slot cargo nextest run -p svelters-cli`: 60 tests run, 60 passed, 0 skipped (17 unit, 42 golden/CLI, 1 pack/site
+- `tools/dev/cargo-slot cargo nextest run -p svelters-cli`: 60 tests run, 60 passed, 0 skipped (14 unit, 45 golden/CLI, 1 pack/site
   consistency: 871 pages, 15,240 own anchors, 54,619 inherited links).
 - `tools/dev/cargo-slot cargo clippy -p svelters-cli --all-targets -- -D warnings`: clean.
 - `tools/dev/cargo-slot cargo check --workspace --all-targets`: exit 0 (warnings only in other crates).
