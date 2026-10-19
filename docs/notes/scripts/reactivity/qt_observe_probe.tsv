@@ -1,0 +1,239 @@
+#qt	6.12.0
+QWidget	windowModality	0	0	exact	-1	-1	-1	
+QWidget	enabled	0	0	exact	-1	-1	-1	CursorChange,EnabledChange
+QWidget	minimumWidth	0	0	exact	-1	-1	-1	
+QWidget	minimumHeight	0	0	exact	-1	-1	-1	
+QWidget	maximumWidth	0	0	ignored	-1	-1	-1	
+QWidget	maximumHeight	0	0	ignored	-1	-1	-1	
+QWidget	mouseTracking	0	0	exact	-1	-1	-1	MouseTrackingChange
+QWidget	tabletTracking	0	0	exact	-1	-1	-1	TabletTrackingChange
+QWidget	focusPolicy	0	0	exact	-1	-1	-1	
+QWidget	contextMenuPolicy	0	0	exact	-1	-1	-1	
+QWidget	updatesEnabled	0	0	exact	-1	-1	-1	
+QWidget	visible	0	0	exact	-1	-1	-1	WindowDeactivate,ActivationChange,Hide,HideToParent
+QWidget	acceptDrops	0	0	exact	-1	-1	-1	AcceptDropsChange
+QWidget	windowTitle	1	0	exact	1	0	-1	WindowTitleChange
+QWidget	windowIconText	1	0	exact	1	0	-1	IconTextChange
+QWidget	windowOpacity	0	0	ignored	-1	-1	-1	
+QWidget	windowModified	0	0	exact	-1	-1	-1	ModifiedChange
+QWidget	toolTip	0	0	exact	-1	-1	-1	ToolTipChange
+QWidget	toolTipDuration	0	0	exact	-1	-1	-1	
+QWidget	statusTip	0	0	exact	-1	-1	-1	
+QWidget	whatsThis	0	0	exact	-1	-1	-1	
+QWidget	accessibleName	0	0	exact	-1	-1	-1	
+QWidget	accessibleDescription	0	0	exact	-1	-1	-1	
+QWidget	accessibleIdentifier	0	0	exact	-1	-1	-1	
+QWidget	layoutDirection	0	0	exact	-1	-1	-1	LayoutDirectionChange
+QWidget	autoFillBackground	0	0	exact	-1	-1	-1	
+QWidget	styleSheet	0	0	exact	-1	-1	-1	DynamicPropertyChange,StyleChange
+QWidget	windowFilePath	0	0	exact	-1	-1	-1	
+QWidget	inputMethodHints	0	0	exact	-1	-1	-1	
+QLineEdit	inputMask	0	0	exact	-1	-1	-1	InputMethodQuery
+QLineEdit	text	1	0	exact	1	0	-1	InputMethodQuery
+QLineEdit	maxLength	0	0	ignored	-1	-1	-1	
+QLineEdit	frame	0	0	exact	-1	-1	-1	
+QLineEdit	echoMode	0	0	exact	-1	-1	-1	
+QLineEdit	cursorPosition	0	0	ignored	-1	-1	-1	
+QLineEdit	alignment	0	0	exact	-1	-1	-1	
+QLineEdit	modified	0	0	exact	-1	-1	-1	
+QLineEdit	dragEnabled	0	0	exact	-1	-1	-1	
+QLineEdit	readOnly	0	0	exact	-1	-1	-1	InputMethodQuery,CursorChange,ReadOnlyChange
+QLineEdit	placeholderText	0	0	exact	-1	-1	-1	
+QLineEdit	cursorMoveStyle	0	0	exact	-1	-1	-1	
+QLineEdit	clearButtonEnabled	0	0	exact	-1	-1	-1	
+QSpinBox	suffix	0	0	exact	-1	-1	-1	
+QSpinBox	prefix	0	0	exact	-1	-1	-1	
+QSpinBox	minimum	0	0	exact	-1	-1	-1	
+QSpinBox	maximum	0	0	exact	-1	-1	-1	
+QSpinBox	singleStep	0	0	exact	-1	-1	-1	
+QSpinBox	stepType	0	0	exact	-1	-1	-1	
+QSpinBox	value	1	0	exact	1	0	-1	
+QSpinBox	displayIntegerBase	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	prefix	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	suffix	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	decimals	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	minimum	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	maximum	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	singleStep	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	stepType	0	0	exact	-1	-1	-1	
+QDoubleSpinBox	value	1	0	exact	1	0	-1	
+QSlider	tickPosition	0	0	exact	-1	-1	-1	
+QSlider	tickInterval	0	0	exact	-1	-1	-1	
+QDial	wrapping	0	0	exact	-1	-1	-1	
+QDial	notchTarget	0	0	exact	-1	-1	-1	
+QDial	notchesVisible	0	0	exact	-1	-1	-1	
+QCheckBox	tristate	0	0	exact	-1	-1	-1	
+QPushButton	autoDefault	0	0	exact	-1	-1	-1	
+QPushButton	default	0	0	exact	-1	-1	-1	
+QPushButton	flat	0	0	exact	-1	-1	-1	
+QComboBox	editable	0	0	exact	-1	-1	-1	InputMethodQuery,CursorChange
+QComboBox	currentText	1	0	exact	1	0	-1	InputMethodQuery
+QComboBox	currentIndex	1	0	ignored	0	0	-1	InputMethodQuery
+QComboBox	maxVisibleItems	0	0	exact	-1	-1	-1	
+QComboBox	maxCount	0	0	ignored	-1	-1	-1	
+QComboBox	insertPolicy	0	0	exact	-1	-1	-1	
+QComboBox	sizeAdjustPolicy	0	0	exact	-1	-1	-1	
+QComboBox	minimumContentsLength	0	0	exact	-1	-1	-1	
+QComboBox	placeholderText	0	0	exact	-1	-1	-1	
+QComboBox	duplicatesEnabled	0	0	exact	-1	-1	-1	
+QComboBox	frame	0	0	exact	-1	-1	-1	
+QComboBox	modelColumn	0	0	exact	-1	-1	-1	
+QComboBox	labelDrawingMode	0	0	exact	-1	-1	-1	
+QLabel	text	0	0	exact	-1	-1	-1	
+QLabel	textFormat	0	0	exact	-1	-1	-1	
+QLabel	scaledContents	0	0	exact	-1	-1	-1	
+QLabel	alignment	0	0	exact	-1	-1	-1	
+QLabel	wordWrap	0	0	exact	-1	-1	-1	
+QLabel	margin	0	0	exact	-1	-1	-1	
+QLabel	indent	0	0	exact	-1	-1	-1	
+QLabel	openExternalLinks	0	0	exact	-1	-1	-1	
+QLabel	textInteractionFlags	0	0	exact	-1	-1	-1	
+QProgressBar	minimum	0	0	exact	-1	-1	-1	
+QProgressBar	maximum	0	0	exact	-1	-1	-1	
+QProgressBar	value	1	0	exact	1	0	-1	
+QProgressBar	alignment	0	0	exact	-1	-1	-1	
+QProgressBar	textVisible	0	0	exact	-1	-1	-1	
+QProgressBar	orientation	0	0	exact	-1	-1	-1	
+QProgressBar	invertedAppearance	0	0	exact	-1	-1	-1	
+QProgressBar	textDirection	0	0	exact	-1	-1	-1	
+QProgressBar	format	0	0	exact	-1	-1	-1	
+QTextEdit	autoFormatting	0	0	exact	-1	-1	-1	
+QTextEdit	tabChangesFocus	0	0	exact	-1	-1	-1	
+QTextEdit	documentTitle	0	0	exact	-1	-1	-1	
+QTextEdit	undoRedoEnabled	0	0	exact	-1	-1	-1	
+QTextEdit	lineWrapMode	0	0	exact	-1	-1	-1	
+QTextEdit	lineWrapColumnOrWidth	0	0	exact	-1	-1	-1	
+QTextEdit	readOnly	0	0	exact	-1	-1	-1	InputMethodQuery,ReadOnlyChange
+QTextEdit	markdown	1	0	normalized	1	1	-1	InputMethodQuery
+QTextEdit	html	1	0	normalized	1	1	-1	InputMethodQuery
+QTextEdit	plainText	0	0	exact	-1	-1	-1	InputMethodQuery
+QTextEdit	overwriteMode	0	0	exact	-1	-1	-1	
+QTextEdit	tabStopDistance	0	0	exact	-1	-1	-1	
+QTextEdit	acceptRichText	0	0	exact	-1	-1	-1	
+QTextEdit	cursorWidth	0	0	exact	-1	-1	-1	
+QTextEdit	textInteractionFlags	0	0	exact	-1	-1	-1	
+QTextEdit	placeholderText	0	0	exact	-1	-1	-1	
+QPlainTextEdit	tabChangesFocus	0	0	exact	-1	-1	-1	
+QPlainTextEdit	documentTitle	0	0	exact	-1	-1	-1	
+QPlainTextEdit	undoRedoEnabled	0	0	exact	-1	-1	-1	
+QPlainTextEdit	lineWrapMode	0	0	exact	-1	-1	-1	
+QPlainTextEdit	readOnly	0	0	exact	-1	-1	-1	InputMethodQuery,ReadOnlyChange
+QPlainTextEdit	plainText	1	0	exact	1	1	-1	InputMethodQuery
+QPlainTextEdit	overwriteMode	0	0	exact	-1	-1	-1	
+QPlainTextEdit	tabStopDistance	0	0	exact	-1	-1	-1	
+QPlainTextEdit	cursorWidth	0	0	exact	-1	-1	-1	
+QPlainTextEdit	textInteractionFlags	0	0	exact	-1	-1	-1	
+QPlainTextEdit	maximumBlockCount	0	0	exact	-1	-1	-1	
+QPlainTextEdit	backgroundVisible	0	0	exact	-1	-1	-1	
+QPlainTextEdit	centerOnScroll	0	0	exact	-1	-1	-1	
+QPlainTextEdit	placeholderText	0	0	exact	-1	-1	-1	
+QTabWidget	tabPosition	0	0	exact	-1	-1	-1	
+QTabWidget	tabShape	0	0	exact	-1	-1	-1	
+QTabWidget	currentIndex	1	0	ignored	0	0	-1	
+QTabWidget	elideMode	0	0	exact	-1	-1	-1	
+QTabWidget	usesScrollButtons	0	0	exact	-1	-1	-1	
+QTabWidget	documentMode	0	0	exact	-1	-1	-1	
+QTabWidget	tabsClosable	0	0	exact	-1	-1	-1	
+QTabWidget	movable	0	0	exact	-1	-1	-1	
+QTabWidget	tabBarAutoHide	0	0	exact	-1	-1	-1	
+QGroupBox	title	0	0	exact	-1	-1	-1	Resize,ContentsRectChange
+QGroupBox	alignment	0	0	exact	-1	-1	-1	
+QGroupBox	flat	0	0	exact	-1	-1	-1	
+QGroupBox	checkable	0	0	exact	-1	-1	-1	
+QGroupBox	checked	1	0	exact	1	0	-1	
+QFrame	frameShape	0	0	exact	-1	-1	-1	Resize,ContentsRectChange
+QFrame	frameShadow	0	0	exact	-1	-1	-1	Resize,ContentsRectChange
+QFrame	lineWidth	0	0	exact	-1	-1	-1	Resize,ContentsRectChange
+QFrame	midLineWidth	0	0	exact	-1	-1	-1	Resize,ContentsRectChange
+QDateTimeEdit	currentSection	0	0	ignored	-1	-1	-1	
+QDateTimeEdit	displayFormat	0	0	exact	-1	-1	-1	
+QDateTimeEdit	calendarPopup	0	0	exact	-1	-1	-1	
+QDateTimeEdit	currentSectionIndex	0	0	exact	-1	-1	-1	InputMethodQuery
+QDateTimeEdit	timeSpec	0	0	exact	-1	-1	-1	
+QCalendarWidget	firstDayOfWeek	0	0	exact	-1	-1	-1	
+QCalendarWidget	gridVisible	0	0	exact	-1	-1	-1	
+QCalendarWidget	selectionMode	0	0	exact	-1	-1	-1	
+QCalendarWidget	horizontalHeaderFormat	0	0	exact	-1	-1	-1	
+QCalendarWidget	verticalHeaderFormat	0	0	exact	-1	-1	-1	
+QCalendarWidget	navigationBarVisible	0	0	exact	-1	-1	-1	
+QCalendarWidget	dateEditEnabled	0	0	exact	-1	-1	-1	
+QCalendarWidget	dateEditAcceptDelay	0	0	exact	-1	-1	-1	
+QMainWindow	toolButtonStyle	0	0	exact	-1	-1	-1	
+QMainWindow	animated	0	0	exact	-1	-1	-1	
+QMainWindow	documentMode	0	0	exact	-1	-1	-1	
+QMainWindow	tabShape	0	0	exact	-1	-1	-1	
+QMainWindow	dockNestingEnabled	0	0	exact	-1	-1	-1	
+QMainWindow	dockOptions	0	0	exact	-1	-1	-1	
+QMainWindow	unifiedTitleAndToolBarOnMac	0	0	ignored	-1	-1	-1	
+QDialog	sizeGripEnabled	0	0	exact	-1	-1	-1	
+QDialog	modal	0	0	exact	-1	-1	-1	
+QToolButton	popupMode	0	0	exact	-1	-1	-1	
+QToolButton	toolButtonStyle	0	0	exact	-1	-1	-1	
+QToolButton	autoRaise	0	0	exact	-1	-1	-1	
+QToolButton	arrowType	0	0	exact	-1	-1	-1	
+QLCDNumber	smallDecimalPoint	0	0	exact	-1	-1	-1	
+QLCDNumber	digitCount	0	0	exact	-1	-1	-1	
+QLCDNumber	mode	0	0	exact	-1	-1	-1	
+QLCDNumber	segmentStyle	0	0	exact	-1	-1	-1	
+QLCDNumber	value	0	0	exact	-1	-1	-1	
+QLCDNumber	intValue	0	0	exact	-1	-1	-1	
+QSplitter	orientation	0	0	exact	-1	-1	-1	
+QSplitter	opaqueResize	0	0	exact	-1	-1	-1	
+QSplitter	handleWidth	0	0	exact	-1	-1	-1	
+QSplitter	childrenCollapsible	0	0	exact	-1	-1	-1	
+QStackedWidget	currentIndex	1	0	ignored	0	0	-1	
+QScrollArea	widgetResizable	0	0	exact	-1	-1	-1	
+QScrollArea	alignment	0	0	exact	-1	-1	-1	
+QListWidget	currentRow	1	0	ignored	0	0	-1	
+QListWidget	sortingEnabled	0	0	exact	-1	-1	-1	
+QListWidget	supportedDragActions	0	0	exact	-1	-1	-1	
+QKeySequenceEdit	clearButtonEnabled	0	0	exact	-1	-1	-1	
+QTimer	singleShot	0	1	exact	-1	-1	1	
+QTimer	interval	0	1	exact	-1	-1	1	
+QTimer	timerType	0	1	exact	-1	-1	1	
+QAction	checkable	1	0	exact	1	0	-1	ActionChanged
+QAction	checked	1	0	exact	1	0	-1	ActionChanged
+QAction	enabled	1	0	exact	1	0	-1	ActionChanged
+QAction	text	1	0	exact	1	0	-1	ActionChanged
+QAction	iconText	1	0	exact	1	0	-1	ActionChanged
+QAction	toolTip	1	0	exact	1	0	-1	ActionChanged
+QAction	statusTip	1	0	exact	1	0	-1	ActionChanged
+QAction	whatsThis	1	0	exact	1	0	-1	ActionChanged
+QAction	shortcutContext	1	0	exact	1	0	-1	ActionChanged
+QAction	autoRepeat	1	0	exact	1	0	-1	ActionChanged
+QAction	visible	1	0	exact	1	0	-1	ActionChanged
+QAction	menuRole	1	0	exact	1	0	-1	ActionChanged
+QAction	iconVisibleInMenu	1	0	exact	0	0	-1	
+QAction	shortcutVisibleInContextMenu	1	0	exact	0	0	-1	
+QAction	priority	1	0	exact	1	0	-1	ActionChanged
+QSortFilterProxyModel	filterKeyColumn	0	1	exact	-1	-1	1	
+QSortFilterProxyModel	dynamicSortFilter	0	1	exact	-1	-1	1	
+QSortFilterProxyModel	filterCaseSensitivity	1	1	exact	1	0	1	
+QSortFilterProxyModel	sortCaseSensitivity	1	1	exact	1	0	1	
+QSortFilterProxyModel	isSortLocaleAware	1	1	exact	1	0	1	
+QSortFilterProxyModel	sortRole	1	1	exact	1	0	1	
+QSortFilterProxyModel	filterRole	1	1	exact	1	0	1	
+QSortFilterProxyModel	recursiveFilteringEnabled	1	1	exact	1	0	1	
+QSortFilterProxyModel	autoAcceptChildRows	1	1	exact	1	0	1	
+QTextDocument	undoRedoEnabled	0	0	exact	-1	-1	-1	
+QTextDocument	modified	0	0	exact	-1	-1	-1	
+QTextDocument	useDesignMetrics	0	0	exact	-1	-1	-1	
+QTextDocument	layoutEnabled	0	0	exact	-1	-1	-1	
+QTextDocument	textWidth	0	0	exact	-1	-1	-1	
+QTextDocument	indentWidth	0	0	exact	-1	-1	-1	
+QTextDocument	defaultStyleSheet	0	0	exact	-1	-1	-1	
+QTextDocument	maximumBlockCount	0	0	exact	-1	-1	-1	
+QTextDocument	documentMargin	0	0	exact	-1	-1	-1	
+QStandardItemModel	sortRole	0	1	exact	-1	-1	1	
+#scenario	QLineEdit setText ab,ab	textChanged=1 textEdited=0
+#scenario	QLineEdit keyClicks xyz	textChanged=3 textEdited=3
+#scenario	QSlider setMaximum 50 with value 80	valueChanged=1 value=50
+#scenario	parent setEnabled(false): child events	EnabledChange child.isEnabled=0
+#scenario	parent hide(): child events	WindowDeactivate,Hide child.isVisible=0
+#scenario	hidden QWidget resize: events	 (Resize pending until show)
+#scenario	then show: events	PlatformSurface,WinIdChange,WindowIconChange,Move,Resize,Show,CursorChange,ShowToParent,WindowActivate,ActivationChange,Enter
+#scenario	QTimer setInterval 10,10,20: bindable notifier	2
+#scenario	QTimer 3 sets inside a property update group	inside=0 after=1
+#scenario	QTimer active start/stop: bindable notifier	2
+#scenario	QSpinBox setValue 500 (max 99)	valueChanged=1 value=99
+#scenario	QSlider 100k setValue with a NOTIFY slot reading value()	126.226 ns/set (sink 1)

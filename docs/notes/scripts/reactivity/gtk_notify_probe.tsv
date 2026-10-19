@@ -1,0 +1,745 @@
+#gtk	4.24.1
+GtkPrintBackend	status	0	exact	1	1	
+GtkWindow	title	0	exact	1	1	
+GtkWindow	resizable	1	exact	1	0	
+GtkWindow	modal	1	exact	1	0	
+GtkWindow	default-width	1	exact	1	0	
+GtkWindow	default-height	1	exact	1	0	
+GtkWindow	destroy-with-parent	1	exact	1	0	
+GtkWindow	hide-on-close	1	exact	1	0	
+GtkWindow	icon-name	1	exact	1	0	
+GtkWindow	decorated	1	exact	1	0	
+GtkWindow	deletable	1	exact	1	0	
+GtkWindow	handle-menubar-accel	1	exact	1	0	
+GtkWindow	gravity	1	exact	1	0	
+GtkWindow	mnemonics-visible	1	exact	1	0	
+GtkWindow	focus-visible	1	exact	1	0	
+GtkWindow	maximized	1	exact	1	0	
+GtkWindow	fullscreened	1	exact	1	0	
+GtkAboutDialog	program-name	1	exact	1	1	title
+GtkAboutDialog	version	1	exact	1	1	title
+GtkAboutDialog	copyright	1	exact	1	1	
+GtkAboutDialog	comments	1	exact	1	1	
+GtkAboutDialog	website	1	exact	1	1	
+GtkAboutDialog	website-label	1	exact	1	1	
+GtkAboutDialog	license	1	exact	1	1	license-type
+GtkAboutDialog	system-information	1	exact	1	1	
+GtkAboutDialog	translator-credits	1	exact	1	1	
+GtkAboutDialog	logo-icon-name	1	exact	1	1	
+GtkAboutDialog	wrap-license	1	exact	1	0	
+GtkAboutDialog	license-type	1	exact	1	0	license,wrap-license
+GtkAppChooserDialog	heading	1	exact	1	1	
+GtkColorChooserDialog	show-editor	0	exact	1	1	focus-widget
+GtkMessageDialog	message-type	1	exact	1	0	
+GtkMessageDialog	text	0	exact	1	1	
+GtkMessageDialog	use-markup	1	exact	1	0	
+GtkMessageDialog	secondary-text	0	exact	1	1	
+GtkMessageDialog	secondary-use-markup	1	exact	1	0	
+GtkApplicationWindow	show-menubar	1	exact	1	0	
+GtkShortcutsWindow	section-name	0	ignored	1	1	
+GtkShortcutsWindow	view-name	0	exact	1	1	
+GtkActionBar	revealed	1	exact	1	0	
+GtkAppChooserButton	show-dialog-item	1	exact	1	0	
+GtkAppChooserButton	show-default-item	1	exact	1	0	
+GtkAppChooserButton	heading	1	exact	1	1	
+GtkAppChooserButton	modal	1	exact	1	0	
+GtkAppChooserWidget	show-default	1	exact	1	0	
+GtkAppChooserWidget	show-recommended	1	exact	1	0	
+GtkAppChooserWidget	show-fallback	1	exact	1	0	
+GtkAppChooserWidget	show-other	1	exact	1	0	
+GtkAppChooserWidget	show-all	1	exact	1	0	
+GtkAppChooserWidget	default-text	1	exact	1	0	
+GtkAspectFrame	xalign	1	exact	1	0	
+GtkAspectFrame	yalign	1	exact	1	0	
+GtkAspectFrame	ratio	1	exact	1	0	
+GtkAspectFrame	obey-child	1	exact	1	0	
+GtkBox	spacing	1	exact	1	0	
+GtkBox	homogeneous	1	exact	1	0	
+GtkBox	baseline-child	1	exact	1	0	
+GtkBox	baseline-position	1	exact	1	0	
+GtkShortcutsGroup	title	0	exact	1	1	
+GtkShortcutsGroup	view	0	exact	1	1	
+GtkShortcutsSection	title	0	exact	1	1	
+GtkShortcutsSection	section-name	0	exact	1	1	
+GtkShortcutsSection	view-name	1	exact	1	0	
+GtkShortcutsSection	max-height	1	exact	1	0	
+GtkButton	label	1	exact	1	1	icon-name,child,css-classes
+GtkButton	has-frame	1	exact	1	0	css-classes
+GtkButton	use-underline	1	exact	1	0	
+GtkButton	icon-name	1	exact	1	1	child,label,css-classes
+GtkButton	can-shrink	1	exact	1	0	
+GtkLinkButton	uri	0	exact	1	1	
+GtkLinkButton	visited	1	exact	1	0	
+GtkLockButton	text-lock	0	exact	1	1	
+GtkLockButton	text-unlock	0	exact	1	1	
+GtkLockButton	tooltip-lock	0	exact	1	1	has-tooltip,tooltip-markup,tooltip-text
+GtkLockButton	tooltip-unlock	0	exact	1	1	
+GtkLockButton	tooltip-not-authorized	0	exact	1	1	
+GtkToggleButton	active	1	exact	1	0	
+GtkCalendar	year	1	exact	1	0	date
+GtkCalendar	month	1	exact	1	0	date
+GtkCalendar	day	1	exact	1	0	date
+GtkCalendar	show-heading	1	exact	1	0	
+GtkCalendar	show-day-names	1	exact	1	0	
+GtkCalendar	show-week-numbers	1	exact	1	0	
+GtkCellView	draw-sensitive	1	exact	1	0	
+GtkCellView	fit-model	1	exact	1	0	
+GtkCenterBox	baseline-position	1	exact	1	0	
+GtkCenterBox	shrink-center-last	1	exact	1	0	
+GtkCheckButton	active	1	exact	1	0	
+GtkCheckButton	label	1	exact	1	1	css-classes
+GtkCheckButton	inconsistent	1	exact	1	0	
+GtkCheckButton	use-underline	1	exact	1	0	
+GtkColorButton	title	0	exact	1	1	
+GtkColorButton	show-editor	1	exact	1	0	
+GtkColorButton	modal	1	exact	1	0	
+GtkColorChooserWidget	show-editor	0	exact	1	1	
+GtkColumnView	enable-rubberband	1	exact	1	0	
+GtkColumnView	reorderable	1	exact	1	0	
+GtkColumnView	show-row-separators	1	exact	1	0	
+GtkColumnView	show-column-separators	1	exact	1	0	css-classes
+GtkColumnView	single-click-activate	1	exact	1	0	
+GtkColumnView	tab-behavior	1	exact	1	0	
+GtkComboBox	active	1	ignored	0	0	
+GtkComboBox	has-frame	1	exact	1	0	
+GtkComboBox	button-sensitivity	1	exact	1	0	
+GtkComboBox	entry-text-column	1	exact	1	0	
+GtkComboBox	popup-fixed-width	1	exact	1	0	
+GtkComboBox	id-column	1	exact	1	0	active-id
+GtkComboBox	active-id	1	ignored	0	0	
+GtkDrawingArea	content-width	1	exact	1	0	
+GtkDrawingArea	content-height	1	exact	1	0	
+GtkDropDown	selected	1	ignored	0	0	
+GtkDropDown	enable-search	1	exact	1	0	
+GtkDropDown	show-arrow	1	exact	1	0	
+GtkDropDown	search-match-mode	1	exact	1	0	
+GtkEditableLabel	editing	1	exact	1	0	css-classes
+GtkPopover	position	1	exact	1	0	
+GtkPopover	autohide	1	exact	1	0	
+GtkPopover	has-arrow	1	exact	1	0	
+GtkPopover	mnemonics-visible	1	exact	1	0	
+GtkPopover	cascade-popdown	1	exact	1	0	
+GtkPopoverMenu	visible-submenu	0	ignored	1	1	
+GtkEntry	max-length	1	exact	1	0	
+GtkEntry	visibility	1	exact	1	0	invisible-char
+GtkEntry	has-frame	1	exact	1	0	css-classes
+GtkEntry	activates-default	1	exact	1	0	
+GtkEntry	truncate-multiline	1	exact	1	0	
+GtkEntry	overwrite-mode	1	exact	1	0	
+GtkEntry	invisible-char-set	0	exact	1	1	
+GtkEntry	progress-fraction	1	exact	1	0	
+GtkEntry	primary-icon-name	1	exact	1	1	primary-icon-storage-type
+GtkEntry	secondary-icon-name	1	exact	1	1	secondary-icon-storage-type
+GtkEntry	primary-icon-activatable	1	exact	1	0	
+GtkEntry	secondary-icon-activatable	1	exact	1	0	
+GtkEntry	primary-icon-sensitive	1	exact	1	0	
+GtkEntry	secondary-icon-sensitive	1	exact	1	0	
+GtkEntry	primary-icon-tooltip-text	1	exact	1	1	has-tooltip
+GtkEntry	secondary-icon-tooltip-text	1	exact	1	1	
+GtkEntry	primary-icon-tooltip-markup	1	exact	1	1	
+GtkEntry	secondary-icon-tooltip-markup	1	exact	1	1	
+GtkEntry	im-module	1	exact	1	1	cursor,complete-text
+GtkEntry	placeholder-text	1	exact	1	1	
+GtkEntry	input-purpose	1	exact	1	0	
+GtkEntry	show-emoji-icon	1	exact	1	0	secondary-icon-tooltip-text,secondary-icon-activatable,secondary-icon-sensitive,secondary-icon-storage-type,secondary-icon-name
+GtkEntry	enable-emoji-completion	1	exact	1	0	
+GtkEntry	menu-entry-icon-primary-text	1	exact	1	0	
+GtkEntry	menu-entry-icon-secondary-text	1	exact	1	0	extra-menu
+GtkExpander	expanded	1	exact	1	0	
+GtkExpander	label	0	exact	1	1	label-widget
+GtkExpander	use-underline	1	exact	1	0	
+GtkExpander	use-markup	1	exact	1	0	
+GtkExpander	resize-toplevel	1	exact	1	0	
+GtkFileChooserWidget	search-mode	0	exact	1	1	subtitle
+GtkFlowBox	homogeneous	1	exact	1	0	
+GtkFlowBox	column-spacing	1	exact	1	0	
+GtkFlowBox	row-spacing	1	exact	1	0	
+GtkFlowBox	min-children-per-line	1	exact	1	0	
+GtkFlowBox	max-children-per-line	1	exact	1	0	
+GtkFlowBox	selection-mode	1	exact	1	0	
+GtkFlowBox	activate-on-single-click	1	exact	1	0	
+GtkFlowBox	accept-unpaired-release	1	exact	1	0	
+GtkFontButton	title	0	exact	1	1	
+GtkFontButton	modal	1	exact	1	0	
+GtkFontButton	use-font	1	exact	1	0	
+GtkFontButton	use-size	1	exact	1	0	
+GtkFontDialogButton	level	1	exact	1	0	
+GtkFontDialogButton	font-features	1	exact	1	0	
+GtkFontDialogButton	use-font	1	exact	1	0	
+GtkFontDialogButton	use-size	1	exact	1	0	
+GtkFrame	label	1	exact	1	1	label-widget
+GtkFrame	label-xalign	1	exact	1	0	
+GtkGLArea	has-depth-buffer	1	exact	1	0	
+GtkGLArea	has-stencil-buffer	1	exact	1	0	
+GtkGLArea	use-es	1	exact	1	0	allowed-apis
+GtkGLArea	auto-render	1	exact	1	0	
+GtkGraphicsOffload	enabled	1	exact	1	0	
+GtkGraphicsOffload	black-background	1	exact	1	0	
+GtkGrid	row-spacing	1	exact	1	0	
+GtkGrid	column-spacing	1	exact	1	0	
+GtkGrid	row-homogeneous	1	exact	1	0	
+GtkGrid	column-homogeneous	1	exact	1	0	
+GtkGrid	baseline-row	1	exact	1	0	
+GtkGridView	enable-rubberband	1	exact	1	0	
+GtkGridView	max-columns	1	exact	1	0	
+GtkGridView	min-columns	1	exact	1	0	
+GtkGridView	single-click-activate	1	exact	1	0	
+GtkGridView	tab-behavior	1	exact	1	0	
+GtkListView	enable-rubberband	1	exact	1	0	
+GtkListView	show-separators	1	exact	1	0	css-classes
+GtkListView	single-click-activate	1	exact	1	0	
+GtkListView	tab-behavior	1	exact	1	0	
+GtkHeaderBar	show-title-buttons	1	exact	1	0	
+GtkHeaderBar	decoration-layout	0	exact	1	1	
+GtkHeaderBar	use-native-controls	1	exact	1	0	
+GtkIconView	pixbuf-column	1	exact	1	0	
+GtkIconView	text-column	1	exact	1	0	
+GtkIconView	markup-column	1	exact	1	0	
+GtkIconView	selection-mode	1	exact	1	0	
+GtkIconView	item-orientation	1	exact	1	0	
+GtkIconView	columns	1	exact	1	0	
+GtkIconView	item-width	1	exact	1	0	
+GtkIconView	spacing	1	exact	1	0	
+GtkIconView	row-spacing	1	exact	1	0	
+GtkIconView	column-spacing	1	exact	1	0	
+GtkIconView	margin	1	exact	1	0	
+GtkIconView	reorderable	1	exact	1	0	
+GtkIconView	tooltip-column	1	exact	1	0	has-tooltip
+GtkIconView	item-padding	1	exact	1	0	
+GtkIconView	activate-on-single-click	1	exact	1	0	
+GtkImage	file	0	ignored	1	1	storage-type,icon-name,icon-size
+GtkImage	icon-size	1	exact	1	0	
+GtkImage	pixel-size	1	exact	1	0	
+GtkImage	icon-name	0	exact	1	1	storage-type,icon-size
+GtkImage	resource	0	ignored	1	1	icon-name,icon-size,storage-type
+GtkImage	use-fallback	1	exact	1	0	
+GtkInfoBar	message-type	1	exact	1	0	css-classes
+GtkInfoBar	show-close-button	1	exact	1	0	
+GtkInfoBar	revealed	1	exact	1	0	
+GtkInscription	min-chars	1	exact	1	0	
+GtkInscription	min-lines	1	exact	1	0	
+GtkInscription	nat-chars	1	exact	1	0	
+GtkInscription	nat-lines	1	exact	1	0	
+GtkInscription	text	1	exact	1	0	
+GtkInscription	text-overflow	1	exact	1	0	
+GtkInscription	wrap-mode	1	exact	1	0	
+GtkInscription	xalign	1	exact	1	0	
+GtkInscription	yalign	1	exact	1	0	
+GtkLabel	label	0	exact	1	1	
+GtkLabel	use-markup	1	exact	1	0	
+GtkLabel	use-underline	1	exact	1	0	
+GtkLabel	justify	1	exact	1	0	
+GtkLabel	wrap	1	exact	1	0	
+GtkLabel	wrap-mode	1	exact	1	0	
+GtkLabel	natural-wrap-mode	1	exact	1	0	
+GtkLabel	selectable	1	exact	1	0	cursor,focusable
+GtkLabel	ellipsize	1	exact	1	0	
+GtkLabel	width-chars	1	exact	1	0	
+GtkLabel	single-line-mode	1	exact	1	0	
+GtkLabel	max-width-chars	1	exact	1	0	
+GtkLabel	lines	1	exact	1	0	
+GtkLabel	xalign	1	exact	1	0	
+GtkLabel	yalign	1	exact	1	0	
+GtkLevelBar	value	1	exact	1	0	
+GtkLevelBar	min-value	1	exact	1	0	
+GtkLevelBar	max-value	1	exact	1	0	
+GtkLevelBar	mode	1	exact	1	0	
+GtkLevelBar	inverted	1	exact	1	0	
+GtkListBox	selection-mode	1	exact	1	0	
+GtkListBox	activate-on-single-click	1	exact	1	0	
+GtkListBox	accept-unpaired-release	1	exact	1	0	
+GtkListBox	show-separators	1	exact	1	0	css-classes
+GtkListBox	tab-behavior	1	exact	1	0	
+GtkListBoxRow	activatable	1	exact	1	0	css-classes
+GtkListBoxRow	selectable	1	exact	1	0	
+GtkSidebarRow	label	0	exact	1	1	
+GtkSidebarRow	tooltip	0	exact	1	1	tooltip-markup,tooltip-text,has-tooltip
+GtkSidebarRow	ejectable	0	exact	1	1	
+GtkSidebarRow	order-index	0	exact	1	1	
+GtkPlacesViewRow	name	0	exact	1	1	
+GtkPlacesViewRow	path	0	exact	1	1	
+GtkMenuButton	direction	1	exact	1	0	
+GtkMenuButton	icon-name	1	exact	1	1	
+GtkMenuButton	always-show-arrow	1	exact	1	0	
+GtkMenuButton	label	1	exact	1	1	icon-name
+GtkMenuButton	use-underline	1	exact	1	0	
+GtkMenuButton	has-frame	1	exact	1	0	
+GtkMenuButton	primary	1	exact	1	0	
+GtkMenuButton	active	1	exact	1	0	
+GtkMenuButton	can-shrink	1	exact	1	0	
+GtkNotebook	tab-pos	1	exact	1	0	
+GtkNotebook	show-tabs	1	exact	1	0	
+GtkNotebook	show-border	1	exact	1	0	css-classes
+GtkNotebook	scrollable	1	exact	1	0	
+GtkNotebook	page	1	ignored	0	0	
+GtkNotebook	enable-popup	1	exact	1	0	
+GtkNotebook	group-name	1	exact	1	0	
+GtkPaned	position	1	exact	1	0	position-set
+GtkPaned	position-set	1	exact	1	0	
+GtkPaned	wide-handle	1	exact	1	0	
+GtkPaned	resize-start-child	1	exact	1	0	
+GtkPaned	resize-end-child	1	exact	1	0	
+GtkPaned	shrink-start-child	1	exact	1	0	
+GtkPaned	shrink-end-child	1	exact	1	0	
+GtkPasswordEntry	placeholder-text	0	exact	1	1	
+GtkPasswordEntry	activates-default	1	exact	1	0	
+GtkPasswordEntry	show-peek-icon	1	exact	1	0	
+GtkPicture	alternative-text	1	exact	1	0	
+GtkPicture	can-shrink	1	exact	1	0	
+GtkPicture	content-fit	1	exact	1	0	keep-aspect-ratio
+GtkPicture	isolate-contents	1	exact	1	0	
+GtkPopoverBin	handle-input	1	exact	1	0	
+GtkProgressBar	fraction	1	exact	1	1	
+GtkProgressBar	inverted	1	exact	1	0	
+GtkProgressBar	text	0	exact	1	1	
+GtkProgressBar	show-text	1	exact	1	0	
+GtkProgressBar	ellipsize	1	exact	1	0	
+GtkRange	inverted	1	exact	1	0	
+GtkRange	show-fill-level	1	exact	1	0	
+GtkRange	restrict-to-fill-level	1	exact	1	0	
+GtkRange	fill-level	1	exact	0	0	
+GtkRange	round-digits	1	exact	1	0	
+GtkScale	digits	1	exact	1	0	
+GtkScale	draw-value	1	exact	1	0	round-digits
+GtkScale	has-origin	1	exact	1	0	
+GtkScale	value-pos	1	exact	1	0	
+GtkRevealer	transition-type	1	exact	1	0	
+GtkRevealer	transition-duration	1	exact	1	0	
+GtkRevealer	reveal-child	1	exact	1	0	child-revealed
+GtkScaleButton	value	1	exact	1	1	
+GtkScaleButton	has-frame	1	exact	1	0	
+GtkVolumeButton	use-symbolic	1	exact	1	0	icons
+GtkScrolledWindow	hscrollbar-policy	1	exact	1	0	vscrollbar-policy
+GtkScrolledWindow	vscrollbar-policy	1	exact	1	0	hscrollbar-policy
+GtkScrolledWindow	window-placement	1	exact	1	0	
+GtkScrolledWindow	has-frame	1	exact	1	0	css-classes
+GtkScrolledWindow	min-content-width	1	exact	1	0	
+GtkScrolledWindow	min-content-height	1	exact	1	0	
+GtkScrolledWindow	kinetic-scrolling	1	exact	1	0	
+GtkScrolledWindow	overlay-scrolling	1	exact	1	0	
+GtkScrolledWindow	max-content-width	1	exact	1	0	
+GtkScrolledWindow	max-content-height	1	exact	1	0	
+GtkScrolledWindow	propagate-natural-width	1	exact	1	0	
+GtkScrolledWindow	propagate-natural-height	1	exact	1	0	
+GtkSearchBar	search-mode-enabled	1	exact	1	0	
+GtkSearchBar	show-close-button	1	exact	1	0	
+GtkSearchEntry	placeholder-text	0	exact	1	1	
+GtkSearchEntry	input-purpose	1	exact	1	0	
+GtkSearchEntry	activates-default	1	exact	1	0	
+GtkSearchEntry	search-delay	1	exact	1	0	
+GtkShortcutLabel	accelerator	0	exact	1	1	
+GtkShortcutLabel	disabled-text	0	exact	1	1	
+GtkShortcutsShortcut	accelerator	0	exact	1	1	
+GtkShortcutsShortcut	icon-set	0	exact	1	1	
+GtkShortcutsShortcut	title	0	exact	1	1	
+GtkShortcutsShortcut	subtitle	0	exact	1	1	subtitle-set
+GtkShortcutsShortcut	subtitle-set	0	exact	1	1	subtitle
+GtkShortcutsShortcut	direction	1	exact	1	0	
+GtkShortcutsShortcut	shortcut-type	1	exact	1	0	subtitle
+GtkShortcutsShortcut	action-name	1	exact	1	1	
+GtkSpinButton	activates-default	1	exact	1	0	
+GtkSpinButton	climb-rate	1	exact	1	0	value
+GtkSpinButton	digits	1	exact	1	0	value,text,complete-text,width-chars
+GtkSpinButton	snap-to-ticks	1	exact	1	0	
+GtkSpinButton	numeric	1	exact	1	0	
+GtkSpinButton	wrap	1	exact	1	0	
+GtkSpinButton	update-policy	1	exact	1	0	
+GtkSpinButton	value	1	ignored	0	0	
+GtkSpinner	spinning	1	exact	1	0	
+GtkStack	hhomogeneous	1	exact	1	0	
+GtkStack	vhomogeneous	1	exact	1	0	
+GtkStack	visible-child-name	1	ignored	0	0	
+GtkStack	transition-duration	1	exact	1	0	
+GtkStack	transition-type	1	exact	1	0	
+GtkStack	interpolate-size	1	exact	1	0	
+GtkSvgWidget	resource	0	exact	1	1	
+GtkSvgWidget	state	1	exact	1	0	
+GtkSwitch	active	1	exact	1	0	state
+GtkSwitch	state	1	exact	1	0	
+GtkText	max-length	1	exact	1	0	
+GtkText	visibility	1	exact	1	0	invisible-char
+GtkText	invisible-char-set	0	exact	1	1	
+GtkText	activates-default	1	exact	1	0	
+GtkText	truncate-multiline	1	exact	1	0	
+GtkText	overwrite-mode	1	exact	1	0	
+GtkText	im-module	1	exact	1	1	complete-text,cursor
+GtkText	placeholder-text	1	exact	1	1	
+GtkText	input-purpose	1	exact	1	0	
+GtkText	enable-emoji-completion	1	exact	1	0	
+GtkText	propagate-text-width	1	exact	1	0	
+GtkTextView	pixels-above-lines	1	exact	1	0	
+GtkTextView	pixels-below-lines	1	exact	1	0	
+GtkTextView	pixels-inside-wrap	1	exact	1	0	
+GtkTextView	editable	1	exact	1	0	
+GtkTextView	wrap-mode	1	exact	1	0	
+GtkTextView	justification	1	exact	1	0	
+GtkTextView	left-margin	1	exact	1	0	
+GtkTextView	right-margin	1	exact	1	0	
+GtkTextView	top-margin	1	exact	1	0	
+GtkTextView	bottom-margin	1	exact	1	0	
+GtkTextView	indent	1	exact	1	0	
+GtkTextView	cursor-visible	1	exact	1	0	
+GtkTextView	overwrite	1	exact	1	0	
+GtkTextView	accepts-tab	1	exact	1	0	
+GtkTextView	im-module	0	exact	1	1	cursor
+GtkTextView	input-purpose	1	exact	1	0	
+GtkTextView	monospace	1	exact	1	0	css-classes
+GtkTreeExpander	hide-expander	1	exact	1	0	
+GtkTreeExpander	indent-for-depth	1	exact	1	0	
+GtkTreeExpander	indent-for-icon	1	exact	1	0	
+GtkTreeView	headers-visible	1	exact	1	0	
+GtkTreeView	headers-clickable	1	ignored	0	0	
+GtkTreeView	reorderable	1	exact	1	0	
+GtkTreeView	enable-search	1	exact	1	0	
+GtkTreeView	search-column	1	exact	1	0	
+GtkTreeView	fixed-height-mode	1	exact	1	0	
+GtkTreeView	hover-selection	1	exact	1	0	
+GtkTreeView	hover-expand	1	exact	1	0	
+GtkTreeView	show-expanders	1	exact	1	0	
+GtkTreeView	level-indentation	1	exact	1	0	
+GtkTreeView	rubber-banding	1	exact	1	0	
+GtkTreeView	enable-grid-lines	1	exact	1	0	
+GtkTreeView	enable-tree-lines	1	exact	1	0	
+GtkTreeView	tooltip-column	1	exact	1	0	has-tooltip
+GtkTreeView	activate-on-single-click	1	exact	1	0	
+GtkVideo	autoplay	1	exact	1	0	
+GtkVideo	loop	1	exact	1	0	
+GtkVideo	graphics-offload	1	exact	1	0	
+GtkViewport	scroll-to-focus	1	exact	1	0	
+GtkWindowControls	side	1	exact	1	0	css-classes
+GtkWindowControls	decoration-layout	1	exact	1	1	
+GtkWindowControls	use-native-controls	1	exact	1	0	
+GtkAdjustment	value	0	ignored	1	1	
+GtkAdjustment	lower	0	exact	1	1	
+GtkAdjustment	upper	0	exact	1	1	
+GtkAdjustment	step-increment	0	exact	1	1	
+GtkAdjustment	page-increment	0	exact	1	1	
+GtkAdjustment	page-size	0	exact	1	1	
+GtkCellAreaBox	spacing	1	exact	1	0	
+GtkCellRendererAccel	accel-key	1	exact	1	0	text
+GtkCellRendererAccel	keycode	1	exact	1	0	text
+GtkCellRendererAccel	accel-mode	1	exact	1	0	
+GtkCellRendererCombo	text-column	1	exact	1	0	
+GtkCellRendererCombo	has-entry	1	exact	1	0	
+GtkCellRendererSpin	climb-rate	0	exact	1	1	
+GtkCellRendererSpin	digits	1	exact	1	0	
+GtkCellRendererPixbuf	icon-size	1	exact	1	0	
+GtkCellRendererPixbuf	icon-name	0	exact	1	1	
+GtkCellRendererProgress	value	1	exact	1	0	
+GtkCellRendererProgress	text	0	exact	1	1	
+GtkCellRendererProgress	pulse	1	exact	1	0	
+GtkCellRendererProgress	text-xalign	0	exact	1	1	
+GtkCellRendererProgress	text-yalign	0	exact	1	1	
+GtkCellRendererProgress	inverted	1	exact	1	0	
+GtkCellRendererSpinner	active	1	exact	1	0	
+GtkCellRendererSpinner	pulse	1	exact	1	0	
+GtkCellRendererSpinner	size	1	exact	1	0	
+GtkCellRendererToggle	activatable	1	exact	1	0	
+GtkCellRendererToggle	active	1	exact	1	0	
+GtkCellRendererToggle	radio	1	exact	1	0	
+GtkCellRendererToggle	inconsistent	1	exact	1	0	
+GtkTreeViewColumn	resizable	1	exact	1	0	
+GtkTreeViewColumn	spacing	1	exact	1	0	
+GtkTreeViewColumn	sizing	1	exact	1	0	resizable
+GtkTreeViewColumn	fixed-width	1	exact	1	0	
+GtkTreeViewColumn	min-width	1	exact	1	0	
+GtkTreeViewColumn	max-width	1	exact	1	0	
+GtkTreeViewColumn	title	0	exact	1	1	
+GtkTreeViewColumn	expand	1	exact	1	0	
+GtkTreeViewColumn	clickable	1	exact	1	0	
+GtkTreeViewColumn	alignment	1	exact	1	0	
+GtkTreeViewColumn	reorderable	1	exact	1	0	
+GtkTreeViewColumn	sort-indicator	1	exact	1	0	
+GtkTreeViewColumn	sort-order	1	exact	1	0	
+GtkTreeViewColumn	sort-column-id	1	exact	1	0	
+GtkAlertDialog	modal	1	exact	1	0	
+GtkAlertDialog	message	1	exact	1	0	
+GtkAlertDialog	detail	1	exact	1	0	
+GtkAlertDialog	cancel-button	1	exact	1	0	
+GtkAlertDialog	default-button	1	exact	1	0	
+GtkBoolFilter	invert	1	exact	1	0	
+GtkFileFilter	name	1	exact	1	0	
+GtkStringFilter	ignore-case	1	exact	1	0	
+GtkStringFilter	match-mode	1	exact	1	0	
+GtkStringFilter	search	1	exact	1	0	
+GtkFontFilter	monospace	0	exact	1	1	
+GtkAssistantPage	page-type	1	exact	1	0	
+GtkAssistantPage	title	1	exact	1	1	
+GtkAssistantPage	complete	1	exact	1	0	
+GtkBoxLayout	homogeneous	1	exact	1	0	
+GtkBoxLayout	spacing	1	exact	1	0	
+GtkBoxLayout	baseline-child	1	exact	1	0	
+GtkBoxLayout	baseline-position	1	exact	1	0	
+GtkCenterLayout	shrink-center-last	1	exact	1	0	
+GtkGridLayout	row-spacing	1	exact	1	0	
+GtkGridLayout	column-spacing	1	exact	1	0	
+GtkGridLayout	row-homogeneous	1	exact	1	0	
+GtkGridLayout	column-homogeneous	1	exact	1	0	
+GtkGridLayout	baseline-row	1	exact	1	0	
+GtkBookmarkList	attributes	1	exact	1	0	
+GtkBookmarkList	io-priority	1	exact	1	0	
+GtkBuilder	translation-domain	0	exact	1	1	
+GtkColorDialog	title	1	exact	1	0	
+GtkColorDialog	modal	1	exact	1	0	
+GtkColorDialog	with-alpha	1	exact	1	0	
+GtkListItem	accessible-description	1	exact	1	0	
+GtkListItem	accessible-label	1	exact	1	0	
+GtkListItem	activatable	1	exact	1	0	
+GtkListItem	focusable	1	exact	1	0	
+GtkListItem	selectable	1	exact	1	0	
+GtkColumnViewCell	focusable	1	exact	1	0	
+GtkColumnViewColumn	title	1	exact	1	0	
+GtkColumnViewColumn	resizable	1	exact	1	0	
+GtkColumnViewColumn	expand	1	exact	1	0	
+GtkColumnViewColumn	fixed-width	1	exact	1	0	
+GtkColumnViewColumn	id	1	exact	1	0	
+GtkColumnViewRow	accessible-description	1	exact	1	0	
+GtkColumnViewRow	accessible-label	1	exact	1	0	
+GtkColumnViewRow	activatable	1	exact	1	0	
+GtkColumnViewRow	focusable	1	exact	1	0	
+GtkColumnViewRow	selectable	1	exact	1	0	
+GtkNumericSorter	sort-order	1	exact	1	0	
+GtkStringSorter	ignore-case	1	exact	1	0	
+GtkStringSorter	collation	1	exact	1	0	
+GtkConstraintGuide	min-width	1	exact	1	0	
+GtkConstraintGuide	min-height	1	exact	1	0	
+GtkConstraintGuide	nat-width	1	exact	1	0	
+GtkConstraintGuide	nat-height	1	exact	1	0	
+GtkConstraintGuide	max-width	1	exact	1	0	
+GtkConstraintGuide	max-height	1	exact	1	0	
+GtkConstraintGuide	strength	1	exact	1	0	
+GtkConstraintGuide	name	0	exact	1	1	
+GtkGridLayoutChild	column	1	exact	1	0	
+GtkGridLayoutChild	row	1	exact	1	0	
+GtkGridLayoutChild	column-span	1	exact	1	0	
+GtkGridLayoutChild	row-span	1	exact	1	0	
+GtkOverlayLayoutChild	measure	1	exact	1	0	
+GtkOverlayLayoutChild	clip-overlay	1	exact	1	0	
+GtkCssProvider	prefers-color-scheme	1	exact	1	0	
+GtkCssProvider	prefers-contrast	1	exact	1	0	
+GtkCssProvider	prefers-reduced-motion	1	exact	1	0	
+GtkDirectoryList	attributes	1	exact	1	1	
+GtkDirectoryList	io-priority	1	exact	1	0	
+GtkDirectoryList	monitored	1	exact	1	0	
+GtkGestureSingle	touch-only	1	exact	1	0	
+GtkGestureSingle	exclusive	1	exact	1	0	
+GtkGestureSingle	button	1	exact	1	0	
+GtkGesturePan	orientation	1	exact	1	0	
+GtkGestureLongPress	delay-factor	1	exact	1	0	
+GtkGestureStylus	stylus-only	1	exact	1	0	
+GtkDropTarget	preload	1	exact	1	0	
+GtkShortcutController	scope	1	exact	1	0	
+GtkEntryBuffer	text	0	exact	1	1	length
+GtkEntryBuffer	max-length	1	exact	1	0	
+GtkEntryCompletion	minimum-key-length	1	exact	1	0	
+GtkEntryCompletion	text-column	0	exact	1	1	
+GtkEntryCompletion	inline-completion	1	exact	1	0	
+GtkEntryCompletion	popup-completion	1	exact	1	0	
+GtkEntryCompletion	popup-set-width	1	exact	1	0	
+GtkEntryCompletion	popup-single-match	1	exact	1	0	
+GtkEntryCompletion	inline-selection	1	exact	1	0	
+GtkFileChooserNative	accept-label	0	exact	1	1	
+GtkFileChooserNative	cancel-label	0	exact	1	1	
+GtkFileDialog	accept-label	1	exact	1	0	
+GtkFileDialog	initial-name	1	exact	1	0	
+GtkFileDialog	modal	1	exact	1	0	
+GtkFileDialog	title	1	exact	1	0	
+GtkFileLauncher	always-ask	1	exact	1	0	
+GtkFileLauncher	writable	1	exact	1	0	
+GtkFilterListModel	incremental	1	exact	1	0	
+GtkFilterListModel	watch-items	1	exact	1	0	
+GtkFontDialog	title	1	exact	1	0	
+GtkFontDialog	modal	1	exact	1	0	
+GtkIconPaintable	size	1	exact	1	0	
+GtkIconPaintable	scale	1	exact	1	0	
+GtkIconTheme	theme-name	1	exact	1	1	
+GtkNotebookPage	tab-label	0	exact	1	1	
+GtkNotebookPage	menu-label	0	exact	1	1	
+GtkNotebookPage	position	0	ignored	1	1	
+GtkNotebookPage	tab-expand	1	exact	1	0	
+GtkNotebookPage	tab-fill	1	exact	1	0	
+GtkNotebookPage	reorderable	1	exact	1	0	
+GtkNotebookPage	detachable	1	exact	1	0	
+GtkPrintDialog	accept-label	1	exact	1	0	
+GtkPrintDialog	modal	1	exact	1	0	
+GtkPrintDialog	title	1	exact	1	0	
+GtkSettings	gtk-double-click-time	0	exact	1	1	
+GtkSettings	gtk-double-click-distance	0	exact	1	1	
+GtkSettings	gtk-cursor-blink	0	exact	1	1	
+GtkSettings	gtk-cursor-blink-time	0	exact	1	1	
+GtkSettings	gtk-cursor-blink-timeout	0	exact	1	1	
+GtkSettings	gtk-split-cursor	0	exact	1	1	
+GtkSettings	gtk-theme-name	0	exact	1	1	
+GtkSettings	gtk-icon-theme-name	0	exact	1	1	
+GtkSettings	gtk-dnd-drag-threshold	0	exact	1	1	
+GtkSettings	gtk-font-name	0	exact	1	1	
+GtkSettings	gtk-xft-antialias	0	exact	1	1	
+GtkSettings	gtk-xft-hinting	0	exact	1	1	
+GtkSettings	gtk-xft-hintstyle	0	exact	1	1	
+GtkSettings	gtk-xft-rgba	0	exact	1	1	
+GtkSettings	gtk-xft-dpi	0	exact	1	1	
+GtkSettings	gtk-hint-font-metrics	0	exact	1	1	
+GtkSettings	gtk-cursor-theme-name	0	exact	1	1	
+GtkSettings	gtk-cursor-theme-size	0	exact	1	1	
+GtkSettings	gtk-alternative-button-order	0	exact	1	1	
+GtkSettings	gtk-alternative-sort-arrows	0	exact	1	1	
+GtkSettings	gtk-enable-animations	0	exact	1	1	
+GtkSettings	gtk-error-bell	0	exact	1	1	
+GtkSettings	gtk-show-status-shapes	0	exact	1	1	
+GtkSettings	gtk-print-backends	0	exact	1	1	
+GtkSettings	gtk-print-preview-command	0	exact	1	1	
+GtkSettings	gtk-enable-accels	0	exact	1	1	
+GtkSettings	gtk-im-module	0	exact	1	1	
+GtkSettings	gtk-recent-files-max-age	0	exact	1	1	
+GtkSettings	gtk-fontconfig-timestamp	0	exact	1	1	
+GtkSettings	gtk-sound-theme-name	0	exact	1	1	
+GtkSettings	gtk-enable-input-feedback-sounds	0	exact	1	1	
+GtkSettings	gtk-enable-event-sounds	0	exact	1	1	
+GtkSettings	gtk-primary-button-warps-slider	0	exact	1	1	
+GtkSettings	gtk-entry-select-on-focus	0	exact	1	1	
+GtkSettings	gtk-entry-password-hint-timeout	0	exact	1	1	
+GtkSettings	gtk-label-select-on-focus	0	exact	1	1	
+GtkSettings	gtk-shell-shows-app-menu	0	exact	1	1	
+GtkSettings	gtk-shell-shows-menubar	0	exact	1	1	
+GtkSettings	gtk-shell-shows-desktop	0	exact	1	1	
+GtkSettings	gtk-decoration-layout	0	exact	1	1	
+GtkSettings	gtk-titlebar-double-click	0	exact	1	1	
+GtkSettings	gtk-titlebar-middle-click	0	exact	1	1	
+GtkSettings	gtk-titlebar-right-click	0	exact	1	1	
+GtkSettings	gtk-dialogs-use-header	0	exact	1	1	
+GtkSettings	gtk-enable-primary-paste	0	exact	1	1	
+GtkSettings	gtk-recent-files-enabled	0	exact	1	1	
+GtkSettings	gtk-long-press-time	0	exact	1	1	
+GtkSettings	gtk-keynav-use-caret	0	exact	1	1	
+GtkSettings	gtk-overlay-scrolling	0	exact	1	1	
+GtkSettings	gtk-font-rendering	0	exact	1	1	
+GtkSettings	gtk-interface-color-scheme	0	exact	1	1	
+GtkSettings	gtk-interface-contrast	0	exact	1	1	
+GtkSettings	gtk-interface-reduced-motion	0	exact	1	1	
+GtkSettings	gtk-keyboard-focus-visible-timeout	0	exact	1	1	
+GtkSingleSelection	autoselect	1	exact	1	0	
+GtkSingleSelection	can-unselect	1	exact	1	0	
+GtkSingleSelection	selected	1	ignored	0	0	
+GtkSizeGroup	mode	1	exact	1	0	
+GtkSliceListModel	offset	1	exact	1	0	
+GtkSliceListModel	size	1	exact	1	0	
+GtkSortListModel	incremental	1	exact	1	0	
+GtkSvg	resource	1	exact	1	1	
+GtkSvg	playing	1	exact	1	0	
+GtkSvg	weight	1	exact	1	0	
+GtkSvg	state	1	exact	1	0	
+GtkSvg	overflow	1	exact	1	0	
+GtkTextBuffer	text	0	exact	1	1	cursor-position
+GtkTextBuffer	enable-undo	1	exact	1	0	
+GtkTextTag	font	0	exact	1	1	stretch-set,weight-set,variant-set,style-set,family-set,font-desc
+GtkTextTag	family	0	exact	1	1	font,font-desc,stretch-set,weight-set,variant-set,style-set,family-set
+GtkTextTag	style	0	exact	1	1	font,font-desc,stretch-set,weight-set,variant-set,style-set,family-set
+GtkTextTag	variant	0	exact	1	1	font,font-desc,stretch-set,weight-set,variant-set,style-set,family-set
+GtkTextTag	weight	0	exact	1	1	font,font-desc,stretch-set,weight-set,variant-set,style-set,family-set
+GtkTextTag	stretch	0	exact	1	1	font,font-desc,stretch-set,weight-set,variant-set,style-set,family-set
+GtkTextTag	size	0	exact	1	1	font,font-desc,stretch-set,weight-set,variant-set,style-set,family-set,size-points
+GtkTextTag	size-points	0	exact	1	1	font,font-desc,size-set,stretch-set,weight-set,variant-set,style-set,family-set
+GtkTextTag	scale	0	exact	1	1	scale-set
+GtkTextTag	pixels-above-lines	0	exact	1	1	pixels-above-lines-set
+GtkTextTag	pixels-below-lines	0	exact	1	1	pixels-below-lines-set
+GtkTextTag	pixels-inside-wrap	0	exact	1	1	pixels-inside-wrap-set
+GtkTextTag	line-height	0	exact	1	1	line-height-set
+GtkTextTag	editable	0	exact	1	1	editable-set
+GtkTextTag	wrap-mode	0	exact	1	1	wrap-mode-set
+GtkTextTag	justification	0	exact	1	1	justification-set
+GtkTextTag	direction	0	exact	1	1	
+GtkTextTag	left-margin	0	exact	1	1	left-margin-set
+GtkTextTag	indent	0	exact	1	1	indent-set
+GtkTextTag	strikethrough	0	exact	1	1	strikethrough-set
+GtkTextTag	right-margin	0	exact	1	1	right-margin-set
+GtkTextTag	underline	0	exact	1	1	underline-set
+GtkTextTag	overline	0	exact	1	1	overline-set
+GtkTextTag	rise	0	exact	1	1	rise-set
+GtkTextTag	background-full-height	0	exact	1	1	background-full-height-set
+GtkTextTag	language	0	exact	1	1	language-set
+GtkTextTag	invisible	0	exact	1	1	invisible-set
+GtkTextTag	fallback	0	exact	1	1	fallback-set
+GtkTextTag	letter-spacing	0	exact	1	1	letter-spacing-set
+GtkTextTag	font-features	0	exact	1	1	font-features-set
+GtkTextTag	allow-breaks	0	exact	1	1	allow-breaks-set
+GtkTextTag	insert-hyphens	0	exact	1	1	insert-hyphens-set
+GtkTextTag	text-transform	0	exact	1	1	text-transform-set
+GtkTextTag	word	0	exact	1	1	word-set
+GtkTextTag	sentence	0	exact	1	1	sentence-set
+GtkTextTag	accumulative-margin	0	exact	1	1	
+GtkTextTag	background-set	0	exact	1	1	
+GtkTextTag	foreground-set	0	exact	1	1	
+GtkTextTag	family-set	0	exact	1	1	
+GtkTextTag	style-set	0	exact	1	1	
+GtkTextTag	variant-set	0	exact	1	1	
+GtkTextTag	weight-set	0	exact	1	1	
+GtkTextTag	stretch-set	0	exact	1	1	
+GtkTextTag	size-set	0	exact	1	1	
+GtkTextTag	scale-set	0	exact	1	1	
+GtkTextTag	pixels-above-lines-set	0	exact	1	1	
+GtkTextTag	pixels-below-lines-set	0	exact	1	1	
+GtkTextTag	pixels-inside-wrap-set	0	exact	1	1	
+GtkTextTag	line-height-set	0	exact	1	1	
+GtkTextTag	editable-set	0	exact	1	1	
+GtkTextTag	wrap-mode-set	0	exact	1	1	
+GtkTextTag	justification-set	0	exact	1	1	
+GtkTextTag	left-margin-set	0	exact	1	1	
+GtkTextTag	indent-set	0	exact	1	1	
+GtkTextTag	strikethrough-set	0	exact	1	1	
+GtkTextTag	strikethrough-rgba-set	0	exact	1	1	
+GtkTextTag	right-margin-set	0	exact	1	1	
+GtkTextTag	underline-set	0	exact	1	1	
+GtkTextTag	underline-rgba-set	0	exact	1	1	
+GtkTextTag	overline-set	0	exact	1	1	
+GtkTextTag	overline-rgba-set	0	exact	1	1	
+GtkTextTag	rise-set	0	exact	1	1	
+GtkTextTag	background-full-height-set	0	exact	1	1	
+GtkTextTag	language-set	0	exact	1	1	
+GtkTextTag	tabs-set	0	exact	1	1	
+GtkTextTag	invisible-set	0	exact	1	1	
+GtkTextTag	paragraph-background-set	0	exact	1	1	
+GtkTextTag	fallback-set	0	exact	1	1	
+GtkTextTag	letter-spacing-set	0	exact	1	1	
+GtkTextTag	font-features-set	0	exact	1	1	
+GtkTextTag	allow-breaks-set	0	exact	1	1	
+GtkTextTag	show-spaces-set	0	exact	1	1	
+GtkTextTag	insert-hyphens-set	0	exact	1	1	
+GtkTextTag	text-transform-set	0	exact	1	1	
+GtkTextTag	word-set	0	exact	1	1	
+GtkTextTag	sentence-set	0	exact	1	1	
+GtkTreeListModel	autoexpand	1	exact	1	0	
+GtkTreeListRow	expanded	1	ignored	0	0	
+GtkUriLauncher	uri	1	exact	1	0	
+#scenario	textbuffer insert_at_cursor	text=1	cursor-position=1	has-selection=0	can-undo=1	can-redo=0
+#scenario	textbuffer select_range(all)	text=0	cursor-position=1	has-selection=1	can-undo=0	can-redo=0
+#scenario	textbuffer delete(all)	text=1	cursor-position=1	has-selection=1	can-undo=0	can-redo=0
+#scenario	textbuffer set_text abc,abc	text=3	cursor-position=3	has-selection=0	can-undo=1	can-redo=0
+#scenario	textbuffer 100 x insert_at_cursor	text=100	cursor-position=100	has-selection=0	can-undo=1	can-redo=0
+#scenario	textbuffer changed signals total	105
+#scenario	adjustment set_value 5,5	value=1	lower=0	upper=0	page-size=0
+#scenario	adjustment clamped read	100
+#scenario	adjustment set_value 500 (upper 100)	value=1	lower=0	upper=0	page-size=0
+#scenario	adjustment 10 set_value inside freeze/thaw	value=1	lower=0	upper=0	page-size=0
+#scenario	adjustment configure(value 1, upper 50)	value=1	lower=0	upper=1	page-size=0
+#scenario	adjustment value after upper 0.5	1
+#scenario	adjustment set_upper 0.5 (value 1 now out of range)	value=0	lower=0	upper=1	page-size=0
+#scenario	scale set_value: widget	adjustment=0	fill-level=0
+#scenario	scale set_value: its adjustment	value=1
+#scenario	entry editable insert_text abc	text=1	cursor-position=0	text-length=0
+#scenario	entry insert_text d: entry	text=1	cursor-position=0	text-length=0
+#scenario	entry insert_text d: its buffer	text=1	length=1
+#scenario	notebook set_current_page 2	page=1
+#scenario	notebook page after removing current	1
+#scenario	notebook remove current page	page=1
+#scenario	label set_markup	label=1	use-markup=1
+#scenario	togglebutton set_active true,true	active=1
+#scenario	window present (WM-driven props)	default-width=1	default-height=1	is-active=1	maximized=0	fullscreened=0
+#scenario	window maximize (async, WM)	default-width=0	default-height=0	is-active=0	maximized=0	fullscreened=0
+#crashed	GtkCellRendererText
+#crashed	GtkActivateAction
+#crashed	GtkMnemonicAction
+#crashed	GtkNamedAction
+#crashed	GtkNothingAction
+#crashed	GtkSignalAction
+#crashed	GtkStackPage
+#crashed	GtkTreeSelection

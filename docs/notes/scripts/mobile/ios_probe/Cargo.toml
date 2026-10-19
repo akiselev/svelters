@@ -1,0 +1,17 @@
+# Throwaway probe (docs/notes/ios-uikit-backend.md): does the UIKit surface the first slice needs
+# type-check for aarch64-apple-ios from Linux with no SDK? Build with:
+#   CARGO_TARGET_DIR=/tmp/svm/target cargo check --manifest-path docs/notes/scripts/mobile/ios_probe/Cargo.toml --target aarch64-apple-ios
+[package]
+name = "ios_probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[target.'cfg(target_os = "ios")'.dependencies]
+objc2 = "0.6.5"
+block2 = "0.6.2"
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSString", "NSObject", "NSKeyValueObserving", "NSDictionary", "NSNotification", "NSSet", "NSRunLoop", "NSGeometry", "NSValue"] }
+objc2-quartz-core = { version = "0.3.2", default-features = false, features = ["std", "CADisplayLink", "objc2-core-foundation"] }
+objc2-ui-kit = { version = "0.3.2", default-features = false, features = ["std", "block2", "UIApplication", "UIResponder", "UIScene", "UIWindowScene", "UISceneOptions", "UISceneSession", "UIWindow", "UIView", "UIViewController", "UIStackView", "UIControl", "UIButton", "UIButtonConfiguration", "UISwitch", "UISlider", "UITextField", "UITextInputTraits", "UITextInput", "UILabel", "UIProgressView", "UIAction", "UIMenuElement", "UIGeometry", "UIAccessibility", "UIAccessibilityConstants", "UIAccessibilityIdentification", "UIInterface", "UIColor", "UIScreen", "objc2-core-foundation"] }

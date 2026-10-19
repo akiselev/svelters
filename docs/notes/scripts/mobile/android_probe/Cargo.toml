@@ -1,0 +1,18 @@
+# Throwaway probe (docs/notes/android-backend.md): the native half of the Android backend's loop
+# and JNI bridge type-checks for aarch64-linux-android from Linux with no NDK (check only, no link):
+#   CARGO_TARGET_DIR=/tmp/svm/target cargo check --manifest-path docs/notes/scripts/mobile/android_probe/Cargo.toml --target aarch64-linux-android
+[package]
+name = "android_probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[workspace]
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni-sys = "0.4"
+ndk-sys = "0.6"
+libc = "0.2"

@@ -1,0 +1,21 @@
+# Standalone prototype (not a workspace member): cost of native property observation through the
+# real host + GTK backend (plans/research/REACTIVITY.md section 6). Build and run:
+#   (cd js && ./build.sh)    # optional: the Svelte createSubscriber scenarios
+#   CARGO_TARGET_DIR=/tmp/svl-reactivity-target CARGO_BUILD_BUILD_DIR=/tmp/svl-reactivity-target/build \
+#     ../../../../../tools/dev/cargo-slot cargo build --release
+#   env -u DISPLAY -u WAYLAND_DISPLAY GDK_BACKEND=x11 xvfb-run -a /tmp/svl-reactivity-target/release/reactivity-host-bench 10000
+[package]
+name = "reactivity-host-bench"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+svelters-abi = { path = "../../../../../crates/svelters-abi" }
+svelters-host = { path = "../../../../../crates/svelters-host" }
+svelters-gtk = { path = "../../../../../crates/svelters-gtk" }
+
+[profile.release.package.rquickjs-sys]
+opt-level = 2
