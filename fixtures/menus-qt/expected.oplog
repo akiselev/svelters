@@ -83,9 +83,9 @@ event #13 toggled [false]
 event #14 toggled [true]
 set #18 text "S:open;|true|false|true"
 event #17 clicked []
+remove #8 #9
+destroy #9
 create action #22
 set #22 text "c.txt"
 listen #22 triggered on
-insert #8 #22 before=#9 slot=default
-remove #8 #9
-destroy #9
+insert #8 #22 before=#10 slot=default

@@ -5,8 +5,8 @@ set #2 direction "top-to-bottom"
 set #2 spacing 6
 create line-edit #3
 set #3 placeholder-text "Your name"
-set #3 text ""
 listen #3 text-changed on
+set #3 text ""
 insert #2 #3 before=end slot=default
 create label #4
 set #4 text "Nobody (0 edits)"

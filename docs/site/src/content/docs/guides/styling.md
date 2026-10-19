@@ -7,7 +7,7 @@ Svelte's `class`, `class:`, `style:` and `style` work on native elements, and a 
 
 ```svelte
 <script>
-  import { setColorScheme, setTokens } from '@svelters/renderer/style';
+  import { setColorScheme, setTokens } from '@svelters/native-runtime/style';
   let count = $state(0);
   let warn = $state(false);
 </script>
@@ -42,7 +42,7 @@ The Qt window stretches the page vertically because `QVBoxLayout` distributes sp
 | Layer | What | Where |
 | --- | --- | --- |
 | Native styling | `<style>`, `class`, `class:`, `style:`, `style` with the toolkit's CSS properties | translated to GTK CSS and QSS |
-| Setter properties | the same places, with the toolkit's layout and widget properties (`spacing`, `hexpand`, `width-request` on GTK; `spacing`, `minimum-width`, `stretch` on Qt) | written with `setProp` / `setChildAttr`, matched by the renderer |
+| Setter properties | the same places, with the toolkit's layout and widget properties (`spacing`, `hexpand`, `width-request` on GTK; `spacing`, `minimum-width`, `stretch` on Qt) | written with `setProp` / `setChildAttr`, matched at compile time |
 | Native escape | `@native gtk { }` and `@native qt { }` inside `<style>` | passed through verbatim to one toolkit |
 | Tokens | `--sv-*` custom properties and the colour scheme | one token set mapped per toolkit |
 
@@ -52,19 +52,21 @@ Widget props set as attributes (`<box spacing={8}>`) still work and win over any
 
 ```text
 <style> in App.svelte
-  | Svelte compile (css: 'external'): scoped hash on selectors and on the elements' class
-  | svelters:style Vite plugin -> @svelters/style: each declaration looked up in the style table
+  | Vite plugin (@svelters/native-runtime/vite):
+  |   CSS declarations: stock Svelte compile (css: 'external') scopes the selectors,
+  |                     @svelters/style translates them for the toolkit
+  |   setter declarations: svelters-compile matches them to elements at compile time
   v
-registerStyles("src/App.svelte", { gtk, qt, qtDark, rules })   (data in the bundle, no <style> tag)
+registerStyles("src/App.svelte", { gtk } | { qt, qtDark })   (data in the bundle, no <style> tag)
+generated code: setProp / setChildAttr for setter rules, conditional on dynamic class / id
   v
-renderer: class / id / style -> host.style(op, handle, text)      (ABI v2.3)
-          setter rules matched on class / id changes -> setProp / setChildAttr
+runtime: class / id / style -> host.style(op, handle, text)      (ABI v2.3)
   v
 GTK: one GtkCssProvider per component, widget css classes          Qt: one application stylesheet, class property
 ```
 
-- **Scoping.** Svelte appends its hash class (`svelte-1n46o8q`) to every selector and every element that carries a class, so a component's rules only match its own elements. The renderer forwards the class string unchanged.
-- **Type selectors use Svelters element names** (`button`, `label`, `entry`), not toolkit names. Each toolkit has its own element names, and the translator maps them: `button` becomes the CSS node `button` on GTK, `push-button` becomes `.QPushButton` on Qt. Kinds that share a toolkit name with another kind (for instance `button`, `toggle-button` and `link-button` are all the CSS node `button`) get a marker class `sv-k-<tag>` from the renderer, and the selector uses it, so `button` never matches a toggle button. An element that does not exist on a toolkit (`toggle-button` on Qt) drops the rule there with a warning.
+- **Scoping.** Svelte appends a scope class (`svelte-<hash>`, derived from the file path) to every selector, and the compiler adds it to every native element of the component, so a component's rules only match its own elements.
+- **Type selectors use Svelters element names** (`button`, `label`, `entry`), not toolkit names. Each toolkit has its own element names, and the translator maps them: `button` becomes the CSS node `button` on GTK, `push-button` becomes `.QPushButton` on Qt. Kinds that share a toolkit name with another kind (for instance `button`, `toggle-button` and `link-button` are all the CSS node `button`) get a marker class `sv-k-<tag>` from the runtime, and the selector uses it, so `button` never matches a toggle button. An element that does not exist on a toolkit (`toggle-button` on Qt) drops the rule there with a warning.
 - **Classes are cheap and local.** GTK adds and removes only the classes the app set (the widget keeps its own `text-button` or `toggle`). Nothing writes the whole `css-classes` list. Qt sets the dynamic property `class` to `"<QtClass> your classes"`, so `.QPushButton` keeps matching, and re-polishes that one widget.
 - **`id`** sets the widget name (GTK) or object name (Qt), so `#id` selectors match.
 
@@ -96,9 +98,9 @@ A rule whose declarations include setter properties becomes a setter rule for th
 ```
 
 - **Selectors.** One compound of an element name, `.class` and `#id`. A combinator (`.toolbar .grow`), a state (`:hover`), `@media` or a nested rule around a setter property is an error naming the property: the toolkit has no way to re-evaluate them, so they stay CSS-only.
-- **Matching.** The renderer matches setter rules when an element is created and again whenever its `class` or `id` changes, so `class:` toggles them. It writes only the difference.
+- **Matching.** The compiler matches setter rules at compile time. A rule that depends on a dynamic `class`, a `class:` directive or a dynamic `id` becomes a runtime condition, so toggling the class switches the value. Only changes are written.
 - **Precedence.** An explicit attribute (`<box spacing={4}>`) wins over `style:` and `style=`, which win over rules; rules are ordered by specificity (ids, classes, element names), then source order; the native value is last. Removing the attribute or the inline declaration brings the next layer back.
-- **Restoring.** Before a rule first overrides a property, the renderer reads its current value with `getProp`; when no rule sets the property any more, that value is written back. A child attribute goes back to `null` (the parent's default).
+- **Restoring.** When no rule, inline declaration or attribute sets the property any more, the spec's native default is written back; for a property without a known default, the runtime reads the value with `getProp` before the first override and writes that back. A child attribute goes back to `null` (the parent's default). `style:<setter>={undefined}` falls back to the static `style=` value, then the rules, then the default.
 - **Values.** Lengths are unitless or in `px`; booleans are `true` and `false`; enumerations are the property's own values (`halign: center`); `contents-margins` takes 1 to 4 lengths in CSS order. `var()` is not available in setter properties.
 - A rule that matches an element its property does not apply to (`.toolbar { spacing: 8px }` on a label) skips that property; with an element name in the selector it is an error at build time.
 
@@ -146,7 +148,7 @@ A rule whose declarations include setter properties becomes a setter rule for th
 
 ## `style` and `style:`
 
-Inline style is parsed in JavaScript and split the same way: CSS declarations are sent to the backend in its dialect, setter declarations are written with `setProp` above every rule. Raw toolkit CSS is not accepted in `style`; use `@native`.
+Inline style is split the same way: CSS declarations are sent to the backend in its dialect, setter declarations are written with `setProp` above every rule. Raw toolkit CSS is not accepted in `style`; use `@native`.
 
 - `style:spacing={8}` and `style="spacing: 8px"` take the same path. A number or boolean is written as it is; a string is parsed like a declaration value.
 - GTK deduplicates CSS by content: each distinct declaration set becomes a shared class `sv-s<n>` in one append-only provider, flushed once per main-loop turn. Changing a widget to an already seen style is a class swap. Inline rules sit above component rules, as inline style does on the web.
@@ -188,34 +190,22 @@ Two compensations are applied for you:
 - **Qt boxes.** A QSS background on a button, combo box or spin box only paints once the box is customised, so `border: none` is added to a rule that sets a background but no border (not on labels, frames and windows).
 - **GTK themes.** The theme paints buttons and entries with a `background-image` gradient that hides `background-color`, so `background-image: none` is added next to it.
 
-## Compiled components
-
-Components compiled by the experimental native compiler (`svelters-compile`, NC1) use the same tables. Setter rules are matched at compile time (dynamic classes become runtime conditions); the CSS half of `<style>` is scoped by Svelte and translated by @svelters/style in the Vite plugin, and classes, `id` and inline style reach the widget through the same `host.style` operations. Differences: setter declarations of a dynamic `style={...}` are applied at runtime above everything (the compiled runtime does not track explicit attributes), `style:<setter>={undefined}` writes `null` instead of falling back to the rules, and a dynamic `id` matches no `#id` setter rule.
-
 ## Diagnostics
 
-The Vite plugin prints one line per dropped construct, naming the toolkit, with the position inside the file:
+Setter declarations are checked by the compiler: an unknown property, a bad value, or a combinator, state, `@media` or nesting around a setter property is a compile error with its position.
+
+CSS declarations are checked by the translator. Each dropped construct is one Vite warning from the compiler plugin (`svelters-native-compiler`), naming the toolkit:
 
 ```text
-[plugin svelters:style] warning [qt] property 'box-shadow' is not supported on qt
-[plugin svelters:style] warning [qt] <toggle-button> is not an element on qt; rule dropped
-[plugin svelters:style] error [qt] value 'oklch(0.6 0.1 250)' for background-color uses 'oklch', which QSS cannot parse
-[plugin svelters:style] error [qt] combinator '+' never matches in QSS; rule dropped
+warning [qt] property 'box-shadow' is not supported on qt
+warning [qt] <toggle-button> is not an element on qt; rule dropped
+error [qt] value 'oklch(0.6 0.1 250)' for background-color uses 'oklch', which QSS cannot parse
+error [qt] combinator '+' never matches in QSS; rule dropped
 ```
 
-Nothing is dropped silently. Build all targets from one source and read the output of each toolkit. A component that is clean on every toolkit you ship prints nothing. Inline `style` problems are reported once per distinct message at runtime with `console.warn`.
+Translator errors are reported as warnings too: the rule is dropped and the build continues. Nothing is dropped silently. Build all targets from one source and read the output of each toolkit; a component that is clean on every toolkit you ship prints nothing. If stock Svelte cannot compile a component for its CSS, the plugin warns `<style> not translated` and skips the CSS half. Inline `style` problems are reported once per distinct message at runtime with `console.warn`.
 
-Options (the third argument of `svelteConfig` in `vite.config.js`, or environment variables):
-
-```js
-export default defineConfig(svelteConfig(import.meta.dirname, undefined, {
-  style: {
-    strict: true,          // or SVELTERS_STYLE_STRICT=1: every warning and error fails the build
-    verbose: false,        // or SVELTERS_STYLE_VERBOSE=1: also print the info lines (compensations)
-    tokens: ['--sv-brand'] // token names you define with setTokens(), so they are not reported as unknown
-  },
-}));
-```
+There are no style options in `svelteConfig`.
 
 ## Tokens and the colour scheme
 
@@ -237,7 +227,7 @@ export default defineConfig(svelteConfig(import.meta.dirname, undefined, {
 | `--sv-font-size`, `--sv-font-family` | `11pt`, `sans-serif` | same |
 
 ```js
-import { setTokens, getTokens, setColorScheme, getColorScheme } from '@svelters/renderer/style';
+import { setTokens, getTokens, setColorScheme, getColorScheme } from '@svelters/native-runtime/style';
 
 setColorScheme('dark');                       // tokens, Qt palette, GTK prefers-color-scheme and dark sheets follow
 setTokens({ '--sv-accent': '#e5a50a' });      // override app-wide
@@ -247,7 +237,7 @@ setTokens({ '--sv-accent': null });           // back to the scheme's default
 Calls in the same job are batched, and a token set that did not change sends nothing.
 
 - **GTK.** Tokens are a `:root { --sv-x: value; }` rule in one small provider below the component providers. Component CSS keeps `var(--sv-x)` and GTK resolves it, so a token change rewrites that one provider. The scheme is set as the `prefers-color-scheme` property of every provider the host owns (GTK evaluates `@media (prefers-color-scheme)` per provider) and as the toolkit's dark preference, so the theme's own widgets follow too.
-- **Qt.** QSS has no variables. The translator keeps component rules as templates with `${--sv-x}` placeholders; the renderer fills them from the active token set and the backend concatenates the sheets into one application stylesheet. The same tokens become the application `QPalette` (`--sv-bg` is Window and Button, `--sv-fg` the text roles, `--sv-surface` is Base, `--sv-accent` and `--sv-accent-fg` are Highlight and HighlightedText), so widgets you did not style match. A token without a value and without a `var()` fallback removes its declaration rather than emitting something QSS would mis-parse. Qt sets the sheet at once while no window is visible (startup) and one zero-delay timer turn later after that, so a theme switch is one re-polish.
+- **Qt.** QSS has no variables. The translator keeps component rules as templates with `${--sv-x}` placeholders; the runtime fills them from the active token set and the backend concatenates the sheets into one application stylesheet. The same tokens become the application `QPalette` (`--sv-bg` is Window and Button, `--sv-fg` the text roles, `--sv-surface` is Base, `--sv-accent` and `--sv-accent-fg` are Highlight and HighlightedText), so widgets you did not style match. A token without a value and without a `var()` fallback removes its declaration rather than emitting something QSS would mis-parse. Qt sets the sheet at once while no window is visible (startup) and one zero-delay timer turn later after that, so a theme switch is one re-polish.
 - Tokens are app-wide on both toolkits. A per-subtree override works on GTK only through `@native gtk`.
 - `@media (prefers-color-scheme: dark)` in a component follows `setColorScheme`, not the operating system. Following the system setting is an open item.
 - Dark mode on Qt under X11 without a platform theme is the palette above: `QStyleHints::setColorScheme` did not change it in testing, so Svelters does not rely on it.
@@ -284,7 +274,7 @@ Calls in the same job are batched, and a token set that did not change sends not
 - The Qt sheet is applied before the first window is shown (36 ms against about 900 ms after, measured over 1000 buttons).
 - Hot reload (`svelters-build --watch`) re-registers sheets under the same ids, which reloads one GTK provider or one Qt sheet.
 
-Measurements: `docs/notes/styling-gtk-css-qss.md`.
+Measurements (taken on the since-retired renderer pipeline; the backend side is unchanged): `docs/notes/styling-gtk-css-qss.md`.
 
 ## Limits and open items
 
@@ -294,4 +284,4 @@ Measurements: `docs/notes/styling-gtk-css-qss.md`.
 - Svelte's `transition:` and `animate:` stay compile errors; CSS `transition` works on GTK only.
 - Unscoped `@native` content is global to its toolkit.
 
-Sources: `docs/notes/styling-gtk-css-qss.md`, `docs/notes/x6-styling.md`, `docs/notes/st1-style-unification.md`, `plans/milestones/X6-styling.md`, `plans/milestones/ST1-style-unification.md`, `plans/architecture/backend-abi.md` (ABI v2.3).
+Sources: `docs/notes/styling-gtk-css-qss.md`, `docs/notes/x6-styling.md`, `docs/notes/st1-style-unification.md`, `docs/notes/fx1-fixes.md` (item 1), `docs/notes/native-compiler/styling-syntax.md`, `packages/native-runtime/vite.js`, `packages/native-runtime/src/style.js`, `plans/milestones/X6-styling.md`, `plans/milestones/ST1-style-unification.md`, `plans/architecture/backend-abi.md` (ABI v2.3).

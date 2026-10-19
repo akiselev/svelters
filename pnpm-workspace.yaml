@@ -7,7 +7,3 @@ packages:
   - "experiments/native-compiler/handwritten"
   - "experiments/native-compiler/compiled"
   - "experiments/native-compiler/conformance"
-
-# Every package resolves svelte to the vendored custom-renderer fork (see vendor/svelte/PIN).
-overrides:
-  svelte: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz

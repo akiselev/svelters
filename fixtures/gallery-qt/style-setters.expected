@@ -2,7 +2,7 @@
 # rules: .setters { spacing; direction; contents-margins }, .grow { stretch } (child attribute); inline: minimum-/maximum-width
 set #N spacing 16
 set #N direction "left-to-right"
-set #N contents-margins {"top":4,"right":0,"bottom":0,"left":0}
+set #N contents-margins {"bottom":0,"left":0,"right":0,"top":4}
 attr #N #N stretch 1
 set #N minimum-width 120
 set #N maximum-width 160

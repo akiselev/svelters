@@ -1,6 +1,6 @@
 <script>
   // Qt twin of fixtures/styles (Qt vocabulary).
-  import { setColorScheme, setTokens } from '@svelters/renderer/style';
+  import { setColorScheme, setTokens } from '@svelters/native-runtime/style';
 
   let on = $state(false);
   let dark = $state(false);

@@ -7,33 +7,17 @@ import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { build } from 'vite';
 import { nativeConfig, svelteNative } from '@svelters/native-runtime/vite';
-import { TARGETS, cases, sourceOf, targetsOf } from './cases.mjs';
+import { cases, sourceOf, targetsOf } from './cases.mjs';
 
 const here = import.meta.dirname;
 const repo = path.resolve(here, '../../..');
 const only = process.argv.slice(2);
 
-/** Deep merge of plain objects (`b` wins). */
-function merge(a, b) {
-  if (a === null || b === null || typeof a !== 'object' || typeof b !== 'object' || Array.isArray(a) || Array.isArray(b)) return b;
-  const out = { ...a };
-  for (const [k, v] of Object.entries(b)) out[k] = k in a ? merge(a[k], v) : v;
-  return out;
-}
-
-// specs derived from a real one plus an overlay (the testhost target)
-for (const t of TARGETS) {
-  if (!t.overlay) continue;
-  const base = JSON.parse(fs.readFileSync(path.join(repo, `metadata/semantics/${t.backend}.json`), 'utf8'));
-  fs.mkdirSync(path.dirname(t.spec), { recursive: true });
-  fs.writeFileSync(t.spec, JSON.stringify(merge(base, JSON.parse(fs.readFileSync(t.overlay, 'utf8')))));
-}
-
-// Cases with extra scripts are compared live against the JS pipeline's bundle: build it first.
+// Cases with extra scripts are compared live against the fixture's own bundle: build it first.
 for (const c of cases()) {
   if ((only.length && !only.includes(c.name)) || !c.extraScripts?.length) continue;
   execFileSync('pnpm', ['run', '--silent', 'build'], { cwd: path.dirname(c.jsExpected), stdio: ['ignore', 'ignore', 'inherit'] });
-  console.log(`built JS pipeline ${c.name}`);
+  console.log(`built fixture ${c.name}`);
 }
 for (const c of cases()) {
   if (only.length && !only.includes(c.name)) continue;

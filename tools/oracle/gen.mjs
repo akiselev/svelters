@@ -53,7 +53,8 @@ async function loadTsParser() {
 }
 
 async function loadSvelte() {
-	const dir = pnpmPackage(`svelte@file+vendor+svelte+svelte-${SVELTE_VERSION}`, 'svelte');
+	// stock svelte from npm (the custom-renderer fork is retired, RT1)
+	const dir = pnpmPackage(`svelte@${SVELTE_VERSION}`, 'svelte');
 	const pkg = JSON.parse(fs.readFileSync(path.join(dir, 'package.json'), 'utf8'));
 	if (pkg.version !== SVELTE_VERSION) throw new Error(`svelte ${pkg.version}, expected ${SVELTE_VERSION}`);
 	return import(pathToFileURL(path.join(dir, 'src/compiler/index.js')).href);
@@ -241,9 +242,6 @@ async function svelteCases() {
 		}
 	}
 	for (const f of walk(path.join(root, 'fixtures'), (p) => p.endsWith('.svelte') && path.basename(path.dirname(p)) === 'src' && path.dirname(path.dirname(path.dirname(p))) === path.join(root, 'fixtures'))) {
-		inputs.push({ id: `svelters/${path.relative(root, f)}`, file: f, loose: false });
-	}
-	for (const f of walk(path.join(root, 'tests/renderer-conformance/apps'), (p) => p.endsWith('.svelte') && path.dirname(p) === path.join(root, 'tests/renderer-conformance/apps'))) {
 		inputs.push({ id: `svelters/${path.relative(root, f)}`, file: f, loose: false });
 	}
 	const cases = [];

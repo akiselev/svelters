@@ -13,7 +13,7 @@ ORACLE_UPDATE_BASELINE=1 tools/oracle/run.sh      # raise the pass-count ratchet
 
 Requirements: `pnpm install --frozen-lockfile` (acorn, @sveltejs/acorn-typescript and svelte are
 resolved from `node_modules/.pnpm`), Node 22, upstream checkouts in `$UPSTREAM` (default
-`/tmp/claude-0/up`): `acorn` @ 8.19.0, `svelte` @ f3de3f2 and `acorn-typescript`
+`/tmp/claude-0/up`): `acorn` @ 8.19.0, `svelte` @ tag `svelte@5.57.2` (stock; before RT1 the fork base f3de3f2) and `acorn-typescript`
 (`git clone https://github.com/sveltejs/acorn-typescript`, tested @ 5e2e704; optional, its
 `test/*/input.ts` files are inputs only; the parsers that run are the npm packages).
 
@@ -30,7 +30,7 @@ resolved from `node_modules/.pnpm`), Node 22, upstream checkouts in `$UPSTREAM` 
   `{id, code, options, ast, comments}` or `{id, code, options, error: {message, pos, raisedAt}}`.
 - `svelte.jsonl` (~3680 cases, ~14 MB): every `.svelte` in the `parser-modern`, `parser-legacy`,
   `compiler-errors`, `runtime-runes`, `runtime-legacy`, `validator` samples, plus this repo's
-  `fixtures/*/src/*.svelte` and `tests/renderer-conformance/apps/*.svelte`, parsed with
+  `fixtures/*/src/*.svelte`, parsed with
   `parse(src, {modern: true, loose})` (`loose` for `parser-modern/loose-*`). Records
   `{id, source, options, ast}` or `{id, source, options, error: {code, message, start, end}}`
   (message without Svelte's docs-URL line).

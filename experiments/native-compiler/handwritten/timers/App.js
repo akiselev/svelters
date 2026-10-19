@@ -1,5 +1,5 @@
 // Hand-written in the generated-code shape for fixtures/timers/src/App.svelte.
-import * as $ from 'svelte/internal/client';
+import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 import { onMount } from 'svelte';
 

@@ -175,7 +175,7 @@ def strip_cv(native: str) -> str:
 
 
 def ts_leaf(cat: str, payload, m) -> str:
-    """The TypeScript type for a classified ref (see packages/renderer/types/values.d.ts)."""
+    """The TypeScript type for a classified ref (see packages/native-runtime/types/values.d.ts)."""
     if cat == "bool":
         return "boolean"
     if cat in ("int", "float"):

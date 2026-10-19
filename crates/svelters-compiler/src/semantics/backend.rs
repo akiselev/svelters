@@ -317,6 +317,10 @@ impl BackendSemantics for SpecBackend {
             .help("set the property one way and listen to an event instead"))
     }
 
+    fn attaches_to(&self, child: &ElementRef) -> Option<&str> {
+        self.kind(child).attaches_to.as_deref()
+    }
+
     fn place_child(&self, parent: &ElementRef, child: &ElementRef, requested: Option<&str>) -> Result<SlotPlan, Unresolved> {
         let all: Vec<(&str, &str, &SlotSpec)> = self.slots(parent);
         if all.is_empty() {

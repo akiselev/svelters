@@ -4,18 +4,14 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "description": "Shared Vite config for building a Svelters app into a single ESM bundle",
+  "description": "App build for svelters: a Vite config that compiles an app's components with svelters-compile into one ESM bundle (dist/app.js), and the svelters-build CLI (one-shot or --watch)",
   "exports": {
     ".": "./index.js"
   },
   "dependencies": {
-    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "@svelters/native-runtime": "workspace:*",
     "svelte": "5.57.2",
-    "vite": "8.3.4",
-    "@svelters/dom": "workspace:*",
-    "@svelters/renderer": "workspace:*",
-    "@svelters/style": "workspace:*",
-    "@svelters/types": "workspace:*"
+    "vite": "8.3.4"
   },
   "bin": {
     "svelters-build": "./bin/svelters-build.mjs"

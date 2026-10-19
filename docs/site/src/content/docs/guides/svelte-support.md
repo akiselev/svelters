@@ -1,150 +1,134 @@
 ---
 title: Svelte support
-description: Which Svelte 5 features work on native widgets today, which need more work, and which are compile errors.
+description: Which Svelte 5 features the svelters compiler accepts on native widgets, which it rejects, and where it departs from Svelte.
 ---
 
-Svelters compiles components with the vendored Svelte fork (`5.57.2`, branch `custom-condition` at `f3de3f2`, the #18042 custom renderer stack) and `experimental.customRenderer`, then runs them on `@svelters/renderer`. This page lists every Svelte feature the project surveyed.
+Svelters compiles components with its own compiler, `svelters-compile` (crate `crates/svelters-compiler`). It is a Rust port of Svelte 5.57.2's parser, acorn and scope analysis. Script semantics follow Svelte's runes mode and emit the same reactive calls; the template is lowered to native operations instead of DOM code. This page lists what it accepts.
 
 ## Status words
 
 | Status | Meaning |
 | --- | --- |
-| **works** | Works today on `packages/renderer`. |
-| **needs X** | Compiles or partly works; the named work is missing. |
+| **works** | Compiles and runs on the native runtime. |
+| **partial** | Compiles with the restriction named in the notes. |
+| **error** | A compile error. The code is given where it is not `unsupported_feature`. |
 | **n/a** | Meaningless for native UI. |
-| **forbidden** | A compile error under the renderer. |
-| **planned** | Not implemented. Design exists in the project notes. |
 
-The survey is dated 2026-10-17. Every claim comes from compiling with the fork and running the result under Node against the production renderer.
+Behaviour not listed as a departure here or in `docs/notes/native-compiler/deviations.md` is meant to match Svelte. Two checks keep it honest: the oracle compares the parser and scope ports with upstream, and the conformance ratchet (`experiments/native-compiler/conformance`) runs Svelte's own `runtime-runes` samples through the compiler and runtime on a DOM test backend. 498 of the 774 samples with a DOM variant pass; most of the rest use features rejected below (spreads on elements, transitions, `use:`, SVG).
 
 :::note[Native widgets, not DOM]
-Elements are native kinds (`window`, `box`, `label`, `button`, `entry`, ...), not HTML. See [the element reference](/api/) for the tags each toolkit provides.
+Elements are native kinds (`window`, `box`, `label`, `button`, `entry`, ...), not HTML. The compiler checks every tag, prop, event, child and binding against the toolkit's semantic spec (`metadata/semantics/<toolkit>.json`), so a mistake is a compile error with a position. See [the element reference](/api/) for the tags each toolkit provides.
 :::
 
-## Reactivity
+## Script and runes
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `$state`, `$state.raw` | works | Drives `set_prop`. Objects and arrays become deep proxies. |
-| `$derived`, `$derived.by` | works | |
-| `$effect`, `$effect.pre`, `$effect.root`, `$effect.tracking` | works | `.pre` runs before the block's host ops, `$effect` after. |
-| `$props` | works | Basis of every wrapper component. |
-| `$bindable` | works | Component two-way binding. See [Bindings](/guides/bindings/). |
-| `$inspect`, `$inspect.trace` | works (dev) | Needs `console` from the host in dev. |
-| `svelte/store` (`writable`, `$store`) | works | Needs the `custom-renderer` export condition. |
-| Deep `$state` passed as a native prop | needs coercion | The value arrives as a `Proxy`. Deep mutations never reach `setAttribute`; use `$state.snapshot(x)` or reassign a `$state.raw` value. The renderer currently throws for object values (`objects are not valid host prop values`); planned: the renderer snapshots object props. |
-| Static boolean attribute (`<spinner spinning />`) | needs metadata | Arrives as `""`, while `{expr}` booleans arrive as `true`/`false`. Coercion needs typed props from M3 metadata. |
+| `$state`, `$state.raw`, `$state.snapshot`, `$state.eager` | works | Also in class fields, constructors (`this.x = $state(v)`), nested functions and destructured declarations. |
+| `$derived`, `$derived.by` | works | Synchronous only. `await` inside `$derived` is an error. |
+| `$effect`, `$effect.pre`, `$effect.root`, `$effect.tracking`, `$effect.pending` | works | |
+| `$props`, `$bindable`, `$props.id()` | works | Identifier, destructuring, defaults and rest. |
+| `$inspect`, `$inspect(...).with`, `$inspect.trace` | works (dev) | Kept with `svelteConfig(root, { dev: true })`, stripped otherwise. |
+| `$host()` | error | `host_invalid_placement`: no custom elements. |
+| Stores (`$store` reads, writes, `bind:` to `$store.x`) | works | |
+| `<script module>`, instance `export function` / `export const` | works | Re-exports from the instance script are an error. |
+| `.svelte.js` modules | works | Compiled by the same binary (`--module`). |
+| `<script lang="ts">` | works | TypeScript is parsed and stripped, as Svelte does. |
+| Legacy mode (`export let`, `$:`) | error | `legacy_export_invalid`; runes mode is forced. |
+
+The compiler writes its output as edits over your source rather than reprinting it, so generated code keeps your formatting. Dev mode keeps `$inspect` and labels signals; Svelte's other dev instrumentation (ownership checks, mutation warnings) is not emitted.
 
 ## Template
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| Text `{expr}` | works for `label`, `button` | Folded into the `label` property. Text anywhere else is dropped. Needs metadata for which kinds take text (`GtkTextView` buffer, `QPlainTextEdit::plainText`) and a warning for stray text. |
-| Attributes and `{...spread}` | works | Spread drops non-`on*` function props (fork bug b). |
-| `{#if}` / `{:else if}` / `{:else}` | works | One comment anchor per block, JS-only. Branches are removed and destroyed, new ones created and inserted. |
-| `{#each}` keyed, unkeyed, index, destructuring, `{:else}` | works | Keyed moves are `remove` plus `insert`. See [Lists and snippets](/guides/lists-and-snippets/). |
-| `{#key}` | works | Destroys and recreates the subtree. |
-| `{#await}` | works | |
-| `{@html}` | forbidden | n/a. A native rich-text label is a property (`GtkLabel use-markup`, `QLabel` rich text). |
-| `{@const}` | works | |
-| `{@debug}` | works (dev) | |
-| `{@render}`, `{#snippet}`, `children` | works | Snippets are the replacement for slots. |
-| `{@attach}` and `use:` | works | Runs after insert. The main way to reach the native node and to attach listeners with flags. |
-| `createRawSnippet` | forbidden at runtime | Compiles, throws `invalid_snippet_in_custom_renderer`. |
+| Static attributes | works | Typed at compile time from the spec: `spacing="8"` is the integer 8, `<spinner spinning />` is `true`. A value that does not fit is `bad_attribute_value`. Values the backend also takes as text (fonts, colours, icons, shortcuts) pass as strings. |
+| `{expr}` attributes | works | One render effect per reactive prop. Dynamic values are not type-checked by the compiler; the element typings in `@svelters/native-runtime/types` cover them in an editor or `svelte-check`. |
+| Text and `{expr}` | partial | Only in elements with a text-content prop (`label` and `button` on GTK, where it sets `label`). Elsewhere it is `text_not_allowed`. Inside such an element, `{#if}` with text-only branches folds into the text; other blocks are `text_content_children`. |
+| `{#if}` / `{:else if}` / `{:else}` | works | The new branch is built first, then the old one removed and destroyed. |
+| `{#each}` keyed, unkeyed, index, `{:else}` | partial | The item must be a plain identifier: destructuring is an error. Keyed moves are minimal (`remove` plus `insert` outside a longest increasing subsequence). See [Lists and snippets](/guides/lists-and-snippets/). |
+| `{#key}` | works | Recreates the subtree. |
+| `{#await}` | partial | `{:then v}` and `{:catch e}` take plain identifiers. `pending` is shown from a microtask unless the promise already settled. |
+| `await` in template expressions | not supported | There is no async mode. Do not use it: the compiler does not reject it yet. |
+| `{@const}` | partial | Plain identifiers only. |
+| `{@html}` | error | n/a. A rich-text label is a property (`GtkLabel use-markup`, `QLabel` rich text). |
+| `{@debug}` | error | |
+| `{#snippet}`, `{@render}`, `children` | partial | Snippet parameters must be plain identifiers (no destructuring or defaults). |
+| `{@attach}` | works | Runs in an effect after mount, with the runtime node. |
+| `use:` actions | error | Use `{@attach}`. |
+| Spread `{...obj}` on native elements | partial | Only static keys: an object literal or a top-level `const` object literal. Any other spread is `native_spread_unsupported`; set the props explicitly or spread onto a component. |
+| Spread on components | works | |
+| `parent:<name>={v}` | works | Svelters syntax: a child attribute (grid cell, stretch, tab title) checked against the actual parent's slot. |
+| `<sv-slot name="x">` | works | Svelters syntax: routes its content to the parent's named slot. |
+
+## Components and special elements
+
+| Feature | Status | Notes |
+| --- | --- | --- |
+| Components, props, callback props | works | |
+| `bind:prop` and `bind:this` on components | works | `bind:this` binds the component's exports. |
+| Dynamic components, `<svelte:component this>` | works | Recreated when the component changes. |
+| `<svelte:boundary>` | partial | `onerror` and `failed` work; `pending` is ignored (no async mode). |
+| Context (`setContext`, `getContext`, `getAllContexts`) | works | `ListView` rows get the list's context. |
+| `<svelte:element>`, `<svelte:self>`, `<svelte:fragment>` | error | |
+| `<svelte:window>`, `<svelte:document>`, `<svelte:body>`, `<svelte:head>` | error | DOM-only. See [Replacing svelte:window](/guides/events/#replacing-sveltewindow). |
+| `<slot>` (Svelte 4) | error | Use snippets. |
+| `<svelte:options>` | works | At the top level. |
+
+## Toplevels and attached kinds
+
+| Feature | Status | Notes |
+| --- | --- | --- |
+| Windows and dialogs anywhere in the tree | works | A toplevel inside an element is transient for the enclosing toplevel and shown after it. |
+| `show="modal\|modeless\|none"` on a toplevel | works | Static only (`show_invalid`). Dialogs default to modal, windows to modeless. With `none` the app opens it: `bind:this` plus `call('present')`. |
+| GTK event controllers (`<event-controller-key>`, `<gesture-click>`, ...), `<context-menu>`, the Qt `<menu>` inside a non-menu widget | works | Attached to the enclosing widget whatever its slots, also inside a text element: `<button>Text <context-menu>...</context-menu></button>`. |
+| Menus and actions (`menu-bar`, `tool-bar`, `menu`, `action`, `menu-separator`) | works | GTK vocabulary; Qt uses `menu title=` and `action text=`. Fixtures `menus`, `menus-qt`. |
+| `<canvas>` with `{@attach draw(...)}` from `@svelters/canvas` | works | GTK and Qt. |
 
 ## Events
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `onclicked={f}`, `onclose-request={f}`, `ontext-changed={f}` | works | `on` plus the native signal name in kebab case. There are no DOM-style aliases (`onclick`, `onchange`). See [Events](/guides/events/). |
-| `on:event` directive | forbidden | `incompatible_with_custom_renderer`, in legacy and runes components. |
-| `on<name>capture` | works | The capture flag reaches the renderer. Native capture-phase listening needs the `listen` flags ABI change (planned). |
-| Other modifiers (`once`, `passive`, `self`, `stopPropagation`, ...) | needs `@svelters/events` | **planned**: `prevent`, `stop`, `once` helpers; `listen` with flags. |
-| Component callback props (`onSave={...}`) | works | Plain props. |
-| `createEventDispatcher` | works | Deprecated; do not use. |
-| Handler return values | works for inline arrows and identifiers only | Props, calls and member expressions lose the return. Never rely on returns. |
-| Sync handlers with results | **planned** (M4) | `call_sync` returns an error until then. |
-| `svelte:window`, `svelte:document`, `svelte:body` | forbidden | Replaced by native elements and an app module (**planned**). |
+| `onclicked={f}`, `onclose-request={f}` | works | `on` plus the native signal name. There are no DOM-style aliases: `onclick` is `unknown_event`. See [Events](/guides/events/). |
+| `on<signal>capture={f}` | works | Where the spec allows the capture phase; else `listen_phase_unsupported`. |
+| `{@attach listen(sig, fn, { after, capture })}` | works | `listen` from `@svelters/native-runtime`. |
+| Sync signals (`close-request`, `key-pressed`) | works | Handlers get a `NativeEvent` first: `e.preventDefault()`, `e.result = v`. |
+| Legacy `on:name={handler}` | works | A listener like `onname={handler}`. Modifiers, bare forwarding (`on:clicked`) and `on:` on components are errors. |
 
 ## Bindings
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `bind:value`, `bind:checked`, `bind:group`, `bind:clientWidth` on elements | forbidden | Compile error under the renderer. Use component `$bindable` wrappers. |
-| `bind:this` on elements | forbidden today | **In progress (F1):** coming through the Svelte fork. `{@attach}` is the interim way to get the node. |
-| `bind:<prop>` on elements | forbidden today | **In progress (F1):** binding hook in the fork, renderer and binding metadata in phase B after P5. |
-| `bind:prop` and `bind:this` on components | works | |
-| Function bindings `bind:v={get, set}` | works | |
-| Dimension bindings | forbidden | **planned**: a `resized` pseudo-signal and a `Measure` wrapper. |
-
-## Snippets, lists and composition
-
-| Feature | Status | Notes |
-| --- | --- | --- |
-| Snippets with parameters ("slot props") | works | Receive getters, so updates are fine-grained. |
-| `List` with a row snippet | works | Right for tens to a few hundred rows. |
-| Virtualized `ListView` | **planned** (M5) | Prototype only: `mount()` a `RowHost` per native row slot. |
-| `ColumnView` and `Column` | **planned** (M5) | Prototype only. |
-| Grids (`GtkGrid`, `QGridLayout`) | **planned** (M4) | Needs `sv-item` and a `set_child_attr` op. |
-| Named native slots (`sv-slot`) | works | Routing works. Replace-default and restore semantics and generated wrapper components are **planned**. |
-| Snippet declared directly inside a native element | footgun | Compiles, renders nothing. |
-| Context (`setContext`, `getContext`, `getAllContexts`) | works | A separately `mount`ed root starts with no context unless it is passed. |
-| `svelte:boundary` with `{failed}` attribute | works | |
-| `svelte:boundary` with inline `{#snippet failed()}` | needs fix | Compiler crash when `experimental.async` is off (fork bug a). |
-| Dynamic components, `<svelte:component>` | works | |
-| `svelte:element` | works | A dynamic native kind. Widget state is lost on a kind change. |
-| `svelte:self`, `svelte:fragment`, `svelte:options` | works | Compile where allowed. |
-| Legacy `<slot>` | works | Compiles in legacy mode; do not use in new code. |
+| `bind:this` on elements | works | The runtime node: `call`, `getProp`, `StaleHandleError` after destroy. |
+| `bind:<prop>` on elements | works | Where the spec has a binding plan (`bind:text` on an entry, `bind:checked` on an action, `bind:value` on a Qt slider). Else `bind_no_plan`, `unknown_property` or `read_only_property`. See [Bindings](/guides/bindings/). |
+| Function bindings `bind:v={get, set}` | works | On elements and components. |
+| `bind:group`, `bind:clientWidth` and other DOM bindings | error | Not native properties. |
 
 ## Lifecycle
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `onMount`, `onDestroy`, `tick`, `untrack` | works | At `onMount` the widget exists and is inserted. Sizes read there are 0: allocation happens at the next frame. |
-| `flushSync` | works | Needed in tests and factory handlers; a dev error inside sync signal handlers. |
-| HMR | works in the trial | `compile({hmr})` plus a host registry; state resets. The M2 dev loop is **planned**. |
-
-Order seen on the production renderer: script, `$effect.pre`, host ops, `mount()` returns, then `{@attach}`, `$effect`, `onMount`. On hide: `remove`, attach cleanup, `onMount` cleanup, `onDestroy`, then `destroy` in a microtask sweep.
+| `onMount`, `onDestroy`, `tick`, `untrack`, `flushSync` | works | Svelte's own runtime. At `onMount` the widget exists and is inserted; sizes read there are 0 until the toolkit lays it out. |
+| Hot reload | works | `svelters-build --watch` with the host's reload (M2b); state resets. |
 
 ## Styling
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `class`, `class:x`, `class={{...}}` | works | The class string is diffed and forwarded: GTK css classes, Qt `class` property. See [Styling](/guides/styling/). |
-| `id` | works | Widget name (GTK) and object name (Qt), for `#id` selectors. |
-| `style`, `style:x` | works | A structured channel: parsed, checked against the portable vocabulary and sent as declarations. `opacity` goes through the widget API. |
-| `<style>` with `css: 'injected'` | forbidden | |
-| `<style>` (external CSS) | works | Scoped by Svelte, translated at build time to GTK CSS and QSS with diagnostics, carried in the bundle as data. `@native gtk { }` and `@native qt { }` pass through. |
-| `--sv-*` tokens, dark scheme | works | `setTokens` and `setColorScheme` from `@svelters/renderer/style`. |
+| `class`, `class:x`, `class={{...}}` | works | GTK CSS classes, Qt `class` property. See [Styling](/guides/styling/). |
+| `id` | works | Widget name (GTK), object name (Qt). |
+| `style`, `style:x={v}` | partial | `style:x` shorthand and `style:x\|important` are errors. |
+| `<style>` | works | Scoped by Svelte's CSS compile, translated to GTK CSS and QSS; setter properties are matched at compile time. |
 
 ## Motion
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| `transition:`, `in:`, `out:`, `animate:` | forbidden | Native replacements: `GtkRevealer`/`GtkStack` wrappers, `QPropertyAnimation` (**planned**). |
-| `svelte/motion` (`Tween`, `Spring`) | compiles | Schedules through `requestAnimationFrame`, which the host must provide from the frame clock (**planned**). |
+| `transition:`, `in:`, `out:`, `animate:` | error | Native replacements (`GtkRevealer`, `GtkStack`, `QPropertyAnimation`) are not wrapped yet. |
+| `svelte/motion` (`Tween`, `Spring`) | compiles | Schedules through `requestAnimationFrame`, which the host drives from the toolkit's frame clock. Not covered by a fixture. |
 
-## Compile options and runtime
+## Not applicable
 
-| Feature | Status | Notes |
-| --- | --- | --- |
-| `experimental.customRenderer` | works | Required. |
-| `experimental.async` (`await` in script or template, `pending` snippet) | works | Without it, `await` in the template is a compile error. Enabling it also avoids fork bug a. The decision to enable it is open. |
-| SSR, hydration | n/a | The server build throws `custom_renderer_unavailable_on_server`. |
-| `svelte:head` | forbidden, n/a | |
+SSR and hydration do not exist: the compiler emits client code only.
 
-## Known fork bugs
-
-Both reproduce on the top of the #18042 stack. They are written up but not filed upstream (`docs/notes/svelte-fork-upstream-bugs.md`); `tests/renderer-conformance/WEEKLY.md` re-verifies them weekly.
-
-| Bug | Symptom | Workaround |
-| --- | --- | --- |
-| (a) Compiler crash | `TypeError: Cannot read properties of undefined (reading 'body')` compiling `<svelte:boundary>` with an inline `{#snippet failed()}` or `{#snippet pending()}` when `experimental.customRenderer` is set and `experimental.async` is off. | Pass the snippet as an attribute (`<svelte:boundary {failed}>`) or enable `experimental.async`. |
-| (b) Spread drops functions | `{...spread}` on an element silently drops function-valued props whose names do not start with `on`. Explicit attributes pass intact. | Pass callbacks as `on*` props or as explicit attributes. |
-
-## Unresolved items from the survey
-
-- The renderer's O(n) sibling lookups were measured at 86 s for a reverse of 10,000 rows before the P5 fix. After the fix the bare renderer reverses 1000 rows in 46 ms; Svelte's own keyed `reconcile` is still quadratic. See [Lists and snippets](/guides/lists-and-snippets/).
-- `.svelte` files are not yet typechecked against the generated element declarations (`svelte-check` is not installed in the workspace).
-
-Sources: `docs/notes/svelte-feature-survey.md`, `docs/notes/svelte-fork-upstream-bugs.md`, `docs/notes/p5-integration.md`, `docs/notes/styling-gtk-css-qss.md`, `STATUS.md`.
+Sources: `docs/notes/native-compiler/language-subset.md`, `docs/notes/native-compiler/deviations.md`, `docs/notes/native-compiler/runtime-contract.md`, `docs/notes/native-compiler/semantic-spec.md`, `experiments/native-compiler/conformance/REPORT.md`, `crates/svelters-compiler/src/lower/mod.rs`, `fixtures/`, `STATUS.md`.

@@ -3,6 +3,16 @@
 Status: research proposal, 2026-10-17. Working notes, measurements and probes:
 `docs/notes/runtime-research.md`, `docs/notes/scripts/runtime-research/`.
 
+**Progress (RT1, 2026-10-19, `plans/milestones/RT1-retire-fork-runtime-core.md`):** phases 0 and 1
+are done. The fork and the renderer path were retired first, so every package resolves the stock
+npm `svelte@5.57.2` and no `svelte-stock` alias was needed (open question 5). `nativeSheets` scopes
+CSS with a stock compile (`css: 'external'`, `bind:` directives blanked). The contract is
+`@svelters/native-runtime/core` (open question 7: kept as proposed) with the 43 names the compiler
+emits (`component` in the list below is not emitted; the compiler uses `$n.component`); the core
+internals live in `src/core/internal.js` and the only importer of `svelte/internal/*` is
+`src/core/svelte.js`; `tools/check-svelte-internals.mjs` runs in the native-runtime tests. Phase 2
+onward is not started.
+
 ## Recommendation in one paragraph
 
 Yes, own it, but not in one jump and not all of it. Do the **hybrid (option d)**:

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "svelters": { "toolkit": "qt" },
   "scripts": {
     "build": "vite build",
     "test": "vite build && node --experimental-vm-modules --no-warnings ../gallery-common/check-pages.mjs .",
@@ -15,6 +16,6 @@
   "devDependencies": {
     "@svelters/build": "workspace:*",
     "vite": "8.3.4",
-    "@svelters/renderer": "workspace:*"
+    "@svelters/native-runtime": "workspace:*"
   }
 }

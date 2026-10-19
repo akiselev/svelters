@@ -271,6 +271,11 @@ pub trait BackendSemantics {
     fn plan_binding(&self, el: &ElementRef, prop: &str) -> Result<BindingPlan, Unresolved>;
     /// Routing order: explicit slot -> kind routing -> default slot.
     fn place_child(&self, parent: &ElementRef, child: &ElementRef, requested_slot: Option<&str>) -> Result<SlotPlan, Unresolved>;
+    /// The kind or class `child` attaches to when it is not placed in a slot (spec `attaches_to`):
+    /// such a child is inserted into any element of that kind, with no slot or position.
+    fn attaches_to(&self, _child: &ElementRef) -> Option<&str> {
+        None
+    }
     /// The property that text children fold into (`<label>Count: {n}</label>`).
     fn text_content(&self, el: &ElementRef) -> Option<&PropertySpec>;
     /// The style table entry of `name` (None: not a style property of this backend).

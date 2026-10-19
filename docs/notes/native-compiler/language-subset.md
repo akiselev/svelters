@@ -34,7 +34,9 @@ behavioural fixtures `experiments/native-compiler/fixtures/runes-*`.
 | --- | --- | --- |
 | `parent:<name>={v}` / `parent:<name>="v"` | yes, typed against the parent's slot | `$n.child_attr(node, name, v)` (render effect when reactive) |
 | `on<event>capture={fn}` | yes, where the spec allows `capture` | `$n.on(node, signal, fn, 2)` |
-| `{@attach listen(sig, fn, { after, capture })}` (`listen` from `@svelters/renderer`) | yes; static type/options resolved and phase-checked | `$.attach(node, () => $n.listen(signal, fn, flags))`; the import is rewritten to `@svelters/native-runtime` |
+| `{@attach listen(sig, fn, { after, capture })}` (`listen` from `@svelters/native-runtime`) | yes; static type/options resolved and phase-checked | `$.attach(node, () => $n.listen(signal, fn, flags))` |
+| A toplevel kind (window, dialog) anywhere, `show="modal\|modeless\|none"` (RT1, X7) | yes; `show` must be static (`show_invalid`) | `$n.toplevel(kind, present, show?)`: shown at the root, or transient for the enclosing toplevel and shown after it |
+| An `attaches_to` kind (GTK event controllers, `context-menu`; Qt `menu` outside a menu container) inside any widget, also next to text in `<button>` (RT1) | yes | `$n.attached(kind)`: inserted with no slot or position |
 | `{@attach f}` | yes | `$.attach(node, () => f)` |
 | Handlers of sync signals | yes | listeners get `(event, ...args)` with a `NativeEvent` (`e.preventDefault()`, `e.result = v`); `(...args)` for every other signal |
 | `{...{ k: v }}` / `{...constObject}` on native elements | yes (static keys) | one op per key; other spreads: `native_spread_unsupported` |

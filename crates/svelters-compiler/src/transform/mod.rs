@@ -528,17 +528,8 @@ impl Rewriter for ScopeRewriter<'_> {
             for (script, edits) in [(&self.root.module, &self.module), (&self.root.instance, &self.script)] {
                 let Some(script) = script else { continue };
                 for stmt in &script.content.body {
-                    if let Statement::ImportDeclaration(d) = stmt {
+                    if let Statement::ImportDeclaration(_) = stmt {
                         let s = stmt.span();
-                        let crate::estree::LiteralNode::Literal(src) = &d.source;
-                        if matches!(&src.value, crate::estree::LiteralValue::String(v) if v == crate::lower::RENDERER_MODULE) {
-                            // @svelters/renderer's helpers for components (`listen`, `NativeEvent`,
-                            // `StaleHandleError`, `LISTEN_*`) come from the native runtime
-                            let text = edits.apply(self.cx.src, s.start, s.end);
-                            w.write(&text.replacen(&src.raw, "'@svelters/native-runtime'", 1));
-                            w.write("\n");
-                            continue;
-                        }
                         // edits on imports are TypeScript removals (`import { type A, B }`)
                         edits.emit(w, self.cx.src, s.start, s.end);
                         w.write("\n");
@@ -626,7 +617,7 @@ pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope:
         }
     }
     let mut w = Writer::new(src);
-    w.write("import * as $ from 'svelte/internal/client';\n");
+    w.write("import * as $ from '@svelters/native-runtime/core';\n");
     edits.emit(&mut w, src, 0, src.len() as u32);
     for h in cx.hoisted.borrow().iter() {
         w.write("\n");

@@ -14,14 +14,13 @@
 // Row content lives in recycled *row slots*: one hosted root per slot, mounted at the slot's first
 // bind into an outlet (a native box outside the window tree that the toolkit places in the view),
 // rebound to other items as the view scrolls, destroyed at teardown.
-import * as $ from 'svelte/internal/client';
-// Svelte's client context functions (the public 'svelte' entry resolves to the server build
-// without the browser condition); resolved by the alias in ../vite.js and test/register.mjs.
-import { getAllContexts, setContext } from 'svelte/internal/client/context';
-import { diffKeys } from '@svelters/lists/diff';
+import * as $ from './core/index.js';
+// the core's component context functions (Svelte's, through the core adapter)
+import { flush, get_all_contexts as getAllContexts, set_context as setContext } from './core/internal.js';
+import { diffKeys } from './lists-diff.js';
 import { append, element, mount, on, rowOutlet, set } from './index.js';
 
-export { diffKeys, applySplices, lis } from '@svelters/lists/diff';
+export { diffKeys, applySplices, lis, MAX_OPS } from './lists-diff.js';
 
 /** `arr.splice` without spreading (a 100k-item insert would overflow the argument limit). */
 function spliceArray(arr, pos, removed, add) {
@@ -206,7 +205,7 @@ export class ListController {
         { target: s.outlet },
       );
     }
-    $.flush();
+    flush();
   }
 
   unbind(row, gen) {

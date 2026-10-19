@@ -1,0 +1,14 @@
+# Hand-written GTK kind (crates/svelters-gtk/src/backend/canvas.rs, lookup.rs): `canvas` is the portable tag
+# of the recording canvas (X8). The backend creates a GtkDrawingArea with a canvas installed and serves the
+# drawing area's generated members plus `ops` (the JSON display list @svelters/canvas records).
+# `spec`: see gtk-menus.yaml.
+elements:
+  - tag: canvas
+    props: [ops]
+    signals: []
+    spec:
+      kind: Svelters.Canvas
+      native: GtkDrawingArea
+      base: Gtk.DrawingArea
+      props: { ops: { type: string, nullable: true } }
+      provenance: "canvas.rs set_ops/get_ops; lookup.rs maps `canvas` to the drawing area"

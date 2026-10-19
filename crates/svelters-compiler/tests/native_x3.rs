@@ -89,12 +89,12 @@ fn snippet_roots_child_attrs_are_checked_at_the_render_site() {
 #[test]
 fn capture_suffix_and_phases_follow_the_spec() {
     // `close` on Qt is an event filter: no phases at all; GTK accepts `after` on any signal
-    let after = r#"<script>import { listen } from '@svelters/renderer';</script>
+    let after = r#"<script>import { listen } from '@svelters/native-runtime';</script>
 <window {@attach listen('close-request', (e) => e.preventDefault(), { after: true })}></window>"#;
     let out = js("gtk", after);
     assert!(out.contains(r#"$.attach($$n1, () => $n.listen("close-request", ((e) => e.preventDefault()), 1));"#), "{out}");
     assert!(out.contains("import { listen } from '@svelters/native-runtime';"), "{out}");
-    let after_qt = r#"<script>import { listen } from '@svelters/renderer';</script>
+    let after_qt = r#"<script>import { listen } from '@svelters/native-runtime';</script>
 <main-window {@attach listen('close', (e) => e.preventDefault(), { after: true })}></main-window>"#;
     let r = run("qt", after_qt);
     assert_eq!(codes(&r, Severity::Error), vec!["listen_phase_unsupported"]);

@@ -1,5 +1,6 @@
-// The compiled cases: the existing JS-pipeline fixtures (same App.svelte, same script) and the
-// NC1-only fixtures under ../fixtures (native binding, styling, slots, teardown).
+// The compiled cases: the shared fixtures (fixtures/<name>: same App.svelte, same script, compared with
+// their checked-in expected.oplog, which `pnpm test` in the fixture also checks) and the compiler's own
+// fixtures under ../fixtures (native binding, styling, slots, teardown, diagnostics).
 import path from 'node:path';
 import fs from 'node:fs';
 
@@ -8,24 +9,20 @@ const repo = path.resolve(here, '../../..');
 /** The real backends (native.mjs runs these on the toolkits). */
 export const BACKENDS = ['gtk', 'qt'];
 
-/**
- * Compile targets: the real backends, plus `testhost` = the GTK spec with the vocabulary the
- * JS-pipeline fixtures assume on the Node TestHost (testhost-overlay.json, merged by build.mjs into
- * out/testhost.spec.json). Only cases that list it in `targets` are compiled for it.
- */
+/** Compile targets: one per backend. */
 export const TARGETS = [
   { name: 'gtk', backend: 'gtk' },
   { name: 'qt', backend: 'qt' },
   { name: 'appkit', backend: 'appkit' },
   { name: 'winui', backend: 'winui' },
-  { name: 'testhost', backend: 'gtk', spec: path.join(here, 'out/testhost.spec.json'), overlay: path.join(here, 'testhost-overlay.json') },
 ];
 
 /**
  * { name, source, script, sources?, scripts?, jsExpected?, handwritten?, own, targets? }
+ *   jsExpected: the fixture's checked-in op log (expected.oplog);
  *   handwritten: the hand-written equivalent's op log (the intended code shape), or null for a
- *     JS-pipeline comparison only (state-equal with jsExpected at every boundary; identical op
- *     logs are reported as such);
+ *     comparison with jsExpected only (state-equal at every boundary; identical op logs are
+ *     reported as such);
  *   rejectOn: { target: code } expected compile-time rejections;
  *   targets: compile targets (default: the real backends);
  *   sources / scripts: { target: path } overriding source / script for one target.
@@ -38,9 +35,9 @@ export const TARGETS = [
 export function cases() {
   const out = [];
   const fixture = (name) => path.join(repo, 'fixtures', name);
-  // further scripts run live on both pipelines' bundles (JS: <fixture>/dist/app.js)
+  // further scripts run live on this bundle and on the fixture's own build (<fixture>/dist/app.js)
   const extraScripts = (dir) => (fs.existsSync(path.join(dir, 'script.deferred.json')) ? [path.join(dir, 'script.deferred.json')] : []);
-  /** The Qt twin of a shared fixture: a qt-only case compared with the twin's JS pipeline. */
+  /** The Qt twin of a shared fixture: a qt-only case compared with the twin's expected.oplog. */
   const qtTwin = (name, extra = {}) => {
     const dir = fixture(`${name}-qt`);
     if (!fs.existsSync(dir)) return;
@@ -55,8 +52,8 @@ export function cases() {
       ...extra,
     });
   };
-  // virtual-list / lists-stress: `<ListView>` from @svelters/lists (virtualized native list); the
-  // native pipeline resolves it to @svelters/native-runtime/lists. No hand-written equivalent.
+  // virtual-list / lists-stress: `<ListView>` from @svelters/lists (virtualized native list,
+  // @svelters/native-runtime/lists). No hand-written equivalent.
   const lists = ['virtual-list', 'lists-stress', 'lists-recycle'];
   for (const name of ['counter', 'if-toggle', 'keyed-list', 'keyed-stress', 'native-close', 'timers', ...lists]) {
     const nativeScript = fs.existsSync(path.join(here, 'scripts', `${name}.native.json`)) ? path.join(here, 'scripts', `${name}.native.json`) : undefined;
@@ -67,7 +64,7 @@ export function cases() {
       jsExpected: path.join(fixture(name), 'expected.oplog'),
       handwritten: lists.includes(name) ? null : path.join(here, '../handwritten', name, 'expected.oplog'),
       // The hand-written equivalent predates master's bind:this version of this fixture: only
-      // the JS-pipeline state comparison applies.
+      // the state comparison with the fixture's op log applies.
       handwrittenStale: name === 'native-close',
       nativeScript,
       extraScripts: extraScripts(fixture(name)),
@@ -75,36 +72,39 @@ export function cases() {
     });
     qtTwin(name, { nativeScript });
   }
-  // X2/X3 fixtures of the JS pipeline (child attributes, listen phases, sync handlers) and the
-  // bind:this ones: compared with the JS pipeline only (no hand-written equivalents). <entry>
-  // has no `key-pressed` on GTK (a controller signal): those two run on the testhost target only
-  // and are rejected on the real spec.
-  const jsOnly = {
-    'child-attrs': {},
-    'sync-handlers': { gtk: 'unknown_event' },
-    'listen-phases': { gtk: 'unknown_event' },
-    'bind-this': {},
-    'borrowed-walk': {},
-    // FX1: setter-rule precedence (explicit > style:/style= > rules > native), the same on both pipelines
-    'style-precedence': {},
+  // X2/X3/X4/X7/X8 fixtures (child attributes, listen phases and sync handlers on an event
+  // controller, menus, toplevels) and the bind:this ones: compared with the fixture's op log only
+  // (no hand-written equivalents).
+  const goldenOnly = [
+    'child-attrs',
+    'sync-handlers',
+    'listen-phases',
+    'bind-this',
+    'bind-value',
+    'borrowed-walk',
+    'buffer-bind',
+    'dialogs',
+    'menus',
+    'styles',
+    // FX1: setter-rule precedence (explicit > style:/style= > rules > native)
+    'style-precedence',
     // NT0: non-UI types imported from svelters:gtk/gtk and svelters:gtk/gio (named exports, construct / static ops)
-    'gtk-types': {},
-  };
-  for (const [name, rejectOn] of Object.entries(jsOnly)) {
+    'gtk-types',
+  ];
+  for (const name of goldenOnly) {
     out.push({
       name,
       source: path.join(fixture(name), 'src/App.svelte'),
       script: path.join(fixture(name), 'script.json'),
       jsExpected: path.join(fixture(name), 'expected.oplog'),
       handwritten: null,
-      rejectOn,
-      targets: ['gtk', 'testhost'],
+      targets: ['gtk'],
     });
     qtTwin(name);
   }
   // AppKit / WinUI counters (fixtures/counter-{mac,win}): compiled for their own backend only and
   // run on a TestHost that resolves names like that toolkit (`toolkit`, from metadata/semantics),
-  // compared with the JS pipeline's op log of the same fixture.
+  // compared with the fixture's op log.
   for (const [name, target] of [['counter-mac', 'appkit'], ['counter-win', 'winui']]) {
     out.push({
       name,

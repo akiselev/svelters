@@ -130,7 +130,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
 }
 
 /// Compiles a `.svelte.js` module (Svelte's `compileModule`, client output): runes in module
-/// scope become runtime calls against `svelte/internal/client`.
+/// scope become runtime calls against the core (`@svelters/native-runtime/core`).
 pub fn compile_module(src: &str, opts: &ModuleOptions) -> CompileResult {
     let mut timings = Timings::default();
     let mut diags = Diagnostics::default();

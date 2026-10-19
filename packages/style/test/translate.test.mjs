@@ -15,7 +15,7 @@ function styleOf(name) {
   const m = /<style>([\s\S]*)<\/style>/.exec(src);
   const { css, native, errors } = extractNative(m[1]);
   const markup = src.replace(m[0], `<style>${css}</style>`);
-  const r = compile(markup, { filename: `${name}.svelte`, css: 'external', cssHash: ({ name: n }) => `svelte-${n.toLowerCase()}`, experimental: { customRenderer: '/x/renderer.js' } });
+  const r = compile(markup, { filename: `${name}.svelte`, css: 'external', cssHash: ({ name: n }) => `svelte-${n.toLowerCase()}` });
   return { css: r.css?.code ?? '', native, errors };
 }
 
