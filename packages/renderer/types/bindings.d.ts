@@ -55,6 +55,8 @@ export interface BindableProps {
   button: {
     "can-shrink": boolean; // gtk
     "has-frame": boolean; // gtk
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     state: string; // appkit
     "use-underline": boolean; // gtk
   };
@@ -351,10 +353,17 @@ export interface BindableProps {
     text: string; // gtk
   };
   "secure-text-field": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     "string-value": string; // appkit
   };
   slider: {
     "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     value: number; // qt/winui
   };
   "spin-box": {
@@ -412,6 +421,10 @@ export interface BindableProps {
     "plain-text": string; // qt
   };
   "text-field": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     "string-value": string; // appkit
   };
   "text-view": {

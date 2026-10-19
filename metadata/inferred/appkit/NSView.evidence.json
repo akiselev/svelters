@@ -1,0 +1,511 @@
+{
+ "props:additional-safe-area-insets": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ]
+   },
+   "sample": {
+    "t": "insets",
+    "v": [
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ]
+   }
+  }
+ },
+ "props:allowed-touch-types": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 1,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 2,
+   "sample": {
+    "expect": {
+     "t": "i64",
+     "v": 2
+    },
+    "t": "names",
+    "v": [
+     "indirect"
+    ]
+   }
+  }
+ },
+ "props:alpha-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 1.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:autoresizes-subviews": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:autoresizing-mask": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "expect": {
+     "t": "i64",
+     "v": 1
+    },
+    "t": "names",
+    "v": [
+     "min-x-margin"
+    ]
+   }
+  }
+ },
+ "props:bounds-rotation": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [
+    "view-bounds-did-change"
+   ],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:can-draw-concurrently": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:can-draw-subviews-into-layer": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:clips-to-bounds": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:focus-ring-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "default",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "none",
+   "sample": {
+    "t": "str",
+    "v": "none"
+   }
+  }
+ },
+ "props:frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "events": [
+    "view-frame-did-change"
+   ],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     10.0,
+     20.0,
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "rect",
+    "v": [
+     10.0,
+     20.0,
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:frame-center-rotation": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [
+    "view-frame-did-change"
+   ],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:frame-rotation": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [
+    "view-frame-did-change"
+   ],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:hidden": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:horizontal-content-size-constraint-active": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:layer-contents-placement": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "scale-axes-independently",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "scale-proportionally-to-fit",
+   "sample": {
+    "t": "str",
+    "v": "scale-proportionally-to-fit"
+   }
+  }
+ },
+ "props:layer-contents-redraw-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "on-set-needs-display",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "never",
+   "sample": {
+    "t": "str",
+    "v": "never"
+   }
+  }
+ },
+ "props:layer-uses-core-image-filters": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:posts-bounds-changed-notifications": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:posts-frame-changed-notifications": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:prefers-compact-control-size-metrics": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:prepared-content-rect": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     10.0,
+     20.0,
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "rect",
+    "v": [
+     10.0,
+     20.0,
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:tool-tip": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": null,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:translates-autoresizing-mask-into-constraints": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:user-interface-layout-direction": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "left-to-right",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "right-to-left",
+   "sample": {
+    "t": "str",
+    "v": "right-to-left"
+   }
+  }
+ },
+ "props:vertical-content-size-constraint-active": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:wants-layer": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:wants-resting-touches": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "signals:view-bounds-did-change": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSViewBoundsDidChangeNotification"
+  }
+ },
+ "signals:view-frame-did-change": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSViewFrameDidChangeNotification"
+  }
+ }
+}

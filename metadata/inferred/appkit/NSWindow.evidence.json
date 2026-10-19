@@ -1,0 +1,735 @@
+{
+ "props:accepts-mouse-moved-events": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:allows-tool-tips-when-application-is-inactive": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:alpha-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 1.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:aspect-ratio": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:autorecalculates-key-view-loop": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:can-become-visible-without-login": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:can-hide": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:content-aspect-ratio": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:content-max-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     3.4028234663852886e+38,
+     3.4028234663852886e+38
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:content-min-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:content-resize-increments": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     1.0,
+     1.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:displays-when-screen-profile-changes": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:document-edited": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:excluded-from-windows-menu": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:has-shadow": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:hides-on-deactivate": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:max-full-screen-content-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     100000.0,
+     100000.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:max-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     3.4028234663852886e+38,
+     3.4028234663852886e+38
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:min-full-screen-content-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     87.0,
+     33.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:min-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     32.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:miniwindow-title": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "appkit_probe",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:movable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:movable-by-window-background": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:opaque": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:ordered-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": 2,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "t": "i64",
+    "v": 1
+   }
+  }
+ },
+ "props:preserves-content-during-live-resize": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:prevents-application-termination-when-modal": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:resize-increments": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     1.0,
+     1.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:subtitle": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:title": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:title-visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "visible",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "hidden",
+   "sample": {
+    "t": "str",
+    "v": "hidden"
+   }
+  }
+ },
+ "props:titlebar-appears-transparent": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:titlebar-separator-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "none",
+   "sample": {
+    "t": "str",
+    "v": "none"
+   }
+  }
+ },
+ "props:toolbar-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "expanded",
+   "sample": {
+    "t": "str",
+    "v": "expanded"
+   }
+  }
+ },
+ "props:views-need-display": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "signals:window-did-become-key": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidBecomeKeyNotification"
+  }
+ },
+ "signals:window-did-become-main": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidBecomeMainNotification"
+  }
+ },
+ "signals:window-did-change-backing-properties": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidChangeBackingPropertiesNotification"
+  }
+ },
+ "signals:window-did-change-occlusion-state": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidChangeOcclusionStateNotification"
+  }
+ },
+ "signals:window-did-change-screen": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidChangeScreenNotification"
+  }
+ },
+ "signals:window-did-deminiaturize": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidDeminiaturizeNotification"
+  }
+ },
+ "signals:window-did-enter-full-screen": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidEnterFullScreenNotification"
+  }
+ },
+ "signals:window-did-exit-full-screen": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidExitFullScreenNotification"
+  }
+ },
+ "signals:window-did-miniaturize": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidMiniaturizeNotification"
+  }
+ },
+ "signals:window-did-move": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidMoveNotification"
+  }
+ },
+ "signals:window-did-resign-key": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidResignKeyNotification"
+  }
+ },
+ "signals:window-did-resign-main": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidResignMainNotification"
+  }
+ },
+ "signals:window-did-resize": {
+  "confidence": 0.9,
+  "evidence": {
+   "symbol": "NSWindowDidResizeNotification"
+  }
+ }
+}

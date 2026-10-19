@@ -72,3 +72,47 @@ def test_check_requires_a_probe_for_the_ledger_version(tmp_path, monkeypatch):
     (tmp_path / "metadata/probe/gtk/4.22.4.json").write_text(json.dumps({"version": "4.22.4"}))
     assert ledger.probe_problems("gtk", "4.22.4") == []
     assert ledger.probe_problems("qt", "6.11.0") == []
+    assert "no probe for appkit 26.1" in ledger.probe_problems("appkit", "26.1")[0]
+
+
+def test_read_results_jsonl_json_and_junit(tmp_path):
+    jl = tmp_path / "r.jsonl"
+    jl.write_text('{"suite": "generated", "test": "prop_a", "result": "fail", "message": "boom"}\n'
+                  '{"suite": "generated", "test": "prop_b", "result": "pass"}\n'
+                  '{"suite": "generated", "test": "prop_a", "result": "pass"}\n')
+    assert ledger.read_results(jl) == ({"prop_a": "pass", "prop_b": "pass"}, {})
+    js = tmp_path / "r.json"
+    js.write_text(json.dumps({"results": [{"test": "t", "result": "fail", "message": "m"}]}))
+    assert ledger.read_results(js) == ({"t": "fail"}, {"t": "m"})
+    xml = tmp_path / "r.xml"
+    xml.write_text('<testsuites><testsuite><testcase name="ok1"/><testcase name="bad"><failure message="nope"/></testcase>'
+                   '<testcase name="sk"><skipped/></testcase></testsuite></testsuites>')
+    assert ledger.read_results(xml) == ({"ok1": "pass", "bad": "fail", "sk": "skip"}, {"bad": "nope"})
+
+
+def test_import_parks_failing_inferred_facts_and_records_the_rest(tmp_path, monkeypatch):
+    facts = tmp_path / "facts.json"
+    man = {"toolkit": "appkit", "version": "26.1", "untestable": [],
+           "facts": [dict(fact("p_ok", "inferred", ["prop_ok"]), kind="NSView"), dict(fact("p_bad", "inferred", ["prop_bad"]), kind="NSView"),
+                     dict(fact("m", "manual", ["kind_nsview"]), kind="NSView")]}
+    facts.write_text(json.dumps(man))
+    monkeypatch.setitem(ledger.FACTS, "appkit", facts)
+    monkeypatch.setitem(ledger.PARKED, "appkit", tmp_path / "_parked.json")
+    monkeypatch.setattr(ledger, "LEDGER_DIR", tmp_path / "verified")
+    regen = []
+    monkeypatch.setattr(ledger, "regenerate", lambda tk: regen.append(tk))
+    res = tmp_path / "r.jsonl"
+    res.write_text('{"test": "prop_ok", "result": "pass"}\n{"test": "prop_bad", "result": "fail", "message": "left: 1"}\n'
+                   '{"test": "kind_nsview", "result": "pass"}\n')
+    assert ledger.import_results("appkit", res, dry_run=True) == 0
+    assert not (tmp_path / "verified").exists() and not regen
+    assert ledger.import_results("appkit", res) == 0
+    assert regen == ["appkit"]
+    parked = ledger.load_parked("appkit")
+    assert [(p["name"], p["message"]) for p in parked] == [("p_bad", "left: 1")]
+    entries = {e["test"]: e["result"] for e in ledger.load("appkit")["entries"]}
+    assert entries == {"prop_ok": "pass", "prop_bad": "fail", "kind_nsview": "pass"}
+    assert "appkit" in ledger.toolkits_all()
+    # a failing manual fact fails the import
+    res.write_text('{"test": "kind_nsview", "result": "fail"}\n')
+    assert ledger.import_results("appkit", res) == 1

@@ -1,0 +1,372 @@
+[
+ {
+  "abstract": false,
+  "bindings": 0,
+  "delivery": 0,
+  "element": "box",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "NSBox",
+  "ownership": true,
+  "props": [
+   14,
+   14
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   10,
+   10
+  ],
+  "verified_inferred": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 3,
+  "delivery": 0,
+  "element": "button",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSButton",
+  "lifetime": "owned",
+  "methods": [
+   1,
+   1
+  ],
+  "native": "NSButton",
+  "ownership": false,
+  "props": [
+   27,
+   27
+  ],
+  "props_annotated": 21,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   28,
+   28
+  ],
+  "verified_inferred": [
+   18,
+   18
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "delivery": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSControl",
+  "lifetime": null,
+  "methods": [
+   0,
+   1
+  ],
+  "native": "NSControl",
+  "ownership": false,
+  "props": [
+   23,
+   24
+  ],
+  "props_annotated": 14,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   15,
+   15
+  ],
+  "verified_inferred": [
+   12,
+   12
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "delivery": 0,
+  "element": "progress-indicator",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSProgressIndicator",
+  "lifetime": "owned",
+  "methods": [
+   2,
+   2
+  ],
+  "native": "NSProgressIndicator",
+  "ownership": false,
+  "props": [
+   9,
+   9
+  ],
+  "props_annotated": 8,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   12,
+   12
+  ],
+  "verified_inferred": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "delivery": 0,
+  "element": "secure-text-field",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSSecureTextField",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSSecureTextField",
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 5,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   7,
+   7
+  ],
+  "verified_inferred": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 4,
+  "delivery": 0,
+  "element": "slider",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSSlider",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSSlider",
+  "ownership": false,
+  "props": [
+   12,
+   12
+  ],
+  "props_annotated": 14,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   20,
+   20
+  ],
+  "verified_inferred": [
+   11,
+   11
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "delivery": 0,
+  "element": "stack-view",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSStackView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   3
+  ],
+  "native": "NSStackView",
+  "ownership": true,
+  "props": [
+   10,
+   10
+  ],
+  "props_annotated": 6,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ],
+  "verified_inferred": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 5,
+  "delivery": 1,
+  "element": "text-field",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSTextField",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSTextField",
+  "ownership": false,
+  "props": [
+   25,
+   25
+  ],
+  "props_annotated": 24,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   34,
+   34
+  ],
+  "verified_inferred": [
+   22,
+   22
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "delivery": 2,
+  "element": "view",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   3
+  ],
+  "native": "NSView",
+  "ownership": true,
+  "props": [
+   102,
+   103
+  ],
+  "props_annotated": 28,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   33,
+   33
+  ],
+  "verified_inferred": [
+   26,
+   26
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "delivery": 13,
+  "element": "window",
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSWindow",
+  "lifetime": "toplevel",
+  "methods": [
+   4,
+   6
+  ],
+  "native": "NSWindow",
+  "ownership": true,
+  "props": [
+   107,
+   112
+  ],
+  "props_annotated": 36,
+  "signal_results": 1,
+  "signals": [
+   15,
+   15
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   58,
+   58
+  ],
+  "verified_inferred": [
+   45,
+   45
+  ]
+ }
+]

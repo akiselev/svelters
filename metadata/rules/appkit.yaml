@@ -1,0 +1,81 @@
+# Data the AppKit inference rules read (tools/metadata/appkit/probe.py builds its plan from it, tools/metadata/appkit/infer.py
+# turns the probe and the headers' facts into metadata/inferred/appkit). Plan: plans/research/ANNOTATION-AUTOMATION.md section 2,
+# reactivity constraints: plans/research/REACTIVITY.md section 3.3. Pattern decisions belong here, single facts in
+# metadata/overrides/appkit (`deny:` or a manual record).
+schema: svelters-rules/v1
+toolkit: appkit
+
+# Facts below this confidence are not written; they are listed in metadata/inferred/appkit/_review.json.
+promote_at: 0.9
+
+# P3: candidate samples by neutral type. The prober sets the first candidate that differs from the default it read,
+# so a bool always flips and an enum always moves to another member. Flags samples are single members (value != 0).
+samples:
+  bool: [true, false]
+  int: [3, 1, 0]
+  float: [0.5, 2.0, 0.25]
+  string: ["svl probe", "x"]
+  rect: [{x: 10, y: 20, width: 120, height: 40}]
+  size: [{width: 120, height: 40}]
+  point: [{x: 10, y: 20}]
+  insets: [{top: 1, right: 2, bottom: 3, left: 4}]
+
+# Props that are neither probed nor inferred: they act on the window server, the key/main window or the
+# process, or only make sense in a running event loop. `class` limits a pattern to one class (and its subclasses).
+deny_props:
+  - pattern: '^(next-responder|next-key-view|initial-first-responder|menu|touch-bar|user-activity)$'
+    reason: responder chain and menus are objects owned elsewhere
+  - class: NSWindow
+    pattern: '^(level|collection-behavior|sharing-type|tabbing-mode|tabbing-identifier|frame-autosave-name|represented-url|restorable|restoration-class|depth-limit|backing-type|allows-concurrent-view-drawing|ignores-mouse-events|animation-behavior)$'
+    reason: window-server or process-wide state (window level, Spaces, screen sharing, tabbing, autosave, state restoration); not something a page sets per window
+  - class: NSWindow
+    pattern: '^released-when-closed$'
+    reason: the backend's handle table owns windows and sets it NO; the first CI probe crashed (SIGSEGV) destroying a window probed with YES
+  - class: NSWindow
+    pattern: '^(represented-filename)$'
+    reason: resolved against the working directory (the probe read back a runner path); not deterministic across machines
+  - class: NSWindow
+    pattern: '^style-mask$'
+    reason: manual (metadata/overrides/appkit/NSWindow.yaml); a probe that drops `titled` can leave the window without a frame view
+
+# B: change sources for a generic `bind:<prop>` (REACTIVITY.md 3.3: KVO is only documented for a few AppKit
+# properties and never fires for typing, so no binding uses bare KVO). The nearest source in an element class's
+# chain applies; the binding is attached to the topmost element class it applies to (subclasses inherit it).
+binding_sources:
+  - class: NSTextField
+    signal: control-text-did-change
+    observability: {class: partial, missed: [programmatic]}
+    why: "NSControlTextDidChangeNotification is posted by the field editor for every user edit of the text (NSControl.h); a value prop read in the handler reflects the edit. Programmatic sets and native normalization (formatters) post nothing"
+  - class: NSControl
+    signal: action
+    observability: {class: partial, missed: [programmatic]}
+    why: "NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing"
+# The NSControl value props a binding source can carry (all alias the cell's objectValue).
+binding_props: [state, double-value, float-value, int-value, integer-value, string-value]
+
+# R: notification signals of a class (and its subclasses). The names are the AppKit constants declared in the class's
+# header with the instance as the notification object; the prober looks each constant up in the loaded AppKit (dlsym)
+# and checks its value. The generated test posts the notification itself: delivery only (`verified: delivery`).
+notifications:
+  NSView:
+    - NSViewFrameDidChangeNotification
+    - NSViewBoundsDidChangeNotification
+  NSTextField:
+    - NSControlTextDidBeginEditingNotification
+  NSWindow:
+    - NSWindowDidResizeNotification
+    - NSWindowDidMoveNotification
+    - NSWindowDidBecomeKeyNotification
+    - NSWindowDidResignKeyNotification
+    - NSWindowDidBecomeMainNotification
+    - NSWindowDidResignMainNotification
+    - NSWindowDidMiniaturizeNotification
+    - NSWindowDidDeminiaturizeNotification
+    - NSWindowDidEnterFullScreenNotification
+    - NSWindowDidExitFullScreenNotification
+    - NSWindowDidChangeScreenNotification
+    - NSWindowDidChangeBackingPropertiesNotification
+    - NSWindowDidChangeOcclusionStateNotification
+# Props passed as the arguments of a notification signal (read from the emitter when it is delivered).
+notification_args:
+  NSControlTextDidBeginEditingNotification: [string-value]

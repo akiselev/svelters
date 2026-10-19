@@ -46,13 +46,15 @@ jobs:
         run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install --quiet clang==21.1.7 pyyaml jsonschema
       - name: Ingest from the Xcode SDK
         run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/ingest.py'
+      - name: Inferred layer is current (rules + checked-in probe over the fresh ingest)
+        run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/infer.py --check'
       - name: Generate tables and tests
         run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/gen_backend.py'
       - name: Committed output is current
         run: |
           git status --short
           git diff --stat
-          git diff --exit-code -- metadata/appkit crates/svelters-appkit/src/generated examples/counter-mac/tests/generated.rs
+          git diff --exit-code -- metadata/appkit metadata/inferred/appkit crates/svelters-appkit/src/generated examples/counter-mac/tests/generated.rs
       - name: Upload regenerated metadata
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -95,10 +97,16 @@ jobs:
         env:
           SVELTERS_APPKIT_TRACE_FRAMES: "1"
         run: cargo test -p counter-mac --test backend
+      # One JSON line per generated case (svelters_apple::testing): the input of
+      # `tools/metadata/ledger.py import --toolkit appkit` (uploaded below; commit the imported ledger).
       - name: counter-mac generated
         if: ${{ !cancelled() }}
         timeout-minutes: 10
-        run: cargo test -p counter-mac --test generated
+        env:
+          SVELTERS_TEST_RESULTS: ${{ github.workspace }}/target/appkit-results/generated.jsonl
+        run: |
+          mkdir -p target/appkit-results && rm -f target/appkit-results/generated.jsonl
+          cargo test -p counter-mac --test generated
       - name: counter-mac counter
         if: ${{ !cancelled() }}
         timeout-minutes: 10
@@ -107,6 +115,29 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 5
         run: cargo run -p counter-mac -- --screenshot target/counter-mac.png --exit --report target/counter-mac.json
+
+      # AI1: the runtime prober (tools/metadata/appkit/probe.py) writes metadata/probe/appkit/<SDK>.json;
+      # uploaded as `appkit-probe` with the test results, to be committed (then infer.py, gen_backend.py,
+      # ledger.py import). It must not fail the job: a crashing class is recorded, not fatal.
+      - name: Python for the metadata tools
+        if: ${{ !cancelled() }}
+        run: python3 -m venv "$RUNNER_TEMP/venv" && "$RUNNER_TEMP/venv/bin/pip" install --quiet pyyaml jsonschema
+      - name: Probe AppKit
+        if: ${{ !cancelled() }}
+        timeout-minutes: 20
+        run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/probe.py --out target/appkit-probe'
+      - name: Ledger import (dry run against the committed ledger)
+        if: ${{ !cancelled() }}
+        run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/ledger.py import --toolkit appkit --dry-run target/appkit-results/generated.jsonl'
+      - name: Upload probe and test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: appkit-probe
+          if-no-files-found: warn
+          path: |
+            target/appkit-probe/
+            target/appkit-results/
 
       - name: Upload screenshots and reports
         if: ${{ !cancelled() }}

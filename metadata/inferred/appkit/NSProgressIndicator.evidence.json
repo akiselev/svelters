@@ -1,0 +1,122 @@
+{
+ "props:control-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "regular",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "small",
+   "sample": {
+    "t": "str",
+    "v": "small"
+   }
+  }
+ },
+ "props:displayed-when-stopped": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:double-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:indeterminate": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:max-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 100.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:min-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "bar",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "spinning",
+   "sample": {
+    "t": "str",
+    "v": "spinning"
+   }
+  }
+ },
+ "props:uses-threaded-animation": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ }
+}

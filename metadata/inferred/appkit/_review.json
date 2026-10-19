@@ -1,0 +1,173 @@
+{
+ "inferred": {
+  "bindings": 11,
+  "props": 161,
+  "signals": 16
+ },
+ "probe": true,
+ "promote_at": 0.9,
+ "rows": [
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "double-value",
+   "pattern": "binding:prop-ignored",
+   "section": "bindings"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "float-value",
+   "pattern": "binding:prop-ignored",
+   "section": "bindings"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "string-value",
+   "pattern": "binding:prop-normalized",
+   "section": "bindings"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "double-value",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "float-value",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "max-accelerator-level",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSButton",
+   "name": "string-value",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
+   "name": "attributed-string-value",
+   "pattern": "prop:error",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
+   "name": "double-value",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
+   "name": "float-value",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSControl",
+   "name": "string-value",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "string-value",
+   "pattern": "binding:prop-ignored",
+   "section": "bindings"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSSlider",
+   "name": "string-value",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSTextField",
+   "name": "placeholder-attributed-string",
+   "pattern": "prop:error",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSView",
+   "name": "bounds",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSView",
+   "name": "needs-display",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSView",
+   "name": "needs-layout",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "NSView",
+   "name": "needs-update-constraints",
+   "pattern": "prop:ignored",
+   "section": "props"
+  }
+ ],
+ "schema": "svelters-inferred-review/v1",
+ "skipped": {
+  "binding:enum-prop": 1,
+  "binding:inherited": 1
+ },
+ "toolkit": "appkit",
+ "unreviewed": {
+  "by_pattern": {
+   "low:binding:prop-ignored": 3,
+   "low:binding:prop-normalized": 1,
+   "low:prop:error": 2,
+   "low:prop:ignored": 9,
+   "low:prop:normalized": 3
+  },
+  "low": 18,
+  "middle": 0
+ },
+ "version": "26.1"
+}

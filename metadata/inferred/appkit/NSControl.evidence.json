@@ -1,0 +1,212 @@
+{
+ "props:alignment": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "center",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "left",
+   "sample": {
+    "t": "str",
+    "v": "left"
+   }
+  }
+ },
+ "props:allows-expansion-tool-tips": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:base-writing-direction": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "natural",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "left-to-right",
+   "sample": {
+    "t": "str",
+    "v": "left-to-right"
+   }
+  }
+ },
+ "props:continuous": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:control-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "regular",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "small",
+   "sample": {
+    "t": "str",
+    "v": "small"
+   }
+  }
+ },
+ "props:enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:highlighted": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:ignores-multi-click": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": 0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "t": "i64",
+    "v": 1
+   }
+  }
+ },
+ "props:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": 0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "t": "i64",
+    "v": 1
+   }
+  }
+ },
+ "props:line-break-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "word-wrapping",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "char-wrapping",
+   "sample": {
+    "t": "str",
+    "v": "char-wrapping"
+   }
+  }
+ },
+ "props:refuses-first-responder": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:tag": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": -1,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:uses-single-line-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ }
+}

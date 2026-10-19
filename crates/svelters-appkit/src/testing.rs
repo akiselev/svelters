@@ -12,6 +12,33 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use svelters_abi::*;
 
+/// A sample value in a static row table of the generated tests (`Value` itself owns heap data,
+/// so the tables hold this and convert per row).
+#[derive(Clone, Copy, Debug)]
+pub enum S {
+    Bool(bool),
+    I64(i64),
+    F64(f64),
+    Str(&'static str),
+    /// A list of member names (an `NS_OPTIONS` sample).
+    Names(&'static [&'static str]),
+    /// A well-known record (`SVL_T_RECT`, ...) with its fields in JS order.
+    Rec(svl_id, &'static [f64]),
+}
+
+impl S {
+    pub fn v(&self) -> Value {
+        match *self {
+            S::Bool(b) => Value::Bool(b),
+            S::I64(i) => Value::I64(i),
+            S::F64(f) => Value::F64(f),
+            S::Str(s) => Value::Str(s.into()),
+            S::Names(n) => Value::List(n.iter().map(|x| Value::Str((*x).into())).collect()),
+            S::Rec(ty, f) => Value::Record { ty, fields: f.iter().map(|x| Value::F64(*x)).collect() },
+        }
+    }
+}
+
 /// Pointer identity of a native object, for comparisons in tests.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub struct ObjRef(pub usize);
@@ -200,6 +227,11 @@ impl Harness {
 
     pub fn obj(&self, h: u64) -> ObjRef {
         oref(&self.native(h))
+    }
+
+    /// Whether the native object answers `selector` (members newer than the running macOS do not).
+    pub fn responds(&self, h: u64, selector: &str) -> bool {
+        svelters_apple::objc::bridge::responds(&self.native(h), svelters_apple::objc::bridge::sel(selector))
     }
 
     pub fn is_kind(&self, h: u64, class: &str) -> bool {
