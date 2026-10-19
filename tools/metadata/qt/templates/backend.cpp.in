@@ -45,6 +45,7 @@
 #include <QtCore/QPersistentModelIndex>
 #include <QtWidgets/QListView>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QScrollBar>
 #include <QtWidgets/QStyledItemDelegate>
 #include <QtWidgets/QAbstractButton>
@@ -1862,6 +1863,27 @@ extern "C" void svl_qt_pump(int ms) {
     QCoreApplication::processEvents(QEventLoop::AllEvents, 5);
   } while (std::chrono::steady_clock::now() < until);
   QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+}
+
+// The QTextEdits of the app (N2 host tests): "<count>|<1 when they all show one document>|<its plain text>".
+// With `set_text`, the first editor's document is changed natively first (as typing would).
+extern "C" const char *svl_qt_text_edits(const char *set_text) {
+  static std::string buf;
+  std::vector<QTextEdit *> eds;
+  for (QWidget *w : QApplication::allWidgets())
+    if (auto *e = qobject_cast<QTextEdit *>(w)) eds.push_back(e);
+  if (set_text && !eds.empty()) eds.front()->document()->setPlainText(QString::fromUtf8(set_text));
+  bool shared = !eds.empty();
+  for (QTextEdit *e : eds) shared = shared && e->document() == eds.front()->document();
+  buf = std::to_string(eds.size()) + "|" + (shared ? "1" : "0") + "|" + (eds.empty() ? std::string() : eds.front()->toPlainText().toStdString());
+  return buf.c_str();
+}
+
+// Whether the push button with this text has a non-null icon (-1: no such button).
+extern "C" int svl_qt_button_icon(const char *label) {
+  for (QWidget *w : QApplication::allWidgets())
+    if (auto *b = qobject_cast<QPushButton *>(w); b && b->text() == QString::fromUtf8(label)) return b->icon().isNull() ? 0 : 1;
+  return -1;
 }
 
 // QObject children of the object behind `h` (-1 for an unknown handle): ownership checks of the tests.

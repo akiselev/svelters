@@ -94,6 +94,24 @@ fn listen_flags(words: &str) -> u32 {
     flags
 }
 
+/// Signals of the non-GUI types the replay produces natively: (signal, method to call, its argument).
+const TYPE_TRIGGERS: &[(&str, &str, &str)] = &[("contents-changed", "setPlainText", "typed natively")];
+
+/// A JSON value of a log line as an ABI value; a number in a handle slot is a `#n` of the log.
+fn json_value(v: &serde_json::Value, handles: &HashMap<String, Value>, handle_slot: bool) -> Value {
+    match v {
+        serde_json::Value::Null => Value::Null,
+        serde_json::Value::Bool(b) => Value::Bool(*b),
+        serde_json::Value::Number(n) if handle_slot && n.is_i64() => {
+            handles.get(&format!("#{}", n.as_i64().unwrap())).cloned().unwrap_or_else(|| panic!("unknown handle #{n}"))
+        }
+        serde_json::Value::Number(n) => n.as_i64().map(Value::I64).unwrap_or_else(|| Value::F64(n.as_f64().unwrap())),
+        serde_json::Value::String(s) => Value::Str(s.clone()),
+        serde_json::Value::Array(a) => Value::List(a.iter().map(|x| json_value(x, handles, false)).collect()),
+        serde_json::Value::Object(o) => Value::Map(o.iter().map(|(k, x)| (k.clone(), json_value(x, handles, false))).collect()),
+    }
+}
+
 /// `Some(reason)` when the Qt backend cannot replay `log`. Walks the log once with the same name
 /// resolution the replay uses.
 fn unsupported(b: &BackendRef, log: &str) -> Option<String> {
@@ -103,7 +121,26 @@ fn unsupported(b: &BackendRef, log: &str) -> Option<String> {
         match parts[0] {
             "sync" | "result" => return Some("sync handlers".into()),
             "gone" => return Some("native deaths (gone)".into()),
-            "construct" | "static" => return Some("non-GUI types (construct/static, N2)".into()),
+            // ABI v2.5 (N2): `construct #h Kind {props}` and `static Kind.method [args] [#h]` on the Qt type kinds.
+            "construct" => {
+                let k = b.resolve(NameKind::Kind, 0, parts[2]);
+                if k == 0 {
+                    return Some(format!("no Qt type {}", parts[2]));
+                }
+                kinds.insert(parts[1].to_string(), k);
+            }
+            "static" => {
+                let (call, args) = line["static ".len()..].split_once(' ').unwrap();
+                let (kind, method) = call.rsplit_once('.').unwrap();
+                let k = b.resolve(NameKind::Kind, 0, kind);
+                if k == 0 || b.resolve(NameKind::Method, k, &format!("static:{method}")) == 0 {
+                    return Some(format!("no Qt static {call}"));
+                }
+                if let Some((_, h)) = args.rsplit_once(" #") {
+                    kinds.insert(format!("#{h}"), k);
+                }
+            }
+            "event" if TYPE_TRIGGERS.iter().any(|t| t.0 == parts[2]) => {}
             "create" => {
                 let k = b.resolve(NameKind::Kind, 0, parts[1]);
                 if k == 0 {
@@ -125,7 +162,9 @@ fn unsupported(b: &BackendRef, log: &str) -> Option<String> {
             }
             "call" => {
                 let k = kinds[parts[1]];
-                if b.resolve(NameKind::Method, k, parts[2]) == 0 || parts.get(3).is_some_and(|a| a.trim() != "[]") {
+                // Element methods take no arguments in the logs; type-layer methods take JSON arguments.
+                let typed = k >= 0x20000 && k < 0x200000;
+                if b.resolve(NameKind::Method, k, parts[2]) == 0 || (!typed && parts.get(3).is_some_and(|a| a.trim() != "[]")) {
                     return Some(format!("no Qt method {} with these arguments", parts[2]));
                 }
             }
@@ -153,6 +192,8 @@ fn unsupported(b: &BackendRef, log: &str) -> Option<String> {
 fn replay(b: &BackendRef, name: &str, log: &str) {
     let mut map: HashMap<String, u64> = HashMap::new();
     let mut kinds: HashMap<u64, svl_id> = HashMap::new();
+    // Results of construct / static (N2): handles and VALUE handles, by their `#n` in the log.
+    let mut vals: HashMap<String, Value> = HashMap::new();
     let (mut events, mut attrs) = (0, 0);
     for (n, line) in log.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
         let ctx = format!("{name}:{}: {line}", n + 1);
@@ -178,12 +219,57 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 };
                 b.insert(hd(rest[1]), hd(rest[2]), before, slot).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
             }
+            "construct" => {
+                let k = b.resolve(NameKind::Kind, 0, parts[2]);
+                let props: serde_json::Value = serde_json::from_str(parts[3]).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                let (mut ids, mut values) = (Vec::new(), Vec::new());
+                for (name, v) in props.as_object().unwrap() {
+                    let p = b.resolve(NameKind::Prop, k, name);
+                    let slot = b.describe(NameKind::Prop, k, p).and_then(|d| d.params.first().map(|s| s.tag));
+                    ids.push(p);
+                    values.push(json_value(v, &vals, matches!(slot, Some(SVL_HANDLE | SVL_BOXED))));
+                }
+                let v = b.construct(k, &ids, &values).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                let Value::Handle(h) = v else { panic!("{ctx}: construct answered {v:?}") };
+                map.insert(parts[1].to_string(), h);
+                kinds.insert(h, k);
+                vals.insert(parts[1].to_string(), v);
+            }
+            "static" => {
+                let (call, args) = line["static ".len()..].split_once(' ').unwrap();
+                let (kname, method) = call.rsplit_once('.').unwrap();
+                let (json, result) = match args.rsplit_once(" #") {
+                    Some((j, n)) => (j, Some(format!("#{n}"))),
+                    None => (args, None),
+                };
+                let k = b.resolve(NameKind::Kind, 0, kname);
+                let m = b.resolve(NameKind::Method, k, &format!("static:{method}"));
+                let args: serde_json::Value = serde_json::from_str(json).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                let args: Vec<Value> = args.as_array().unwrap().iter().map(|v| json_value(v, &vals, false)).collect();
+                let v = b.call_static(k, m, &args).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                if let Some(name) = result {
+                    let h = match &v {
+                        Value::Handle(h) | Value::Boxed { handle: h, .. } => *h,
+                        other => panic!("{ctx}: a constructor answered {other:?}"),
+                    };
+                    map.insert(name.clone(), h);
+                    kinds.insert(h, b.handle_info(h).map(|i| i.kind).unwrap_or(k));
+                    vals.insert(name, v);
+                }
+            }
             "remove" => b.remove(hd(parts[1]), hd(parts[2])).unwrap_or_else(|e| panic!("{ctx}: {}", e.message)),
             "destroy" => b.destroy(hd(parts[1])),
             "set" => {
                 let o = hd(parts[1]);
                 let prop = b.resolve(NameKind::Prop, kind(o), parts[2]);
                 let mut v = parse_val(parts[3]).value();
+                // A handle or VALUE handle the app made (`set #7 document 1`): the log's `#n`.
+                if let Value::I64(n) = v {
+                    let slot = b.describe(NameKind::Prop, kind(o), prop).and_then(|d| d.params.first().map(|p| p.tag));
+                    if matches!(slot, Some(SVL_HANDLE | SVL_BOXED)) {
+                        v = vals.get(&format!("#{n}")).cloned().unwrap_or_else(|| panic!("{ctx}: unknown handle #{n}"));
+                    }
+                }
                 // A bare attribute (`<action checkable>`) is text until the renderer coerces it by the prop's descriptor.
                 if let svelters_abi::Value::Str(t) = &v {
                     if matches!(t.as_str(), "" | "true" | "false") && b.describe(NameKind::Prop, kind(o), prop).is_some_and(|d| d.params.first().is_some_and(|p| p.tag == svelters_abi::SVL_BOOL)) {
@@ -195,7 +281,9 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
             "call" => {
                 let o = hd(parts[1]);
                 let m = b.resolve(NameKind::Method, kind(o), parts[2]);
-                b.call(o, m, &[]).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                let args: serde_json::Value = serde_json::from_str(parts.get(3).copied().unwrap_or("[]")).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                let args: Vec<Value> = args.as_array().unwrap().iter().map(|v| json_value(v, &vals, false)).collect();
+                b.call(o, m, &args).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
             }
             "listen" => {
                 let o = hd(parts[1]);
@@ -260,6 +348,15 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 if sig == "toggled" && parts[3] == "[false]" {
                     continue;
                 }
+                // A signal of a non-GUI type (N2), produced by changing the object natively through its method.
+                if let Some((_, method, arg)) = TYPE_TRIGGERS.iter().find(|t| t.0 == sig) {
+                    let m = b.resolve(NameKind::Method, kind(o), method);
+                    b.call(o, m, &[Value::Str(arg.to_string())]).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                    let got = EVENTS.lock().unwrap().clone();
+                    assert!(got.contains(&(o, sid)), "{ctx}: event not delivered, got {got:?}");
+                    events += 1;
+                    continue;
+                }
                 let click = b.resolve(NameKind::Method, kind(o), if matches!(sig, "triggered" | "toggled") { "trigger" } else { "click" });
                 b.call(o, click, &[]).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
                 let got = EVENTS.lock().unwrap().clone();
@@ -295,7 +392,7 @@ fn body() {
         replay(&b, &name, &log);
         replayed.push(name);
     }
-    for must in ["child-attrs-qt", "counter-qt"] {
+    for must in ["child-attrs-qt", "counter-qt", "qt-types"] {
         assert!(replayed.iter().any(|n| n == must), "fixtures/{must} must replay on Qt, replayed {replayed:?}");
     }
     println!("oplog_replay ok: {replayed:?}");

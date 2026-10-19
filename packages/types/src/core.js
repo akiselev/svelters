@@ -92,9 +92,13 @@ function live(self) {
 }
 
 function valueHandle(self) {
-  const m = self[BOX]?.__svlBoxed;
-  if (!m) throw new DisposedError(self.constructor.native ?? 'value');
-  return m[0];
+  const b = self[BOX];
+  const m = b?.__svlBoxed;
+  if (m) return m[0];
+  // A host without boxed values (the Node TestHost) answers a value constructor with a plain handle.
+  const h = b && !('__svlBoxed' in b) ? handleOf(b) : null;
+  if (h === null) throw new DisposedError(self.constructor.native ?? 'value');
+  return h;
 }
 
 const handleFor = (self) => (BOX in self ? valueHandle(self) : live(self));
@@ -214,16 +218,17 @@ const kebabSignal = (s) => (s.includes('-') || !/[A-Z]/.test(s) ? s : s.replace(
 
 /** Base class of every generated object class. */
 export class NativeObject {
-  constructor(a, ...rest) {
+  constructor(...args) {
+    const a = args[0];
     if (a === WRAP) {
-      this[NODE] = rest[0];
+      this[NODE] = args[1];
       return;
     }
     const make = this.constructor[CONSTRUCT];
     if (typeof make !== 'function') {
       throw new TypeError(`${this.constructor.native ?? 'this class'} cannot be constructed with new`);
     }
-    const raw = make.call(this.constructor, a, ...rest);
+    const raw = make.call(this.constructor, ...args);
     const h = handleOf(raw);
     if (h === null) throw new Error(`${this.constructor.native}: the host returned no object`);
     this[NODE] = raw;
@@ -318,16 +323,17 @@ if (typeof Symbol.dispose === 'symbol') {
 
 /** Base class of every generated value class: an immutable native value behind a VALUE handle. */
 export class NativeValue {
-  constructor(a, ...rest) {
+  constructor(...args) {
+    const a = args[0];
     if (a === WRAP) {
-      this[BOX] = rest[0];
+      this[BOX] = args[1];
       return;
     }
     const make = this.constructor[CONSTRUCT];
     if (typeof make !== 'function') {
       throw new TypeError(`${this.constructor.native ?? 'this class'} cannot be constructed with new`);
     }
-    this[BOX] = make.call(this.constructor, a, ...rest);
+    this[BOX] = make.call(this.constructor, ...args);
   }
 
   /** What the host converts a value argument to; null once disposed. */
@@ -335,8 +341,14 @@ export class NativeValue {
     return this[BOX]?.__svlBoxed ?? null;
   }
 
+  /** A host without boxed values (the Node TestHost) holds the value as a plain handle: that handle. */
+  get svlHandle() {
+    const b = this[BOX];
+    return b && !('__svlBoxed' in b) ? (handleOf(b) ?? undefined) : undefined;
+  }
+
   get disposed() {
-    return this.__svlBoxed === null;
+    return this.__svlBoxed === null && this.svlHandle === undefined;
   }
 
   get nativeType() {

@@ -1,0 +1,17 @@
+{
+  "name": "@svelters-fixtures/qt-types-gc",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test": "vite build"
+  },
+  "dependencies": {
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "vite": "8.3.4"
+  }
+}
