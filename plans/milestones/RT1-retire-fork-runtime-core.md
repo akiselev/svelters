@@ -112,4 +112,91 @@ Unchanged in substance: `typesAliases()` from `@svelters/types/vite` is applied 
 
 ## Completion record
 
-(filled in below)
+Branch `ci/rt1` (from master @ bff6a637). Commits: 52da870b (retirement + compiled-path parity),
+796e933d (runtime core phases 0-1, compiler/runtime fixes, docs), 77778d55 (form-binding
+expectations), then this record. 229 files changed before this record (+2616 / -8014).
+
+### Removed
+
+`packages/renderer`, `packages/dom`, `tests/renderer-conformance` (incl. `WEEKLY.md`), `vendor/svelte`
+(tarball + PIN), `overrides.svelte` in `pnpm-workspace.yaml`, `packages/build`'s renderer/shim
+entries and style plugin, `packages/lists`' `ListView.svelte` / controller / `RowHost`,
+`experiments/native-compiler/compiled/{testhost-overlay.json,galleries.mjs,bench-lists.mjs}`, the
+parser port's `customRenderer` option.
+
+### Fixture op logs: reviewed differences from the renderer's
+
+`tools/oplog-compare.mjs` against the logs at bff6a637: 14 identical, 19 state-equal at every
+boundary (op order only: keyed moves, the order of a flush's sets), 4 differing, all reviewed:
+
+- `dialogs`: the TestHost records the transient insert of the nested window in the main window's
+  default slot after the box (`[2, 6]`) where the renderer inserted it first (`[6, 2]`); the
+  backends ignore `before`/slot for a transient insert (backend-abi.md "Toplevels in the tree").
+- `menus`: `set #6 checkable true` where the renderer sent `""` for the bare attribute (a renderer
+  bug: the compiler types it from the spec).
+- `sync-handlers`, `listen-phases`: rewritten to the real GTK vocabulary (decision 9), so the key
+  presses go to the attached controller (#5) instead of the entry.
+
+### Found and fixed on the way (the full gates caught them)
+
+- `buffer-bind` on GTK: `bind:value` was written before `lower`/`upper` (the compiler emitted
+  bindings in source order), so GtkScale clamped the value to 0; the TestHost does not clamp, so
+  the op logs looked state-equal. Bindings are now written after the element's other attributes.
+- Qt gallery text page: borrowed nodes had no `setProp` (the renderer's nodes did); added (and to
+  `NativeElement` in the typings).
+- `bind:this` on a dynamic component left `$n.component(` unclosed (conformance sample
+  `binding-property-non-reactive-ignored`); fixed, regression test in `rt1_kinds.rs`. Two more
+  conformance samples now pass (`bind-this-proxy`, `bind-this-raw`).
+- The core's fake `Boundary` lacked `get_effect_pending` (`$effect.pending()` inside a component
+  would have thrown); `check-svelte-internals.mjs` now keeps the member list equal to Svelte's.
+
+### Gates (all observed after the last code change, 2026-10-19)
+
+- `tools/dev/headless tools/dev/cargo-slot cargo nextest run --workspace --no-fail-fast`: 2000
+  tests, 1998 passed, 2 failed, 7 skipped. The 2 failures were `oracle_acorn` and `oracle_svelte`,
+  which run only when a local oracle corpus exists in `target/oracle` (normally absent, as on CI,
+  where they skip); I had generated one. `oracle_svelte` on the stock corpus: 3678 of 3683 pass
+  (the 5 failures are CSS-parser errors; Svelte's CSS parser is not ported by design); the stock
+  corpus has fewer samples than the fork's, so `tests/oracle_baseline.json` `svelte` went from 3682
+  to 3678. Then `cargo nextest run -p svelters-compiler`: 160 passed, 7 skipped (oracle_svelte
+  passing on the corpus; the acorn corpus removed because my acorn checkout's test files do not
+  reproduce the baseline corpus: 3922 < 3938, unrelated to RT1, acorn untouched). The previous full
+  run (before the binding-order fix) had 1996/1999 with the 3 real failures listed above.
+- `corepack pnpm -r build`: exit 0. `corepack pnpm test` (incl. test:meta): exit 0; node:test
+  types 12, style 17, native-runtime 72 (+ check-svelte-internals, svelte-check 0 errors),
+  canvas 3, lists 2; 39 fixture checks PASS; compiled harness 79 PASS, handwritten 6 PASS;
+  pytest 126 passed, 1 skipped.
+- `corepack pnpm docs:test`: 11 Python tests OK (1 skipped), 17 node tests pass.
+  `corepack pnpm docs:build`: built, check-links 141411 internal references in 908 pages resolve.
+- Conformance ratchet (`experiments/native-compiler/conformance`, `UPSTREAM` = a clone of
+  sveltejs/svelte at tag `svelte@5.57.2`): 500 / 774 pass (rejected 168, runtime errors 27,
+  mismatches 76, timeouts 0), baseline 498 -> 500 (`--update-baseline`). With the default 20 s
+  timeout under load two samples timed out once (`effect-loop-infinite`, `error-boundary-20`); both
+  pass alone and in the 60 s run.
+- RUNTIME phase 1 exit criterion: `grep -rn "svelte/internal" packages/native-runtime/src` matches
+  one file (`src/core/svelte.js`, enforced by `core-contract.test.mjs`); the compiler's sources no
+  longer mention it.
+
+### CI (`ci/rt1` @ 77778d55)
+
+js 39305741893, linux-gtk 39305742125 (gtk + gtk-4-14), linux-qt 39305741804, macos-appkit
+39305741808, windows-winui 39305741928: all success. (This record's commit re-runs them.)
+
+### Open items
+
+- `src/style.js` still carries the renderer's runtime setter-rule matching (`applyStyle`,
+  `styleChildAttrs`, `explicitPropSet`); the compiled path matches setters at compile time and
+  never registers rules, so that half is dead code now.
+- `gen_bindings.py` still writes `BINDINGS` and `TEXT_PROPS` into `src/bindings.generated.js`; only
+  `TOPLEVELS` and `ROW_OUTLETS` are used (it also still cross-checks bindings across toolkits,
+  which test:meta relies on).
+- The X7 `show` policy picks the modal method at run time from `TOPLEVELS`; moving it into the
+  specs would let the compiler resolve it.
+- `TestHost` records a transient toplevel insert as a slot child (see `dialogs`).
+- Docs site: `concepts/abi.md` still describes `listen` flags and `call_sync` as planned (outside
+  the guides this milestone rewrote). `docs/notes/native-compiler/language-subset.md` says
+  `<script lang="ts">` is unsupported, which is out of date. `{await p}` in a template compiles
+  without a diagnostic into an `await` inside a non-async effect (compiler bug, async is out of
+  scope).
+- Historical notes under `docs/notes/` (custom-renderer trial, fork bindings, P1 lane) describe
+  the retired path; they are kept as history.
