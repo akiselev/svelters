@@ -42,6 +42,8 @@ struct Slot {
     sig: svl_id,
     /// The completion of an async method (settled, not dropped, when the owner dies).
     completion: bool,
+    /// A completion whose owner died: only the host's `disposed` settlement may run it now.
+    orphan: bool,
 }
 
 #[derive(Default)]
@@ -93,7 +95,7 @@ impl Core {
         let index = match t.free.pop() {
             Some(i) => i,
             None => {
-                t.slots.push(Slot { gen_: 0, live: false, owner: 0, scope: 0, sig: 0, completion: false });
+                t.slots.push(Slot { gen_: 0, live: false, owner: 0, scope: 0, sig: 0, completion: false, orphan: false });
                 (t.slots.len() - 1) as u32
             }
         };
@@ -103,6 +105,7 @@ impl Core {
         s.scope = scope;
         s.sig = sig;
         s.completion = false;
+        s.orphan = false;
         let id = pack(s.gen_, index);
         t.by_owner.entry(owner).or_default().push(id);
         Ok(id)
@@ -149,6 +152,7 @@ impl Core {
             if let Some(s) = orphan {
                 // Detached from the dead owner; settled at the next checkpoint (outside any JS entry).
                 s.owner = 0;
+                s.orphan = true;
                 t.orphans.push(id);
                 continue;
             }
@@ -172,7 +176,7 @@ impl Core {
                 code: Value::Str("disposed".into()),
                 message: "the object was disposed before the operation completed".into(),
             };
-            let _ = self.invoke_callback(id, &[Value::Error(Box::new(err))]);
+            let _ = self.invoke_callback_as(id, &[Value::Error(Box::new(err))], true);
             self.cb_release(id);
         }
         // The Promise reactions run at the next checkpoint.
@@ -213,11 +217,17 @@ impl Core {
 
     /// `host->invoke_callback`: runs the JS function behind `id` synchronously.
     pub(crate) fn invoke_callback(&self, id: u64, args: &[Value]) -> Result<Value, String> {
+        self.invoke_callback_as(id, args, false)
+    }
+
+    /// `settle`: the host itself settles an orphaned completion; the backend never may.
+    fn invoke_callback_as(&self, id: u64, args: &[Value], settle: bool) -> Result<Value, String> {
         let (owner, scope, sig) = {
             let st = self.st.borrow();
             let s = st
                 .callbacks
                 .live(id)
+                .filter(|s| settle || !s.orphan)
                 .ok_or_else(|| "callback was released or its owner is gone".to_string())?;
             (s.owner, s.scope, s.sig)
         };
