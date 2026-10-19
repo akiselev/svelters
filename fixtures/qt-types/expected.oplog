@@ -5,7 +5,7 @@ call #2 setStringList [["one","two"]]
 call #2 insertRows [2,1]
 call #2 index [2,0]
 call #2 setData [null,"three"]
-static QIcon.new ["/tmp/svelters-qt-types.svg"] #3
+static QIcon.new ["/tmp/svelters-qt-types.png"] #3
 static QUrl.new ["https://example.com/docs/index.html"] #4
 call #4 host []
 create main-window #5

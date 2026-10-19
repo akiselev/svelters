@@ -801,6 +801,10 @@ def report(data: dict) -> str:
     lines.append("")
     lines.append("== overloads (decision Q4: runtime dispatch in a fixed order)")
     lines.append(f"  JS method names {names}, overloaded {overloaded}; const/non-const twins merged {twins}; C++ spelling variants merged {merged} (same JS arguments and result: QStringView/QString, short/int, float/double)")
+    renames = load_overrides().get("renames") or {}
+    lines.append(f"  renamed (the truly ambiguous ones, `renames:` in the overrides): {len(renames)}")
+    for k, v in sorted(renames.items()):
+        lines.append(f"    {k} -> {v}")
     lines.append(f"  ambiguous (an earlier overload has the same JS signature; blocked unless renamed): {len(amb)}")
     for a in amb:
         lines.append(f"    {a['key']}  <- {a['shadowed_by']}")

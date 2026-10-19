@@ -40,7 +40,9 @@ fn run(host: &Host, raw: BackendRef<'static>, checks: Vec<(i32, Box<dyn Fn()>)>,
 
 fn qt_types_fixture() {
     // The fixture's icon path (a file icon, not a theme name).
-    std::fs::write("/tmp/svelters-qt-types.svg", r#"<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><rect width="16" height="16" fill="red"/></svg>"#).unwrap();
+    // A 1x1 PNG (QIcon reads it without the SVG plugin).
+    const PNG: [u8; 70] = [137, 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 31, 21, 196, 137, 0, 0, 0, 13, 73, 68, 65, 84, 120, 156, 99, 248, 207, 192, 240, 31, 0, 5, 0, 1, 255, 137, 153, 61, 29, 0, 0, 0, 0, 73, 69, 78, 68, 174, 66, 96, 130];
+    std::fs::write("/tmp/svelters-qt-types.png", PNG).unwrap();
     let (host, raw) = host_for("fixtures/qt-types");
     let seen: Rc<RefCell<Vec<String>>> = Rc::default();
     let s = seen.clone();
@@ -110,7 +112,7 @@ fn dropped_wrappers_release_their_handles() {
     host.checkpoint();
     hooks::pump(20);
     let before = count();
-    assert!(before >= baseline + 120, "the handler minted 120 handles: {baseline} -> {before}");
+    assert!(before >= baseline + 120, "the handler minted 120 handles: {baseline} -> {before}; errors {:?}", host.take_errors().into_iter().map(|e| e.message).collect::<Vec<_>>());
     assert!(hooks::click_button("drop"));
     host.checkpoint();
     for _ in 0..5 {

@@ -21,6 +21,10 @@ total            12      108      113       12        8       33       23       
 
 == overloads (decision Q4: runtime dispatch in a fixed order)
   JS method names 2079, overloaded 112; const/non-const twins merged 2; C++ spelling variants merged 45 (same JS arguments and result: QStringView/QString, short/int, float/double)
+  renamed (the truly ambiguous ones, `renames:` in the overrides): 3
+    QPolygon.point(int, int *, int *) -> pointXY
+    QTextDocument.redo(QTextCursor *) -> redoCursor
+    QTextDocument.undo(QTextCursor *) -> undoCursor
   ambiguous (an earlier overload has the same JS signature; blocked unless renamed): 0
 
 == curated set

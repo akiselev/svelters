@@ -123,12 +123,25 @@ inline svl_id resolve(uint32_t what, svl_id kind, std::string_view name) {
   }
   const TypeRow *t = gen_type(start);
   if (!element && t && t->cat == C_VALUE && what == SVL_METHOD && name == "equals") return kEqualsId;
-  if (!element && t && (t->cat == C_OBJECT || t->cat == C_MODEL) && (what == SVL_PROP || what == SVL_SIGNAL || what == SVL_METHOD))
-    return dyn_id(c);
+  return 0;
+}
+
+// The metaobject fallback for a name `resolve` did not find (the backend asks after its object getters).
+inline svl_id resolve_dynamic(uint32_t what, svl_id kind, std::string_view name) {
+  const TypeRow *t = is_type_kind(kind) ? gen_type(kind) : nullptr;
+  if (t && (t->cat == C_OBJECT || t->cat == C_MODEL) && (what == SVL_PROP || what == SVL_SIGNAL || what == SVL_METHOD))
+    return dyn_id(camel(name));
   return 0;
 }
 
 inline bool is_member_id(svl_id id) { return id >= kTypeMemberBase; }
+
+// The host pads omitted optional arguments with null: trailing nulls past the required count are omitted, so
+// the C++ defaults apply (an explicit null for a defaulted pointer means the same as the default).
+inline size_t trim_omitted(const svl_value *a, size_t n, size_t required) {
+  while (n > required && a[n - 1].tag == SVL_NULL) --n;
+  return n;
+}
 
 // `equals(other)` on every value kind: QMetaType equality of the held values (C++ operator== is not bound).
 
@@ -721,6 +734,11 @@ struct Accept<T, std::enable_if_t<std::is_floating_point_v<T>>> {
 template <>
 struct Accept<QString> {
   static bool ok(const svl_value *v) { return v->tag == SVL_STR || v->tag == SVL_NULL; }
+};
+// A Date only (its F64 is typed DATETIME): a plain number picks the numeric overload.
+template <>
+struct Accept<QDateTime> {
+  static bool ok(const svl_value *v) { return v->tag == SVL_F64 && v->type == SVL_T_DATETIME; }
 };
 template <>
 struct Accept<QVariant> {

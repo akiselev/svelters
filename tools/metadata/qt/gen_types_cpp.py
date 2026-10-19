@@ -22,6 +22,7 @@ import types_qt_classify as tqc  # noqa: E402
 
 KIND_BASE = 0x20000
 MEMBER_BASE = 0x200000
+WHAT_ORDER = {"SVL_KIND": 0, "SVL_PROP": 1, "SVL_SIGNAL": 2, "SVL_METHOD": 3}  # svl_name_kind values
 CAT = {"object": "svl::C_OBJECT", "model": "svl::C_MODEL", "value": "svl::C_VALUE", "unique": "svl::C_UNIQUE",
        "item": "svl::C_ITEM", "statics": "svl::C_STATICS"}
 
@@ -191,7 +192,7 @@ class TypesGen:
     def emit_member_tables(self) -> list[str]:
         what = {"prop": "SVL_PROP", "signal": "SVL_SIGNAL", "method": "SVL_METHOD", "static": "SVL_METHOD", "ctor": "SVL_METHOD"}
         rows = sorted(((self.kind[m["cls"]], what[m["what"]], m["js"], m["id"]) for m in self.members),
-                      key=lambda r: (r[0], r[1], r[2]))
+                      key=lambda r: (r[0], WHAT_ORDER[r[1]], r[2].encode()))  # the C++ binary search compares these numerically / bytewise
         # Statics and instance methods may share a JS name (resolved to the instance one; statics by `call_static`).
         seen, uniq = set(), []
         for r in rows:
@@ -350,6 +351,8 @@ svl_id gen_static_member(svl_id kind, std::string_view name) {
         if m["what"] == "method":
             out += self.receiver(n, js)
         out.append("  std::string er;")
+        # The host fills omitted optional arguments with null: they are omitted (C++ supplies the defaults).
+        out.append(f"  n = trim_omitted(a, n, {min(required(o) for o in ovs) + (1 if any(o['ret']['k'] == 'async' for o in ovs) else 0)});")
         multi = len(ovs) > 1
         for o in ovs:
             ins = ins_of(o)

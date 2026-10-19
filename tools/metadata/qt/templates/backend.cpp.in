@@ -864,7 +864,7 @@ svl_id b_resolve(void *, uint32_t what, svl_id kind, const char *name, size_t le
       if (kGetterNames[i] == n) return kGetterBase + static_cast<svl_id>(i);
   // Type kinds by native name (`QTimer`), and element kinds' methods of their class's bound type.
   if (what == SVL_KIND || !svl::is_type_kind(kind)) return svl::resolve(what, kind, n);
-  return 0;
+  return svl::resolve_dynamic(what, kind, n);
 }
 
 svl_handle b_create(void *, svl_id kind) {

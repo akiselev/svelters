@@ -16,7 +16,7 @@
   names.setData(names.index(2, 0), 'three');
 
   // An icon from a path: strings keep meaning a theme name, files are explicit (a QIcon value).
-  const icon = new QIcon('/tmp/svelters-qt-types.svg');
+  const icon = new QIcon('/tmp/svelters-qt-types.png');
   // A value with methods.
   const home = new QUrl('https://example.com/docs/index.html');
 
