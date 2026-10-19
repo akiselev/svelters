@@ -1,0 +1,30 @@
+{
+ "props:tick-interval": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tick-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "NoTicks",
+   "notify": null,
+   "outcome": "exact",
+   "read": "TicksAbove",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "TicksAbove",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ }
+}

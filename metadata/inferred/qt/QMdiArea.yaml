@@ -1,0 +1,45 @@
+elements:
+- tag: mdi-area
+  props:
+  - js: activation-order
+    native: activationOrder
+    sample: StackingOrder
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: document-mode
+    native: documentMode
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-position
+    native: tabPosition
+    sample: South
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-shape
+    native: tabShape
+    sample: Triangular
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tabs-closable
+    native: tabsClosable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tabs-movable
+    native: tabsMovable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: view-mode
+    native: viewMode
+    sample: TabbedView
+    provenance:
+    - origin: probe
+      ref: round trip exact

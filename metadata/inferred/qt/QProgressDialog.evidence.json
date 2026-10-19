@@ -1,0 +1,119 @@
+{
+ "methods:wasCanceled": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "wasCanceled",
+   "stable": true,
+   "user": false,
+   "value": false
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:auto-close": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:auto-reset": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:label-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:maximum": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 100,
+   "notify": null,
+   "outcome": "exact",
+   "read": 101,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 101,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:minimum": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:minimum-duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 4000,
+   "notify": null,
+   "outcome": "exact",
+   "read": 4001,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 4001,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:value": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "notify": null,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 0,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:canceled": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

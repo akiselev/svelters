@@ -1,0 +1,164 @@
+elements:
+- tag: tab-widget
+  props:
+  - js: current-index
+    native: currentIndex
+    sample: 1
+    setup: for (int k = 0; k < 3; ++k) $w->addTab(new QWidget, QStringLiteral("t"))
+    provenance:
+    - origin: probe
+      ref: round trip exact after recipe populate (addTab); NOTIFY fired
+  - js: document-mode
+    native: documentMode
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: elide-mode
+    native: elideMode
+    sample: ElideLeft
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: movable
+    native: movable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-bar-auto-hide
+    native: tabBarAutoHide
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-position
+    native: tabPosition
+    sample: South
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-shape
+    native: tabShape
+    sample: Triangular
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tabs-closable
+    native: tabsClosable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: uses-scroll-buttons
+    native: usesScrollButtons
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: count
+    native: count
+    provenance:
+    - origin: probe
+      ref: 'returns property count (probe: equal on a new instance)'
+  signals:
+  - js: current-changed
+    native: currentChanged
+    connect: currentChanged(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      property: currentIndex
+      values:
+      - 1
+      - 0
+      - 1
+      setup: for (int k = 0; k < 3; ++k) $w->addTab(new QWidget, QStringLiteral("t"))
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal currentChanged(int)
+    - origin: probe
+      ref: emitted once per set of currentIndex (sample, default, sample); its NOTIFY signal
+  - js: tab-bar-clicked
+    native: tabBarClicked
+    connect: tabBarClicked(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal tabBarClicked(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: tab-bar-double-clicked
+    native: tabBarDoubleClicked
+    connect: tabBarDoubleClicked(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal tabBarDoubleClicked(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: tab-close-requested
+    native: tabCloseRequested
+    connect: tabCloseRequested(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal tabCloseRequested(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  bindings:
+  - name: current-index
+    direction: two_way
+    property: current-index
+    type:
+      ref: i32
+      nullable: false
+    change:
+      signal: current-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - 1
+      - 0
+    provenance:
+    - origin: rule
+      ref: 'B1: QTabWidget::currentIndex is writable, scalar and NOTIFYs currentChanged(int); the renderer compares before set'

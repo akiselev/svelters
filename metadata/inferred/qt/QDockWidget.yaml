@@ -1,0 +1,37 @@
+elements:
+- tag: dock-widget
+  signals:
+  - js: top-level-changed
+    native: topLevelChanged
+    connect: topLevelChanged(bool)
+    args:
+    - name: topLevel
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal topLevelChanged(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: visibility-changed
+    native: visibilityChanged
+    connect: visibilityChanged(bool)
+    args:
+    - name: visible
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal visibilityChanged(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

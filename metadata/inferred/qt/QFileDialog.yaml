@@ -1,0 +1,96 @@
+elements:
+- tag: file-dialog
+  props:
+  - js: accept-mode
+    native: acceptMode
+    sample: AcceptSave
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: default-suffix
+    native: defaultSuffix
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: file-mode
+    native: fileMode
+    sample: ExistingFile
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: view-mode
+    native: viewMode
+    sample: List
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: current-changed
+    native: currentChanged
+    connect: currentChanged(QString)
+    args:
+    - name: path
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal currentChanged(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: directory-entered
+    native: directoryEntered
+    connect: directoryEntered(QString)
+    args:
+    - name: directory
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal directoryEntered(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: file-selected
+    native: fileSelected
+    connect: fileSelected(QString)
+    args:
+    - name: file
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal fileSelected(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: filter-selected
+    native: filterSelected
+    connect: filterSelected(QString)
+    args:
+    - name: filter
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal filterSelected(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

@@ -3,8 +3,9 @@
 
 Inputs (only these):
   gtk: metadata/gtk/*.json   (`bindings` list on a kind with an `element.tag`; merged from metadata/overrides/gtk/*.yaml by ingest.py)
-  qt:  metadata/overrides/qt/*.yaml   (`bindings` list on an `elements[]` entry)
-  appkit: metadata/overrides/appkit/*.yaml over metadata/inferred/appkit/*.yaml (layers.py) + metadata/appkit/*.json
+  qt:  metadata/overrides/qt/*.yaml   (`bindings` list on an `elements[]` entry), with the inferred layer
+       metadata/inferred/qt merged under them (tools/metadata/qt/qt_layers.py)
+  appkit: metadata/overrides/appkit/*.yaml over metadata/inferred/appkit/*.yaml (appkit_layers.py) + metadata/appkit/*.json
           (`bindings` list on a class; applies to the element classes deriving from it)
   winui:  metadata/overrides/winui/*.yaml + metadata/winui/*.json     (same; property and signal are kebab-case JS names)
 Outputs (checked in, byte-identical on rerun):
@@ -30,6 +31,21 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import naming  # noqa: E402
 import svmeta  # noqa: E402
+
+
+def _toolkit_layers(tk: str):
+    """tools/metadata/<tk>/<tk>_layers.py, loaded by path (its directory is not on sys.path)."""
+    import importlib.util
+    name = f"{tk}_layers"
+    if name in sys.modules:
+        return sys.modules[name]
+    d = Path(__file__).resolve().parents[1] / tk if Path(__file__).resolve().parent.name == "common" else Path(__file__).resolve().parent / tk
+    sys.path.insert(0, str(d))   # its own sibling imports
+    spec = importlib.util.spec_from_file_location(name, d / f"{tk}_layers.py")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
 
 ROOT = Path(__file__).resolve().parents[3]
 GTK_META = ROOT / "metadata/gtk"
@@ -153,9 +169,14 @@ def qt_inherited(cls: str, key: str, files: dict[str, dict]) -> list[dict]:
     return out
 
 
+def qt_files() -> dict[str, dict]:
+    """The Qt override files with the inferred layer merged under them (manual wins, parked facts left out)."""
+    return _toolkit_layers("qt").merged_overrides(QT_OVERRIDES, None, QT_META)
+
+
 def qt_bindings() -> dict[str, dict[str, dict]]:
     out: dict[str, dict[str, dict]] = {}
-    files = {path.stem: svmeta.load_yaml(path) for path in sorted(QT_OVERRIDES.glob("*.yaml"))}
+    files = qt_files()
     for stem, data in files.items():
         for el in data.get("elements", []):
             if not el.get("bindings"):
@@ -209,10 +230,8 @@ def _add_binding(out: dict, tag: str, b: dict, tk: str, props: dict, signals: di
 
 
 def appkit_layers() -> dict[str, dict]:
-    """The AppKit annotations, ingested < inferred < manual (tools/metadata/appkit/layers.py)."""
-    sys.path.insert(0, str(ROOT / "tools/metadata/appkit"))
-    import layers  # noqa: E402
-    return layers.load(validate=False)[0]
+    """The AppKit annotations, ingested < inferred < manual (tools/metadata/appkit/appkit_layers.py)."""
+    return _toolkit_layers("appkit").load(validate=False)[0]
 
 
 def appkit_bindings() -> dict[str, dict[str, dict]]:

@@ -1,0 +1,239 @@
+elements:
+- tag: line-edit
+  props:
+  - js: clear-button-enabled
+    native: clearButtonEnabled
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: cursor-move-style
+    native: cursorMoveStyle
+    sample: VisualMoveStyle
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: drag-enabled
+    native: dragEnabled
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: echo-mode
+    native: echoMode
+    sample: NoEcho
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: frame
+    native: frame
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: input-mask
+    native: inputMask
+    sample: AAA
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: max-length
+    native: maxLength
+    sample: 32768
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: modified
+    native: modified
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: placeholder-text
+    native: placeholderText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: read-only
+    native: readOnly
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text
+    native: text
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  methods:
+  - js: hasAcceptableInput
+    native: hasAcceptableInput
+    provenance:
+    - origin: probe
+      ref: 'returns property acceptableInput (probe: equal on a new instance)'
+  - js: displayText
+    native: displayText
+    provenance:
+    - origin: probe
+      ref: 'returns property displayText (probe: equal on a new instance)'
+  - js: hasSelectedText
+    native: hasSelectedText
+    provenance:
+    - origin: probe
+      ref: 'returns property hasSelectedText (probe: equal on a new instance)'
+  - js: isRedoAvailable
+    native: isRedoAvailable
+    provenance:
+    - origin: probe
+      ref: 'returns property redoAvailable (probe: equal on a new instance)'
+  - js: selectedText
+    native: selectedText
+    provenance:
+    - origin: probe
+      ref: 'returns property selectedText (probe: equal on a new instance)'
+  - js: isUndoAvailable
+    native: isUndoAvailable
+    provenance:
+    - origin: probe
+      ref: 'returns property undoAvailable (probe: equal on a new instance)'
+  signals:
+  - js: cursor-position-changed
+    native: cursorPositionChanged
+    connect: cursorPositionChanged(int,int)
+    args:
+    - name: oldPos
+      type: i32
+    - name: newPos
+      type: i32
+    trigger:
+      property: text
+      values:
+      - svl probe
+      - ''
+      - svl probe
+    expect_args:
+    - '-1'
+    - '9'
+    provenance:
+    - origin: metaobject
+      ref: signal cursorPositionChanged(int,int)
+    - origin: probe
+      ref: emitted once per set of text (sample, default, sample)
+  - js: editing-finished
+    native: editingFinished
+    connect: editingFinished()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal editingFinished()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: input-rejected
+    native: inputRejected
+    connect: inputRejected()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal inputRejected()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: return-pressed
+    native: returnPressed
+    connect: returnPressed()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal returnPressed()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: selection-changed
+    native: selectionChanged
+    connect: selectionChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal selectionChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: text-changed
+    native: textChanged
+    connect: textChanged(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      property: text
+      values:
+      - svl probe
+      - ''
+      - svl probe
+    expect_args:
+    - svl probe
+    provenance:
+    - origin: metaobject
+      ref: signal textChanged(QString)
+    - origin: probe
+      ref: emitted once per set of text (sample, default, sample); its NOTIFY signal
+  - js: text-edited
+    native: textEdited
+    connect: textEdited(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal textEdited(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  bindings:
+  - name: text
+    direction: two_way
+    property: text
+    type:
+      ref: string
+      nullable: false
+    change:
+      signal: text-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - svl probe
+      - ''
+    provenance:
+    - origin: rule
+      ref: 'B1: QLineEdit::text is writable, scalar and NOTIFYs textChanged(QString); the renderer compares before set'

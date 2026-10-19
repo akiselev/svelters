@@ -1,0 +1,172 @@
+elements:
+- tag: text-edit
+  props:
+  - js: accept-rich-text
+    native: acceptRichText
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: cursor-width
+    native: cursorWidth
+    sample: 2
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: document-title
+    native: documentTitle
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: line-wrap-column-or-width
+    native: lineWrapColumnOrWidth
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: line-wrap-mode
+    native: lineWrapMode
+    sample: NoWrap
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: overwrite-mode
+    native: overwriteMode
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: placeholder-text
+    native: placeholderText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: plain-text
+    native: plainText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: read-only
+    native: readOnly
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-changes-focus
+    native: tabChangesFocus
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-stop-distance
+    native: tabStopDistance
+    sample: 81.5
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: undo-redo-enabled
+    native: undoRedoEnabled
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: copy-available
+    native: copyAvailable
+    connect: copyAvailable(bool)
+    args:
+    - name: 'yes'
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal copyAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: cursor-position-changed
+    native: cursorPositionChanged
+    connect: cursorPositionChanged()
+    args: []
+    trigger:
+      property: plainText
+      values:
+      - svl probe
+      - ''
+      - svl probe
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal cursorPositionChanged()
+    - origin: probe
+      ref: emitted once per set of plainText (sample, default, sample)
+  - js: redo-available
+    native: redoAvailable
+    connect: redoAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal redoAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: selection-changed
+    native: selectionChanged
+    connect: selectionChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal selectionChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: text-changed
+    native: textChanged
+    connect: textChanged()
+    args: []
+    trigger:
+      property: plainText
+      values:
+      - svl probe
+      - ''
+      - svl probe
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal textChanged()
+    - origin: probe
+      ref: emitted once per set of plainText (sample, default, sample)
+  - js: undo-available
+    native: undoAvailable
+    connect: undoAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal undoAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

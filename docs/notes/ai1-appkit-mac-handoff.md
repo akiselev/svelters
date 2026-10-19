@@ -13,7 +13,7 @@ Design: `docs/notes/ai1-inference.md` (slice 4). Setup of a Mac for this repo: `
 | Probe output (checked in) | `metadata/probe/appkit/26.1.json` |
 | Rules | `metadata/rules/appkit.yaml` |
 | Inference | `tools/metadata/appkit/infer.py` -> `metadata/inferred/appkit/` |
-| Layers ingested < inferred < manual (+ `deny:`, parked) | `tools/metadata/appkit/layers.py` |
+| Layers ingested < inferred < manual (+ `deny:`, parked) | `tools/metadata/appkit/appkit_layers.py` |
 | Generator: table-driven rows for inferred facts and bindings, facts manifest | `tools/metadata/appkit/gen_backend.py` -> `examples/counter-mac/tests/generated.rs`, `crates/svelters-appkit/src/generated/facts.json` |
 | Results file per test case (`SVELTERS_TEST_RESULTS`) | `crates/svelters-apple/src/testing.rs` |
 | Ledger import / check / refresh for appkit | `tools/metadata/ledger.py`, `metadata/verified/appkit.json` |

@@ -1,0 +1,220 @@
+{
+ "props:accept-rich-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:cursor-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1,
+   "notify": null,
+   "outcome": "exact",
+   "read": 2,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 2,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:document-title": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:line-wrap-column-or-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:line-wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "WidgetWidth",
+   "notify": null,
+   "outcome": "exact",
+   "read": "NoWrap",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoWrap",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:overwrite-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:placeholder-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:plain-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:read-only": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-changes-focus": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-stop-distance": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 80.0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 81.5,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 81.5,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:undo-redo-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:copy-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:cursor-position-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [],
+   "trigger": "plainText"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:redo-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:selection-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:text-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [],
+   "trigger": "plainText"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:undo-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

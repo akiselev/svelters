@@ -3,7 +3,8 @@
 
   python3 tools/metadata/qt/gen_cpp.py --config gen.toml --out <dir>
 
-Inputs are only the config, metadata/qt/*.json, metadata/overrides/qt/*.yaml and the files in
+Inputs are only the config, metadata/qt/*.json, metadata/overrides/qt/*.yaml, the inferred layer
+(metadata/inferred/qt/*.yaml and _parked.json, merged under the overrides by qt_layers.py) and the files in
 tools/metadata/qt/ (this script and templates/). Output is byte-identical on rerun: no clocks,
 no environment, no absolute paths in the output.
 
@@ -12,6 +13,7 @@ Config (TOML; relative paths resolve against the config file's directory):
   [input]
   metadata  = "metadata/qt"
   overrides = "metadata/overrides/qt"
+  inferred  = "metadata/inferred/qt"   # optional; default: inferred/qt next to the overrides' parent
   [output]
   backend = "svl_qt_backend.cpp"
   verify  = "svl_qt_verify.cpp"
@@ -36,8 +38,10 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "common"))
+sys.path.insert(0, str(HERE))
 import naming  # noqa: E402
 import svmeta  # noqa: E402
+import qt_layers as layers  # noqa: E402
 from tsvalues import write_values_dts  # noqa: E402
 
 
@@ -211,21 +215,32 @@ def ts_leaf(cat: str, payload, m) -> str:
 # model
 
 class Model:
-    def __init__(self, meta_dir: Path, ov_dir: Path, only: list[str]):
+    def __init__(self, meta_dir: Path, ov_dir: Path, only: list[str], inferred_dir: Path | None = None):
+        """`inferred_dir`: the inferred layer (default: metadata/inferred/qt next to the overrides), merged under
+        the manual overrides by tools/metadata/qt/qt_layers.py."""
         self.meta_dir, self.ov_dir = meta_dir, ov_dir
+        self.inferred_dir = Path(inferred_dir) if inferred_dir else layers.default_inferred(ov_dir)
         self.read_files: list[Path] = []
         self._kinds: dict[str, dict] = {}
         self.elements: list[dict] = []
         self.inherit: dict[str, dict] = {}
+        # Inferred facts the generator could not resolve or test: parked by `ledger.py refresh`, never an error.
+        self.untestable: list[dict] = []
         errs: list[str] = []
         for p in sorted(ov_dir.glob("*.yaml")):
             errs += svmeta.check_override(p, HERE / "override.schema.json")
         if errs:
             raise GenError("override schema errors:\n  " + "\n  ".join(errs))
+        manual = {p.stem: svmeta.load_yaml(p) for p in sorted(ov_dir.glob("*.yaml"))}
+        if self.inferred_dir.is_dir():
+            self.read_files += sorted(self.inferred_dir.glob("*.yaml"))
+            if (self.inferred_dir / "_parked.json").exists():
+                self.read_files.append(self.inferred_dir / "_parked.json")
+        merged = layers.merge(manual, layers.load_inferred(self.inferred_dir), layers.load_parked(self.inferred_dir), meta_dir)
         for p in sorted(ov_dir.glob("*.yaml")):
             cls = p.stem
             self.read_files.append(p)
-            ov = svmeta.load_yaml(p)
+            ov = merged[cls]
             if self.kind(cls) is None:
                 raise GenError(f"{p.name}: no metadata/qt/{cls}.json (file names are class names)")
             if ov.get("inherit"):
@@ -261,13 +276,13 @@ class Model:
             self._apply_inherit(e)
             for key in ("props", "signals", "methods"):
                 for r in e.get(key, []):
-                    r["_raw"] = copy.deepcopy({k: v for k, v in r.items() if k != "_raw"})
+                    r["_raw"] = copy.deepcopy({k: v for k, v in r.items() if not k.startswith("_")})
             for sl in (e.get("children") or {}).get("slots", []):
                 sl["_raw"] = copy.deepcopy({k: v for k, v in sl.items() if k != "attrs"})
                 for a in sl.get("attrs", []):
                     a["_raw"] = copy.deepcopy(a)
             for b in e.get("bindings", []):
-                b["_raw"] = copy.deepcopy(b)
+                b["_raw"] = copy.deepcopy({k: v for k, v in b.items() if not k.startswith("_")})
         for e in self.elements:
             self._resolve(e)
         self._assign_ids()
@@ -357,18 +372,30 @@ class Model:
         el["layout_cls"] = comp.get("layout", {}).get("class")
         if el["layout_cls"] and not self.kind(el["layout_cls"]):
             raise GenError(f"{tag}: no metadata for layout {el['layout_cls']}")
-        for p in el.get("props", []):
-            self._resolve_prop(el, p)
-        for m in el.get("methods", []):
-            self._resolve_method(el, m)
-        for s in el.get("signals", []):
-            self._resolve_signal(el, s)
+        for key, fn in (("props", self._resolve_prop), ("methods", self._resolve_method), ("signals", self._resolve_signal)):
+            keep = []
+            for r in el.get(key, []):
+                if r.get("_origin") != "inferred":
+                    fn(el, r)
+                    keep.append(r)
+                    continue
+                try:
+                    fn(el, r)
+                    keep.append(r)
+                except GenError as ex:
+                    self.drop_inferred(el, key, r["js"], r, str(ex))
+            el[key] = keep
         ch = el.get("children")
         if ch:
             for s in ch["slots"]:
                 self._resolve_slot(el, s)
             if ch["default_slot"] not in [s["name"] for s in ch["slots"]]:
                 raise GenError(f"{tag}: default_slot {ch['default_slot']} not in slots")
+
+    def drop_inferred(self, el: dict, section: str, name: str, rec: dict, why: str) -> None:
+        sec = {"props": "prop", "methods": "method", "signals": "signal", "bindings": "binding"}[section]
+        self.untestable.append({"fact": fact_id(el, sec, name), "kind": el["cls"], "section": section, "name": name,
+                                "record_fp": rec.get("_fp"), "message": why[:240]})
 
     def target_cls(self, el: dict, target: str | None) -> str:
         if target == "layout":
@@ -1600,6 +1627,25 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
 # verification tests
 
 PREFIX = "svelters-api:v1:type:qt:QtWidgets"
+# section -> (row struct, table) of the table-driven tests of inferred facts (verify.cpp.in).
+TABLES = {"props": ("PropRow", "kPropRows"), "methods": ("MethodRow", "kMethodRows"),
+          "signals": ("SignalRow", "kSignalRows"), "emits": ("EmitRow", "kEmitRows"), "bindings": ("BindingRow", "kBindingRows")}
+TABLE_FN = {"props": "tt_prop", "methods": "tt_method", "signals": "tt_signal", "emits": "tt_emit", "bindings": "tt_binding"}
+
+
+def table_sources(tmpl: str) -> dict[str, str]:
+    """section -> the source of its generic test body plus the shared helpers (part of each row fact's fingerprint)."""
+    a, b = tmpl.find("// ---- table-driven tests"), tmpl.find("// ---- end table-driven tests")
+    if a < 0 or b < 0:
+        raise GenError("verify.cpp.in: no table-driven test section")
+    block = tmpl[a:b]
+    shared = block.split("bool tt_", 1)[0]
+    out = {}
+    for sec, fn in TABLE_FN.items():
+        i = block.find(f"bool {fn}(")
+        j = block.find("\n}\n", i)
+        out[sec] = shared + block[i:j + 3]
+    return out
 SCALAR = ("string", "bool", "int", "float")
 
 
@@ -1613,7 +1659,7 @@ def fact_id(e: dict, section: str, name: str, rec: dict | None = None) -> str:
 
 def strip(rec):
     if isinstance(rec, dict):
-        return {k: strip(v) for k, v in rec.items() if k not in ("_raw", "rec", "prop", "decl_cls", "inherited_from")}
+        return {k: strip(v) for k, v in rec.items() if k not in ("_raw", "rec", "prop", "decl_cls", "inherited_from", "_origin", "_fp")}
     if isinstance(rec, list):
         return [strip(x) for x in rec]
     return rec
@@ -1623,7 +1669,7 @@ class Tests:
     """One test (or a few) per annotated fact; a fact the generator cannot test is an error.
     Every test is attributed to its fact for the verified ledger (`--facts`)."""
 
-    def __init__(self, m: Model):
+    def __init__(self, m: Model, table_src: dict[str, str] | None = None):
         self.m = m
         self.fns: list[tuple[str, str]] = []
         self.synthetic_done: set[str] = set()
@@ -1631,6 +1677,10 @@ class Tests:
         self.facts: dict[str, dict] = {}
         self.errors: list[str] = []
         self._fact: tuple[str, dict] | None = None
+        # Inferred facts: table-driven, one generic test body per section (verify.cpp.in) and a row per fact.
+        self.rows: dict[str, list[str]] = {k: [] for k in TABLES}
+        self.table_src = table_src or {}
+        self.setups: dict[tuple[str, str], str] = {}
 
     def add(self, name: str, body: str) -> None:
         if getattr(self, "_setup", None):
@@ -1665,10 +1715,19 @@ class Tests:
         m = self.m
         for e in m.elements:
             for p in e.get("props", []):
+                if p.get("_origin") == "inferred":
+                    self.row_fact(e, "props", "prop", p["js"], p, [p["_raw"], strip(p.get("prop"))])
+                    continue
                 self.fact(fact_id(e, "prop", p["js"], p), [p["_raw"], strip(p.get("prop"))], "props", e, p["js"], lambda e=e, p=p: self.prop(e, p))
             for me in e.get("methods", []):
+                if me.get("_origin") == "inferred":
+                    self.row_fact(e, "methods", "method", me["js"], me, [me["_raw"], strip(me.get("rec"))])
+                    continue
                 self.fact(fact_id(e, "method", me["js"], me), [me["_raw"], strip(me.get("rec"))], "methods", e, me["js"], lambda e=e, me=me: self.method(e, me))
             for sg in e.get("signals", []):
+                if sg.get("_origin") == "inferred":
+                    self.row_fact(e, "signals", "signal", sg["js"], sg, [sg["_raw"], strip(sg.get("rec"))])
+                    continue
                 self.fact(fact_id(e, "signal", sg["js"], sg), [sg["_raw"], strip(sg.get("rec"))], "signals", e, sg["js"], lambda e=e, sg=sg: self.signal(e, sg))
             ch = e.get("children")
             if ch:
@@ -1679,6 +1738,9 @@ class Tests:
                         self.fact(fact_id(e, "slot", f"{sl['name']}:attr:{a['name']}"), a["_raw"], "attrs", e, f"{sl['name']}.{a['name']}",
                                   lambda e=e, sl=sl, a=a: self.attr(e, sl, a))
             for b in e.get("bindings", []):
+                if b.get("_origin") == "inferred":
+                    self.row_fact(e, "bindings", "binding", b["name"], b, b["_raw"])
+                    continue
                 self.fact(fact_id(e, "binding", b["name"]), b["_raw"], "bindings", e, b["name"], lambda e=e, b=b: self.binding(e, b))
             if e["construct"].get("context_menu"):
                 self.fact(fact_id(e, "construct", "context_menu"), e["construct"], "construct", e, "context_menu", lambda e=e: self.context_menu(e))
@@ -1688,9 +1750,130 @@ class Tests:
         facts = []
         for fid in sorted(self.facts):
             f = self.facts[fid]
-            facts.append({"fact": fid, "section": f["section"], "name": f["name"], "elements": sorted(set(f["elements"])),
-                          "tests": f["tests"], "fingerprint": svmeta.fingerprint({"record": f["record"], "tests": f["srcs"]})})
-        return {"toolkit": "qt", "version": version, "facts": facts}
+            rec = {"fact": fid, "section": f["section"], "name": f["name"], "elements": sorted(set(f["elements"])),
+                   "tests": f["tests"], "fingerprint": svmeta.fingerprint({"record": f["record"], "tests": f["srcs"]})}
+            if f.get("origin"):
+                rec.update({"origin": f["origin"], "record_fp": f["record_fp"], "kind": f["kind"]})
+            if f.get("strength"):
+                rec["strength"] = f["strength"]
+            facts.append(rec)
+        untestable = sorted(self.m.untestable, key=lambda u: (u["kind"], u["section"], u["name"]))
+        return {"toolkit": "qt", "version": version, "facts": facts, "untestable": untestable}
+
+    # -- table-driven tests of inferred facts -----------------------------------------------------
+    def row_fact(self, e: dict, section: str, sec1: str, name: str, rec: dict, raw) -> None:
+        """One table row (and no function) per inferred fact; a fact the tables cannot express is untestable
+        (parked by `ledger.py refresh`), never an error."""
+        fid = fact_id(e, sec1, name)
+        table = "emits" if section == "signals" and rec.get("delivery_only") else section
+        try:
+            row = getattr(self, f"row_{table}")(e, rec)
+        except GenError as ex:
+            self.m.drop_inferred(e, section, name, rec, str(ex))
+            return
+        test = f"{sec1}/{e['tag']}.{name}" + {"props": "", "methods": "", "signals": "/delivered_once", "emits": "/delivered_once",
+                                              "bindings": "/echo"}[table]
+        line = f'    {{"{test}", {row}}},'
+        self.rows[table].append(line)
+        self.facts[fid] = {"fact": fid, "record": {"raw": raw, "section": section, "name": name}, "tests": [test],
+                           "srcs": [line, self.table_src.get(table, "")], "elements": [e["tag"]], "section": section,
+                           "name": name, "origin": "inferred", "record_fp": rec.get("_fp"), "kind": e["cls"]}
+        if table == "emits":
+            self.facts[fid]["strength"] = "delivery"
+
+    def cval(self, ref: str, v) -> str:
+        """A `Val` initializer (verify.cpp.in) for a sample of a property of type `ref`."""
+        cat, pay = classify(ref)
+        if cat == "bool" and isinstance(v, bool):
+            return f"{{VT_BOOL, {int(v)}, 0, nullptr}}"
+        if cat == "int" and isinstance(v, int) and not isinstance(v, bool):
+            return f"{{VT_INT, {v}, 0, nullptr}}"
+        if cat == "float" and isinstance(v, (int, float)) and not isinstance(v, bool):
+            return f"{{VT_F64, 0, {float(v)!r}, nullptr}}"
+        if cat == "string" and isinstance(v, str):
+            return f"{{VT_STR, 0, 0, {json.dumps(v, ensure_ascii=True)}}}"
+        if cat == "enum":
+            d = self.m.enum_defs.get(pay)
+            mem = next((x for x in (d or {}).get("members", []) if x["name"] == v), None)
+            if mem is None:
+                raise GenError(f"enum sample {v!r} is not a member of {pay}")
+            return f"{{VT_ENUM, static_cast<int64_t>({mem['cpp']}), 0, nullptr}}"
+        raise GenError(f"no table value for {v!r} of type {ref}")
+
+    def setup_fn(self, e: dict, stmt: str | None) -> str:
+        """`nullptr`, or a function running the C++ precondition `stmt` ($w: the widget as the element's class)."""
+        if not stmt:
+            return "nullptr"
+        key = (e["cls"], stmt)
+        if key not in self.setups:
+            self.setups[key] = f"su_{len(self.setups) + 1}"
+        return self.setups[key]
+
+    def prop_ref(self, e: dict, native: str) -> str:
+        _, prop = self.m.find(e["cls"], "properties", lambda r: r["name"] == native)
+        if not prop:
+            raise GenError(f"property {native} not found on {e['cls']}")
+        return prop["type"]["ref"]
+
+    def row_props(self, e, p) -> str:
+        if p.get("target") or p.get("dynamic") or not p.get("native") or p["readonly"]:
+            raise GenError(f"{p['js']}: the property table only tests writable Q_PROPERTYs of the element itself")
+        if p["cat"] not in SCALAR + ("enum",):
+            raise GenError(f"{p['js']}: no table test for a {p['cat']} property")
+        return f'"{e["tag"]}", "{p["js"]}", "{p["native"]}", {self.setup_fn(e, p.get("setup"))}, {self.cval(p["ref"], p.get("sample"))}'
+
+    def row_methods(self, e, me) -> str:
+        _, prop = self.m.find(e["cls"], "properties", lambda r: (r.get("accessors") or {}).get("get") == me["native"])
+        if not prop or me["argrefs"] or classify(me["ret"])[0] not in SCALAR + ("enum",):
+            raise GenError(f"{me['js']}: the method table only tests zero-argument READ accessors of a scalar property")
+        return f'"{e["tag"]}", "{me["js"]}", "{prop["name"]}"'
+
+    def row_signals(self, e, s) -> str:
+        t = s.get("trigger")
+        if not isinstance(t, dict) or s.get("synthetic"):
+            raise GenError(f"{s['js']}: the signal table needs a property trigger")
+        a, b, c = t["values"]
+        if a != c:
+            raise GenError(f"{s['js']}: trigger values must be [first, second, first]")
+        ref = self.prop_ref(e, t["property"])
+        ex = list(s.get("expect_args", []))[:4]
+        exs = ", ".join("nullptr" if x is None else json.dumps(x, ensure_ascii=True) for x in ex + [None] * (4 - len(ex)))
+        return (f'"{e["tag"]}", "{s["js"]}", "{t["property"]}", {self.setup_fn(e, t.get("setup"))}, '
+                f'{self.cval(ref, a)}, {self.cval(ref, b)}, {len(s["args"])}, {len(ex)}, {{{exs}}}')
+
+    def row_emits(self, e, s) -> str:
+        t = s.get("trigger")
+        if not isinstance(t, dict) or "emit" not in t or s.get("synthetic"):
+            raise GenError(f"{s['js']}: a delivery-only signal needs trigger.emit")
+        refs = [a["ref"] for a in s["args"]]
+        if len(t["emit"]) != len(refs) or len(refs) > 4 or any(classify(r)[0] not in SCALAR for r in refs):
+            raise GenError(f"{s['js']}: the emit table takes up to four scalar arguments")
+        vals = [self.cval(r, v) for r, v in zip(refs, t["emit"])] + ["{VT_BOOL, 0, 0, nullptr}"] * (4 - len(refs))
+        ex = list(s.get("expect_args", []))[:4]
+        exs = ", ".join("nullptr" if x is None else json.dumps(x, ensure_ascii=True) for x in ex + [None] * (4 - len(ex)))
+        return (f'"{e["tag"]}", "{s["js"]}", "{s["connect"]}", {len(refs)}, {{{", ".join(vals)}}}, {len(ex)}, {{{exs}}}')
+
+    def row_bindings(self, e, b) -> str:
+        p = e["props_by_name"].get(b["property"])
+        sg = next((x for x in e.get("signals", []) if x["js"] == b["change"]["signal"] and not x.get("synthetic")), None)
+        vals = (b.get("verify") or {}).get("values")
+        if p is None or sg is None or not vals or not p.get("native") or p.get("target") or p["readonly"]:
+            raise GenError(f"bind:{b['name']}: needs a writable property {b['property']}, the signal {b['change']['signal']} and verify.values")
+        arg0 = b["change"].get("value", "arg0") == "arg0"
+        if arg0 and not sg["args"]:
+            raise GenError(f"bind:{b['name']}: change.value arg0 needs a signal with arguments")
+        return (f'"{e["tag"]}", "{p["js"]}", "{sg["js"]}", "{p["native"]}", {self.setup_fn(e, p.get("setup"))}, '
+                f'{self.cval(p["ref"], vals[0])}, {self.cval(p["ref"], vals[1])}, {str(arg0).lower()}')
+
+    def tables(self) -> str:
+        out = []
+        for (cls, stmt), fn in sorted(self.setups.items(), key=lambda kv: int(kv[1][3:])):
+            out.append(f"void {fn}(QObject *o) {{\n  auto *w = static_cast<{cls} *>(o);\n  {stmt.replace('$w', 'w')};\n}}")
+        for section, (struct, arr) in TABLES.items():
+            out.append(f"const {struct} {arr}[] = {{")
+            out += self.rows[section]
+            out.append("    {nullptr},\n};")
+        return "\n".join(out)
 
     # helpers
     def mkparent(self, e): return f'  svl_handle p = mk("{e["tag"]}");'
@@ -1783,7 +1966,7 @@ class Tests:
                      "  B->destroy(B->self, h);"]
             self.add(f"prop/{t}.{pn}/round_trip", "\n".join(lines))
         if p.get("suppress_signals"):
-            sigs = [sg for sg in e.get("signals", []) if not sg.get("synthetic")]
+            sigs = [sg for sg in e.get("signals", []) if not sg.get("synthetic") and sg.get("_origin") != "inferred"]
             if not sigs or not sigs[0].get("trigger"):
                 raise GenError(f"{pn}: suppress_signals needs a signal with a trigger on the element")
             if cat not in SCALAR:
@@ -2222,7 +2405,7 @@ class Tests:
 
 
 def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
-    T = Tests(m)
+    T = Tests(m, table_sources(tmpl))
     tests, table = T.build()
     if T.errors:
         raise GenError("manual facts without a working generated test (fix or drop them):\n  " + "\n  ".join(T.errors))
@@ -2241,7 +2424,8 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
     child_tag = m.accepted_child_tag(parent, next(s for s in parent["children"]["slots"] if s["name"] == parent["children"]["default_slot"]))
     prop = next(p for p in val["props"] if p.get("cat") == "string")
     # A plain QObject signal with a trigger, for the listener-phase tests.
-    sig = next(((e, sg) for e in simple for sg in e.get("signals", []) if not sg.get("synthetic") and sg.get("trigger")), None)
+    sig = next(((e, sg) for e in simple for sg in e.get("signals", [])
+                if not sg.get("synthetic") and isinstance(sg.get("trigger"), str) and sg.get("_origin") != "inferred"), None)
     if not sig:
         raise GenError("need an element with a triggerable signal")
     sig_e, sig_s = sig
@@ -2249,6 +2433,7 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
             "@@SIG_TRIGGER@@": sig_s["trigger"].replace("$w", "w").replace("$i", "i"), "@@ANY_TAG@@": any_tag, "@@PARENT_TAG@@": parent["tag"], "@@CHILD_TAG@@": child_tag,
             "@@VALUE_TAG@@": val["tag"], "@@VALUE_PROP@@": prop["js"], "@@DIGEST@@": digest}
     out = tmpl.replace("//@@INCLUDES@@", inc(m, classes)).replace("//@@TESTS@@", tests).replace("//@@TEST_TABLE@@", table)
+    out = out.replace("//@@ROW_TABLES@@", T.tables())
     for k, v in subs.items():
         out = out.replace(k, v)
     return out, T.manifest(version)
@@ -2368,7 +2553,9 @@ def main() -> int:
     res = lambda s: (base / s).resolve()
     out = Path(a.out)
     try:
-        m = Model(res(cfg["input"]["metadata"]), res(cfg["input"]["overrides"]), cfg.get("elements", {}).get("tags", []))
+        inferred = cfg["input"].get("inferred")
+        m = Model(res(cfg["input"]["metadata"]), res(cfg["input"]["overrides"]), cfg.get("elements", {}).get("tags", []),
+                  res(inferred) if inferred else None)
         templ = HERE / "templates"
         digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in", templ / "vlist.hpp.in", templ / "menus.hpp.in", templ / "canvas.hpp.in"])
         o = cfg["output"]

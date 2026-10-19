@@ -1,0 +1,79 @@
+{
+ "bindings:current-row": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "currentRowChanged(int)"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:count": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "count",
+   "stable": true,
+   "user": false,
+   "value": 0
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:current-row": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "notify": "currentRowChanged(int)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": "populate",
+   "recipe_call": "addItems",
+   "sample": 0,
+   "user": true
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:sorting-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:current-row-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    0
+   ],
+   "trigger": "currentRow"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:current-text-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    "a"
+   ],
+   "trigger": "currentRow"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:item-selection-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [],
+   "trigger": "currentRow"
+  },
+  "pattern": "signal:property-trigger"
+ }
+}

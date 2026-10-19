@@ -71,6 +71,9 @@ def test_check_requires_a_probe_for_the_ledger_version(tmp_path, monkeypatch):
     assert "not 4.22.4" in ledger.probe_problems("gtk", "4.22.4")[0]
     (tmp_path / "metadata/probe/gtk/4.22.4.json").write_text(json.dumps({"version": "4.22.4"}))
     assert ledger.probe_problems("gtk", "4.22.4") == []
+    assert "no probe for qt 6.11.0" in ledger.probe_problems("qt", "6.11.0")[0]   # AI1 slice 2: Qt is probed too
+    (tmp_path / "metadata/probe/qt").mkdir(parents=True)
+    (tmp_path / "metadata/probe/qt/6.11.0.json").write_text(json.dumps({"version": "6.11.0"}))
     assert ledger.probe_problems("qt", "6.11.0") == []
     assert "no probe for appkit 26.1" in ledger.probe_problems("appkit", "26.1")[0]
 

@@ -1,0 +1,15 @@
+elements:
+- tag: slider
+  props:
+  - js: tick-interval
+    native: tickInterval
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tick-position
+    native: tickPosition
+    sample: TicksAbove
+    provenance:
+    - origin: probe
+      ref: round trip exact

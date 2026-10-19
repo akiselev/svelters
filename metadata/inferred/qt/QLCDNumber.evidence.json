@@ -1,0 +1,93 @@
+{
+ "props:digit-count": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 5,
+   "notify": null,
+   "outcome": "exact",
+   "read": 6,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 6,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Dec",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Hex",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Hex",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:segment-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Filled",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Outline",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Outline",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:small-decimal-point": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:value": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1.5,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1.5,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:overflow": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

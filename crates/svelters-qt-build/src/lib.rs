@@ -13,7 +13,8 @@
 //! pkg-config, and link directives are emitted.
 //!
 //! `rerun-if-changed` is emitted only for the build config's inputs: `metadata/qt/**`,
-//! `metadata/overrides/qt/**`, the generator scripts/templates and the ABI header. Nothing from
+//! `metadata/overrides/qt/**`, `metadata/inferred/qt/**` (the inferred layer, merged under the overrides),
+//! the generator scripts/templates and the ABI header. Nothing from
 //! the app or any dependent crate's Rust sources is listed, so editing those never reruns the
 //! leaf crate's build script.
 
@@ -31,6 +32,7 @@ pub struct Config {
     repo_root: Option<PathBuf>,
     metadata_dir: Option<PathBuf>,
     overrides_dir: Option<PathBuf>,
+    inferred_dir: Option<PathBuf>,
     tags: Vec<String>,
     verification_tests: bool,
     fat: bool,
@@ -50,6 +52,7 @@ impl Config {
             repo_root: None,
             metadata_dir: None,
             overrides_dir: None,
+            inferred_dir: None,
             tags: Vec::new(),
             verification_tests: false,
             fat: true,
@@ -82,6 +85,12 @@ impl Config {
 
     pub fn overrides_dir(mut self, dir: impl Into<PathBuf>) -> Self {
         self.overrides_dir = Some(dir.into());
+        self
+    }
+
+    /// The inferred annotation layer (default `metadata/inferred/qt`; tools/metadata/qt/infer.py).
+    pub fn inferred_dir(mut self, dir: impl Into<PathBuf>) -> Self {
+        self.inferred_dir = Some(dir.into());
         self
     }
 
@@ -125,12 +134,14 @@ impl Config {
         };
         let metadata = self.metadata_dir.clone().unwrap_or_else(|| root.join("metadata/qt"));
         let overrides = self.overrides_dir.clone().unwrap_or_else(|| root.join("metadata/overrides/qt"));
+        let inferred = self.inferred_dir.clone().unwrap_or_else(|| root.join("metadata/inferred/qt"));
         let abi_include = root.join("crates/svelters-abi/include");
 
         // rerun-if-changed: config inputs only.
         for p in [
             &metadata,
             &overrides,
+            &inferred,
             &root.join("tools/metadata/qt"),
             &root.join("tools/metadata/common/svmeta.py"),
             &abi_include,
@@ -145,7 +156,7 @@ impl Config {
         std::fs::create_dir_all(&gen_dir).map_err(|e| e.to_string())?;
         let mut toml = String::new();
         let q = |p: &Path| format!("{:?}", p.to_string_lossy());
-        writeln!(toml, "[input]\nmetadata = {}\noverrides = {}\n", q(&metadata), q(&overrides)).unwrap();
+        writeln!(toml, "[input]\nmetadata = {}\noverrides = {}\ninferred = {}\n", q(&metadata), q(&overrides), q(&inferred)).unwrap();
         writeln!(toml, "[output]\nbackend = \"svl_qt_backend.cpp\"\nverify = \"svl_qt_verify.cpp\"\ndts = \"qt.d.ts\"\n").unwrap();
         let tags: Vec<String> = self.tags.iter().map(|t| format!("{t:?}")).collect();
         writeln!(toml, "[elements]\ntags = [{}]", tags.join(", ")).unwrap();

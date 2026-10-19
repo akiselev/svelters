@@ -1,0 +1,53 @@
+elements:
+- tag: main-window
+  props:
+  - js: animated
+    native: animated
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: dock-nesting-enabled
+    native: dockNestingEnabled
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: document-mode
+    native: documentMode
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-shape
+    native: tabShape
+    sample: Triangular
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tool-button-style
+    native: toolButtonStyle
+    sample: ToolButtonTextOnly
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: tool-button-style-changed
+    native: toolButtonStyleChanged
+    connect: toolButtonStyleChanged(Qt::ToolButtonStyle)
+    args:
+    - name: toolButtonStyle
+      type: enum<Qt::ToolButtonStyle>
+    trigger:
+      property: toolButtonStyle
+      values:
+      - ToolButtonTextOnly
+      - ToolButtonIconOnly
+      - ToolButtonTextOnly
+    expect_args:
+    - ''
+    provenance:
+    - origin: metaobject
+      ref: signal toolButtonStyleChanged(Qt::ToolButtonStyle)
+    - origin: probe
+      ref: emitted once per set of toolButtonStyle (sample, default, sample)

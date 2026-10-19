@@ -16,11 +16,23 @@ export interface QtElementDescriptors {
       checked?: boolean;
       separator?: boolean;
       group?: string;
+      "auto-repeat"?: boolean;
+      "icon-text"?: string;
+      "icon-visible-in-menu"?: boolean;
+      "menu-role"?: "about-qt-role" | "about-role" | "application-specific-role" | "no-role" | "preferences-role" | "quit-role" | "text-heuristic-role";
+      priority?: "high-priority" | "low-priority" | "normal-priority";
+      "shortcut-context"?: "application-shortcut" | "widget-shortcut" | "widget-with-children-shortcut" | "window-shortcut";
+      "shortcut-visible-in-context-menu"?: boolean;
+      "whats-this"?: string;
     };
     events: {
       toggled: (checked: boolean) => void;
       triggered: (checked: boolean) => void;
       hovered: () => void;
+      changed: () => void;
+      "checkable-changed": (checkable: boolean) => void;
+      "enabled-changed": (enabled: boolean) => void;
+      "visible-changed": () => void;
     };
     methods: {
       trigger(): void;
@@ -249,6 +261,11 @@ export interface QtElementDescriptors {
       "placeholder-text"?: string;
       "insert-policy"?: "insert-after-current" | "insert-alphabetically" | "insert-at-bottom" | "insert-at-current" | "insert-at-top" | "insert-before-current" | "no-insert";
       "duplicates-enabled"?: boolean;
+      frame?: boolean;
+      "max-count"?: number;
+      "minimum-contents-length"?: number;
+      "model-column"?: number;
+      "size-adjust-policy"?: "contents" | "contents-on-first-show" | "minimum-contents-length-with-icon";
       enabled?: boolean;
       "tool-tip"?: string;
       "status-tip"?: string;
@@ -264,6 +281,10 @@ export interface QtElementDescriptors {
       "current-index-changed": (index: number) => void;
       "current-text-changed": (text: string) => void;
       activated: (index: number) => void;
+      "edit-text-changed": (text: string) => void;
+      highlighted: (index: number) => void;
+      "text-activated": (text: string) => void;
+      "text-highlighted": (text: string) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -283,6 +304,7 @@ export interface QtElementDescriptors {
       insertItem(index: number, text: string, userData: Variant): void;
       removeItem(index: number): void;
       clear(): void;
+      count(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -401,6 +423,8 @@ export interface QtElementDescriptors {
       "maximum-time"?: TimeParts;
       "minimum-date-time"?: Date;
       "maximum-date-time"?: Date;
+      "current-section-index"?: number;
+      "time-spec"?: "local-time" | "offset-from-utc" | "time-zone" | "utc";
       "read-only"?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -435,6 +459,7 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      sectionCount(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -485,6 +510,7 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      notchSize(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -634,6 +660,9 @@ export interface QtElementDescriptors {
       minimum?: number;
       maximum?: number;
       "single-step"?: number;
+      prefix?: string;
+      "step-type"?: "adaptive-decimal-step-type" | "default-step-type";
+      suffix?: string;
       "read-only"?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -653,6 +682,7 @@ export interface QtElementDescriptors {
     };
     events: {
       "value-changed": (d: number) => void;
+      "text-changed": (text: string) => void;
       "editing-finished": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -668,6 +698,7 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      cleanText(): string;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -744,6 +775,10 @@ export interface QtElementDescriptors {
     };
     events: {
       accepted: () => void;
+      "current-changed": (path: string) => void;
+      "directory-entered": (directory: string) => void;
+      "file-selected": (file: string) => void;
+      "filter-selected": (filter: string) => void;
       rejected: () => void;
       finished: (result: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
@@ -1009,6 +1044,10 @@ export interface QtElementDescriptors {
     events: {
       "text-value-changed": (text: string) => void;
       "int-value-changed": (value: number) => void;
+      "double-value-changed": (value: number) => void;
+      "double-value-selected": (value: number) => void;
+      "int-value-selected": (value: number) => void;
+      "text-value-selected": (text: string) => void;
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
@@ -1125,6 +1164,8 @@ export interface QtElementDescriptors {
     methods: {
       setBuddy(buddy: number): void;
       buddy(): number;
+      hasSelectedText(): boolean;
+      selectedText(): string;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -1140,6 +1181,7 @@ export interface QtElementDescriptors {
       value?: number;
       mode?: "bin" | "dec" | "hex" | "oct";
       "segment-style"?: "filled" | "flat" | "outline";
+      "small-decimal-point"?: boolean;
       "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
       "frame-shadow"?: "plain" | "raised" | "sunken";
       "line-width"?: number;
@@ -1193,6 +1235,8 @@ export interface QtElementDescriptors {
       "input-mask"?: string;
       "drag-enabled"?: boolean;
       "cursor-position"?: number;
+      "cursor-move-style"?: "logical-move-style" | "visual-move-style";
+      modified?: boolean;
       enabled?: boolean;
       "tool-tip"?: string;
       "status-tip"?: string;
@@ -1211,6 +1255,8 @@ export interface QtElementDescriptors {
       "editing-finished": () => void;
       "text-edited": (text: string) => void;
       "selection-changed": () => void;
+      "cursor-position-changed": (oldPos: number, newPos: number) => void;
+      "input-rejected": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -1231,6 +1277,12 @@ export interface QtElementDescriptors {
       redo(): void;
       copy(): void;
       setSelection(start: number, length: number): void;
+      hasAcceptableInput(): boolean;
+      displayText(): string;
+      hasSelectedText(): boolean;
+      isRedoAvailable(): boolean;
+      selectedText(): string;
+      isUndoAvailable(): boolean;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -1264,6 +1316,7 @@ export interface QtElementDescriptors {
     events: {
       "current-row-changed": (currentRow: number) => void;
       "item-selection-changed": () => void;
+      "current-text-changed": (currentText: string) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -1281,6 +1334,7 @@ export interface QtElementDescriptors {
       addItem(label: string): void;
       insertItem(row: number, label: string): void;
       clear(): void;
+      count(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -1310,6 +1364,7 @@ export interface QtElementDescriptors {
     };
     events: {
       close: () => void;
+      "tool-button-style-changed": (toolButtonStyle: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon") => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -1404,6 +1459,8 @@ export interface QtElementDescriptors {
       "accessible-name"?: string;
     };
     events: {
+      "about-to-hide": () => void;
+      "about-to-show": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -1534,6 +1591,8 @@ export interface QtElementDescriptors {
       "tab-stop-distance"?: number;
       "text-interaction-flags"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
       "document-title"?: string;
+      "background-visible"?: boolean;
+      "center-on-scroll"?: boolean;
       "frame-shape"?: "box" | "hline" | "no-frame" | "panel" | "styled-panel" | "vline" | "win-panel";
       "frame-shadow"?: "plain" | "raised" | "sunken";
       "line-width"?: number;
@@ -1555,6 +1614,10 @@ export interface QtElementDescriptors {
       "selection-changed": () => void;
       "cursor-position-changed": () => void;
       "block-count-changed": (newBlockCount: number) => void;
+      "copy-available": (yes: boolean) => void;
+      "modification-changed": (changed: boolean) => void;
+      "redo-available": (available: boolean) => void;
+      "undo-available": (available: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -1580,6 +1643,7 @@ export interface QtElementDescriptors {
       cut(): void;
       centerCursor(): void;
       ensureCursorVisible(): void;
+      blockCount(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -1597,6 +1661,7 @@ export interface QtElementDescriptors {
       "text-visible"?: boolean;
       orientation?: "horizontal" | "vertical";
       "inverted-appearance"?: boolean;
+      "text-direction"?: "bottom-to-top" | "top-to-bottom";
       enabled?: boolean;
       "tool-tip"?: string;
       "status-tip"?: string;
@@ -1625,6 +1690,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       reset(): void;
+      text(): string;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -1676,6 +1742,7 @@ export interface QtElementDescriptors {
     methods: {
       reset(): void;
       cancel(): void;
+      wasCanceled(): boolean;
       open(): void;
       present(): void;
       accept(): void;
@@ -1939,6 +2006,7 @@ export interface QtElementDescriptors {
       suffix?: string;
       "display-integer-base"?: number;
       prefix?: string;
+      "step-type"?: "adaptive-decimal-step-type" | "default-step-type";
       "read-only"?: boolean;
       wrapping?: boolean;
       frame?: boolean;
@@ -1976,6 +2044,7 @@ export interface QtElementDescriptors {
     methods: {
       validate(input: string, pos: number): { ret: "acceptable" | "intermediate" | "invalid"; input: string; pos: number };
       fixup(input: string): { input: string };
+      cleanText(): string;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -2049,6 +2118,8 @@ export interface QtElementDescriptors {
     };
     events: {
       "current-changed": (index: number) => void;
+      "widget-added": (index: number) => void;
+      "widget-removed": (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2063,6 +2134,7 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      count(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -2124,6 +2196,7 @@ export interface QtElementDescriptors {
       "uses-scroll-buttons"?: boolean;
       "auto-hide"?: boolean;
       "elide-mode"?: "left" | "middle" | "none" | "right";
+      "change-current-on-drag"?: boolean;
       enabled?: boolean;
       "tool-tip"?: string;
       "status-tip"?: string;
@@ -2159,6 +2232,7 @@ export interface QtElementDescriptors {
       insertTab(index: number, text: string): number;
       removeTab(index: number): void;
       moveTab(from: number, to: number): void;
+      count(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -2176,6 +2250,8 @@ export interface QtElementDescriptors {
       "document-mode"?: boolean;
       "uses-scroll-buttons"?: boolean;
       "current-index"?: number;
+      "elide-mode"?: "left" | "middle" | "none" | "right";
+      "tab-bar-auto-hide"?: boolean;
       enabled?: boolean;
       "tool-tip"?: string;
       "status-tip"?: string;
@@ -2191,6 +2267,7 @@ export interface QtElementDescriptors {
       "current-changed": (index: number) => void;
       "tab-close-requested": (index: number) => void;
       "tab-bar-clicked": (index: number) => void;
+      "tab-bar-double-clicked": (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2205,6 +2282,7 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      count(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -2237,6 +2315,7 @@ export interface QtElementDescriptors {
     events: {
       "history-changed": () => void;
       "backward-available": (available: boolean) => void;
+      "forward-available": (available: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2256,6 +2335,7 @@ export interface QtElementDescriptors {
       backward(): void;
       forward(): void;
       clearHistory(): void;
+      sourceType(): "html-resource" | "image-resource" | "markdown-resource" | "style-sheet-resource" | "unknown-resource" | "user-resource";
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -2275,11 +2355,17 @@ export interface QtElementDescriptors {
       "use-design-metrics"?: boolean;
       "default-style-sheet"?: string;
       readonly "block-count"?: number;
+      "layout-enabled"?: boolean;
     };
     events: {
       "contents-changed": () => void;
       "block-count-changed": (newBlockCount: number) => void;
       "modification-changed": (changed: boolean) => void;
+      "contents-change": (position: number, charsRemoved: number, charsAdded: number) => void;
+      "document-layout-changed": () => void;
+      "redo-available": (available: boolean) => void;
+      "undo-available": (available: boolean) => void;
+      "undo-command-added": () => void;
     };
     methods: {
       setPlainText(text: string): void;
@@ -2291,6 +2377,7 @@ export interface QtElementDescriptors {
       lineCount(): number;
       undo(): void;
       redo(): void;
+      blockCount(): number;
     };
     slots: never;
   };
@@ -2332,6 +2419,9 @@ export interface QtElementDescriptors {
       "text-changed": () => void;
       "selection-changed": () => void;
       "cursor-position-changed": () => void;
+      "copy-available": (yes: boolean) => void;
+      "redo-available": (available: boolean) => void;
+      "undo-available": (available: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2434,6 +2524,9 @@ export interface QtElementDescriptors {
     events: {
       "movable-changed": (movable: boolean) => void;
       "orientation-changed": (orientation: "horizontal" | "vertical") => void;
+      "tool-button-style-changed": (toolButtonStyle: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon") => void;
+      "top-level-changed": (topLevel: boolean) => void;
+      "visibility-changed": (visible: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2449,6 +2542,7 @@ export interface QtElementDescriptors {
     };
     methods: {
       clear(): void;
+      isFloating(): boolean;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -2491,6 +2585,7 @@ export interface QtElementDescriptors {
       "context-menu": (position: Point, globalPosition: Point, reason: number) => void;
     };
     methods: {
+      count(): number;
       show(): void;
       hide(): void;
       setFocus(): void;
@@ -2556,6 +2651,8 @@ export interface QtElementDescriptors {
     props: {
       "wizard-style"?: "aero-style" | "classic-style" | "mac-style" | "modern-style" | "nstyles";
       options?: Array<"cancel-button-on-left" | "disabled-back-button-on-last-page" | "extended-watermark-pixmap" | "have-custom-button1" | "have-custom-button2" | "have-custom-button3" | "have-finish-button-on-early-pages" | "have-help-button" | "have-next-button-on-last-page" | "help-button-on-right" | "ignore-sub-titles" | "independent-pages" | "no-back-button-on-last-page" | "no-back-button-on-start-page" | "no-cancel-button" | "no-cancel-button-on-last-page" | "no-default-button" | "stretch-banner">;
+      "sub-title-format"?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
+      "title-format"?: "auto-text" | "markdown-text" | "plain-text" | "rich-text";
       modal?: boolean;
       "size-grip-enabled"?: boolean;
       enabled?: boolean;
@@ -2571,6 +2668,10 @@ export interface QtElementDescriptors {
     };
     events: {
       "current-id-changed": (id: number) => void;
+      "custom-button-clicked": (which: number) => void;
+      "help-requested": () => void;
+      "page-added": (id: number) => void;
+      "page-removed": (id: number) => void;
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
@@ -2617,6 +2718,7 @@ export interface QtElementDescriptors {
       "accessible-name"?: string;
     };
     events: {
+      "complete-changed": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;

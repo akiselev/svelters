@@ -1,0 +1,56 @@
+{
+ "methods:notchSize": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "notchSize",
+   "stable": true,
+   "user": false,
+   "value": 1
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:notch-target": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 3.7,
+   "notify": null,
+   "outcome": "exact",
+   "read": 5.2,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 5.2,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:notches-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:wrapping": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ }
+}

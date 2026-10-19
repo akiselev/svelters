@@ -1,0 +1,273 @@
+{
+ "bindings:plain-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "textChanged()"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:blockCount": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "blockCount",
+   "stable": true,
+   "user": false,
+   "value": 1
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:background-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:center-on-scroll": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:cursor-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1,
+   "notify": null,
+   "outcome": "exact",
+   "read": 2,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 2,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:document-title": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:line-wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "WidgetWidth",
+   "notify": null,
+   "outcome": "exact",
+   "read": "NoWrap",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoWrap",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:maximum-block-count": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:overwrite-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:placeholder-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:plain-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": "textChanged()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": true
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:read-only": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-changes-focus": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-stop-distance": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 80.0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 81.5,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 81.5,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:undo-redo-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:block-count-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:copy-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:cursor-position-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [],
+   "trigger": "plainText"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:modification-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:redo-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:selection-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:text-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [],
+   "trigger": "plainText"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:undo-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

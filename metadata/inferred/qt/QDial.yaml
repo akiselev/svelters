@@ -1,0 +1,27 @@
+elements:
+- tag: dial
+  props:
+  - js: notch-target
+    native: notchTarget
+    sample: 5.2
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: notches-visible
+    native: notchesVisible
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: wrapping
+    native: wrapping
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: notchSize
+    native: notchSize
+    provenance:
+    - origin: probe
+      ref: 'returns property notchSize (probe: equal on a new instance)'

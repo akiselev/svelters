@@ -49,7 +49,7 @@ Mac handoff: `docs/notes/ai1-appkit-mac-handoff.md`.
   `observability: partial, missed: [programmatic]`, attached to the topmost element class; notification signals from
   the rules' per-class list when the probe found the constant (delivery only). No methods or slots (ingest only reads
   override-named methods).
-- `tools/metadata/appkit/layers.py`: ingested < inferred < manual for every consumer (gen_backend, gen_semantics
+- `tools/metadata/appkit/appkit_layers.py`: ingested < inferred < manual for every consumer (gen_backend, gen_semantics
   through its Model, gen_bindings, probe). A manual record replaces the inferred record of the same name; manual
   `deny: ["<section>:<glob>"]`; parked inferred records (by record fingerprint) are left out.
 - `gen_backend.py`: manual facts keep one function per fact; inferred props and signals and all bindings are
@@ -68,3 +68,12 @@ Mac handoff: `docs/notes/ai1-appkit-mac-handoff.md`.
 - 2026-10-17: prototype moved, deterministic probe, infer/ingest/gen/ledger/coverage code written; first inference
   run over 57 kinds gave 291 props, 472 methods, 45 signals, 228 generic bindings, 3 slots (concrete kinds only,
   before abstract subjects and the synthetic-signal probe).
+
+## Slice 2 (Qt): design as built
+
+See `tools/metadata/qt/README.md`. Probe `metadata/probe/qt/6.11.0.json` (PySide6 6.11.0, 73 classes, 4 crashing
+ops recorded: QColumnView/QDockWidget property writes SEGV), `infer.py` + `metadata/rules/qt.yaml` (accept-by-pattern),
+`metadata/inferred/qt/` (43 classes), `qt_layers.py` (merge), table-driven tests in `verify.cpp.in`, ledger parking for Qt.
+Net new verified facts after the manual layer wins: props 31, methods 24, signals 47 (37 `verified: delivery`),
+bindings 13; 0 parked. Not done: abstract-base subjects (inherit-level inference), `@unverified` in qt.d.ts,
+pure getters and actions (review rows only), enum-argument delivery-only signals.

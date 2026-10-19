@@ -1,0 +1,108 @@
+elements:
+- tag: list-widget
+  props:
+  - js: current-row
+    native: currentRow
+    sample: 0
+    setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    provenance:
+    - origin: probe
+      ref: round trip exact after recipe populate (addItems); NOTIFY fired
+  - js: sorting-enabled
+    native: sortingEnabled
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: count
+    native: count
+    provenance:
+    - origin: probe
+      ref: 'returns property count (probe: equal on a new instance)'
+  signals:
+  - js: current-row-changed
+    native: currentRowChanged
+    connect: currentRowChanged(int)
+    args:
+    - name: currentRow
+      type: i32
+    trigger:
+      property: currentRow
+      values:
+      - 0
+      - -1
+      - 0
+      setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    expect_args:
+    - '0'
+    provenance:
+    - origin: metaobject
+      ref: signal currentRowChanged(int)
+    - origin: probe
+      ref: emitted once per set of currentRow (sample, default, sample); its NOTIFY signal
+  - js: current-text-changed
+    native: currentTextChanged
+    connect: currentTextChanged(QString)
+    args:
+    - name: currentText
+      type: string
+    trigger:
+      property: currentRow
+      values:
+      - 0
+      - -1
+      - 0
+      setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    expect_args:
+    - a
+    provenance:
+    - origin: metaobject
+      ref: signal currentTextChanged(QString)
+    - origin: probe
+      ref: emitted once per set of currentRow (sample, default, sample)
+  - js: item-selection-changed
+    native: itemSelectionChanged
+    connect: itemSelectionChanged()
+    args: []
+    trigger:
+      property: currentRow
+      values:
+      - 0
+      - -1
+      - 0
+      setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal itemSelectionChanged()
+    - origin: probe
+      ref: emitted once per set of currentRow (sample, default, sample)
+  bindings:
+  - name: current-row
+    direction: two_way
+    property: current-row
+    type:
+      ref: i32
+      nullable: false
+    change:
+      signal: current-row-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - 0
+      - -1
+    provenance:
+    - origin: rule
+      ref: 'B1: QListWidget::currentRow is writable, scalar and NOTIFYs currentRowChanged(int); the renderer compares before set'

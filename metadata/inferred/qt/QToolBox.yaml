@@ -1,0 +1,26 @@
+elements:
+- tag: tool-box
+  methods:
+  - js: count
+    native: count
+    provenance:
+    - origin: probe
+      ref: 'returns property count (probe: equal on a new instance)'
+  signals:
+  - js: current-changed
+    native: currentChanged
+    connect: currentChanged(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal currentChanged(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

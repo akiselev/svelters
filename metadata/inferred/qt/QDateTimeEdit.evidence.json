@@ -1,0 +1,70 @@
+{
+ "methods:sectionCount": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "sectionCount",
+   "stable": true,
+   "user": false,
+   "value": 5
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:calendar-popup": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:current-section-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:display-format": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "d MM yyyy HH:mm",
+   "notify": null,
+   "outcome": "exact",
+   "read": "yyyy-MM-dd",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "yyyy-MM-dd",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:time-spec": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "LocalTime",
+   "notify": null,
+   "outcome": "exact",
+   "read": "UTC",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "UTC",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ }
+}

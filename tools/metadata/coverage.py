@@ -18,7 +18,7 @@ What "exposed" means differs per toolkit, so each toolkit has a small adapter:
 - Qt: only annotated facts exist in the generated backend, so exposed = annotated on an element
   (directly or through an `inherit:` block declared on this class).
 - AppKit: every ingested property whose type the tables carry is exposed (KVC); signals and
-  methods only when annotated (manual or inferred, tools/metadata/appkit/layers.py). Results come
+  methods only when annotated (manual or inferred, tools/metadata/appkit/appkit_layers.py). Results come
   from the macOS CI job (`ledger.py import`).
 
 Deterministic: reads metadata/, the ledger and the gallery pages; writes sorted output.
@@ -32,6 +32,21 @@ import json
 import re
 import sys
 from pathlib import Path
+
+
+def _toolkit_layers(tk: str):
+    """tools/metadata/<tk>/<tk>_layers.py, loaded by path (its directory is not on sys.path)."""
+    import importlib.util
+    name = f"{tk}_layers"
+    if name in sys.modules:
+        return sys.modules[name]
+    d = Path(__file__).resolve().parents[1] / tk if Path(__file__).resolve().parent.name == "common" else Path(__file__).resolve().parent / tk
+    sys.path.insert(0, str(d))   # its own sibling imports
+    spec = importlib.util.spec_from_file_location(name, d / f"{tk}_layers.py")
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -109,7 +124,7 @@ def gtk_rows() -> list[dict]:
 
 def gtk_fact_table(tk: str = "gtk") -> dict:
     """Facts by section and state: manual / inferred verified, delivery-only, pending; parked and unreviewed counts."""
-    man = json.loads(ledger.FACTS[tk].read_text())
+    man = json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.qt_facts() if tk == "qt" else json.loads(ledger.FACTS[tk].read_text())
     verified = ledger.verified_facts(tk)
     sections: dict[str, dict[str, int]] = {}
     for f in man["facts"]:
@@ -136,7 +151,7 @@ def qt_rows() -> list[dict]:
     meta = ROOT / "metadata/qt"
     ovdir = ROOT / "metadata/overrides/qt"
     docs = {p.stem: svmeta.load_json(p) for p in sorted(meta.glob("*.json"))}
-    ovs = {p.stem: svmeta.load_yaml(p) for p in sorted(ovdir.glob("*.yaml"))}
+    ovs = _toolkit_layers("qt").merged_overrides(ovdir, None, meta)   # manual over inferred (metadata/inferred/qt)
     man = ledger.qt_facts()
     verified = ledger.verified_facts("qt")
     pages = gallery_kinds("qt")
@@ -234,7 +249,7 @@ def render(tk: str, rows: list[dict]) -> str:
          f"| Facts verified (manual and inferred) | {vf}/{vt} |",
          f"| Kinds on a gallery page | {sum(1 for r in rows if r['gallery'])} |",
          ""]
-    if tk in ("gtk", "appkit"):
+    if tk in ("gtk", "qt", "appkit"):
         ft = gtk_fact_table(tk)
         o += ["## Facts by state\n",
               "| Section | Verified (manual) | Verified (inferred) | of which `verified: delivery` | Pending | Parked |",
@@ -250,16 +265,16 @@ def render(tk: str, rows: list[dict]) -> str:
                   "| Band and pattern | Candidates |", "| --- | --- |"]
             o += [f"| `{k}` | {v} |" for k, v in un.get("by_pattern", {}).items()]
             o.append("")
-        if tk == "gtk":
-            o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
-                     "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
-                     "methods column counts annotated methods, which have generated tests; the annotated and verified "
-                     "columns say which facts are tested. Properties without a passing test are marked `@unverified` in the typings.\n")
-        else:
-            o.append("AppKit exposes every ingested property whose type the tables carry through KVC (dev mode also resolves "
-                     "unannotated ones at run time); signals and methods only when annotated (manual or inferred). The tests run "
-                     "only on macOS: results are imported from the macos-appkit CI job (`ledger.py import --toolkit appkit`). "
-                     "Props (annotated) counts props with a test sample.\n")
+    if tk == "gtk":
+        o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
+                 "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
+                 "methods column counts annotated methods, which have generated tests; the annotated and verified "
+                 "columns say which facts are tested. Properties without a passing test are marked `@unverified` in the typings.\n")
+    elif tk == "appkit":
+        o.append("AppKit exposes every ingested property whose type the tables carry through KVC (dev mode also resolves "
+                 "unannotated ones at run time); signals and methods only when annotated (manual or inferred). The tests run "
+                 "only on macOS: results are imported from the macos-appkit CI job (`ledger.py import --toolkit appkit`). "
+                 "Props (annotated) counts props with a test sample.\n")
     else:
         o.append("Qt exposes only annotated facts (the generated C++ backend has no reflection fallback); "
                  f"{sum(r.get('defaults', 0) for r in rows)} properties carry a typed default read from a default-constructed instance.\n")

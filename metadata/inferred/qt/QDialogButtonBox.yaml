@@ -1,0 +1,55 @@
+elements:
+- tag: dialog-button-box
+  props:
+  - js: center-buttons
+    native: centerButtons
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: orientation
+    native: orientation
+    sample: Vertical
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: accepted
+    native: accepted
+    connect: accepted()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal accepted()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: help-requested
+    native: helpRequested
+    connect: helpRequested()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal helpRequested()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: rejected
+    native: rejected
+    connect: rejected()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal rejected()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

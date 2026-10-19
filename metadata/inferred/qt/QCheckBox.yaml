@@ -1,0 +1,9 @@
+elements:
+- tag: check-box
+  props:
+  - js: tristate
+    native: tristate
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact

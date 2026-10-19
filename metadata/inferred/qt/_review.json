@@ -1,0 +1,1486 @@
+{
+ "accept": [
+  "binding:notify",
+  "method:read-only-getter",
+  "prop:round-trip",
+  "signal:delivery-only",
+  "signal:notify-trigger",
+  "signal:property-trigger"
+ ],
+ "inferred": {
+  "bindings": 22,
+  "methods": 24,
+  "props": 209,
+  "signals": 105
+ },
+ "promote_at": 0.9,
+ "rows": [
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QAction",
+   "name": "actionGroup",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QAction",
+   "name": "associatedObjects",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QAction",
+   "name": "data",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QAction",
+   "name": "isSeparator",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QAction",
+   "name": "menu",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QAction",
+   "name": "shortcuts",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QCalendarWidget",
+   "name": "calendar",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QCalendarWidget",
+   "name": "dateTextFormat",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QCalendarWidget",
+   "name": "headerTextFormat",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QCalendarWidget",
+   "name": "monthShown",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QCalendarWidget",
+   "name": "yearShown",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QCheckBox",
+   "name": "checkState",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "QCheckBox",
+   "name": "check-state-changed",
+   "pattern": "signal:delivery-only-enum-argument",
+   "section": "signals"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QColorDialog",
+   "name": "selectedColor",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QComboBox",
+   "name": "completer",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QComboBox",
+   "name": "itemDelegate",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QComboBox",
+   "name": "lineEdit",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QComboBox",
+   "name": "model",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QComboBox",
+   "name": "rootModelIndex",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QComboBox",
+   "name": "validator",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QComboBox",
+   "name": "view",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QComboBox",
+   "name": "currentText",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QDateTimeEdit",
+   "name": "calendar",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QDateTimeEdit",
+   "name": "calendarWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QDateTimeEdit",
+   "name": "currentSection",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QDialogButtonBox",
+   "name": "buttons",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QDockWidget",
+   "name": "titleBarWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QDockWidget",
+   "name": "toggleViewAction",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QDockWidget",
+   "name": "widget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QDockWidget",
+   "name": "dockLocation",
+   "pattern": "prop:crash",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QDockWidget",
+   "name": "floating",
+   "pattern": "prop:error",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "QDockWidget",
+   "name": "dock-location-changed",
+   "pattern": "signal:delivery-only-enum-argument",
+   "section": "signals"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "directory",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "directoryUrl",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "filter",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "history",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "iconProvider",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "itemDelegate",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "mimeTypeFilters",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "nameFilters",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "proxyModel",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "saveState",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "selectedFiles",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "selectedMimeTypeFilter",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "selectedNameFilter",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "selectedUrls",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFileDialog",
+   "name": "sidebarUrls",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QFontDialog",
+   "name": "selectedFont",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QKeySequenceEdit",
+   "name": "maximumSequenceLength",
+   "pattern": "prop:error",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "QLCDNumber",
+   "name": "setBinMode",
+   "pattern": "method:action",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "QLCDNumber",
+   "name": "setHexMode",
+   "pattern": "method:action",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "QLCDNumber",
+   "name": "setOctMode",
+   "pattern": "method:action",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLabel",
+   "name": "buddy",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLabel",
+   "name": "movie",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLabel",
+   "name": "picture",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLabel",
+   "name": "selectionStart",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLineEdit",
+   "name": "completer",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLineEdit",
+   "name": "selectionEnd",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLineEdit",
+   "name": "selectionLength",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLineEdit",
+   "name": "selectionStart",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLineEdit",
+   "name": "textMargins",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QLineEdit",
+   "name": "validator",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QLineEdit",
+   "name": "cursorPosition",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QListWidget",
+   "name": "currentItem",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QListWidget",
+   "name": "selectedItems",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMainWindow",
+   "name": "centralWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMainWindow",
+   "name": "menuBar",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMainWindow",
+   "name": "menuWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMainWindow",
+   "name": "statusBar",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QMainWindow",
+   "name": "unifiedTitleAndToolBarOnMac",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMdiArea",
+   "name": "activeSubWindow",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMdiArea",
+   "name": "currentSubWindow",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMenu",
+   "name": "activeAction",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMenu",
+   "name": "defaultAction",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMenu",
+   "name": "isEmpty",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMenu",
+   "name": "isTearOffMenuVisible",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMenu",
+   "name": "menuAction",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMenuBar",
+   "name": "activeAction",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QMenuBar",
+   "name": "nativeMenuBar",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMessageBox",
+   "name": "buttons",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMessageBox",
+   "name": "checkBox",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMessageBox",
+   "name": "clickedButton",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMessageBox",
+   "name": "defaultButton",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QMessageBox",
+   "name": "escapeButton",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QPlainTextEdit",
+   "name": "canPaste",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QPlainTextEdit",
+   "name": "currentCharFormat",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QPlainTextEdit",
+   "name": "cursorRect",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QPlainTextEdit",
+   "name": "document",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QPlainTextEdit",
+   "name": "extraSelections",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QPlainTextEdit",
+   "name": "textCursor",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "QProgressDialog",
+   "name": "cancel",
+   "pattern": "method:action",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QPushButton",
+   "name": "menu",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QScrollArea",
+   "name": "widget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QSplitter",
+   "name": "count",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QSplitter",
+   "name": "saveState",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QSplitter",
+   "name": "sizes",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QStackedWidget",
+   "name": "currentWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QStatusBar",
+   "name": "currentMessage",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QTabBar",
+   "name": "currentIndex",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTabWidget",
+   "name": "currentWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTabWidget",
+   "name": "hasHeightForWidth",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTabWidget",
+   "name": "tabBar",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextBrowser",
+   "name": "backwardHistoryCount",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextBrowser",
+   "name": "forwardHistoryCount",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextBrowser",
+   "name": "isBackwardAvailable",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextBrowser",
+   "name": "isForwardAvailable",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "allFormats",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "availableRedoSteps",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "availableUndoSteps",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "baselineOffset",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "begin",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "characterCount",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "defaultCursorMoveStyle",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "documentLayout",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "end",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "firstBlock",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "idealWidth",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "isEmpty",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "isRedoAvailable",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "isUndoAvailable",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "lastBlock",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "lineCount",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "pageCount",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "revision",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "rootFrame",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "subScriptBaseline",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "superScriptBaseline",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "toHtml",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "toPlainText",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextDocument",
+   "name": "toRawText",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "alignment",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "canPaste",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "currentCharFormat",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "currentFont",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "cursorRect",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "extraSelections",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "fontFamily",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "fontItalic",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "fontPointSize",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "fontUnderline",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "fontWeight",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "textBackgroundColor",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "textColor",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QTextEdit",
+   "name": "textCursor",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QTextEdit",
+   "name": "html",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QTextEdit",
+   "name": "markdown",
+   "pattern": "prop:normalized",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QToolBar",
+   "name": "toggleViewAction",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QToolBox",
+   "name": "currentWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QToolBox",
+   "name": "currentIndex",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QToolButton",
+   "name": "defaultAction",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QToolButton",
+   "name": "menu",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizard",
+   "name": "currentPage",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizard",
+   "name": "nextId",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizard",
+   "name": "pageIds",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizard",
+   "name": "sideWidget",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizard",
+   "name": "visitedIds",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QWizard",
+   "name": "currentId",
+   "pattern": "prop:ignored",
+   "section": "props"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "QWizard",
+   "name": "startId",
+   "pattern": "prop:error",
+   "section": "props"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizardPage",
+   "name": "isCommitPage",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizardPage",
+   "name": "isComplete",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizardPage",
+   "name": "isFinalPage",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  },
+  {
+   "accepted": false,
+   "band": "middle",
+   "confidence": 0.9,
+   "kind": "QWizardPage",
+   "name": "nextId",
+   "pattern": "method:pure-getter",
+   "section": "methods"
+  }
+ ],
+ "schema": "svelters-inferred-review/v1",
+ "skipped": {
+  "method:read-only-non-scalar": 2,
+  "method:read-only-without-getter": 1,
+  "prop:denied (font defaults differ between platforms and Qt versions)": 4,
+  "prop:denied (window/visibility state owned by the renderer)": 3,
+  "prop:enum-not-in-table": 1,
+  "prop:no_sample": 56,
+  "signal:argument-shape": 47
+ },
+ "toolkit": "qt",
+ "unreviewed": {
+  "by_pattern": {
+   "low:prop:crash": 1,
+   "low:prop:error": 3,
+   "low:prop:ignored": 8,
+   "low:prop:normalized": 2,
+   "middle:method:action": 4,
+   "middle:method:pure-getter": 142,
+   "middle:signal:delivery-only-enum-argument": 2
+  },
+  "low": 14,
+  "middle": 148
+ },
+ "version": "6.11.0"
+}

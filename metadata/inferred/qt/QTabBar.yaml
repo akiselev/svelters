@@ -1,0 +1,159 @@
+elements:
+- tag: tab-bar
+  props:
+  - js: auto-hide
+    native: autoHide
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: change-current-on-drag
+    native: changeCurrentOnDrag
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: document-mode
+    native: documentMode
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: draw-base
+    native: drawBase
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: elide-mode
+    native: elideMode
+    sample: ElideLeft
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: expanding
+    native: expanding
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: movable
+    native: movable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: shape
+    native: shape
+    sample: RoundedSouth
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tabs-closable
+    native: tabsClosable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: uses-scroll-buttons
+    native: usesScrollButtons
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: count
+    native: count
+    provenance:
+    - origin: probe
+      ref: 'returns property count (probe: equal on a new instance)'
+  signals:
+  - js: current-changed
+    native: currentChanged
+    connect: currentChanged(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal currentChanged(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: tab-bar-clicked
+    native: tabBarClicked
+    connect: tabBarClicked(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal tabBarClicked(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: tab-bar-double-clicked
+    native: tabBarDoubleClicked
+    connect: tabBarDoubleClicked(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal tabBarDoubleClicked(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: tab-close-requested
+    native: tabCloseRequested
+    connect: tabCloseRequested(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal tabCloseRequested(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: tab-moved
+    native: tabMoved
+    connect: tabMoved(int,int)
+    args:
+    - name: from
+      type: i32
+    - name: to
+      type: i32
+    trigger:
+      emit:
+      - 1
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal tabMoved(int,int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

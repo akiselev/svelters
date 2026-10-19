@@ -6,7 +6,7 @@ ones (metadata/inferred/<tk>, written by infer.py). The generators write a fact 
 origin, test names + a fingerprint over the fact record and its test source):
 
   gtk: crates/svelters-gtk/src/generated/facts.json   (written by tools/metadata/gtk/gen_backend.py)
-  qt:  produced on the fly by tools/metadata/qt/gen_cpp.py --facts
+  qt:  produced on the fly by tools/metadata/qt/gen_cpp.py --facts (inferred facts: table-driven rows)
   appkit: crates/svelters-appkit/src/generated/facts.json (tools/metadata/appkit/gen_backend.py)
 
 `refresh` runs the generated tests and records, per test: the fact id, the origin, the test id, the
@@ -203,25 +203,31 @@ def run_gtk(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str
     return res, msgs
 
 
-def run_qt() -> dict[str, str]:
+def run_qt(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str]]:
+    """(test -> pass|fail, test -> failure message). One binary runs every generated Qt test; `only` is ignored."""
     cmd = display_prefix() + ["cargo", "test", "-p", "counter-qt", "--test", "generated"]
     p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
-    res = {}
-    for m in re.finditer(r"^(ok  |FAIL) (\S+?)(?::|$)", p.stdout, re.M):
+    res, msgs = {}, {}
+    for m in re.finditer(r"^(ok  |FAIL) (\S+?)(?::(.*)|$)", p.stdout, re.M):
         res[m.group(2)] = "pass" if m.group(1).startswith("ok") else "fail"
+        if m.group(3):
+            msgs[m.group(2)] = m.group(3).strip()[:240]
     if not res:
         sys.stderr.write(p.stdout[-4000:] + p.stderr[-4000:])
         raise SystemExit("ledger: no Qt test results (build failure?)")
     for line in p.stdout.splitlines():
         if line.startswith("FAIL "):
             print("  " + line, file=sys.stderr)
-    return res
+    return res, msgs
 
 
-PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json", "appkit": ROOT / "metadata/inferred/appkit/_parked.json"}
+PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json", "qt": ROOT / "metadata/inferred/qt/_parked.json",
+          "appkit": ROOT / "metadata/inferred/appkit/_parked.json"}
 # What turns the merged metadata into the generated backend, in order (a parked fact leaves all of them).
 REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], ["tools/metadata/gtk/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
                  ["tools/metadata/semantics/gen_semantics.py"]],
+         # Qt: the generator runs in the counter-qt build (it reads _parked.json); the rest consumes the merged layers.
+         "qt": [["tools/metadata/common/gen_bindings.py"], ["tools/metadata/semantics/gen_semantics.py"]],
          "appkit": [["tools/metadata/appkit/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
                     ["tools/metadata/semantics/gen_semantics.py"]]}
 
@@ -372,8 +378,9 @@ def refresh(tk: str) -> int:
             regenerate(tk)
             man = manifest(tk)
             results, msgs = run_appkit()
-    elif tk == "gtk":
-        results, msgs = run_gtk()
+    else:
+        run = run_gtk if tk == "gtk" else run_qt
+        results, msgs = run()
         for _ in range(4):
             if not park(tk, man, results, msgs):
                 break
@@ -384,11 +391,9 @@ def refresh(tk: str) -> int:
                     for t in f["tests"]}
             man = new
             if redo:
-                r2, m2 = run_gtk(redo)
+                r2, m2 = run(redo)
                 results.update(r2)
                 msgs.update(m2)
-    else:
-        results = run_qt()
     _, bad, soft = record(tk, man, results)
     if tk in GEN_AFTER_LEDGER:
         subprocess.run([sys.executable, str(ROOT / GEN_AFTER_LEDGER[tk])], cwd=ROOT, check=True)   # typings read the ledger
@@ -398,7 +403,7 @@ def refresh(tk: str) -> int:
     return 1 if bad else 0
 
 
-PROBED = {"gtk", "appkit"}
+PROBED = {"gtk", "qt", "appkit"}
 
 
 def probe_problems(tk: str, version: str) -> list[str]:

@@ -1,0 +1,498 @@
+elements:
+- tag: action
+  props:
+  - js: auto-repeat
+    native: autoRepeat
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: checkable
+    native: checkable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: checked
+    native: checked
+    sample: true
+    setup: $w->setCheckable(true)
+    provenance:
+    - origin: probe
+      ref: round trip exact after recipe checkable (setCheckable); NOTIFY fired
+  - js: icon-text
+    native: iconText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: icon-visible-in-menu
+    native: iconVisibleInMenu
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: menu-role
+    native: menuRole
+    sample: NoRole
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: priority
+    native: priority
+    sample: LowPriority
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: shortcut-context
+    native: shortcutContext
+    sample: WidgetShortcut
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: shortcut-visible-in-context-menu
+    native: shortcutVisibleInContextMenu
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: status-tip
+    native: statusTip
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: text
+    native: text
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: tool-tip
+    native: toolTip
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: whats-this
+    native: whatsThis
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  signals:
+  - js: changed
+    native: changed
+    connect: changed()
+    args: []
+    trigger:
+      property: autoRepeat
+      values:
+      - false
+      - true
+      - false
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal changed()
+    - origin: probe
+      ref: emitted once per set of autoRepeat (sample, default, sample); its NOTIFY signal
+  - js: checkable-changed
+    native: checkableChanged
+    connect: checkableChanged(bool)
+    args:
+    - name: checkable
+      type: bool
+    trigger:
+      property: checkable
+      values:
+      - true
+      - false
+      - true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal checkableChanged(bool)
+    - origin: probe
+      ref: emitted once per set of checkable (sample, default, sample); its NOTIFY signal
+  - js: enabled-changed
+    native: enabledChanged
+    connect: enabledChanged(bool)
+    args:
+    - name: enabled
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal enabledChanged(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: hovered
+    native: hovered
+    connect: hovered()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal hovered()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: toggled
+    native: toggled
+    connect: toggled(bool)
+    args:
+    - name: checked
+      type: bool
+    trigger:
+      property: checked
+      values:
+      - true
+      - false
+      - true
+      setup: $w->setCheckable(true)
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal toggled(bool)
+    - origin: probe
+      ref: emitted once per set of checked (sample, default, sample); its NOTIFY signal
+  - js: triggered
+    native: triggered
+    connect: triggered(bool)
+    collapses:
+    - triggered()
+    args:
+    - name: checked
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal triggered(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: visible-changed
+    native: visibleChanged
+    connect: visibleChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal visibleChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  bindings:
+  - name: auto-repeat
+    direction: two_way
+    property: auto-repeat
+    type:
+      ref: bool
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - false
+      - true
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::autoRepeat is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: checkable
+    direction: two_way
+    property: checkable
+    type:
+      ref: bool
+      nullable: false
+    change:
+      signal: checkable-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - true
+      - false
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::checkable is writable, scalar and NOTIFYs checkableChanged(bool); the renderer compares before set'
+  - name: checked
+    direction: two_way
+    property: checked
+    type:
+      ref: bool
+      nullable: false
+    change:
+      signal: toggled
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - true
+      - false
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::checked is writable, scalar and NOTIFYs toggled(bool); the renderer compares before set'
+  - name: icon-text
+    direction: two_way
+    property: icon-text
+    type:
+      ref: string
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - svl probe
+      - ''
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::iconText is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: menu-role
+    direction: two_way
+    property: menu-role
+    type:
+      ref: enum<QAction::MenuRole>
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - NoRole
+      - TextHeuristicRole
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::menuRole is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: priority
+    direction: two_way
+    property: priority
+    type:
+      ref: enum<QAction::Priority>
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - LowPriority
+      - NormalPriority
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::priority is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: shortcut-context
+    direction: two_way
+    property: shortcut-context
+    type:
+      ref: enum<Qt::ShortcutContext>
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - WidgetShortcut
+      - WindowShortcut
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::shortcutContext is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: status-tip
+    direction: two_way
+    property: status-tip
+    type:
+      ref: string
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - svl probe
+      - ''
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::statusTip is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: text
+    direction: two_way
+    property: text
+    type:
+      ref: string
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - svl probe
+      - ''
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::text is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: tool-tip
+    direction: two_way
+    property: tool-tip
+    type:
+      ref: string
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - svl probe
+      - ''
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::toolTip is writable, scalar and NOTIFYs changed(); the renderer compares before set'
+  - name: whats-this
+    direction: two_way
+    property: whats-this
+    type:
+      ref: string
+      nullable: false
+    change:
+      signal: changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - svl probe
+      - ''
+    provenance:
+    - origin: rule
+      ref: 'B1: QAction::whatsThis is writable, scalar and NOTIFYs changed(); the renderer compares before set'

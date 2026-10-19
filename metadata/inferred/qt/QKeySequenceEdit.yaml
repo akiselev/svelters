@@ -1,0 +1,23 @@
+elements:
+- tag: key-sequence-edit
+  props:
+  - js: clear-button-enabled
+    native: clearButtonEnabled
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: editing-finished
+    native: editingFinished
+    connect: editingFinished()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal editingFinished()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

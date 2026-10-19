@@ -1,0 +1,94 @@
+{
+ "props:accept-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "AcceptOpen",
+   "notify": null,
+   "outcome": "exact",
+   "read": "AcceptSave",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "AcceptSave",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:default-suffix": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:file-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "AnyFile",
+   "notify": null,
+   "outcome": "exact",
+   "read": "ExistingFile",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "ExistingFile",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:view-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Detail",
+   "notify": null,
+   "outcome": "exact",
+   "read": "List",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "List",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:current-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:directory-entered": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:file-selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:filter-selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

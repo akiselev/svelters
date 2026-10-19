@@ -1,0 +1,105 @@
+elements:
+- tag: input-dialog
+  signals:
+  - js: double-value-changed
+    native: doubleValueChanged
+    connect: doubleValueChanged(double)
+    args:
+    - name: value
+      type: f64
+    trigger:
+      emit:
+      - 1.5
+    delivery_only: true
+    expect_args:
+    - '1.5'
+    provenance:
+    - origin: metaobject
+      ref: signal doubleValueChanged(double)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: double-value-selected
+    native: doubleValueSelected
+    connect: doubleValueSelected(double)
+    args:
+    - name: value
+      type: f64
+    trigger:
+      emit:
+      - 1.5
+    delivery_only: true
+    expect_args:
+    - '1.5'
+    provenance:
+    - origin: metaobject
+      ref: signal doubleValueSelected(double)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: int-value-changed
+    native: intValueChanged
+    connect: intValueChanged(int)
+    args:
+    - name: value
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal intValueChanged(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: int-value-selected
+    native: intValueSelected
+    connect: intValueSelected(int)
+    args:
+    - name: value
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal intValueSelected(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: text-value-changed
+    native: textValueChanged
+    connect: textValueChanged(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal textValueChanged(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: text-value-selected
+    native: textValueSelected
+    connect: textValueSelected(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal textValueSelected(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

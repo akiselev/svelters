@@ -1,0 +1,75 @@
+elements:
+- tag: progress-bar
+  props:
+  - js: format
+    native: format
+    sample: yyyy-MM-dd
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: inverted-appearance
+    native: invertedAppearance
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: maximum
+    native: maximum
+    sample: 101
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: minimum
+    native: minimum
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: orientation
+    native: orientation
+    sample: Vertical
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text-direction
+    native: textDirection
+    sample: BottomToTop
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text-visible
+    native: textVisible
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: value
+    native: value
+    sample: 0
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  methods:
+  - js: text
+    native: text
+    provenance:
+    - origin: probe
+      ref: 'returns property text (probe: equal on a new instance)'
+  signals:
+  - js: value-changed
+    native: valueChanged
+    connect: valueChanged(int)
+    args:
+    - name: value
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal valueChanged(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

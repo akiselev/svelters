@@ -1,0 +1,87 @@
+{
+ "props:sub-title-format": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "AutoText",
+   "notify": null,
+   "outcome": "exact",
+   "read": "PlainText",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "PlainText",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:title-format": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "AutoText",
+   "notify": null,
+   "outcome": "exact",
+   "read": "PlainText",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "PlainText",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:wizard-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ClassicStyle",
+   "notify": null,
+   "outcome": "exact",
+   "read": "ModernStyle",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "ModernStyle",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:current-id-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:custom-button-clicked": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:help-requested": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:page-added": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:page-removed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

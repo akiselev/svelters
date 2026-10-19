@@ -12,7 +12,7 @@ Status: research proposal, 2026-10-17; decisions in section 11. Implementation (
   | `classify_overrides.py` | classifies every hand-written fact as rule, probe or judgement |
   | `infer_static.py` | static rules over the ingested metadata; recall against the overrides |
   | `gtk_prober.py` | the GTK runtime prober (PyGObject); `--ns Adw` probes a pack with no metadata |
-  | `qt_prober.py` | the Qt runtime prober (PySide6, offscreen) |
+  | `qt_prober.py` | the Qt runtime prober (PySide6, offscreen); moved to `tools/metadata/qt/probe.py` (AI1 slice 2) |
   | `summarize_probe.py` | summarizes a probe and scores it against the overrides and ledger |
   | `draft_gtk.py` | turns a probe into draft overrides with confidence and evidence |
   | `winui_static.py` | WinUI rule counts over a `winmd-tool dump` |

@@ -1,0 +1,100 @@
+{
+ "props:activation-order": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "CreationOrder",
+   "notify": null,
+   "outcome": "exact",
+   "read": "StackingOrder",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "StackingOrder",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:document-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "North",
+   "notify": null,
+   "outcome": "exact",
+   "read": "South",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "South",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-shape": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Rounded",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Triangular",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Triangular",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tabs-closable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tabs-movable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:view-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "SubWindowView",
+   "notify": null,
+   "outcome": "exact",
+   "read": "TabbedView",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "TabbedView",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ }
+}

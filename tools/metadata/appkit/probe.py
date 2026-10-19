@@ -2,7 +2,7 @@
 """AppKit runtime prober (AI1 slice 4): metadata/probe/appkit/<SDK version>.json.
 
 Runs on macOS (the macos-appkit CI job, or a maintainer's Mac). For each ingested class it builds a
-plan from metadata/appkit/*.json, the merged annotations (layers.py) and metadata/rules/appkit.yaml,
+plan from metadata/appkit/*.json, the merged annotations (appkit_layers.py) and metadata/rules/appkit.yaml,
 then runs the prober binary (crates/svelters-appkit/examples/appkit_probe.rs, built with the
 `exceptions` feature so Objective-C exceptions become errors) once per class:
 

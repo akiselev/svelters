@@ -1,0 +1,345 @@
+{
+ "bindings:auto-repeat": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:checkable": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "checkableChanged(bool)"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:checked": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "toggled(bool)"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:icon-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:menu-role": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:priority": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:shortcut-context": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:status-tip": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:tool-tip": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:whats-this": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": false,
+   "notify": "changed()"
+  },
+  "pattern": "binding:notify"
+ },
+ "props:auto-repeat": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:checkable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": "checkableChanged(bool)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:checked": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": "toggled(bool)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": "checkable",
+   "recipe_call": "setCheckable",
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:icon-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:icon-visible-in-menu": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": true,
+   "notify": "changed()",
+   "notify_fired": false,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:menu-role": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "TextHeuristicRole",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "NoRole",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoRole",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:priority": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "NormalPriority",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "LowPriority",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "LowPriority",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:shortcut-context": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "WindowShortcut",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "WidgetShortcut",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "WidgetShortcut",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:shortcut-visible-in-context-menu": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": true,
+   "notify": "changed()",
+   "notify_fired": false,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:status-tip": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tool-tip": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:whats-this": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": "changed()",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [],
+   "trigger": "autoRepeat"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:checkable-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    true
+   ],
+   "trigger": "checkable"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:enabled-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:hovered": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:toggled": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    true
+   ],
+   "trigger": "checked"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:triggered": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:visible-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

@@ -21,7 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parent / "common"))
-import layers  # noqa: E402
+import appkit_layers as layers  # noqa: E402
 import names  # noqa: E402
 import svmeta  # noqa: E402
 
@@ -82,7 +82,7 @@ class Model:
         # the toolkit version of the ledger and the probe: the SDK the metadata was ingested from
         self.version = enum_doc["sdk"].removeprefix("MacOSX")
         self.enums = {e["name"]: {"flags": e["flags"], "members": [(m["js"], m["value"]) for m in e["members"]]} for e in enums}
-        # ingested < inferred < manual (layers.py); origin[(class, section, name)] = (layer, record fingerprint)
+        # ingested < inferred < manual (appkit_layers.py); origin[(class, section, name)] = (layer, record fingerprint)
         self.ov, self.origin, errs = layers.load()
         if errs:
             raise GenError("\n".join(errs))

@@ -1,0 +1,124 @@
+elements:
+- tag: spin-box
+  props:
+  - js: display-integer-base
+    native: displayIntegerBase
+    sample: 11
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: maximum
+    native: maximum
+    sample: 100
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: minimum
+    native: minimum
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: prefix
+    native: prefix
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: single-step
+    native: singleStep
+    sample: 2
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: step-type
+    native: stepType
+    sample: AdaptiveDecimalStepType
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: suffix
+    native: suffix
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: value
+    native: value
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  methods:
+  - js: cleanText
+    native: cleanText
+    provenance:
+    - origin: probe
+      ref: 'returns property cleanText (probe: equal on a new instance)'
+  signals:
+  - js: text-changed
+    native: textChanged
+    connect: textChanged(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      property: value
+      values:
+      - 1
+      - 0
+      - 1
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal textChanged(QString)
+    - origin: probe
+      ref: emitted once per set of value (sample, default, sample)
+  - js: value-changed
+    native: valueChanged
+    connect: valueChanged(int)
+    args:
+    - name: i
+      type: i32
+    trigger:
+      property: value
+      values:
+      - 1
+      - 0
+      - 1
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal valueChanged(int)
+    - origin: probe
+      ref: emitted once per set of value (sample, default, sample); its NOTIFY signal
+  bindings:
+  - name: value
+    direction: two_way
+    property: value
+    type:
+      ref: i32
+      nullable: false
+    change:
+      signal: value-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - 1
+      - 0
+    provenance:
+    - origin: rule
+      ref: 'B1: QSpinBox::value is writable, scalar and NOTIFYs valueChanged(int); the renderer compares before set'

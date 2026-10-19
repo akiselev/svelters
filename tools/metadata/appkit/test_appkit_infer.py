@@ -1,4 +1,4 @@
-"""Tests of the AppKit inference pipeline: infer.py rules, layers.py precedence, probe.py plan and crash isolation."""
+"""Tests of the AppKit inference pipeline: infer.py rules, appkit_layers.py precedence, probe.py plan and crash isolation."""
 import json
 import sys
 from pathlib import Path
@@ -12,7 +12,7 @@ _SHARED = ("infer", "layers", "probe", "gen_backend", "names")
 _saved = {n: sys.modules.pop(n) for n in _SHARED if n in sys.modules}
 sys.path.insert(0, str(HERE))
 import infer  # noqa: E402
-import layers  # noqa: E402
+import appkit_layers as layers  # noqa: E402
 import probe  # noqa: E402
 sys.path.remove(str(HERE))
 for _n in _SHARED:

@@ -20,7 +20,17 @@ export interface BindableProps {
     "wrap-license": boolean; // gtk
   };
   action: {
+    "auto-repeat": boolean; // qt
+    checkable: boolean; // qt
     checked: boolean; // gtk/qt
+    "icon-text": string; // qt
+    "menu-role": string; // qt
+    priority: string; // qt
+    "shortcut-context": string; // qt
+    "status-tip": string; // qt
+    text: string; // qt
+    "tool-tip": string; // qt
+    "whats-this": string; // qt
   };
   "action-bar": {
     revealed: boolean; // gtk
@@ -454,6 +464,11 @@ export interface BindableProps {
     "can-shrink": boolean; // gtk
     "has-frame": boolean; // gtk
     "use-underline": boolean; // gtk
+  };
+  "tool-bar": {
+    movable: boolean; // qt
+    orientation: string; // qt
+    "tool-button-style": string; // qt
   };
   "tool-box": {
     "current-index": number; // qt

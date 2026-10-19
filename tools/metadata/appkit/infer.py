@@ -12,7 +12,7 @@ Inputs (a pure function of these; no SDK, AppKit, clock or network, so it runs o
                                          inferred layer, so rerunning is idempotent)
 
 Outputs (byte-identical on rerun), in the override schema (tools/metadata/appkit/override.schema.json):
-  metadata/inferred/appkit/<Class>.yaml           facts with confidence >= promote_at; layers.py merges them under
+  metadata/inferred/appkit/<Class>.yaml           facts with confidence >= promote_at; appkit_layers.py merges them under
                                                   the manual overrides (ingested < inferred < manual)
   metadata/inferred/appkit/<Class>.evidence.json  confidence and the probe excerpt of every fact
   metadata/inferred/appkit/_review.json           facts below promote_at by pattern, and skip counts
@@ -287,7 +287,7 @@ def run(inp: Inputs) -> tuple[dict[str, str], dict[str, str], dict]:
 
 
 def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str]:
-    """(class, section, name) -> the fingerprint layers.py and the ledger know the inferred record by."""
+    """(class, section, name) -> the fingerprint appkit_layers.py and the ledger know the inferred record by."""
     out = {}
     for fname, text in files.items():
         doc = yaml.safe_load(text)

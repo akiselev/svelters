@@ -1,0 +1,145 @@
+{
+ "bindings:movable": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "movableChanged(bool)"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:orientation": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "orientationChanged(Qt::Orientation)"
+  },
+  "pattern": "binding:notify"
+ },
+ "bindings:tool-button-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "toolButtonStyleChanged(Qt::ToolButtonStyle)"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:isFloating": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "floating",
+   "stable": true,
+   "user": false,
+   "value": true
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:floatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:movable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": "movableChanged(bool)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:orientation": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Horizontal",
+   "notify": "orientationChanged(Qt::Orientation)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "Vertical",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Vertical",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tool-button-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ToolButtonIconOnly",
+   "notify": "toolButtonStyleChanged(Qt::ToolButtonStyle)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "ToolButtonTextOnly",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "ToolButtonTextOnly",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:movable-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    false
+   ],
+   "trigger": "movable"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:orientation-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    "Vertical"
+   ],
+   "trigger": "orientation"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:tool-button-style-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    "ToolButtonTextOnly"
+   ],
+   "trigger": "toolButtonStyle"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:top-level-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:visibility-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "signals:top-level-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:visibility-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

@@ -1,0 +1,42 @@
+# Rules data for tools/metadata/qt/infer.py (AI1 slice 2, plans/research/ANNOTATION-AUTOMATION.md sections 2 and 11).
+#
+# Qt exposure is accept-by-pattern (decision 6): only the fact patterns listed under `accept` are written, and only
+# on classes a manual override already exposes as an element (tags and constructs stay a manual decision). Every
+# other candidate is a review row in metadata/inferred/qt/_review.json.
+
+# Facts at or above this confidence (and of an accepted pattern) are written; the rest are review rows.
+promote_at: 0.9
+
+# Patterns the inference writes (`<section>:<rule>`):
+accept:
+  - prop:round-trip           # P1/P3: a writable scalar or enum Q_PROPERTY whose probe sample read back exactly
+  - method:read-only-getter   # M1: the READ accessor of a read-only Q_PROPERTY (probe: getter == property)
+  - signal:notify-trigger     # R2: a signal with scalar/enum arguments emitted once per set of the property it NOTIFYs
+  - signal:property-trigger   # R2: the same, emitted by setting another probed property (sample, default, sample)
+  - signal:delivery-only      # R2: a scalar-argument signal no probed set emits; the generated test emits it through
+                              #     QMetaMethod::invoke (decision 2: counts as `verified: delivery`)
+  - binding:notify            # B1: a writable scalar/enum property with a NOTIFY signal that fired on the probe set
+
+# Q_PROPERTY C++ type -> neutral ref the generated tests compare (anything else: no sampler, no fact).
+scalar_types: { bool: bool, int: i32, uint: u32, qlonglong: i64, qulonglong: u64, double: f64, qreal: f64, float: f32, QString: string }
+
+# Probe recipe call -> the C++ precondition the generated test runs after creating the element ($w: the widget,
+# cast to the element's class). Same call, same arguments as tools/metadata/qt/probe.py.
+recipes:
+  setRange: "$w->setRange(0, 100)"
+  addItems: '$w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})'
+  addTab: 'for (int k = 0; k < 3; ++k) $w->addTab(new QWidget, QStringLiteral("t"))'
+  addWidget: "for (int k = 0; k < 3; ++k) $w->addWidget(new QWidget)"
+  addItem: 'for (int k = 0; k < 3; ++k) $w->addItem(QStringLiteral("x"))'
+  setCheckable: "$w->setCheckable(true)"
+  setText: '$w->setText(QStringLiteral("hello world"))'
+  setPlainText: '$w->setPlainText(QStringLiteral("hello world"))'
+
+# Never inferred, by native name (regex, full match), with the reason shown in the review summary.
+deny_props:
+  - { pattern: "(windowTitle|windowModality|windowFlags|windowState|modal|visible|enabled|geometry)", reason: "window/visibility state owned by the renderer" }
+  - { pattern: "(currentFont|font\\w*)", reason: "font defaults differ between platforms and Qt versions" }
+deny_methods:
+  - { pattern: "(winId|effectiveWinId|internalWinId|devicePixelRatio\\w*|logicalDpi\\w*|physicalDpi\\w*|width\\w*|height\\w*|depth|colorCount|paintingActive)", reason: "display-dependent value" }
+deny_signals:
+  - { pattern: "(windowTitleChanged|windowIconChanged|windowIconTextChanged|customContextMenuRequested|objectNameChanged|destroyed)", reason: "QWidget/QObject signal, annotated on the QWidget inherit block" }

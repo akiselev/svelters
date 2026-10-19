@@ -1,0 +1,103 @@
+elements:
+- tag: wizard
+  props:
+  - js: sub-title-format
+    native: subTitleFormat
+    sample: PlainText
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: title-format
+    native: titleFormat
+    sample: PlainText
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: wizard-style
+    native: wizardStyle
+    sample: ModernStyle
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: current-id-changed
+    native: currentIdChanged
+    connect: currentIdChanged(int)
+    args:
+    - name: id
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal currentIdChanged(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: custom-button-clicked
+    native: customButtonClicked
+    connect: customButtonClicked(int)
+    args:
+    - name: which
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal customButtonClicked(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: help-requested
+    native: helpRequested
+    connect: helpRequested()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal helpRequested()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: page-added
+    native: pageAdded
+    connect: pageAdded(int)
+    args:
+    - name: id
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal pageAdded(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: page-removed
+    native: pageRemoved
+    connect: pageRemoved(int)
+    args:
+    - name: id
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal pageRemoved(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

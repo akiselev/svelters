@@ -1,0 +1,295 @@
+{
+ "bindings:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "textChanged(QString)"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:displayText": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "displayText",
+   "stable": true,
+   "user": false,
+   "value": ""
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "methods:hasAcceptableInput": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "acceptableInput",
+   "stable": true,
+   "user": false,
+   "value": true
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "methods:hasSelectedText": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "hasSelectedText",
+   "stable": true,
+   "user": false,
+   "value": false
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "methods:isRedoAvailable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "redoAvailable",
+   "stable": true,
+   "user": false,
+   "value": false
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "methods:isUndoAvailable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "undoAvailable",
+   "stable": true,
+   "user": false,
+   "value": false
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "methods:selectedText": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "selectedText",
+   "stable": true,
+   "user": false,
+   "value": ""
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:clear-button-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:cursor-move-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "LogicalMoveStyle",
+   "notify": null,
+   "outcome": "exact",
+   "read": "VisualMoveStyle",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "VisualMoveStyle",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:drag-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:echo-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Normal",
+   "notify": null,
+   "outcome": "exact",
+   "read": "NoEcho",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoEcho",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:input-mask": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "AAA",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "AAA",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:max-length": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 32767,
+   "notify": null,
+   "outcome": "exact",
+   "read": 32768,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 32768,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:modified": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:placeholder-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:read-only": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": "textChanged(QString)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": true
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:cursor-position-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    -1,
+    9
+   ],
+   "trigger": "text"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:editing-finished": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:input-rejected": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:return-pressed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:selection-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:text-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    "svl probe"
+   ],
+   "trigger": "text"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:text-edited": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

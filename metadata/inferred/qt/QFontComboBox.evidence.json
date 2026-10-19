@@ -1,0 +1,16 @@
+{
+ "props:writing-system": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Any",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Latin",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Latin",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ }
+}

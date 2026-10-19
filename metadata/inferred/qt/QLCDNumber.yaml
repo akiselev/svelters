@@ -1,0 +1,53 @@
+elements:
+- tag: lcd-number
+  props:
+  - js: digit-count
+    native: digitCount
+    sample: 6
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: int-value
+    native: intValue
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: mode
+    native: mode
+    sample: Hex
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: segment-style
+    native: segmentStyle
+    sample: Outline
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: small-decimal-point
+    native: smallDecimalPoint
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: value
+    native: value
+    sample: 1.5
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: overflow
+    native: overflow
+    connect: overflow()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal overflow()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

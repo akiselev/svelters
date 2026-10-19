@@ -1,0 +1,200 @@
+{
+ "methods:count": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "count",
+   "stable": true,
+   "user": false,
+   "value": 0
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:auto-hide": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:change-current-on-drag": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:document-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:draw-base": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:elide-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ElideNone",
+   "notify": null,
+   "outcome": "exact",
+   "read": "ElideLeft",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "ElideLeft",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:expanding": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:movable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:shape": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "RoundedNorth",
+   "notify": null,
+   "outcome": "exact",
+   "read": "RoundedSouth",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "RoundedSouth",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tabs-closable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:uses-scroll-buttons": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:current-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:tab-bar-clicked": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:tab-bar-double-clicked": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:tab-close-requested": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:tab-moved": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1,
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

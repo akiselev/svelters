@@ -1,0 +1,136 @@
+{
+ "methods:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "text",
+   "stable": true,
+   "user": false,
+   "value": ""
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:format": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "%p%",
+   "notify": null,
+   "outcome": "exact",
+   "read": "yyyy-MM-dd",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "yyyy-MM-dd",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:inverted-appearance": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:maximum": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 100,
+   "notify": null,
+   "outcome": "exact",
+   "read": 101,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 101,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:minimum": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:orientation": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Horizontal",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Vertical",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Vertical",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:text-direction": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "TopToBottom",
+   "notify": null,
+   "outcome": "exact",
+   "read": "BottomToTop",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "BottomToTop",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:text-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:value": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "notify": "valueChanged(int)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 0,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:value-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}
