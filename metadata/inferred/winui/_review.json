@@ -1,0 +1,92 @@
+{
+ "inferred": {
+  "bindings": 48,
+  "events": 76,
+  "methods": 8,
+  "notify": 121,
+  "props": 143
+ },
+ "promote_at": 0.9,
+ "rows": [
+  {
+   "band": "middle",
+   "class": "ButtonBase",
+   "confidence": 0.6,
+   "name": "CommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "ContentControl",
+   "confidence": 0.6,
+   "name": "Content",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "Slider",
+   "confidence": 0.6,
+   "name": "Header",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TextBox",
+   "confidence": 0.6,
+   "name": "Select",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "class": "TextBox",
+   "confidence": 0.6,
+   "name": "Description",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TextBox",
+   "confidence": 0.6,
+   "name": "Header",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  }
+ ],
+ "schema": "svelters-inferred-review/v1",
+ "skipped": {
+  "binding:type:value": 5,
+  "event:denied": 2,
+  "method:denied": 14,
+  "method:overloaded": 2,
+  "method:param-type": 16,
+  "method:return:f32": 1,
+  "method:return:i64": 1,
+  "method:return:list": 1,
+  "method:return:object": 4,
+  "method:return:value": 1,
+  "method:return:variant": 4,
+  "notify:no-notify-rule": 3,
+  "notify:read-only": 9,
+  "prop:denied": 9,
+  "prop:type:f32": 1,
+  "prop:type:flags": 2,
+  "prop:type:list": 4,
+  "prop:type:object": 71,
+  "prop:type:value": 16
+ },
+ "toolkit": "winui",
+ "unreviewed": {
+  "by_pattern": {
+   "middle:method:scalar-args": 1,
+   "middle:prop:object-as-string": 5
+  },
+  "low": 0,
+  "middle": 6
+ },
+ "version": "2.3.9"
+}

@@ -1,0 +1,54 @@
+{
+ "events:Click": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:ClickMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ClickModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ClickMode>"
+  },
+  "rule": "O6"
+ },
+ "props:ClickMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IButtonBase",
+   "samples": [
+    "Press",
+    "Release"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ClickMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsPointerOver": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IButtonBase",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:IsPressed": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IButtonBase",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ }
+}

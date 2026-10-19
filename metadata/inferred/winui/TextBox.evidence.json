@@ -1,0 +1,682 @@
+{
+ "bindings:accepts-return": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::accepts-return",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:character-casing": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::character-casing",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CharacterCasing>"
+  },
+  "rule": "B1"
+ },
+ "bindings:desired-candidate-window-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::desired-candidate-window-alignment",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CandidateWindowAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-text-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-text-alignment",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-color-font-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-color-font-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-read-only": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-read-only",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-spell-check-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-spell-check-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-text-prediction-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-text-prediction-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-length": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-length",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:placeholder-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::placeholder-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:prevent-keyboard-display-on-programmatic-focus": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::prevent-keyboard-display-on-programmatic-focus",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-alignment",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-reading-order": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-reading-order",
+   "type": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-wrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-wrapping",
+   "type": "enum<Microsoft.UI.Xaml.TextWrapping>"
+  },
+  "rule": "B1"
+ },
+ "events:BeforeTextChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:CandidateWindowBoundsChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ContextMenuOpening": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.ContextMenuOpeningEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:CopyingToClipboard": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:CuttingToClipboard": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Paste": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextControlPasteEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.TextControlPasteEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SelectionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SelectionChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextBoxSelectionChangingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TextChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextChangedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.TextChangedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TextChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextBoxTextChangingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextBoxTextChangingEventArgs>",
+   "result": null,
+   "trigger": "set:Text=abc"
+  },
+  "rule": "R1/R2"
+ },
+ "events:TextCompositionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TextCompositionEnded": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TextCompositionStarted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TextBox, Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "methods:ClearUndoRedoHistory": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "methods:Redo": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "methods:SelectAll": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "methods:Undo": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "notify:AcceptsReturn": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AcceptsReturnProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CharacterCasing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CharacterCasingProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CharacterCasing>"
+  },
+  "rule": "O6"
+ },
+ "notify:DesiredCandidateWindowAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DesiredCandidateWindowAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CandidateWindowAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalTextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalTextAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsColorFontEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsColorFontEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsReadOnly": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsReadOnlyProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsSpellCheckEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsSpellCheckEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTextPredictionEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTextPredictionEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxLengthProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlaceholderTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:PreventKeyboardDisplayOnProgrammaticFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PreventKeyboardDisplayOnProgrammaticFocusProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:TextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:TextReadingOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextReadingOrderProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+  },
+  "rule": "O6"
+ },
+ "notify:TextWrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextWrappingProperty",
+   "type": "enum<Microsoft.UI.Xaml.TextWrapping>"
+  },
+  "rule": "O6"
+ },
+ "props:AcceptsReturn": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CanPasteClipboardContent": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:CanRedo": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:CanUndo": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:CharacterCasing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "Lower",
+    "Normal"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CharacterCasing>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DesiredCandidateWindowAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "BottomEdge",
+    "Default"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CandidateWindowAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalTextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "Left",
+    "Center"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsColorFontEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsReadOnly": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsSpellCheckEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTextPredictionEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PreventKeyboardDisplayOnProgrammaticFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionStart": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "Left",
+    "Center"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextReadingOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "UseFlowDirection",
+    "Default"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextReadingOrder>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextWrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "Wrap",
+    "NoWrap"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.TextWrapping>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

@@ -2,7 +2,45 @@
 //! COM reference or a JS value, so an element's handlers cannot keep it alive (backend-abi.md,
 //! "Native code never holds a JS value"). The backend state is found through a thread-local:
 //! WinUI raises events on the UI thread that owns the element.
+use crate::bindings::Microsoft::UI::Xaml::{DependencyObject, DependencyProperty, DependencyPropertyChangedCallback};
 use svelters_abi::Value;
+use windows_core::{EventRevoker, IInspectable, Interface};
+
+/// A live native subscription; dropping it unsubscribes.
+pub enum Registration {
+    /// A WinRT event (`Click`, `Closed`, ...). Held for its `Drop`, which revokes the handler.
+    Event(#[allow(dead_code)] EventRevoker),
+    /// A `notify::<prop>` listener: `DependencyObject.RegisterPropertyChangedCallback`, undone by
+    /// `UnregisterPropertyChangedCallback` with the same property and token. The object reference is
+    /// the element itself, which the handle table already holds.
+    Property { obj: DependencyObject, dp: DependencyProperty, token: i64 },
+}
+
+impl From<EventRevoker> for Registration {
+    fn from(r: EventRevoker) -> Self {
+        Registration::Event(r)
+    }
+}
+
+impl Drop for Registration {
+    fn drop(&mut self) {
+        if let Registration::Property { obj, dp, token } = self {
+            let _ = obj.UnregisterPropertyChangedCallback(&*dp, *token);
+        }
+    }
+}
+
+/// `notify::<prop>`: post an argument-less event whenever the DependencyProperty `dp` of `o` changes
+/// (programmatic or user change; the callback carries no value, the listener reads the prop).
+pub fn notify(o: &IInspectable, dp: &DependencyProperty, sink: Sink) -> windows_core::Result<Registration> {
+    let obj = o.cast::<DependencyObject>()?;
+    let cb = DependencyPropertyChangedCallback::new(move |_, _| {
+        sink.post(Vec::new());
+        Ok(())
+    });
+    let token = obj.RegisterPropertyChangedCallback(dp, &cb)?;
+    Ok(Registration::Property { obj, dp: dp.clone(), token })
+}
 
 #[derive(Clone, Copy, Debug)]
 pub struct Sink {

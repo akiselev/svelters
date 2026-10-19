@@ -7,7 +7,8 @@ Inputs (only these):
        metadata/inferred/qt merged under them (tools/metadata/qt/qt_layers.py)
   appkit: metadata/overrides/appkit/*.yaml over metadata/inferred/appkit/*.yaml (appkit_layers.py) + metadata/appkit/*.json
           (`bindings` list on a class; applies to the element classes deriving from it)
-  winui:  metadata/overrides/winui/*.yaml + metadata/winui/*.json     (same; property and signal are kebab-case JS names)
+  winui:  the merged model of tools/metadata/winui/gen_backend.py (metadata/winui + manual and inferred annotations;
+          property and signal are kebab-case JS names)
 Outputs (checked in, byte-identical on rerun):
   packages/renderer/src/bindings.generated.js   table used by renderer.bind(el, name, get, set)
   packages/renderer/types/bindings.d.ts         `bind:<name>` types per tag
@@ -204,7 +205,7 @@ def qt_bindings() -> dict[str, dict[str, dict]]:
     return out
 
 APPKIT_META = ROOT / "metadata/appkit"
-WINUI_META = ROOT / "metadata/winui"
+
 
 
 kebab = naming.kebab  # the shared rule (tools/metadata/common/naming.py): IsChecked -> is-checked
@@ -258,45 +259,38 @@ def appkit_bindings() -> dict[str, dict[str, dict]]:
     return out
 
 
-def winui_elements() -> dict[str, str]:
-    """class (full name) -> tag for every WinUI element kind (`element` present in the override)."""
-    out = {}
-    for path in sorted(WINUI_OVERRIDES.glob("*.yaml")):
-        data = svmeta.load_yaml(path)
-        el = data.get("element")
-        if el is None:
-            continue
-        short = data["class"].rsplit(".", 1)[1]
-        out[data["class"]] = el.get("tag") or kebab(short)
-    return out
+def winui_model():
+    """The WinUI generator's model: manual and inferred layers merged (tools/metadata/winui/winui_layers.py), parked
+    facts and inferred bindings without their prop or change event left out."""
+    import importlib.util
+    path = ROOT / "tools/metadata/winui/gen_backend.py"
+    spec = importlib.util.spec_from_file_location("svelters_winui_gen_b", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    try:
+        return mod.Model()
+    except mod.GenError as e:
+        raise GenError(f"winui: {e}") from e
 
 
 def winui_bindings() -> dict[str, dict[str, dict]]:
-    """WinUI bindings; `property` and `change.signal` are kebab-case JS names. Bindings on a base class apply
-    to the element kinds whose chain includes it."""
-    ov = {}
-    for path in sorted(WINUI_OVERRIDES.glob("*.yaml")):
-        data = svmeta.load_yaml(path)
-        ov[data["class"]] = data
-    meta = {}
-    for path in sorted(WINUI_META.glob("*.json")):
-        if not path.name.startswith("_"):
-            k = svmeta.load_json(path)
-            meta[k["native"]["name"]] = k
+    """WinUI bindings; `property` and `change.signal` are kebab-case JS names (`notify::<prop>` for the generic
+    ones: a DependencyProperty callback). Bindings on a base class apply to the element kinds whose chain includes it."""
+    m = winui_model()
     out: dict[str, dict[str, dict]] = {}
-    for cls, tag in sorted(winui_elements().items(), key=lambda kv: kv[1]):
+    for k in sorted(m.kinds, key=lambda k: k["tag"]):
         props: dict[str, bool] = {}
         signals: dict[str, int] = {}
-        chain = [cls] + meta[cls]["bases"]
-        for c in chain:
-            writable = {p["name"]: bool(p["access"]["write"]) for p in meta[c]["properties"]} if c in meta else {}
-            for p in ov.get(c, {}).get("props", []):
-                props.setdefault(kebab(p["name"]), writable.get(p["name"], True))
-            for e in ov.get(c, {}).get("events", []):
-                signals.setdefault(kebab(e["name"]), len(e.get("payload", [])))
-        for c in chain:
-            for b in ov.get(c, {}).get("bindings", []):
-                _add_binding(out, tag, b, "winui", props, signals)
+        for c in k["chain"]:
+            for p in m.props:
+                if p["class"] == c:
+                    props.setdefault(p["name"], bool(p["write"]))
+            for e in m.events:
+                if e["class"] == c:
+                    signals.setdefault(e["name"], len(e["payload"]))
+        for c in k["chain"]:
+            for b in m.ovr.get(c, {}).get("bindings", []):
+                _add_binding(out, k["tag"], b, "winui", props, signals)
     return out
 
 

@@ -1,0 +1,242 @@
+{
+ "bindings:intermediate-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::intermediate-value",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-direction-reversed": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-direction-reversed",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-thumb-tool-tip-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-thumb-tool-tip-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::orientation",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "B1"
+ },
+ "bindings:snaps-to": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::snaps-to",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SliderSnapsTo>"
+  },
+  "rule": "B1"
+ },
+ "bindings:step-frequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::step-frequency",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:tick-frequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::tick-frequency",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:tick-placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::tick-placement",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.TickPlacement>"
+  },
+  "rule": "B1"
+ },
+ "notify:IntermediateValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IntermediateValueProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:IsDirectionReversed": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsDirectionReversedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsThumbToolTipEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsThumbToolTipEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OrientationProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "O6"
+ },
+ "notify:SnapsTo": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SnapsToProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SliderSnapsTo>"
+  },
+  "rule": "O6"
+ },
+ "notify:StepFrequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "StepFrequencyProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:TickFrequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TickFrequencyProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:TickPlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TickPlacementProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.TickPlacement>"
+  },
+  "rule": "O6"
+ },
+ "props:IntermediateValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsDirectionReversed": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsThumbToolTipEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    "Horizontal",
+    "Vertical"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SnapsTo": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    "Ticks",
+    "StepValues"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SliderSnapsTo>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:StepFrequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TickFrequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TickPlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISlider",
+   "samples": [
+    "TopLeft",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.TickPlacement>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}
