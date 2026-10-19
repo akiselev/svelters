@@ -12,7 +12,7 @@ without a mechanism), nullable host `prop_changed(h, prop)`, `SVL_M_OBSERVABLE`.
 AppKit and WinUI leave the member `NULL`. The host refcounts per (h, prop) and hands each notification
 to `globalThis.__svelters_prop_changed(h, prop)` through the ordinary event queue: no dirty set, no
 read-back or compare, no batch, no `__svelters_changed`, no set-path read-back, no sync flush. Nothing
-in `@svelters/types` or the runtime subscribes yet. Every §12 decision is still open. Details:
+in `@svelters/types` or the runtime subscribes yet. All §12 decisions were made on 2026-10-19 (§13). Details:
 `plans/architecture/backend-abi.md` "ABI v2.6 additive".
 
 - **Prototypes and probes** (`docs/notes/scripts/reactivity/`):
@@ -920,3 +920,20 @@ specifiers and dev hooks only; capabilities are added when the first one changes
     platform trait with `observability` and type-member lookup; add a thin `RuntimeTarget` (specifiers,
     dev hooks); hand-written overrides through `Overlay`, not a parallel trait hierarchy (§9).
     *Recommend: yes. Also decide whether `|lazy` joins `|nonreactive` in R2 or waits.*
+
+## 13. Decisions (user, 2026-10-19)
+
+All recommendations in §12 are adopted, except #8:
+
+1. **Delivery model:** yes. Coalesce per (handle, prop) per checkpoint and deliver one batch before signal events, with a single job drain.
+2. **Values in the batch:** yes. The host reads natively, compares with the last value and carries the value. Proportional props are invalidation-only. The JS value cache stays optional (R5).
+3. **Generated getters are reactive by default** for `exact`/`partial` props.
+4. **Opt-out:** `bind:prop|nonreactive` plus `untrack(...)` / `obj.peek(prop)`. The rejected forms stay rejected (§8.1).
+5. **Partial observability:** compile warning plus a dev runtime warning; an error only in `--strict-native`.
+6. **`set_only` props:** no native observation; setters invalidate locally; two-way `bind:` is a compile error.
+7. **Echo:** for observed props, host compare-with-last replaces handler blocking. Backend-side suppression applies only to proportional props. Signal-based echo rules are unchanged.
+8. **`bind:` migration: all at once (not gradually).** In R2 every `bind:` on an `exact` prop is lowered onto observation (`bind_prop` / `bind_readonly`). Signal-based binding plans remain only for props that are not `exact` on that platform (e.g. AppKit user edits through the field editor, which KVO misses).
+9. **Polling for `none` props:** not in v1. Report `none` with a warning.
+10. **AppKit BORROWED + KVO:** as recommended. **The minimum macOS is 11**, which covers the 10.13 relaxed-unregistration requirement.
+11. **Compiler traits:** one object-safe `PlatformSemantics` (renamed from `BackendSemantics`) with `observability` and type-member lookup, a thin `RuntimeTarget`, and overrides through `Overlay`. **`|lazy` waits** for R5.
+
