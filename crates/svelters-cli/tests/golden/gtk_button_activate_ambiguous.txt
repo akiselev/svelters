@@ -1,0 +1,7 @@
+$ svelters docs gtk button.activate
+exit: 2
+--- stdout
+`button.activate` is ambiguous; use one of:
+  gtk button.event:activate  (event)  Emitted to animate press then release.
+  gtk button.method:activate  (method, from Gtk.Widget)  Activates the widget.
+--- stderr

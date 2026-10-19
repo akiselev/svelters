@@ -1,0 +1,12 @@
+$ svelters docs gtk button.onclicked
+exit: 0
+--- stdout
+# <button>.clicked · event
+`gtk button.event:clicked` · declared here · Site: /api/gtk/button/#event-clicked
+Handler `onclicked` · arguments none · returns `void` · async · phase `first` · flags action · annotated, verified
+
+Emitted when the button has been activated (pressed and released).
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr

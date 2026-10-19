@@ -1,0 +1,18 @@
+$ svelters docs qt QMainWindow::DockOption
+exit: 0
+--- stdout
+# QMainWindow::DockOption
+`qt:QMainWindow.DockOption` · Qt 6 (Widgets) enum · ingested (not annotated)
+Site: /api/qt/types/qmainwindow-dockoption/ · Upstream: https://doc.qt.io/qt-6/qmainwindow.html
+
+## Values
+- `AnimatedDocks` = `"0x01"`
+- `AllowNestedDocks` = `"0x02"`
+- `AllowTabbedDocks` = `"0x04"`
+- `ForceTabbedDocks` = `"0x08"`
+- `VerticalTabs` = `"0x10"`
+- `GroupedDragging` = `"0x20"`
+
+qt: header `qmainwindow.h` · module `QtWidgets`
+
+--- stderr

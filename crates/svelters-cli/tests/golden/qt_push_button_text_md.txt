@@ -1,0 +1,12 @@
+$ svelters docs qt push-button.text
+exit: 0
+--- stdout
+# <push-button>.text · property
+`qt push-button.prop:text` · declared here · Site: /api/qt/push-button/#property-text
+Type `string` · rw · annotated, verified
+
+The text shown on the button
+
+---
+Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3. Only short briefs are reproduced here (text policy: brief); see doc.qt.io for the full documentation.
+--- stderr

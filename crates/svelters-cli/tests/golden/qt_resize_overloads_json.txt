@@ -1,0 +1,51 @@
+$ svelters docs qt main-window.method:resize --json
+exit: 0
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "member",
+  "toolkit": "qt",
+  "data_version": "6.11.0+f0960f1ddc2925fd",
+  "entity": {
+    "id": "qt:QMainWindow",
+    "address": "qt main-window",
+    "native": "QMainWindow",
+    "tags": [
+      "main-window"
+    ],
+    "site": "/api/qt/main-window/"
+  },
+  "member": {
+    "kind": "method",
+    "name": "resize",
+    "address": "qt main-window.method:resize",
+    "declared_in": "qt:QWidget",
+    "site": "/api/qt/box-layout/#method-resize",
+    "annotated": true,
+    "verified": false,
+    "doc": "This property holds the size of the widget excluding any window frame",
+    "signatures": [
+      "void resize(const QSize &)",
+      "void resize(int w, int h)"
+    ],
+    "params": [
+      {
+        "name": "",
+        "type": {
+          "display": "unknown",
+          "native": "const QSize &"
+        }
+      }
+    ],
+    "returns": {
+      "display": "void"
+    },
+    "static": false,
+    "virtual": false
+  },
+  "notices": [
+    "Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3. Only short briefs are reproduced here (text policy: brief); see doc.qt.io for the full documentation."
+  ],
+  "notes": []
+}
+--- stderr

@@ -1,0 +1,72 @@
+$ svelters docs qt main-window
+exit: 0
+--- stdout
+# <main-window> · QMainWindow
+`qt:QMainWindow` · Qt 6 (Widgets) class · annotated, tested (20/20 facts verified) · lifetime toplevel
+Inherits: QWidget → QObject → QPaintDevice
+Site: /api/qt/main-window/ · Upstream: https://doc.qt.io/qt-6/qmainwindow.html
+
+The QMainWindow class provides a main application window.
+
+## Properties
+- `animated`: `boolean`, rw, default `true` — Whether manipulating dock widgets and tool bars is animated
+- `dockOptions`: `QMainWindow::DockOption`, rw, default `"AnimatedDocks|AllowTabbedDocks"` — The docking behavior of QMainWindow
+- `document-mode`: `boolean`, rw, default `false` — Whether the tab bar for tabbed dockwidgets is set to document mode
+- `window-title`: `string`, rw, bindable — The window title (caption)
+
+## Events
+- `close` (`onclose`) ()
+
+## Children
+Policy `named_slots`, default slot `central`
+- `central` (default): one QWidget
+- `menubar`: one QMenuBar
+- `statusbar`: one QStatusBar
+- `toolbars`: many QToolBar
+- `docks`: many QDockWidget
+
+## Dangerous members
+- property `windowFlags` (from QWidget): owned by the backend, not reachable today. The property behind setWindowFlags; toplevel insert/remove rely on it (tools/metadata/qt/templates/backend.cpp.in:887, 911). Use instead: A toplevel element (<main-window>, <dialog>).
+- method `addDockWidget`: corrupts the widget tree, not reachable today. The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold. Use instead: Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).
+- method `addToolBar`: corrupts the widget tree, not reachable today. The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold. Use instead: Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).
+- method `insertToolBar`: corrupts the widget tree, not reachable today. The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold. Use instead: Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).
+- method `menuBar`: owned by the backend. Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because "menuBar() would create one" (metadata/overrides/qt/QMainWindow.yaml:55, 74). Use instead: Insert a <menu-bar> / <status-bar> child.
+- method `setCentralWidget`: corrupts the widget tree, not reachable today. The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold. Use instead: Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).
+- method `statusBar`: owned by the backend. Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because "menuBar() would create one" (metadata/overrides/qt/QMainWindow.yaml:55, 74). Use instead: Insert a <menu-bar> / <status-bar> child.
+- method `overrideWindowFlags` (from QWidget): owned by the backend, not reachable today. Toplevel insert/remove keep the window type by passing windowFlags() into setParent (tools/metadata/qt/templates/backend.cpp.in:887, 911); changing the flags re-creates the native window. The windowFlags property is denied to inference as renderer-owned (metadata/rules/qt.yaml). Use instead: A toplevel element (<main-window>, <dialog>) nested where it belongs.
+- method `setLayout` (from QWidget): owned by the backend, not reachable today. Composite elements install their layout at create (tools/metadata/qt/gen_cpp.py:930-933) and the slot ops cast layout() to that class (gen_cpp.py:862); another layout breaks every later insert/remove. Use instead: <box-layout>/<grid-layout> children.
+- method `setParent` (from QWidget): corrupts the widget tree, not reachable today. The backend re-parents widgets itself: toplevel insert/remove (tools/metadata/qt/templates/backend.cpp.in:887, 911), the menu glue (tools/metadata/qt/templates/menus.hpp.in:69-71) and every slot's remove (metadata/overrides/qt/QWidget.yaml:134). A widget moved behind it keeps a stale placement record. Use instead: Put the child element inside its parent; {#if}/{#each} move it.
+- method `setWindowFlag` (from QWidget): owned by the backend, not reachable today. Toplevel insert/remove keep the window type by passing windowFlags() into setParent (tools/metadata/qt/templates/backend.cpp.in:887, 911); changing the flags re-creates the native window. The windowFlags property is denied to inference as renderer-owned (metadata/rules/qt.yaml). Use instead: A toplevel element (<main-window>, <dialog>) nested where it belongs.
+
+## Constructors
+- `QMainWindow(QWidget *parent, Qt::WindowFlags flags)` — Constructs a QMainWindow with the given *parent* and the specified widget *flags*.
+
+## Methods
+- `void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget)` (+1 overloads) ⚠ dangerous — Adds the given *dockwidget* to the specified *area*.
+- `QToolBar * addToolBar(const QString &title)` (+2 overloads) ⚠ dangerous — Creates a QToolBar object, setting its window title to *title*, and inserts it into the top toolbar area.
+- `QWidget * centralWidget() const` — Returns the central widget for the main window.
+- `QMainWindow::DockOptions dockOptions() const` — This property holds the docking behavior of QMainWindow
+- `void insertToolBar(QToolBar *before, QToolBar *toolbar)` ⚠ dangerous — Inserts the *toolbar* into the area occupied by the *before* toolbar so that it appears before it.
+- `QMenuBar * menuBar() const` ⚠ dangerous — Returns the menu bar for the main window.
+- `void setCentralWidget(QWidget *widget)` ⚠ dangerous — Sets the given *widget* to be the main window's central widget.
+- `QStatusBar * statusBar() const` ⚠ dangerous — Returns the status bar for the main window.
+
+Inherited: QWidget (3 properties, 1 event, 8 methods). List them with `--all`.
+
+qt: header `qmainwindow.h` · module `QtWidgets` · qobject `yes`
+
+## Example: Using <main-window>
+```svelte
+<script>
+  let count = $state(0);
+</script>
+
+<main-window accessible-name="Hello" onclose={() => count++}>
+  <label>Child content</label>
+</main-window>
+```
+(generated from metadata, illustrative)
+
+---
+Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3. Only short briefs are reproduced here (text policy: brief); see doc.qt.io for the full documentation.
+--- stderr

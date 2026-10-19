@@ -1,0 +1,19 @@
+$ svelters docs Gtk.Button.can-shrink
+exit: 0
+--- stdout
+# <button>.can-shrink · property
+`gtk button.prop:can-shrink` · declared here · Site: /api/gtk/button/#property-can-shrink
+Type `boolean` · rw · default `false` · notify `notify::can-shrink` · bindable (`bind:can-shrink`) · accessors get `gtk_button_get_can_shrink`, set `gtk_button_set_can_shrink` · since 4.12 · annotated, verified
+
+Whether the size of the button can be made smaller than the natural
+size of its contents.
+
+For text buttons, setting this property will allow ellipsizing the label.
+
+If the contents of a button are an icon or a custom widget, setting this
+property has no effect.
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr
+note: found only in gtk

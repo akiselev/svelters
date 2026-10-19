@@ -1,0 +1,28 @@
+$ svelters docs gtk window.set_titlebar
+exit: 0
+--- stdout
+# <window>.set_titlebar · method
+`gtk window.method:set_titlebar` · declared here · Site: /api/gtk/window/#method-set-titlebar
+
+    set_titlebar(titlebar: Widget): void
+
+
+> ⚠ **Dangerous: corrupts the widget tree.** Calling `set_titlebar` is reachable from app code, but the backend owns what it changes. Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md).
+> **Use instead:** Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot="titlebar">`); remove it with {#if}.
+> Declared in `metadata/dangerous/gtk.yaml#child-setters`. Nothing blocks it at run time yet.
+
+Sets a custom titlebar for the window.
+
+A typical widget used here is `HeaderBar`, as it
+provides various features expected of a titlebar while allowing
+the addition of child widgets to it.
+
+If you set a custom titlebar, GTK will do its best to convince
+the window manager not to put its own titlebar on the window.
+Depending on the system, this function may not work for a window
+that is already visible, so you set the titlebar before calling
+`Widget.show()`.
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr

@@ -1,0 +1,19 @@
+$ svelters docs QMainWindow::setCentralWidget
+exit: 0
+--- stdout
+# <main-window>.setCentralWidget · method
+`qt main-window.method:setCentralWidget` · declared here · Site: /api/qt/main-window/#method-setcentralwidget
+
+    void setCentralWidget(QWidget *widget)
+
+
+> ⚠ **Dangerous: corrupts the widget tree.** Calling `setCentralWidget` is not possible from app code today; the backend owns this state. The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.
+> **Use instead:** Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).
+> Declared in `metadata/dangerous/qt.yaml#main-window-slots`. Nothing blocks it at run time yet.
+
+Sets the given *widget* to be the main window's central widget.
+
+---
+Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3. Only short briefs are reproduced here (text policy: brief); see doc.qt.io for the full documentation.
+--- stderr
+note: found only in qt

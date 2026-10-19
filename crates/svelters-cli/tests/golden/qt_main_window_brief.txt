@@ -1,0 +1,14 @@
+$ svelters docs qt main-window --brief
+exit: 0
+--- stdout
+<main-window> · QMainWindow (qt:QMainWindow) · Qt 6 (Widgets) class · annotated, tested (20/20 facts verified)
+inherits: QWidget → QObject → QPaintDevice
+The QMainWindow class provides a main application window.
+props: animated boolean rw · dockOptions QMainWindow::DockOption rw · document-mode boolean rw · window-title string rw
+events: close
+slots: central · menubar · statusbar · toolbars · docks
+methods: addDockWidget · addToolBar · centralWidget · dockOptions · insertToolBar · menuBar · setCentralWidget · statusBar
+ctors: QMainWindow
+dangerous: property:windowFlags · method:addDockWidget · method:addToolBar · method:insertToolBar · method:menuBar · method:setCentralWidget · method:statusBar · method:overrideWindowFlags · method:setLayout · method:setParent · method:setWindowFlag
+inherited props/events/methods: QWidget 3/1/8 (--all)
+--- stderr

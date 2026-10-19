@@ -102,7 +102,13 @@ Written incrementally by the CLI research lane (2026-10-17). Design proposal: `p
   elements). GTK IR has 101 tagged entities. `tools/docs/qt/frontend.py:135` `elements_for` matches only on
   `construct.class`. Either the IR is stale or the frontend misses most elements; a docs CLI built on the IR
   inherits whichever it is. Fix (or regenerate) before shipping `svelters docs`.
+- **Re-measured 2026-10-19 (CL0, after N1): no gap.** A fresh `build_ir.py` gives Qt 54 tagged entities
+  carrying 55 tags, exactly the 55 distinct `- tag:` values in `metadata/overrides/qt/*.yaml` (QWidget holds
+  `box-layout` and `grid-layout`); GTK 72 tagged entities = the 72 `element.tag` values in `metadata/gtk/*.json`. The 8 were a stale IR.
+  Side findings: the site routes QWidget to `/api/qt/box-layout/` (its first tag), and 273 Qt properties still have
+  camelCase `js_name`s (`dockOptions`, `iconSize`), all on unannotated members.
 - Element tag names in the IR are still portable (`window`, `box`, `scrolledwindow`); N1 renames them.
+  (Done: N1 landed; tags are native kebab-case.)
   Several native classes share a tag across toolkits (`window` = GtkApplicationWindow / QMainWindow;
   Qt `box` = QWidget+QBoxLayout).
 

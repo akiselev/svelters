@@ -1,0 +1,13 @@
+$ svelters docs -k dock
+exit: 0
+--- stdout
+  qt QMainWindow::DockOption  (type)
+  qt main-window.method:dockOptions  (method)  This property holds the docking behavior of QMainWindow
+  qt main-window.prop:dockOptions  (property)  The docking behavior of QMainWindow
+  qt main-window.slot:docks  (slot)
+  qt QMainWindow::DockOption.value:AllowNestedDocks  (value)
+  qt QMainWindow::DockOption.value:AllowTabbedDocks  (value)
+  qt QMainWindow::DockOption.value:AnimatedDocks  (value)
+  qt QMainWindow::DockOption.value:ForceTabbedDocks  (value)
+  qt main-window.method:addDockWidget  (method)  Adds the given dockwidget to the specified area.
+--- stderr

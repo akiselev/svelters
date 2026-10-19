@@ -10,6 +10,7 @@ members = [
     "crates/svelters-appkit",
     "crates/svelters-winui",
     "crates/svelters-compiler",
+    "crates/svelters-cli",
     "examples/counter",
     "examples/counter-qt",
     "examples/counter-mac",
@@ -39,4 +40,8 @@ cc = "1"
 # QuickJS is C compiled by the cc crate; at the dev profile's opt-level 0 it runs 5-10x slower, which
 # makes JS-heavy tests (10k-row lists) hit the host's turn budget. Optimise it in every profile.
 [profile.dev.package.rquickjs-sys]
+opt-level = 2
+
+# svelters-cli builds and reads its deflated docs packs with it; unoptimised it takes ~4 s per pack.
+[profile.dev.package.miniz_oxide]
 opt-level = 2
