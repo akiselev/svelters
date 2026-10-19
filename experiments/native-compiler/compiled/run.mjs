@@ -1,12 +1,12 @@
 // Runs every compiled bundle on the Node TestHost with the case's script and checks:
-//   existing fixtures: op log == the hand-written equivalent's (../handwritten/<name>/expected.oplog,
-//     i.e. the compiler emits the intended code shape) and native state == the JS pipeline's
-//     (tools/oplog-compare.mjs, at every event/sync/gone boundary and at the end);
-//   JS-pipeline comparisons (handwritten: null): native state == the JS pipeline's only;
+//   shared fixtures: op log == the hand-written equivalent's (../handwritten/<name>/expected.oplog,
+//     i.e. the compiler emits the intended code shape) and native state == the fixture's
+//     expected.oplog (tools/oplog-compare.mjs, at every event/sync/gone boundary and at the end);
+//   golden-only comparisons (handwritten: null): native state == the fixture's expected.oplog only;
 //   own fixtures: op log == <dir>/expected.<backend>.oplog, or, when <dir>/expected.<backend>.diagnostics
 //     exists, that compilation was rejected with exactly those diagnostic codes.
 // Bundles run on the TestHost in their target's vocabulary (`toolkit`: the qt target's prop schema
-// and QSS dialect for qt, GTK for gtk and testhost).
+// and QSS dialect for qt, GTK for gtk).
 // UPDATE=1 rewrites the own fixtures' expectations (review the diff!).
 import fs from 'node:fs';
 import path from 'node:path';
@@ -74,9 +74,9 @@ for (const c of cases()) {
     const sameShape = c.handwrittenStale || hand === null || actual === hand;
     if (!sameShape || !r.equal) failed = true;
     const shape = c.handwrittenStale ? 'hand-written outdated' : hand === null ? 'no hand-written equivalent' : sameShape ? 'op log == hand-written' : 'op log != hand-written';
-    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${shape}; ${actual === theirs ? 'identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`);
+    console.log(`${sameShape && r.equal ? 'PASS' : 'FAIL'} ${tag}: ${shape}; ${actual === theirs ? 'identical to' : r.equal ? 'state-equal with' : 'STATE DIFFERS from'} fixture op log (${r.boundaries} boundaries, ops ${r.opsB} / ${r.opsA})`);
     for (const p of r.problems) console.log(`  ${p}`);
-    // extra scripts: both pipelines' bundles run live with the same steps, compared by state
+    // extra scripts: this bundle and the fixture's own build run live with the same steps, compared by state
     for (const extra of c.extraScripts ?? []) {
       const steps = JSON.parse(fs.readFileSync(extra, 'utf8'));
       const xtag = `${tag} [${path.basename(extra)}]`;
@@ -92,7 +92,7 @@ for (const c of cases()) {
       fs.writeFileSync(path.join(dir, `actual.${path.basename(extra, '.json')}.oplog`), ours);
       const x = compare(js, ours, { defaults: DEFAULTS });
       if (!x.equal) failed = true;
-      console.log(`${x.equal ? 'PASS' : 'FAIL'} ${xtag}: ${ours === js ? 'identical to' : x.equal ? 'state-equal with' : 'STATE DIFFERS from'} JS pipeline (${x.boundaries} boundaries, ops ${x.opsB} / ${x.opsA})`);
+      console.log(`${x.equal ? 'PASS' : 'FAIL'} ${xtag}: ${ours === js ? 'identical to' : x.equal ? 'state-equal with' : 'STATE DIFFERS from'} the fixture's own bundle (${x.boundaries} boundaries, ops ${x.opsB} / ${x.opsA})`);
       for (const p of x.problems) console.log(`  ${p}`);
     }
   }

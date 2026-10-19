@@ -2,7 +2,7 @@
 <script>
   // The themed variant of the styling page: the dark colour scheme and a token override, set while
   // the page is shown and undone when it goes away.
-  import { setColorScheme, setTokens } from '@svelters/renderer/style';
+  import { setColorScheme, setTokens } from '@svelters/native-runtime/style';
   import StyledDemo from '../StyledDemo.svelte';
 
   $effect(() => {

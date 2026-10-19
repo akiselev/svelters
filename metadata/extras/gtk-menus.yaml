@@ -2,10 +2,67 @@
 # have no ingested metadata. This file lists their members for the cross-checks of
 # tools/metadata/common/gen_bindings.py and holds their facts for the verified ledger
 # (tools/metadata/ledger.py).
+#
+# `spec` (RT1) is what tools/metadata/semantics/gen_semantics.py adds to metadata/semantics/gtk.json for the
+# compiler: kind id, native type, `base` (a generated kind whose chain follows, so its members apply),
+# own prop types, signal args, methods, the `items` slot and `attaches_to` (a kind inserted into any widget
+# of that kind regardless of the parent's slots).
 elements:
+  - tag: menu-bar
+    props: []
+    signals: []
+    spec:
+      kind: Svelters.MenuBar
+      native: GtkPopoverMenuBar
+      base: Gtk.Widget
+      children: { accepts: [Svelters.Menu, Svelters.Action, Svelters.MenuSeparator] }
+      provenance: "menus.rs: GtkPopoverMenuBar over the root GMenu; widget members from the Widget tables (table_name)"
+  - tag: tool-bar
+    props: []
+    signals: []
+    spec:
+      kind: Svelters.ToolBar
+      native: GtkBox
+      base: Gtk.Box
+      children: { accepts: [Svelters.Menu, Svelters.Action, Svelters.MenuSeparator] }
+      provenance: "menus.rs: a GtkBox of buttons rebuilt from the child nodes; widget members from the Box tables (table_name)"
+  - tag: context-menu
+    props: []
+    signals: []
+    spec:
+      kind: Svelters.ContextMenu
+      native: GtkPopoverMenu
+      methods: [popup, popdown]
+      children: { accepts: [Svelters.Menu, Svelters.Action, Svelters.MenuSeparator] }
+      attaches_to: Gtk.Widget
+      provenance: "menus.rs menu_attach_context: a GtkPopoverMenu parented to the widget it is inserted into"
+  - tag: menu
+    props: [label, icon, enabled, visible]
+    signals: []
+    spec:
+      kind: Svelters.Menu
+      native: GMenu
+      props: { label: string, icon: string, enabled: bool, visible: bool }
+      children: { accepts: [Svelters.Menu, Svelters.Action, Svelters.MenuSeparator] }
+      attaches_to: Gtk.MenuButton
+      provenance: "menus.rs: a GMenu, a submenu item of its parent or the menu-model of the menu-button it is inserted into"
+  - tag: menu-separator
+    props: [visible]
+    signals: []
+    spec:
+      kind: Svelters.MenuSeparator
+      native: GMenu
+      props: { visible: bool }
+      provenance: "menus.rs: a section boundary of the parent GMenu"
   - tag: action
     props: [label, icon, shortcut, tooltip, enabled, visible, checkable, checked, group]
     signals: [activate, toggled]
+    spec:
+      kind: Svelters.Action
+      native: GSimpleAction
+      props: { label: string, icon: string, shortcut: string, tooltip: string, enabled: bool, visible: bool, checkable: bool, checked: bool, group: string }
+      signals: { activate: [{ name: checked, type: bool }], toggled: [{ name: checked, type: bool }] }
+      provenance: "menus.rs find_member / describe_member / menu_emit (activate(checked), toggled(checked))"
     bindings:
       - name: checked
         direction: two_way

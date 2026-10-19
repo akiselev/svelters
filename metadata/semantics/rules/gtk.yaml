@@ -16,6 +16,9 @@ kinds:
     lifetime: toplevel
     present: present
     provenance: "backend-abi.md ABI v2 'As implemented': GTK toplevel is GtkWindow; present is the zero-arg method in METHODS"
+  Gtk.EventController:
+    attaches_to: Gtk.Widget
+    provenance: "svelters-gtk backend.rs insert_controller (X8): a controller inserted into a widget is added with gtk_widget_add_controller, whatever the widget's slots"
   # Text children (`text_content`) come from `text_prop` in metadata/overrides/gtk (Label, Button).
   Gtk.Editable:
     signals:

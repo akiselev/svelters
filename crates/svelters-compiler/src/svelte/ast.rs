@@ -63,9 +63,6 @@ node! {
         pub namespace: Option<String>,
         #[serde(skip_serializing_if = "Option::is_none")]
         pub css: Option<String>,
-        /// `customRenderer` option of the custom-renderer fork: a module path, or null to opt out.
-        #[serde(rename = "customRenderer", skip_serializing_if = "Option::is_none")]
-        pub custom_renderer: Option<Option<String>>,
         /// `customElement` is accepted by the parser but unsupported by this compiler: kept raw.
         #[serde(skip)]
         pub custom_element: Option<Span>,

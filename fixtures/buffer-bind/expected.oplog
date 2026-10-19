@@ -11,11 +11,11 @@ create label #4
 set #4 label "text=start"
 insert #2 #4 before=end slot=default
 create scale #5
+set #5 value 10
+listen #5 value-changed on
 set #5 lower 0
 set #5 upper 100
 set #5 step-increment 1
-set #5 value 10
-listen #5 value-changed on
 insert #2 #5 before=end slot=default
 create label #6
 set #6 label "value=10"
@@ -27,7 +27,7 @@ insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 event #7 clicked []
-set #4 label "text=from js"
-set #6 label "value=55"
 set #3 text "from js"
+set #4 label "text=from js"
 set #5 value 55
+set #6 label "value=55"

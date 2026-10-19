@@ -23,10 +23,10 @@ gone #6 parent
 event #4 clicked []
 set #3 text "child closed (parent)"
 event #4 clicked []
+set #3 text "child open"
 create main-window #7
 set #7 window-title "Child"
 create label #8
 set #8 text "Child body"
 insert #7 #8 before=end slot=default
 call #7 present []
-set #3 text "child open"

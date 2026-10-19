@@ -10,7 +10,7 @@
     "./recorder": "./src/recorder.js"
   },
   "dependencies": {
-    "@svelters/renderer": "workspace:*",
+    "@svelters/native-runtime": "workspace:*",
     "svelte": "5.57.2"
   },
   "scripts": {

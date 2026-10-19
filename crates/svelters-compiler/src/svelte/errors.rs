@@ -224,11 +224,6 @@ pub fn expected_whitespace(node: impl Into<NodeLike>) -> CompileError {
     e(node, "expected_whitespace", "Expected whitespace".into())
 }
 
-/// %message% is not compatible with `customRenderer`
-pub fn incompatible_with_custom_renderer(node: impl Into<NodeLike>, message: &str) -> CompileError {
-    e(node, "incompatible_with_custom_renderer", format!("{message} is not compatible with `customRenderer`"))
-}
-
 /// %message%
 pub fn js_parse_error(node: impl Into<NodeLike>, message: &str) -> CompileError {
     e(node, "js_parse_error", message.to_string())

@@ -30,7 +30,7 @@ const script = [{ checkpoint: true }];
 list.forEach((_, i) => script.push({ event: [SIDEBAR_FIRST_HANDLE + i, 'clicked', []] }, { checkpoint: true }));
 let log;
 try {
-  log = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, styleDialect: tk === 'qt' ? 'qss' : 'css' });
+  log = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, toolkit: tk, styleDialect: tk === 'qt' ? 'qss' : 'css' });
 } catch (e) {
   fail(`opening the pages in the TestHost threw: ${e?.stack ?? e}`);
 }

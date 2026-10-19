@@ -113,8 +113,8 @@ sync #10 unbind [1,1]
 result #10 null
 sync #10 teardown [1]
 remove #11 #14
-destroy #11
-result #10 null
 destroy #15
 destroy #16
 destroy #14
+destroy #11
+result #10 null

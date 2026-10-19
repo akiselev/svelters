@@ -13,7 +13,7 @@
 
 pub mod ir;
 mod native_attrs;
-pub use native_attrs::RENDERER_MODULE;
+pub use native_attrs::HELPERS_MODULE;
 mod lists;
 
 use crate::diag::Diagnostics;
@@ -404,7 +404,7 @@ impl<'a> Lower<'a, '_, '_> {
         } else {
             Op::SetDynamic { prop: prop.to_string(), value: Dynamic::Template(parts), span }
         };
-        Some(Element { id, span, kind: er.tag.clone(), present: None, slot, class_expr: None, id_expr: None, ops: vec![op], children: Fragment::default() })
+        Some(Element { id, span, kind: er.tag.clone(), present: None, toplevel: false, show: None, attached: false, slot, class_expr: None, id_expr: None, ops: vec![op], children: Fragment::default() })
     }
 
     /// `{:then value}` / `{:catch error}`: only plain identifiers.
@@ -669,16 +669,29 @@ impl<'a> Lower<'a, '_, '_> {
 
         // placement (`attr_target`: where `parent:` attributes go, when known here)
         let mut attr_target: Option<(ElementRef, String)> = None;
+        let lt = self.sem.lifetime(&er);
+        let toplevel = lt.lifetime == Lifetime::Toplevel;
+        let mut attached = false;
         let (slot, present) = match parent {
             Parent::Root | Parent::Detached => {
-                // A toplevel kind is presented when mounted at the root. Other kinds are allowed at a
-                // component's top level: a child component's root elements go to the container the
-                // parent passes in (placement is then checked at runtime; the compiler cannot see
-                // across component boundaries). Mounting a non-toplevel at the app root throws.
-                // Detached content (snippets, component children) is placed by its render site.
-                let lt = self.sem.lifetime(&er);
-                let slot = if matches!(parent, Parent::Detached) { requested_slot.clone() } else { None };
-                (slot, if lt.lifetime == Lifetime::Toplevel { lt.present } else { None })
+                // A toplevel kind is shown when mounted at the root (its `show` policy). Other kinds
+                // are allowed at a component's top level: a child component's root elements go to the
+                // container the parent passes in (placement is then checked at runtime; the compiler
+                // cannot see across component boundaries). Mounting a non-toplevel at the app root
+                // throws. Detached content (snippets, component children) is placed by its render site.
+                let slot = if matches!(parent, Parent::Detached) && !toplevel { requested_slot.clone() } else { None };
+                (slot, if toplevel { lt.present.clone() } else { None })
+            }
+            // X7: a toplevel declared inside an element is transient for the enclosing toplevel
+            // (backend-abi.md "Toplevels in the tree"), never a child of the element's slots.
+            Parent::Element(..) if toplevel => (None, lt.present.clone()),
+            Parent::Element(p, _) if self.sem.attaches_to(&er).is_some_and(|t| self.sem.is_a(p, t)) && self.sem.place_child(p, &er, requested_slot.as_deref()).is_err() => {
+                // an event controller, a context menu: inserted into the element itself, no slot
+                attached = true;
+                if requested_slot.is_some() {
+                    self.diags.native_error("slot_not_applicable", tag_span, format!("<{}> attaches to <{}> and takes no slot", el.name, p.tag));
+                }
+                (None, None)
             }
             Parent::Element(p, pid) => match self.sem.place_child(p, &er, requested_slot.as_deref()) {
                 Ok(plan) => {
@@ -719,8 +732,18 @@ impl<'a> Lower<'a, '_, '_> {
         let mut inline_dirs: Vec<(String, AttrValue<'a>)> = Vec::new();
         let mut inline_setters: Vec<(StyleLowering, Span)> = Vec::new();
         let mut style_span: Option<Span> = None;
+        let mut show: Option<String> = None;
         for a in &el.attributes {
             match a {
+                // X7: how a toplevel is shown once it (and the enclosing toplevel) is in place
+                AttributeLike::Attribute(at) if toplevel && at.name == "show" => match static_text(at).as_deref() {
+                    Some(m @ ("modal" | "modeless" | "none")) => show = Some(m.to_string()),
+                    _ => {
+                        self.diags
+                            .native_error("show_invalid", name_span(at), format!("<{}> `show` must be a static \"modal\", \"modeless\" or \"none\"", el.name))
+                            .help("`none` leaves opening the toplevel to the app (`bind:this` + call('present'))");
+                    }
+                },
                 AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") || (at.name == "class" && class_prop.is_none()) => {}
                 AttributeLike::Attribute(at) if native_style && at.name == "id" => {
                     let value = match (static_text(at), dynamic_of(at)) {
@@ -876,13 +899,29 @@ impl<'a> Lower<'a, '_, '_> {
         let text_prop = self.sem.text_content(&er).cloned().filter(|_| !only_element_children(&el.fragment));
         let children = if let Some(tc) = text_prop {
             self.text_content(el, &tc.js, &mut ops);
-            Fragment::default()
+            // attached children (a context menu, an event controller) do not mix with the text:
+            // they are not the element's content
+            let mut f = Fragment::default();
+            for n in &el.fragment.nodes {
+                if let FragmentNode::RegularElement(c) = n
+                    && self.attaches(&c.name)
+                    && let Some(e) = self.element(c, &Parent::Element(er.clone(), id), &chain)
+                {
+                    f.items.push(Item::Element(e));
+                }
+            }
+            f
         } else {
             self.fragment(&el.fragment, &Parent::Element(er.clone(), id), &chain)
         };
         self.forced_slot = forced;
 
-        Some(Element { id, span: el.span(), kind: er.tag.clone(), present, slot, class_expr, id_expr, ops, children })
+        Some(Element { id, span: el.span(), kind: er.tag.clone(), present, toplevel, show, attached, slot, class_expr, id_expr, ops, children })
+    }
+
+    /// Whether `tag` is a kind that attaches to its parent element (spec `attaches_to`).
+    fn attaches(&self, tag: &str) -> bool {
+        self.sem.resolve_element(tag).ok().is_some_and(|r| self.sem.attaches_to(&r).is_some())
     }
 
     fn push_static(&mut self, ops: &mut Vec<Op<'a>>, prop: &crate::semantics::PropertySpec, text: Option<&str>, at: &Attribute) {
@@ -921,6 +960,8 @@ impl<'a> Lower<'a, '_, '_> {
                     let alternate = b.alternate.as_ref().map(|a| trim_parts(self.text_parts(el, a))).unwrap_or_default();
                     parts.push(TemplatePart::If { test: &b.test, consequent, alternate });
                 }
+                // lowered as the element's attached children (element(), text-content branch)
+                FragmentNode::RegularElement(c) if std::ptr::eq(f, &el.fragment) && self.attaches(&c.name) => {}
                 other => {
                     let prop = self.text_prop.clone().unwrap_or_default();
                     let element = matches!(

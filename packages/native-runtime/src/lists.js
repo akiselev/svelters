@@ -18,10 +18,10 @@ import * as $ from 'svelte/internal/client';
 // Svelte's client context functions (the public 'svelte' entry resolves to the server build
 // without the browser condition); resolved by the alias in ../vite.js and test/register.mjs.
 import { getAllContexts, setContext } from 'svelte/internal/client/context';
-import { diffKeys } from '@svelters/lists/diff';
+import { diffKeys } from './lists-diff.js';
 import { append, element, mount, on, rowOutlet, set } from './index.js';
 
-export { diffKeys, applySplices, lis } from '@svelters/lists/diff';
+export { diffKeys, applySplices, lis, MAX_OPS } from './lists-diff.js';
 
 /** `arr.splice` without spreading (a 100k-item insert would overflow the argument limit). */
 function spliceArray(arr, pos, removed, add) {

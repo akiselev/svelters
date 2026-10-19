@@ -2,8 +2,8 @@
 // through the counter example's driver: scripted `clicked` becomes a real click, `changed` real
 // typing into the entry, `gone` a native window close. Checks per case and backend:
 //   - the run succeeded with no host errors;
-//   - existing fixtures: the native widget tree read back from the toolkit equals the JS
-//     pipeline's (the same fixture built by packages/build, run by the same driver);
+//   - shared fixtures: the native widget tree read back from the toolkit equals the
+//     fixture's own build (fixtures/<name>/dist, run by the same driver);
 //   - own fixtures: the tree equals <dir>/expected.<backend>.native.json (UPDATE=1 records it).
 // Screenshots: out/<backend>/<name>/native.png. Needs `cargo build -p counter`.
 import fs from 'node:fs';
@@ -51,11 +51,11 @@ for (const backend of BACKENDS) {
     let against = '';
     if (!c.own) {
       const theirs = run(backend, path.dirname(c.jsExpected), script, path.join(dir, 'native-js.json'), null);
-      if (!theirs.ok) problems.push(`JS pipeline run failed on ${backend}: ${JSON.stringify(theirs.failures ?? theirs.errors)}`);
+      if (!theirs.ok) problems.push(`fixture build run failed on ${backend}: ${JSON.stringify(theirs.failures ?? theirs.errors)}`);
       else if (JSON.stringify(tree(ours)) !== JSON.stringify(tree(theirs))) {
-        problems.push(`native tree differs from the JS pipeline's:\n  ours:   ${JSON.stringify(tree(ours))}\n  theirs: ${JSON.stringify(tree(theirs))}`);
+        problems.push(`native tree differs from the fixture build's:\n  ours:   ${JSON.stringify(tree(ours))}\n  theirs: ${JSON.stringify(tree(theirs))}`);
       }
-      against = 'native tree == JS pipeline on the same toolkit';
+      against = 'native tree == fixture build on the same toolkit';
     } else {
       const exp = path.join(c.dir, `expected.${backend}.native.json`);
       const got = JSON.stringify(tree(ours), null, 1) + '\n';

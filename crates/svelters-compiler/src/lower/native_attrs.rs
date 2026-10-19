@@ -12,7 +12,7 @@ use crate::svelte::ast::{AttachTag, Script};
 pub const CHILD_ATTR_PREFIX: &str = "parent:";
 
 /// What the instance/module scripts tell lowering: local names of `listen` imported from
-/// `@svelters/renderer`, and top-level `const x = { ... }` object literals (spreadable).
+/// `@svelters/native-runtime`, and top-level `const x = { ... }` object literals (spreadable).
 #[derive(Default)]
 pub(super) struct ScriptFacts<'a> {
     pub listen: HashSet<String>,
@@ -27,7 +27,7 @@ impl<'a> ScriptFacts<'a> {
                 match stmt {
                     Statement::ImportDeclaration(d) => {
                         let crate::estree::LiteralNode::Literal(src) = &d.source;
-                        if !matches!(&src.value, LiteralValue::String(v) if v == RENDERER_MODULE) {
+                        if !matches!(&src.value, LiteralValue::String(v) if v == HELPERS_MODULE) {
                             continue;
                         }
                         for sp in &d.specifiers {
@@ -60,8 +60,8 @@ impl<'a> ScriptFacts<'a> {
     }
 }
 
-/// The renderer module whose `listen` helper compiled components get from the native runtime.
-pub const RENDERER_MODULE: &str = "@svelters/renderer";
+/// The module whose `listen` helper (and `NativeEvent`, `StaleHandleError`, `LISTEN_*`) components import.
+pub const HELPERS_MODULE: &str = "@svelters/native-runtime";
 
 /// A value taken from a spread object.
 pub(super) enum SpreadValue<'a> {
@@ -333,7 +333,7 @@ impl<'a> Lower<'a, '_, '_> {
     }
 
     /// `{@attach expr}`. `listen(type, handler, { after, capture })` imported from
-    /// @svelters/renderer, with a static type and static flags, is resolved and phase-checked at
+    /// @svelters/native-runtime, with a static type and static flags, is resolved and phase-checked at
     /// compile time; any other attachment runs as Svelte's `$.attach` with the runtime node.
     pub(super) fn attach_op(&mut self, er: &ElementRef, t: &'a AttachTag) -> Option<Op<'a>> {
         let span = t.span();

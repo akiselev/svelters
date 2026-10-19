@@ -3,6 +3,6 @@ fn main() {
         .qt_from_pkg_config("Qt6Widgets")
         .profile_dev_fat()
         .with_verification_tests()
-        .dts_out("packages/renderer/types/qt.d.ts")
+        .dts_out("packages/native-runtime/types/qt.d.ts")
         .build();
 }

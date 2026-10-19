@@ -166,9 +166,16 @@ impl Codegen<'_, '_> {
         let n = format!("$$n{}", e.id + 1); // `$$` is reserved by Svelte, so user bindings cannot collide
         self.line();
         self.w.map(e.span.start);
-        match &e.present {
-            Some(p) => self.w.write(&format!("const {n} = $n.element({}, {});", js_str(&e.kind), js_str(p))),
-            None => self.w.write(&format!("const {n} = $n.element({});", js_str(&e.kind))),
+        if e.toplevel {
+            let present = e.present.as_deref().map_or("null".to_string(), js_str);
+            match &e.show {
+                Some(s) => self.w.write(&format!("const {n} = $n.toplevel({}, {present}, {});", js_str(&e.kind), js_str(s))),
+                None => self.w.write(&format!("const {n} = $n.toplevel({}, {present});", js_str(&e.kind))),
+            }
+        } else if e.attached {
+            self.w.write(&format!("const {n} = $n.attached({});", js_str(&e.kind)));
+        } else {
+            self.w.write(&format!("const {n} = $n.element({});", js_str(&e.kind)));
         }
         if let Some(c) = &e.class_expr {
             self.line();

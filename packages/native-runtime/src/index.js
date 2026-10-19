@@ -11,8 +11,8 @@ import { block, branch, component_root, destroy_effect } from 'svelte/internal/c
 import { queue_micro_task } from 'svelte/internal/client/dom/task';
 // The X6 styling of @svelters/renderer (classes, widget name, inline style, sheets, tokens) works
 // on any node with `h`, `tag`, `attrs` and `sc`: compiled components drive it through `attr`.
-import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty } from '@svelters/renderer/style';
-import { ROW_OUTLETS } from '@svelters/renderer/bindings';
+import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty } from './style.js';
+import { ROW_OUTLETS, TOPLEVELS } from './bindings.generated.js';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
@@ -42,11 +42,14 @@ class Scope {
 }
 
 class Native {
-  constructor(kind, h, present) {
+  constructor(kind, h, top) {
     this.kind = kind;
     this.h = h;
     this.host = host();
-    this.present = present ?? null;
+    this.top = top ?? null; // toplevel kinds: { present, show }; `shown` once its show policy ran
+    this.shown = false;
+    this.nested = false; // a toplevel declared inside an element (transient for the enclosing one)
+    this.attached = false; // attached to its parent element (an event controller, a context menu)
     this.scope = scope;
     this.owner = null; // the container or region this node was appended to
     this.np = null; // native parent (Native) while inserted
@@ -159,8 +162,11 @@ function natives(item, out = []) {
   return out;
 }
 
+/** Not positioned among its parent's children: a transient toplevel or an attached node. */
+const unplaced = (n) => n.nested || n.attached;
+
 function firstNative(item) {
-  if (item instanceof Native) return item.np && alive(item) ? item : null;
+  if (item instanceof Native) return item.np && alive(item) && !unplaced(item) ? item : null;
   for (const x of item.items) {
     const n = firstNative(x);
     if (n) return n;
@@ -183,17 +189,114 @@ function nextNative(item) {
 function attach(node) {
   const t = target(node.owner);
   if (t instanceof Root) {
-    if (!node.present) throw new Error(`only toplevel kinds may be mounted at the root, got <${node.kind}>`);
-    if (alive(node)) node.host.call(node.h, node.present, []);
+    if (!node.top) throw new Error(`only toplevel kinds may be mounted at the root, got <${node.kind}>`);
+    if (alive(node)) showTop(node);
+    settle();
+    return;
+  }
+  if (node.top) {
+    // X7: transient for the enclosing toplevel, shown after it (settle)
+    node.nested = true;
+    pendingTops.push(node);
+    settle();
     return;
   }
   const parent = t.node;
   if (!alive(parent) || !alive(node)) return;
+  if (node.attached) {
+    // an event controller or context menu: inserted into the element itself, no slot or position
+    node.host.insert(parent.h, node.h, null, undefined);
+    node.np = parent;
+    return;
+  }
   const before = nextNative(node);
   node.host.insert(parent.h, node.h, before ? before.h : null, t.name ?? undefined);
   node.np = parent;
   node.slotName = t.name;
   applyChildAttrs(node);
+  if (pendingTops.length) settle();
+}
+
+// ---------------------------------------------------------------------------------------------
+// Toplevels (X7, backend-abi.md "Toplevels in the tree")
+
+/** Toplevels declared inside an element, waiting for the enclosing toplevel to be known or shown. */
+let pendingTops = [];
+
+/**
+ * The toplevel `node` is declared in: the nearest enclosing native of a toplevel kind; null when
+ * there is none (mounted into a target); undefined while the chain of appends is not complete.
+ */
+function enclosingTop(node) {
+  for (let c = node.owner; ; ) {
+    const t = target(c);
+    if (t instanceof Root) return null;
+    const n = t.node;
+    if (n.top) return n;
+    if (n.mountTarget) return null;
+    if (!n.owner) return undefined;
+    c = n.owner;
+  }
+}
+
+/** Inserts pending toplevels into their enclosing toplevel (transient) and shows them after it. */
+function settle() {
+  for (let progress = true; progress && pendingTops.length; ) {
+    progress = false;
+    for (const n of [...pendingTops]) {
+      const anc = enclosingTop(n);
+      const drop = !alive(n) || (anc && !alive(anc));
+      if (!drop && anc === undefined) continue;
+      if (!drop && anc && !n.np) {
+        n.host.insert(anc.h, n.h, null, undefined);
+        n.np = anc;
+        progress = true;
+      }
+      if (drop || !anc || anc.shown) {
+        pendingTops.splice(pendingTops.indexOf(n), 1);
+        if (!drop) showTop(n);
+        progress = true;
+      }
+    }
+  }
+}
+
+/** The first of `names` the host resolves as a method of `node`'s kind (the first without ids). */
+function pickMethod(node, names) {
+  const hs = node.host;
+  if (names.length === 1 || typeof hs.methodId !== 'function' || typeof hs.kindId !== 'function') return names[0];
+  let kid;
+  try {
+    kid = hs.kindId(node.kind);
+  } catch {
+    return names[0];
+  }
+  for (const n of names) {
+    try {
+      if (hs.methodId(kid, n) != null) return n;
+    } catch {
+      // not a method of this kind
+    }
+  }
+  return names[names.length - 1];
+}
+
+/**
+ * The `show` policy: `modal` (dialog default: the modal method, `modal` set first when the kind
+ * has it and the app did not set it), `modeless` (window default: the spec's present method) or
+ * `none` (the app opens it through `bind:this`).
+ */
+function showTop(node) {
+  node.shown = true;
+  const spec = Object.hasOwn(TOPLEVELS, node.kind) ? TOPLEVELS[node.kind] : null;
+  const mode = node.top.show ?? (spec?.dialog ? 'modal' : 'modeless');
+  if (mode === 'none') return;
+  let m;
+  if (mode === 'modal' && spec) {
+    m = pickMethod(node, spec.open);
+    if (m === 'present' && spec.modalProp && !node.last.has('modal')) set(node, 'modal', true);
+  } else m = node.top.present ?? pickMethod(node, spec?.modeless ?? ['present']);
+  node.host.call(node.h, m, []);
 }
 
 // Sends every `parent:` attribute of `node` to its native parent; called right after an insert
@@ -243,11 +346,33 @@ export function rowOutlet() {
 }
 
 export function element(kind, present) {
+  if (present) return toplevel(kind, present);
+  return create(kind, null);
+}
+
+function create(kind, top) {
   if (!scope) throw new Error('element() outside a mounted component');
   const hs = host();
-  const n = new Native(kind, hs.create(kind), present);
+  const n = new Native(kind, hs.create(kind), top);
   table(hs).set(n.h, n);
   scope.natives.push(n);
+  return n;
+}
+
+/**
+ * A toplevel kind (X7). At the root it is shown by its `show` policy once its subtree is complete;
+ * inside an element it becomes transient for the enclosing toplevel (`host.insert(enclosing, h)`)
+ * and is shown after that one. `present`: the spec's modeless show method (null: picked from
+ * TOPLEVELS); `show`: a static `show="modal|modeless|none"`.
+ */
+export function toplevel(kind, present = null, show = undefined) {
+  return create(kind, { present, show });
+}
+
+/** A kind that attaches to its parent element (spec `attaches_to`): inserted with no slot or position. */
+export function attached(kind) {
+  const n = create(kind, null);
+  n.attached = true;
   return n;
 }
 
@@ -1080,6 +1205,7 @@ function relink(parent, effects) {
 function move(b) {
   const before = nextNative(b);
   for (const n of natives(b)) {
+    if (unplaced(n)) continue;
     n.host.remove(n.np.h, n.h);
     n.host.insert(n.np.h, n.h, before ? before.h : null, n.slotName ?? undefined);
     applyChildAttrs(n);
@@ -1123,7 +1249,9 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
   globalThis.__svelters_gone = gone;
   globalThis.__svelters_node = nodeFor;
   // a runtime node (a list row's outlet, lists.js) or a bare host handle
-  const root = target == null ? new Root() : slot(target instanceof Native ? target : new Native('#target', target, null), null);
+  const mountNode = target == null ? null : target instanceof Native ? target : new Native('#target', target, null);
+  if (mountNode) mountNode.mountTarget = true;
+  const root = mountNode ? slot(mountNode, null) : new Root();
   const s = new Scope(null);
   const prev = scope;
   scope = s;

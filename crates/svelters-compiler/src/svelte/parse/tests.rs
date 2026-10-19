@@ -365,8 +365,8 @@ fn svelte_options_without_expressions() {
     assert_eq!(o.attributes.len(), 4);
     assert_eq!(names(&root.fragment.nodes), ["\"x\""]);
 
-    let root = ok("<svelte:options customRenderer=\"./r.js\" />");
-    assert_eq!(root.options.unwrap().custom_renderer, Some(Some("./r.js".into())));
+    // stock Svelte 5.57.2 has no `customRenderer` option (it was the retired fork's)
+    assert_eq!(err("<svelte:options customRenderer=\"./r.js\" />").0, "svelte_options_unknown_attribute");
 }
 
 #[test]
@@ -380,10 +380,6 @@ fn svelte_options_errors() {
     assert_eq!(err("<svelte:options customElement=\"font-face\" />").0, "svelte_options_reserved_tagname");
     assert_eq!(err("<svelte:options customElement />").0, "svelte_options_invalid_customelement");
     assert_eq!(err("<svelte:options class:x />").0, "svelte_options_invalid_attribute");
-    assert_eq!(
-        err("<svelte:options css=\"injected\" customRenderer=\"./r.js\" />"),
-        ("incompatible_with_custom_renderer", "`css: 'injected'` is not compatible with `customRenderer`".into(), 16, 30)
-    );
     assert_eq!(err("<svelte:options>x</svelte:options>"), ("svelte_meta_invalid_content", "<svelte:options> cannot have children".into(), 16, 17));
 }
 

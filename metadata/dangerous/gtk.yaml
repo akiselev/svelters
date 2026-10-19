@@ -185,7 +185,7 @@ rules:
     severity: other
     reason: >-
       Startup notification is window-system state: GTK hands the id to the window system when the window is shown, which
-      the renderer's `show` attribute does (packages/renderer/src/index.js:390-401). AI1 review moved it to the
+      the runtime's `show` attribute does (packages/native-runtime/src/index.js `showTop`). AI1 review moved it to the
       window-system deny pattern (metadata/rules/gtk.yaml).
     use_instead: Nothing; svelters has no startup-notification support.
 
@@ -203,7 +203,7 @@ rules:
     severity: corrupts-tree
     reason: >-
       The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs,
-      packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps
+      packages/native-runtime/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps
       (crates/svelters-gtk/src/backend.rs:679-692).
     use_instead: 'Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes.'
     evidence: [crates/svelters-gtk/src/backend.rs:674-693]
