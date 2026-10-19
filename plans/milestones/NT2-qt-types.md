@@ -81,4 +81,66 @@ has a line budget.
 
 ## Completion record
 
-(filled in below)
+Branch `worktree-agent-a0c7f1e79811c8505`, pushed as `ci/nt2`. Master (CL0, NT1, RT1, up to 1d39e648) merged in.
+Gates and CI below were observed on **3e87d51f**; the commit after it only adds this record.
+
+**Commits:** a5f4db77 (ingest + classifier), 128b3cfe (core, thunks, construct/call_static, JS modules, typings,
+docs, boundary check), 1952af7a (fixtures, host/core tests, replay), the follow-ups up to 08ebaede (member table
+order, dynamic fallback after getters, omitted optional arguments, unknown-member wording, CI bundles), fc553711
+(ledger), the master merges b5d8a8f3 / 354fc05e, dcf3c7ba (post-RT1 fixtures), 3e87d51f (signal hook survives
+later mounts).
+
+**Gates (local, after the last code change):**
+- `tools/dev/headless tools/dev/cargo-slot cargo nextest run --workspace --no-fail-fast`: **2082 passed, 0 failed,
+  7 skipped**. Earlier runs that guided fixes: `counter::integration borrowed_walk_qt` (probe errors now say
+  "unknown method") and `host_types native_models_feed_lists` after RT1 (see 3e87d51f).
+- `counter-qt` alone: 64/64 before the master merge (types_core 9, host_types 3, generated incl. 38 type facts,
+  oplog_replay replaying `qt-types` with its construct/static/call/event lines).
+- `python3 tools/metadata/ledger.py refresh --toolkit qt`: 749 facts, 1826 tests, 0 manual / 0 inferred not
+  passing, 0 parked; `ledger.py check`: qt 634 manual facts verified (595 before: +38 type facts, +1 `text-edit`
+  `document` prop), inferred 115; gtk 550, appkit 79, winui 60 unchanged.
+- `corepack pnpm -r build` (with a `pnpm` shim on PATH and `cargo build -p svelters-compiler` first): ok.
+- `corepack pnpm test` (incl. `test:meta`: pytest 135 passed / 1 skipped, ledger check, coverage check): ok.
+- `python3 tools/docs/build_ir.py` then `corepack pnpm docs:test`: unittest 11 (1 skipped) OK, site tests 17/17.
+- `@svelters/types` node tests 19/19 and strict `tsc` on GTK + Qt typings.
+
+**CI on `ci/nt2` @ 3e87d51f:** js 39336650956 success, linux-gtk 39336651034 success, linux-qt (Qt 6.11.3)
+39336650902 success, macos-appkit 39336650906 success, windows-winui 39336651076 success.
+
+**Classification** (`metadata/qt/types/report.txt`): all public classes — record 12, value 108, object 113,
+model 12, statics 8, unique 33, item 23, transient 82, needs-override 8, unclassified 12, excluded 291,
+widget 73. Bound: 118 classes (QtCore 58, QtGui 59, QtWidgets 1; 60 roots). Members: QtCore 1229/1336 (91%),
+QtGui 1378/1488 (92%), QtWidgets 40/40; 412 hidden (value mutators and prop readers); overloads: 2079 JS names, 112
+overloaded, 45 spelling variants merged, 2 const twins, 3 renamed, 0 ambiguous. Curated (ledger-tested): QTimer,
+QStringListModel, QStandardItemModel, QStandardItem, QTextDocument, QUrl, QFileInfo, QIcon, QMimeDatabase,
+QTemporaryDir.
+
+**Generated size and leaf build time** (same machine, debug `-O0 -g`, single g++ per file, load ~4):
+- `svl_qt_backend.cpp` 39,449 → 97,674 lines (1.83 → 4.72 MB); compile 64.9 s → 174.4 s.
+- `svl_qt_verify.cpp` 24,539 → 25,521 lines; compile 94.6 s → 98.0 s.
+- The leaf build script used to compile the two units one after the other (~160 s); it now compiles them in
+  parallel (`svelters-qt-build`), so the leaf rebuild is bounded by the backend unit (~175 s + generator).
+  `tools/dev/qt-leaf-timing` measures a forced rebuild (its wall time includes waiting for a cargo slot).
+- JS: `packages/types/qt` 678 KB (137 files); a bundle imports only the classes it uses (shake test).
+
+**ABI:** no change. The Qt backend implements the v2.5 members; conventions are recorded in
+`plans/architecture/backend-abi.md` ("Qt non-GUI types (NT2, no ABI change)").
+
+**Shared files touched outside the Qt lane:** `packages/types/src/core.js` / `core.d.ts` (constructor arguments
+forwarded, `isProps`/`constructObject`, TestHost-shaped values, the dispatch hook kept in front of later runtime
+installs — that last one also fixes GTK listeners registered before a ListView mounts), `packages/types/vite.js` and
+`package.json` (qt aliases/exports via `tools/metadata/common/types_pkg.py`, used by both generators),
+`tools/metadata/gtk/types_closure.py` (reads the Qt manifest too), `serdes.hpp.in` (records from maps, flags from
+name lists, kinds on VALUE handles), `metadata/overrides/qt/QTextEdit.yaml` (`document` accessor prop; gen_cpp
+accepts object-typed accessor props), `.github/workflows/linux-qt.yml` (builds `tests/qt-types-*`).
+
+**Open items:**
+- libclang pass for nested public-field structs not done (QFont::Tag 12 members, QTextOption::Tab 4,
+  QCalendar::YearMonthDay 3, QColorSpace::PrimaryPoints 3 stay blocked).
+- `async_from_future` has no Qt 6.11 member to bind (only QtConcurrent / platform APIs return QFuture); tested
+  through `svl_qt_test_future`.
+- The backend translation unit roughly tripled; splitting the type layer into its own unit (shared core header)
+  would let it compile in parallel too. The roots list is the other knob.
+- QMap/QHash/QSet parameters (29 members: `itemData`, `roleNames`, ...) and `QBindable` are blocked.
+- `concrete:` / `platform_enum_members:` / `platform_members:` are hand lists where qdoc lacks the fact.
+- Qt returned QObjects stay BORROWED (no refcount to take); only factory results become SHARED.
