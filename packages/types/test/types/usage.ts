@@ -33,4 +33,19 @@ const attrs = AttrList.fromString('0 5 weight bold');
 // @ts-expect-error value classes hide their mutators
 font.setFamily('Serif');
 
-void [store, n, text, names, dir, dialog, icon, bytes, ok, family, same, attrs, Texture, Clipboard, Cancellable];
+// N1: async members return Promises and take { signal } last; callbacks are typed functions
+async function asyncUsage(parent: { readonly svlHandle: number | null }) {
+  const signal = { aborted: false, addEventListener(_type: 'abort', _fn: () => void) {} };
+  const r = await File.newForPath('/tmp/a').loadContentsAsync({ signal });
+  const c: Uint8Array = r.contents;
+  const etag: string | null = r.etagOut;
+  const info = await File.newForPath('/tmp/a').queryInfoAsync('standard::size', 'none');
+  const size: number = info.getSize();
+  const picked: File = await dialog.open(parent);
+  // @ts-expect-error the GCancellable is not part of an async signature
+  await File.newForPath('/tmp/a').loadContentsAsync(new Cancellable());
+  const usage = File.newForPath('/tmp').measureDiskUsage('none', null, (reporting: boolean, current: number) => void [reporting, current]);
+  return [c, etag, size, picked, usage];
+}
+
+void [store, n, text, names, dir, dialog, icon, bytes, ok, family, same, attrs, Texture, Clipboard, Cancellable, asyncUsage];

@@ -3,6 +3,7 @@ import { CONSTRUCT, call, callStatic, construct, constructProps, getProp, setPro
 import { Object as GObject_Object } from '../gobject/Object.js';
 import { PageSetup } from './PageSetup.js';
 import { PrintContext } from './PrintContext.js';
+import { PrintOperationPreview } from './PrintOperationPreview.js';
 import { PrintSettings } from './PrintSettings.js';
 
 export class PrintOperation extends GObject_Object {
@@ -18,8 +19,10 @@ export class PrintOperation extends GObject_Object {
     'end-print': [['o', () => PrintContext]],
     'got-page-size': [['o', () => PrintContext], ['o', () => PageSetup]],
     'paginate': [['o', () => PrintContext]],
+    'preview': [['o', () => PrintOperationPreview], ['o', () => PrintContext], null],
     'ready': [['o', () => PrintContext]],
     'request-page-setup': [['o', () => PrintContext], null, ['o', () => PageSetup]],
+    'update-custom-widget': [null, ['o', () => PageSetup], ['o', () => PrintSettings]],
   };
 
   static [CONSTRUCT](props) {
@@ -72,6 +75,10 @@ export class PrintOperation extends GObject_Object {
 
   isFinished() {
     return call(this, 'is_finished', []);
+  }
+
+  run(action, parent = null) {
+    return call(this, 'run', [action, parent]);
   }
 
   setAllowAsync(allowAsync) {

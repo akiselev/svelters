@@ -11,7 +11,11 @@ export class ColumnViewCell extends ListItem {
   static bases = ["Gtk.ColumnViewCell", "Gtk.ListItem", "GObject.Object"];
 
   static [CONSTRUCT](props) {
-    return construct(this.native, constructProps(this, props, {'accessibleDescription': ['accessible-description'], 'accessibleLabel': ['accessible-label'], 'activatable': ['activatable'], 'focusable': ['focusable'], 'selectable': ['selectable']}));
+    return construct(this.native, constructProps(this, props, {'accessibleDescription': ['accessible-description'], 'accessibleLabel': ['accessible-label'], 'activatable': ['activatable'], 'child': ['child'], 'focusable': ['focusable'], 'selectable': ['selectable']}));
+  }
+
+  getChild() {
+    return call(this, 'get_child', []);
   }
 
   getFocusable() {
@@ -30,8 +34,19 @@ export class ColumnViewCell extends ListItem {
     return call(this, 'get_selected', []);
   }
 
+  setChild(child = null) {
+    call(this, 'set_child', [child]);
+  }
+
   setFocusable(focusable) {
     call(this, 'set_focusable', [focusable]);
+  }
+
+  get child() {
+    return getProp(this, 'child');
+  }
+  set child(v) {
+    setProp(this, 'child', v);
   }
 
   get focusable() {

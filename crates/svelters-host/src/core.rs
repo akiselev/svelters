@@ -514,6 +514,12 @@ impl Core {
                     .and_then(|k| st.signal_names.get(&(*k, signal)))
                     .cloned()
             };
+            // Objects the backend minted for the event (a GFileMonitor's file) join the handle table.
+            if name.is_some() {
+                for a in &args {
+                    self.adopt_handles(a);
+                }
+            }
             match name {
                 Some(signal) => out.push(DispatchEvent::Signal {
                     handle,

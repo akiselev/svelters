@@ -46,7 +46,7 @@ export class DirectoryList extends GObject_Object {
     call(this, 'set_file', [file]);
   }
 
-  setIoPriority(ioPriority) {
+  setIoPriority(ioPriority = 0) {
     call(this, 'set_io_priority', [ioPriority]);
   }
 

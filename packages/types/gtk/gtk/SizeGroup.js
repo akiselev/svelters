@@ -17,8 +17,20 @@ export class SizeGroup extends GObject_Object {
     return wrapObject(SizeGroup, callStatic('Gtk.SizeGroup', 'new', [mode]));
   }
 
+  addWidget(widget) {
+    call(this, 'add_widget', [widget]);
+  }
+
   getMode() {
     return call(this, 'get_mode', []);
+  }
+
+  getWidgets() {
+    return call(this, 'get_widgets', []);
+  }
+
+  removeWidget(widget) {
+    call(this, 'remove_widget', [widget]);
   }
 
   setMode(mode) {

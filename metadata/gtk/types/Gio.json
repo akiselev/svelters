@@ -405,12 +405,7 @@
   },
   "AppInfo": {
    "abstract": false,
-   "blocked": {
-    "get_default_for_type_async": "async",
-    "get_default_for_uri_scheme_async": "async",
-    "launch_default_for_uri_async": "async",
-    "launch_uris_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -627,6 +622,42 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "launch_uris_finish",
+      "outs": []
+     },
+     "js": "launchUrisAsync",
+     "name": "launch_uris_async",
+     "params": [
+      {
+       "js": "uris",
+       "name": "uris",
+       "nullable": true,
+       "type": {
+        "elem": {
+         "k": "str"
+        },
+        "k": "list",
+        "slist": false
+       }
+      },
+      {
+       "js": "context",
+       "name": "context",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.AppLaunchContext"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.60",
+     "throws": true
+    },
+    {
      "js": "removeSupportsType",
      "name": "remove_supports_type",
      "params": [
@@ -829,6 +860,36 @@
      "ret_nullable": true
     },
     {
+     "async": {
+      "finish": "get_default_for_type_finish",
+      "outs": []
+     },
+     "js": "getDefaultForTypeAsync",
+     "name": "get_default_for_type_async",
+     "params": [
+      {
+       "js": "contentType",
+       "name": "content_type",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "mustSupportUris",
+       "name": "must_support_uris",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.AppInfo"
+     },
+     "since": "2.74",
+     "throws": true
+    },
+    {
      "js": "getDefaultForUriScheme",
      "name": "get_default_for_uri_scheme",
      "params": [
@@ -845,6 +906,29 @@
       "t": "Gio.AppInfo"
      },
      "ret_nullable": true
+    },
+    {
+     "async": {
+      "finish": "get_default_for_uri_scheme_finish",
+      "outs": []
+     },
+     "js": "getDefaultForUriSchemeAsync",
+     "name": "get_default_for_uri_scheme_async",
+     "params": [
+      {
+       "js": "uriScheme",
+       "name": "uri_scheme",
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.AppInfo"
+     },
+     "since": "2.74",
+     "throws": true
     },
     {
      "js": "getFallbackForType",
@@ -914,6 +998,37 @@
      "ret": {
       "k": "bool"
      },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "launch_default_for_uri_finish",
+      "outs": []
+     },
+     "js": "launchDefaultForUriAsync",
+     "name": "launch_default_for_uri_async",
+     "params": [
+      {
+       "js": "uri",
+       "name": "uri",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "context",
+       "name": "context",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.AppLaunchContext"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.50",
      "throws": true
     },
     {
@@ -2202,9 +2317,7 @@
   },
   "AsyncInitable": {
    "abstract": false,
-   "blocked": {
-    "init_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -2214,7 +2327,31 @@
    "interfaces": [],
    "kind": "interface",
    "lifetime": "shared",
-   "methods": [],
+   "methods": [
+    {
+     "async": {
+      "finish": "init_finish",
+      "outs": []
+     },
+     "js": "initAsync",
+     "name": "init_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
+    }
+   ],
    "name": "AsyncInitable",
    "ns": "Gio",
    "parent": null,
@@ -2646,21 +2783,16 @@
   "DBusConnection": {
    "abstract": false,
    "blocked": {
-    "add_filter": "callback",
-    "call": "async",
+    "call": "variant",
     "call_sync": "variant",
-    "call_with_unix_fd_list": "async",
+    "call_with_unix_fd_list": "variant",
     "call_with_unix_fd_list_sync": "variant",
-    "close": "async",
     "emit_signal": "variant",
-    "flush": "async",
-    "new": "async",
-    "new_for_address": "async",
     "register_object_with_closures2": "unbound:GObject.Closure",
     "register_subtree": "type:needs-override:Gio.DBusSubtreeVTable",
-    "send_message_with_reply": "async",
+    "send_message_with_reply": "async: start has out parameters",
     "signal:closed": "gerror",
-    "signal_subscribe": "callback"
+    "signal_subscribe": "callback: variant"
    },
    "builder": false,
    "category": "object",
@@ -2776,6 +2908,68 @@
    "lifetime": "shared",
    "methods": [
     {
+     "js": "addFilter",
+     "name": "add_filter",
+     "params": [
+      {
+       "js": "filterFunction",
+       "name": "filter_function",
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "connection",
+           "type": {
+            "k": "object",
+            "t": "Gio.DBusConnection"
+           }
+          },
+          {
+           "name": "message",
+           "type": {
+            "k": "object",
+            "t": "Gio.DBusMessage"
+           }
+          },
+          {
+           "name": "incoming",
+           "type": {
+            "k": "bool"
+           }
+          }
+         ],
+         "ret": {
+          "k": "object",
+          "t": "Gio.DBusMessage"
+         }
+        },
+        "t": "Gio.DBusMessageFilterFunction"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "2.26"
+    },
+    {
+     "async": {
+      "finish": "close_finish",
+      "outs": []
+     },
+     "js": "close",
+     "name": "close",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.26",
+     "throws": true
+    },
+    {
      "js": "closeSync",
      "name": "close_sync",
      "params": [
@@ -2847,6 +3041,20 @@
       "t": "guint"
      },
      "since": "2.32",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "flush_finish",
+      "outs": []
+     },
+     "js": "flush",
+     "name": "flush",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.26",
      "throws": true
     },
     {
@@ -3318,7 +3526,97 @@
    "scope": "closure",
    "signals": [],
    "since": "2.26",
-   "statics": [],
+   "statics": [
+    {
+     "async": {
+      "finish": "new_finish",
+      "outs": []
+     },
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "stream",
+       "name": "stream",
+       "type": {
+        "k": "object",
+        "t": "Gio.IOStream"
+       }
+      },
+      {
+       "js": "guid",
+       "name": "guid",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.DBusConnectionFlags"
+       }
+      },
+      {
+       "js": "observer",
+       "name": "observer",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.DBusAuthObserver"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.DBusConnection"
+     },
+     "since": "2.26",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "new_for_address_finish",
+      "outs": []
+     },
+     "js": "newForAddress",
+     "name": "new_for_address",
+     "params": [
+      {
+       "js": "address",
+       "name": "address",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.DBusConnectionFlags"
+       }
+      },
+      {
+       "js": "observer",
+       "name": "observer",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.DBusAuthObserver"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.DBusConnection"
+     },
+     "since": "2.26",
+     "throws": true
+    }
+   ],
    "undecided": []
   },
   "DBusInterfaceInfo": {
@@ -3868,6 +4166,7 @@
       {
        "js": "value",
        "name": "value",
+       "nullable": true,
        "type": {
         "k": "str"
        }
@@ -4267,12 +4566,7 @@
   },
   "Drive": {
    "abstract": false,
-   "blocked": {
-    "eject_with_operation": "async",
-    "poll_for_media": "async",
-    "start": "async",
-    "stop": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -4325,6 +4619,38 @@
       "k": "bool"
      },
      "since": "2.22"
+    },
+    {
+     "async": {
+      "finish": "eject_with_operation_finish",
+      "outs": []
+     },
+     "js": "ejectWithOperation",
+     "name": "eject_with_operation",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     },
     {
      "js": "enumerateIdentifiers",
@@ -4451,6 +4777,83 @@
       "k": "bool"
      },
      "since": "2.50"
+    },
+    {
+     "async": {
+      "finish": "poll_for_media_finish",
+      "outs": []
+     },
+     "js": "pollForMedia",
+     "name": "poll_for_media",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "start_finish",
+      "outs": []
+     },
+     "js": "start",
+     "name": "start",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.DriveStartFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "stop_finish",
+      "outs": []
+     },
+     "js": "stop",
+     "name": "stop",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     }
    ],
    "name": "Drive",
@@ -4460,8 +4863,11 @@
    "properties": [],
    "qualified": "Gio.Drive",
    "refs": [
+    "Gio.DriveStartFlags",
     "Gio.DriveStartStopType",
     "Gio.Icon",
+    "Gio.MountOperation",
+    "Gio.MountUnmountFlags",
     "Gio.Volume"
    ],
    "scope": "closure",
@@ -4491,42 +4897,10 @@
   "File": {
    "abstract": false,
    "blocked": {
-    "append_to_async": "async",
-    "copy_async_with_closures": "async",
-    "create_async": "async",
-    "create_readwrite_async": "async",
-    "delete_async": "async",
-    "eject_mountable_with_operation": "async",
-    "enumerate_children_async": "async",
-    "find_enclosing_mount_async": "async",
-    "load_bytes_async": "async",
-    "load_contents_async": "async",
-    "make_directory_async": "async",
-    "make_symbolic_link_async": "async",
-    "measure_disk_usage": "callback",
-    "mount_enclosing_volume": "async",
-    "mount_mountable": "async",
-    "move": "callback",
-    "move_async_with_closures": "async",
-    "new_tmp_async": "async",
-    "new_tmp_dir_async": "async",
-    "open_readwrite_async": "async",
-    "poll_mountable": "async",
-    "query_default_handler_async": "async",
-    "query_filesystem_info_async": "async",
-    "query_info_async": "async",
-    "read_async": "async",
-    "replace_async": "async",
-    "replace_contents_async": "async",
-    "replace_contents_bytes_async": "callback",
-    "replace_readwrite_async": "async",
-    "set_attribute": "gpointer",
-    "set_attributes_async": "async",
-    "set_display_name_async": "async",
-    "start_mountable": "async",
-    "stop_mountable": "async",
-    "trash_async": "async",
-    "unmount_mountable_with_operation": "async"
+    "copy_async_with_closures": "async: no finish function",
+    "move_async_with_closures": "async: no finish function",
+    "replace_contents_bytes_async": "async: no finish function",
+    "set_attribute": "gpointer"
    },
    "builder": false,
    "category": "object",
@@ -4557,6 +4931,37 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileOutputStream"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "append_to_finish",
+      "outs": []
+     },
+     "js": "appendToAsync",
+     "name": "append_to_async",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileCreateFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -4658,6 +5063,37 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "create_finish",
+      "outs": []
+     },
+     "js": "createAsync",
+     "name": "create_async",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileCreateFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileOutputStream"
+     },
+     "throws": true
+    },
+    {
      "js": "createReadwrite",
      "name": "create_readwrite",
      "params": [
@@ -4676,6 +5112,38 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileIOStream"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "create_readwrite_finish",
+      "outs": []
+     },
+     "js": "createReadwriteAsync",
+     "name": "create_readwrite_async",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileCreateFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -4706,6 +5174,29 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "delete_finish",
+      "outs": []
+     },
+     "js": "deleteAsync",
+     "name": "delete_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.34",
+     "throws": true
+    },
+    {
      "js": "dup",
      "name": "dup",
      "params": [],
@@ -4713,6 +5204,38 @@
       "k": "object",
       "t": "Gio.File"
      }
+    },
+    {
+     "async": {
+      "finish": "eject_mountable_with_operation_finish",
+      "outs": []
+     },
+     "js": "ejectMountableWithOperation",
+     "name": "eject_mountable_with_operation",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     },
     {
      "js": "enumerateChildren",
@@ -4750,6 +5273,44 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "enumerate_children_finish",
+      "outs": []
+     },
+     "js": "enumerateChildrenAsync",
+     "name": "enumerate_children_async",
+     "params": [
+      {
+       "js": "attributes",
+       "name": "attributes",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileQueryInfoFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileEnumerator"
+     },
+     "throws": true
+    },
+    {
      "js": "equal",
      "name": "equal",
      "params": [
@@ -4777,6 +5338,29 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.Mount"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "find_enclosing_mount_finish",
+      "outs": []
+     },
+     "js": "findEnclosingMountAsync",
+     "name": "find_enclosing_mount_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -4992,6 +5576,31 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "load_bytes_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "etagOut",
+        "name": "etag_out",
+        "nullable": true,
+        "type": {
+         "k": "str"
+        }
+       }
+      ]
+     },
+     "js": "loadBytesAsync",
+     "name": "load_bytes_async",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.56",
+     "throws": true
+    },
+    {
      "js": "loadContents",
      "name": "load_contents",
      "params": [
@@ -5044,6 +5653,53 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "load_contents_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "contents",
+        "name": "contents",
+        "type": {
+         "elem": {
+          "k": "int",
+          "t": "guint8"
+         },
+         "k": "array",
+         "len": 2
+        }
+       },
+       {
+        "dir": "out",
+        "hidden": true,
+        "js": "length",
+        "name": "length",
+        "nullable": true,
+        "type": {
+         "k": "int",
+         "t": "gsize"
+        }
+       },
+       {
+        "dir": "out",
+        "js": "etagOut",
+        "name": "etag_out",
+        "nullable": true,
+        "type": {
+         "k": "str"
+        }
+       }
+      ]
+     },
+     "js": "loadContentsAsync",
+     "name": "load_contents_async",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
      "js": "makeDirectory",
      "name": "make_directory",
      "params": [
@@ -5060,6 +5716,29 @@
      "ret": {
       "k": "bool"
      },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "make_directory_finish",
+      "outs": []
+     },
+     "js": "makeDirectoryAsync",
+     "name": "make_directory_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.38",
      "throws": true
     },
     {
@@ -5106,6 +5785,138 @@
      "ret": {
       "k": "bool"
      },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "make_symbolic_link_finish",
+      "outs": []
+     },
+     "js": "makeSymbolicLinkAsync",
+     "name": "make_symbolic_link_async",
+     "params": [
+      {
+       "js": "symlinkValue",
+       "name": "symlink_value",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.74",
+     "throws": true
+    },
+    {
+     "js": "measureDiskUsage",
+     "name": "measure_disk_usage",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileMeasureFlags"
+       }
+      },
+      {
+       "js": "cancellable",
+       "name": "cancellable",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.Cancellable"
+       }
+      },
+      {
+       "js": "progressCallback",
+       "name": "progress_callback",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "reporting",
+           "type": {
+            "k": "bool"
+           }
+          },
+          {
+           "name": "current_size",
+           "type": {
+            "k": "int",
+            "t": "guint64"
+           }
+          },
+          {
+           "name": "num_dirs",
+           "type": {
+            "k": "int",
+            "t": "guint64"
+           }
+          },
+          {
+           "name": "num_files",
+           "type": {
+            "k": "int",
+            "t": "guint64"
+           }
+          }
+         ],
+         "ret": {
+          "k": "void"
+         }
+        },
+        "t": "Gio.FileMeasureProgressCallback"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "diskUsage",
+       "name": "disk_usage",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "guint64"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "numDirs",
+       "name": "num_dirs",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "guint64"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "numFiles",
+       "name": "num_files",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "guint64"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.38",
      "throws": true
     },
     {
@@ -5194,6 +6005,135 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "mount_enclosing_volume_finish",
+      "outs": []
+     },
+     "js": "mountEnclosingVolume",
+     "name": "mount_enclosing_volume",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountMountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "mount_mountable_finish",
+      "outs": []
+     },
+     "js": "mountMountable",
+     "name": "mount_mountable",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountMountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "throws": true
+    },
+    {
+     "js": "move",
+     "name": "move",
+     "params": [
+      {
+       "js": "destination",
+       "name": "destination",
+       "type": {
+        "k": "object",
+        "t": "Gio.File"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileCopyFlags"
+       }
+      },
+      {
+       "js": "cancellable",
+       "name": "cancellable",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.Cancellable"
+       }
+      },
+      {
+       "js": "progressCallback",
+       "name": "progress_callback",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "current_num_bytes",
+           "type": {
+            "k": "int",
+            "t": "gint64"
+           }
+          },
+          {
+           "name": "total_num_bytes",
+           "type": {
+            "k": "int",
+            "t": "gint64"
+           }
+          }
+         ],
+         "ret": {
+          "k": "void"
+         }
+        },
+        "t": "Gio.FileProgressCallback"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
      "js": "openReadwrite",
      "name": "open_readwrite",
      "params": [
@@ -5215,6 +6155,30 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "open_readwrite_finish",
+      "outs": []
+     },
+     "js": "openReadwriteAsync",
+     "name": "open_readwrite_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileIOStream"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
      "js": "peekPath",
      "name": "peek_path",
      "params": [],
@@ -5223,6 +6187,20 @@
      },
      "ret_nullable": true,
      "since": "2.56"
+    },
+    {
+     "async": {
+      "finish": "poll_mountable_finish",
+      "outs": []
+     },
+     "js": "pollMountable",
+     "name": "poll_mountable",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     },
     {
      "js": "queryDefaultHandler",
@@ -5242,6 +6220,30 @@
       "k": "object",
       "t": "Gio.AppInfo"
      },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "query_default_handler_finish",
+      "outs": []
+     },
+     "js": "queryDefaultHandlerAsync",
+     "name": "query_default_handler_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.AppInfo"
+     },
+     "since": "2.60",
      "throws": true
     },
     {
@@ -5318,6 +6320,36 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "query_filesystem_info_finish",
+      "outs": []
+     },
+     "js": "queryFilesystemInfoAsync",
+     "name": "query_filesystem_info_async",
+     "params": [
+      {
+       "js": "attributes",
+       "name": "attributes",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileInfo"
+     },
+     "throws": true
+    },
+    {
      "js": "queryInfo",
      "name": "query_info",
      "params": [
@@ -5343,6 +6375,44 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileInfo"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "query_info_finish",
+      "outs": []
+     },
+     "js": "queryInfoAsync",
+     "name": "query_info_async",
+     "params": [
+      {
+       "js": "attributes",
+       "name": "attributes",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileQueryInfoFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -5413,6 +6483,29 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "read_finish",
+      "outs": []
+     },
+     "js": "readAsync",
+     "name": "read_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileInputStream"
+     },
+     "throws": true
+    },
+    {
      "js": "replace",
      "name": "replace",
      "params": [
@@ -5446,6 +6539,52 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileOutputStream"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "replace_finish",
+      "outs": []
+     },
+     "js": "replaceAsync",
+     "name": "replace_async",
+     "params": [
+      {
+       "js": "etag",
+       "name": "etag",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "makeBackup",
+       "name": "make_backup",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileCreateFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -5528,6 +6667,74 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "replace_contents_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "newEtag",
+        "name": "new_etag",
+        "nullable": true,
+        "type": {
+         "k": "str"
+        }
+       }
+      ]
+     },
+     "js": "replaceContentsAsync",
+     "name": "replace_contents_async",
+     "params": [
+      {
+       "js": "contents",
+       "name": "contents",
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "guint8"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "length",
+       "name": "length",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "etag",
+       "name": "etag",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "makeBackup",
+       "name": "make_backup",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileCreateFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
      "js": "replaceReadwrite",
      "name": "replace_readwrite",
      "params": [
@@ -5561,6 +6768,53 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileIOStream"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "replace_readwrite_finish",
+      "outs": []
+     },
+     "js": "replaceReadwriteAsync",
+     "name": "replace_readwrite_async",
+     "params": [
+      {
+       "js": "etag",
+       "name": "etag",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "makeBackup",
+       "name": "make_backup",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileCreateFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -5839,6 +7093,54 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "set_attributes_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "info",
+        "name": "info",
+        "type": {
+         "k": "object",
+         "t": "Gio.FileInfo"
+        }
+       }
+      ]
+     },
+     "js": "setAttributesAsync",
+     "name": "set_attributes_async",
+     "params": [
+      {
+       "js": "info",
+       "name": "info",
+       "type": {
+        "k": "object",
+        "t": "Gio.FileInfo"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.FileQueryInfoFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
      "js": "setAttributesFromInfo",
      "name": "set_attributes_from_info",
      "params": [
@@ -5901,6 +7203,100 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "set_display_name_finish",
+      "outs": []
+     },
+     "js": "setDisplayNameAsync",
+     "name": "set_display_name_async",
+     "params": [
+      {
+       "js": "displayName",
+       "name": "display_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "start_mountable_finish",
+      "outs": []
+     },
+     "js": "startMountable",
+     "name": "start_mountable",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.DriveStartFlags"
+       }
+      },
+      {
+       "js": "startOperation",
+       "name": "start_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "stop_mountable_finish",
+      "outs": []
+     },
+     "js": "stopMountable",
+     "name": "stop_mountable",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
      "js": "supportsThreadContexts",
      "name": "supports_thread_contexts",
      "params": [],
@@ -5927,6 +7323,61 @@
       "k": "bool"
      },
      "throws": true
+    },
+    {
+     "async": {
+      "finish": "trash_finish",
+      "outs": []
+     },
+     "js": "trashAsync",
+     "name": "trash_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.38",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "unmount_mountable_with_operation_finish",
+      "outs": []
+     },
+     "js": "unmountMountableWithOperation",
+     "name": "unmount_mountable_with_operation",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     }
    ],
    "name": "File",
@@ -5939,6 +7390,7 @@
     "GLib.Bytes",
     "Gio.AppInfo",
     "Gio.Cancellable",
+    "Gio.DriveStartFlags",
     "Gio.FileAttributeInfoList",
     "Gio.FileCopyFlags",
     "Gio.FileCreateFlags",
@@ -5946,12 +7398,16 @@
     "Gio.FileIOStream",
     "Gio.FileInfo",
     "Gio.FileInputStream",
+    "Gio.FileMeasureFlags",
     "Gio.FileMonitor",
     "Gio.FileMonitorFlags",
     "Gio.FileOutputStream",
     "Gio.FileQueryInfoFlags",
     "Gio.FileType",
-    "Gio.Mount"
+    "Gio.Mount",
+    "Gio.MountMountFlags",
+    "Gio.MountOperation",
+    "Gio.MountUnmountFlags"
    ],
    "scope": "root",
    "signals": [],
@@ -6078,6 +7534,80 @@
       "t": "Gio.File"
      },
      "since": "2.32",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "new_tmp_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "iostream",
+        "name": "iostream",
+        "type": {
+         "k": "object",
+         "t": "Gio.FileIOStream"
+        }
+       }
+      ]
+     },
+     "js": "newTmpAsync",
+     "name": "new_tmp_async",
+     "params": [
+      {
+       "js": "tmpl",
+       "name": "tmpl",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "since": "2.74",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "new_tmp_dir_finish",
+      "outs": []
+     },
+     "js": "newTmpDirAsync",
+     "name": "new_tmp_dir_async",
+     "params": [
+      {
+       "js": "tmpl",
+       "name": "tmpl",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "since": "2.74",
      "throws": true
     },
     {
@@ -6265,10 +7795,7 @@
   },
   "FileEnumerator": {
    "abstract": false,
-   "blocked": {
-    "close_async": "async",
-    "next_files_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -6290,6 +7817,28 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "close_finish",
+      "outs": []
+     },
+     "js": "closeAsync",
+     "name": "close_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -6405,6 +7954,41 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "next_files_finish",
+      "outs": []
+     },
+     "js": "nextFilesAsync",
+     "name": "next_files_async",
+     "params": [
+      {
+       "js": "numFiles",
+       "name": "num_files",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "object",
+       "t": "Gio.FileInfo"
+      },
+      "k": "list",
+      "slist": false
+     },
+     "throws": true
+    },
+    {
      "js": "setPending",
      "name": "set_pending",
      "params": [
@@ -6453,9 +8037,7 @@
   },
   "FileIOStream": {
    "abstract": false,
-   "blocked": {
-    "query_info_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -6496,6 +8078,37 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileInfo"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "query_info_finish",
+      "outs": []
+     },
+     "js": "queryInfoAsync",
+     "name": "query_info_async",
+     "params": [
+      {
+       "js": "attributes",
+       "name": "attributes",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -7675,9 +9288,7 @@
   },
   "FileInputStream": {
    "abstract": false,
-   "blocked": {
-    "query_info_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -7708,6 +9319,36 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileInfo"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "query_info_finish",
+      "outs": []
+     },
+     "js": "queryInfoAsync",
+     "name": "query_info_async",
+     "params": [
+      {
+       "js": "attributes",
+       "name": "attributes",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -7884,9 +9525,7 @@
   },
   "FileOutputStream": {
    "abstract": false,
-   "blocked": {
-    "query_info_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -7934,6 +9573,36 @@
       "t": "Gio.FileInfo"
      },
      "throws": true
+    },
+    {
+     "async": {
+      "finish": "query_info_finish",
+      "outs": []
+     },
+     "js": "queryInfoAsync",
+     "name": "query_info_async",
+     "params": [
+      {
+       "js": "attributes",
+       "name": "attributes",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.FileInfo"
+     },
+     "throws": true
     }
    ],
    "name": "FileOutputStream",
@@ -7954,10 +9623,7 @@
   },
   "IOStream": {
    "abstract": true,
-   "blocked": {
-    "close_async": "async",
-    "splice_async": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -7988,6 +9654,29 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "close_finish",
+      "outs": []
+     },
+     "js": "closeAsync",
+     "name": "close_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -8044,6 +9733,45 @@
      },
      "since": "2.22",
      "throws": true
+    },
+    {
+     "async": {
+      "finish": "splice_finish",
+      "outs": []
+     },
+     "js": "spliceAsync",
+     "name": "splice_async",
+     "params": [
+      {
+       "js": "stream2",
+       "name": "stream2",
+       "type": {
+        "k": "object",
+        "t": "Gio.IOStream"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.IOStreamSpliceFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.28",
+     "throws": true
     }
    ],
    "name": "IOStream",
@@ -8093,6 +9821,7 @@
    "qualified": "Gio.IOStream",
    "refs": [
     "Gio.Cancellable",
+    "Gio.IOStreamSpliceFlags",
     "Gio.InputStream",
     "Gio.OutputStream"
    ],
@@ -8241,11 +9970,8 @@
   "InputStream": {
    "abstract": true,
    "blocked": {
-    "close_async": "async",
-    "read_all_async": "async",
-    "read_async": "async",
-    "read_bytes_async": "async",
-    "skip_async": "async"
+    "read_all_async": "async: start has out parameters",
+    "read_async": "async: start has out parameters"
    },
    "builder": false,
    "category": "object",
@@ -8276,6 +10002,28 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "close_finish",
+      "outs": []
+     },
+     "js": "closeAsync",
+     "name": "close_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -8422,6 +10170,38 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "read_bytes_finish",
+      "outs": []
+     },
+     "js": "readBytesAsync",
+     "name": "read_bytes_async",
+     "params": [
+      {
+       "js": "count",
+       "name": "count",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "since": "2.34",
+     "throws": true
+    },
+    {
      "js": "setPending",
      "name": "set_pending",
      "params": [],
@@ -8449,6 +10229,37 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gssize"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "skip_finish",
+      "outs": []
+     },
+     "js": "skipAsync",
+     "name": "skip_async",
+     "params": [
+      {
+       "js": "count",
+       "name": "count",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -8611,10 +10422,10 @@
   "ListStore": {
    "abstract": false,
    "blocked": {
-    "find_with_equal_func": "callback",
-    "find_with_equal_func_full": "callback",
-    "insert_sorted": "callback",
-    "sort": "callback"
+    "find_with_equal_func": "callback: gpointer",
+    "find_with_equal_func_full": "callback: gpointer",
+    "insert_sorted": "callback: gpointer",
+    "sort": "callback: gpointer"
    },
    "builder": false,
    "category": "model",
@@ -8837,9 +10648,7 @@
   },
   "LoadableIcon": {
    "abstract": false,
-   "blocked": {
-    "load_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -8878,6 +10687,39 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.InputStream"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "load_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "type",
+        "name": "type",
+        "nullable": true,
+        "type": {
+         "k": "str"
+        }
+       }
+      ]
+     },
+     "js": "loadAsync",
+     "name": "load_async",
+     "params": [
+      {
+       "js": "size",
+       "name": "size",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -9895,12 +11737,7 @@
   },
   "Mount": {
    "abstract": false,
-   "blocked": {
-    "eject_with_operation": "async",
-    "guess_content_type": "async",
-    "remount": "async",
-    "unmount_with_operation": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -9926,6 +11763,38 @@
      "ret": {
       "k": "bool"
      }
+    },
+    {
+     "async": {
+      "finish": "eject_with_operation_finish",
+      "outs": []
+     },
+     "js": "ejectWithOperation",
+     "name": "eject_with_operation",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     },
     {
      "js": "getDefaultLocation",
@@ -10012,6 +11881,28 @@
      "ret_nullable": true
     },
     {
+     "async": {
+      "finish": "guess_content_type_finish",
+      "outs": []
+     },
+     "js": "guessContentType",
+     "name": "guess_content_type",
+     "params": [
+      {
+       "js": "forceRescan",
+       "name": "force_rescan",
+       "type": {
+        "k": "bool"
+       }
+      }
+     ],
+     "ret": {
+      "k": "strv"
+     },
+     "since": "2.18",
+     "throws": true
+    },
+    {
      "js": "guessContentTypeSync",
      "name": "guess_content_type_sync",
      "params": [
@@ -10048,6 +11939,37 @@
      "since": "2.20"
     },
     {
+     "async": {
+      "finish": "remount_finish",
+      "outs": []
+     },
+     "js": "remount",
+     "name": "remount",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountMountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
      "js": "shadow",
      "name": "shadow",
      "params": [],
@@ -10055,6 +11977,38 @@
       "k": "void"
      },
      "since": "2.20"
+    },
+    {
+     "async": {
+      "finish": "unmount_with_operation_finish",
+      "outs": []
+     },
+     "js": "unmountWithOperation",
+     "name": "unmount_with_operation",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     },
     {
      "js": "unshadow",
@@ -10077,6 +12031,9 @@
     "Gio.Drive",
     "Gio.File",
     "Gio.Icon",
+    "Gio.MountMountFlags",
+    "Gio.MountOperation",
+    "Gio.MountUnmountFlags",
     "Gio.Volume"
    ],
    "scope": "closure",
@@ -10774,16 +12731,10 @@
   "OutputStream": {
    "abstract": true,
    "blocked": {
-    "close_async": "async",
-    "flush_async": "async",
-    "splice_async": "async",
-    "write_all_async": "async",
-    "write_async": "async",
-    "write_bytes_async": "async",
     "writev": "type:needs-override:Gio.OutputVector",
     "writev_all": "type:needs-override:Gio.OutputVector",
-    "writev_all_async": "async",
-    "writev_async": "async"
+    "writev_all_async": "type:needs-override:Gio.OutputVector",
+    "writev_async": "type:needs-override:Gio.OutputVector"
    },
    "builder": false,
    "category": "object",
@@ -10823,6 +12774,28 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "close_finish",
+      "outs": []
+     },
+     "js": "closeAsync",
+     "name": "close_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
      "js": "flush",
      "name": "flush",
      "params": [
@@ -10833,6 +12806,28 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "flush_finish",
+      "outs": []
+     },
+     "js": "flushAsync",
+     "name": "flush_async",
+     "params": [
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -10902,6 +12897,45 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gssize"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "splice_finish",
+      "outs": []
+     },
+     "js": "spliceAsync",
+     "name": "splice_async",
+     "params": [
+      {
+       "js": "source",
+       "name": "source",
+       "type": {
+        "k": "object",
+        "t": "Gio.InputStream"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.OutputStreamSpliceFlags"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -11003,6 +13037,105 @@
      "throws": true
     },
     {
+     "async": {
+      "finish": "write_all_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "bytesWritten",
+        "name": "bytes_written",
+        "nullable": true,
+        "type": {
+         "k": "int",
+         "t": "gsize"
+        }
+       }
+      ]
+     },
+     "js": "writeAllAsync",
+     "name": "write_all_async",
+     "params": [
+      {
+       "js": "buffer",
+       "name": "buffer",
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "guint8"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "count",
+       "name": "count",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.44",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "write_finish",
+      "outs": []
+     },
+     "js": "writeAsync",
+     "name": "write_async",
+     "params": [
+      {
+       "js": "buffer",
+       "name": "buffer",
+       "type": {
+        "elem": {
+         "k": "int",
+         "t": "guint8"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "count",
+       "name": "count",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gssize"
+     },
+     "throws": true
+    },
+    {
      "js": "writeBytes",
      "name": "write_bytes",
      "params": [
@@ -11021,6 +13154,37 @@
        "type": {
         "k": "object",
         "t": "Gio.Cancellable"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gssize"
+     },
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "write_bytes_finish",
+      "outs": []
+     },
+     "js": "writeBytesAsync",
+     "name": "write_bytes_async",
+     "params": [
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      },
+      {
+       "js": "ioPriority",
+       "name": "io_priority",
+       "type": {
+        "k": "int",
+        "t": "gint"
        }
       }
      ],
@@ -11051,10 +13215,7 @@
   },
   "Permission": {
    "abstract": true,
-   "blocked": {
-    "acquire_async": "async",
-    "release_async": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -11079,6 +13240,20 @@
        }
       }
      ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.26",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "acquire_finish",
+      "outs": []
+     },
+     "js": "acquireAsync",
+     "name": "acquire_async",
+     "params": [],
      "ret": {
       "k": "bool"
      },
@@ -11157,6 +13332,20 @@
        }
       }
      ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.26",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "release_finish",
+      "outs": []
+     },
+     "js": "releaseAsync",
+     "name": "release_async",
+     "params": [],
      "ret": {
       "k": "bool"
      },
@@ -11335,7 +13524,7 @@
    "blocked": {
     "bind_with_mapping_closures": "unbound:GObject.Closure",
     "get_default_value": "variant",
-    "get_mapped": "callback",
+    "get_mapped": "callback: variant",
     "get_user_value": "variant",
     "get_value": "variant",
     "prop:settings-schema": "struct by value",
@@ -12910,6 +15099,25 @@
      "throws": true
     },
     {
+     "js": "appendTake",
+     "name": "append_take",
+     "params": [
+      {
+       "js": "fd",
+       "name": "fd",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gsize"
+     },
+     "since": "2.90"
+    },
+    {
      "js": "get",
      "name": "get",
      "params": [
@@ -12938,6 +15146,44 @@
       "t": "gint"
      },
      "since": "2.24"
+    },
+    {
+     "js": "lookup",
+     "name": "lookup",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.90"
+    },
+    {
+     "js": "peek",
+     "name": "peek",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "2.90"
     },
     {
      "js": "peekFds",
@@ -13007,10 +15253,7 @@
   },
   "Volume": {
    "abstract": false,
-   "blocked": {
-    "eject_with_operation": "async",
-    "mount": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -13036,6 +15279,38 @@
      "ret": {
       "k": "bool"
      }
+    },
+    {
+     "async": {
+      "finish": "eject_with_operation_finish",
+      "outs": []
+     },
+     "js": "ejectWithOperation",
+     "name": "eject_with_operation",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountUnmountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.22",
+     "throws": true
     },
     {
      "js": "enumerateIdentifiers",
@@ -13140,6 +15415,37 @@
      "ret_nullable": true
     },
     {
+     "async": {
+      "finish": "mount_finish",
+      "outs": []
+     },
+     "js": "mount",
+     "name": "mount",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gio.MountMountFlags"
+       }
+      },
+      {
+       "js": "mountOperation",
+       "name": "mount_operation",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.MountOperation"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "throws": true
+    },
+    {
      "js": "shouldAutomount",
      "name": "should_automount",
      "params": [],
@@ -13158,7 +15464,10 @@
     "Gio.Drive",
     "Gio.File",
     "Gio.Icon",
-    "Gio.Mount"
+    "Gio.Mount",
+    "Gio.MountMountFlags",
+    "Gio.MountOperation",
+    "Gio.MountUnmountFlags"
    ],
    "scope": "closure",
    "signals": [

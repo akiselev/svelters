@@ -110,6 +110,52 @@ export const construct = (native, props) => host().construct(native, props);
 /** `host.callStatic`: a static function or constructor function of the native type `native`. */
 export const callStatic = (native, method, args) => host().callStatic(native, method, args);
 
+// ---- async (N1) -----------------------------------------------------------------------------------
+
+// wrapper -> number of its async calls in flight. While a call runs, the object it was made on stays
+// reachable, so the garbage collector cannot release the handle (which would cancel the native
+// operation and reject the Promise with `disposed`): `await File.newForPath(p).loadContentsAsync()` works.
+const inflight = new Map();
+
+function settle(self, p, shape) {
+  if (self !== null) inflight.set(self, (inflight.get(self) ?? 0) + 1);
+  const done = () => {
+    if (self === null) return;
+    const n = inflight.get(self) - 1;
+    if (n > 0) inflight.set(self, n);
+    else inflight.delete(self);
+  };
+  return Promise.resolve(p).then(
+    (r) => {
+      done();
+      return shape ? shape(r) : r;
+    },
+    (e) => {
+      done();
+      throw e;
+    },
+  );
+}
+
+function withOptions(args, options) {
+  if (options === undefined || options === null) return args;
+  if (typeof options !== 'object') throw new TypeError('async options must be an object ({ signal })');
+  return [...args, options];
+}
+
+/**
+ * An async method (`_async` + `_finish` folded, `SVL_M_ASYNC`): resolves with the finish result shaped by
+ * `shape`, rejects with a `NativeError`. `options.signal` (an `AbortSignal`) cancels the operation.
+ */
+export function callAsync(self, method, args, options, shape) {
+  return settle(self, host().call(handleFor(self), method, withOptions(args, options)), shape);
+}
+
+/** An async static function or constructor. */
+export function callStaticAsync(native, method, args, options, shape) {
+  return settle(null, host().callStatic(native, method, withOptions(args, options)), shape);
+}
+
 /** A GType argument: a generated class (its native name) or a native type name. */
 export function typeArg(x) {
   if (x === null || x === undefined) return null;

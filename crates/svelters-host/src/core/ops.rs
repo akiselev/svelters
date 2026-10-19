@@ -456,7 +456,7 @@ impl Core {
                 (None, Name::Id(i)) => format!("#{i}"),
             };
             if let Some(d) = desc.as_ref().filter(|d| d.flags & SVL_M_ASYNC != 0) {
-                return self.op_call_async(e, h, m, k, d, &mname, args);
+                return self.op_call_async(e, h, m, k, d, &mname, args, false);
             }
             let given = JsReader::len(e, args)?;
             let mut ar = Arena::new();
@@ -581,7 +581,7 @@ impl Core {
     /// Handles that come back inside a result and are new to the host (the backend minted them
     /// for native objects it did not create) join the handle table with the kind and lifetime
     /// class the backend reports. Known handles (an object we created) are left alone.
-    fn adopt_handles(&self, v: &Value) {
+    pub(super) fn adopt_handles(&self, v: &Value) {
         match v {
             Value::Handle(h) => {
                 if self.st.borrow().handles.contains_key(h) || *h >= MAX_HANDLE {
@@ -597,6 +597,9 @@ impl Core {
                 }
             }
             Value::List(items) => items.iter().for_each(|i| self.adopt_handles(i)),
+            Value::Record { fields, .. } => fields.iter().for_each(|i| self.adopt_handles(i)),
+            // Out-parameter objects folded into an async completion.
+            Value::Map(entries) => entries.iter().for_each(|(_, v)| self.adopt_handles(v)),
             _ => {}
         }
     }

@@ -20,7 +20,7 @@ export class ColumnViewSorter extends Sorter {
 
   getNthSortColumn(position) {
     const __res = call(this, 'get_nth_sort_column', [position]);
-    return { ret: wrapObject(ColumnViewColumn, __res.ret), sortOrder: __res.sortOrder };
+    return { ret: wrapObject(ColumnViewColumn, __res.ret), sortOrder: __res.sort_order };
   }
 
   getPrimarySortColumn() {

@@ -1,53 +1,51 @@
-// Callbacks, async methods and GError on real GIO calls, through the host and the GTK backend.
+// GIO services on the generic path (N1): the generated `Gio.File` class over the GI invoker. Sync calls,
+// out parameters, GError -> NativeError, `_async`/`_finish` folded into Promises (resolve, reject,
+// abort), a call-scope callback, enumeration and a file monitor's signal. Replaces the hand-written
+// `gio-file` service of S1/S2.
 // __DIR__ is replaced by the test with a scratch directory holding a.txt, b.txt and c.txt.
-const h = globalThis.__svelters_host;
+import { File } from './types/gtk/gio/File.js';
+
 const log = (...a) => console.log(a.join(' '));
 const text = (bytes) => String.fromCharCode(...bytes);
 const DIR = '__DIR__';
 
 async function main() {
-  const f = h.create('gio-file');
+  const f = File.newForPath(DIR + '/a.txt');
 
-  // sync: strings, bool, bytes
-  h.setProp(f, 'path', DIR + '/a.txt');
-  log('path', h.getProp(f, 'path') === DIR + '/a.txt', h.getProp(f, 'uri').startsWith('file://'));
-  log('exists', h.call(f, 'exists', []));
-  const bytes = h.call(f, 'loadContents', []);
-  log('loadContents', bytes instanceof Uint8Array, JSON.stringify(text(bytes)));
-  // out parameters: the call answers {ret, contents, etag}
-  const withEtag = h.call(f, 'loadContentsEtag', []);
-  log('loadContentsEtag', Object.keys(withEtag).join(), withEtag.ret, withEtag.contents instanceof Uint8Array, JSON.stringify(text(withEtag.contents)), withEtag.etag === null || typeof withEtag.etag === 'string');
+  // sync: strings, bool
+  log('path', f.getPath() === DIR + '/a.txt', f.getUri().startsWith('file://'));
+  log('exists', f.queryExists());
+  // out parameters: {ret, contents, etagOut}
+  const r = f.loadContents();
+  log('loadContents', Object.keys(r).join(), r.ret, r.contents instanceof Uint8Array, JSON.stringify(text(r.contents)), r.etagOut === null || typeof r.etagOut === 'string');
 
   // sync GError -> NativeError (domain, GIOErrorEnum member name, message)
-  h.setProp(f, 'path', DIR + '/missing.txt');
-  log('exists missing', h.call(f, 'exists', []));
+  const missing = File.newForPath(DIR + '/missing.txt');
+  log('exists missing', missing.queryExists());
   try {
-    h.call(f, 'loadContents', []);
+    missing.loadContents();
     log('no error');
   } catch (e) {
     log('sync error', e.name, e.domain, e.code, e instanceof NativeError, /missing\.txt/.test(e.message));
   }
 
-  // async: g_file_load_contents_async -> Promise<Uint8Array>
-  h.setProp(f, 'path', DIR + '/b.txt');
-  const pending = h.call(f, 'loadContentsAsync', []);
+  // async: g_file_load_contents_async + _finish -> Promise<{ret, contents, etagOut}>
+  const pending = File.newForPath(DIR + '/b.txt').loadContentsAsync();
   log('async returns a promise', pending instanceof Promise);
   const data = await pending;
-  log('async result', JSON.stringify(text(data)));
+  log('async result', Object.keys(data).join(), JSON.stringify(text(data.contents)));
 
   // async failure rejects with the same NativeError shape
-  h.setProp(f, 'path', DIR + '/missing.txt');
   try {
-    await h.call(f, 'loadContentsAsync', []);
+    await missing.loadContentsAsync();
     log('no rejection');
   } catch (e) {
     log('async rejection', e.name, e.domain, e.code);
   }
 
   // AbortSignal -> g_cancellable_cancel -> GIO completes with `cancelled`
-  h.setProp(f, 'path', DIR + '/c.txt');
   const ac = new AbortController();
-  const aborted = h.call(f, 'loadContentsAsync', [{ signal: ac.signal }]);
+  const aborted = File.newForPath(DIR + '/c.txt').loadContentsAsync({ signal: ac.signal });
   ac.abort();
   try {
     await aborted;
@@ -56,31 +54,36 @@ async function main() {
     log('abort', e.name, e.domain, e.code);
   }
 
-  // call-scope callback: g_file_enumerate_children, one JS call per child
-  h.setProp(f, 'path', DIR);
-  const names = [];
-  const n = h.call(f, 'listNames', [(name) => { names.push(name); return true; }]);
-  log('listNames', n, JSON.stringify(names.sort()));
-  let first = null;
-  h.call(f, 'listNames', [(name) => { first = name; return false; }]);
-  log('listNames stops on false', first !== null);
+  // an async result that is an object: a FileInfo, wrapped as its generated class
+  const info = await f.queryInfoAsync('standard::size,standard::name', 'none');
+  log('queryInfoAsync', info.constructor.name, info.getSize(), info.getName());
 
-  // notified-scope callback: g_file_monitor; the test creates a file once we say MONITORING
+  // enumeration: FileEnumerator.next_file until null (main.js, the three files and the staged types/)
+  const dir = File.newForPath(DIR);
+  const en = dir.enumerateChildren('standard::name', 'none');
+  const names = [];
+  for (let i; (i = en.nextFile()) !== null; ) names.push(i.getName());
+  log('enumerate', names.length, JSON.stringify(names.filter((n) => n.endsWith('.txt')).sort()));
+
+  // call-scope callback: g_file_measure_disk_usage reports progress synchronously
+  const progress = [];
+  const usage = dir.measureDiskUsage('none', null, (reporting, size, dirs, files) => progress.push([reporting, files]));
+  log('measureDiskUsage', usage.ret, usage.numFiles >= 3, progress.length > 0);
+
+  // a file monitor's `changed` signal; the test creates new.txt once we say MONITORING
+  const mon = dir.monitorDirectory('none');
   const events = [];
-  h.call(f, 'monitor', [(event, path) => { events.push(event); if (event === 'created') log('EVENT created', path.endsWith('/new.txt')); }]);
+  const off = mon.on('changed', (file, other, event) => {
+    events.push(event);
+    if (event === 'created') log('EVENT created', file.getPath().endsWith('/new.txt'));
+  });
   log('MONITORING');
   await new Promise((resolve) => {
     const poll = () => (events.includes('created') ? resolve() : setTimeout(poll, 10));
     poll();
   });
-
-  // unmonitor releases the callback natively; destroying the owner releases the rest
-  h.call(f, 'unmonitor', []);
-  const owner = h.create('gio-file');
-  h.setProp(owner, 'path', DIR);
-  h.call(owner, 'monitor', [() => {}]);
-  h.destroy(owner);
-  h.destroy(f);
+  off();
+  mon.cancel();
   log('ALL DONE');
 }
 

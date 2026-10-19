@@ -47,6 +47,8 @@ export { DropTarget } from './DropTarget.js';
 export { DropTargetAsync } from './DropTargetAsync.js';
 export { Editable } from './Editable.js';
 export { EntryBuffer } from './EntryBuffer.js';
+export { EnumList } from './EnumList.js';
+export { EnumListItem } from './EnumListItem.js';
 export { EventController } from './EventController.js';
 export { EventControllerFocus } from './EventControllerFocus.js';
 export { EventControllerKey } from './EventControllerKey.js';

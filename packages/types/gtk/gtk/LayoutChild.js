@@ -10,8 +10,16 @@ export class LayoutChild extends GObject_Object {
 
   static bases = ["Gtk.LayoutChild", "GObject.Object"];
 
+  getChildWidget() {
+    return call(this, 'get_child_widget', []);
+  }
+
   getLayoutManager() {
     return wrapObject(LayoutManager, call(this, 'get_layout_manager', []));
+  }
+
+  get childWidget() {
+    return getProp(this, 'child-widget');
   }
 
   get layoutManager() {

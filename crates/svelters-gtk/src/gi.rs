@@ -25,26 +25,26 @@ use std::ffi::{c_char, c_int, c_uint, c_void, CStr, CString};
 use std::rc::Rc;
 use svelters_abi::*;
 
-type Info = *mut c_void;
+pub(crate) type Info = *mut c_void;
 
 #[repr(C)]
 #[derive(Clone, Copy)]
-union GIArgument {
-    v_boolean: c_int,
-    v_int8: i8,
-    v_uint8: u8,
-    v_int16: i16,
-    v_uint16: u16,
-    v_int32: i32,
-    v_uint32: u32,
-    v_int64: i64,
-    v_uint64: u64,
-    v_float: f32,
-    v_double: f64,
-    v_pointer: *mut c_void,
+pub(crate) union GIArgument {
+    pub(crate) v_boolean: c_int,
+    pub(crate) v_int8: i8,
+    pub(crate) v_uint8: u8,
+    pub(crate) v_int16: i16,
+    pub(crate) v_uint16: u16,
+    pub(crate) v_int32: i32,
+    pub(crate) v_uint32: u32,
+    pub(crate) v_int64: i64,
+    pub(crate) v_uint64: u64,
+    pub(crate) v_float: f32,
+    pub(crate) v_double: f64,
+    pub(crate) v_pointer: *mut c_void,
 }
 
-const ZERO: GIArgument = GIArgument { v_uint64: 0 };
+pub(crate) const ZERO: GIArgument = GIArgument { v_uint64: 0 };
 
 const TAG_VOID: c_int = 0;
 const TAG_BOOLEAN: c_int = 1;
@@ -115,10 +115,23 @@ unsafe extern "C" {
     fn gi_type_info_get_array_fixed_size(info: Info, size: *mut usize) -> c_int;
     fn gi_type_info_get_param_type(info: Info, n: c_uint) -> Info;
     fn gi_base_info_unref(info: Info);
+    fn gi_base_info_ref(info: Info) -> Info;
     fn gi_base_info_get_name(info: Info) -> *const c_char;
     fn gi_base_info_get_namespace(info: Info) -> *const c_char;
     fn gi_base_info_get_container(info: Info) -> Info;
     fn gi_registered_type_info_get_g_type(info: Info) -> glib::ffi::GType;
+    fn gi_arg_info_get_scope(info: Info) -> c_int;
+    fn gi_arg_info_get_closure_index(info: Info, out: *mut c_uint) -> c_int;
+    fn gi_arg_info_get_destroy_index(info: Info, out: *mut c_uint) -> c_int;
+    fn gi_repository_find_by_error_domain(repo: *mut c_void, domain: u32) -> Info;
+    pub(crate) fn gi_callable_info_create_closure(
+        info: Info,
+        cif: *mut c_void,
+        callback: unsafe extern "C" fn(*mut c_void, *mut c_void, *mut *mut c_void, *mut c_void),
+        user_data: *mut c_void,
+    ) -> *mut c_void;
+    pub(crate) fn gi_callable_info_get_closure_native_address(info: Info, closure: *mut c_void) -> *mut c_void;
+    pub(crate) fn gi_callable_info_destroy_closure(info: Info, closure: *mut c_void);
     fn gi_function_info_invoke(
         info: Info,
         in_args: *const GIArgument,
@@ -131,10 +144,10 @@ unsafe extern "C" {
 }
 
 /// Owns one reference to a GIBaseInfo.
-struct Owned(Info);
+pub(crate) struct Owned(pub(crate) Info);
 
 impl Owned {
-    fn new(p: Info) -> Option<Owned> {
+    pub(crate) fn new(p: Info) -> Option<Owned> {
         (!p.is_null()).then(|| Owned(p))
     }
 }
@@ -147,7 +160,7 @@ impl Drop for Owned {
 
 /// How a C array's length is known.
 #[derive(Clone, Copy, Debug, PartialEq)]
-enum ArrLen {
+pub(crate) enum ArrLen {
     Zero,
     /// The native argument at this index holds the length.
     Arg(usize),
@@ -156,7 +169,7 @@ enum ArrLen {
 
 /// The wire type of one argument or return value.
 #[derive(Clone, Debug, PartialEq)]
-enum Ty {
+pub(crate) enum Ty {
     Void,
     Bool,
     I8,
@@ -184,26 +197,31 @@ enum Ty {
     List(Box<Ty>, bool),
     /// A C array.
     Array(Box<Ty>, ArrLen),
+    /// A JS function: index into `Plan::callbacks` (N1, GI closures by scope).
+    Callback(usize),
+    /// A `GDestroyNotify`, a `GAsyncReadyCallback` or an untyped pointer (callback user data): filled by
+    /// the invoker, never by JS.
+    Internal,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-enum Dir {
+pub(crate) enum Dir {
     In,
     Out,
     InOut,
 }
 
 #[derive(Clone, Debug)]
-struct Slot {
-    ty: Ty,
-    nullable: bool,
+pub(crate) struct Slot {
+    pub(crate) ty: Ty,
+    pub(crate) nullable: bool,
     /// `transfer: full`: the callee takes (arguments) or hands over (returns) the elements.
-    full: bool,
+    pub(crate) full: bool,
     /// `transfer: container`: the callee takes only the container.
-    container: bool,
-    dir: Dir,
+    pub(crate) container: bool,
+    pub(crate) dir: Dir,
     /// An out struct the caller allocates (`caller-allocates`), with its size.
-    caller_alloc: Option<usize>,
+    pub(crate) caller_alloc: Option<usize>,
 }
 
 impl Slot {
@@ -218,6 +236,13 @@ enum Role {
     Js,
     /// The length of the array argument at this native index; JS never sees it.
     Len(usize),
+    /// The user data of the callback argument at this native index: the closure itself.
+    UserData(usize),
+    /// The `GDestroyNotify` of the callback argument at this native index.
+    Destroy(usize),
+    /// Async machinery the invoker supplies (`GCancellable`, `GAsyncReadyCallback` and its user data,
+    /// the `GAsyncResult` of a finish function).
+    Hidden,
 }
 
 struct PlanArg {
@@ -228,6 +253,39 @@ struct PlanArg {
     out_pos: Option<usize>,
 }
 
+/// A callback argument (a JS function): its type, scope and the arguments it pairs with.
+pub(crate) struct CbSpec {
+    /// The `GICallbackInfo`.
+    pub(crate) info: Rc<Owned>,
+    /// `Gtk.CustomFilterFunc`.
+    pub(crate) name: String,
+    pub(crate) sig: Rc<CbSig>,
+    /// `GI_SCOPE_TYPE_*` as the GIR declares it.
+    pub(crate) scope: c_int,
+    pub(crate) user_data: Option<usize>,
+    pub(crate) destroy: Option<usize>,
+}
+
+/// The signature of a callback type: what the trampoline converts.
+pub(crate) struct CbSig {
+    /// One per C argument; `None` for the user data pointer.
+    pub(crate) args: Vec<Option<(String, Slot)>>,
+    pub(crate) ret: Slot,
+}
+
+/// The `GAsyncReadyCallback` arguments of an `_async` function (folded with its `_finish`).
+#[derive(Clone, Copy)]
+struct AsyncArgs {
+    callback: usize,
+    user_data: Option<usize>,
+    cancellable: Option<usize>,
+}
+
+pub(crate) const SCOPE_CALL: c_int = 1;
+pub(crate) const SCOPE_ASYNC: c_int = 2;
+pub(crate) const SCOPE_NOTIFIED: c_int = 3;
+pub(crate) const SCOPE_FOREVER: c_int = 4;
+
 struct Plan {
     args: Vec<PlanArg>,
     ret: Slot,
@@ -236,6 +294,10 @@ struct Plan {
     is_ctor: bool,
     n_in: usize,
     n_out: usize,
+    callbacks: Vec<CbSpec>,
+    async_args: Option<AsyncArgs>,
+    /// The native index of the `GAsyncResult` argument of a finish function.
+    async_result: Option<usize>,
 }
 
 impl Plan {
@@ -250,6 +312,8 @@ pub struct DynMethod {
     info: Owned,
     declaring: Type,
     plan: Result<Plan, String>,
+    /// For an `_async` function: its `_finish` function.
+    finish: Option<Rc<DynMethod>>,
 }
 
 /// A converted value. Objects carry whether the call handed over a reference.
@@ -298,6 +362,36 @@ pub struct Gi {
     cache: RefCell<HashMap<(u32, String), u32>>,
     by_type: RefCell<HashMap<(Type, String), Option<u32>>>,
     methods: RefCell<Vec<Rc<DynMethod>>>,
+    /// Callback type descriptors, by (callback type name, host scope); ids from `CB_TYPE_BASE`.
+    cb_types: RefCell<Vec<(String, u16, TypeDesc)>>,
+}
+
+/// Type ids of callback signatures (`CALLBACK` slots of typelib methods).
+pub const CB_TYPE_BASE: u32 = SVL_T_FIRST_BACKEND + 0x0100_0000;
+/// The completion callback the host appends to a folded async method (`SVL_M_ASYNC`).
+pub const T_ASYNC_DONE: u32 = SVL_T_FIRST_BACKEND + 0x00FF_0000;
+
+/// The descriptor of [`T_ASYNC_DONE`]: one result value (the finish result, the folded out
+/// parameters as an object, or an `ERROR`).
+pub fn async_done_desc() -> TypeDesc {
+    TypeDesc {
+        name: "(result: unknown) => void".into(),
+        kind: SVL_CALLBACK,
+        scope: SVL_CB_ASYNC,
+        members: vec![],
+        fields: vec![SlotDesc::new(SVL_NULL).named("result")],
+        ret: SlotDesc::new(SVL_NULL),
+    }
+}
+
+/// The host scope a GIR scope maps to. `forever` is reported as `notified`: the host refuses
+/// `forever`, the native closure is never freed, and the JS function lives until its owner dies.
+fn host_scope(scope: c_int) -> u16 {
+    match scope {
+        SCOPE_CALL => SVL_CB_CALL,
+        SCOPE_ASYNC => SVL_CB_ASYNC,
+        _ => SVL_CB_NOTIFIED,
+    }
 }
 
 fn tag_ty(tag: c_int, what: &str) -> Option<Ty> {
@@ -443,7 +537,7 @@ impl Gi {
                     }
                 }
             }
-            Ok(Gi { repo, cache: RefCell::new(HashMap::new()), by_type: RefCell::new(HashMap::new()), methods: RefCell::new(Vec::new()) })
+            Ok(Gi { repo, cache: RefCell::new(HashMap::new()), by_type: RefCell::new(HashMap::new()), methods: RefCell::new(Vec::new()), cb_types: RefCell::new(Vec::new()) })
         }
     }
 
@@ -548,16 +642,138 @@ impl Gi {
     }
 
     fn build(&self, info: Owned, name: &str) -> DynMethod {
-        let declaring = unsafe {
-            let c = gi_base_info_get_container(info.0);
-            if c.is_null() { Type::INVALID } else { from_glib(gi_registered_type_info_get_g_type(c)) }
-        };
-        let plan = plan_of(&info, name);
-        DynMethod { name: name.to_string(), info, declaring, plan }
+        let container = unsafe { gi_base_info_get_container(info.0) };
+        let declaring = unsafe { if container.is_null() { Type::INVALID } else { from_glib(gi_registered_type_info_get_g_type(container)) } };
+        let mut plan = plan_of(&info, name);
+        let mut finish = None;
+        // `foo_async` / `foo` with a GAsyncReadyCallback pairs with `foo_finish` of the same container
+        // (the typelib only names the pair from GLib 2.84 on, so the GIR naming convention decides).
+        if let Ok(p) = &plan {
+            if p.async_args.is_some() {
+                let native = unsafe { CStr::from_ptr(gi_base_info_get_name(info.0)) }.to_string_lossy().into_owned();
+                let stem = native.strip_suffix("_async").unwrap_or(&native);
+                let fname = format!("{stem}_finish");
+                let found = if container.is_null() {
+                    None
+                } else {
+                    unsafe { gi_base_info_ref(container) };
+                    let c = Owned(container);
+                    CString::new(fname.as_str()).ok().and_then(|n| self.find_in(&c, &n))
+                };
+                match found {
+                    Some(f) => {
+                        let fm = self.build(f, &fname);
+                        match &fm.plan {
+                            Ok(fp) if fp.async_result.is_some() => finish = Some(Rc::new(fm)),
+                            Ok(_) => plan = Err(format!("{name}: {fname} takes no GAsyncResult")),
+                            Err(e) => plan = Err(format!("{name}: its finish function is not supported: {e}")),
+                        }
+                    }
+                    None => plan = Err(format!("{name}: async function without a {fname} function")),
+                }
+            }
+        }
+        DynMethod { name: name.to_string(), info, declaring, plan, finish }
+    }
+
+    /// The type id of a callback signature as the host sees it (registered on first use).
+    fn cb_type_id(&self, table: &mut TypeTable, spec: &CbSpec) -> u32 {
+        let scope = host_scope(spec.scope);
+        if let Some(i) = self.cb_types.borrow().iter().position(|(n, s, _)| *n == spec.name && *s == scope) {
+            return CB_TYPE_BASE + i as u32;
+        }
+        let fields = spec.sig.args.iter().flatten().map(|(n, s)| slot_desc(table, &s.ty, s.nullable).named(n)).collect();
+        let desc = TypeDesc { name: spec.name.clone(), kind: SVL_CALLBACK, scope, members: vec![], fields, ret: slot_desc(table, &spec.sig.ret.ty, spec.sig.ret.nullable) };
+        let mut v = self.cb_types.borrow_mut();
+        v.push((spec.name.clone(), scope, desc));
+        CB_TYPE_BASE + v.len() as u32 - 1
+    }
+
+    /// The descriptor of a callback type id from [`Gi::cb_type_id`].
+    pub fn cb_type_desc(&self, id: u32) -> Option<TypeDesc> {
+        let i = id.checked_sub(CB_TYPE_BASE)? as usize;
+        self.cb_types.borrow().get(i).map(|(_, _, d)| d.clone())
+    }
+
+    /// The error enum registered for a `GError` domain (`G_IO_ERROR` -> `GIOErrorEnum`).
+    pub fn error_enum(&self, domain: glib::Quark) -> Option<Type> {
+        let info = Owned::new(unsafe { gi_repository_find_by_error_domain(self.repo, domain.into_glib()) })?;
+        let t: Type = unsafe { from_glib(gi_registered_type_info_get_g_type(info.0)) };
+        (t.is_a(Type::ENUM)).then_some(t)
     }
 
     pub fn method(&self, idx: u32) -> Option<Rc<DynMethod>> {
         self.methods.borrow().get(idx as usize).cloned()
+    }
+}
+
+/// The `GICallbackInfo` of an interface-typed argument, if it is a callback type.
+fn callback_iface(ti: Info) -> Option<Owned> {
+    if unsafe { gi_type_info_get_tag(ti) } != TAG_INTERFACE {
+        return None;
+    }
+    let iface = Owned::new(unsafe { gi_type_info_get_interface(ti) })?;
+    let tname = unsafe { CStr::from_ptr(gobject_ffi::g_type_name_from_instance(iface.0 as *mut gobject_ffi::GTypeInstance)) };
+    (tname.to_bytes() == b"GICallbackInfo").then_some(iface)
+}
+
+fn qualified(info: Info) -> String {
+    unsafe {
+        let ns = gi_base_info_get_namespace(info);
+        let n = gi_base_info_get_name(info);
+        let ns = if ns.is_null() { String::new() } else { CStr::from_ptr(ns).to_string_lossy().into_owned() };
+        let n = if n.is_null() { String::new() } else { CStr::from_ptr(n).to_string_lossy().into_owned() };
+        format!("{ns}.{n}")
+    }
+}
+
+/// The signature of a callback type. Supported: arguments the invoker reads back (numbers, strings,
+/// enums, flags, objects, boxed values, GStrv, lists) plus one trailing user-data pointer, and any
+/// return value the invoker can pass in. Out arguments, arrays with a length, `GError` and other
+/// untyped pointers are refused.
+fn plan_callback(cb: &Owned, what: &str) -> Result<CbSig, String> {
+    unsafe {
+        if gi_callable_info_can_throw_gerror(cb.0) != 0 {
+            return Err(format!("{what}: callbacks that throw are not supported"));
+        }
+        let n = gi_callable_info_get_n_args(cb.0);
+        let mut args = Vec::new();
+        for i in 0..n {
+            let a = Owned::new(gi_callable_info_get_arg(cb.0, i)).ok_or("missing argument info")?;
+            let aname = CStr::from_ptr(gi_base_info_get_name(a.0)).to_string_lossy().into_owned();
+            let w = format!("{what} argument '{aname}'");
+            if gi_arg_info_get_direction(a.0) != DIR_IN {
+                return Err(format!("{w}: out arguments of callbacks are not supported"));
+            }
+            let ti = Owned::new(gi_arg_info_get_type_info(a.0)).ok_or("missing type info")?;
+            if callback_iface(ti.0).is_some() {
+                return Err(format!("{w}: callbacks taking callbacks are not supported"));
+            }
+            let ty = type_info_ty(ti.0, &w)?;
+            if ty == Ty::Void {
+                if i + 1 == n {
+                    args.push(None);
+                    continue;
+                }
+                return Err(format!("{w}: untyped pointer arguments are not supported"));
+            }
+            if matches!(ty, Ty::Array(_, ArrLen::Arg(_))) {
+                return Err(format!("{w}: arrays with a length argument are not supported in callbacks"));
+            }
+            let transfer = gi_arg_info_get_ownership_transfer(a.0);
+            args.push(Some((
+                aname,
+                Slot { ty, nullable: gi_arg_info_may_be_null(a.0) != 0, full: transfer == TRANSFER_EVERYTHING, container: transfer == TRANSFER_CONTAINER, dir: Dir::In, caller_alloc: None },
+            )));
+        }
+        let rt = Owned::new(gi_callable_info_get_return_type(cb.0)).ok_or("missing return type")?;
+        let rty = type_info_ty(rt.0, &format!("{what}: return value"))?;
+        if matches!(rty, Ty::List(..) | Ty::Array(..)) {
+            return Err(format!("{what}: callbacks returning lists or arrays are not supported"));
+        }
+        let transfer = gi_callable_info_get_caller_owns(cb.0);
+        let ret = Slot { ty: rty, nullable: gi_callable_info_may_return_null(cb.0) != 0, full: transfer == TRANSFER_EVERYTHING, container: false, dir: Dir::Out, caller_alloc: None };
+        Ok(CbSig { args, ret })
     }
 }
 
@@ -567,6 +783,10 @@ fn plan_of(info: &Owned, name: &str) -> Result<Plan, String> {
         let is_method = gi_callable_info_is_method(info.0) != 0;
         let n = gi_callable_info_get_n_args(info.0);
         let mut args: Vec<PlanArg> = Vec::new();
+        let mut callbacks: Vec<CbSpec> = Vec::new();
+        let mut async_cb: Option<(usize, Option<usize>)> = None;
+        // User-data arguments that name their callback (older typelibs put `closure` on the user data).
+        let mut back_refs: Vec<(usize, usize)> = Vec::new();
         let (mut n_in, mut n_out) = (0usize, 0usize);
         for i in 0..n {
             let a = Owned::new(gi_callable_info_get_arg(info.0, i)).ok_or("missing argument info")?;
@@ -579,23 +799,53 @@ fn plan_of(info: &Owned, name: &str) -> Result<Plan, String> {
                 d => return Err(format!("{what}: unknown direction {d}")),
             };
             let ti = Owned::new(gi_arg_info_get_type_info(a.0)).ok_or("missing type info")?;
-            let caller_alloc = dir == Dir::Out && gi_arg_info_is_caller_allocates(a.0) != 0;
-            let ty = type_info_ty_ref(ti.0, &what, caller_alloc).map_err(|e| {
-                if e.contains("callbacks") { format!("{e} (this method takes a callback)") } else { e }
-            })?;
-            if ty == Ty::Void {
-                return Err(format!("{what}: untyped (void) parameters, such as callback user data, are not supported"));
-            }
+            let mut closure: c_uint = 0;
+            let has_closure = gi_arg_info_get_closure_index(a.0, &mut closure) != 0;
+            let mut destroy: c_uint = 0;
+            let has_destroy = gi_arg_info_get_destroy_index(a.0, &mut destroy) != 0;
+            let i = i as usize;
             let transfer = gi_arg_info_get_ownership_transfer(a.0);
-            let mut slot = Slot {
-                ty,
-                nullable: gi_arg_info_may_be_null(a.0) != 0,
-                full: transfer == TRANSFER_EVERYTHING,
-                container: transfer == TRANSFER_CONTAINER,
-                dir,
-                caller_alloc: None,
-            };
-            if dir == Dir::Out && gi_arg_info_is_caller_allocates(a.0) != 0 {
+            let nullable = gi_arg_info_may_be_null(a.0) != 0;
+            if let Some(cb) = callback_iface(ti.0) {
+                if dir != Dir::In {
+                    return Err(format!("{what}: out callbacks are not supported"));
+                }
+                let cbname = qualified(cb.0);
+                let ty = match cbname.as_str() {
+                    // A destroy notify belongs to the callback that names it (checked below).
+                    "GLib.DestroyNotify" => Ty::Internal,
+                    "Gio.AsyncReadyCallback" => {
+                        async_cb = Some((i, has_closure.then_some(closure as usize)));
+                        Ty::Internal
+                    }
+                    _ => {
+                        let sig = plan_callback(&cb, &format!("{what} ({cbname})"))?;
+                        callbacks.push(CbSpec {
+                            info: Rc::new(cb),
+                            name: cbname,
+                            sig: Rc::new(sig),
+                            scope: gi_arg_info_get_scope(a.0),
+                            user_data: has_closure.then_some(closure as usize),
+                            destroy: has_destroy.then_some(destroy as usize),
+                        });
+                        Ty::Callback(callbacks.len() - 1)
+                    }
+                };
+                let slot = Slot { ty, nullable, full: false, container: false, dir, caller_alloc: None };
+                n_in += 1;
+                args.push(PlanArg { name: aname, slot, role: Role::Js, in_pos: Some(n_in - 1), out_pos: None });
+                continue;
+            }
+            let caller_alloc = dir == Dir::Out && gi_arg_info_is_caller_allocates(a.0) != 0;
+            let ty = type_info_ty_ref(ti.0, &what, caller_alloc)?;
+            if ty == Ty::Void && has_closure && dir == Dir::In {
+                back_refs.push((i, closure as usize));
+            }
+            let mut slot = Slot { ty, nullable, full: transfer == TRANSFER_EVERYTHING, container: transfer == TRANSFER_CONTAINER, dir, caller_alloc: None };
+            if slot.ty == Ty::Void {
+                slot.ty = Ty::Internal;
+            }
+            if caller_alloc {
                 let Ty::Boxed(_) = slot.ty else {
                     return Err(format!("{what}: caller-allocated out values other than boxed structs are not supported"));
                 };
@@ -614,6 +864,49 @@ fn plan_of(info: &Owned, name: &str) -> Result<Plan, String> {
                 n_out - 1
             });
             args.push(PlanArg { name: aname, slot, role: Role::Js, in_pos, out_pos });
+        }
+        // Callback companions: user data and destroy notifies are filled in by the invoker.
+        for (k, cb) in callbacks.iter().enumerate() {
+            let owner = args.iter().position(|a| a.slot.ty == Ty::Callback(k)).unwrap();
+            if let Some(u) = cb.user_data.filter(|u| *u < args.len() && *u != owner && args[*u].slot.ty == Ty::Internal) {
+                args[u].role = Role::UserData(owner);
+            }
+            if let Some(d) = cb.destroy.filter(|d| *d < args.len() && args[*d].slot.ty == Ty::Internal) {
+                args[d].role = Role::Destroy(owner);
+            }
+        }
+        for (u, c) in back_refs {
+            if c < args.len() && matches!(args[c].slot.ty, Ty::Callback(_)) && args[u].role == Role::Js {
+                args[u].role = Role::UserData(c);
+            }
+        }
+        let mut async_args = None;
+        if let Some((cb, ud)) = async_cb {
+            args[cb].role = Role::Hidden;
+            let ud = ud
+                .filter(|u| *u < args.len() && *u != cb)
+                .or_else(|| args.iter().position(|a| a.slot.ty == Ty::Internal && a.role == Role::Js && a.slot.dir == Dir::In));
+            if let Some(u) = ud {
+                args[u].role = Role::Hidden;
+            }
+            let cancellable = args.iter().position(|a| a.slot.dir == Dir::In && matches!(a.slot.ty, Ty::Object(t) if t == gtk::gio::Cancellable::static_type()));
+            if let Some(c) = cancellable {
+                args[c].role = Role::Hidden;
+            }
+            async_args = Some(AsyncArgs { callback: cb, user_data: ud, cancellable });
+        }
+        // The GAsyncResult of a finish function comes from the completion, never from JS.
+        let mut async_result = None;
+        if name.ends_with("_finish") {
+            async_result = args.iter().position(|a| a.slot.dir == Dir::In && a.role == Role::Js && matches!(a.slot.ty, Ty::Object(t) if t == gtk::gio::AsyncResult::static_type()));
+            if let Some(r) = async_result {
+                args[r].role = Role::Hidden;
+            }
+        }
+        for a in &args {
+            if a.role == Role::Js && a.slot.ty == Ty::Internal {
+                return Err(format!("{name}: argument '{}': untyped (void) parameters and unpaired destroy notifies are not supported", a.name));
+            }
         }
         // Length arguments of arrays are filled in by the array and hidden from JS.
         let mut marks: Vec<(usize, usize)> = Vec::new();
@@ -645,7 +938,29 @@ fn plan_of(info: &Owned, name: &str) -> Result<Plan, String> {
             dir: Dir::Out,
             caller_alloc: None,
         };
-        Ok(Plan { args, ret, throws: gi_callable_info_can_throw_gerror(info.0) != 0, is_method, is_ctor: flags & FN_IS_CONSTRUCTOR != 0, n_in, n_out })
+        if async_args.is_some() && ret.ty != Ty::Void {
+            return Err(format!("{name}: async functions with a return value are not supported"));
+        }
+        // GIR marks some progress callbacks of async functions `call` although they run after the
+        // call returns (g_file_load_partial_contents_async): a call-scope closure would be freed first.
+        if async_args.is_some() && callbacks.iter().any(|c| c.scope == SCOPE_CALL) {
+            return Err(format!("{name}: call-scope callbacks of async functions are not supported"));
+        }
+        if async_args.is_some() && args.iter().any(|a| a.role == Role::Js && a.slot.dir != Dir::In) {
+            return Err(format!("{name}: async functions with out parameters are not supported"));
+        }
+        Ok(Plan {
+            args,
+            ret,
+            throws: gi_callable_info_can_throw_gerror(info.0) != 0,
+            is_method,
+            is_ctor: flags & FN_IS_CONSTRUCTOR != 0,
+            n_in,
+            n_out,
+            callbacks,
+            async_args,
+            async_result,
+        })
     }
 }
 
@@ -668,7 +983,7 @@ fn ranged<T: TryFrom<i64>>(x: i64, what: &str) -> Result<T, String> {
 /// What `call` holds while the native function runs: string copies and objects whose references
 /// must be released afterwards.
 #[derive(Default)]
-struct Keep {
+pub(crate) struct Keep {
     strings: Vec<CString>,
     objects: Vec<glib::Object>,
     values: Vec<glib::Value>,
@@ -682,10 +997,20 @@ struct Keep {
     slots: Vec<Box<GIArgument>>,
     /// The length of the array just converted.
     last_len: usize,
+    /// Native closures made for callback arguments, with their GIR scope.
+    closures: Vec<(*mut crate::closures::NativeClosure, c_int)>,
+    /// The native function ran (it may have kept the closures its scope allows it to keep).
+    committed: bool,
 }
 
 impl Drop for Keep {
     fn drop(&mut self) {
+        // A `call`-scope closure ends with the call; any closure the callee never saw ends now.
+        for (c, scope) in self.closures.drain(..) {
+            if scope == SCOPE_CALL || !self.committed {
+                unsafe { crate::closures::NativeClosure::free(c) };
+            }
+        }
         unsafe {
             for p in self.mallocs.drain(..) {
                 glib::ffi::g_free(p);
@@ -713,6 +1038,40 @@ fn elem_size(t: &Ty) -> Option<usize> {
     })
 }
 
+/// What the invoker needs from the backend for callbacks and async completions (N1). The backend's
+/// `Inner` implements it; closures and pending operations hold it weakly.
+pub trait Host: Env {
+    /// Runs the JS function behind a host callback id.
+    fn invoke_callback(&self, id: u64, args: &[Value]) -> Result<Value, String>;
+    /// The native side dropped a callback (idempotent).
+    fn release_callback(&self, id: u64);
+    /// A converted native value as an ABI value (objects get handles owned by `owner`).
+    fn ret_to_value(&self, r: Ret, owner: u64) -> Value;
+    /// A `GError` as an `ERROR` value (domain, error-enum member name, message).
+    fn error_value(&self, e: &glib::Error) -> Value;
+    /// The async operation completing `done` finished natively. False when it was already settled
+    /// (its owner was destroyed), so the completion must not be delivered.
+    fn async_finished(&self, done: u64) -> bool;
+    fn gi(&self) -> Option<Rc<Gi>>;
+    fn as_env(&self) -> &dyn Env;
+}
+
+/// What a call needs besides its arguments.
+pub(crate) struct CallCx<'a> {
+    /// GIArguments the invoker supplies, by native argument index (async machinery).
+    pub(crate) presets: &'a [(usize, GIArgument)],
+    /// The backend, for callback arguments.
+    pub(crate) host: Option<&'a std::rc::Weak<dyn Host>>,
+    /// The handle the call is made on (owner of minted handles), 0 for statics.
+    pub(crate) owner: u64,
+}
+
+impl CallCx<'_> {
+    pub(crate) fn plain() -> CallCx<'static> {
+        CallCx { presets: &[], host: None, owner: 0 }
+    }
+}
+
 impl DynMethod {
     pub fn is_static(&self) -> bool {
         self.plan.as_ref().is_ok_and(|p| !p.is_method)
@@ -720,6 +1079,16 @@ impl DynMethod {
 
     pub fn has_outs(&self) -> bool {
         self.plan.as_ref().is_ok_and(|p| p.has_outs())
+    }
+
+    /// Why the invoker refuses this function, if it does.
+    pub fn plan_error(&self) -> Option<&str> {
+        self.plan.as_ref().err().map(|e| e.as_str())
+    }
+
+    /// An `_async` function folded with its `_finish`: JS gets a Promise (`SVL_M_ASYNC`).
+    pub fn is_async(&self) -> bool {
+        self.plan.as_ref().is_ok_and(|p| p.async_args.is_some())
     }
 
     pub fn declaring(&self) -> Type {
@@ -732,14 +1101,24 @@ impl DynMethod {
 
     /// The member descriptor for the host: typed slots so that enums travel as names, flags as
     /// name sets, records and objects as their value types. `None` when the plan has an error.
-    pub fn describe(&self, table: &mut TypeTable) -> Option<MemberDesc> {
+    pub fn describe(&self, table: &mut TypeTable, gi: &Gi) -> Option<MemberDesc> {
         let plan = self.plan.as_ref().ok()?;
         let mut params = Vec::new();
         for a in &plan.args {
             if a.role != Role::Js {
                 continue;
             }
-            let mut d = slot_desc(table, &a.slot.ty, a.slot.nullable).named(&a.name);
+            let mut d = match &a.slot.ty {
+                Ty::Callback(k) => {
+                    let mut d = SlotDesc::new(SVL_CALLBACK).typed(gi.cb_type_id(table, &plan.callbacks[*k]));
+                    if a.slot.nullable {
+                        d.flags |= SVL_D_NULLABLE;
+                    }
+                    d
+                }
+                ty => slot_desc(table, ty, a.slot.nullable),
+            }
+            .named(&a.name);
             match a.slot.dir {
                 Dir::Out => d.flags |= SVL_D_OUT,
                 Dir::InOut => d.flags |= SVL_D_INOUT,
@@ -754,11 +1133,19 @@ impl DynMethod {
                 flags |= SVL_M_CTOR;
             }
         }
+        if plan.async_args.is_some() {
+            // The host appends its one-shot completion; the finish function's GError rejects.
+            params.push(SlotDesc::new(SVL_CALLBACK).typed(T_ASYNC_DONE).named("done"));
+            flags |= SVL_M_ASYNC;
+            if self.finish.as_ref().and_then(|f| f.plan.as_ref().ok()).is_some_and(|f| f.throws) {
+                flags |= SVL_M_THROWS;
+            }
+        }
         Some(MemberDesc { name: self.name.clone(), params, ret: slot_desc(table, &plan.ret.ty, plan.ret.nullable), flags })
     }
 
     /// Calls the function with an object receiver.
-    pub fn call(&self, obj: &glib::Object, args: &[svl_value], env: &dyn Env, gi: &Gi) -> Result<Called, GiErr> {
+    pub fn call(&self, obj: &glib::Object, args: &[svl_value], env: &dyn Env, gi: &Gi, cx: &CallCx) -> Result<Called, GiErr> {
         let plan = self.plan.as_ref().map_err(|e| e.clone())?;
         if !plan.is_method {
             return Err(format!("{} is a static function or constructor, not a method", self.name).into());
@@ -766,11 +1153,11 @@ impl DynMethod {
         if !obj.type_().is_a(self.declaring) {
             return Err(format!("{} is not a {}", obj.type_().name(), self.declaring.name()).into());
         }
-        self.invoke(plan, Some(obj.as_ptr() as *mut c_void), args, env, gi)
+        self.invoke(plan, Some(obj.as_ptr() as *mut c_void), args, env, gi, cx)
     }
 
     /// Calls the function with a boxed receiver (a VALUE handle).
-    pub fn call_boxed(&self, value: &glib::Value, args: &[svl_value], env: &dyn Env, gi: &Gi) -> Result<Called, GiErr> {
+    pub fn call_boxed(&self, value: &glib::Value, args: &[svl_value], env: &dyn Env, gi: &Gi, cx: &CallCx) -> Result<Called, GiErr> {
         let plan = self.plan.as_ref().map_err(|e| e.clone())?;
         if !plan.is_method {
             return Err(format!("{} is a static function or constructor, not a method", self.name).into());
@@ -782,19 +1169,93 @@ impl DynMethod {
         if p.is_null() {
             return Err("the value is empty".into());
         }
-        self.invoke(plan, Some(p as *mut c_void), args, env, gi)
+        self.invoke(plan, Some(p as *mut c_void), args, env, gi, cx)
     }
 
     /// Calls a static function or constructor.
-    pub fn call_static(&self, args: &[svl_value], env: &dyn Env, gi: &Gi) -> Result<Called, GiErr> {
+    pub fn call_static(&self, args: &[svl_value], env: &dyn Env, gi: &Gi, cx: &CallCx) -> Result<Called, GiErr> {
         let plan = self.plan.as_ref().map_err(|e| e.clone())?;
         if plan.is_method {
             return Err(format!("{} is an instance method; call it on an object", self.name).into());
         }
-        self.invoke(plan, None, args, env, gi)
+        self.invoke(plan, None, args, env, gi, cx)
     }
 
-    fn invoke(&self, plan: &Plan, recv: Option<*mut c_void>, args: &[svl_value], env: &dyn Env, gi: &Gi) -> Result<Called, GiErr> {
+    /// Starts a folded async operation: `args` are the JS-visible arguments (without the host's
+    /// completion), `done` the completion callback id. The `GAsyncReadyCallback` calls the finish
+    /// function on the main loop and completes `done` exactly once (see `closures.rs`).
+    pub fn start_async(
+        self: &Rc<Self>,
+        recv: Option<&glib::Object>,
+        args: &[svl_value],
+        done: u64,
+        cancellable: &gtk::gio::Cancellable,
+        host: std::rc::Weak<dyn Host>,
+        gi: &Gi,
+        owner: u64,
+    ) -> Result<(), GiErr> {
+        let plan = self.plan.as_ref().map_err(|e| e.clone())?;
+        let aa = plan.async_args.ok_or_else(|| format!("{} is not an async function", self.name))?;
+        let finish = self.finish.clone().ok_or_else(|| format!("{}: no finish function", self.name))?;
+        if plan.is_method != recv.is_some() {
+            return Err(format!("{}: wrong receiver for an async call", self.name).into());
+        }
+        if let Some(o) = recv {
+            if !o.type_().is_a(self.declaring) {
+                return Err(format!("{} is not a {}", o.type_().name(), self.declaring.name()).into());
+            }
+        }
+        let op = crate::closures::AsyncOp::new(finish, recv.cloned(), done, host.clone(), owner);
+        let mut presets: Vec<(usize, GIArgument)> = Vec::new();
+        let mut cb = ZERO;
+        cb.v_pointer = crate::closures::async_ready as *mut c_void;
+        presets.push((aa.callback, cb));
+        if let Some(u) = aa.user_data {
+            let mut a = ZERO;
+            a.v_pointer = op as *mut c_void;
+            presets.push((u, a));
+        }
+        if let Some(c) = aa.cancellable {
+            let mut a = ZERO;
+            a.v_pointer = cancellable.as_ptr() as *mut c_void;
+            presets.push((c, a));
+        }
+        let Some(h) = host.upgrade() else {
+            unsafe { crate::closures::AsyncOp::discard(op) };
+            return Err("the backend is gone".into());
+        };
+        let cx = CallCx { presets: &presets, host: Some(&host), owner };
+        let r = self.invoke(plan, recv.map(|o| o.as_ptr() as *mut c_void), args, h.as_env(), gi, &cx);
+        if r.is_err() {
+            // An async start never throws: an error here means the native function did not run, so the
+            // ready callback will never come.
+            unsafe { crate::closures::AsyncOp::discard(op) };
+        }
+        r.map(|_| ())
+    }
+
+    /// Runs a finish function on the `GAsyncResult` of a completion.
+    pub(crate) fn finish_with(&self, recv: Option<&glib::Object>, res: *mut c_void, env: &dyn Env, gi: &Gi) -> Result<Called, GiErr> {
+        let plan = self.plan.as_ref().map_err(|e| e.clone())?;
+        let r = plan.async_result.ok_or("not a finish function")?;
+        let mut a = ZERO;
+        a.v_pointer = res;
+        let presets = [(r, a)];
+        let cx = CallCx { presets: &presets, host: None, owner: 0 };
+        let recv = if plan.is_method { Some(recv.ok_or("finish function without a receiver")?.as_ptr() as *mut c_void) } else { None };
+        self.invoke(plan, recv, &[], env, gi, &cx)
+    }
+
+    /// The names of the out parameters (in order) and whether the function returns a value: the
+    /// shape of a folded async result.
+    pub(crate) fn result_shape(&self) -> (bool, Vec<String>) {
+        match &self.plan {
+            Ok(p) => (p.ret.ty != Ty::Void, p.args.iter().filter(|a| a.role == Role::Js && a.slot.dir != Dir::In).map(|a| a.name.clone()).collect()),
+            Err(_) => (false, vec![]),
+        }
+    }
+
+    fn invoke(&self, plan: &Plan, recv: Option<*mut c_void>, args: &[svl_value], env: &dyn Env, gi: &Gi, cx: &CallCx) -> Result<Called, GiErr> {
         let visible: Vec<usize> = plan.args.iter().enumerate().filter(|(_, a)| a.role == Role::Js && a.slot.dir != Dir::Out).map(|(i, _)| i).collect();
         if args.len() != visible.len() {
             let want: Vec<&str> = visible.iter().map(|i| plan.args[*i].name.as_str()).collect();
@@ -809,12 +1270,18 @@ impl DynMethod {
         }
         // Length values the in-arrays produced, by native index of the length argument.
         let mut lens: HashMap<usize, usize> = HashMap::new();
+        // User data and destroy notifies the callback arguments produced, by native index.
+        let mut fills: Vec<(usize, GIArgument)> = Vec::new();
         let mut next_js = 0;
         // Pointers to the out storage, by out position.
         let mut out_ptr: Vec<*mut GIArgument> = vec![std::ptr::null_mut(); plan.n_out];
         for (i, a) in plan.args.iter().enumerate() {
+            if let Some((_, p)) = cx.presets.iter().find(|(k, _)| *k == i) {
+                ins[base + a.in_pos.ok_or("preset out argument")?] = *p;
+                continue;
+            }
             match (a.role, a.slot.dir) {
-                (Role::Len(_), Dir::In) => {}
+                (Role::Len(_), Dir::In) | (Role::UserData(_), _) | (Role::Destroy(_), _) | (Role::Hidden, _) => {}
                 (_, Dir::Out) => {
                     if let Some(size) = a.slot.caller_alloc {
                         let p = unsafe { glib::ffi::g_malloc0(size) };
@@ -830,11 +1297,44 @@ impl DynMethod {
                 }
                 (_, Dir::In) => {
                     let what = format!("{} argument '{}'", self.name, a.name);
-                    let arg = to_arg(&a.slot, &args[next_js], &what, &mut keep, env, gi)?;
+                    let v = &args[next_js];
                     next_js += 1;
-                    ins[base + a.in_pos.unwrap()] = arg;
-                    if let Ty::Array(_, ArrLen::Arg(l)) = &a.slot.ty {
-                        lens.insert(*l, keep.last_len);
+                    if let Ty::Callback(k) = a.slot.ty {
+                        let spec = &plan.callbacks[k];
+                        let (native, data) = if v.tag == SVL_NULL {
+                            if !a.slot.nullable {
+                                return Err(format!("{what}: null is not allowed").into());
+                            }
+                            (std::ptr::null_mut(), std::ptr::null_mut())
+                        } else if v.tag != SVL_CALLBACK {
+                            return Err(format!("{what}: expected a function").into());
+                        } else {
+                            let host = cx.host.ok_or_else(|| format!("{what}: callbacks need the host"))?;
+                            let id = unsafe { v.u.u };
+                            let c = crate::closures::NativeClosure::create(spec, id, host.clone(), cx.owner).map_err(|e| format!("{what}: {e}"))?;
+                            keep.closures.push((c, spec.scope));
+                            (unsafe { (*c).native }, c as *mut c_void)
+                        };
+                        let mut na = ZERO;
+                        na.v_pointer = native;
+                        ins[base + a.in_pos.unwrap()] = na;
+                        for (j, b) in plan.args.iter().enumerate() {
+                            let mut x = ZERO;
+                            match b.role {
+                                Role::UserData(o) if o == i => x.v_pointer = data,
+                                Role::Destroy(o) if o == i && !data.is_null() => {
+                                    x.v_pointer = crate::closures::closure_destroy as *mut c_void;
+                                }
+                                _ => continue,
+                            }
+                            fills.push((j, x));
+                        }
+                    } else {
+                        let arg = to_arg(&a.slot, v, &what, &mut keep, env, gi)?;
+                        ins[base + a.in_pos.unwrap()] = arg;
+                        if let Ty::Array(_, ArrLen::Arg(l)) = &a.slot.ty {
+                            lens.insert(*l, keep.last_len);
+                        }
                     }
                 }
                 (_, Dir::InOut) => {
@@ -849,7 +1349,11 @@ impl DynMethod {
                     outs[a.out_pos.unwrap()].v_pointer = p as *mut c_void;
                 }
             }
-            let _ = i;
+        }
+        for (j, x) in fills {
+            if let Some(pos) = plan.args[j].in_pos {
+                ins[base + pos] = x;
+            }
         }
         for (l, n) in &lens {
             let la = &plan.args[*l];
@@ -859,6 +1363,8 @@ impl DynMethod {
         }
         let mut ret = ZERO;
         let mut err: *mut glib::ffi::GError = std::ptr::null_mut();
+        // From here on the callee may have kept the closures it was given (by their scope).
+        keep.committed = true;
         let ok = unsafe { gi_function_info_invoke(self.info.0, ins.as_ptr(), ins.len(), outs.as_ptr(), outs.len(), &mut ret, &mut err) };
         if !err.is_null() {
             // Objects the callee took were ref'd for it; our temporaries go with `keep`.
@@ -906,7 +1412,7 @@ impl DynMethod {
 /// The descriptor slot of a plan type.
 fn slot_desc(table: &mut TypeTable, ty: &Ty, nullable: bool) -> SlotDesc {
     let t = match ty {
-        Ty::Void => return SlotDesc::new(SVL_NULL),
+        Ty::Void | Ty::Callback(_) | Ty::Internal => return SlotDesc::new(SVL_NULL),
         Ty::Bool => Type::BOOL,
         Ty::I8 => Type::I8,
         Ty::U8 => Type::U8,
@@ -1027,13 +1533,14 @@ fn items_of(v: &svl_value) -> &[svl_value] {
     if l.len == 0 || l.ptr.is_null() { &[] } else { unsafe { std::slice::from_raw_parts(l.ptr, l.len) } }
 }
 
-fn to_arg(slot: &Slot, v: &svl_value, what: &str, keep: &mut Keep, env: &dyn Env, gi: &Gi) -> Result<GIArgument, String> {
+pub(crate) fn to_arg(slot: &Slot, v: &svl_value, what: &str, keep: &mut Keep, env: &dyn Env, gi: &Gi) -> Result<GIArgument, String> {
     let mut a = ZERO;
     let null_ok = |slot: &Slot| -> Result<GIArgument, String> {
         if slot.nullable { Ok(ZERO) } else { Err(format!("{what}: null is not allowed")) }
     };
     match &slot.ty {
         Ty::Void => {}
+        Ty::Callback(_) | Ty::Internal => return Err(format!("{what}: not a value argument")),
         Ty::Bool => {
             a.v_boolean = match v.tag {
                 SVL_BOOL => (unsafe { v.u.b }) as c_int,
@@ -1243,10 +1750,10 @@ fn read_elem(t: &Ty, p: *const u8, full: bool) -> Result<Ret, String> {
     }
 }
 
-fn read(slot: &Slot, r: GIArgument, len: Option<usize>, name: &str) -> Result<Ret, String> {
+pub(crate) fn read(slot: &Slot, r: GIArgument, len: Option<usize>, name: &str) -> Result<Ret, String> {
     unsafe {
         Ok(match &slot.ty {
-            Ty::Void => Ret::Null,
+            Ty::Void | Ty::Callback(_) | Ty::Internal => Ret::Null,
             Ty::Bool => Ret::Bool(r.v_boolean != 0),
             Ty::I8 => Ret::Int(r.v_int8 as i64),
             Ty::U8 => Ret::Int(r.v_uint8 as i64),
@@ -1432,7 +1939,7 @@ mod tests {
     }
 
     fn gi() -> Gi {
-        Gi { repo: std::ptr::null_mut(), cache: Default::default(), by_type: Default::default(), methods: Default::default() }
+        Gi { repo: std::ptr::null_mut(), cache: Default::default(), by_type: Default::default(), methods: Default::default(), cb_types: Default::default() }
     }
 
     fn arg(ty: Ty, v: &svl_value) -> Result<GIArgument, String> {

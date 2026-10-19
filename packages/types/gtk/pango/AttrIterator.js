@@ -20,7 +20,7 @@ export class AttrIterator extends NativeValue {
 
   getFont(desc) {
     const __res = call(this, 'get_font', [desc]);
-    return { language: wrapValue(Language, __res.language), extraAttrs: (__res.extraAttrs)?.map((e) => wrapValue(Attribute, e)) ?? null };
+    return { language: wrapValue(Language, __res.language), extraAttrs: (__res.extra_attrs)?.map((e) => wrapValue(Attribute, e)) ?? null };
   }
 
   range() {

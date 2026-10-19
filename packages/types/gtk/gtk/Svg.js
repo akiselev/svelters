@@ -12,7 +12,7 @@ export class Svg extends GObject_Object {
   static bases = ["Gtk.Svg", "GObject.Object", "Gdk.Paintable", "Gtk.SymbolicPaintable"];
 
   static [CONSTRUCT](props) {
-    return construct(this.native, constructProps(this, props, {'features': ['features'], 'playing': ['playing'], 'resource': ['resource'], 'state': ['state'], 'weight': ['weight']}));
+    return construct(this.native, constructProps(this, props, {'features': ['features'], 'overflow': ['overflow'], 'playing': ['playing'], 'resource': ['resource'], 'state': ['state'], 'weight': ['weight']}));
   }
 
   static new() {
@@ -31,6 +31,10 @@ export class Svg extends GObject_Object {
     return call(this, 'get_features', []);
   }
 
+  getOverflow() {
+    return call(this, 'get_overflow', []);
+  }
+
   getState() {
     return call(this, 'get_state', []);
   }
@@ -38,6 +42,10 @@ export class Svg extends GObject_Object {
   getStateNames() {
     const __res = call(this, 'get_state_names', []);
     return { ret: __res.ret, length: __res.length };
+  }
+
+  getStylesheet() {
+    return wrapValue(Bytes, call(this, 'get_stylesheet', []));
   }
 
   getWeight() {
@@ -72,8 +80,20 @@ export class Svg extends GObject_Object {
     call(this, 'set_frame_clock', [clock]);
   }
 
+  setOverflow(overflow) {
+    call(this, 'set_overflow', [overflow]);
+  }
+
+  setSettings(settings = null) {
+    call(this, 'set_settings', [settings]);
+  }
+
   setState(state) {
     call(this, 'set_state', [state]);
+  }
+
+  setStylesheet(bytes = null) {
+    call(this, 'set_stylesheet', [bytes]);
   }
 
   setWeight(weight) {
@@ -86,7 +106,7 @@ export class Svg extends GObject_Object {
 
   computeConcreteSize(specifiedWidth, specifiedHeight, defaultWidth, defaultHeight) {
     const __res = call(this, 'compute_concrete_size', [specifiedWidth, specifiedHeight, defaultWidth, defaultHeight]);
-    return { concreteWidth: __res.concreteWidth, concreteHeight: __res.concreteHeight };
+    return { concreteWidth: __res.concrete_width, concreteHeight: __res.concrete_height };
   }
 
   getCurrentImage() {
@@ -126,6 +146,13 @@ export class Svg extends GObject_Object {
   }
   set features(v) {
     setProp(this, 'features', v);
+  }
+
+  get overflow() {
+    return getProp(this, 'overflow');
+  }
+  set overflow(v) {
+    setProp(this, 'overflow', v);
   }
 
   get playing() {

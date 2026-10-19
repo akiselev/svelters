@@ -34,6 +34,10 @@ export class EventController extends GObject_Object {
     return call(this, 'get_propagation_phase', []);
   }
 
+  getWidget() {
+    return call(this, 'get_widget', []);
+  }
+
   reset() {
     call(this, 'reset', []);
   }
@@ -73,5 +77,9 @@ export class EventController extends GObject_Object {
   }
   set propagationPhase(v) {
     setProp(this, 'propagation-phase', v);
+  }
+
+  get widget() {
+    return getProp(this, 'widget');
   }
 }

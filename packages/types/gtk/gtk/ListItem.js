@@ -10,7 +10,7 @@ export class ListItem extends GObject_Object {
   static bases = ["Gtk.ListItem", "GObject.Object"];
 
   static [CONSTRUCT](props) {
-    return construct(this.native, constructProps(this, props, {'accessibleDescription': ['accessible-description'], 'accessibleLabel': ['accessible-label'], 'activatable': ['activatable'], 'focusable': ['focusable'], 'selectable': ['selectable']}));
+    return construct(this.native, constructProps(this, props, {'accessibleDescription': ['accessible-description'], 'accessibleLabel': ['accessible-label'], 'activatable': ['activatable'], 'child': ['child'], 'focusable': ['focusable'], 'selectable': ['selectable']}));
   }
 
   getAccessibleDescription() {
@@ -23,6 +23,10 @@ export class ListItem extends GObject_Object {
 
   getActivatable() {
     return call(this, 'get_activatable', []);
+  }
+
+  getChild() {
+    return call(this, 'get_child', []);
   }
 
   getFocusable() {
@@ -57,6 +61,10 @@ export class ListItem extends GObject_Object {
     call(this, 'set_activatable', [activatable]);
   }
 
+  setChild(child = null) {
+    call(this, 'set_child', [child]);
+  }
+
   setFocusable(focusable) {
     call(this, 'set_focusable', [focusable]);
   }
@@ -84,6 +92,13 @@ export class ListItem extends GObject_Object {
   }
   set activatable(v) {
     setProp(this, 'activatable', v);
+  }
+
+  get child() {
+    return getProp(this, 'child');
+  }
+  set child(v) {
+    setProp(this, 'child', v);
   }
 
   get focusable() {

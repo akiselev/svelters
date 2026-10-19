@@ -141,9 +141,7 @@
   },
   "AttrList": {
    "abstract": false,
-   "blocked": {
-    "filter": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "value",
    "constructors": [
@@ -161,6 +159,7 @@
    "gtype": "PangoAttrList",
    "hidden": [
     "change",
+    "filter",
     "insert",
     "insert_before",
     "splice",
@@ -1025,6 +1024,7 @@
     "set_variations",
     "set_variations_static",
     "set_weight",
+    "set_width",
     "unset_fields"
    ],
    "interfaces": [],
@@ -1197,6 +1197,16 @@
      }
     },
     {
+     "js": "getWidth",
+     "name": "get_width",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Pango.Width"
+     },
+     "since": "1.58"
+    },
+    {
      "js": "hash",
      "name": "hash",
      "params": [],
@@ -1236,7 +1246,8 @@
     "Pango.Stretch",
     "Pango.Style",
     "Pango.Variant",
-    "Pango.Weight"
+    "Pango.Weight",
+    "Pango.Width"
    ],
    "scope": "closure",
    "signals": [],
@@ -1914,9 +1925,7 @@
   },
   "Fontset": {
    "abstract": true,
-   "blocked": {
-    "foreach": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -1927,6 +1936,46 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "foreach",
+     "name": "foreach",
+     "params": [
+      {
+       "js": "func",
+       "name": "func",
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "fontset",
+           "type": {
+            "k": "object",
+            "t": "Pango.Fontset"
+           }
+          },
+          {
+           "name": "font",
+           "type": {
+            "k": "object",
+            "t": "Pango.Font"
+           }
+          }
+         ],
+         "ret": {
+          "k": "bool"
+         }
+        },
+        "t": "Pango.FontsetForeachFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
     {
      "js": "getFont",
      "name": "get_font",

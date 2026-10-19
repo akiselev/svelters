@@ -13,6 +13,14 @@ export class ShortcutTrigger extends GObject_Object {
     return wrapObject(ShortcutTrigger, callStatic('Gtk.ShortcutTrigger', 'parse_string', [string]));
   }
 
+  static createForMenu() {
+    return wrapObject(ShortcutTrigger, callStatic('Gtk.ShortcutTrigger', 'create_for_menu', []));
+  }
+
+  static createWithAliases(keyval, modifiers) {
+    return wrapObject(ShortcutTrigger, callStatic('Gtk.ShortcutTrigger', 'create_with_aliases', [keyval, modifiers]));
+  }
+
   compare(trigger2) {
     return call(this, 'compare', [trigger2]);
   }

@@ -15,6 +15,14 @@ export class Root extends NativeObject {
     return wrapObject(Display, call(this, 'get_display', []));
   }
 
+  getFocus() {
+    return call(this, 'get_focus', []);
+  }
+
+  setFocus(focus = null) {
+    call(this, 'set_focus', [focus]);
+  }
+
   getRenderer() {
     return wrapObject(Renderer, call(this, 'get_renderer', []));
   }

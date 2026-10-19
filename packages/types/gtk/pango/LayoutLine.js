@@ -32,7 +32,7 @@ export class LayoutLine extends NativeValue {
 
   indexToX(index, trailing) {
     const __res = call(this, 'index_to_x', [index, trailing]);
-    return { xPos: __res.xPos };
+    return { xPos: __res.x_pos };
   }
 
   isParagraphStart() {
@@ -41,6 +41,6 @@ export class LayoutLine extends NativeValue {
 
   xToIndex(xPos) {
     const __res = call(this, 'x_to_index', [xPos]);
-    return { ret: __res.ret, index: __res.index, trailing: __res.trailing };
+    return { ret: __res.ret, index: __res.index_, trailing: __res.trailing };
   }
 }

@@ -73,7 +73,7 @@ export class Uri extends NativeValue {
 
   static splitWithUser(uriRef, flags) {
     const __res = callStatic('GLib.Uri', 'split_with_user', [uriRef, flags]);
-    return { ret: __res.ret, scheme: __res.scheme, user: __res.user, password: __res.password, authParams: __res.authParams, host: __res.host, port: __res.port, path: __res.path, query: __res.query, fragment: __res.fragment };
+    return { ret: __res.ret, scheme: __res.scheme, user: __res.user, password: __res.password, authParams: __res.auth_params, host: __res.host, port: __res.port, path: __res.path, query: __res.query, fragment: __res.fragment };
   }
 
   static unescapeBytes(escapedString, length, illegalCharacters = null) {

@@ -156,6 +156,10 @@ struct Recorder {
     frames: std::cell::Cell<u32>,
     /// `prop_changed` calls (ABI v2.6): (handle, prop id).
     changed: RefCell<Vec<(u64, u32)>>,
+    /// `invoke_callback` calls (N1 async completions): (callback id, arguments).
+    invoked: RefCell<Vec<(u64, Vec<Value>)>>,
+    /// `release_callback` calls.
+    released: RefCell<Vec<u64>>,
 }
 
 unsafe extern "C" fn h_post(p: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize) {
@@ -202,10 +206,19 @@ unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, reason: u32) {
     let r = unsafe { &*(p as *const Recorder) };
     r.destroyed.borrow_mut().push((h, reason));
 }
-unsafe extern "C" fn h_invoke(_: *mut c_void, _: u64, _: *const svl_value, _: usize, _: *mut svl_value) -> std::ffi::c_int {
-    -1
+unsafe extern "C" fn h_invoke(p: *mut c_void, id: u64, args: *const svl_value, n: usize, out: *mut svl_value) -> std::ffi::c_int {
+    let r = unsafe { &*(p as *const Recorder) };
+    let args = unsafe { Value::vec_from_raw(args, n) };
+    r.invoked.borrow_mut().push((id, args));
+    unsafe { *out = svl_value::null() };
+    0
 }
-unsafe extern "C" fn h_release(_: *mut c_void, _: u64) {}
+unsafe extern "C" fn h_release(p: *mut c_void, id: u64) {
+    let r = unsafe { &*(p as *const Recorder) };
+    r.released.borrow_mut().push(id);
+}
+
+static NEXT_CALLBACK: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0x7000_0000);
 
 /// Drives a `GtkBackend` through its C vtable with names instead of IDs, recording host callbacks.
 ///
@@ -562,6 +575,68 @@ impl Harness {
         let id = self.resolve(SVL_METHOD, k, method);
         self.backend_ref().describe(NameKind::Method, k, id)
     }
+    /// Starts an async method (`SVL_M_ASYNC`): encodes `args` like `call_args` and appends a completion
+    /// callback id the harness records. Returns that id; [`Harness::wait_completion`] gives the result.
+    pub fn call_async(&self, h: u64, method: &str, args: &[V]) -> Result<u64, String> {
+        let k = self.kind_of(h);
+        let id = self.resolve(SVL_METHOD, k, method);
+        if id == 0 {
+            return Err(format!("unknown method {method}"));
+        }
+        let desc = self.backend_ref().describe(NameKind::Method, k, id).ok_or("no descriptor")?;
+        if desc.flags & SVL_M_ASYNC == 0 {
+            return Err(format!("{method} is not async"));
+        }
+        let done = desc.params.last().filter(|p| p.tag == SVL_CALLBACK).ok_or("no completion slot")?.ty;
+        let mut vals = Vec::new();
+        for (i, a) in args.iter().enumerate() {
+            vals.push(self.encode_arg(&desc.params[i], a)?);
+        }
+        let cb = NEXT_CALLBACK.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        vals.push(Value::Callback { id: cb, ty: done });
+        self.backend_ref().call(h, id, &vals).map_err(|e| e.message)?;
+        Ok(cb)
+    }
+
+    /// `resolve(SVL_METHOD)` and the descriptor of a method of the native kind `kind` (`Gio.File`),
+    /// without an instance. `None` when the kind or the method does not resolve.
+    pub fn kind_method(&self, kind: &str, method: &str) -> Option<(u32, Option<MemberDesc>)> {
+        let k = self.resolve(SVL_KIND, 0, kind);
+        if k == 0 {
+            return None;
+        }
+        let id = self.resolve(SVL_METHOD, k, method);
+        if id == 0 {
+            return None;
+        }
+        let d = self.backend_ref().describe(NameKind::Method, k, id);
+        if d.is_none() {
+            eprintln!("{kind}.{method}: {}", self.err());
+        }
+        Some((id, d))
+    }
+
+    /// Pumps the main loop until the completion `cb` arrives (or `ms` pass): its single argument.
+    pub fn wait_completion(&self, cb: u64, ms: u64) -> Option<Value> {
+        let end = std::time::Instant::now() + std::time::Duration::from_millis(ms);
+        loop {
+            let found = self.rec.invoked.borrow().iter().position(|(id, _)| *id == cb);
+            if let Some(i) = found {
+                let (_, args) = self.rec.invoked.borrow_mut().remove(i);
+                return Some(args.into_iter().next().unwrap_or(Value::Null));
+            }
+            if std::time::Instant::now() > end {
+                return None;
+            }
+            pump(10);
+        }
+    }
+
+    /// `backend.cancel(cb)`: cancels the async operation completing `cb`.
+    pub fn cancel(&self, cb: u64) -> bool {
+        self.backend_ref().cancel(cb)
+    }
+
     /// Whether `h`'s kind has property `prop` in the running library.
     pub fn has_prop(&self, h: u64, prop: &str) -> bool {
         self.resolve(SVL_PROP, self.kind_of(h), prop) != 0

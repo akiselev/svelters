@@ -29,7 +29,7 @@ export class RecentInfo extends NativeValue {
 
   getApplicationInfo(appName) {
     const __res = call(this, 'get_application_info', [appName]);
-    return { ret: __res.ret, appExec: __res.appExec, count: __res.count, stamp: wrapValue(DateTime, __res.stamp) };
+    return { ret: __res.ret, appExec: __res.app_exec, count: __res.count, stamp: wrapValue(DateTime, __res.stamp) };
   }
 
   getApplications() {

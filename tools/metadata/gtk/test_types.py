@@ -73,24 +73,46 @@ def test_value_mutators_are_hidden_and_readers_kept(facts):
             assert not r["undecided"] or q in ("Gtk.TextIter",), f"{q} has undecided mutators {r['undecided']}"
 
 
-def test_every_bound_member_is_marshallable_by_the_n0_invoker(facts):
-    """No bound member mentions a callback, an async pair, a variant (outside properties), a hash table or a
-    by-value struct: the rules block them with a reason instead."""
-    bad = {"callback", "async", "variant", "hash table", "struct by value", "fundamental", "gpointer"}
+def test_every_bound_member_is_marshallable_by_the_invoker(facts):
+    """No bound member mentions a variant (outside properties), a hash table or a by-value struct: the rules
+    block them with a reason instead. Callbacks (N1) carry their scope and a signature the trampoline
+    converts; no GCancellable, GAsyncReadyCallback or GAsyncResult reaches JS in an async member."""
+    bad = {"variant", "hash table", "struct by value", "fundamental", "gpointer"}
     for q, r in facts.items():
         for m in r["constructors"] + r["statics"] + r["methods"]:
             blob = json.dumps([m["ret"]] + [p["type"] for p in m["params"]])
-            assert '"k": "variant"' not in blob and '"k": "callback"' not in blob, f"{q}.{m['name']}"
+            assert '"k": "variant"' not in blob, f"{q}.{m['name']}"
+            for p in m["params"]:
+                if p["type"]["k"] == "callback":
+                    assert p["type"]["scope"] in ("call", "async", "notified", "forever"), (q, m["name"])
+                    assert "sig" in p["type"] and p.get("dir") is None, (q, m["name"])
+            if m.get("async"):
+                assert '"Gio.AsyncReadyCallback"' not in blob and '"Gio.AsyncResult"' not in blob, f"{q}.{m['name']}"
+                assert '"Gio.Cancellable"' not in json.dumps([p["type"] for p in m["params"]]), f"{q}.{m['name']}"
+                assert m["async"]["finish"].endswith("_finish")
         assert not (set(r["blocked"].values()) - set(r["blocked"].values())) & bad
         for name, why in r["blocked"].items():
             assert why, (q, name)
 
 
-def test_the_async_and_callback_members_are_reported_blocked_for_n1(facts):
+def test_async_pairs_are_folded_and_callbacks_bound_n1(facts):
     f = facts["Gio.File"]
-    assert f["blocked"]["load_contents_async"] == "async"
-    assert f["blocked"].get("read_async") == "async"
-    assert "load_contents" in {m["name"] for m in f["methods"]}
+    by = {m["name"]: m for m in f["methods"] + f["statics"]}
+    lc = by["load_contents_async"]
+    assert lc["async"]["finish"] == "load_contents_finish" and lc["params"] == [] and lc["throws"]
+    assert [p["name"] for p in lc["async"]["outs"] if not p.get("hidden")] == ["contents", "etag_out"]
+    assert by["query_info_async"]["ret"] == {"k": "object", "t": "Gio.FileInfo"}
+    assert "new_tmp_async" in {m["name"] for m in f["statics"]}
+    assert "load_contents_finish" not in by and "load_contents" in by
+    assert "load_partial_contents_async" not in by, "not introspectable (its call-scope callback outlives the call)"
+    md = by["measure_disk_usage"]
+    cb = next(p for p in md["params"] if p["type"]["k"] == "callback")
+    assert cb["type"]["scope"] == "call" and [a["name"] for a in cb["type"]["sig"]["args"]] == ["reporting", "current_size", "num_dirs", "num_files"]
+    assert "progress_data" not in {p["name"] for p in md["params"]}
+    cf = {m["name"]: m for m in facts["Gtk.CustomFilter"]["methods"]}["set_filter_func"]
+    assert [p["type"]["scope"] for p in cf["params"]] == ["notified"]
+    fd = {m["name"]: m for m in facts["Gtk.FileDialog"]["methods"]}["open"]
+    assert fd["params"][0]["type"] == {"k": "widget", "t": "Gtk.Window"} and fd["ret"] == {"k": "object", "t": "Gio.File"}
 
 
 def test_classes_have_one_export_per_file_and_nothing_at_import_time(gen):
@@ -191,6 +213,17 @@ def test_closure_is_computable_per_module_import(manifest):
         TC.roots_of(manifest, ["svelters:gtk/pango:NoSuch"])
 
 
+def test_async_members_return_promises_in_modules_and_typings():
+    src = (PKG / "gtk/gio/File.js").read_text()
+    assert "loadContentsAsync(options) {\n    return callAsync(this, 'load_contents_async', [], options, (r) => ({ ret: r.ret, contents: r.contents, etagOut: r.etag_out }));" in src
+    assert "queryInfoAsync(attributes, flags, ioPriority = 0, options)" in src
+    d = (PKG / "gtk/gio.d.ts").read_text()
+    assert "loadContentsAsync(options?: AsyncOptions): Promise<{ ret: boolean; contents: Uint8Array; etagOut: string | null }>;" in d
+    g = (PKG / "gtk/gtk.d.ts").read_text()
+    assert "open(parent?: NativeElement | null, options?: AsyncOptions): Promise<File>;" in g
+    assert "setFilterFunc(matchFunc?: ((item: GObject_Object | null) => boolean) | null): void;" in g or "setFilterFunc(matchFunc?: ((item: Object" in g
+
+
 def test_typings_cover_every_namespace_module(gen):
     for ns in {r["ns"] for r in gen.types.values()}:
         d = (PKG / "gtk" / f"{ns.lower()}.d.ts").read_text()
@@ -204,7 +237,9 @@ def test_the_ledger_facts_cover_the_curated_types_and_their_tests_exist():
     data = json.loads((TF.FACTS_DIR / "facts.json").read_text())
     tests = (ROOT / "crates/svelters-gtk/tests/types_verify.rs").read_text()
     ids = {f["fact"] for f in data["facts"]}
-    assert len(ids) == 50
+    # five groups per curated type, plus `async` for the four with async members (N1)
+    assert len(ids) == 54
+    assert "svelters-api:v1:type:gtk:Gio:File:async" in ids
     assert "svelters-api:v1:type:gtk:Gio:File:construct" in ids
     assert "svelters-api:v1:type:gtk:Pango:FontDescription:lifetime" in ids
     for f in data["facts"]:

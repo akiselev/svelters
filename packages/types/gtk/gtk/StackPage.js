@@ -12,7 +12,11 @@ export class StackPage extends GObject_Object {
   static bases = ["Gtk.StackPage", "GObject.Object", "Gtk.Accessible"];
 
   static [CONSTRUCT](props) {
-    return construct(this.native, constructProps(this, props, {'accessibleRole': ['accessible-role'], 'iconName': ['icon-name'], 'name': ['name'], 'needsAttention': ['needs-attention'], 'title': ['title'], 'useUnderline': ['use-underline'], 'visible': ['visible']}));
+    return construct(this.native, constructProps(this, props, {'accessibleRole': ['accessible-role'], 'child': ['child'], 'iconName': ['icon-name'], 'name': ['name'], 'needsAttention': ['needs-attention'], 'title': ['title'], 'useUnderline': ['use-underline'], 'visible': ['visible']}));
+  }
+
+  getChild() {
+    return call(this, 'get_child', []);
   }
 
   getIconName() {
@@ -122,6 +126,10 @@ export class StackPage extends GObject_Object {
 
   updatePlatformState(state) {
     call(this, 'update_platform_state', [state]);
+  }
+
+  get child() {
+    return getProp(this, 'child');
   }
 
   get iconName() {

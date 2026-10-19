@@ -41,6 +41,7 @@ Construct-time properties (construct-only ones can only be given here): `enableU
 
 ## Methods
 
+- `addCommitNotify(flags, commitNotify)`, since 4.16; `commitNotify` is a callback (notified scope)
 - `addMark(mark, where)`
 - `addSelectionClipboard(clipboard)`
 - `applyTag(tag, start, end)`
@@ -125,5 +126,5 @@ Listen with `obj.on('name', fn)`; it returns its disposer.
 
 ## Not bound yet
 
-8 members are not bound; reasons: callback 1, struct by value 7.
+7 members are not bound; reasons: struct by value 7.
 

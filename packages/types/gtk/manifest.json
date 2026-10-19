@@ -53,13 +53,17 @@
       "GObject.Object",
       "Gdk.ContentFormats",
       "Gdk.ContentProvider",
-      "Gdk.Display"
+      "Gdk.Display",
+      "Gdk.Texture",
+      "Gio.InputStream"
      ],
      "native": "Gdk.Clipboard",
      "signature": [
       "Gdk.ContentFormats",
       "Gdk.ContentProvider",
-      "Gdk.Display"
+      "Gdk.Display",
+      "Gdk.Texture",
+      "Gio.InputStream"
      ]
     },
     "ColorState": {
@@ -98,7 +102,8 @@
      "native": "Gdk.ContentProvider",
      "signature": [
       "GLib.Bytes",
-      "Gdk.ContentFormats"
+      "Gdk.ContentFormats",
+      "Gio.OutputStream"
      ]
     },
     "Cursor": {
@@ -240,7 +245,8 @@
       "Gdk.Device",
       "Gdk.Display",
       "Gdk.Drag",
-      "Gdk.Surface"
+      "Gdk.Surface",
+      "Gio.InputStream"
      ],
      "native": "Gdk.Drop",
      "signature": [
@@ -249,7 +255,8 @@
       "Gdk.Display",
       "Gdk.Drag",
       "Gdk.DragAction",
-      "Gdk.Surface"
+      "Gdk.Surface",
+      "Gio.InputStream"
      ]
     },
     "EventSequence": {
@@ -283,7 +290,9 @@
      "implements": [],
      "imports": [],
      "native": "Gdk.FrameTimings",
-     "signature": []
+     "signature": [
+      "Gdk.FrameResult"
+     ]
     },
     "GLContext": {
      "category": "object",
@@ -695,8 +704,11 @@
      ],
      "native": "Gio.Drive",
      "signature": [
+      "Gio.DriveStartFlags",
       "Gio.DriveStartStopType",
       "Gio.Icon",
+      "Gio.MountOperation",
+      "Gio.MountUnmountFlags",
       "Gio.Volume"
      ]
     },
@@ -722,6 +734,7 @@
       "GLib.Bytes",
       "Gio.AppInfo",
       "Gio.Cancellable",
+      "Gio.DriveStartFlags",
       "Gio.FileAttributeInfoList",
       "Gio.FileCopyFlags",
       "Gio.FileCreateFlags",
@@ -729,12 +742,16 @@
       "Gio.FileIOStream",
       "Gio.FileInfo",
       "Gio.FileInputStream",
+      "Gio.FileMeasureFlags",
       "Gio.FileMonitor",
       "Gio.FileMonitorFlags",
       "Gio.FileOutputStream",
       "Gio.FileQueryInfoFlags",
       "Gio.FileType",
-      "Gio.Mount"
+      "Gio.Mount",
+      "Gio.MountMountFlags",
+      "Gio.MountOperation",
+      "Gio.MountUnmountFlags"
      ]
     },
     "FileAttributeInfoList": {
@@ -896,6 +913,7 @@
      "native": "Gio.IOStream",
      "signature": [
       "Gio.Cancellable",
+      "Gio.IOStreamSpliceFlags",
       "Gio.InputStream",
       "Gio.OutputStream"
      ]
@@ -1067,6 +1085,9 @@
       "Gio.Drive",
       "Gio.File",
       "Gio.Icon",
+      "Gio.MountMountFlags",
+      "Gio.MountOperation",
+      "Gio.MountUnmountFlags",
       "Gio.Volume"
      ]
     },
@@ -1264,7 +1285,10 @@
       "Gio.Drive",
       "Gio.File",
       "Gio.Icon",
-      "Gio.Mount"
+      "Gio.Mount",
+      "Gio.MountMountFlags",
+      "Gio.MountOperation",
+      "Gio.MountUnmountFlags"
      ]
     }
    }
@@ -1711,6 +1735,7 @@
      "signature": [
       "GLib.String",
       "Gsk.FillRule",
+      "Gsk.PathIntersection",
       "Gsk.PathPoint",
       "Gsk.Stroke"
      ]
@@ -1981,15 +2006,19 @@
      "signature": []
     },
     "AlternativeTrigger": {
-     "category": "object",
+     "category": "model",
      "extends": "Gtk.ShortcutTrigger",
      "file": "gtk/AlternativeTrigger.js",
-     "implements": [],
+     "implements": [
+      "Gio.ListModel"
+     ],
      "imports": [
-      "Gtk.ShortcutTrigger"
+      "Gtk.ShortcutTrigger",
+      "GObject.Object"
      ],
      "native": "Gtk.AlternativeTrigger",
      "signature": [
+      "GObject.Object",
       "Gtk.ShortcutTrigger"
      ]
     },
@@ -2024,7 +2053,8 @@
      "signature": [
       "Gio.ApplicationFlags",
       "Gio.Menu",
-      "Gio.MenuModel"
+      "Gio.MenuModel",
+      "Gtk.ApplicationInhibitFlags"
      ]
     },
     "BinLayout": {
@@ -2363,10 +2393,13 @@
      "file": "gtk/CustomFilter.js",
      "implements": [],
      "imports": [
-      "Gtk.Filter"
+      "Gtk.Filter",
+      "GObject.Object"
      ],
      "native": "Gtk.CustomFilter",
-     "signature": []
+     "signature": [
+      "GObject.Object"
+     ]
     },
     "CustomLayout": {
      "category": "object",
@@ -2495,6 +2528,32 @@
       "GObject.Object"
      ],
      "native": "Gtk.EntryBuffer",
+     "signature": []
+    },
+    "EnumList": {
+     "category": "model",
+     "extends": "GObject.Object",
+     "file": "gtk/EnumList.js",
+     "implements": [
+      "Gio.ListModel"
+     ],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.EnumList",
+     "signature": [
+      "GObject.Object"
+     ]
+    },
+    "EnumListItem": {
+     "category": "object",
+     "extends": "GObject.Object",
+     "file": "gtk/EnumListItem.js",
+     "implements": [],
+     "imports": [
+      "GObject.Object"
+     ],
+     "native": "Gtk.EnumListItem",
      "signature": []
     },
     "EventController": {
@@ -2740,12 +2799,18 @@
      "imports": [
       "GObject.Object",
       "Gtk.Filter",
+      "Pango.FontDescription",
+      "Pango.FontFace",
+      "Pango.FontFamily",
       "Pango.FontMap",
       "Pango.Language"
      ],
      "native": "Gtk.FontDialog",
      "signature": [
       "Gtk.Filter",
+      "Pango.FontDescription",
+      "Pango.FontFace",
+      "Pango.FontFamily",
       "Pango.FontMap",
       "Pango.Language"
      ]
@@ -3040,10 +3105,13 @@
      "file": "gtk/LayoutManager.js",
      "implements": [],
      "imports": [
-      "GObject.Object"
+      "GObject.Object",
+      "Gtk.LayoutChild"
      ],
      "native": "Gtk.LayoutManager",
      "signature": [
+      "Gtk.LayoutChild",
+      "Gtk.Orientation",
       "Gtk.SizeRequestMode"
      ]
     },
@@ -3172,7 +3240,8 @@
      ],
      "native": "Gtk.MountOperation",
      "signature": [
-      "Gdk.Display"
+      "Gdk.Display",
+      "Gio.MountOperation"
      ]
     },
     "MultiFilter": {
@@ -3457,13 +3526,18 @@
      "implements": [],
      "imports": [
       "GObject.Object",
+      "Gio.OutputStream",
       "Gtk.PageSetup",
-      "Gtk.PrintSettings"
+      "Gtk.PrintSettings",
+      "Gtk.PrintSetup"
      ],
      "native": "Gtk.PrintDialog",
      "signature": [
+      "Gio.File",
+      "Gio.OutputStream",
       "Gtk.PageSetup",
-      "Gtk.PrintSettings"
+      "Gtk.PrintSettings",
+      "Gtk.PrintSetup"
      ]
     },
     "PrintJob": {
@@ -3499,12 +3573,15 @@
       "GObject.Object",
       "Gtk.PageSetup",
       "Gtk.PrintContext",
+      "Gtk.PrintOperationPreview",
       "Gtk.PrintSettings"
      ],
      "native": "Gtk.PrintOperation",
      "signature": [
       "Gtk.PageSetup",
       "Gtk.PrintContext",
+      "Gtk.PrintOperationAction",
+      "Gtk.PrintOperationPreview",
       "Gtk.PrintOperationResult",
       "Gtk.PrintSettings",
       "Gtk.PrintStatus",
@@ -3801,7 +3878,8 @@
      "native": "Gtk.ShortcutTrigger",
      "signature": [
       "GLib.String",
-      "Gdk.Display"
+      "Gdk.Display",
+      "Gdk.ModifierType"
      ]
     },
     "SignalAction": {
@@ -4056,6 +4134,8 @@
       "Gdk.Paintable",
       "Gdk.PaintableFlags",
       "Gdk.Snapshot",
+      "Gtk.Overflow",
+      "Gtk.Settings",
       "Gtk.SvgFeatures"
      ]
     },
@@ -4095,6 +4175,7 @@
       "Gdk.Clipboard",
       "Gdk.ContentProvider",
       "Gdk.Paintable",
+      "Gtk.TextBufferNotifyFlags",
       "Gtk.TextChildAnchor",
       "Gtk.TextIter",
       "Gtk.TextMark",
@@ -4421,7 +4502,8 @@
       "Pango.Stretch",
       "Pango.Style",
       "Pango.Variant",
-      "Pango.Weight"
+      "Pango.Weight",
+      "Pango.Width"
      ]
     },
     "FontFace": {

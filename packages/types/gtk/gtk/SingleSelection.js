@@ -77,7 +77,7 @@ export class SingleSelection extends GObject_Object {
 
   getSection(position) {
     const __res = call(this, 'get_section', [position]);
-    return { outStart: __res.outStart, outEnd: __res.outEnd };
+    return { outStart: __res.out_start, outEnd: __res.out_end };
   }
 
   sectionsChanged(position, nItems) {

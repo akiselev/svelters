@@ -59,7 +59,16 @@ Construct-time properties (construct-only ones can only be given here): `acceptL
 - `setModal(modal)`, since 4.10
 - `setTitle(title)`, since 4.10
 
-## Not bound yet
+## Async methods
 
-8 members are not bound; reasons: async 8.
+Each folds a native `_async`/`_finish` pair into one call that returns a Promise. It resolves with the finish result (an object of the out parameters where there are any) and rejects with a `NativeError`. The native `GCancellable` is not exposed: pass `{ signal }` (an `AbortSignal`) as the last argument to cancel, which rejects with code `cancelled`. See [Async calls and callbacks](../async/).
+
+- `open(parent, { signal }?)` → `Promise<object>` (`open` + `open_finish`), since 4.10
+- `openMultiple(parent, { signal }?)` → `Promise<object>` (`open_multiple` + `open_multiple_finish`), since 4.10
+- `openMultipleTextFiles(parent, { signal }?)` → `Promise<{ ret, encoding }>` (`open_multiple_text_files` + `open_multiple_text_files_finish`), since 4.18
+- `openTextFile(parent, { signal }?)` → `Promise<{ ret, encoding }>` (`open_text_file` + `open_text_file_finish`), since 4.18
+- `save(parent, { signal }?)` → `Promise<object>` (`save` + `save_finish`), since 4.10
+- `saveTextFile(parent, { signal }?)` → `Promise<{ ret, encoding, lineEnding }>` (`save_text_file` + `save_text_file_finish`), since 4.18
+- `selectFolder(parent, { signal }?)` → `Promise<object>` (`select_folder` + `select_folder_finish`), since 4.10
+- `selectMultipleFolders(parent, { signal }?)` → `Promise<object>` (`select_multiple_folders` + `select_multiple_folders_finish`), since 4.10
 
