@@ -78,9 +78,14 @@ class Frontend:
 
         self.verified = ledger.verified_facts("qt")
         self.facts = [e["fact"] for e in ledger.load("qt")["entries"]]
+        # The manual overrides with the inferred layer (metadata/inferred/qt) merged under them.
+        sys.path.insert(0, str(root / "tools/metadata/qt"))
+        import layers  # noqa: E402
+
+        merged = layers.merged_overrides(root / "metadata/overrides/qt", None, root / "metadata/qt")
         self.overrides: dict[str, dict] = {}
         for p in sorted((root / "metadata/overrides/qt").glob("*.yaml")):
-            self.overrides[p.stem] = {"path": p, "data": svmeta.load_yaml(p)}
+            self.overrides[p.stem] = {"path": p, "data": merged[p.stem]}
         # enum name -> entity id (class scoped); a bare name is resolved through the owner chain, then uniquely.
         self.enum_ids: dict[tuple[str, str], str] = {}
         self.enum_by_name: dict[str, list[str]] = {}
@@ -223,7 +228,7 @@ class Frontend:
                 rec["annotated"] = True
                 if any(f.endswith(f":prop:{ap['js']}") and f in self.verified and any(f":{c}:" in f for c in self.chain(stem)) for f in self.facts):
                     rec["verified"] = True
-                rec["origins"] = sorted(set(rec["origins"]) | {"manual"})
+                rec["origins"] = sorted(set(rec["origins"]) | {ap.get("_origin", "manual")})
                 if ap.get("type") == "enum" and ap.get("values"):
                     rec["type"] = {"display": " | ".join(json.dumps(v) for v in ap["values"]), "neutral": "enum"}
                 if ap.get("target") == "layout":
@@ -280,7 +285,7 @@ class Frontend:
                 rec["js_event"] = a["js"]
                 rec["handler_prop"] = f"on{a['js']}"
                 rec["annotated"] = True
-                rec["origins"] = sorted(set(rec["origins"]) | {"manual"})
+                rec["origins"] = sorted(set(rec["origins"]) | {a.get("_origin", "manual")})
                 if a.get("args") is not None and not rec["params"]:
                     rec["params"] = [{"name": f"arg{i}", "type": {"display": x if isinstance(x, str) else "unknown"}} for i, x in enumerate(a["args"])]
                 ext = rec["extensions"][TK]

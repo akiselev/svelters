@@ -1,0 +1,86 @@
+elements:
+- tag: calendar-widget
+  props:
+  - js: date-edit-accept-delay
+    native: dateEditAcceptDelay
+    sample: 1501
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: date-edit-enabled
+    native: dateEditEnabled
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: first-day-of-week
+    native: firstDayOfWeek
+    sample: Tuesday
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: grid-visible
+    native: gridVisible
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: horizontal-header-format
+    native: horizontalHeaderFormat
+    sample: NoHorizontalHeader
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: navigation-bar-visible
+    native: navigationBarVisible
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: selection-mode
+    native: selectionMode
+    sample: NoSelection
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: vertical-header-format
+    native: verticalHeaderFormat
+    sample: NoVerticalHeader
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: current-page-changed
+    native: currentPageChanged
+    connect: currentPageChanged(int,int)
+    args:
+    - name: year
+      type: i32
+    - name: month
+      type: i32
+    trigger:
+      emit:
+      - 1
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal currentPageChanged(int,int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: selection-changed
+    native: selectionChanged
+    connect: selectionChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal selectionChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

@@ -1,0 +1,21 @@
+elements:
+- tag: push-button
+  props:
+  - js: auto-default
+    native: autoDefault
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: default
+    native: default
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: flat
+    native: flat
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact

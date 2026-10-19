@@ -1,0 +1,82 @@
+{
+ "props:animated": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:dock-nesting-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:document-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-shape": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Rounded",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Triangular",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Triangular",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tool-button-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ToolButtonIconOnly",
+   "notify": null,
+   "outcome": "exact",
+   "read": "ToolButtonTextOnly",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "ToolButtonTextOnly",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:tool-button-style-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    "ToolButtonTextOnly"
+   ],
+   "trigger": "toolButtonStyle"
+  },
+  "pattern": "signal:property-trigger"
+ }
+}

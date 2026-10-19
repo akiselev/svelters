@@ -79,7 +79,8 @@
                   "probe",
                   "manual",
                   "docs",
-                  "source"
+                  "source",
+                  "rule"
                 ]
               },
               "ref": {
@@ -135,7 +136,9 @@
             },
             "args": {
               "type": "array",
-              "items": { "type": "string" },
+              "items": {
+                "type": "string"
+              },
               "description": "C++ constructor arguments (QActionGroup needs a parent: [\"nullptr\"])."
             },
             "context_menu": {
@@ -216,6 +219,14 @@
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        },
+        "deny": {
+          "description": "Inferred facts (metadata/inferred/qt) this element does not get: `<section>:<glob>` with section props, signals, methods or bindings (tools/metadata/qt/layers.py).",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(props|signals|methods|bindings):.+$"
+          }
         }
       }
     },
@@ -473,8 +484,53 @@
           }
         },
         "trigger": {
-          "type": "string",
-          "description": "C++ statement that makes Qt emit the signal; `$w` is the widget, `$i` the iteration (0, 1, 2)."
+          "description": "What makes Qt emit the signal: a C++ statement (`$w` is the widget, `$i` the iteration 0, 1, 2), or, as the inferred layer writes it, a property set {property: <Q_PROPERTY>, values: [first, second, third], setup?: <C++ statement>} (enum values by member name), or {emit: [args]} (the test emits the signal itself; with `delivery_only`).",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "property",
+                "values"
+              ],
+              "properties": {
+                "property": {
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3
+                },
+                "setup": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "emit"
+              ],
+              "properties": {
+                "emit": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean"
+                    ]
+                  },
+                  "description": "Arguments the generated test emits the signal with (QMetaMethod::invoke): a delivery-only trigger."
+                }
+              }
+            }
+          ]
         },
         "expect_args": {
           "type": "array",
@@ -486,12 +542,26 @@
           "enum": [
             "close_request",
             "key_press",
-            "key_release", "mouse_press", "mouse_release", "mouse_move", "mouse_double_click", "wheel",
-            "focus_in", "focus_out", "enter", "leave", "resize", "context_menu"
+            "key_release",
+            "mouse_press",
+            "mouse_release",
+            "mouse_move",
+            "mouse_double_click",
+            "wheel",
+            "focus_in",
+            "focus_out",
+            "enter",
+            "leave",
+            "resize",
+            "context_menu"
           ]
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        },
+        "delivery_only": {
+          "type": "boolean",
+          "description": "The trigger emits the signal synthetically: the test checks delivery, listen-off and destroy, not native causation (`verified: delivery`)."
         }
       }
     },
@@ -742,6 +812,21 @@
         },
         "provenance": {
           "$ref": "#/$defs/provenance"
+        },
+        "verify": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "values"
+          ],
+          "description": "Values the generated binding test sets natively (QObject::setProperty) then through the backend (enum values by member name).",
+          "properties": {
+            "values": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
         }
       }
     },

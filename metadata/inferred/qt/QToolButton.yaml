@@ -1,0 +1,27 @@
+elements:
+- tag: tool-button
+  props:
+  - js: arrow-type
+    native: arrowType
+    sample: UpArrow
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: auto-raise
+    native: autoRaise
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: popup-mode
+    native: popupMode
+    sample: MenuButtonPopup
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tool-button-style
+    native: toolButtonStyle
+    sample: ToolButtonTextOnly
+    provenance:
+    - origin: probe
+      ref: round trip exact

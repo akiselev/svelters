@@ -3,7 +3,8 @@
 
 Inputs (only these):
   gtk: metadata/gtk/*.json   (`bindings` list on a kind with an `element.tag`; merged from metadata/overrides/gtk/*.yaml by ingest.py)
-  qt:  metadata/overrides/qt/*.yaml   (`bindings` list on an `elements[]` entry)
+  qt:  metadata/overrides/qt/*.yaml   (`bindings` list on an `elements[]` entry), with the inferred layer
+       metadata/inferred/qt merged under them (tools/metadata/qt/layers.py)
   appkit: metadata/overrides/appkit/*.yaml + metadata/appkit/*.json   (`bindings` list on a class; applies to the element classes deriving from it)
   winui:  metadata/overrides/winui/*.yaml + metadata/winui/*.json     (same; property and signal are kebab-case JS names)
 Outputs (checked in, byte-identical on rerun):
@@ -152,9 +153,16 @@ def qt_inherited(cls: str, key: str, files: dict[str, dict]) -> list[dict]:
     return out
 
 
+def qt_files() -> dict[str, dict]:
+    """The Qt override files with the inferred layer merged under them (manual wins, parked facts left out)."""
+    sys.path.insert(0, str(ROOT / "tools/metadata/qt"))
+    import layers
+    return layers.merged_overrides(QT_OVERRIDES, None, QT_META)
+
+
 def qt_bindings() -> dict[str, dict[str, dict]]:
     out: dict[str, dict[str, dict]] = {}
-    files = {path.stem: svmeta.load_yaml(path) for path in sorted(QT_OVERRIDES.glob("*.yaml"))}
+    files = qt_files()
     for stem, data in files.items():
         for el in data.get("elements", []):
             if not el.get("bindings"):

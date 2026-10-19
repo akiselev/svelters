@@ -339,27 +339,27 @@
   "kind": "QComboBox",
   "lifetime": "owned",
   "methods": [
-   5,
+   6,
    82
   ],
   "native": "QComboBox",
   "ownership": false,
   "props": [
-   9,
+   14,
    16
   ],
-  "props_annotated": 9,
+  "props_annotated": 14,
   "signal_results": 0,
   "signals": [
-   3,
+   5,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   18,
-   18
+   26,
+   26
   ]
  },
  {
@@ -438,16 +438,16 @@
   "kind": "QDateTimeEdit",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    64
   ],
   "native": "QDateTimeEdit",
   "ownership": false,
   "props": [
-   9,
+   11,
    17
   ],
-  "props_annotated": 9,
+  "props_annotated": 11,
   "signal_results": 0,
   "signals": [
    1,
@@ -457,8 +457,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   11,
-   11
+   14,
+   14
   ]
  },
  {
@@ -471,7 +471,7 @@
   "kind": "QDial",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    17
   ],
   "native": "QDial",
@@ -490,8 +490,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   6,
-   6
+   7,
+   7
   ]
  },
  {
@@ -603,27 +603,27 @@
   "kind": "QDoubleSpinBox",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    22
   ],
   "native": "QDoubleSpinBox",
   "ownership": false,
   "props": [
-   5,
+   8,
    9
   ],
-  "props_annotated": 5,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
-   1,
+   2,
    2
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   12,
+   12
   ]
  },
  {
@@ -1104,10 +1104,10 @@
   "native": "QLCDNumber",
   "ownership": false,
   "props": [
-   5,
+   6,
    6
   ],
-  "props_annotated": 5,
+  "props_annotated": 6,
   "signal_results": 0,
   "signals": [
    1,
@@ -1117,8 +1117,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   7,
-   7
+   8,
+   8
   ]
  },
  {
@@ -1131,7 +1131,7 @@
   "kind": "QLabel",
   "lifetime": "owned",
   "methods": [
-   2,
+   4,
    48
   ],
   "native": "QLabel",
@@ -1150,8 +1150,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   14,
-   14
+   16,
+   16
   ]
  },
  {
@@ -1197,27 +1197,27 @@
   "kind": "QLineEdit",
   "lifetime": "owned",
   "methods": [
-   6,
+   12,
    85
   ],
   "native": "QLineEdit",
   "ownership": false,
   "props": [
-   11,
+   13,
    19
   ],
-  "props_annotated": 11,
+  "props_annotated": 13,
   "signal_results": 1,
   "signals": [
-   5,
+   6,
    7
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   24,
-   24
+   33,
+   33
   ]
  },
  {
@@ -1263,7 +1263,7 @@
   "kind": "QListWidget",
   "lifetime": "owned",
   "methods": [
-   3,
+   4,
    40
   ],
   "native": "QListWidget",
@@ -1275,15 +1275,15 @@
   "props_annotated": 3,
   "signal_results": 0,
   "signals": [
-   2,
+   3,
    10
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   11,
-   11
+   13,
+   13
   ]
  },
  {
@@ -1308,15 +1308,15 @@
   "props_annotated": 5,
   "signal_results": 1,
   "signals": [
-   0,
+   1,
    3
   ],
   "slots": 5,
   "slots_own": 5,
   "unexposed": null,
   "verified": [
-   19,
-   19
+   20,
+   20
   ]
  },
  {
@@ -1494,16 +1494,16 @@
   "kind": "QPlainTextEdit",
   "lifetime": "owned",
   "methods": [
-   11,
+   12,
    93
   ],
   "native": "QPlainTextEdit",
   "ownership": false,
   "props": [
-   13,
+   15,
    16
   ],
-  "props_annotated": 13,
+  "props_annotated": 15,
   "signal_results": 1,
   "signals": [
    4,
@@ -1513,8 +1513,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   30,
-   30
+   33,
+   33
   ]
  },
  {
@@ -1527,16 +1527,16 @@
   "kind": "QProgressBar",
   "lifetime": "owned",
   "methods": [
-   1,
+   2,
    27
   ],
   "native": "QProgressBar",
   "ownership": false,
   "props": [
-   7,
+   8,
    10
   ],
-  "props_annotated": 7,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
    1,
@@ -1546,8 +1546,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   9,
-   9
+   11,
+   11
   ]
  },
  {
@@ -1560,7 +1560,7 @@
   "kind": "QProgressDialog",
   "lifetime": "toplevel",
   "methods": [
-   2,
+   3,
    29
   ],
   "native": "QProgressDialog",
@@ -1579,8 +1579,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   10,
-   10
+   11,
+   11
   ]
  },
  {
@@ -1857,16 +1857,16 @@
   "kind": "QSpinBox",
   "lifetime": "owned",
   "methods": [
-   2,
+   3,
    23
   ],
   "native": "QSpinBox",
   "ownership": false,
   "props": [
-   7,
+   8,
    9
   ],
-  "props_annotated": 7,
+  "props_annotated": 8,
   "signal_results": 0,
   "signals": [
    2,
@@ -1876,8 +1876,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   12,
-   12
+   14,
+   14
   ]
  },
  {
@@ -2022,7 +2022,7 @@
   "kind": "QStackedWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    11
   ],
   "native": "QStackedWidget",
@@ -2041,8 +2041,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   5,
+   5
   ]
  },
  {
@@ -2088,16 +2088,16 @@
   "kind": "QTabBar",
   "lifetime": "owned",
   "methods": [
-   4,
+   5,
    74
   ],
   "native": "QTabBar",
   "ownership": false,
   "props": [
-   11,
+   12,
    14
   ],
-  "props_annotated": 11,
+  "props_annotated": 12,
   "signal_results": 0,
   "signals": [
    5,
@@ -2107,8 +2107,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   21,
-   21
+   23,
+   23
   ]
  },
  {
@@ -2121,16 +2121,16 @@
   "kind": "QTabWidget",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    58
   ],
   "native": "QTabWidget",
   "ownership": true,
   "props": [
-   7,
+   9,
    11
   ],
-  "props_annotated": 7,
+  "props_annotated": 9,
   "signal_results": 0,
   "signals": [
    3,
@@ -2140,8 +2140,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   15,
-   15
+   18,
+   18
   ]
  },
  {
@@ -2220,7 +2220,7 @@
   "kind": "QTextBrowser",
   "lifetime": "owned",
   "methods": [
-   5,
+   6,
    30
   ],
   "native": "QTextBrowser",
@@ -2239,8 +2239,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   11,
-   11
+   12,
+   12
   ]
  },
  {
@@ -2311,7 +2311,7 @@
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 3,
   "defaults": 6,
   "element": "tool-bar",
   "gallery": "06-layout",
@@ -2319,7 +2319,7 @@
   "kind": "QToolBar",
   "lifetime": "owned",
   "methods": [
-   1,
+   2,
    26
   ],
   "native": "QToolBar",
@@ -2331,15 +2331,15 @@
   "props_annotated": 5,
   "signal_results": 0,
   "signals": [
-   2,
+   3,
    8
   ],
   "slots": 1,
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   9,
-   9
+   14,
+   14
   ]
  },
  {
@@ -2352,7 +2352,7 @@
   "kind": "QToolBox",
   "lifetime": "owned",
   "methods": [
-   0,
+   1,
    23
   ],
   "native": "QToolBox",
@@ -2371,8 +2371,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   5,
+   5
   ]
  },
  {
@@ -2589,10 +2589,10 @@
   "native": "QWizard",
   "ownership": true,
   "props": [
-   2,
+   4,
    6
   ],
-  "props_annotated": 2,
+  "props_annotated": 4,
   "signal_results": 0,
   "signals": [
    1,
@@ -2602,8 +2602,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   4,
-   4
+   6,
+   6
   ]
  },
  {

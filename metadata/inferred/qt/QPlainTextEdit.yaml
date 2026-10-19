@@ -1,0 +1,246 @@
+elements:
+- tag: plain-text-edit
+  props:
+  - js: background-visible
+    native: backgroundVisible
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: center-on-scroll
+    native: centerOnScroll
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: cursor-width
+    native: cursorWidth
+    sample: 2
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: document-title
+    native: documentTitle
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: line-wrap-mode
+    native: lineWrapMode
+    sample: NoWrap
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: maximum-block-count
+    native: maximumBlockCount
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: overwrite-mode
+    native: overwriteMode
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: placeholder-text
+    native: placeholderText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: plain-text
+    native: plainText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: read-only
+    native: readOnly
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-changes-focus
+    native: tabChangesFocus
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tab-stop-distance
+    native: tabStopDistance
+    sample: 81.5
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: undo-redo-enabled
+    native: undoRedoEnabled
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: blockCount
+    native: blockCount
+    provenance:
+    - origin: probe
+      ref: 'returns property blockCount (probe: equal on a new instance)'
+  signals:
+  - js: block-count-changed
+    native: blockCountChanged
+    connect: blockCountChanged(int)
+    args:
+    - name: newBlockCount
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal blockCountChanged(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: copy-available
+    native: copyAvailable
+    connect: copyAvailable(bool)
+    args:
+    - name: 'yes'
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal copyAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: cursor-position-changed
+    native: cursorPositionChanged
+    connect: cursorPositionChanged()
+    args: []
+    trigger:
+      property: plainText
+      values:
+      - svl probe
+      - ''
+      - svl probe
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal cursorPositionChanged()
+    - origin: probe
+      ref: emitted once per set of plainText (sample, default, sample)
+  - js: modification-changed
+    native: modificationChanged
+    connect: modificationChanged(bool)
+    args:
+    - name: changed
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal modificationChanged(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: redo-available
+    native: redoAvailable
+    connect: redoAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal redoAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: selection-changed
+    native: selectionChanged
+    connect: selectionChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal selectionChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: text-changed
+    native: textChanged
+    connect: textChanged()
+    args: []
+    trigger:
+      property: plainText
+      values:
+      - svl probe
+      - ''
+      - svl probe
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal textChanged()
+    - origin: probe
+      ref: emitted once per set of plainText (sample, default, sample); its NOTIFY signal
+  - js: undo-available
+    native: undoAvailable
+    connect: undoAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal undoAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  bindings:
+  - name: plain-text
+    direction: two_way
+    property: plain-text
+    type:
+      ref: string
+      nullable: false
+    change:
+      signal: text-changed
+      role: any_change
+      value: prop
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - svl probe
+      - ''
+    provenance:
+    - origin: rule
+      ref: 'B1: QPlainTextEdit::plainText is writable, scalar and NOTIFYs textChanged(); the renderer compares before set'

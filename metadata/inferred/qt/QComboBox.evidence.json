@@ -1,0 +1,244 @@
+{
+ "bindings:current-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "currentIndexChanged(int)"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:count": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "count",
+   "stable": true,
+   "user": false,
+   "value": 0
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:current-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": "currentIndexChanged(int)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": "populate",
+   "recipe_call": "addItems",
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:duplicates-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:insert-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "InsertAtBottom",
+   "notify": null,
+   "outcome": "exact",
+   "read": "NoInsert",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoInsert",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:max-count": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 2147483647,
+   "notify": null,
+   "outcome": "exact",
+   "read": 7,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 7,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:max-visible-items": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 10,
+   "notify": null,
+   "outcome": "exact",
+   "read": 11,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 11,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:minimum-contents-length": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:model-column": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:placeholder-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:size-adjust-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "AdjustToContentsOnFirstShow",
+   "notify": null,
+   "outcome": "exact",
+   "read": "AdjustToContents",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "AdjustToContents",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:activated": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:current-index-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    1
+   ],
+   "trigger": "currentIndex"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:current-text-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    "b"
+   ],
+   "trigger": "currentIndex"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:edit-text-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:highlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    1
+   ],
+   "trigger": "currentIndex"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:text-activated": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:text-highlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    "b"
+   ],
+   "trigger": "currentIndex"
+  },
+  "pattern": "signal:property-trigger"
+ }
+}

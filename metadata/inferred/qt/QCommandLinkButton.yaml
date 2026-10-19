@@ -1,0 +1,15 @@
+elements:
+- tag: command-link-button
+  props:
+  - js: description
+    native: description
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: flat
+    native: flat
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact

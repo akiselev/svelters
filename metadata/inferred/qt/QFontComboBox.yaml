@@ -1,0 +1,9 @@
+elements:
+- tag: font-combo-box
+  props:
+  - js: writing-system
+    native: writingSystem
+    sample: Latin
+    provenance:
+    - origin: probe
+      ref: round trip exact

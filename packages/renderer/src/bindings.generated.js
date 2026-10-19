@@ -21,7 +21,17 @@ export const BINDINGS = {
     "wrap-license": { prop: "wrap-license", signal: "notify::wrap-license", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
   action: {
+    "auto-repeat": { prop: "auto-repeat", signal: "changed", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    checkable: { prop: "checkable", signal: "checkable-changed", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
     checked: { prop: "checked", signal: "toggled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk", "qt"] },
+    "icon-text": { prop: "icon-text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    "menu-role": { prop: "menu-role", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    priority: { prop: "priority", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    "shortcut-context": { prop: "shortcut-context", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    "status-tip": { prop: "status-tip", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    "tool-tip": { prop: "tool-tip", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+    "whats-this": { prop: "whats-this", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
   },
   "action-bar": {
     revealed: { prop: "revealed", signal: "notify::revealed", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
@@ -442,6 +452,11 @@ export const BINDINGS = {
     "can-shrink": { prop: "can-shrink", signal: "notify::can-shrink", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
     "has-frame": { prop: "has-frame", signal: "notify::has-frame", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
     "use-underline": { prop: "use-underline", signal: "notify::use-underline", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+  },
+  "tool-bar": {
+    movable: { prop: "movable", signal: "movable-changed", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+    orientation: { prop: "orientation", signal: "orientation-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+    "tool-button-style": { prop: "tool-button-style", signal: "tool-button-style-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   "tool-box": {
     "current-index": { prop: "current-index", signal: "current-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },

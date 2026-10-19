@@ -1,0 +1,23 @@
+{
+ "methods:count": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "count",
+   "stable": true,
+   "user": false,
+   "value": 0
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "signals:current-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

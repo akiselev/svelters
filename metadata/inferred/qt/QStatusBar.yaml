@@ -1,0 +1,27 @@
+elements:
+- tag: status-bar
+  props:
+  - js: size-grip-enabled
+    native: sizeGripEnabled
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: message-changed
+    native: messageChanged
+    connect: messageChanged(QString)
+    args:
+    - name: message
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal messageChanged(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

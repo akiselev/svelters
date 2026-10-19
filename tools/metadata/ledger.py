@@ -6,7 +6,7 @@ ones (metadata/inferred/<tk>, written by infer.py). The generators write a fact 
 origin, test names + a fingerprint over the fact record and its test source):
 
   gtk: crates/svelters-gtk/src/generated/facts.json   (written by tools/metadata/gtk/gen_backend.py)
-  qt:  produced on the fly by tools/metadata/qt/gen_cpp.py --facts
+  qt:  produced on the fly by tools/metadata/qt/gen_cpp.py --facts (inferred facts: table-driven rows)
 
 `refresh` runs the generated tests and records, per test: the fact id, the origin, the test id, the
 result, the fingerprint and the toolkit version. `check` fails when any manual fact lacks a passing
@@ -190,25 +190,30 @@ def run_gtk(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str
     return res, msgs
 
 
-def run_qt() -> dict[str, str]:
+def run_qt(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str]]:
+    """(test -> pass|fail, test -> failure message). One binary runs every generated Qt test; `only` is ignored."""
     cmd = display_prefix() + ["cargo", "test", "-p", "counter-qt", "--test", "generated"]
     p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
-    res = {}
-    for m in re.finditer(r"^(ok  |FAIL) (\S+?)(?::|$)", p.stdout, re.M):
+    res, msgs = {}, {}
+    for m in re.finditer(r"^(ok  |FAIL) (\S+?)(?::(.*)|$)", p.stdout, re.M):
         res[m.group(2)] = "pass" if m.group(1).startswith("ok") else "fail"
+        if m.group(3):
+            msgs[m.group(2)] = m.group(3).strip()[:240]
     if not res:
         sys.stderr.write(p.stdout[-4000:] + p.stderr[-4000:])
         raise SystemExit("ledger: no Qt test results (build failure?)")
     for line in p.stdout.splitlines():
         if line.startswith("FAIL "):
             print("  " + line, file=sys.stderr)
-    return res
+    return res, msgs
 
 
-PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json"}
+PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json", "qt": ROOT / "metadata/inferred/qt/_parked.json"}
 # What turns the merged metadata into the generated backend, in order (a parked fact leaves all of them).
 REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], ["tools/metadata/gtk/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
-                 ["tools/metadata/semantics/gen_semantics.py"]]}
+                 ["tools/metadata/semantics/gen_semantics.py"]],
+         # Qt: the generator runs in the counter-qt build (it reads _parked.json); the rest consumes the merged layers.
+         "qt": [["tools/metadata/common/gen_bindings.py"], ["tools/metadata/semantics/gen_semantics.py"]]}
 
 
 def load_parked(tk: str) -> list[dict]:
@@ -251,23 +256,21 @@ def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str]) -> b
 
 def refresh(tk: str) -> int:
     man = manifest(tk)
-    if tk == "gtk":
-        results, msgs = run_gtk()
-        for _ in range(4):
-            if not park(tk, man, results, msgs):
-                break
-            regenerate(tk)
-            new = manifest(tk)
-            old_fp = {f["fact"]: f["fingerprint"] for f in man["facts"]}
-            redo = {t for f in new["facts"] if old_fp.get(f["fact"]) != f["fingerprint"] or any(t not in results for t in f["tests"])
-                    for t in f["tests"]}
-            man = new
-            if redo:
-                r2, m2 = run_gtk(redo)
-                results.update(r2)
-                msgs.update(m2)
-    else:
-        results = run_qt()
+    run = run_gtk if tk == "gtk" else run_qt
+    results, msgs = run()
+    for _ in range(4):
+        if not park(tk, man, results, msgs):
+            break
+        regenerate(tk)
+        new = manifest(tk)
+        old_fp = {f["fact"]: f["fingerprint"] for f in man["facts"]}
+        redo = {t for f in new["facts"] if old_fp.get(f["fact"]) != f["fingerprint"] or any(t not in results for t in f["tests"])
+                for t in f["tests"]}
+        man = new
+        if redo:
+            r2, m2 = run(redo)
+            results.update(r2)
+            msgs.update(m2)
     entries, bad, soft = [], 0, 0
     for f in man["facts"]:
         for t in f["tests"]:
@@ -290,7 +293,7 @@ def refresh(tk: str) -> int:
 
 def probe_problems(tk: str, version: str) -> list[str]:
     """The checked-in probe must be for the toolkit version the ledger was refreshed on."""
-    if tk != "gtk":
+    if tk not in PARKED:
         return []
     p = ROOT / f"metadata/probe/{tk}/{version}.json"
     if not p.exists():
@@ -335,7 +338,7 @@ def check(tk: str) -> int:
             print("  " + p, file=sys.stderr)
         return 1
     manual = sum(1 for f in man["facts"] if f.get("origin") != "inferred")
-    extra = f"; inferred {inferred['pass']} verified, {inferred['pending']} pending, {len(load_parked(tk))} parked" if tk == "gtk" else ""
+    extra = f"; inferred {inferred['pass']} verified, {inferred['pending']} pending, {len(load_parked(tk))} parked" if tk in PARKED else ""
     print(f"ledger {tk}: {manual} manual facts verified{extra}")
     return 0
 

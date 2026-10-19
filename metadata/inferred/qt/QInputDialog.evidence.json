@@ -1,0 +1,56 @@
+{
+ "signals:double-value-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1.5
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:double-value-selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1.5
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:int-value-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:int-value-selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:text-value-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:text-value-selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

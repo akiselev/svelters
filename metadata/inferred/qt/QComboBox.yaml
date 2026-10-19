@@ -1,0 +1,236 @@
+elements:
+- tag: combo-box
+  props:
+  - js: current-index
+    native: currentIndex
+    sample: 1
+    setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    provenance:
+    - origin: probe
+      ref: round trip exact after recipe populate (addItems); NOTIFY fired
+  - js: duplicates-enabled
+    native: duplicatesEnabled
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: editable
+    native: editable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: frame
+    native: frame
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: insert-policy
+    native: insertPolicy
+    sample: NoInsert
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: max-count
+    native: maxCount
+    sample: 7
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: max-visible-items
+    native: maxVisibleItems
+    sample: 11
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: minimum-contents-length
+    native: minimumContentsLength
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: model-column
+    native: modelColumn
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: placeholder-text
+    native: placeholderText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: size-adjust-policy
+    native: sizeAdjustPolicy
+    sample: AdjustToContents
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: count
+    native: count
+    provenance:
+    - origin: probe
+      ref: 'returns property count (probe: equal on a new instance)'
+  signals:
+  - js: activated
+    native: activated
+    connect: activated(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal activated(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: current-index-changed
+    native: currentIndexChanged
+    connect: currentIndexChanged(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      property: currentIndex
+      values:
+      - 1
+      - 0
+      - 1
+      setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal currentIndexChanged(int)
+    - origin: probe
+      ref: emitted once per set of currentIndex (sample, default, sample); its NOTIFY signal
+  - js: current-text-changed
+    native: currentTextChanged
+    connect: currentTextChanged(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      property: currentIndex
+      values:
+      - 1
+      - 0
+      - 1
+      setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    expect_args:
+    - b
+    provenance:
+    - origin: metaobject
+      ref: signal currentTextChanged(QString)
+    - origin: probe
+      ref: emitted once per set of currentIndex (sample, default, sample)
+  - js: edit-text-changed
+    native: editTextChanged
+    connect: editTextChanged(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal editTextChanged(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: highlighted
+    native: highlighted
+    connect: highlighted(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      property: currentIndex
+      values:
+      - 1
+      - 0
+      - 1
+      setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal highlighted(int)
+    - origin: probe
+      ref: emitted once per set of currentIndex (sample, default, sample)
+  - js: text-activated
+    native: textActivated
+    connect: textActivated(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal textActivated(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: text-highlighted
+    native: textHighlighted
+    connect: textHighlighted(QString)
+    args:
+    - name: text
+      type: string
+    trigger:
+      property: currentIndex
+      values:
+      - 1
+      - 0
+      - 1
+      setup: $w->addItems(QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")})
+    expect_args:
+    - b
+    provenance:
+    - origin: metaobject
+      ref: signal textHighlighted(QString)
+    - origin: probe
+      ref: emitted once per set of currentIndex (sample, default, sample)
+  bindings:
+  - name: current-index
+    direction: two_way
+    property: current-index
+    type:
+      ref: i32
+      nullable: false
+    change:
+      signal: current-index-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - 1
+      - 0
+    provenance:
+    - origin: rule
+      ref: 'B1: QComboBox::currentIndex is writable, scalar and NOTIFYs currentIndexChanged(int); the renderer compares before set'

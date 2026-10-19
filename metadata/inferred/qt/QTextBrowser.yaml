@@ -1,0 +1,69 @@
+elements:
+- tag: text-browser
+  props:
+  - js: open-external-links
+    native: openExternalLinks
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: open-links
+    native: openLinks
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: sourceType
+    native: sourceType
+    provenance:
+    - origin: probe
+      ref: 'returns property sourceType (probe: equal on a new instance)'
+  signals:
+  - js: backward-available
+    native: backwardAvailable
+    connect: backwardAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal backwardAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: forward-available
+    native: forwardAvailable
+    connect: forwardAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal forwardAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: history-changed
+    native: historyChanged
+    connect: historyChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal historyChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

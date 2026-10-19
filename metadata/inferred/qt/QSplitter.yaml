@@ -1,0 +1,49 @@
+elements:
+- tag: splitter
+  props:
+  - js: children-collapsible
+    native: childrenCollapsible
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: handle-width
+    native: handleWidth
+    sample: 5
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: opaque-resize
+    native: opaqueResize
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: orientation
+    native: orientation
+    sample: Vertical
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: splitter-moved
+    native: splitterMoved
+    connect: splitterMoved(int,int)
+    args:
+    - name: pos
+      type: i32
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal splitterMoved(int,int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

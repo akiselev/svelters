@@ -1,0 +1,72 @@
+{
+ "props:detailed-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:icon": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "NoIcon",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Information",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Information",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:informative-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "yyyy-MM-dd",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "yyyy-MM-dd",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:text-format": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "AutoText",
+   "notify": null,
+   "outcome": "exact",
+   "read": "PlainText",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "PlainText",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ }
+}

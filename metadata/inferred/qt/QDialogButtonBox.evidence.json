@@ -1,0 +1,51 @@
+{
+ "props:center-buttons": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:orientation": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Horizontal",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Vertical",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Vertical",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:accepted": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:help-requested": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:rejected": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

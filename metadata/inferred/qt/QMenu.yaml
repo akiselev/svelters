@@ -1,0 +1,54 @@
+elements:
+- tag: menu
+  props:
+  - js: separators-collapsible
+    native: separatorsCollapsible
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tear-off-enabled
+    native: tearOffEnabled
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: title
+    native: title
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: tool-tips-visible
+    native: toolTipsVisible
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: about-to-hide
+    native: aboutToHide
+    connect: aboutToHide()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal aboutToHide()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: about-to-show
+    native: aboutToShow
+    connect: aboutToShow()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal aboutToShow()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

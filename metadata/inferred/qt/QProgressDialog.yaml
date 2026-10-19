@@ -1,0 +1,65 @@
+elements:
+- tag: progress-dialog
+  props:
+  - js: auto-close
+    native: autoClose
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: auto-reset
+    native: autoReset
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: label-text
+    native: labelText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: maximum
+    native: maximum
+    sample: 101
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: minimum
+    native: minimum
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: minimum-duration
+    native: minimumDuration
+    sample: 4001
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: value
+    native: value
+    sample: 0
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: wasCanceled
+    native: wasCanceled
+    provenance:
+    - origin: probe
+      ref: 'returns property wasCanceled (probe: equal on a new instance)'
+  signals:
+  - js: canceled
+    native: canceled
+    connect: canceled()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal canceled()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

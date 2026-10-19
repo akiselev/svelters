@@ -1,0 +1,33 @@
+elements:
+- tag: date-time-edit
+  props:
+  - js: calendar-popup
+    native: calendarPopup
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: current-section-index
+    native: currentSectionIndex
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: display-format
+    native: displayFormat
+    sample: yyyy-MM-dd
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: time-spec
+    native: timeSpec
+    sample: UTC
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: sectionCount
+    native: sectionCount
+    provenance:
+    - origin: probe
+      ref: 'returns property sectionCount (probe: equal on a new instance)'

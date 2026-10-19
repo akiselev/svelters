@@ -2,6 +2,7 @@
 [input]
 metadata = "../../../metadata/qt"
 overrides = "../../../metadata/overrides/qt"
+inferred = "../../../metadata/inferred/qt"
 
 [output]
 backend = "svl_qt_backend.cpp"

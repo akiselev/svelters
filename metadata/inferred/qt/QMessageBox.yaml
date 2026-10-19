@@ -1,0 +1,33 @@
+elements:
+- tag: message-box
+  props:
+  - js: detailed-text
+    native: detailedText
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: icon
+    native: icon
+    sample: Information
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: informative-text
+    native: informativeText
+    sample: yyyy-MM-dd
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text
+    native: text
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text-format
+    native: textFormat
+    sample: PlainText
+    provenance:
+    - origin: probe
+      ref: round trip exact

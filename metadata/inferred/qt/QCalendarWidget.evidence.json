@@ -1,0 +1,131 @@
+{
+ "props:date-edit-accept-delay": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1500,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1501,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1501,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:date-edit-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:first-day-of-week": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Monday",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Tuesday",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Tuesday",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:grid-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:horizontal-header-format": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ShortDayNames",
+   "notify": null,
+   "outcome": "exact",
+   "read": "NoHorizontalHeader",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoHorizontalHeader",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:navigation-bar-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:selection-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "SingleSelection",
+   "notify": null,
+   "outcome": "exact",
+   "read": "NoSelection",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoSelection",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:vertical-header-format": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ISOWeekNumbers",
+   "notify": null,
+   "outcome": "exact",
+   "read": "NoVerticalHeader",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "NoVerticalHeader",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:current-page-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1,
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:selection-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

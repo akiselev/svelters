@@ -1,0 +1,29 @@
+elements:
+- tag: wizard-page
+  props:
+  - js: sub-title
+    native: subTitle
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: title
+    native: title
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  signals:
+  - js: complete-changed
+    native: completeChanged
+    connect: completeChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal completeChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

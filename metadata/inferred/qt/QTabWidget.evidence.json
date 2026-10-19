@@ -1,0 +1,186 @@
+{
+ "bindings:current-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "currentChanged(int)"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:count": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "count",
+   "stable": true,
+   "user": false,
+   "value": 0
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:current-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": "currentChanged(int)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": "populate",
+   "recipe_call": "addTab",
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:document-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:elide-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ElideNone",
+   "notify": null,
+   "outcome": "exact",
+   "read": "ElideLeft",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "ElideLeft",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:movable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-bar-auto-hide": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "North",
+   "notify": null,
+   "outcome": "exact",
+   "read": "South",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "South",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tab-shape": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Rounded",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Triangular",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Triangular",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tabs-closable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:uses-scroll-buttons": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:current-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    1
+   ],
+   "trigger": "currentIndex"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:tab-bar-clicked": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:tab-bar-double-clicked": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:tab-close-requested": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

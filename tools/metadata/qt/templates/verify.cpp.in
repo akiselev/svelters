@@ -10,6 +10,8 @@
 #include <QtCore/QEvent>
 #include <QtCore/QPointer>
 #include <QtCore/QString>
+#include <QtCore/QMetaMethod>
+#include <QtCore/QVariant>
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QKeyEvent>
@@ -28,6 +30,7 @@
 //@@INCLUDES@@
 
 #include <algorithm>
+#include <cmath>
 #include <chrono>
 #include <cstdio>
 #include <cstring>
@@ -679,7 +682,257 @@ bool t_runtime_wrong_value_type_is_error(std::string &why) {
 
 // ---- generated facts -------------------------------------------------------------------------
 
+// ---- table-driven tests of inferred facts --------------------------------------------------------------------
+// metadata/inferred/qt facts (tools/metadata/qt/infer.py) are verified by one generic body per section and a
+// table row per fact (gen_cpp.py Tests.row_*), so thousands of facts do not mean thousands of functions.
+// A property value: bool/int/enum in `i`, double in `f`, UTF-8 string in `s`.
+enum VT : int { VT_BOOL, VT_INT, VT_F64, VT_STR, VT_ENUM };
+struct Val {
+  VT t;
+  int64_t i;
+  double f;
+  const char *s;
+};
+using Setup = void (*)(QObject *);  // a precondition (populate, range, text) run on the new widget
+struct PropRow {
+  const char *name;
+  const char *tag, *js, *native;
+  Setup setup;
+  Val v;
+};
+struct MethodRow {
+  const char *name;
+  const char *tag, *js, *prop;  // a READ accessor and the read-only property it returns
+};
+struct SignalRow {
+  const char *name;
+  const char *tag, *js, *prop;  // the property whose sets (a, b, a) emit the signal once each
+  Setup setup;
+  Val a, b;
+  size_t nargs, nexpect;
+  const char *expect[4];  // valstr of the first arguments on the first emission
+};
+struct EmitRow {
+  const char *name;
+  const char *tag, *js, *signature;  // emitted through QMetaMethod::invoke (delivery only)
+  size_t nargs;
+  Val args[4];
+  size_t nexpect;
+  const char *expect[4];
+};
+struct BindingRow {
+  const char *name;
+  const char *tag, *prop, *signal, *native;
+  Setup setup;
+  Val a, b;
+  bool arg0;  // the change signal's first argument is the new value
+};
+
+QVariant qv(const Val &v) {
+  switch (v.t) {
+    case VT_BOOL: return QVariant(v.i != 0);
+    case VT_INT:
+    case VT_ENUM: return QVariant(static_cast<qlonglong>(v.i));
+    case VT_F64: return QVariant(v.f);
+    case VT_STR: return QVariant(QString::fromUtf8(v.s));
+  }
+  return QVariant();
+}
+bool close_to(double a, double b) { return std::fabs(a - b) <= 1e-6 * std::max(1.0, std::fabs(b)); }
+// The native property (QObject::property) holds `v`.
+bool native_is(QObject *o, const char *native, const Val &v) {
+  const QVariant r = o->property(native);
+  switch (v.t) {
+    case VT_BOOL: return r.toBool() == (v.i != 0);
+    case VT_INT:
+    case VT_ENUM: return r.toLongLong() == v.i;
+    case VT_F64: return close_to(r.toDouble(), v.f);
+    case VT_STR: return r.toString() == QString::fromUtf8(v.s);
+  }
+  return false;
+}
+// A backend value equals `v`.
+bool out_is(const svl_value &out, const Val &v) {
+  switch (v.t) {
+    case VT_BOOL: return out.tag == SVL_BOOL && out.u.b == (v.i != 0);
+    case VT_INT: return out.tag == SVL_I64 && out.u.i == v.i;
+    case VT_ENUM: return out.tag == SVL_ENUM && out.u.i == v.i;
+    case VT_F64: return out.tag == SVL_F64 && close_to(out.u.f, v.f);
+    case VT_STR: return out.tag == SVL_STR && str_of(out) == v.s;
+  }
+  return false;
+}
+// A backend value equals a native QVariant.
+bool out_matches(const svl_value &out, const QVariant &r) {
+  switch (out.tag) {
+    case SVL_BOOL: return out.u.b == r.toBool();
+    case SVL_I64:
+    case SVL_ENUM: return out.u.i == r.toLongLong();
+    case SVL_F64: return close_to(out.u.f, r.toDouble());
+    case SVL_STR: return str_of(out) == r.toString().toStdString();
+    default: return false;
+  }
+}
+// The backend value for `v`; `keep` owns string bytes, `etype` is the property's enum type id.
+svl_value sv(const Val &v, svl_id etype, std::string &keep) {
+  switch (v.t) {
+    case VT_BOOL: return vbool(v.i != 0);
+    case VT_INT: return vi64(v.i);
+    case VT_ENUM: return venum(etype, v.i);
+    case VT_F64: return vf64(v.f);
+    case VT_STR: keep = v.s; return vstr(keep);
+  }
+  return svl_value{};
+}
+// The enum type id of a property (0 for other types), from describe().
+svl_id prop_enum_type(const char *tag, svl_id p) {
+  const svl_member_desc *d = B->describe(B->self, SVL_PROP, K(tag), p);
+  return d && d->n_params == 1 && d->params[0].tag == SVL_ENUM ? d->params[0].type : 0;
+}
+
+bool tt_prop(const PropRow &r, std::string &why) {
+  svl_handle h = mk(r.tag);
+  CHECK(h != 0);
+  if (r.setup) r.setup(O(h));
+  svl_id p = P(r.tag, r.js);
+  CHECK(p != 0);
+  svl_id et = r.v.t == VT_ENUM ? prop_enum_type(r.tag, p) : 0;
+  CHECK(r.v.t != VT_ENUM || et != 0);
+  std::string keep;
+  svl_value v = sv(r.v, et, keep);
+  CHECK(B->set_prop(B->self, h, p, &v) == 0);
+  CHECK(native_is(O(h), r.native, r.v));  // the backend set the native property
+  svl_value out{};
+  CHECK(B->get_prop(B->self, h, p, &out) == 0 && out_is(out, r.v));  // and reads it back
+  B->destroy(B->self, h);
+  return true;
+}
+
+bool tt_method(const MethodRow &r, std::string &why) {
+  svl_handle h = mk(r.tag);
+  CHECK(h != 0);
+  svl_id m = M(r.tag, r.js);
+  CHECK(m != 0);
+  svl_value out{};
+  CHECK(B->call(B->self, h, m, nullptr, 0, &out) == 0);
+  CHECK(out_matches(out, O(h)->property(r.prop)));  // returns the property
+  CHECK(B->call(B->self, h, m, nullptr, 1, nullptr) < 0);  // arity is checked
+  B->destroy(B->self, h);
+  return true;
+}
+
+bool tt_signal(const SignalRow &r, std::string &why) {
+  svl_handle h = mk(r.tag);
+  CHECK(h != 0);
+  if (r.setup) r.setup(O(h));
+  svl_id sig = G(r.tag, r.js);
+  CHECK(sig != 0);
+  CHECK(B->listen(B->self, h, sig, true) == 0);
+  CHECK(B->listen(B->self, h, sig, true) == 0);  // idempotent: must not double-connect
+  O(h)->setProperty(r.prop, qv(r.a));
+  CHECK(rec.events.size() == 1);  // delivered exactly once
+  CHECK(rec.events[0].h == h && rec.events[0].sig == sig);
+  CHECK(rec.events[0].n == r.nargs);
+  for (size_t i = 0; i < r.nexpect && i < rec.events[0].strs.size(); ++i)
+    CHECK(rec.events[0].strs[i] == r.expect[i]);
+  CHECK(B->listen(B->self, h, sig, false) == 0);
+  O(h)->setProperty(r.prop, qv(r.b));
+  CHECK(rec.events.size() == 1);  // no delivery after listen(off)
+  CHECK(B->listen(B->self, h, sig, true) == 0);
+  O(h)->setProperty(r.prop, qv(r.a));
+  CHECK(rec.events.size() == 2);
+  B->destroy(B->self, h);
+  return true;
+}
+
+// Emit a signal with the given arguments, each converted to the parameter's type.
+bool emit_signal(QObject *o, const char *signature, const Val *args, size_t n) {
+  const QMetaObject *mo = o->metaObject();
+  const int i = mo->indexOfSignal(QMetaObject::normalizedSignature(signature).constData());
+  if (i < 0 || n > 4) return false;
+  const QMetaMethod m = mo->method(i);
+  if (static_cast<size_t>(m.parameterCount()) != n) return false;
+  QVariant vs[4];
+  QByteArray names[4];
+  QGenericArgument ga[4];
+  for (size_t k = 0; k < n; ++k) {
+    vs[k] = qv(args[k]);
+    if (!vs[k].convert(m.parameterMetaType(static_cast<int>(k)))) return false;
+    names[k] = m.parameterTypeName(static_cast<int>(k));
+    ga[k] = QGenericArgument(names[k].constData(), vs[k].constData());
+  }
+  return m.invoke(o, Qt::DirectConnection, ga[0], ga[1], ga[2], ga[3]);
+}
+
+bool tt_emit(const EmitRow &r, std::string &why) {
+  svl_handle h = mk(r.tag);
+  CHECK(h != 0);
+  svl_id sig = G(r.tag, r.js);
+  CHECK(sig != 0);
+  CHECK(B->listen(B->self, h, sig, true) == 0);
+  CHECK(B->listen(B->self, h, sig, true) == 0);  // idempotent: must not double-connect
+  CHECK(emit_signal(O(h), r.signature, r.args, r.nargs));
+  CHECK(rec.events.size() == 1);  // delivered exactly once
+  CHECK(rec.events[0].h == h && rec.events[0].sig == sig);
+  CHECK(rec.events[0].n == r.nargs);
+  for (size_t i = 0; i < r.nexpect && i < rec.events[0].strs.size(); ++i)
+    CHECK(rec.events[0].strs[i] == r.expect[i]);
+  CHECK(B->listen(B->self, h, sig, false) == 0);
+  CHECK(emit_signal(O(h), r.signature, r.args, r.nargs));
+  CHECK(rec.events.size() == 1);  // no delivery after listen(off)
+  CHECK(B->listen(B->self, h, sig, true) == 0);
+  CHECK(emit_signal(O(h), r.signature, r.args, r.nargs));
+  CHECK(rec.events.size() == 2);
+  B->destroy(B->self, h);
+  return true;
+}
+
+bool tt_binding(const BindingRow &r, std::string &why) {
+  svl_handle h = mk(r.tag);
+  CHECK(h != 0);
+  if (r.setup) r.setup(O(h));
+  svl_id sig = G(r.tag, r.signal), p = P(r.tag, r.prop);
+  CHECK(sig != 0 && p != 0);
+  CHECK(B->listen(B->self, h, sig, true) == 0);
+  O(h)->setProperty(r.native, qv(r.a));  // a native change is delivered and readable
+  CHECK(!rec.events.empty());
+  svl_value out{};
+  CHECK(B->get_prop(B->self, h, p, &out) == 0 && out_is(out, r.a));
+  if (r.arg0) CHECK(!rec.events.back().strs.empty() && rec.events.back().strs[0] == valstr(out));
+  svl_id et = r.b.t == VT_ENUM ? prop_enum_type(r.tag, p) : 0;
+  std::string keep;
+  svl_value v = sv(r.b, et, keep);
+  CHECK(B->set_prop(B->self, h, p, &v) == 0);  // a programmatic set reaches the native property
+  CHECK(native_is(O(h), r.native, r.b));
+  B->destroy(B->self, h);
+  return true;
+}
+
+template <class Row>
+int run_rows(const Row *rows, bool (*fn)(const Row &, std::string &), int &count) {
+  int failures = 0;
+  for (const Row *r = rows; r->name; ++r) {
+    rec.clear();
+    reply = Reply::Busy;
+    sync_calls.clear();
+    frames = 0;
+    std::string why;
+    bool ok = fn(*r, why);
+    flush();
+    count++;
+    if (ok) {
+      std::printf("ok   %s\n", r->name);
+    } else {
+      std::printf("FAIL %s: %s (backend: %s)\n", r->name, why.c_str(), B->last_error(B->self));
+      failures++;
+    }
+  }
+  return failures;
+}
+// ---- end table-driven tests ----------------------------------------------------------------------------------
+
 //@@TESTS@@
+//@@ROW_TABLES@@
 
 const TestCase kTests[] = {
     {"runtime/stale_handles_error", t_runtime_stale_handles_error},
@@ -728,7 +981,13 @@ extern "C" int svl_qt_verify_run(void) {
       failures++;
     }
   }
-  std::printf("%d tests, %d failed\n", static_cast<int>(sizeof(kTests) / sizeof(kTests[0])), failures);
+  int count = static_cast<int>(sizeof(kTests) / sizeof(kTests[0]));
+  failures += run_rows(kPropRows, tt_prop, count);
+  failures += run_rows(kMethodRows, tt_method, count);
+  failures += run_rows(kSignalRows, tt_signal, count);
+  failures += run_rows(kEmitRows, tt_emit, count);
+  failures += run_rows(kBindingRows, tt_binding, count);
+  std::printf("%d tests, %d failed\n", count, failures);
   std::fflush(stdout);
   return failures;
 }

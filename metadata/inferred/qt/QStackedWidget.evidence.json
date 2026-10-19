@@ -1,0 +1,65 @@
+{
+ "bindings:current-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "currentChanged(int)"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:count": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "count",
+   "stable": true,
+   "user": false,
+   "value": 0
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:current-index": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": "currentChanged(int)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": "populate",
+   "recipe_call": "addWidget",
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:current-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    1
+   ],
+   "trigger": "currentIndex"
+  },
+  "pattern": "signal:notify-trigger"
+ },
+ "signals:widget-added": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:widget-removed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

@@ -1,0 +1,25 @@
+{
+ "props:size-grip-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:message-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    "svl"
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

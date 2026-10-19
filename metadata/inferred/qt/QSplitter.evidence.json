@@ -1,0 +1,68 @@
+{
+ "props:children-collapsible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:handle-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 4,
+   "notify": null,
+   "outcome": "exact",
+   "read": 5,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 5,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:opaque-resize": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:orientation": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "Horizontal",
+   "notify": null,
+   "outcome": "exact",
+   "read": "Vertical",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "Vertical",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:splitter-moved": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1,
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ }
+}

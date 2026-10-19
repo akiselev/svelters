@@ -1,0 +1,211 @@
+{
+ "methods:blockCount": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "blockCount",
+   "stable": true,
+   "user": false,
+   "value": 1
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:default-style-sheet": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:document-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 4.0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 5.5,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 5.5,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:indent-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 40.0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 41.5,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 41.5,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:layout-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:maximum-block-count": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:modified": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:text-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1.0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 0.5,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 0.5,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:undo-redo-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "notify": null,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": false,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:use-design-metrics": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:block-count-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:contents-change": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    1,
+    1,
+    1
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:contents-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [],
+   "trigger": "documentMargin"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:document-layout-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": []
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:modification-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    true
+   ],
+   "trigger": "modified"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:redo-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:undo-available": {
+  "confidence": 0.9,
+  "evidence": {
+   "emit": [
+    true
+   ]
+  },
+  "pattern": "signal:delivery-only"
+ },
+ "signals:undo-command-added": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [],
+   "trigger": "documentMargin"
+  },
+  "pattern": "signal:property-trigger"
+ }
+}

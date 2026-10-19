@@ -1,0 +1,208 @@
+elements:
+- tag: tool-bar
+  props:
+  - js: floatable
+    native: floatable
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: movable
+    native: movable
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: orientation
+    native: orientation
+    sample: Vertical
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  - js: tool-button-style
+    native: toolButtonStyle
+    sample: ToolButtonTextOnly
+    provenance:
+    - origin: probe
+      ref: round trip exact; NOTIFY fired
+  methods:
+  - js: isFloating
+    native: isFloating
+    provenance:
+    - origin: probe
+      ref: 'returns property floating (probe: equal on a new instance)'
+  signals:
+  - js: movable-changed
+    native: movableChanged
+    connect: movableChanged(bool)
+    args:
+    - name: movable
+      type: bool
+    trigger:
+      property: movable
+      values:
+      - false
+      - true
+      - false
+    expect_args:
+    - 'false'
+    provenance:
+    - origin: metaobject
+      ref: signal movableChanged(bool)
+    - origin: probe
+      ref: emitted once per set of movable (sample, default, sample); its NOTIFY signal
+  - js: orientation-changed
+    native: orientationChanged
+    connect: orientationChanged(Qt::Orientation)
+    args:
+    - name: orientation
+      type: enum<Qt::Orientation>
+    trigger:
+      property: orientation
+      values:
+      - Vertical
+      - Horizontal
+      - Vertical
+    expect_args:
+    - ''
+    provenance:
+    - origin: metaobject
+      ref: signal orientationChanged(Qt::Orientation)
+    - origin: probe
+      ref: emitted once per set of orientation (sample, default, sample); its NOTIFY signal
+  - js: tool-button-style-changed
+    native: toolButtonStyleChanged
+    connect: toolButtonStyleChanged(Qt::ToolButtonStyle)
+    args:
+    - name: toolButtonStyle
+      type: enum<Qt::ToolButtonStyle>
+    trigger:
+      property: toolButtonStyle
+      values:
+      - ToolButtonTextOnly
+      - ToolButtonIconOnly
+      - ToolButtonTextOnly
+    expect_args:
+    - ''
+    provenance:
+    - origin: metaobject
+      ref: signal toolButtonStyleChanged(Qt::ToolButtonStyle)
+    - origin: probe
+      ref: emitted once per set of toolButtonStyle (sample, default, sample); its NOTIFY signal
+  - js: top-level-changed
+    native: topLevelChanged
+    connect: topLevelChanged(bool)
+    args:
+    - name: topLevel
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal topLevelChanged(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: visibility-changed
+    native: visibilityChanged
+    connect: visibilityChanged(bool)
+    args:
+    - name: visible
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal visibilityChanged(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  bindings:
+  - name: movable
+    direction: two_way
+    property: movable
+    type:
+      ref: bool
+      nullable: false
+    change:
+      signal: movable-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - false
+      - true
+    provenance:
+    - origin: rule
+      ref: 'B1: QToolBar::movable is writable, scalar and NOTIFYs movableChanged(bool); the renderer compares before set'
+  - name: orientation
+    direction: two_way
+    property: orientation
+    type:
+      ref: enum<Qt::Orientation>
+      nullable: false
+    change:
+      signal: orientation-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - Vertical
+      - Horizontal
+    provenance:
+    - origin: rule
+      ref: 'B1: QToolBar::orientation is writable, scalar and NOTIFYs orientationChanged(Qt::Orientation); the renderer compares before set'
+  - name: tool-button-style
+    direction: two_way
+    property: tool-button-style
+    type:
+      ref: enum<Qt::ToolButtonStyle>
+      nullable: false
+    change:
+      signal: tool-button-style-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - ToolButtonTextOnly
+      - ToolButtonIconOnly
+    provenance:
+    - origin: rule
+      ref: 'B1: QToolBar::toolButtonStyle is writable, scalar and NOTIFYs toolButtonStyleChanged(Qt::ToolButtonStyle); the renderer compares before
+        set'

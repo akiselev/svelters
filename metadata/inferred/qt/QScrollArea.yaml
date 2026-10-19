@@ -1,0 +1,9 @@
+elements:
+- tag: scroll-area
+  props:
+  - js: widget-resizable
+    native: widgetResizable
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact

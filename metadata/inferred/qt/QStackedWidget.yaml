@@ -1,0 +1,99 @@
+elements:
+- tag: stacked-widget
+  props:
+  - js: current-index
+    native: currentIndex
+    sample: 1
+    setup: for (int k = 0; k < 3; ++k) $w->addWidget(new QWidget)
+    provenance:
+    - origin: probe
+      ref: round trip exact after recipe populate (addWidget); NOTIFY fired
+  methods:
+  - js: count
+    native: count
+    provenance:
+    - origin: probe
+      ref: 'returns property count (probe: equal on a new instance)'
+  signals:
+  - js: current-changed
+    native: currentChanged
+    connect: currentChanged(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      property: currentIndex
+      values:
+      - 1
+      - 0
+      - 1
+      setup: for (int k = 0; k < 3; ++k) $w->addWidget(new QWidget)
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal currentChanged(int)
+    - origin: probe
+      ref: emitted once per set of currentIndex (sample, default, sample); its NOTIFY signal
+  - js: widget-added
+    native: widgetAdded
+    connect: widgetAdded(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal widgetAdded(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: widget-removed
+    native: widgetRemoved
+    connect: widgetRemoved(int)
+    args:
+    - name: index
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal widgetRemoved(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  bindings:
+  - name: current-index
+    direction: two_way
+    property: current-index
+    type:
+      ref: i32
+      nullable: false
+    change:
+      signal: current-changed
+      role: any_change
+      value: arg0
+    write:
+      natively_normalizes: false
+    echo:
+      strategy: none
+      compare_before_set: true
+      read_back: false
+    lifetime:
+      on_native_death: end_binding
+      on_stale_update: warn_noop
+      on_destroy: idempotent_disconnect
+    verify:
+      values:
+      - 1
+      - 0
+    provenance:
+    - origin: rule
+      ref: 'B1: QStackedWidget::currentIndex is writable, scalar and NOTIFYs currentChanged(int); the renderer compares before set'

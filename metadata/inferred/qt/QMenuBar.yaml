@@ -1,0 +1,9 @@
+elements:
+- tag: menu-bar
+  props:
+  - js: default-up
+    native: defaultUp
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact

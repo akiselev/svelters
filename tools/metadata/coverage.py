@@ -104,10 +104,10 @@ def gtk_rows() -> list[dict]:
     return rows
 
 
-def gtk_fact_table() -> dict:
+def gtk_fact_table(tk: str = "gtk") -> dict:
     """Facts by section and state: manual / inferred verified, delivery-only, pending; parked and unreviewed counts."""
-    man = json.loads(ledger.GTK_FACTS.read_text())
-    verified = ledger.verified_facts("gtk")
+    man = json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.qt_facts()
+    verified = ledger.verified_facts(tk)
     sections: dict[str, dict[str, int]] = {}
     for f in man["facts"]:
         row = sections.setdefault(f["section"], {"manual": 0, "inferred": 0, "delivery": 0, "pending": 0})
@@ -118,10 +118,10 @@ def gtk_fact_table() -> dict:
         else:
             row["pending"] += 1
     parked: dict[str, int] = {}
-    for r in ledger.load_parked("gtk"):
+    for r in ledger.load_parked(tk):
         parked[r["section"]] = parked.get(r["section"], 0) + 1
     review = {}
-    rp = ROOT / "metadata/inferred/gtk/_review.json"
+    rp = ROOT / f"metadata/inferred/{tk}/_review.json"
     if rp.exists():
         review = json.loads(rp.read_text()).get("unreviewed", {})
     return {"sections": dict(sorted(sections.items())), "parked": dict(sorted(parked.items())), "unreviewed": review}
@@ -133,7 +133,9 @@ def qt_rows() -> list[dict]:
     meta = ROOT / "metadata/qt"
     ovdir = ROOT / "metadata/overrides/qt"
     docs = {p.stem: svmeta.load_json(p) for p in sorted(meta.glob("*.json"))}
-    ovs = {p.stem: svmeta.load_yaml(p) for p in sorted(ovdir.glob("*.yaml"))}
+    sys.path.insert(0, str(HERE / "qt"))
+    import layers  # noqa: E402
+    ovs = layers.merged_overrides(ovdir, None, meta)   # manual over inferred (metadata/inferred/qt)
     man = ledger.qt_facts()
     verified = ledger.verified_facts("qt")
     pages = gallery_kinds("qt")
@@ -197,8 +199,8 @@ def render(tk: str, rows: list[dict]) -> str:
          f"| Facts verified (manual and inferred) | {vf}/{vt} |",
          f"| Kinds on a gallery page | {sum(1 for r in rows if r['gallery'])} |",
          ""]
-    if tk == "gtk":
-        ft = gtk_fact_table()
+    if tk in ("gtk", "qt"):
+        ft = gtk_fact_table(tk)
         o += ["## Facts by state\n",
               "| Section | Verified (manual) | Verified (inferred) | of which `verified: delivery` | Pending | Parked |",
               "| --- | --- | --- | --- | --- | --- |"]
@@ -213,6 +215,7 @@ def render(tk: str, rows: list[dict]) -> str:
                   "| Band and pattern | Candidates |", "| --- | --- |"]
             o += [f"| `{k}` | {v} |" for k, v in un.get("by_pattern", {}).items()]
             o.append("")
+    if tk == "gtk":
         o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
                  "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
                  "methods column counts annotated methods, which have generated tests; the annotated and verified "

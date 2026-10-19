@@ -1,0 +1,58 @@
+{
+ "props:arrow-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "NoArrow",
+   "notify": null,
+   "outcome": "exact",
+   "read": "UpArrow",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "UpArrow",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:auto-raise": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "notify": null,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": true,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:popup-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "DelayedPopup",
+   "notify": null,
+   "outcome": "exact",
+   "read": "MenuButtonPopup",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "MenuButtonPopup",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:tool-button-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "ToolButtonIconOnly",
+   "notify": null,
+   "outcome": "exact",
+   "read": "ToolButtonTextOnly",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "ToolButtonTextOnly",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ }
+}

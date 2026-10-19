@@ -1,0 +1,155 @@
+{
+ "bindings:value": {
+  "confidence": 0.95,
+  "evidence": {
+   "arg0": true,
+   "notify": "valueChanged(int)"
+  },
+  "pattern": "binding:notify"
+ },
+ "methods:cleanText": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": null,
+   "outcome": "readonly",
+   "prop": "cleanText",
+   "stable": true,
+   "user": false,
+   "value": ""
+  },
+  "pattern": "method:read-only-getter"
+ },
+ "props:display-integer-base": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 10,
+   "notify": null,
+   "outcome": "exact",
+   "read": 11,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 11,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:maximum": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 99,
+   "notify": null,
+   "outcome": "exact",
+   "read": 100,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 100,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:minimum": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": null,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:prefix": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:single-step": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1,
+   "notify": null,
+   "outcome": "exact",
+   "read": 2,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 2,
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:step-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "DefaultStepType",
+   "notify": null,
+   "outcome": "exact",
+   "read": "AdaptiveDecimalStepType",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "AdaptiveDecimalStepType",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:suffix": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "notify": null,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "recipe_call": null,
+   "sample": "svl probe",
+   "user": false
+  },
+  "pattern": "prop:round-trip"
+ },
+ "props:value": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "notify": "valueChanged(int)",
+   "notify_fired": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "recipe_call": null,
+   "sample": 1,
+   "user": true
+  },
+  "pattern": "prop:round-trip"
+ },
+ "signals:text-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "first_args": [
+    "1"
+   ],
+   "trigger": "value"
+  },
+  "pattern": "signal:property-trigger"
+ },
+ "signals:value-changed": {
+  "confidence": 0.95,
+  "evidence": {
+   "first_args": [
+    1
+   ],
+   "trigger": "value"
+  },
+  "pattern": "signal:notify-trigger"
+ }
+}

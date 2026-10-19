@@ -1,0 +1,91 @@
+elements:
+- tag: label
+  props:
+  - js: indent
+    native: indent
+    sample: 0
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: margin
+    native: margin
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: open-external-links
+    native: openExternalLinks
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: scaled-contents
+    native: scaledContents
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text
+    native: text
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text-format
+    native: textFormat
+    sample: PlainText
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: word-wrap
+    native: wordWrap
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: hasSelectedText
+    native: hasSelectedText
+    provenance:
+    - origin: probe
+      ref: 'returns property hasSelectedText (probe: equal on a new instance)'
+  - js: selectedText
+    native: selectedText
+    provenance:
+    - origin: probe
+      ref: 'returns property selectedText (probe: equal on a new instance)'
+  signals:
+  - js: link-activated
+    native: linkActivated
+    connect: linkActivated(QString)
+    args:
+    - name: link
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal linkActivated(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: link-hovered
+    native: linkHovered
+    connect: linkHovered(QString)
+    args:
+    - name: link
+      type: string
+    trigger:
+      emit:
+      - svl
+    delivery_only: true
+    expect_args:
+    - svl
+    provenance:
+    - origin: metaobject
+      ref: signal linkHovered(QString)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'

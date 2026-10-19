@@ -1,0 +1,204 @@
+elements:
+- tag: text-document
+  props:
+  - js: default-style-sheet
+    native: defaultStyleSheet
+    sample: svl probe
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: document-margin
+    native: documentMargin
+    sample: 5.5
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: indent-width
+    native: indentWidth
+    sample: 41.5
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: layout-enabled
+    native: layoutEnabled
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: maximum-block-count
+    native: maximumBlockCount
+    sample: 1
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: modified
+    native: modified
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: text-width
+    native: textWidth
+    sample: 0.5
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: undo-redo-enabled
+    native: undoRedoEnabled
+    sample: false
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  - js: use-design-metrics
+    native: useDesignMetrics
+    sample: true
+    provenance:
+    - origin: probe
+      ref: round trip exact
+  methods:
+  - js: blockCount
+    native: blockCount
+    provenance:
+    - origin: probe
+      ref: 'returns property blockCount (probe: equal on a new instance)'
+  signals:
+  - js: block-count-changed
+    native: blockCountChanged
+    connect: blockCountChanged(int)
+    args:
+    - name: newBlockCount
+      type: i32
+    trigger:
+      emit:
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal blockCountChanged(int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: contents-change
+    native: contentsChange
+    connect: contentsChange(int,int,int)
+    args:
+    - name: position
+      type: i32
+    - name: charsRemoved
+      type: i32
+    - name: charsAdded
+      type: i32
+    trigger:
+      emit:
+      - 1
+      - 1
+      - 1
+    delivery_only: true
+    expect_args:
+    - '1'
+    - '1'
+    - '1'
+    provenance:
+    - origin: metaobject
+      ref: signal contentsChange(int,int,int)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: contents-changed
+    native: contentsChanged
+    connect: contentsChanged()
+    args: []
+    trigger:
+      property: documentMargin
+      values:
+      - 5.5
+      - 4.0
+      - 5.5
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal contentsChanged()
+    - origin: probe
+      ref: emitted once per set of documentMargin (sample, default, sample)
+  - js: document-layout-changed
+    native: documentLayoutChanged
+    connect: documentLayoutChanged()
+    args: []
+    trigger:
+      emit: []
+    delivery_only: true
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal documentLayoutChanged()
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: modification-changed
+    native: modificationChanged
+    connect: modificationChanged(bool)
+    args:
+    - name: changed
+      type: bool
+    trigger:
+      property: modified
+      values:
+      - true
+      - false
+      - true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal modificationChanged(bool)
+    - origin: probe
+      ref: emitted once per set of modified (sample, default, sample)
+  - js: redo-available
+    native: redoAvailable
+    connect: redoAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal redoAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: undo-available
+    native: undoAvailable
+    connect: undoAvailable(bool)
+    args:
+    - name: available
+      type: bool
+    trigger:
+      emit:
+      - true
+    delivery_only: true
+    expect_args:
+    - 'true'
+    provenance:
+    - origin: metaobject
+      ref: signal undoAvailable(bool)
+    - origin: rule
+      ref: 'R2: no probed property set emits it; emitted with sampled arguments (delivery only, no native trigger)'
+  - js: undo-command-added
+    native: undoCommandAdded
+    connect: undoCommandAdded()
+    args: []
+    trigger:
+      property: documentMargin
+      values:
+      - 5.5
+      - 4.0
+      - 5.5
+    expect_args: []
+    provenance:
+    - origin: metaobject
+      ref: signal undoCommandAdded()
+    - origin: probe
+      ref: emitted once per set of documentMargin (sample, default, sample)
