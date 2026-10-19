@@ -144,4 +144,26 @@ never `null`; arrays are always present. Exit status as in markdown: 0 found, 1 
 
 ## Completion record
 
-(filled at the end of the lane)
+Branch `ci/cl0` (worktree branch `worktree-agent-afc8aa27c879ff599`), based on master bff6a637. Not merged.
+
+Commits: a123618d (crate, pack, resolver, output, tests, CLI.md Rust decision), f04ac818 (CI, `docs:pack`, this file,
+CLI.md §4.3, cli-research note), plus this record.
+
+Gates, observed locally on 2026-10-19 after the last code edit:
+- `tools/dev/cargo-slot cargo nextest run -p svelters-cli`: 60 tests run, 60 passed, 0 skipped (17 unit, 42 golden/CLI, 1 pack/site
+  consistency: 871 pages, 15,240 own anchors, 54,619 inherited links).
+- `tools/dev/cargo-slot cargo clippy -p svelters-cli --all-targets -- -D warnings`: clean.
+- `tools/dev/cargo-slot cargo check --workspace --all-targets`: exit 0 (warnings only in other crates).
+- `corepack pnpm docs:test`: exit 0; Python 11 tests OK (1 skipped), node 17 tests, 16 pass, 0 fail, 1 skipped (no `dist/`). Locally
+  the nested `pnpm` call needs a `pnpm` shim on PATH (only `corepack pnpm` is installed here).
+- `pnpm test:meta`: not run; CL0 touches neither `tools/metadata` nor `tools/docs`.
+- Embedded build (`SVELTERS_DOCS_EMBED_DIR`): checked by hand from `/`; not in CI.
+
+CI on `ci/cl0` @ f04ac818, all success: js 39294201831 (runs the svelters-cli step: clippy, 60/60 nextest, docs-pack with the
+same pack sizes as locally, smoke calls), linux-gtk 39294201703, linux-qt 39294201749, macos-appkit 39294201602,
+windows-winui 39294201722.
+
+Shared files touched: root `Cargo.toml` (one member, one `profile.dev.package` entry), `Cargo.lock`, root `package.json`
+(`docs:pack`), `.github/workflows/js.yml` (one step), `plans/research/CLI.md`, `docs/notes/cli-research.md`. `STATUS.md` untouched.
+
+Open items: see above.
