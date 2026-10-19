@@ -19,7 +19,7 @@ export class NativeObject {
   readonly disposed: boolean;
   /** The native type name of the class this wrapper was made as. */
   readonly nativeType: string;
-  constructor(props?: Record<string, unknown>);
+  constructor(...args: any[]);
   /** Listens to a native signal (`'items-changed'` or `itemsChanged`). Returns the disposer. */
   on(signal: string, fn: (...args: any[]) => void): () => void;
   /** Releases our reference now. The native object lives on while anything else holds it. */

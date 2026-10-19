@@ -189,11 +189,30 @@ impl Config {
             sources.push(("svl_qt_verify", "svl_qt_verify.cpp"));
         }
         sources.push(("svl_qt_backend", "svl_qt_backend.cpp"));
-        for (lib, file) in sources {
+        // The two translation units are independent: compile them at the same time (the backend, with the
+        // non-GUI type layer, is the long one). Link order is the order of the `rustc-link-lib` lines, so
+        // the libraries are announced afterwards, verification first.
+        let objs: Vec<Result<Vec<PathBuf>, String>> = std::thread::scope(|s| {
+            let handles: Vec<_> = sources
+                .iter()
+                .map(|(_, file)| {
+                    let (abi_include, cflags, gen_dir, out_dir) = (&abi_include, &cflags, &gen_dir, &out_dir);
+                    s.spawn(move || {
+                        let mut b = cc::Build::new();
+                        b.cpp(true).std("c++17").pic(true).warnings(false).include(abi_include).cargo_metadata(false).out_dir(out_dir);
+                        apply_cflags(&mut b, cflags);
+                        b.file(gen_dir.join(file));
+                        b.try_compile_intermediates().map_err(|e| e.to_string())
+                    })
+                })
+                .collect();
+            handles.into_iter().map(|h| h.join().unwrap_or_else(|_| Err("compiler thread panicked".into()))).collect()
+        });
+        for ((lib, _), objs) in sources.iter().zip(objs) {
+            let objs = objs?;
             let mut b = cc::Build::new();
-            b.cpp(true).std("c++17").pic(true).warnings(false).include(&abi_include);
-            apply_cflags(&mut b, &cflags);
-            b.file(gen_dir.join(file));
+            b.cpp(true).out_dir(&out_dir);
+            b.objects(&objs);
             b.compile(lib);
         }
 

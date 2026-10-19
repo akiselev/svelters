@@ -488,6 +488,35 @@ NT1 (`plans/milestones/NT1-gtk-async.md`) uses the v3 `CALLBACK` / `SVL_M_ASYNC`
   - When an owner dies, an async completion tied to it is detached and settled at the next checkpoint with `NativeError { domain: 'svelters', code: 'disposed' }`, instead of being dropped. Other scopes are released as before.
   - `callStatic` of an `SVL_M_ASYNC` member returns a Promise; it has no owner.
 
+### Qt non-GUI types (NT2, no ABI change)
+
+The Qt backend now implements the v2.5 members (`construct`, `call_static`, `describe(SVL_KIND)`); nothing is
+added to the header. Conventions a host or test may rely on (`plans/milestones/NT2-qt-types.md` has the design):
+
+- **Kinds.** Every bound class of QtCore/QtGui/QtWidgets non-widgets (`metadata/qt/types/`) is a kind named by
+  its C++ class (`QTimer`, `QUrl`), ids from `0x20000`; `describe(SVL_KIND, 0, k)` answers the name and the
+  nearest bound base. Element kinds keep their tags; `resolve(SVL_METHOD, element_kind, name)` also finds the
+  methods of the element class's bound type after the element's own tables and getters.
+- **Lifetimes.** `construct` (default constructor, then each prop through its `QMetaProperty`) and a
+  constructor called as `call_static(k, "new", args)` give QObjects a `SHARED` handle: `destroy` deletes a
+  parentless object and only forgets one a QObject parent owns now. Objects a getter returns stay `BORROWED`.
+  Value classes are `VALUE` handles whose `handle_info.kind` is their class (`call` reaches their const members,
+  and `equals(other)` compares with QMetaType equality). Non-QObject objects JS makes (`QMimeDatabase`) are
+  `OWNED`; container items (`QStandardItem`) are `OWNED` until a PySide `parent add` fact moves them into a
+  container, then `BORROWED`, and their native deletion is reported through `on_destroyed` (`SVL_GONE_OWNER`).
+- **Overloads (decision Q4).** One method id per JS name. A member with several overloads describes dynamic
+  parameter slots (`SVL_NULL` typed `SVL_T_VARIANT`, optional beyond the smallest arity), so the host encodes
+  arguments by their JS type (plain objects as `MAP`); the generated thunk takes the first overload, in a fixed
+  metadata-derived order, whose arity and argument types fit. Records also accept a `MAP` by field name and
+  flags a `LIST` of member names.
+- **Statics.** `call_static` resolves `resolve(SVL_METHOD, k, "static:<name>")` to the static when an instance
+  method has the same name (`QFileInfo.exists`); plain `<name>` otherwise.
+- **Meta fallback.** On QObject type kinds, a prop, signal or method name with no facts resolves to a dynamic
+  id (from `0x1000000`) served through the object's `QMetaObject` (`QMetaProperty`, a signal relay,
+  `QMetaMethod::invoke`).
+- **Async.** A `QFuture<T>` result completes the host's one-shot callback (`SVL_M_ASYNC`); no bound Qt 6.11
+  member returns one yet, so only the adapter exists (tested through a test hook).
+
 ### ABI v2.6 additive (property observation: mechanics only)
 
 Status: the ABI surface and its plumbing are in; the semantics (coalescing, values carried in a

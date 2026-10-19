@@ -311,6 +311,19 @@ struct Conv<QFlags<E>> {
     uint64_t mask;
     if (v->tag == SVL_FLAGS) mask = v->u.u;
     else if (v->tag == SVL_I64 && v->u.i >= 0) mask = static_cast<uint64_t>(v->u.i);
+    else if (v->tag == SVL_LIST) {
+      // A list of member names (a flags argument that reached a dynamic slot: overloaded members, N2).
+      mask = 0;
+      for (size_t i = 0; i < v->u.l.len; ++i) {
+        const svl_value &x = v->u.l.ptr[i];
+        if (x.tag != SVL_STR || (x.flags & SVL_F_UTF16)) { e = "expected flag names"; return false; }
+        const std::string s(static_cast<const char *>(x.u.s.ptr), x.u.s.len);
+        bool hit = false;
+        for (auto &m : EnumInfo<E>::members())
+          if (m.first == s) { mask |= static_cast<uint64_t>(m.second); hit = true; break; }
+        if (!hit) { e = "unknown " + std::string(EnumInfo<E>::name()) + " flag '" + s + "'"; return false; }
+      }
+    }
     else { e = "expected flags"; return false; }
     if (mask & ~all) { e = "unknown bits in " + std::string(EnumInfo<E>::name()) + " flags"; return false; }
     o = QFlags<E>::fromInt(static_cast<typename QFlags<E>::Int>(mask));
@@ -336,8 +349,25 @@ inline bool rec_int(const svl_value *v, int &x, std::string &e) {
   return true;
 }
 
-// Reads the n numeric fields of a RECORD value.
-inline bool rec_fields(const svl_value *v, size_t n, const char *what, double *f, std::string &e) {
+// Reads the n numeric fields of a RECORD value. With `names`, a MAP (a plain JS object that reached a slot
+// without a record descriptor: an overloaded member's dynamic argument, N2) is read by field name too.
+inline bool rec_fields(const svl_value *v, size_t n, const char *what, double *f, std::string &e,
+                       const char *const *names = nullptr) {
+  if (v->tag == SVL_MAP && names) {
+    for (size_t i = 0; i < n; ++i) {
+      bool found = false;
+      for (size_t k = 0; k + 1 < v->u.l.len; k += 2) {
+        const svl_value &key = v->u.l.ptr[k];
+        if (key.tag != SVL_STR || (key.flags & SVL_F_UTF16)) continue;
+        if (std::string_view(static_cast<const char *>(key.u.s.ptr), key.u.s.len) != names[i]) continue;
+        if (!rec_num(&v->u.l.ptr[k + 1], f[i])) { e = std::string("expected numbers in ") + what; return false; }
+        found = true;
+        break;
+      }
+      if (!found) { e = std::string(what) + " needs a field " + names[i]; return false; }
+    }
+    return true;
+  }
   if (v->tag != SVL_RECORD) { e = std::string("expected a ") + what + " record"; return false; }
   if (v->u.l.len != n) { e = std::string(what) + " needs " + std::to_string(n) + " fields"; return false; }
   for (size_t i = 0; i < n; ++i)
@@ -471,7 +501,7 @@ struct RecConv {
   }
   static bool in(const svl_value *v, T &o, std::string &e) {
     double f[Tr::N];
-    if (!rec_fields(v, Tr::N, Tr::name, f, e)) return false;
+    if (!rec_fields(v, Tr::N, Tr::name, f, e, Tr::fields)) return false;
     if (Tr::integral)
       for (size_t i = 0; i < Tr::N; ++i) {
         int tmp;
@@ -526,7 +556,8 @@ struct Conv<QColor> {
       return true;
     }
     double f[4];
-    if (!rec_fields(v, 4, "Color", f, e)) return false;
+    static const char *const kNames[] = {"red", "green", "blue", "alpha"};
+    if (!rec_fields(v, 4, "Color", f, e, kNames)) return false;
     for (double d : f)
       if (!(d >= 0.0 && d <= 1.0)) { e = "color components must be in 0..1"; return false; }
     o = QColor::fromRgbF(f[0], f[1], f[2], f[3]);
@@ -635,6 +666,20 @@ inline bool boxed_from_string<QFont>(const QString &s, QFont &o, std::string &e)
 template <>
 constexpr bool boxed_has_string_form<QFont>() { return true; }
 
+// The kind of a value class's VALUE handles (N2: VALUE handles have kinds and methods). The generator
+// specializes it for every bound value class; 0 = an opaque value with no members.
+template <class T>
+struct TypeKindOf {
+  static constexpr svl_id id = 0;
+};
+// A value of a derived value class where a base is expected (QTextCharFormat for QTextFormat). The
+// generator specializes it for value classes with bound derived classes.
+template <class T>
+struct ValueCast {
+  static const T *ptr(const QVariant &) { return nullptr; }
+};
+std::unordered_map<svl_handle, svl_id> g_boxed_kind;  // VALUE handle -> kind (TypeKindOf), 0 = opaque
+
 template <class T>
 struct BoxedConv {
   static svl_id tid() {
@@ -651,13 +696,21 @@ struct BoxedConv {
     if (v->tag != SVL_BOXED) { e = "expected a boxed " + std::string(QMetaType::fromType<T>().name()); return false; }
     auto it = g.boxed.find(v->u.h);
     if (it == g.boxed.end()) { e = "stale boxed handle"; return false; }
-    if (it->second.metaType() != QMetaType::fromType<T>()) { e = "boxed handle is not a " + std::string(QMetaType::fromType<T>().name()); return false; }
+    if (it->second.metaType() != QMetaType::fromType<T>()) {
+      if (const T *p = ValueCast<T>::ptr(it->second)) {
+        o = *p;
+        return true;
+      }
+      e = "boxed handle is not a " + std::string(QMetaType::fromType<T>().name());
+      return false;
+    }
     o = qvariant_cast<T>(it->second);
     return true;
   }
   static void out(const T &x, svl_value *o) {
     svl_handle h = g.next++;
     g.boxed.emplace(h, QVariant::fromValue(x));
+    if (TypeKindOf<T>::id) g_boxed_kind[h] = TypeKindOf<T>::id;
     *o = mkv(SVL_BOXED, tid());
     o->u.h = h;
   }
@@ -677,7 +730,8 @@ struct Conv<QDate> {
   }
   static bool in(const svl_value *v, QDate &o, std::string &e) {
     double f[3];
-    if (!rec_fields(v, 3, "DateParts", f, e)) return false;
+    static const char *const kNames[] = {"year", "month", "day"};
+    if (!rec_fields(v, 3, "DateParts", f, e, kNames)) return false;
     QDate d = QDate(static_cast<int>(f[0]), static_cast<int>(f[1]), static_cast<int>(f[2]));
     if (!d.isValid()) { e = "invalid date"; return false; }
     o = d;
@@ -697,7 +751,8 @@ struct Conv<QTime> {
   }
   static bool in(const svl_value *v, QTime &o, std::string &e) {
     double f[4];
-    if (!rec_fields(v, 4, "TimeParts", f, e)) return false;
+    static const char *const kNames[] = {"hour", "minute", "second", "ms"};
+    if (!rec_fields(v, 4, "TimeParts", f, e, kNames)) return false;
     QTime t = QTime(static_cast<int>(f[0]), static_cast<int>(f[1]), static_cast<int>(f[2]), static_cast<int>(f[3]));
     if (!t.isValid()) { e = "invalid time"; return false; }
     o = t;

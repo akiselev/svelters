@@ -133,6 +133,7 @@ dependencies = [
 name = "counter-qt"
 version = "0.0.0"
 dependencies = [
+ "serde_json",
  "svelters-abi",
  "svelters-host",
  "svelters-qt-build",

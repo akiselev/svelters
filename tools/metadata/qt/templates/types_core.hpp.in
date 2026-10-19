@@ -1,0 +1,768 @@
+// ---- non-GUI types: the hand-written object core (plans/research/NON-GUI-TYPES.md section 2.2, N2) -------
+//
+// Everything with a lifetime, identity or reflection rule lives here; the generated layer (the //@@TYPES@@
+// section, tools/metadata/qt/gen_types_cpp.py) only calls the functions below, the converters (Conv<T>) and
+// Qt's own API. The boundary is checked by tools/metadata/qt/test_types_cpp.py (section 2.4).
+//
+//  objects   QObject non-widgets: an Entry in `g.table` like every widget. Made by JS (construct or a
+//            constructor) they are SHARED (decision Q1): JS's reference is the ownership, so `destroy` (dispose
+//            or GC) deletes a parentless object and only forgets one that a QObject parent owns now. Returned by
+//            a getter they stay BORROWED (Qt has no refcount to take: a QPointer, `destroyed` reports death).
+//  values    copyable value classes in `g.boxed` (a QVariant) with a kind (TypeKindOf<T>): VALUE handles with
+//            const members (decision Q3: mutators are hidden by the generator). A new handle per crossing.
+//            QModelIndex is held as a QPersistentModelIndex, so a stale index is invalid, never dangling.
+//  unique    non-QObject, non-copyable objects JS makes (QMimeDatabase, QTemporaryDir): `svl::unique`, OWNED,
+//            deleted on destroy.
+//  item      container items (QStandardItem, QUndoCommand): `svl::item`, made as a Tracked<T> subclass whose
+//            destructor reports native death. OWNED until a PySide `parent add` fact moves it into a container,
+//            then BORROWED; a `parent remove` result gives it back.
+//  meta      the QMetaObject fallback: props (QMetaProperty), signals (a relay on QMetaObject::connect) and
+//            invokables (QMetaMethod::invoke) by name for any QObject, including classes with no facts.
+//  async     async_from_future: a QFuture<T> result becomes the host's one-shot completion (a Promise).
+
+namespace svl {
+
+enum Cat : uint8_t { C_OBJECT = 1, C_MODEL, C_VALUE, C_UNIQUE, C_ITEM, C_STATICS };
+
+struct TypeRow {
+  const char *name;
+  svl_id kind;
+  svl_id parent;            // nearest bound base kind, 0 at the root
+  uint8_t cat;
+  const QMetaObject *mo;    // QObject classes
+};
+
+constexpr svl_id kTypeKindBase = 0x20000;
+constexpr svl_id kTypeMemberBase = 0x200000;
+constexpr svl_id kDynBase = 0x1000000;  // names resolved on the object's metaobject at use (the meta fallback)
+constexpr svl_id kEqualsId = kDynBase - 1;  // `equals(other)` on value kinds (QMetaType equality)
+
+// ---- provided by the generated layer -------------------------------------------------------------
+const TypeRow *gen_type(svl_id kind);
+svl_id gen_type_by_name(std::string_view name);
+svl_id gen_member(uint32_t what, svl_id kind, std::string_view name);  // a kind's own members, not inherited
+svl_id gen_static_member(svl_id kind, std::string_view name);         // statics and `new` only
+const char *gen_member_native(svl_id id);                             // native name of a prop / signal id
+const svl_member_desc *gen_member_desc(uint32_t what, svl_id id);
+struct Recv;
+int gen_method(svl_id id, Recv &r, const svl_value *a, size_t n, svl_value *out);
+int gen_static(svl_id id, const svl_value *a, size_t n, svl_value *out);
+QObject *gen_default_new(svl_id kind);
+void *gen_ptr_as(svl_id have, svl_id want, void *p);
+svl_id gen_element_type(svl_id element_kind);  // the bound type of an element kind's class (or an ancestor)
+bool gen_metaconv(int metatype, const void *p, svl_value *o);          // T -> svl_value for prop/signal types
+bool gen_metaconv_in(QMetaType mt, const svl_value *v, QVariant &q, std::string &e);
+
+// ---- kinds -----------------------------------------------------------------------------------------
+
+inline bool is_type_kind(svl_id k) { return k >= kTypeKindBase && k < kTypeMemberBase && gen_type(k); }
+
+inline bool derives(svl_id k, svl_id base) {
+  for (int i = 0; k && i < 64; ++i) {
+    if (k == base) return true;
+    const TypeRow *t = gen_type(k);
+    k = t ? t->parent : 0;
+  }
+  return false;
+}
+
+// The type kind of a QObject: its class or the nearest bound ancestor (QObject at worst).
+svl_id kind_of(const QObject *o) {
+  for (const QMetaObject *mo = o->metaObject(); mo; mo = mo->superClass())
+    if (svl_id k = gen_type_by_name(mo->className())) return k;
+  return 0;
+}
+
+// Names: JS may say `itemsChanged`, `items-changed` or the native spelling.
+inline std::string camel(std::string_view n) {
+  std::string out;
+  bool up = false;
+  for (char c : n) {
+    if (c == '-' || c == '_') {
+      up = true;
+    } else {
+      out.push_back(up ? static_cast<char>(std::toupper(static_cast<unsigned char>(c))) : c);
+      up = false;
+    }
+  }
+  return out;
+}
+
+std::vector<std::string> g_dyn_names;
+std::unordered_map<std::string, svl_id> g_dyn_ids;
+
+inline svl_id dyn_id(std::string_view name) {
+  std::string key(name);
+  auto it = g_dyn_ids.find(key);
+  if (it != g_dyn_ids.end()) return it->second;
+  const svl_id id = kDynBase + static_cast<svl_id>(g_dyn_names.size());
+  g_dyn_names.push_back(key);
+  g_dyn_ids.emplace(std::move(key), id);
+  return id;
+}
+
+inline const char *native_name(svl_id id) {
+  if (id >= kDynBase && id - kDynBase < g_dyn_names.size()) return g_dyn_names[id - kDynBase].c_str();
+  return gen_member_native(id);
+}
+
+// resolve(): a type kind's own and inherited members; QObject kinds fall back to the metaobject by name.
+// Element kinds reach the methods of their class's bound type (and its bases) after their own tables.
+inline svl_id resolve(uint32_t what, svl_id kind, std::string_view name) {
+  if (what == SVL_KIND) return gen_type_by_name(name);
+  const bool element = !is_type_kind(kind);
+  svl_id k = element ? gen_element_type(kind) : kind;
+  if (!k || (element && what != SVL_METHOD)) return 0;
+  const std::string c = camel(name);
+  const svl_id start = k;
+  for (int i = 0; k && i < 64; ++i) {
+    if (svl_id m = gen_member(what, k, c)) return m;
+    if (c != name)
+      if (svl_id m = gen_member(what, k, name)) return m;
+    k = gen_type(k)->parent;
+  }
+  const TypeRow *t = gen_type(start);
+  if (!element && t && t->cat == C_VALUE && what == SVL_METHOD && name == "equals") return kEqualsId;
+  return 0;
+}
+
+// The metaobject fallback for a name `resolve` did not find (the backend asks after its object getters).
+inline svl_id resolve_dynamic(uint32_t what, svl_id kind, std::string_view name) {
+  const TypeRow *t = is_type_kind(kind) ? gen_type(kind) : nullptr;
+  if (t && (t->cat == C_OBJECT || t->cat == C_MODEL) && (what == SVL_PROP || what == SVL_SIGNAL || what == SVL_METHOD))
+    return dyn_id(camel(name));
+  return 0;
+}
+
+inline bool is_member_id(svl_id id) { return id >= kTypeMemberBase; }
+
+// The host pads omitted optional arguments with null: trailing nulls past the required count are omitted, so
+// the C++ defaults apply (an explicit null for a defaulted pointer means the same as the default).
+inline size_t trim_omitted(const svl_value *a, size_t n, size_t required) {
+  while (n > required && a[n - 1].tag == SVL_NULL) --n;
+  return n;
+}
+
+// `equals(other)` on every value kind: QMetaType equality of the held values (C++ operator== is not bound).
+
+// ---- handles -----------------------------------------------------------------------------------------
+
+// Non-QObject objects JS holds: unique objects and items.
+struct PtrEntry {
+  void *p = nullptr;
+  svl_id kind = 0;
+  bool owned = true;   // JS deletes it on destroy (unique; an item not in a container)
+  bool item = false;
+  void (*del)(void *) = nullptr;
+};
+std::unordered_map<svl_handle, PtrEntry> g_ptrs;
+std::unordered_map<const void *, svl_handle> g_ptr_by_addr;
+std::set<const void *> g_tracked;  // live Tracked<T> items (their destructor erases them)
+
+// Gone natively (a tracked item deleted by its container): forget it and tell the host.
+inline void item_gone(const void *p) {
+  g_tracked.erase(p);
+  auto it = g_ptr_by_addr.find(p);
+  if (it == g_ptr_by_addr.end()) return;
+  const svl_handle h = it->second;
+  g_ptr_by_addr.erase(it);
+  g_ptrs.erase(h);
+  report_gone(h, SVL_GONE_OWNER);
+}
+
+// A handle for a QObject a constructor or `construct` made (decision Q1: SHARED).
+inline svl_handle handle_for(QObject *o, svl_id kind) {
+  if (!o) return 0;
+  if (svl_handle h = handle_of(o)) return h;
+  const svl_handle h = g.next++;
+  Entry e;
+  e.obj = o;
+  e.kind = kind ? kind : kind_of(o);
+  e.life = SVL_LIFE_SHARED;
+  e.destroyed = QObject::connect(o, &QObject::destroyed, [h](QObject *obj) { native_destroyed(h, obj); });
+  g.by_obj[o] = h;
+  g.table.emplace(h, std::move(e));
+  return h;
+}
+
+template <class T>
+inline void value(const T &x, svl_value *out) { Conv<T>::out(x, out); }
+
+// The receiver of a value-class member: a pointer into the held QVariant (no copy, no default constructor),
+// through ValueCast for a derived value class (a QTextCharFormat receiving a QTextFormat member).
+template <class T>
+struct ValueRef {
+  const T *p = nullptr;
+  explicit ValueRef(svl_handle h) {
+    auto it = g.boxed.find(h);
+    if (it == g.boxed.end()) return;
+    p = it->second.metaType() == QMetaType::fromType<T>() ? static_cast<const T *>(it->second.constData())
+                                                           : ValueCast<T>::ptr(it->second);
+  }
+  const T *operator->() const { return p; }
+  explicit operator bool() const { return p != nullptr; }
+};
+
+// A JS-owned non-QObject object (`svl::unique`): the deleter is type-erased here, so generated code never deletes.
+template <class T>
+inline svl_handle unique(T *p, svl_id kind) {
+  if (!p) return 0;
+  const svl_handle h = g.next++;
+  g_ptrs[h] = PtrEntry{p, kind, true, false, +[](void *x) { delete static_cast<T *>(x); }};
+  g_ptr_by_addr[p] = h;
+  return h;
+}
+
+// An item: one handle per live item. `owned`: JS made it (or a `parent remove` result gave it back).
+template <class T>
+inline svl_handle item(T *p, svl_id kind, bool owned) {
+  if (!p) return 0;
+  auto it = g_ptr_by_addr.find(p);
+  if (it != g_ptr_by_addr.end()) {
+    if (owned) g_ptrs[it->second].owned = true;
+    return it->second;
+  }
+  if (!g_tracked.count(p)) return 0;  // an item we cannot watch: refusing it is the only safe answer
+  const svl_handle h = g.next++;
+  g_ptrs[h] = PtrEntry{p, kind, owned, true, +[](void *x) { delete static_cast<T *>(x); }};
+  g_ptr_by_addr[p] = h;
+  return h;
+}
+
+// A new QObject from a generated constructor; a new item made as its tracked subclass `Tr`.
+template <class T>
+inline svl_handle object_new(T *o, svl_id kind) { return handle_for(o, kind); }
+
+template <class T, class Tr, class... A>
+inline svl_handle item_new(svl_id kind, A &&...a) {
+  return item<T>(static_cast<T *>(new Tr(std::forward<A>(a)...)), kind, true);
+}
+
+// An S2 out list `[ret, outs...]` of `n` values in the arena; returns the first slot.
+inline svl_value *out_list(svl_value *out, size_t n) {
+  g_out.lists.emplace_back(n, mkv(SVL_NULL));
+  auto &vec = g_out.lists.back();
+  *out = mkv(SVL_LIST);
+  out->u.l.ptr = vec.data();
+  out->u.l.len = vec.size();
+  return vec.data();
+}
+
+// Ownership moved into a container (PySide `parent index="this" action="add"`): JS no longer deletes it.
+inline void item_moved(svl_handle h) {
+  auto it = g_ptrs.find(h);
+  if (it != g_ptrs.end()) it->second.owned = false;
+}
+
+inline void *ptr_of(svl_handle h, svl_id want, std::string &e) {
+  auto it = g_ptrs.find(h);
+  if (it == g_ptrs.end()) { e = "stale or unknown handle"; return nullptr; }
+  if (it->second.item && !g_tracked.count(it->second.p)) { e = "the item was deleted"; return nullptr; }
+  void *p = gen_ptr_as(it->second.kind, want, it->second.p);
+  if (!p) e = std::string("handle is not a ") + (gen_type(want) ? gen_type(want)->name : "?");
+  return p;
+}
+
+// Converters of unique and item pointers (the generator specializes Conv<T *> for each bound class).
+template <class T>
+struct PtrConv {
+  static svl_id kind();
+  static bool in(const svl_value *v, T *&o, std::string &e) {
+    if (v->tag == SVL_NULL) { o = nullptr; return true; }
+    if (v->tag != SVL_HANDLE) { e = "expected handle"; return false; }
+    o = static_cast<T *>(ptr_of(v->u.h, kind(), e));
+    return o != nullptr;
+  }
+  static void out(T *p, svl_value *o) {
+    svl_handle h = 0;
+    if (p) {
+      auto it = g_ptr_by_addr.find(p);
+      h = it != g_ptr_by_addr.end() ? it->second : item<T>(p, kind(), false);
+    }
+    if (!h) { *o = mkv(SVL_NULL); return; }
+    *o = mkv(SVL_HANDLE);
+    o->u.h = h;
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_HANDLE, SVL_D_NULLABLE); }
+};
+
+// Destroy for the handles this core owns. Returns false for handles it does not know.
+inline bool destroy(svl_handle h) {
+  auto it = g_ptrs.find(h);
+  if (it == g_ptrs.end()) return false;
+  PtrEntry e = it->second;
+  g_ptrs.erase(it);
+  g_ptr_by_addr.erase(e.p);
+  if (e.owned && (!e.item || g_tracked.count(e.p)) && e.del) e.del(e.p);
+  return true;
+}
+
+inline bool handle_info(svl_handle h, svl_handle_info *out) {
+  auto it = g_ptrs.find(h);
+  if (it == g_ptrs.end()) return false;
+  out->kind = it->second.kind;
+  out->lifetime = it->second.owned ? SVL_LIFE_OWNED : SVL_LIFE_BORROWED;
+  out->flags = 0;
+  return true;
+}
+
+// The receiver of a generated member thunk.
+struct Recv {
+  svl_handle h = 0;
+  QObject *obj = nullptr;  // QObject receivers
+  void *ptr = nullptr;     // unique / item receivers
+  svl_id kind = 0;
+};
+
+template <class T>
+inline T *object(Recv &r) {
+  if constexpr (std::is_base_of_v<QObject, T>) return dynamic_cast<T *>(r.obj);
+  return nullptr;
+}
+
+// ---- the QMetaObject fallback -------------------------------------------------------------------------
+
+// A metatype-typed datum -> svl_value: generated converters first (enums by name, records, values,
+// handles), then the generic QVariant path (QObject pointers become handles).
+inline void meta_out(QMetaType mt, const void *p, svl_value *o) {
+  if (gen_metaconv(mt.id(), p, o)) return;
+  if (mt.flags() & QMetaType::PointerToQObject) {
+    Conv<QObject *>::out(*static_cast<QObject *const *>(p), o);
+    return;
+  }
+  if (mt.flags() & QMetaType::IsEnumeration) {
+    qint64 x = 0;
+    std::memcpy(&x, p, std::min<size_t>(sizeof x, static_cast<size_t>(mt.sizeOf())));
+    Conv<qint64>::out(x, o);
+    return;
+  }
+  Conv<QVariant>::out(QVariant(mt, p), o);
+}
+
+inline bool meta_in(QMetaType mt, const svl_value *v, QVariant &q, std::string &e) {
+  if (gen_metaconv_in(mt, v, q, e)) return true;
+  if (!e.empty()) return false;
+  if (v->tag == SVL_HANDLE && (mt.flags() & QMetaType::PointerToQObject)) {
+    Entry *en = find(v->u.h);
+    if (!en) { e = "stale or unknown handle"; return false; }
+    QObject *o = en->obj.data();
+    q = QVariant::fromValue(o);
+    if (!q.convert(mt)) { e = std::string("handle is not a ") + mt.name(); return false; }
+    return true;
+  }
+  if (v->tag == SVL_BOXED) {
+    auto it = g.boxed.find(v->u.h);
+    if (it == g.boxed.end()) { e = "stale boxed handle"; return false; }
+    q = it->second;
+  } else if (!Conv<QVariant>::in(v, q, e)) {
+    return false;
+  }
+  if (q.metaType() != mt && !q.convert(mt)) { e = std::string("cannot convert to ") + mt.name(); return false; }
+  return true;
+}
+
+inline int meta_get(QObject *o, const char *name, svl_value *out) {
+  const QMetaObject *mo = o->metaObject();
+  const int i = mo->indexOfProperty(name);
+  if (i < 0) return fail(std::string("get_prop: unknown property ") + name + " (" + mo->className() + " has no Q_PROPERTY of that name)");
+  const QMetaProperty mp = mo->property(i);
+  if (!mp.isReadable()) return fail(std::string("get_prop: ") + name + " is write-only");
+  const QVariant v = mp.read(o);
+  meta_out(mp.metaType(), v.constData(), out);
+  return 0;
+}
+
+inline int meta_set(QObject *o, const char *name, const svl_value *v) {
+  const QMetaObject *mo = o->metaObject();
+  const int i = mo->indexOfProperty(name);
+  if (i < 0) return fail(std::string("set_prop: unknown property ") + name + " (" + mo->className() + " has no Q_PROPERTY of that name)");
+  const QMetaProperty mp = mo->property(i);
+  if (!mp.isWritable()) return fail(std::string("set_prop: ") + name + " is read-only");
+  QVariant q;
+  std::string e;
+  if (!meta_in(mp.metaType(), v, q, e)) return fail(std::string("set_prop: ") + name + ": " + e);
+  if (!mp.write(o, q)) return fail(std::string("set_prop: writing ") + name + " failed");
+  return 0;
+}
+
+// A slot or Q_INVOKABLE by name: the first with this many parameters whose arguments convert.
+inline int meta_invoke(QObject *o, const char *name, const svl_value *a, size_t n, svl_value *out) {
+  const QMetaObject *mo = o->metaObject();
+  // No member of that name at all is an *unknown* method (callers probe names, as for element methods).
+  std::string last = std::string("call: unknown method ") + name + " (" + mo->className() + " has no member of that name)";
+  for (int i = mo->methodCount() - 1; i >= 0; --i) {
+    const QMetaMethod m = mo->method(i);
+    if (m.name() != name || m.methodType() == QMetaMethod::Signal) continue;
+    if (static_cast<size_t>(m.parameterCount()) != n) {
+      last = std::string("call: ") + mo->className() + "::" + name + " takes " + std::to_string(m.parameterCount()) + " argument(s), got " + std::to_string(n);
+      continue;
+    }
+    if (n > 9) break;
+    std::vector<QVariant> vals(n);
+    std::string e;
+    bool ok = true;
+    for (size_t k = 0; k < n && ok; ++k) ok = meta_in(m.parameterMetaType(static_cast<int>(k)), &a[k], vals[k], e);
+    if (!ok) {
+      last = std::string("call: ") + name + ": " + e;
+      continue;
+    }
+    QGenericArgument args[10];
+    for (size_t k = 0; k < n; ++k) args[k] = QGenericArgument(vals[k].typeName(), vals[k].constData());
+    const QMetaType rt = m.returnMetaType();
+    QVariant ret = rt.isValid() && rt.id() != QMetaType::Void ? QVariant(rt, nullptr) : QVariant();
+    QGenericReturnArgument rarg = ret.isValid() ? QGenericReturnArgument(rt.name(), ret.data()) : QGenericReturnArgument();
+    if (!m.invoke(o, Qt::DirectConnection, rarg, args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]))
+      return fail(std::string("call: invoking ") + name + " failed");
+    if (ret.isValid()) meta_out(rt, ret.constData(), out);
+    return 0;
+  }
+  return fail(last);
+}
+
+// One relay object per (handle, signal, flags): QMetaObject::connect with no receiver metaobject makes Qt
+// call qt_metacall (the PropRelay technique), which converts the arguments by their metatypes and posts.
+struct SignalRelay : QObject {
+  svl_handle h;
+  svl_id wire;
+  QMetaMethod sig;
+  SignalRelay(svl_handle h_, svl_id w, QMetaMethod s) : h(h_), wire(w), sig(s) {}
+  int qt_metacall(QMetaObject::Call c, int id, void **a) override {
+    id = QObject::qt_metacall(c, id, a);
+    if (id < 0 || c != QMetaObject::InvokeMetaMethod) return id;
+    if (id == 0) {
+      g_out.clear();
+      const int n = sig.parameterCount();
+      std::vector<svl_value> vals(static_cast<size_t>(n));
+      for (int i = 0; i < n; ++i) meta_out(sig.parameterMetaType(i), a[i + 1], &vals[static_cast<size_t>(i)]);
+      post(h, wire, vals.data(), vals.size());
+    }
+    return id - 1;
+  }
+};
+std::map<ListenKey, QObject *> g_relays;
+
+inline int listen(svl_handle h, Entry &e, svl_id sig, bool on, uint32_t flags) {
+  const ListenKey key{h, sig, flags};
+  auto it = g_relays.find(key);
+  if (!on) {
+    if (it != g_relays.end()) {
+      delete it->second;
+      g_relays.erase(it);
+    }
+    return 0;
+  }
+  if (it != g_relays.end()) return 0;
+  if (flags & SVL_LISTEN_CAPTURE) return fail("listen: no capture phase for object signals");
+  QObject *o = e.obj.data();
+  const char *name = native_name(sig);
+  if (!o || !name) return fail("listen: unknown signal id");
+  const QMetaObject *mo = o->metaObject();
+  int best = -1;
+  for (int i = 0; i < mo->methodCount(); ++i) {
+    const QMetaMethod m = mo->method(i);
+    // The overload with the most parameters carries the most information (`valueChanged(int)` vs ...).
+    if (m.methodType() == QMetaMethod::Signal && m.name() == name &&
+        (best < 0 || m.parameterCount() > mo->method(best).parameterCount()))
+      best = i;
+  }
+  if (best < 0) return fail(std::string("listen: unknown signal ") + name + " (" + mo->className() + " has no signal of that name)");
+  auto *r = new SignalRelay(h, sig | (flags << SVL_SIGNAL_FLAGS_SHIFT), mo->method(best));
+  static const int slot = QObject::staticMetaObject.methodCount();
+  if (!QMetaObject::connect(o, best, r, slot, Qt::DirectConnection, nullptr)) {
+    delete r;
+    return fail(std::string("listen: connecting ") + name + " failed");
+  }
+  g_relays[key] = r;
+  return 0;
+}
+
+void drop(svl_handle h) {
+  for (auto it = g_relays.lower_bound({h, 0, 0}); it != g_relays.end() && std::get<0>(it->first) == h;) {
+    delete it->second;
+    it = g_relays.erase(it);
+  }
+}
+
+// ---- async: QFuture<T> -> the host's one-shot completion callback (SVL_M_ASYNC) ---------------------
+
+template <class T>
+inline void async_from_future(QFuture<T> f, uint64_t cb) {
+  AsyncOp op;
+  op.obj = g.waker.load();
+  op.cancel = [f]() mutable { f.cancel(); };
+  g.asyncs[cb] = std::move(op);
+  f.then(g.waker.load(), [cb](QFuture<T> r) {
+     g_out.clear();
+     svl_value v = mkv(SVL_NULL);
+     if constexpr (std::is_void_v<T>) {
+       r.waitForFinished();
+     } else {
+       Conv<T>::out(r.result(), &v);
+     }
+     async_complete(cb, &v, 1);
+   }).onFailed(g.waker.load(), [cb](const std::exception &x) {
+       svl_value err = mkv(SVL_NULL);
+       out_error(&err, "qt", x.what());
+       async_complete(cb, &err, 1);
+     }).onCanceled(g.waker.load(), [cb] {
+       svl_value err = mkv(SVL_NULL);
+       out_error(&err, "qt", "operation cancelled");
+       async_complete(cb, &err, 1);
+     });
+}
+
+// ---- dispatch entry points (called by the backend vtable) ------------------------------------------
+
+inline int construct(svl_id kind, const svl_id *props, const svl_value *values, size_t n, svl_value *out) {
+  const TypeRow *t = gen_type(kind);
+  if (!t) return fail("construct: unknown kind id " + std::to_string(kind));
+  if (t->cat != C_OBJECT && t->cat != C_MODEL)
+    return fail(std::string("construct: ") + t->name + " is not a QObject class: use its constructor (`new`)");
+  ensure_app();
+  QObject *o = gen_default_new(kind);
+  if (!o) return fail(std::string("construct: ") + t->name + " has no public default constructor");
+  // Qt: default constructor, then setters (section 5); a failing setter leaves nothing behind.
+  for (size_t i = 0; i < n; ++i) {
+    const char *name = native_name(props[i]);
+    int rc = name ? meta_set(o, name, &values[i]) : fail("construct: unknown property id");
+    if (rc != 0) {
+      delete o;
+      return rc;
+    }
+  }
+  *out = mkv(SVL_HANDLE);
+  out->u.h = handle_for(o, kind);
+  return 0;
+}
+
+inline int call_static(svl_id kind, svl_id method, const svl_value *args, size_t n, svl_value *out) {
+  if (!gen_type(kind)) return fail("call_static: unknown kind id " + std::to_string(kind));
+  ensure_app();
+  g_out.clear();
+  g_in.clear();
+  out_null(out);
+  return gen_static(method, args, n, out);
+}
+
+// call() on a handle this layer serves: VALUE handles with a kind, unique/item handles, and member or
+// dynamic ids on QObject handles. `handled` is false when the backend's element path should run.
+inline int call(svl_handle h, svl_id method, const svl_value *args, size_t n, svl_value *out, bool &handled) {
+  handled = true;
+  Recv r;
+  r.h = h;
+  if (auto it = g.boxed.find(h); it != g.boxed.end()) {
+    auto k = g_boxed_kind.find(h);
+    if (k == g_boxed_kind.end()) return fail("call: this value has no methods");
+    r.kind = k->second;
+    if (method == kEqualsId) {
+      if (n != 1) return fail("equals: expected 1 argument");
+      bool same = false;
+      if (args[0].tag == SVL_BOXED) {
+        auto o = g.boxed.find(args[0].u.h);
+        same = o != g.boxed.end() && o->second == it->second;
+      }
+      Conv<bool>::out(same, out);
+      return 0;
+    }
+    return gen_method(method, r, args, n, out);
+  }
+  if (auto it = g_ptrs.find(h); it != g_ptrs.end()) {
+    std::string e;
+    r.kind = it->second.kind;
+    r.ptr = it->second.p;
+    if (it->second.item && !g_tracked.count(r.ptr)) return fail("call: the item was deleted");
+    return gen_method(method, r, args, n, out);
+  }
+  if (!is_member_id(method) && !(method >= kDynBase)) {
+    handled = false;
+    return 0;
+  }
+  Entry *e = find(h);
+  if (!e) return fail("call: stale or unknown handle");
+  r.obj = e->obj.data();
+  r.kind = e->kind;
+  if (method >= kDynBase) return meta_invoke(r.obj, native_name(method), args, n, out);
+  return gen_method(method, r, args, n, out);
+}
+
+inline int get_prop(Entry &e, svl_id prop, svl_value *out) {
+  const char *name = native_name(prop);
+  if (!name) return fail("get_prop: unknown property id");
+  return meta_get(e.obj.data(), name, out);
+}
+
+inline int set_prop(Entry &e, svl_id prop, const svl_value *v) {
+  const char *name = native_name(prop);
+  if (!name) return fail("set_prop: unknown property id");
+  return meta_set(e.obj.data(), name, v);
+}
+
+inline const svl_member_desc *describe(uint32_t what, svl_id kind, svl_id member) {
+  if (what == SVL_KIND) {
+    const TypeRow *t = gen_type(member);
+    if (!t) return nullptr;
+    static std::map<svl_id, svl_member_desc> kinds;
+    auto it = kinds.find(member);
+    if (it == kinds.end()) {
+      svl_member_desc d{};
+      d.name = t->name;
+      d.ret = slot_desc(nullptr, SVL_NULL, 0, t->parent);
+      it = kinds.emplace(member, d).first;
+    }
+    return &it->second;
+  }
+  (void)kind;
+  if (member >= kDynBase) return nullptr;
+  return gen_member_desc(what, member);
+}
+
+}  // namespace svl
+
+// QModelIndex crosses as a VALUE handle that holds a QPersistentModelIndex (section 3.4: "QModelIndex ->
+// persistent index"): after the model removes the row the handle reads as invalid instead of dangling.
+template <>
+struct Conv<QModelIndex> {
+  static svl_id tid() {
+    static svl_id id = new_type(0, "QModelIndex", SVL_BOXED, {}, {});
+    return id;
+  }
+  static bool in(const svl_value *v, QModelIndex &o, std::string &e) {
+    if (v->tag == SVL_NULL) { o = QModelIndex(); return true; }
+    if (v->tag != SVL_BOXED) { e = "expected a QModelIndex"; return false; }
+    auto it = g.boxed.find(v->u.h);
+    if (it == g.boxed.end()) { e = "stale boxed handle"; return false; }
+    if (it->second.metaType() == QMetaType::fromType<QPersistentModelIndex>()) {
+      o = *static_cast<const QPersistentModelIndex *>(it->second.constData());
+      return true;
+    }
+    e = "boxed handle is not a QModelIndex";
+    return false;
+  }
+  static void out(const QModelIndex &x, svl_value *o) {
+    svl_handle h = g.next++;
+    g.boxed.emplace(h, QVariant::fromValue(QPersistentModelIndex(x)));
+    static const svl_id kind = svl::gen_type_by_name("QModelIndex");
+    if (kind) g_boxed_kind[h] = kind;
+    *o = mkv(SVL_BOXED, tid());
+    o->u.h = h;
+  }
+  static svl_slot_desc slot(const char *n) { return slot_desc(n, SVL_BOXED, SVL_D_NULLABLE, tid()); }
+};
+
+namespace svl {
+template <>
+struct ValueRef<QModelIndex> {
+  QModelIndex idx;
+  const QModelIndex *p = nullptr;
+  explicit ValueRef(svl_handle h) {
+    auto it = g.boxed.find(h);
+    if (it == g.boxed.end() || it->second.metaType() != QMetaType::fromType<QPersistentModelIndex>()) return;
+    idx = *static_cast<const QPersistentModelIndex *>(it->second.constData());
+    p = &idx;
+  }
+  const QModelIndex *operator->() const { return p; }
+  explicit operator bool() const { return p != nullptr; }
+};
+
+// After a call: ownership facts of the PySide typesystem. An item argument moved into the receiver (`parent
+// add`) is no longer JS's to delete; an item result given back (`parent remove`) is again.
+inline void moved_into_container(const svl_value *v) {
+  if (!v) return;
+  if (v->tag == SVL_HANDLE) item_moved(v->u.h);
+  if (v->tag == SVL_LIST)
+    for (size_t i = 0; i < v->u.l.len; ++i) moved_into_container(&v->u.l.ptr[i]);
+}
+
+inline void given_back(const svl_value *v) {
+  if (!v) return;
+  if (v->tag == SVL_HANDLE) {
+    if (auto it = g_ptrs.find(v->u.h); it != g_ptrs.end()) it->second.owned = true;
+    // A QObject the caller owns now (`define-ownership owner="target"` on a result): SHARED, like JS-made ones.
+    if (auto it = g.table.find(v->u.h); it != g.table.end() && it->second.life == SVL_LIFE_BORROWED && it->second.obj &&
+                                        !it->second.obj->parent())
+      it->second.life = SVL_LIFE_SHARED;
+  }
+  if (v->tag == SVL_LIST)
+    for (size_t i = 0; i < v->u.l.len; ++i) given_back(&v->u.l.ptr[i]);
+}
+
+// Tracked<T>: an item made as this subclass reports its native death (a container deleting it) to the core.
+struct TrackMark {
+  explicit TrackMark(const void *p) { g_tracked.insert(p); }
+};
+template <class T>
+struct Tracked : T {
+  using T::T;
+  TrackMark mark_{static_cast<const T *>(this)};
+  Tracked(const Tracked &o) : T(o) {}
+  ~Tracked() override { item_gone(static_cast<const T *>(this)); }
+};
+// ... and for item classes with a virtual clone() (a model clones its prototype for every new item).
+template <class T>
+struct TrackedClone : Tracked<T> {
+  using Tracked<T>::Tracked;
+  T *clone() const override { return new TrackedClone(*this); }
+};
+template <class Tr>
+inline Tr *tracked_prototype() { return new Tr(); }  // a model takes ownership of its prototype
+}  // namespace svl
+
+// Runtime overload dispatch (decision Q4): does argument `v` fit a parameter of type T? A trial conversion,
+// stricter for the scalars so that `true` never picks an `int` overload and `1.5` never an `int` one.
+template <class T, class = void>
+struct Accept {
+  static bool ok(const svl_value *v) {
+    T x{};
+    std::string e;
+    const size_t mark = g_in.size();
+    const bool r = Conv<T>::in(v, x, e);
+    while (g_in.size() > mark) g_in.pop_back();
+    return r;
+  }
+};
+template <>
+struct Accept<bool> {
+  static bool ok(const svl_value *v) { return v->tag == SVL_BOOL; }
+};
+template <class T>
+struct Accept<T, std::enable_if_t<std::is_integral_v<T> && !std::is_same_v<T, bool>>> {
+  static bool ok(const svl_value *v) {
+    T x{};
+    std::string e;
+    return (v->tag == SVL_I64 || v->tag == SVL_F64) && Conv<T>::in(v, x, e);
+  }
+};
+template <class T>
+struct Accept<T, std::enable_if_t<std::is_floating_point_v<T>>> {
+  static bool ok(const svl_value *v) { return v->tag == SVL_I64 || v->tag == SVL_F64; }
+};
+template <>
+struct Accept<QString> {
+  static bool ok(const svl_value *v) { return v->tag == SVL_STR || v->tag == SVL_NULL; }
+};
+// A Date only (its F64 is typed DATETIME): a plain number picks the numeric overload.
+template <>
+struct Accept<QDateTime> {
+  static bool ok(const svl_value *v) { return v->tag == SVL_F64 && v->type == SVL_T_DATETIME; }
+};
+template <>
+struct Accept<QVariant> {
+  static bool ok(const svl_value *) { return true; }
+};
+
+// std::chrono durations: milliseconds (or seconds, nanoseconds) as a JS number of that unit.
+template <class Rep, class Period>
+struct Conv<std::chrono::duration<Rep, Period>> {
+  using D = std::chrono::duration<Rep, Period>;
+  static bool in(const svl_value *v, D &o, std::string &e) {
+    Rep r{};
+    if (!Conv<Rep>::in(v, r, e)) return false;
+    o = D(r);
+    return true;
+  }
+  static void out(const D &d, svl_value *o) { Conv<Rep>::out(d.count(), o); }
+  static svl_slot_desc slot(const char *n) { return Conv<Rep>::slot(n); }
+};
+
+// Statics take no receiver; a placeholder keeps the thunk signature uniform.
+[[maybe_unused]] inline int type_fail(const std::string &what, const std::string &why) { return fail(what + ": " + why); }

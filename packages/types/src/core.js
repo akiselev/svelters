@@ -92,9 +92,13 @@ function live(self) {
 }
 
 function valueHandle(self) {
-  const m = self[BOX]?.__svlBoxed;
-  if (!m) throw new DisposedError(self.constructor.native ?? 'value');
-  return m[0];
+  const b = self[BOX];
+  const m = b?.__svlBoxed;
+  if (m) return m[0];
+  // A host without boxed values (the Node TestHost) answers a value constructor with a plain handle.
+  const h = b && !('__svlBoxed' in b) ? handleOf(b) : null;
+  if (h === null) throw new DisposedError(self.constructor.native ?? 'value');
+  return h;
 }
 
 const handleFor = (self) => (BOX in self ? valueHandle(self) : live(self));
@@ -180,6 +184,40 @@ export function constructProps(Class, props, map) {
   return out;
 }
 
+/**
+ * Constructor arguments that are a props object: none, or one plain object (not an array, a wrapper, a Date
+ * or bytes). Qt classes with overloaded constructors take either that or the constructor's arguments.
+ */
+export function isProps(args) {
+  if (args.length === 0) return true;
+  if (args.length !== 1) return false;
+  const x = args[0];
+  if (x === null || typeof x !== 'object' || Array.isArray(x)) return false;
+  const proto = Object.getPrototypeOf(x);
+  return proto === Object.prototype || proto === null;
+}
+
+/**
+ * `construct` with a props object whose keys are properties (`map`, as for `constructProps`) or setter-backed
+ * keys (`setters`: key -> setter method, for Qt values that have a setter but no Q_PROPERTY, such as
+ * QTextDocument `plainText`): the properties go to `construct`, the setters are called on the new object.
+ */
+export function constructObject(native, Class, props, map, setters) {
+  const own = {};
+  const later = [];
+  if (props !== null && props !== undefined) {
+    for (const key of Object.keys(props)) {
+      const k = key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      if (!map[key] && !map[k] && setters[k]) later.push([setters[k], props[key]]);
+      else own[key] = props[key];
+    }
+  }
+  const raw = construct(native, constructProps(Class, own, map));
+  const h = handleOf(raw);
+  for (const [setter, v] of later) host().call(h, setter, [v]);
+  return raw;
+}
+
 // ---- NativeObject ---------------------------------------------------------------------------------
 
 // handle -> { obj, signals: Map<signal, Set<fn>> }. The table holds the wrapper strongly while it has
@@ -188,9 +226,11 @@ const listening = new Map();
 
 function hookDispatch() {
   const g = globalThis;
-  const current = g.__svelters_dispatch;
-  if (current && current[HOOKED]) return;
-  const prev = current;
+  const desc = Object.getOwnPropertyDescriptor(g, '__svelters_dispatch');
+  if (desc?.get?.[HOOKED]) return;
+  // The runtime (re)installs its dispatcher on every mount, a list row's included: keep ours in front
+  // of whatever it installs later, so listeners added before that mount keep receiving their signals.
+  let prev = g.__svelters_dispatch;
   const dispatch = function (h, signal, args, ...rest) {
     const entry = listening.get(h);
     const fns = entry?.signals.get(signal);
@@ -207,8 +247,16 @@ function hookDispatch() {
     }
     return prev ? prev.call(this, h, signal, args, ...rest) : undefined;
   };
-  dispatch[HOOKED] = true;
-  g.__svelters_dispatch = dispatch;
+  const get = () => dispatch;
+  get[HOOKED] = true;
+  Object.defineProperty(g, '__svelters_dispatch', {
+    configurable: true,
+    enumerable: true,
+    get,
+    set(v) {
+      if (v !== dispatch) prev = v;
+    },
+  });
 }
 
 function shapeArgs(Class, signal, args) {
@@ -226,16 +274,17 @@ const kebabSignal = (s) => (s.includes('-') || !/[A-Z]/.test(s) ? s : s.replace(
 
 /** Base class of every generated object class. */
 export class NativeObject {
-  constructor(a, b) {
+  constructor(...args) {
+    const a = args[0];
     if (a === WRAP) {
-      this[NODE] = b;
+      this[NODE] = args[1];
       return;
     }
     const make = this.constructor[CONSTRUCT];
     if (typeof make !== 'function') {
       throw new TypeError(`${this.constructor.native ?? 'this class'} cannot be constructed with new`);
     }
-    const raw = make.call(this.constructor, a);
+    const raw = make.call(this.constructor, ...args);
     const h = handleOf(raw);
     if (h === null) throw new Error(`${this.constructor.native}: the host returned no object`);
     this[NODE] = raw;
@@ -330,16 +379,17 @@ if (typeof Symbol.dispose === 'symbol') {
 
 /** Base class of every generated value class: an immutable native value behind a VALUE handle. */
 export class NativeValue {
-  constructor(a, ...rest) {
+  constructor(...args) {
+    const a = args[0];
     if (a === WRAP) {
-      this[BOX] = rest[0];
+      this[BOX] = args[1];
       return;
     }
     const make = this.constructor[CONSTRUCT];
     if (typeof make !== 'function') {
       throw new TypeError(`${this.constructor.native ?? 'this class'} cannot be constructed with new`);
     }
-    this[BOX] = make.call(this.constructor, a, ...rest);
+    this[BOX] = make.call(this.constructor, ...args);
   }
 
   /** What the host converts a value argument to; null once disposed. */
@@ -347,8 +397,14 @@ export class NativeValue {
     return this[BOX]?.__svlBoxed ?? null;
   }
 
+  /** A host without boxed values (the Node TestHost) holds the value as a plain handle: that handle. */
+  get svlHandle() {
+    const b = this[BOX];
+    return b && !('__svlBoxed' in b) ? (handleOf(b) ?? undefined) : undefined;
+  }
+
   get disposed() {
-    return this.__svlBoxed === null;
+    return this.__svlBoxed === null && this.svlHandle === undefined;
   }
 
   get nativeType() {

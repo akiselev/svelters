@@ -48,6 +48,12 @@ unsafe extern "C" {
     fn svl_qt_context_request(h: u64) -> i32;
     fn svl_qt_open_menus() -> i32;
     fn svl_qt_close_menus();
+    fn svl_qt_pump(ms: i32);
+    fn svl_qt_child_count(h: u64) -> i32;
+    fn svl_qt_type_counts(values: *mut usize, ptrs: *mut usize, tracked: *mut usize);
+    fn svl_qt_test_future(callback: u64, ms: i32, value: i32);
+    fn svl_qt_text_edits(set_text: *const std::ffi::c_char) -> *const std::ffi::c_char;
+    fn svl_qt_button_icon(label: *const std::ffi::c_char) -> i32;
 }
 
 /// The Qt backend vtable. `run` creates the `QApplication` (if none exists) and owns the loop.
@@ -317,6 +323,50 @@ pub mod hooks {
         let (mut ns, mut calls) = (0, 0);
         unsafe { svl_qt_take_timing(&mut ns, &mut calls) };
         (ns, calls)
+    }
+
+    /// Runs the Qt loop for `ms` milliseconds (deferred deletes included).
+    pub fn pump(ms: i32) {
+        unsafe { svl_qt_pump(ms) }
+    }
+
+    /// QObject children of the object behind `h` (-1: unknown handle).
+    pub fn child_count(h: u64) -> i32 {
+        unsafe { svl_qt_child_count(h) }
+    }
+
+    /// Non-GUI type accounting (N2): `(VALUE handles, unique/item handles, live tracked items)`.
+    pub fn type_counts() -> (usize, usize, usize) {
+        let (mut v, mut p, mut t) = (0, 0, 0);
+        unsafe { svl_qt_type_counts(&mut v, &mut p, &mut t) };
+        (v, p, t)
+    }
+
+    /// The app's QTextEdits: `(count, all share one document, its plain text)`; `set` changes the first one's
+    /// document natively first.
+    pub fn text_edits(set: Option<&str>) -> (usize, bool, String) {
+        let c = set.map(|s| CString::new(s).expect("text"));
+        let p = c.as_ref().map_or(std::ptr::null(), |c| c.as_ptr());
+        // SAFETY: NUL-terminated buffer valid until the next call; copied here.
+        let s = unsafe { std::ffi::CStr::from_ptr(svl_qt_text_edits(p)) }.to_string_lossy().into_owned();
+        let mut it = s.splitn(3, '|');
+        let n = it.next().unwrap_or("0").parse().unwrap_or(0);
+        let shared = it.next() == Some("1");
+        (n, shared, it.next().unwrap_or("").to_string())
+    }
+
+    /// Whether the push button labelled `label` has a non-null icon (`None`: no such button).
+    pub fn button_icon(label: &str) -> Option<bool> {
+        let c = CString::new(label).expect("label");
+        match unsafe { svl_qt_button_icon(c.as_ptr()) } {
+            -1 => None,
+            v => Some(v == 1),
+        }
+    }
+
+    /// Drives the QFuture adapter: completes callback `id` with `value` after `ms` (a negative value cancels).
+    pub fn test_future(id: u64, ms: i32, value: i32) {
+        unsafe { svl_qt_test_future(id, ms, value) }
     }
 }
 

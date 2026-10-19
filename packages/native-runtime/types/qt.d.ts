@@ -2390,6 +2390,7 @@ export interface QtElementDescriptors {
   "text-edit": {
     props: {
       "plain-text"?: string;
+      document?: number;
       markdown?: string;
       "accept-rich-text"?: boolean;
       "read-only"?: boolean;

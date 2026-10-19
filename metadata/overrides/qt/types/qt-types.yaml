@@ -1,0 +1,227 @@
+# Overrides of the Qt non-GUI type pipeline (tools/metadata/qt/types_qt_classify.py). Everything else is
+# classified by rules from qdoc + PySide6 + moc (plans/research/NON-GUI-TYPES.md sections 3.1 and 3.4).
+# Strict: every class named here must exist in metadata/qt/types/ingested/ (the classifier fails otherwise).
+
+# The N2 curated set: every member of these types has a generated, ledger-verified test.
+curated:
+  - QTimer
+  - QStringListModel
+  - QStandardItemModel
+  - QStandardItem
+  - QTextDocument
+  - QUrl
+  - QFileInfo
+  - QIcon
+  - QMimeDatabase
+  - QTemporaryDir
+
+# How the generated ledger tests make a subject of a curated type that is not a constructible QObject
+# (those are made with `construct`): the arguments of its constructor (`new`), as JSON-ish scalars.
+subjects:
+  QUrl: ["https://example.com/a/b?x=1#top"]
+  QFileInfo: ["/usr/share"]
+  QIcon: []
+  QMimeDatabase: []
+  QTemporaryDir: []
+  QStandardItem: ["item"]
+
+# Types bound beyond the signature closure of these roots (the allowlist of QtCore/QtGui roots, section 3.4).
+roots:
+  - QTimer
+  - QSettings
+  - QFile
+  - QFileInfo
+  - QDir
+  - QUrl
+  - QUrlQuery
+  - QStandardPaths
+  - QStringListModel
+  - QProcess
+  - QImage
+  - QPixmap
+  - QSortFilterProxyModel
+  - QIdentityProxyModel
+  - QItemSelectionModel
+  - QMimeDatabase
+  - QMimeType
+  - QMimeData
+  - QLocale
+  - QTimeZone
+  - QUuid
+  - QRegularExpression
+  - QRegularExpressionMatch
+  - QElapsedTimer
+  - QCommandLineParser
+  - QCommandLineOption
+  - QTemporaryDir
+  - QTemporaryFile
+  - QSaveFile
+  - QBuffer
+  - QCryptographicHash
+  - QFileSystemWatcher
+  - QProcess
+  - QVariantAnimation
+  - QPropertyAnimation
+  - QSequentialAnimationGroup
+  - QParallelAnimationGroup
+  - QPauseAnimation
+  - QXmlStreamReader
+  - QXmlStreamWriter
+  - QCollator
+  - QStandardItemModel
+  - QStandardItem
+  - QIcon
+  - QFont
+  - QFontInfo
+  - QFontMetrics
+  - QFontMetricsF
+  - QFontDatabase
+  - QPixmap
+  - QImage
+  - QKeySequence
+  - QTextDocument
+  - QClipboard
+  - QDesktopServices
+  - QIntValidator
+  - QDoubleValidator
+  - QRegularExpressionValidator
+  - QFileSystemModel
+  - QTransform
+  - QPainterPath
+  - QPalette
+  - QCompleter
+  - QUndoStack
+
+# Never bound: singletons and loop machinery the host owns (PLAN rule 6: the toolkit loop and the JS
+# runtime own timing and threads), raw devices JS cannot drive, and painting (transient, section 3.1).
+exclude:
+  - QCoreApplication
+  - QGuiApplication
+  - QApplication
+  - QEventLoop
+  - QAbstractEventDispatcher
+  - QThread
+  - QThreadPool
+  - QSocketNotifier
+  - QObjectCleanupHandler
+  - QSignalMapper
+  - QPluginLoader
+  - QLibrary
+  - QSharedMemory
+  - QSystemSemaphore
+  - QTranslator
+  - QPaintDevice
+  - QPagedPaintDevice
+  - QPdfWriter
+  - QPicture
+  - QBitmap
+  - QWindow
+  - QScreen
+  - QOffscreenSurface
+  - QSurface
+  - QOpenGLContext
+  - QSessionManager
+  - QInputMethod
+  - QStyleHints
+  - QAccessible
+  - QPixmapCache
+  - QItemEditorCreatorBase
+  - QTextObjectInterface
+  - QTextBlockUserData
+  - QXmlStreamEntityResolver
+  - QRandomGenerator64
+  - QIODeviceBase
+  - QCollatorSortKey
+  - QDataStream
+  - QTextStream
+  - QDebug
+  - QDirListing
+  - QModelRoleData
+  - QModelRoleDataSpan
+
+# Taxonomy overrides (section 3.4 "type overrides"): `class:` replaces the rule's category.
+classes:
+  QTransform: value        # PySide object-type for historic reasons; a copyable value class
+  QStandardItem: item      # ownership moves into the model (appendRow / setItem): PySide parent facts
+  QRandomGenerator: unique
+
+# The typedef/alias table (section 3.4): a C++ spelling the converters do not know by name, and the
+# neutral kind it marshals as. `cpp` is the C++ type of the converted local (the parameter type itself
+# when omitted).
+aliases:
+  qsizetype: {k: int}
+  qreal: {k: float}
+  QRgb: {k: int}
+  quint8: {k: int}
+  qint8: {k: int}
+  quint16: {k: int}
+  qint16: {k: int}
+  quint32: {k: int}
+  qint32: {k: int}
+  qint64: {k: int}
+  quint64: {k: int}
+  qlonglong: {k: int}
+  qulonglong: {k: int}
+  uchar: {k: int}
+  ushort: {k: int}
+  ulong: {k: int}
+  WId: {k: int}
+  uint16_t: {k: int}
+  char32_t: {k: int}
+  char16_t: {k: int}
+  QModelIndexList: {as: "QList<QModelIndex>"}
+  QLocale::Territory: {as: "QLocale::Country"}
+  QFileInfoList: {as: "QList<QFileInfo>"}
+  QObjectList: {as: "QList<QObject *>"}
+  std::chrono::milliseconds: {k: int, cpp: "std::chrono::milliseconds"}
+  std::chrono::seconds: {k: int, cpp: "std::chrono::seconds"}
+  std::chrono::nanoseconds: {k: int, cpp: "std::chrono::nanoseconds"}
+  QStringView: {k: string, cpp: QString}
+  QAnyStringView: {k: string, cpp: QString}
+  QByteArrayView: {k: bytes, cpp: QByteArray}
+  # `pass`: how the converted local reaches the parameter.
+  QVariantMap: {k: variant, cpp: QVariant, pass: ".toMap()"}
+  QVariantList: {k: variant, cpp: QVariant, pass: ".toList()"}
+  QVariantHash: {k: variant, cpp: QVariant, pass: ".toHash()"}
+
+# Concrete although a pure virtual looks unoverridden: the override is private and qdoc does not list it
+# (QAbstractListModel implements index/parent/columnCount privately).
+concrete:
+  - QStringListModel
+  - QProcess
+  - QImage
+  - QPixmap
+
+# Enum members declared only on another platform (`#ifdef Q_OS_WIN` / `Q_OS_WASM` in the header).
+platform_enum_members:
+  - QSettings::Registry32Format
+  - QSettings::Registry64Format
+  - QSettings::WebLocalStorageFormat
+  - QSettings::WebIndexedDBFormat
+
+# Members declared only on another platform.
+platform_members:
+  - QProcess.nativeArguments
+  - QProcess.setNativeArguments
+  - QProcess.createProcessArgumentsModifier
+  - QProcess.setCreateProcessArgumentsModifier
+
+# Spellings never bound (they compile against one Qt but not the other, or have no JS meaning).
+block_types:
+  QUrl::FormattingOptions: "QUrlTwoFlags, not QFlags: no converter"
+  QUrl::ComponentFormattingOptions: "QFlags of a two-flags enum family"
+  QChar: "single UTF-16 unit: strings cover it"
+  QLatin1StringView: "needs a Latin-1 buffer: the QString overload covers it"
+  QUtf8StringView: "needs a UTF-8 buffer: the QString overload covers it"
+
+# Overload renames (decision Q4): a second overload whose JS signature is identical to an earlier one
+# can never be chosen by the runtime dispatch; it is reachable only under its own name here.
+# Key: `Class.method(param, types)` exactly as the report lists it; value: the JS name.
+renames:
+  "QPolygon.point(int, int *, int *)": pointXY
+  "QTextDocument.redo(QTextCursor *)": redoCursor
+  "QTextDocument.undo(QTextCursor *)": undoCursor
+
+# Members whose rule-derived name looks reading but mutate, or the reverse (section 3.6). Qt: none needed.
+hide: {}
+keep: {}

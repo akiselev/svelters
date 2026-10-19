@@ -11,6 +11,7 @@ svelters-abi.workspace = true
 
 [dev-dependencies]
 svelters-host.workspace = true
+serde_json.workspace = true
 
 [build-dependencies]
 svelters-qt-build.workspace = true
@@ -70,4 +71,12 @@ harness = false
 
 [[test]]
 name = "host_style"
+harness = false
+
+[[test]]
+name = "types_core"
+harness = false
+
+[[test]]
+name = "host_types"
 harness = false

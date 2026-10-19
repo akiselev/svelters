@@ -1,0 +1,40 @@
+== classes by category (all public classes; qdoc 6.11.0, PySide6 typesystems, moc metatypes)
+module       record    value   object    model  statics   unique     item transien needs-ov unclassi excluded primitiv namespac   widget
+QtCore           11       43       34       10        3       19        0        3        4        3      192       17        0        0
+QtGui             1       61       36        2        2        8        2       43        3        7       96        0        0        0
+QtWidgets         0        4       43        0        3        6       21       36        1        2        3        0        0       73
+total            12      108      113       12        8       33       23       82        8       12      291       17        0       73
+
+== bound scope (roots + signature closure + ancestors), by module and category
+  QtCore       58  model 6, object 19, statics 1, unique 8, value 24
+  QtGui        59  item 2, model 2, object 15, statics 1, unique 3, value 36
+  QtWidgets     1  object 1
+  total       118  (roots 60)
+
+== members of bound types: bound / blocked
+  QtCore     members  1336  bound  1229 ( 91%)  blocked  107
+  QtGui      members  1488  bound  1378 ( 92%)  blocked  110
+  QtWidgets  members    40  bound    40 (100%)  blocked    0
+  excluded by rule: core 98, deprecated 28, operator 104, protected or other platform 62, removed by PySide 14, template/platform 72
+  VALUE mutators hidden (non-const members of value classes, decision Q3) and property readers: 412
+  blocking reasons: container 29, blocked-type 19, unbound 17, type:unknown:QFont::Tag 12, type:unknown:QBindable<int> 10, type:unknown:uchar 9, type:unknown:QBindable<bool> 6, type:transient:QPainter 5, type:transient:QPaintDevice 5, type:unknown:QRegion::const_iterator 4, type:unknown:QRegion::const_reverse_iterator 4, type:unknown:QTextOption::Tab 4, type:unknown:QTextDocument::ResourceProvider 4, type:excluded:QTextFrame::iterator 4, type:unknown:QCalendar::YearMonthDay 3, type:unknown:QColorSpace::PrimaryPoints 3
+
+== overloads (decision Q4: runtime dispatch in a fixed order)
+  JS method names 2079, overloaded 112; const/non-const twins merged 2; C++ spelling variants merged 45 (same JS arguments and result: QStringView/QString, short/int, float/double)
+  renamed (the truly ambiguous ones, `renames:` in the overrides): 3
+    QPolygon.point(int, int *, int *) -> pointXY
+    QTextDocument.redo(QTextCursor *) -> redoCursor
+    QTextDocument.undo(QTextCursor *) -> undoCursor
+  ambiguous (an earlier overload has the same JS signature; blocked unless renamed): 0
+
+== curated set
+  QFileInfo              value   bound   57 blocked   2 hidden   5
+  QIcon                  value   bound   28 blocked   2 hidden   3
+  QMimeDatabase          unique  bound   12 blocked   0 hidden   0
+  QStandardItem          item    bound   83 blocked   3 hidden   0
+  QStandardItemModel     model   bound   55 blocked   6 hidden   1
+  QStringListModel       model   bound   15 blocked   2 hidden   0
+  QTemporaryDir          unique  bound    8 blocked   0 hidden   0
+  QTextDocument          object  bound   98 blocked   7 hidden  11
+  QTimer                 object  bound   21 blocked   4 hidden   3
+  QUrl                   value   bound   38 blocked   2 hidden  12

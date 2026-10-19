@@ -1,0 +1,1922 @@
+{
+ "modules": {
+  "svelters:qt/core": {
+   "dir": "core",
+   "exports": {
+    "QAbstractAnimation": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "core/QAbstractAnimation.js",
+     "implements": [],
+     "imports": [
+      "QObject"
+     ],
+     "native": "QAbstractAnimation",
+     "signature": [
+      "QAbstractAnimation::DeletionPolicy",
+      "QAbstractAnimation::Direction",
+      "QAbstractAnimation::State",
+      "QAnimationGroup",
+      "QObject"
+     ]
+    },
+    "QAbstractItemModel": {
+     "category": "model",
+     "extends": "QObject",
+     "file": "core/QAbstractItemModel.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QMimeData",
+      "QModelIndex"
+     ],
+     "native": "QAbstractItemModel",
+     "signature": [
+      "QAbstractItemModel::CheckIndexOption",
+      "QMimeData",
+      "QModelIndex",
+      "QObject",
+      "Qt::DropAction",
+      "Qt::ItemFlag",
+      "Qt::MatchFlag",
+      "Qt::Orientation",
+      "Qt::SortOrder"
+     ]
+    },
+    "QAbstractListModel": {
+     "category": "model",
+     "extends": "QAbstractItemModel",
+     "file": "core/QAbstractListModel.js",
+     "implements": [],
+     "imports": [
+      "QAbstractItemModel",
+      "QModelIndex"
+     ],
+     "native": "QAbstractListModel",
+     "signature": [
+      "QMimeData",
+      "QModelIndex",
+      "QObject",
+      "Qt::DropAction",
+      "Qt::ItemFlag"
+     ]
+    },
+    "QAbstractProxyModel": {
+     "category": "model",
+     "extends": "QAbstractItemModel",
+     "file": "core/QAbstractProxyModel.js",
+     "implements": [],
+     "imports": [
+      "QAbstractItemModel",
+      "QItemSelection",
+      "QMimeData",
+      "QModelIndex"
+     ],
+     "native": "QAbstractProxyModel",
+     "signature": [
+      "QAbstractItemModel",
+      "QItemSelection",
+      "QMimeData",
+      "QModelIndex",
+      "QObject",
+      "Qt::DropAction",
+      "Qt::ItemFlag",
+      "Qt::Orientation",
+      "Qt::SortOrder"
+     ]
+    },
+    "QAnimationGroup": {
+     "category": "object",
+     "extends": "QAbstractAnimation",
+     "file": "core/QAnimationGroup.js",
+     "implements": [],
+     "imports": [
+      "QAbstractAnimation"
+     ],
+     "native": "QAnimationGroup",
+     "signature": [
+      "QAbstractAnimation",
+      "QObject"
+     ]
+    },
+    "QBuffer": {
+     "category": "object",
+     "extends": "QIODevice",
+     "file": "core/QBuffer.js",
+     "implements": [],
+     "imports": [
+      "QIODevice"
+     ],
+     "native": "QBuffer",
+     "signature": [
+      "QIODeviceBase::OpenModeFlag",
+      "QObject"
+     ]
+    },
+    "QCalendar": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QCalendar.js",
+     "implements": [],
+     "imports": [],
+     "native": "QCalendar",
+     "signature": [
+      "QCalendar::System",
+      "QLocale",
+      "QLocale::FormatType"
+     ]
+    },
+    "QCollator": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QCollator.js",
+     "implements": [],
+     "imports": [
+      "QLocale"
+     ],
+     "native": "QCollator",
+     "signature": [
+      "QLocale",
+      "Qt::CaseSensitivity"
+     ]
+    },
+    "QCommandLineOption": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QCommandLineOption.js",
+     "implements": [],
+     "imports": [],
+     "native": "QCommandLineOption",
+     "signature": [
+      "QCommandLineOption::Flag"
+     ]
+    },
+    "QCommandLineParser": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QCommandLineParser.js",
+     "implements": [],
+     "imports": [],
+     "native": "QCommandLineParser",
+     "signature": [
+      "QCommandLineOption",
+      "QCommandLineParser::MessageType",
+      "QCommandLineParser::OptionsAfterPositionalArgumentsMode",
+      "QCommandLineParser::SingleDashWordOptionMode"
+     ]
+    },
+    "QCryptographicHash": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QCryptographicHash.js",
+     "implements": [],
+     "imports": [],
+     "native": "QCryptographicHash",
+     "signature": [
+      "QCryptographicHash::Algorithm",
+      "QIODevice"
+     ]
+    },
+    "QDir": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QDir.js",
+     "implements": [],
+     "imports": [
+      "QFileInfo"
+     ],
+     "native": "QDir",
+     "signature": [
+      "QDir::Filter",
+      "QDir::SortFlag",
+      "QFileInfo"
+     ]
+    },
+    "QEasingCurve": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QEasingCurve.js",
+     "implements": [],
+     "imports": [],
+     "native": "QEasingCurve",
+     "signature": [
+      "QEasingCurve::Type"
+     ]
+    },
+    "QElapsedTimer": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QElapsedTimer.js",
+     "implements": [],
+     "imports": [],
+     "native": "QElapsedTimer",
+     "signature": [
+      "QElapsedTimer::ClockType"
+     ]
+    },
+    "QFile": {
+     "category": "object",
+     "extends": "QFileDevice",
+     "file": "core/QFile.js",
+     "implements": [],
+     "imports": [
+      "QFileDevice"
+     ],
+     "native": "QFile",
+     "signature": [
+      "QFileDevice::FileHandleFlag",
+      "QFileDevice::Permission",
+      "QIODeviceBase::OpenModeFlag",
+      "QObject"
+     ]
+    },
+    "QFileDevice": {
+     "category": "object",
+     "extends": "QIODevice",
+     "file": "core/QFileDevice.js",
+     "implements": [],
+     "imports": [
+      "QIODevice"
+     ],
+     "native": "QFileDevice",
+     "signature": [
+      "QFileDevice::FileError",
+      "QFileDevice::FileTime",
+      "QFileDevice::Permission"
+     ]
+    },
+    "QFileInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QFileInfo.js",
+     "implements": [],
+     "imports": [
+      "QDir"
+     ],
+     "native": "QFileInfo",
+     "signature": [
+      "QDir",
+      "QFileDevice::FileTime",
+      "QFileDevice::Permission",
+      "QTimeZone"
+     ]
+    },
+    "QFileSystemWatcher": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "core/QFileSystemWatcher.js",
+     "implements": [],
+     "imports": [
+      "QObject"
+     ],
+     "native": "QFileSystemWatcher",
+     "signature": [
+      "QObject"
+     ]
+    },
+    "QIODevice": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "core/QIODevice.js",
+     "implements": [],
+     "imports": [
+      "QObject"
+     ],
+     "native": "QIODevice",
+     "signature": [
+      "QIODeviceBase::OpenModeFlag",
+      "QObject"
+     ]
+    },
+    "QIdentityProxyModel": {
+     "category": "model",
+     "extends": "QAbstractProxyModel",
+     "file": "core/QIdentityProxyModel.js",
+     "implements": [],
+     "imports": [
+      "QAbstractProxyModel",
+      "QItemSelection",
+      "QModelIndex"
+     ],
+     "native": "QIdentityProxyModel",
+     "signature": [
+      "QAbstractItemModel",
+      "QItemSelection",
+      "QMimeData",
+      "QModelIndex",
+      "QObject",
+      "Qt::DropAction",
+      "Qt::MatchFlag",
+      "Qt::Orientation"
+     ]
+    },
+    "QItemSelection": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QItemSelection.js",
+     "implements": [],
+     "imports": [
+      "QModelIndex"
+     ],
+     "native": "QItemSelection",
+     "signature": [
+      "QItemSelectionRange",
+      "QModelIndex"
+     ]
+    },
+    "QItemSelectionModel": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "core/QItemSelectionModel.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QAbstractItemModel",
+      "QItemSelection",
+      "QModelIndex"
+     ],
+     "native": "QItemSelectionModel",
+     "signature": [
+      "QAbstractItemModel",
+      "QItemSelection",
+      "QItemSelectionModel::SelectionFlag",
+      "QModelIndex",
+      "QObject"
+     ]
+    },
+    "QItemSelectionRange": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QItemSelectionRange.js",
+     "implements": [],
+     "imports": [
+      "QAbstractItemModel",
+      "QModelIndex",
+      "QPersistentModelIndex"
+     ],
+     "native": "QItemSelectionRange",
+     "signature": [
+      "QAbstractItemModel",
+      "QModelIndex",
+      "QPersistentModelIndex"
+     ]
+    },
+    "QKeyCombination": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QKeyCombination.js",
+     "implements": [],
+     "imports": [],
+     "native": "QKeyCombination",
+     "signature": [
+      "Qt::Key",
+      "Qt::KeyboardModifier",
+      "Qt::Modifier"
+     ]
+    },
+    "QLine": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QLine.js",
+     "implements": [],
+     "imports": [
+      "QLineF"
+     ],
+     "native": "QLine",
+     "signature": [
+      "QLineF"
+     ]
+    },
+    "QLineF": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QLineF.js",
+     "implements": [],
+     "imports": [
+      "QLine"
+     ],
+     "native": "QLineF",
+     "signature": [
+      "QLine",
+      "QLineF::IntersectionType"
+     ]
+    },
+    "QLocale": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QLocale.js",
+     "implements": [],
+     "imports": [],
+     "native": "QLocale",
+     "signature": [
+      "QCalendar",
+      "QLocale::Country",
+      "QLocale::CurrencySymbolFormat",
+      "QLocale::DataSizeFormat",
+      "QLocale::FormatType",
+      "QLocale::Language",
+      "QLocale::LanguageCodeType",
+      "QLocale::MeasurementSystem",
+      "QLocale::NumberOption",
+      "QLocale::QuotationStyle",
+      "QLocale::Script",
+      "QLocale::TagSeparator",
+      "Qt::DayOfWeek",
+      "Qt::LayoutDirection"
+     ]
+    },
+    "QMimeData": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "core/QMimeData.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QUrl"
+     ],
+     "native": "QMimeData",
+     "signature": [
+      "QUrl"
+     ]
+    },
+    "QMimeDatabase": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QMimeDatabase.js",
+     "implements": [],
+     "imports": [
+      "QMimeType"
+     ],
+     "native": "QMimeDatabase",
+     "signature": [
+      "QFileInfo",
+      "QIODevice",
+      "QMimeDatabase::MatchMode",
+      "QMimeType",
+      "QUrl"
+     ]
+    },
+    "QMimeType": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QMimeType.js",
+     "implements": [],
+     "imports": [],
+     "native": "QMimeType",
+     "signature": []
+    },
+    "QModelIndex": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QModelIndex.js",
+     "implements": [],
+     "imports": [
+      "QAbstractItemModel"
+     ],
+     "native": "QModelIndex",
+     "signature": [
+      "QAbstractItemModel",
+      "Qt::ItemFlag"
+     ]
+    },
+    "QObject": {
+     "category": "object",
+     "extends": null,
+     "file": "core/QObject.js",
+     "implements": [],
+     "imports": [],
+     "native": "QObject",
+     "signature": []
+    },
+    "QParallelAnimationGroup": {
+     "category": "object",
+     "extends": "QAnimationGroup",
+     "file": "core/QParallelAnimationGroup.js",
+     "implements": [],
+     "imports": [
+      "QAnimationGroup"
+     ],
+     "native": "QParallelAnimationGroup",
+     "signature": [
+      "QObject"
+     ]
+    },
+    "QPauseAnimation": {
+     "category": "object",
+     "extends": "QAbstractAnimation",
+     "file": "core/QPauseAnimation.js",
+     "implements": [],
+     "imports": [
+      "QAbstractAnimation"
+     ],
+     "native": "QPauseAnimation",
+     "signature": [
+      "QObject"
+     ]
+    },
+    "QPersistentModelIndex": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QPersistentModelIndex.js",
+     "implements": [],
+     "imports": [
+      "QAbstractItemModel",
+      "QModelIndex"
+     ],
+     "native": "QPersistentModelIndex",
+     "signature": [
+      "QAbstractItemModel",
+      "QModelIndex",
+      "Qt::ItemFlag"
+     ]
+    },
+    "QProcess": {
+     "category": "object",
+     "extends": "QIODevice",
+     "file": "core/QProcess.js",
+     "implements": [],
+     "imports": [
+      "QIODevice",
+      "QProcessEnvironment"
+     ],
+     "native": "QProcess",
+     "signature": [
+      "QIODeviceBase::OpenModeFlag",
+      "QObject",
+      "QProcess::ExitStatus",
+      "QProcess::InputChannelMode",
+      "QProcess::ProcessChannel",
+      "QProcess::ProcessChannelMode",
+      "QProcess::ProcessError",
+      "QProcess::ProcessState",
+      "QProcess::UnixProcessFlag",
+      "QProcessEnvironment"
+     ]
+    },
+    "QProcessEnvironment": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QProcessEnvironment.js",
+     "implements": [],
+     "imports": [],
+     "native": "QProcessEnvironment",
+     "signature": [
+      "QProcessEnvironment::Initialization"
+     ]
+    },
+    "QRegularExpression": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QRegularExpression.js",
+     "implements": [],
+     "imports": [
+      "QRegularExpressionMatch"
+     ],
+     "native": "QRegularExpression",
+     "signature": [
+      "QRegularExpression::MatchOption",
+      "QRegularExpression::MatchType",
+      "QRegularExpression::PatternOption",
+      "QRegularExpression::WildcardConversionOption",
+      "QRegularExpressionMatch",
+      "Qt::CaseSensitivity"
+     ]
+    },
+    "QRegularExpressionMatch": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QRegularExpressionMatch.js",
+     "implements": [],
+     "imports": [
+      "QRegularExpression"
+     ],
+     "native": "QRegularExpressionMatch",
+     "signature": [
+      "QRegularExpression",
+      "QRegularExpression::MatchOption",
+      "QRegularExpression::MatchType"
+     ]
+    },
+    "QSaveFile": {
+     "category": "object",
+     "extends": "QFileDevice",
+     "file": "core/QSaveFile.js",
+     "implements": [],
+     "imports": [
+      "QFileDevice"
+     ],
+     "native": "QSaveFile",
+     "signature": [
+      "QIODeviceBase::OpenModeFlag",
+      "QObject"
+     ]
+    },
+    "QSequentialAnimationGroup": {
+     "category": "object",
+     "extends": "QAnimationGroup",
+     "file": "core/QSequentialAnimationGroup.js",
+     "implements": [],
+     "imports": [
+      "QAnimationGroup",
+      "QAbstractAnimation",
+      "QPauseAnimation"
+     ],
+     "native": "QSequentialAnimationGroup",
+     "signature": [
+      "QAbstractAnimation",
+      "QObject",
+      "QPauseAnimation"
+     ]
+    },
+    "QSettings": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "core/QSettings.js",
+     "implements": [],
+     "imports": [
+      "QObject"
+     ],
+     "native": "QSettings",
+     "signature": [
+      "QObject",
+      "QSettings::Format",
+      "QSettings::Scope",
+      "QSettings::Status"
+     ]
+    },
+    "QSortFilterProxyModel": {
+     "category": "model",
+     "extends": "QAbstractProxyModel",
+     "file": "core/QSortFilterProxyModel.js",
+     "implements": [],
+     "imports": [
+      "QAbstractProxyModel",
+      "QItemSelection",
+      "QMimeData",
+      "QModelIndex",
+      "QRegularExpression"
+     ],
+     "native": "QSortFilterProxyModel",
+     "signature": [
+      "QAbstractItemModel",
+      "QItemSelection",
+      "QMimeData",
+      "QModelIndex",
+      "QObject",
+      "QRegularExpression",
+      "Qt::CaseSensitivity",
+      "Qt::DropAction",
+      "Qt::ItemFlag",
+      "Qt::MatchFlag",
+      "Qt::Orientation",
+      "Qt::SortOrder"
+     ]
+    },
+    "QStandardPaths": {
+     "category": "statics",
+     "extends": null,
+     "file": "core/QStandardPaths.js",
+     "implements": [],
+     "imports": [],
+     "native": "QStandardPaths",
+     "signature": [
+      "QStandardPaths::LocateOption",
+      "QStandardPaths::StandardLocation"
+     ]
+    },
+    "QStringListModel": {
+     "category": "model",
+     "extends": "QAbstractListModel",
+     "file": "core/QStringListModel.js",
+     "implements": [],
+     "imports": [
+      "QAbstractListModel",
+      "QModelIndex"
+     ],
+     "native": "QStringListModel",
+     "signature": [
+      "QModelIndex",
+      "QObject",
+      "Qt::DropAction",
+      "Qt::ItemFlag",
+      "Qt::SortOrder"
+     ]
+    },
+    "QTemporaryDir": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QTemporaryDir.js",
+     "implements": [],
+     "imports": [],
+     "native": "QTemporaryDir",
+     "signature": []
+    },
+    "QTemporaryFile": {
+     "category": "object",
+     "extends": "QFile",
+     "file": "core/QTemporaryFile.js",
+     "implements": [],
+     "imports": [
+      "QFile"
+     ],
+     "native": "QTemporaryFile",
+     "signature": [
+      "QObject"
+     ]
+    },
+    "QTimeZone": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QTimeZone.js",
+     "implements": [],
+     "imports": [],
+     "native": "QTimeZone",
+     "signature": [
+      "QLocale",
+      "QLocale::Country",
+      "QTimeZone::Initialization",
+      "QTimeZone::NameType",
+      "QTimeZone::TimeType",
+      "Qt::TimeSpec"
+     ]
+    },
+    "QTimer": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "core/QTimer.js",
+     "implements": [],
+     "imports": [
+      "QObject"
+     ],
+     "native": "QTimer",
+     "signature": [
+      "QObject",
+      "Qt::TimerId",
+      "Qt::TimerType"
+     ]
+    },
+    "QUrl": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QUrl.js",
+     "implements": [],
+     "imports": [],
+     "native": "QUrl",
+     "signature": [
+      "QUrl::AceProcessingOption",
+      "QUrl::ParsingMode",
+      "QUrl::UserInputResolutionOption"
+     ]
+    },
+    "QUrlQuery": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QUrlQuery.js",
+     "implements": [],
+     "imports": [],
+     "native": "QUrlQuery",
+     "signature": [
+      "QUrl"
+     ]
+    },
+    "QUuid": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QUuid.js",
+     "implements": [],
+     "imports": [],
+     "native": "QUuid",
+     "signature": [
+      "QUuid::StringFormat",
+      "QUuid::Variant",
+      "QUuid::Version"
+     ]
+    },
+    "QVariantAnimation": {
+     "category": "object",
+     "extends": "QAbstractAnimation",
+     "file": "core/QVariantAnimation.js",
+     "implements": [],
+     "imports": [
+      "QAbstractAnimation",
+      "QEasingCurve"
+     ],
+     "native": "QVariantAnimation",
+     "signature": [
+      "QEasingCurve",
+      "QObject"
+     ]
+    },
+    "QXmlStreamAttribute": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QXmlStreamAttribute.js",
+     "implements": [],
+     "imports": [],
+     "native": "QXmlStreamAttribute",
+     "signature": []
+    },
+    "QXmlStreamAttributes": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QXmlStreamAttributes.js",
+     "implements": [],
+     "imports": [],
+     "native": "QXmlStreamAttributes",
+     "signature": []
+    },
+    "QXmlStreamNamespaceDeclaration": {
+     "category": "value",
+     "extends": null,
+     "file": "core/QXmlStreamNamespaceDeclaration.js",
+     "implements": [],
+     "imports": [],
+     "native": "QXmlStreamNamespaceDeclaration",
+     "signature": []
+    },
+    "QXmlStreamReader": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QXmlStreamReader.js",
+     "implements": [],
+     "imports": [
+      "QIODevice",
+      "QXmlStreamAttributes"
+     ],
+     "native": "QXmlStreamReader",
+     "signature": [
+      "QIODevice",
+      "QXmlStreamAttributes",
+      "QXmlStreamNamespaceDeclaration",
+      "QXmlStreamReader::Error",
+      "QXmlStreamReader::ReadElementTextBehaviour",
+      "QXmlStreamReader::TokenType"
+     ]
+    },
+    "QXmlStreamWriter": {
+     "category": "unique",
+     "extends": null,
+     "file": "core/QXmlStreamWriter.js",
+     "implements": [],
+     "imports": [
+      "QIODevice"
+     ],
+     "native": "QXmlStreamWriter",
+     "signature": [
+      "QIODevice",
+      "QXmlStreamAttribute",
+      "QXmlStreamAttributes",
+      "QXmlStreamReader",
+      "QXmlStreamWriter::Error"
+     ]
+    }
+   }
+  },
+  "svelters:qt/gui": {
+   "dir": "gui",
+   "exports": {
+    "QAbstractFileIconProvider": {
+     "category": "unique",
+     "extends": null,
+     "file": "gui/QAbstractFileIconProvider.js",
+     "implements": [],
+     "imports": [
+      "QIcon"
+     ],
+     "native": "QAbstractFileIconProvider",
+     "signature": [
+      "QAbstractFileIconProvider::IconType",
+      "QAbstractFileIconProvider::Option",
+      "QFileInfo",
+      "QIcon"
+     ]
+    },
+    "QAbstractTextDocumentLayout": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QAbstractTextDocumentLayout.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QTextBlock",
+      "QTextDocument",
+      "QTextFormat"
+     ],
+     "native": "QAbstractTextDocumentLayout",
+     "signature": [
+      "QObject",
+      "QTextBlock",
+      "QTextDocument",
+      "QTextFormat",
+      "QTextFrame",
+      "Qt::HitTestAccuracy"
+     ]
+    },
+    "QAction": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QAction.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QActionGroup",
+      "QFont",
+      "QIcon",
+      "QKeySequence"
+     ],
+     "native": "QAction",
+     "signature": [
+      "QAction::ActionEvent",
+      "QAction::MenuRole",
+      "QAction::Priority",
+      "QActionGroup",
+      "QFont",
+      "QIcon",
+      "QKeySequence",
+      "QKeySequence::StandardKey",
+      "QObject",
+      "Qt::ShortcutContext"
+     ]
+    },
+    "QActionGroup": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QActionGroup.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QAction"
+     ],
+     "native": "QActionGroup",
+     "signature": [
+      "QAction",
+      "QActionGroup::ExclusionPolicy",
+      "QIcon",
+      "QObject"
+     ]
+    },
+    "QBrush": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QBrush.js",
+     "implements": [],
+     "imports": [
+      "QImage",
+      "QPixmap",
+      "QTransform"
+     ],
+     "native": "QBrush",
+     "signature": [
+      "QImage",
+      "QPixmap",
+      "QTransform",
+      "Qt::BrushStyle",
+      "Qt::GlobalColor"
+     ]
+    },
+    "QClipboard": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QClipboard.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QImage",
+      "QMimeData",
+      "QPixmap"
+     ],
+     "native": "QClipboard",
+     "signature": [
+      "QClipboard::Mode",
+      "QImage",
+      "QMimeData",
+      "QPixmap"
+     ]
+    },
+    "QColorSpace": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QColorSpace.js",
+     "implements": [],
+     "imports": [
+      "QColorTransform"
+     ],
+     "native": "QColorSpace",
+     "signature": [
+      "QColorSpace::ColorModel",
+      "QColorSpace::NamedColorSpace",
+      "QColorSpace::Primaries",
+      "QColorSpace::TransferFunction",
+      "QColorSpace::TransformModel",
+      "QColorTransform"
+     ]
+    },
+    "QColorTransform": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QColorTransform.js",
+     "implements": [],
+     "imports": [
+      "QRgba64"
+     ],
+     "native": "QColorTransform",
+     "signature": [
+      "QRgba64"
+     ]
+    },
+    "QDesktopServices": {
+     "category": "statics",
+     "extends": null,
+     "file": "gui/QDesktopServices.js",
+     "implements": [],
+     "imports": [],
+     "native": "QDesktopServices",
+     "signature": [
+      "QObject",
+      "QUrl"
+     ]
+    },
+    "QDoubleValidator": {
+     "category": "object",
+     "extends": "QValidator",
+     "file": "gui/QDoubleValidator.js",
+     "implements": [],
+     "imports": [
+      "QValidator"
+     ],
+     "native": "QDoubleValidator",
+     "signature": [
+      "QDoubleValidator::Notation",
+      "QObject",
+      "QValidator::State"
+     ]
+    },
+    "QFileSystemModel": {
+     "category": "model",
+     "extends": "QAbstractItemModel",
+     "file": "gui/QFileSystemModel.js",
+     "implements": [],
+     "imports": [
+      "QAbstractItemModel",
+      "QDir",
+      "QFileInfo",
+      "QIcon",
+      "QMimeData",
+      "QModelIndex"
+     ],
+     "native": "QFileSystemModel",
+     "signature": [
+      "QAbstractFileIconProvider",
+      "QDir",
+      "QDir::Filter",
+      "QFileDevice::Permission",
+      "QFileInfo",
+      "QFileSystemModel::Option",
+      "QIcon",
+      "QMimeData",
+      "QModelIndex",
+      "QObject",
+      "QTimeZone",
+      "Qt::DropAction",
+      "Qt::ItemFlag",
+      "Qt::Orientation",
+      "Qt::SortOrder"
+     ]
+    },
+    "QFont": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QFont.js",
+     "implements": [],
+     "imports": [],
+     "native": "QFont",
+     "signature": [
+      "QFont::Capitalization",
+      "QFont::HintingPreference",
+      "QFont::SpacingType",
+      "QFont::Style",
+      "QFont::StyleHint",
+      "QFont::StyleStrategy",
+      "QFont::Weight"
+     ]
+    },
+    "QFontDatabase": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QFontDatabase.js",
+     "implements": [],
+     "imports": [
+      "QFont"
+     ],
+     "native": "QFontDatabase",
+     "signature": [
+      "QChar::Script",
+      "QFont",
+      "QFontDatabase::SystemFont",
+      "QFontDatabase::WritingSystem"
+     ]
+    },
+    "QFontInfo": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QFontInfo.js",
+     "implements": [],
+     "imports": [
+      "QFontVariableAxis"
+     ],
+     "native": "QFontInfo",
+     "signature": [
+      "QFont",
+      "QFont::Style",
+      "QFont::StyleHint",
+      "QFontVariableAxis"
+     ]
+    },
+    "QFontMetrics": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QFontMetrics.js",
+     "implements": [],
+     "imports": [],
+     "native": "QFontMetrics",
+     "signature": [
+      "QFont",
+      "QTextOption",
+      "Qt::TextElideMode"
+     ]
+    },
+    "QFontMetricsF": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QFontMetricsF.js",
+     "implements": [],
+     "imports": [],
+     "native": "QFontMetricsF",
+     "signature": [
+      "QFont",
+      "QTextOption",
+      "Qt::TextElideMode"
+     ]
+    },
+    "QFontVariableAxis": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QFontVariableAxis.js",
+     "implements": [],
+     "imports": [],
+     "native": "QFontVariableAxis",
+     "signature": []
+    },
+    "QIcon": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QIcon.js",
+     "implements": [],
+     "imports": [
+      "QPixmap"
+     ],
+     "native": "QIcon",
+     "signature": [
+      "QIcon::Mode",
+      "QIcon::State",
+      "QIcon::ThemeIcon",
+      "QIconEngine",
+      "QPixmap"
+     ]
+    },
+    "QIconEngine": {
+     "category": "unique",
+     "extends": null,
+     "file": "gui/QIconEngine.js",
+     "implements": [],
+     "imports": [
+      "QPixmap"
+     ],
+     "native": "QIconEngine",
+     "signature": [
+      "QIcon::Mode",
+      "QIcon::State",
+      "QPixmap"
+     ]
+    },
+    "QImage": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QImage.js",
+     "implements": [],
+     "imports": [
+      "QColorSpace",
+      "QPixelFormat",
+      "QTransform"
+     ],
+     "native": "QImage",
+     "signature": [
+      "QColorSpace",
+      "QColorTransform",
+      "QIODevice",
+      "QImage::Format",
+      "QPixelFormat",
+      "QTransform",
+      "Qt::AspectRatioMode",
+      "Qt::ImageConversionFlag",
+      "Qt::MaskMode",
+      "Qt::Orientation",
+      "Qt::TransformationMode"
+     ]
+    },
+    "QImageReader": {
+     "category": "unique",
+     "extends": null,
+     "file": "gui/QImageReader.js",
+     "implements": [],
+     "imports": [
+      "QIODevice",
+      "QImage"
+     ],
+     "native": "QImageReader",
+     "signature": [
+      "QIODevice",
+      "QImage",
+      "QImage::Format",
+      "QImageIOHandler::ImageOption",
+      "QImageIOHandler::Transformation",
+      "QImageReader::ImageReaderError"
+     ]
+    },
+    "QIntValidator": {
+     "category": "object",
+     "extends": "QValidator",
+     "file": "gui/QIntValidator.js",
+     "implements": [],
+     "imports": [
+      "QValidator"
+     ],
+     "native": "QIntValidator",
+     "signature": [
+      "QObject",
+      "QValidator::State"
+     ]
+    },
+    "QKeySequence": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QKeySequence.js",
+     "implements": [],
+     "imports": [],
+     "native": "QKeySequence",
+     "signature": [
+      "QKeyCombination",
+      "QKeySequence::SequenceFormat",
+      "QKeySequence::SequenceMatch",
+      "QKeySequence::StandardKey"
+     ]
+    },
+    "QPainterPath": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QPainterPath.js",
+     "implements": [],
+     "imports": [
+      "QPolygonF"
+     ],
+     "native": "QPainterPath",
+     "signature": [
+      "QPolygonF",
+      "QTransform",
+      "Qt::FillRule"
+     ]
+    },
+    "QPalette": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QPalette.js",
+     "implements": [],
+     "imports": [
+      "QBrush"
+     ],
+     "native": "QPalette",
+     "signature": [
+      "QBrush",
+      "QPalette::ColorGroup",
+      "QPalette::ColorRole",
+      "Qt::GlobalColor"
+     ]
+    },
+    "QPen": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QPen.js",
+     "implements": [],
+     "imports": [
+      "QBrush"
+     ],
+     "native": "QPen",
+     "signature": [
+      "QBrush",
+      "Qt::PenCapStyle",
+      "Qt::PenJoinStyle",
+      "Qt::PenStyle"
+     ]
+    },
+    "QPixelFormat": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QPixelFormat.js",
+     "implements": [],
+     "imports": [],
+     "native": "QPixelFormat",
+     "signature": [
+      "QPixelFormat::AlphaPosition",
+      "QPixelFormat::AlphaPremultiplied",
+      "QPixelFormat::AlphaUsage",
+      "QPixelFormat::ByteOrder",
+      "QPixelFormat::ColorModel",
+      "QPixelFormat::TypeInterpretation",
+      "QPixelFormat::YUVLayout"
+     ]
+    },
+    "QPixmap": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QPixmap.js",
+     "implements": [],
+     "imports": [
+      "QImage",
+      "QTransform"
+     ],
+     "native": "QPixmap",
+     "signature": [
+      "QIODevice",
+      "QImage",
+      "QImageReader",
+      "QTransform",
+      "Qt::AspectRatioMode",
+      "Qt::ImageConversionFlag",
+      "Qt::TransformationMode"
+     ]
+    },
+    "QPolygon": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QPolygon.js",
+     "implements": [],
+     "imports": [
+      "QPolygonF"
+     ],
+     "native": "QPolygon",
+     "signature": [
+      "QPolygonF",
+      "Qt::FillRule"
+     ]
+    },
+    "QPolygonF": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QPolygonF.js",
+     "implements": [],
+     "imports": [
+      "QPolygon"
+     ],
+     "native": "QPolygonF",
+     "signature": [
+      "QPolygon",
+      "Qt::FillRule"
+     ]
+    },
+    "QRegion": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QRegion.js",
+     "implements": [],
+     "imports": [],
+     "native": "QRegion",
+     "signature": [
+      "QPolygon",
+      "QRegion::RegionType",
+      "Qt::FillRule"
+     ]
+    },
+    "QRegularExpressionValidator": {
+     "category": "object",
+     "extends": "QValidator",
+     "file": "gui/QRegularExpressionValidator.js",
+     "implements": [],
+     "imports": [
+      "QValidator",
+      "QRegularExpression"
+     ],
+     "native": "QRegularExpressionValidator",
+     "signature": [
+      "QObject",
+      "QRegularExpression",
+      "QValidator::State"
+     ]
+    },
+    "QRgba64": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QRgba64.js",
+     "implements": [],
+     "imports": [],
+     "native": "QRgba64",
+     "signature": []
+    },
+    "QStandardItem": {
+     "category": "item",
+     "extends": null,
+     "file": "gui/QStandardItem.js",
+     "implements": [],
+     "imports": [
+      "QBrush",
+      "QFont",
+      "QIcon",
+      "QModelIndex",
+      "QStandardItemModel"
+     ],
+     "native": "QStandardItem",
+     "signature": [
+      "QBrush",
+      "QFont",
+      "QIcon",
+      "QModelIndex",
+      "QStandardItemModel",
+      "Qt::AlignmentFlag",
+      "Qt::CheckState",
+      "Qt::ItemFlag",
+      "Qt::SortOrder"
+     ]
+    },
+    "QStandardItemModel": {
+     "category": "model",
+     "extends": "QAbstractItemModel",
+     "file": "gui/QStandardItemModel.js",
+     "implements": [],
+     "imports": [
+      "QAbstractItemModel",
+      "QMimeData",
+      "QModelIndex",
+      "QStandardItem"
+     ],
+     "native": "QStandardItemModel",
+     "signature": [
+      "QMimeData",
+      "QModelIndex",
+      "QObject",
+      "QStandardItem",
+      "Qt::DropAction",
+      "Qt::ItemFlag",
+      "Qt::MatchFlag",
+      "Qt::Orientation",
+      "Qt::SortOrder"
+     ]
+    },
+    "QTextBlock": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTextBlock.js",
+     "implements": [],
+     "imports": [
+      "QTextBlockFormat",
+      "QTextCharFormat",
+      "QTextDocument",
+      "QTextList"
+     ],
+     "native": "QTextBlock",
+     "signature": [
+      "QTextBlockFormat",
+      "QTextCharFormat",
+      "QTextDocument",
+      "QTextList",
+      "Qt::LayoutDirection"
+     ]
+    },
+    "QTextBlockFormat": {
+     "category": "value",
+     "extends": "QTextFormat",
+     "file": "gui/QTextBlockFormat.js",
+     "implements": [],
+     "imports": [
+      "QTextFormat"
+     ],
+     "native": "QTextBlockFormat",
+     "signature": [
+      "QTextBlockFormat::MarkerType",
+      "QTextFormat::PageBreakFlag",
+      "Qt::AlignmentFlag"
+     ]
+    },
+    "QTextBlockGroup": {
+     "category": "object",
+     "extends": "QTextObject",
+     "file": "gui/QTextBlockGroup.js",
+     "implements": [],
+     "imports": [
+      "QTextObject"
+     ],
+     "native": "QTextBlockGroup",
+     "signature": []
+    },
+    "QTextCharFormat": {
+     "category": "value",
+     "extends": "QTextFormat",
+     "file": "gui/QTextCharFormat.js",
+     "implements": [],
+     "imports": [
+      "QTextFormat",
+      "QFont",
+      "QPen"
+     ],
+     "native": "QTextCharFormat",
+     "signature": [
+      "QFont",
+      "QFont::Capitalization",
+      "QFont::HintingPreference",
+      "QFont::SpacingType",
+      "QFont::StyleHint",
+      "QFont::StyleStrategy",
+      "QPen",
+      "QTextCharFormat::UnderlineStyle",
+      "QTextCharFormat::VerticalAlignment"
+     ]
+    },
+    "QTextCursor": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTextCursor.js",
+     "implements": [],
+     "imports": [
+      "QTextBlock",
+      "QTextBlockFormat",
+      "QTextCharFormat",
+      "QTextDocument",
+      "QTextDocumentFragment",
+      "QTextFrame",
+      "QTextList",
+      "QTextTable"
+     ],
+     "native": "QTextCursor",
+     "signature": [
+      "QTextBlock",
+      "QTextBlockFormat",
+      "QTextCharFormat",
+      "QTextDocument",
+      "QTextDocumentFragment",
+      "QTextFrame",
+      "QTextList",
+      "QTextTable"
+     ]
+    },
+    "QTextDocument": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QTextDocument.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QAbstractTextDocumentLayout",
+      "QFont",
+      "QTextBlock",
+      "QTextCursor",
+      "QTextFormat",
+      "QTextFrame",
+      "QTextObject",
+      "QTextOption",
+      "QUrl"
+     ],
+     "native": "QTextDocument",
+     "signature": [
+      "QAbstractTextDocumentLayout",
+      "QFont",
+      "QObject",
+      "QRegularExpression",
+      "QTextBlock",
+      "QTextCursor",
+      "QTextDocument::FindFlag",
+      "QTextDocument::MarkdownFeature",
+      "QTextDocument::MetaInformation",
+      "QTextDocument::Stacks",
+      "QTextFormat",
+      "QTextFrame",
+      "QTextObject",
+      "QTextOption",
+      "QUrl",
+      "Qt::CursorMoveStyle"
+     ]
+    },
+    "QTextDocumentFragment": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTextDocumentFragment.js",
+     "implements": [],
+     "imports": [],
+     "native": "QTextDocumentFragment",
+     "signature": [
+      "QTextCursor",
+      "QTextDocument",
+      "QTextDocument::MarkdownFeature"
+     ]
+    },
+    "QTextFormat": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTextFormat.js",
+     "implements": [],
+     "imports": [
+      "QBrush",
+      "QPen",
+      "QTextLength"
+     ],
+     "native": "QTextFormat",
+     "signature": [
+      "QBrush",
+      "QPen",
+      "QTextBlockFormat",
+      "QTextCharFormat",
+      "QTextFrameFormat",
+      "QTextImageFormat",
+      "QTextLength",
+      "QTextListFormat",
+      "QTextTableCellFormat",
+      "QTextTableFormat",
+      "Qt::LayoutDirection"
+     ]
+    },
+    "QTextFrame": {
+     "category": "object",
+     "extends": "QTextObject",
+     "file": "gui/QTextFrame.js",
+     "implements": [],
+     "imports": [
+      "QTextObject",
+      "QTextFrameFormat"
+     ],
+     "native": "QTextFrame",
+     "signature": [
+      "QTextCursor",
+      "QTextDocument",
+      "QTextFrameFormat"
+     ]
+    },
+    "QTextFrameFormat": {
+     "category": "value",
+     "extends": "QTextFormat",
+     "file": "gui/QTextFrameFormat.js",
+     "implements": [],
+     "imports": [
+      "QTextFormat",
+      "QBrush",
+      "QTextLength"
+     ],
+     "native": "QTextFrameFormat",
+     "signature": [
+      "QBrush",
+      "QTextFormat::PageBreakFlag",
+      "QTextFrameFormat::BorderStyle",
+      "QTextFrameFormat::Position",
+      "QTextLength"
+     ]
+    },
+    "QTextImageFormat": {
+     "category": "value",
+     "extends": "QTextCharFormat",
+     "file": "gui/QTextImageFormat.js",
+     "implements": [],
+     "imports": [
+      "QTextCharFormat",
+      "QTextLength"
+     ],
+     "native": "QTextImageFormat",
+     "signature": [
+      "QTextLength"
+     ]
+    },
+    "QTextLength": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTextLength.js",
+     "implements": [],
+     "imports": [],
+     "native": "QTextLength",
+     "signature": [
+      "QTextLength::Type"
+     ]
+    },
+    "QTextList": {
+     "category": "object",
+     "extends": "QTextBlockGroup",
+     "file": "gui/QTextList.js",
+     "implements": [],
+     "imports": [
+      "QTextBlockGroup",
+      "QTextBlock",
+      "QTextListFormat"
+     ],
+     "native": "QTextList",
+     "signature": [
+      "QTextBlock",
+      "QTextListFormat"
+     ]
+    },
+    "QTextListFormat": {
+     "category": "value",
+     "extends": "QTextFormat",
+     "file": "gui/QTextListFormat.js",
+     "implements": [],
+     "imports": [
+      "QTextFormat"
+     ],
+     "native": "QTextListFormat",
+     "signature": [
+      "QTextListFormat::Style"
+     ]
+    },
+    "QTextObject": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QTextObject.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QTextFormat"
+     ],
+     "native": "QTextObject",
+     "signature": [
+      "QTextDocument",
+      "QTextFormat"
+     ]
+    },
+    "QTextOption": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTextOption.js",
+     "implements": [],
+     "imports": [],
+     "native": "QTextOption",
+     "signature": [
+      "QTextOption::Flag",
+      "QTextOption::WrapMode",
+      "Qt::AlignmentFlag",
+      "Qt::LayoutDirection"
+     ]
+    },
+    "QTextTable": {
+     "category": "object",
+     "extends": "QTextFrame",
+     "file": "gui/QTextTable.js",
+     "implements": [],
+     "imports": [
+      "QTextFrame",
+      "QTextCursor",
+      "QTextTableCell",
+      "QTextTableFormat"
+     ],
+     "native": "QTextTable",
+     "signature": [
+      "QTextCursor",
+      "QTextTableCell",
+      "QTextTableFormat"
+     ]
+    },
+    "QTextTableCell": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTextTableCell.js",
+     "implements": [],
+     "imports": [
+      "QTextCharFormat",
+      "QTextCursor"
+     ],
+     "native": "QTextTableCell",
+     "signature": [
+      "QTextCharFormat",
+      "QTextCursor"
+     ]
+    },
+    "QTextTableCellFormat": {
+     "category": "value",
+     "extends": "QTextCharFormat",
+     "file": "gui/QTextTableCellFormat.js",
+     "implements": [],
+     "imports": [
+      "QTextCharFormat",
+      "QBrush"
+     ],
+     "native": "QTextTableCellFormat",
+     "signature": [
+      "QBrush",
+      "QTextFrameFormat::BorderStyle"
+     ]
+    },
+    "QTextTableFormat": {
+     "category": "value",
+     "extends": "QTextFrameFormat",
+     "file": "gui/QTextTableFormat.js",
+     "implements": [],
+     "imports": [
+      "QTextFrameFormat",
+      "QTextLength"
+     ],
+     "native": "QTextTableFormat",
+     "signature": [
+      "QTextLength",
+      "Qt::AlignmentFlag"
+     ]
+    },
+    "QTransform": {
+     "category": "value",
+     "extends": null,
+     "file": "gui/QTransform.js",
+     "implements": [],
+     "imports": [
+      "QLine",
+      "QLineF",
+      "QPainterPath",
+      "QPolygon",
+      "QPolygonF",
+      "QRegion"
+     ],
+     "native": "QTransform",
+     "signature": [
+      "QLine",
+      "QLineF",
+      "QPainterPath",
+      "QPolygon",
+      "QPolygonF",
+      "QRegion",
+      "QTransform::TransformationType"
+     ]
+    },
+    "QUndoCommand": {
+     "category": "item",
+     "extends": null,
+     "file": "gui/QUndoCommand.js",
+     "implements": [],
+     "imports": [],
+     "native": "QUndoCommand",
+     "signature": []
+    },
+    "QUndoStack": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QUndoStack.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QAction",
+      "QUndoCommand"
+     ],
+     "native": "QUndoStack",
+     "signature": [
+      "QAction",
+      "QObject",
+      "QUndoCommand"
+     ]
+    },
+    "QValidator": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "gui/QValidator.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QLocale"
+     ],
+     "native": "QValidator",
+     "signature": [
+      "QLocale",
+      "QObject",
+      "QValidator::State"
+     ]
+    }
+   }
+  },
+  "svelters:qt/widgets": {
+   "dir": "widgets",
+   "exports": {
+    "QCompleter": {
+     "category": "object",
+     "extends": "QObject",
+     "file": "widgets/QCompleter.js",
+     "implements": [],
+     "imports": [
+      "QObject",
+      "QAbstractItemModel",
+      "QModelIndex"
+     ],
+     "native": "QCompleter",
+     "signature": [
+      "QAbstractItemModel",
+      "QCompleter::CompletionMode",
+      "QCompleter::ModelSorting",
+      "QModelIndex",
+      "QObject",
+      "Qt::CaseSensitivity",
+      "Qt::MatchFlag"
+     ]
+    }
+   }
+  }
+ },
+ "schema": "svelters-types-manifest/v1",
+ "toolkit": "qt"
+}

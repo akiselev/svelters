@@ -9,6 +9,7 @@ closure from it. Enums and flags are leaves (they have no class).
 
   python3 tools/metadata/gtk/types_closure.py svelters:gtk/gio:File svelters:gtk/gtk:TextBuffer
   python3 tools/metadata/gtk/types_closure.py --module svelters:gtk/gio     # every export of a module
+  python3 tools/metadata/gtk/types_closure.py svelters:qt/core:QTimer          # Qt (packages/types/qt/manifest.json)
 """
 from __future__ import annotations
 
@@ -19,6 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 MANIFEST = ROOT / "packages/types/gtk/manifest.json"
+MANIFEST_QT = ROOT / "packages/types/qt/manifest.json"  # svelters:qt/<ns> (N2), same shape
 
 
 def load(path: Path = MANIFEST) -> dict:
@@ -79,9 +81,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("imports", nargs="*")
     ap.add_argument("--module", action="append", default=[])
-    ap.add_argument("--manifest", default=str(MANIFEST))
+    ap.add_argument("--manifest", default=None, help="default: the gtk manifest, or the qt one for svelters:qt/ imports")
     a = ap.parse_args()
-    m = load(Path(a.manifest))
+    specs = a.imports + a.module
+    qt = bool(specs) and all(s.startswith("svelters:qt/") for s in specs)
+    m = load(Path(a.manifest) if a.manifest else (MANIFEST_QT if qt else MANIFEST))
     roots = roots_of(m, a.imports + a.module)
     c = closure(m, roots)
     cls = sorted(classes_in(m, c))

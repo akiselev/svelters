@@ -3,6 +3,7 @@ elements:
     construct: { class: QTextEdit }
     props:
       - { js: plain-text, native: plainText, suppress_signals: true, provenance: "QTextEdit::plainText (qdoc)" }
+      - { js: document, getter: document, setter: setDocument, provenance: "QTextEdit::document / setDocument (qdoc); a QTextDocument JS made (svelters:qt/gui, NT2) shared by several editors" }
       - { js: markdown, native: markdown, sample: 'x\n\n', provenance: "QTextEdit::markdown (qdoc)" }
       - { js: accept-rich-text, native: acceptRichText, provenance: "QTextEdit::acceptRichText (qdoc)" }
       - { js: read-only, native: readOnly, provenance: "QTextEdit::readOnly (qdoc)" }

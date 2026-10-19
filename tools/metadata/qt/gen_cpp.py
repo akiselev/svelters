@@ -431,7 +431,7 @@ class Model:
             _, g = self._need_method(tag, tcls, p["getter"], 0)
             ref = g["returns"]["ref"]
             cat, _ = classify(ref)
-            if cat not in ("bool", "int", "float", "string", "enum"):
+            if cat not in ("bool", "int", "float", "string", "enum", "object"):
                 raise GenError(f"{tag}: accessor prop {p['js']} getter returns {ref}")
             self.use(ref, f"{tag}.{p['js']}")
             p.update({"native": None, "decl_cls": tcls, "prop": {"access": {"write": True}}, "decl_ref": ref, "ref": ref,
@@ -1596,6 +1596,21 @@ def emit_context(m: Model) -> str:
     return "\n".join(out)
 
 
+def types_gen(m: Model):
+    """The non-GUI type generator over the classified facts next to the widget metadata, or None without them."""
+    import gen_types_cpp
+    facts = gen_types_cpp.load(m.meta_dir)
+    if facts is None:
+        return None
+    element_types = {}
+    for e in m.elements:
+        for c in [e["cls"]] + (m.kind(e["cls"]) or {}).get("bases", []):
+            if c in facts["types"]:
+                element_types[e["tag"]] = c
+                break
+    return gen_types_cpp.TypesGen(facts, element_types)
+
+
 def gen_backend(m: Model, digest: str, tmpl: str) -> str:
     classes = set()
     for e in m.elements:
@@ -1614,6 +1629,13 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
         "CALL": emit_call(m), "DESCRIBE": emit_describe(m), "ENUMS": emit_enums(m), "ATTRS": emit_attrs(m), "INSERT": emit_insert(m), "REMOVE": emit_remove(m), "LISTEN": emit_listen(m),
         "TOPLEVEL": emit_toplevel(m), "GETTERS": emit_getters(m), "CONTEXT": emit_context(m),
     }
+    # Non-GUI types (N2): the hand-written core and the generated layer over metadata/qt/types (gen_types_cpp.py).
+    tg = types_gen(m)
+    if tg:
+        parts["ENUMS"] = tg.decls(set(m.boxed_used), set(m.enums_used), enum_member_names) + "\n\n" + parts["ENUMS"]
+        parts["TYPES"] = tg.body()
+        parts["INCLUDES"] += "\n" + "\n".join(f"#include <{h}>" for h in sorted(tg.headers()))
+    parts["TYPES_CORE"] = (HERE / "templates" / "types_core.hpp.in").read_text()
     parts["SERDES"] = (HERE / "templates" / "serdes.hpp.in").read_text()
     parts["VLIST"] = (HERE / "templates" / "vlist.hpp.in").read_text()
     parts["MENUS"] = (HERE / "templates" / "menus.hpp.in").read_text()
@@ -1745,6 +1767,115 @@ class Tests:
             if e["construct"].get("context_menu"):
                 self.fact(fact_id(e, "construct", "context_menu"), e["construct"], "construct", e, "context_menu", lambda e=e: self.context_menu(e))
         return "\n".join(self.src), "\n".join(f'    {{"{n}", {i}}},' for n, i in self.fns)
+
+    # -- non-GUI types (N2): ledger tests of the curated set ---------------------------------------
+    def types(self, tg) -> None:
+        """Per curated type (metadata/overrides/qt/types/qt-types.yaml): construction and lifetime class,
+        property reads and write-backs, every zero-argument const member and static, and signal connection,
+        through the ABI exactly as the host drives it. Facts `svelters-api:v1:type:qt:<Module>:<Class>:<group>`."""
+        import types_qt_classify as tqc
+        ov = tqc.load_overrides()
+        subjects = ov.get("subjects") or {}
+        self.src.append("""// ---- non-GUI types (N2) ----
+extern "C" size_t svl_qt_live_handles(void);
+extern "C" void svl_qt_type_counts(size_t *values, size_t *ptrs, size_t *tracked);
+[[maybe_unused]] svl_value ty_arg(const std::string &s) { return vstr(s); }
+// A subject of the curated type: `construct` for a constructible QObject class, else its constructor.
+svl_handle ty_subject(const char *cls, const std::vector<std::string> &args, bool construct, std::string &why) {
+  svl_value out{};
+  const svl_id k = K(cls);
+  if (!k) { why = std::string("no kind ") + cls; return 0; }
+  int rc;
+  if (construct) {
+    rc = B->construct(B->self, k, nullptr, nullptr, 0, &out);
+  } else {
+    std::vector<svl_value> a;
+    for (auto &s : args) a.push_back(vstr(s));
+    rc = B->call_static(B->self, k, R(SVL_METHOD, k, "static:new"), a.data(), a.size(), &out);
+  }
+  if (rc != 0 || (out.tag != SVL_HANDLE && out.tag != SVL_BOXED)) { why = std::string(cls) + ": no subject: " + B->last_error(B->self); return 0; }
+  return out.u.h;
+}
+size_t ty_count() {
+  size_t v = 0, p = 0, t = 0;
+  svl_qt_type_counts(&v, &p, &t);
+  return svl_qt_live_handles() + v + p;
+}
+""")
+        for n in sorted(tg.types):
+            t = tg.types[n]
+            if not t["curated"]:
+                continue
+            cat = t["category"]
+            if (cat in ("object", "model") and t["constructible"]) and n not in subjects:
+                args = None
+            else:
+                args = subjects.get(n)
+                if args is None:
+                    self.errors.append(f"type {n}: curated but no `subjects:` entry")
+                    continue
+            arglist = "{" + ", ".join(json.dumps(str(a)) for a in (args or [])) + "}"
+            mk = f'  svl_handle s = ty_subject("{n}", {arglist}, {"true" if args is None else "false"}, why);\n  CHECK(s != 0);'
+            life = {"object": "SVL_LIFE_SHARED", "model": "SVL_LIFE_SHARED", "value": "SVL_LIFE_VALUE", "unique": "SVL_LIFE_OWNED",
+                    "item": "SVL_LIFE_OWNED"}[cat]
+            prefix = f"svelters-api:v1:type:qt:{t['module']}:{n}"
+            fake = {"tag": f"type:{n}", "cls": n}
+
+            def add(group: str, body: str, raw) -> None:
+                self._fact = (f"{prefix}:{group}", {"raw": raw, "section": "types", "name": group})
+                self.add(f"types/{n}.{group}", body)
+                f = self.facts[f"{prefix}:{group}"]
+                f.setdefault("elements", []).append(fake["tag"])
+                f["section"], f["name"] = "types", group
+                self._fact = None
+
+            add("construct", "\n".join([
+                mk, "  svl_handle_info info{};", "  CHECK(B->handle_info(B->self, s, &info) == 0);",
+                f"  CHECK(info.lifetime == {life});", f'  CHECK(info.kind == K("{n}"));',
+                f'  const svl_member_desc *d = B->describe(B->self, SVL_KIND, 0, info.kind);',
+                f'  CHECK(d && std::string(d->name) == "{n}");', "  B->destroy(B->self, s);"]),
+                {"category": cat, "lifetime": t["lifetime"], "parent": t["parent"], "subject": args})
+            props = [p for p in t["properties"]]
+            if props:
+                lines = [mk, f'  const svl_id k = K("{n}");']
+                for p in props:
+                    lines += [f'  {{ svl_id pid = R(SVL_PROP, k, "{p["name"]}"); CHECK(pid != 0);',
+                              "    svl_value out{};", "    CHECK(B->get_prop(B->self, s, pid, &out) == 0);"]
+                    if p["writable"] and p["type"]["k"] not in ("object",):
+                        lines += ["    uint32_t tag = out.tag;", "    CHECK(B->set_prop(B->self, s, pid, &out) == 0);",
+                                  "    svl_value again{};", "    CHECK(B->get_prop(B->self, s, pid, &again) == 0 && again.tag == tag);"]
+                    lines.append("  }")
+                lines.append("  B->destroy(B->self, s);")
+                add("props", "\n".join(lines), [{k: v for k, v in p.items()} for p in props])
+            readers = [js for js, ovs in sorted(t["methods"].items())
+                       if any(o.get("const") and gen_types_req(o) == 0 and o["ret"]["k"] != "async" for o in ovs)]
+            if readers:
+                lines = [mk]
+                for js in readers:
+                    lines += [f'  {{ svl_id m = R(SVL_METHOD, K("{n}"), "{js}"); CHECK(m != 0); svl_value out{{}};',
+                              f'    if (B->call(B->self, s, m, nullptr, 0, &out) != 0) {{ why = std::string("{js}: ") + B->last_error(B->self); return false; }} }}']
+                lines.append("  B->destroy(B->self, s);")
+                add("methods", "\n".join(lines), {js: [o["key"] for o in t["methods"][js]] for js in readers})
+            statics = [js for js, ovs in sorted(t["statics"].items()) if any(gen_types_req(o) == 0 and o["ret"]["k"] != "async" for o in ovs)]
+            if statics:
+                lines = []
+                for js in statics:
+                    lines += [f'  {{ svl_id m = R(SVL_METHOD, K("{n}"), "static:{js}"); CHECK(m != 0); svl_value out{{}};',
+                              f'    if (B->call_static(B->self, K("{n}"), m, nullptr, 0, &out) != 0) {{ why = std::string("{js}: ") + B->last_error(B->self); return false; }}',
+                              "    if (out.tag == SVL_HANDLE || out.tag == SVL_BOXED) B->destroy(B->self, out.u.h); }"]
+                add("statics", "\n".join(lines), {js: [o["key"] for o in t["statics"][js]] for js in statics})
+            if t["signals"]:
+                lines = [mk, f'  const svl_id k = K("{n}");']
+                for sg in sorted({s["name"] for s in t["signals"]}):
+                    lines += [f'  {{ svl_id g = R(SVL_SIGNAL, k, "{sg}"); CHECK(g != 0);',
+                              "    CHECK(B->listen(B->self, s, g, true) == 0);", "    CHECK(B->listen(B->self, s, g, false) == 0); }"]
+                lines.append("  B->destroy(B->self, s);")
+                add("signals", "\n".join(lines), [s["sig"] for s in t["signals"]])
+            add("lifetime", "\n".join([
+                "  flush();", "  const size_t before = ty_count();", mk, "  CHECK(ty_count() == before + 1);",
+                "  B->destroy(B->self, s);", "  flush();", "  CHECK(ty_count() == before);",
+                "  B->destroy(B->self, s);  // idempotent", "  CHECK(ty_count() == before);"]),
+                {"lifetime": t["lifetime"]})
 
     def manifest(self, version: str) -> dict:
         facts = []
@@ -2404,9 +2535,20 @@ class Tests:
             clean]))
 
 
+def gen_types_req(o: dict) -> int:
+    import gen_types_cpp
+    return gen_types_cpp.required(o)
+
+
 def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
     T = Tests(m, table_sources(tmpl))
     tests, table = T.build()
+    tg = types_gen(m)
+    if tg:
+        n0 = len(T.src)
+        T.types(tg)
+        tests += "\n" + "\n".join(T.src[n0:])
+        table += "\n" + "\n".join(f'    {{"{n}", {i}}},' for n, i in T.fns if n.startswith("types/"))
     if T.errors:
         raise GenError("manual facts without a working generated test (fix or drop them):\n  " + "\n  ".join(T.errors))
     version = (m.kind("QWidget") or {}).get("source", {}).get("qdoc", {}).get("version", "?")
@@ -2571,7 +2713,9 @@ def main() -> int:
         m = Model(res(cfg["input"]["metadata"]), res(cfg["input"]["overrides"]), cfg.get("elements", {}).get("tags", []),
                   res(inferred) if inferred else None)
         templ = HERE / "templates"
-        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in", templ / "vlist.hpp.in", templ / "menus.hpp.in", templ / "canvas.hpp.in"])
+        types_files = sorted((m.meta_dir / "types").glob("Qt*.json"))
+        digest = m.digest([HERE / "gen_cpp.py", templ / "backend.cpp.in", templ / "verify.cpp.in", templ / "serdes.hpp.in", templ / "vlist.hpp.in", templ / "menus.hpp.in", templ / "canvas.hpp.in",
+                           templ / "types_core.hpp.in", HERE / "gen_types_cpp.py"] + types_files)
         o = cfg["output"]
         write_text(out / o["backend"], gen_backend(m, digest, (templ / "backend.cpp.in").read_text()))
         verify, facts = gen_verify(m, digest, (templ / "verify.cpp.in").read_text())
