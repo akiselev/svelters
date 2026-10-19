@@ -226,9 +226,11 @@ const listening = new Map();
 
 function hookDispatch() {
   const g = globalThis;
-  const current = g.__svelters_dispatch;
-  if (current && current[HOOKED]) return;
-  const prev = current;
+  const desc = Object.getOwnPropertyDescriptor(g, '__svelters_dispatch');
+  if (desc?.get?.[HOOKED]) return;
+  // The runtime (re)installs its dispatcher on every mount, a list row's included: keep ours in front
+  // of whatever it installs later, so listeners added before that mount keep receiving their signals.
+  let prev = g.__svelters_dispatch;
   const dispatch = function (h, signal, args, ...rest) {
     const entry = listening.get(h);
     const fns = entry?.signals.get(signal);
@@ -245,8 +247,16 @@ function hookDispatch() {
     }
     return prev ? prev.call(this, h, signal, args, ...rest) : undefined;
   };
-  dispatch[HOOKED] = true;
-  g.__svelters_dispatch = dispatch;
+  const get = () => dispatch;
+  get[HOOKED] = true;
+  Object.defineProperty(g, '__svelters_dispatch', {
+    configurable: true,
+    enumerable: true,
+    get,
+    set(v) {
+      if (v !== dispatch) prev = v;
+    },
+  });
 }
 
 function shapeArgs(Class, signal, args) {
