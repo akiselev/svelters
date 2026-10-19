@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://svelters.dev/schemas/svelters-dangerous-v1.json",
+  "title": "Dangerous native members of one toolkit (metadata/dangerous/<toolkit>.yaml)",
+  "description": "Pattern rules that mark whole families of native members as dangerous: reachable from app JS at run time, but the backend owns what they change, so calling them can corrupt the tree svelters manages, crash, or fight the backend's lifecycle. Single members are declared in the `dangerous:` block of metadata/overrides/<toolkit>/<Kind>.yaml (same annotation, plus `false` to exempt a member from a rule). See docs/notes/dangerous-members.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "toolkit",
+    "rules"
+  ],
+  "properties": {
+    "schema": {
+      "const": "svelters-dangerous/v1"
+    },
+    "toolkit": {
+      "enum": [
+        "gtk",
+        "qt",
+        "appkit",
+        "winui"
+      ]
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    }
+  },
+  "$defs": {
+    "annotation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "severity",
+        "reason"
+      ],
+      "properties": {
+        "severity": {
+          "enum": [
+            "corrupts-tree",
+            "owned-by-backend",
+            "crashes",
+            "other"
+          ],
+          "description": "corrupts-tree: re-parents or removes native children behind the renderer. owned-by-backend: state the backend sets and relies on (a delegate, a target, the application). crashes: can free or double-free a native object the backend still holds. other: anything else (say why in reason)."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 10,
+          "description": "One or two sentences, citing the backend code that owns the state (file:line)."
+        },
+        "use_instead": {
+          "type": "string",
+          "description": "The svelters way to get the effect (a slot, {#if}, an attribute, an event)."
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Backend source locations (path:line) that back the reason."
+        },
+        "reachable": {
+          "type": "boolean",
+          "description": "false: JS cannot reach the member today (the backend's tables do not expose it, or a runtime guard refuses it); it is marked so exposure and inference never add it. Default true."
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "section",
+        "name",
+        "severity",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "section": {
+          "enum": [
+            "methods",
+            "properties",
+            "signals"
+          ],
+          "description": "Properties mean the write side (an attribute, setProp, KVC); reading is harmless."
+        },
+        "name": {
+          "type": "string",
+          "description": "Regular expression, matched in full against the native member name as in metadata/<toolkit>/<Kind>.json (`name`)."
+        },
+        "kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "Kinds the rule applies to: a member matches when its declaring kind, or one of that kind's bases, is listed (short name: Window, QWidget, NSView, Panel). Absent: every kind."
+        },
+        "severity": {
+          "$ref": "#/$defs/annotation/properties/severity"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 10
+        },
+        "use_instead": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reachable": {
+          "type": "boolean",
+          "description": "false: JS cannot reach the member today (the backend's tables do not expose it, or a runtime guard refuses it); it is marked so exposure and inference never add it. Default true."
+        }
+      }
+    },
+    "override_block": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "The `dangerous:` block of an override file: native member name -> annotation, or false to exempt the member from every rule.",
+      "properties": {
+        "methods": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/annotation"
+              },
+              {
+                "const": false
+              }
+            ]
+          }
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/annotation"
+              },
+              {
+                "const": false
+              }
+            ]
+          }
+        },
+        "signals": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "$ref": "#/$defs/annotation"
+              },
+              {
+                "const": false
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

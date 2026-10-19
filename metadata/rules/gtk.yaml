@@ -28,6 +28,10 @@ deny_methods:
   # `children` slots), and the backend itself sets a toplevel's application; the display is the window system's.
   - pattern: '^(set_child|set_(start|end)_child|set_(center|start|end|label|title)_widget|set_titlebar|set_parent|set_application|set_display)$'
     reason: re-parents a widget or rebinds a toplevel behind the renderer; children are slots, the backend owns application and display
+  # Dangerous members (metadata/dangerous/gtk.yaml): the container ops the slots use, popover attach and the transient parent
+  # the backend sets. `dangerous.py --check` fails when a dangerous method is not denied here.
+  - pattern: '^(append|prepend|insert|remove|remove_all|insert_child_after|reorder_child_after|attach|attach_next_to|remove_row|remove_column|put|add_overlay|remove_overlay|pack_start|pack_end|add_child|add_named|add_titled|(append|prepend|insert)_page(_menu)?|remove_page|reorder_child|detach_tab|set_popover|set_transient_for)$'
+    reason: dangerous member (metadata/dangerous/gtk.yaml) - a slot op or a toplevel binding the backend owns
 
 # Signals that are never emitted synthetically (their class handler acts on the window system or needs a drag).
 deny_signals:

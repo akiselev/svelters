@@ -9,3 +9,16 @@ slots:
     prop: Content
     default: true
     provenance: "[ContentProperty(Name=\"Content\")] on ContentControl (winmd); single child, put_Content(null) clears"
+
+# Dangerous members (docs/notes/dangerous-members.md): reachable from JS, but the backend owns what they change.
+dangerous:
+  properties:
+    Content:
+      severity: corrupts-tree
+      reason: >-
+        The same native Content is the single-child `content` slot (crates/svelters-winui/src/generated/dispatch.rs:529-532, set by
+        insert at backend.rs:572-579, cleared by remove at backend.rs:617), and set_prop never checks whether the slot holds an
+        inserted child (backend.rs:669-677): a string write drops that child out of the native tree while the backend still records
+        it as inserted. Text content is fine (the renderer writes it for text children); reads are harmless.
+      use_instead: Text children (`<button>Save</button>`) or one element child in the content slot; never setProp('content') on a node with element children.
+      evidence: [crates/svelters-winui/src/generated/dispatch.rs:529-532, crates/svelters-winui/src/backend.rs:572-579, crates/svelters-winui/src/backend.rs:669-677]

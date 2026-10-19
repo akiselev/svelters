@@ -1,0 +1,177 @@
+# Dangerous Qt members (schema: tools/metadata/common/dangerous.schema.json; model: docs/notes/dangerous-members.md).
+# Qt has no generic invoke path: `call` resolves only the generated per-kind tables (b_resolve,
+# tools/metadata/qt/templates/backend.cpp.in:824-838), i.e. the `methods:` of the overrides and the inferred layer, plus
+# an object-getter table built from every public zero-argument qdoc method returning a QObject (tools/metadata/qt/gen_cpp.py:1509-1531).
+# So most rules here are `reachable: false`: the backend performs these operations itself in insert/remove/create/destroy,
+# and the mark keeps exposure (an override `methods:` entry) and inference from adding them. Single reachable members
+# (QMenuBar.clear, QToolBar.clear, QMdiArea.closeAllSubWindows) are declared in their override's `dangerous:` block.
+schema: svelters-dangerous/v1
+toolkit: qt
+rules:
+  - id: reparent
+    section: methods
+    name: setParent
+    kinds: [QWidget]
+    reachable: false
+    severity: corrupts-tree
+    reason: >-
+      The backend re-parents widgets itself: toplevel insert/remove (tools/metadata/qt/templates/backend.cpp.in:887, 911),
+      the menu glue (tools/metadata/qt/templates/menus.hpp.in:69-71) and every slot's remove (metadata/overrides/qt/QWidget.yaml:134).
+      A widget moved behind it keeps a stale placement record.
+    use_instead: Put the child element inside its parent; {#if}/{#each} move it.
+    evidence: [tools/metadata/qt/templates/backend.cpp.in:885-912]
+
+  - id: window-flags
+    section: methods
+    name: setWindowFlags|overrideWindowFlags|setWindowFlag
+    kinds: [QWidget]
+    reachable: false
+    severity: owned-by-backend
+    reason: >-
+      Toplevel insert/remove keep the window type by passing windowFlags() into setParent (tools/metadata/qt/templates/backend.cpp.in:887, 911);
+      changing the flags re-creates the native window. The windowFlags property is denied to inference as renderer-owned (metadata/rules/qt.yaml).
+    use_instead: A toplevel element (<main-window>, <dialog>) nested where it belongs.
+
+  - id: window-flags-prop
+    section: properties
+    name: windowFlags
+    kinds: [QWidget]
+    reachable: false
+    severity: owned-by-backend
+    reason: The property behind setWindowFlags; toplevel insert/remove rely on it (tools/metadata/qt/templates/backend.cpp.in:887, 911).
+    use_instead: A toplevel element (<main-window>, <dialog>).
+
+  - id: layout
+    section: methods
+    name: setLayout
+    kinds: [QWidget]
+    reachable: false
+    severity: owned-by-backend
+    reason: >-
+      Composite elements install their layout at create (tools/metadata/qt/gen_cpp.py:930-933) and the slot ops cast layout()
+      to that class (gen_cpp.py:862); another layout breaks every later insert/remove.
+    use_instead: <box-layout>/<grid-layout> children.
+
+  - id: main-window-slots
+    section: methods
+    name: setCentralWidget|takeCentralWidget|setMenuBar|setMenuWidget|setStatusBar|addToolBar|insertToolBar|removeToolBar|addDockWidget|removeDockWidget
+    kinds: [QMainWindow]
+    reachable: false
+    severity: corrupts-tree
+    reason: >-
+      The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163);
+      setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.
+    use_instead: Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).
+    evidence: [metadata/overrides/qt/QMainWindow.yaml:39-163]
+
+  - id: main-window-lazy-getters
+    section: methods
+    name: menuBar|statusBar
+    kinds: [QMainWindow]
+    severity: owned-by-backend
+    reason: >-
+      Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged
+      bar in a backend slot; the backend reads menuWidget() and findChild instead because "menuBar() would create one"
+      (metadata/overrides/qt/QMainWindow.yaml:55, 74).
+    use_instead: Insert a <menu-bar> / <status-bar> child.
+    evidence: [metadata/overrides/qt/QMainWindow.yaml:55, metadata/overrides/qt/QMainWindow.yaml:74]
+
+  - id: single-widget-slots
+    section: methods
+    name: setWidget|takeWidget
+    kinds: [QScrollArea, QDockWidget]
+    reachable: false
+    severity: corrupts-tree
+    reason: >-
+      The single child slot of <scroll-area> and <dock-widget> (metadata/overrides/qt/QScrollArea.yaml:22-26,
+      QDockWidget.yaml:54-61); setWidget deletes the widget it replaces.
+    use_instead: One child element inside the parent.
+
+  - id: page-slots
+    section: methods
+    name: addWidget|insertWidget|removeWidget
+    kinds: [QStackedWidget, QSplitter, QStatusBar]
+    reachable: false
+    severity: corrupts-tree
+    reason: >-
+      The pages/children slots of <stacked-widget>, <splitter> and <status-bar> insert and remove with these
+      (metadata/overrides/qt/QStackedWidget.yaml:38-49, QSplitter.yaml:43-47, QStatusBar.yaml:35-62).
+    use_instead: Children in markup ({#if}/{#each}); stacked pages switch with current-index.
+
+  - id: status-bar-permanent
+    section: methods
+    name: addPermanentWidget|insertPermanentWidget
+    kinds: [QStatusBar]
+    reachable: false
+    severity: corrupts-tree
+    reason: The permanent slot of <status-bar> (metadata/overrides/qt/QStatusBar.yaml:35-62).
+    use_instead: Children of <status-bar> in the permanent slot.
+
+  - id: tab-widget-pages
+    section: methods
+    name: addTab|insertTab|removeTab|clear
+    kinds: [QTabWidget]
+    reachable: false
+    severity: corrupts-tree
+    reason: The pages slot inserts with insertTab and removes with removeTab(indexOf) (metadata/overrides/qt/QTabWidget.yaml:84-97); clear desyncs it.
+    use_instead: Page children of <tab-widget> with parent:tab-text.
+
+  - id: tab-widget-bar
+    section: methods
+    name: addTab|insertTab|removeTab|moveTab
+    kinds: [QTabBar]
+    severity: corrupts-tree
+    reason: >-
+      Only on the bar inside a <tab-widget> (reachable through the tabBar() object getter, tools/metadata/qt/gen_cpp.py:1509-1531):
+      the tab widget's pages slot keeps tab and page indexes in step (metadata/overrides/qt/QTabWidget.yaml:84-97), and changing
+      the inner bar's tabs desyncs them. A standalone <tab-bar> is fine.
+    use_instead: Page children of the <tab-widget>.
+
+  - id: tool-box-items
+    section: methods
+    name: addItem|insertItem|removeItem
+    kinds: [QToolBox]
+    reachable: false
+    severity: corrupts-tree
+    reason: The pages slot of <tool-box> (metadata/overrides/qt/QToolBox.yaml:39-50).
+    use_instead: Page children of <tool-box>.
+
+  - id: mdi-subwindows
+    section: methods
+    name: addSubWindow|removeSubWindow
+    kinds: [QMdiArea]
+    reachable: false
+    severity: corrupts-tree
+    reason: The subwindows slot wraps each child in a QMdiSubWindow with these (metadata/overrides/qt/QMdiArea.yaml:35-42).
+    use_instead: Children of <mdi-area>.
+
+  - id: layout-widgets
+    section: methods
+    name: addWidget|insertWidget
+    kinds: [QBoxLayout, QGridLayout]
+    reachable: false
+    severity: corrupts-tree
+    reason: >-
+      The layout slots of <box-layout>, <grid-layout>, <dialog> and <group-box> insert with these
+      (metadata/overrides/qt/QWidget.yaml:123-127, 168-198, QDialog.yaml:41-45, QGroupBox.yaml:67-71).
+    use_instead: Children in markup; grids take parent:row/parent:column.
+
+  - id: layout-remove
+    section: methods
+    name: removeWidget
+    kinds: [QLayout]
+    reachable: false
+    severity: corrupts-tree
+    reason: The layout slots remove children with QLayout::removeWidget (metadata/overrides/qt/QWidget.yaml:131, QDialog.yaml:49, QGroupBox.yaml:75).
+    use_instead: Remove the child with {#if}/{#each}.
+
+  - id: nested-loop
+    section: methods
+    name: exec
+    kinds: [QDialog, QMenu]
+    reachable: false
+    severity: other
+    reason: >-
+      Runs a nested event loop inside the backend's run loop; the backend opens dialogs and menus with open()/popup and
+      never exec() (metadata/overrides/qt/QDialog.yaml, tools/metadata/qt/templates/menus.hpp.in:15).
+    use_instead: The show attribute / present, with the accepted/rejected events.
