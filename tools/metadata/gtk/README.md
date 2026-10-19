@@ -28,7 +28,9 @@ Plan and decisions: `plans/research/ANNOTATION-AUTOMATION.md` (section 11). Note
 - **inferred** (`metadata/inferred/gtk/<Kind>.yaml`): the same schema as the manual overrides
   (`override.schema.json`), `annotated.origin: inferred`, provenance pointing at the probe observation or the rule.
   `<Kind>.evidence.json` has the confidence and the probe excerpt. Only facts at `promote_at` (0.9) or above are
-  written; the rest are counted in `_review.json` and stay unreviewed.
+  written; the rest are listed in `_review.json` until a decision in `_reviewed.yaml` settles them
+  (`accept`: written and tested like any inferred fact; `reject`; `override`: a manual record covers it). See
+  `docs/notes/ai1-gtk-review.md`.
 - **manual** (`metadata/overrides/gtk/<Kind>.yaml`): wins field by field, a nested field (a trigger, an op) is
   replaced as a whole. `deny: ["methods:set_*", "bindings:x"]` removes inferred facts of the kind.
 
