@@ -15,7 +15,7 @@ The model below is the research result. ABI v2 (approved 2026-10-17, lands at th
 2. **Handles are never reused.** A handle is a `u64` below 2^53 from a monotonic per-backend counter, so JS numbers are exact. A late release cannot hit a different object, and no generation bits are needed. Using a stale handle is an error, never a crash.
 3. **Native code never holds a JS value.** Events go back as `(handle, signal, args)`, so the two heaps cannot form a cycle. Natives implemented in JS (models, factories) hold an integer ID into a host table.
 4. **GC only cleans up after explicit destroy.** It releases borrowed and value handles, and every GC release is idempotent. Releases go through a host queue drained at checkpoints, never from a QuickJS finalizer directly (a class `Drop` runs synchronously in the middle of JS execution).
-5. **Each handle has one of four lifetime classes.**
+5. **Each handle has one of five lifetime classes.**
 6. **A native death cascades.** When a toplevel dies natively, or anything else dies under us, every handle under it dies, and JS is told through a queued notification.
 
 ## Lifetime classes
@@ -27,7 +27,8 @@ The backend decides the class when it mints a handle, driven by metadata.
 | `owned` | `create` | the handle table (always); the native parent also holds one while the object is inserted | GTK: disconnect, unparent if needed, drop the table ref. Qt: disconnect, `deleteLater`. WinRT: remove from parent, `Release`. Apple: `removeFromSuperview`, drop the strong ref | `on_destroyed(h, reason)` |
 | `toplevel` | `create` of a window kind | the toolkit's toplevel list (GTK), or the table (Qt, WinRT, Apple); GTK's table holds it weakly | native window destroy (`gtk_window_destroy`, `deleteLater`, `Close`, `close` plus release) | `on_destroyed(h, CLOSED)` plus cascade |
 | `borrowed` | `get_prop` or `call` returning an object we did not create (`QComboBox::lineEdit`, a ScrolledWindow viewport, template parts) | its native owner only; the table holds a weak ref | forget only | `on_destroyed(h, OWNER)` |
-| `value` | `get_prop` or `call` returning a refcounted value (QIcon, GdkTexture, GBytes, GVariant, GdkPixbuf) | the table (a copy or a ref) | unref, drop the copy | never |
+| `value` | `get_prop` or `call` returning a refcounted value (QIcon, GBytes, PangoFontDescription, GVariant) | the table (a copy or a ref) | unref, drop the copy | never |
+| `shared` | `construct`, `call_static` or any call returning a non-widget object (`GFile`, `GdkTexture`, `GListStore`) | the table (a strong ref); one handle per object | drop our reference only; the host also calls it when the JS wrapper is garbage collected | never (we hold it) |
 
 The API pages show a kind's lifetime class where the generator knows it. The full `lifetime` block, per-parameter `ownership` and `hazards` fields are planned metadata (below).
 

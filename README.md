@@ -4,7 +4,7 @@ Svelte 5 components running in embedded QuickJS and rendered with native toolkit
 
 The project is being rebuilt (v2).
 - Plan: [PLAN.md](PLAN.md)
-- Status: [plans/STATUS.md](plans/STATUS.md)
+- Status: [STATUS.md](STATUS.md)
 - Research notes: [docs/notes/](docs/notes/)
 
 The 2021 prototype is preserved at the `v1-legacy` tag.

@@ -184,32 +184,30 @@ fn handles_nullable_and_boxed() {
         assert!(h.set_handle(label, "mnemonic-widget", 999_999).unwrap_err().contains("stale"));
         let bx = h.create("Box");
         assert!(h.set_handle(label, "mnemonic-widget", bx).is_ok(), "any widget is acceptable");
-        // A GIcon object has no kind: it travels as a BOXED handle; a string is its canonical form.
+        // A GIcon is an object: it travels as a SHARED handle; a string is its canonical form.
         let img = h.create("Image");
         assert!(h.prop_desc(img, "gicon").unwrap().params[0].has(SVL_D_STRING_FORM));
         h.set_value(img, "gicon", &Value::Str("document-new".into())).unwrap();
         let icon = h.obj(img).property::<Option<gtk::gio::Icon>>("gicon").expect("icon set");
         assert!(icon.downcast_ref::<gtk::gio::ThemedIcon>().is_some());
-        let Value::Boxed { ty, handle } = h.get_value(img, "gicon") else { panic!("boxed") };
-        assert_eq!(h.type_desc(ty).unwrap().kind, SVL_BOXED);
-        // Handing the boxed handle to another image copies the reference.
+        let Value::Handle(handle) = h.get_value(img, "gicon") else { panic!("handle") };
+        // Handing the handle to another image shares the object.
         let img2 = h.create("Image");
-        h.set_value(img2, "gicon", &Value::Boxed { ty, handle }).unwrap();
+        h.set_value(img2, "gicon", &Value::Handle(handle)).unwrap();
         assert!(h.obj(img2).property::<Option<gtk::gio::Icon>>("gicon").is_some());
-        // A boxed value is a VALUE-class handle; releasing it makes the handle stale.
-        assert_eq!(h.handle_info(handle).unwrap().lifetime, SVL_LIFE_VALUE);
+        // SHARED: releasing the handle makes it stale.
+        assert_eq!(h.handle_info(handle).unwrap().lifetime, SVL_LIFE_SHARED);
         // Release: explicit, idempotent, stale afterwards.
         h.destroy(handle);
         assert!(h.handle_info(handle).is_err());
         h.destroy(handle);
-        assert!(h.set_value(img2, "gicon", &Value::Boxed { ty, handle }).unwrap_err().contains("stale boxed handle"));
+        assert!(h.set_value(img2, "gicon", &Value::Handle(handle)).unwrap_err().contains("stale"));
         // A boxed value of the wrong type is refused.
         let fb = h.create("FontDialogButton");
         h.set_value(fb, "font-desc", &Value::Str("Sans Bold 12".into())).unwrap();
         let fd = h.obj(fb).property::<Option<gtk::pango::FontDescription>>("font-desc").unwrap();
         assert_eq!(fd.size(), 12 * gtk::pango::SCALE);
         let Value::Boxed { ty: fty, handle: fh } = h.get_value(fb, "font-desc") else { panic!("boxed font") };
-        assert_ne!(fty, ty);
         assert!(h.set_value(img2, "gicon", &Value::Boxed { ty: fty, handle: fh }).unwrap_err().contains("is not a"));
         h.destroy(fh);
         h.set_value(img2, "gicon", &Value::Null).unwrap();

@@ -70,7 +70,7 @@ ST1 lands PR #3 with the two systems merged into one, built on X6.
 4. Compiler changes from design item 4. The PR's `styled-toolbar` and `dynamic-class` fixtures are updated to the new names and behaviour.
 5. Galleries: add one setter/layout section per toolkit to the existing styling gallery pages, with screenshot or op-log tests.
 6. Docs from design item 6.
-7. Update `plans/STATUS.md` and record notes in `docs/notes/st1-style-unification.md`.
+7. Update `STATUS.md` and record notes in `docs/notes/st1-style-unification.md`.
 
 ## Out of scope
 

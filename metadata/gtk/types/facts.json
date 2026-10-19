@@ -1,0 +1,506 @@
+{
+ "facts": [
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Clipboard:construct",
+   "facts_digest": "2cf2c9a84ca86500",
+   "kind": "Clipboard",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_clipboard_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Clipboard:props",
+   "facts_digest": "2cf2c9a84ca86500",
+   "kind": "Clipboard",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_clipboard_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Clipboard:methods",
+   "facts_digest": "2cf2c9a84ca86500",
+   "kind": "Clipboard",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_clipboard_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Clipboard:signals",
+   "facts_digest": "2cf2c9a84ca86500",
+   "kind": "Clipboard",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_clipboard_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Clipboard:lifetime",
+   "facts_digest": "2cf2c9a84ca86500",
+   "kind": "Clipboard",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_clipboard_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Texture:construct",
+   "facts_digest": "4db3b4d765008bdf",
+   "kind": "Texture",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_texture_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Texture:props",
+   "facts_digest": "4db3b4d765008bdf",
+   "kind": "Texture",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_texture_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Texture:methods",
+   "facts_digest": "4db3b4d765008bdf",
+   "kind": "Texture",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_texture_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Texture:signals",
+   "facts_digest": "4db3b4d765008bdf",
+   "kind": "Texture",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_texture_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gdk:Texture:lifetime",
+   "facts_digest": "4db3b4d765008bdf",
+   "kind": "Texture",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gdk_texture_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:File:construct",
+   "facts_digest": "aab153f2e285f2af",
+   "kind": "File",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_file_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:File:props",
+   "facts_digest": "aab153f2e285f2af",
+   "kind": "File",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_file_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:File:methods",
+   "facts_digest": "aab153f2e285f2af",
+   "kind": "File",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_file_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:File:signals",
+   "facts_digest": "aab153f2e285f2af",
+   "kind": "File",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_file_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:File:lifetime",
+   "facts_digest": "aab153f2e285f2af",
+   "kind": "File",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_file_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:ListStore:construct",
+   "facts_digest": "294162717401aff6",
+   "kind": "ListStore",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_liststore_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:ListStore:props",
+   "facts_digest": "294162717401aff6",
+   "kind": "ListStore",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_liststore_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:ListStore:methods",
+   "facts_digest": "294162717401aff6",
+   "kind": "ListStore",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_liststore_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:ListStore:signals",
+   "facts_digest": "294162717401aff6",
+   "kind": "ListStore",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_liststore_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:ListStore:lifetime",
+   "facts_digest": "294162717401aff6",
+   "kind": "ListStore",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gio_liststore_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:construct",
+   "facts_digest": "9ae14fbb4c309c4a",
+   "kind": "DirectoryList",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_directorylist_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:props",
+   "facts_digest": "9ae14fbb4c309c4a",
+   "kind": "DirectoryList",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_directorylist_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:methods",
+   "facts_digest": "9ae14fbb4c309c4a",
+   "kind": "DirectoryList",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_directorylist_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:signals",
+   "facts_digest": "9ae14fbb4c309c4a",
+   "kind": "DirectoryList",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_directorylist_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:lifetime",
+   "facts_digest": "9ae14fbb4c309c4a",
+   "kind": "DirectoryList",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_directorylist_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:construct",
+   "facts_digest": "eb16579a24e6295d",
+   "kind": "FileDialog",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_filedialog_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:props",
+   "facts_digest": "eb16579a24e6295d",
+   "kind": "FileDialog",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_filedialog_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:methods",
+   "facts_digest": "eb16579a24e6295d",
+   "kind": "FileDialog",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_filedialog_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:signals",
+   "facts_digest": "eb16579a24e6295d",
+   "kind": "FileDialog",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_filedialog_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:lifetime",
+   "facts_digest": "eb16579a24e6295d",
+   "kind": "FileDialog",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_filedialog_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StringList:construct",
+   "facts_digest": "68da5a1c4979a7fa",
+   "kind": "StringList",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_stringlist_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StringList:props",
+   "facts_digest": "68da5a1c4979a7fa",
+   "kind": "StringList",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_stringlist_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StringList:methods",
+   "facts_digest": "68da5a1c4979a7fa",
+   "kind": "StringList",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_stringlist_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StringList:signals",
+   "facts_digest": "68da5a1c4979a7fa",
+   "kind": "StringList",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_stringlist_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:StringList:lifetime",
+   "facts_digest": "68da5a1c4979a7fa",
+   "kind": "StringList",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_stringlist_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:construct",
+   "facts_digest": "ca44af3fc6d3a77a",
+   "kind": "TextBuffer",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_textbuffer_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:props",
+   "facts_digest": "ca44af3fc6d3a77a",
+   "kind": "TextBuffer",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_textbuffer_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:methods",
+   "facts_digest": "ca44af3fc6d3a77a",
+   "kind": "TextBuffer",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_textbuffer_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:signals",
+   "facts_digest": "ca44af3fc6d3a77a",
+   "kind": "TextBuffer",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_textbuffer_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:lifetime",
+   "facts_digest": "ca44af3fc6d3a77a",
+   "kind": "TextBuffer",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::gtk_textbuffer_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:AttrList:construct",
+   "facts_digest": "ea7e0d42762785aa",
+   "kind": "AttrList",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_attrlist_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:AttrList:props",
+   "facts_digest": "ea7e0d42762785aa",
+   "kind": "AttrList",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_attrlist_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:AttrList:methods",
+   "facts_digest": "ea7e0d42762785aa",
+   "kind": "AttrList",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_attrlist_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:AttrList:signals",
+   "facts_digest": "ea7e0d42762785aa",
+   "kind": "AttrList",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_attrlist_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:AttrList:lifetime",
+   "facts_digest": "ea7e0d42762785aa",
+   "kind": "AttrList",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_attrlist_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:FontDescription:construct",
+   "facts_digest": "2a48ef4cddcf6fc0",
+   "kind": "FontDescription",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_fontdescription_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:FontDescription:props",
+   "facts_digest": "2a48ef4cddcf6fc0",
+   "kind": "FontDescription",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_fontdescription_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:FontDescription:methods",
+   "facts_digest": "2a48ef4cddcf6fc0",
+   "kind": "FontDescription",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_fontdescription_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:FontDescription:signals",
+   "facts_digest": "2a48ef4cddcf6fc0",
+   "kind": "FontDescription",
+   "name": "signals",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_fontdescription_signals"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Pango:FontDescription:lifetime",
+   "facts_digest": "2a48ef4cddcf6fc0",
+   "kind": "FontDescription",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_verify::pango_fontdescription_lifetime"
+   ]
+  }
+ ],
+ "schema": "svelters-types-facts/v1",
+ "toolkit": "gtk"
+}

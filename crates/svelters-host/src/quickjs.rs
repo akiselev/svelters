@@ -723,6 +723,50 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
         let w = core.clone();
         let cb = cbs.clone();
         host.set(
+            "construct",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, kind: Value<'js>, props: Opt<Value<'js>>| -> Res<Value<'js>> {
+                    let c = core_of(&ctx, &w)?;
+                    let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
+                    let props = props.0.unwrap_or_else(|| Value::new_undefined(ctx.clone()));
+                    let r = msg(&ctx, conv.with_name(&kind, |n| c.op_construct(&conv, n, &props)))?;
+                    op_conv(&ctx, &conv, r)
+                },
+            )?,
+        )?;
+        let w = core.clone();
+        let cb = cbs.clone();
+        host.set(
+            "callStatic",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, kind: Value<'js>, method: Value<'js>, args: Value<'js>| -> Res<Value<'js>> {
+                    let c = core_of(&ctx, &w)?;
+                    if !args.is_array() {
+                        return Err(Exception::throw_type(&ctx, "callStatic: args must be an array"));
+                    }
+                    let conv = QjsConv::new(ctx.clone(), c.clone(), Some(cb.clone()));
+                    let r = msg(
+                        &ctx,
+                        conv.with_name(&kind, |nk| conv.with_name(&method, |nm| c.op_call_static(&conv, nk, nm, &args)))
+                            .and_then(|x| x),
+                    )?;
+                    op_conv(&ctx, &conv, r)
+                },
+            )?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "typeChain",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, h: f64| -> Res<Vec<String>> {
+                let c = core_of(&ctx, &w)?;
+                op(&ctx, c.op_type_chain(handle_of(&ctx, h)?))
+            })?,
+        )?;
+        let w = core.clone();
+        let cb = cbs.clone();
+        host.set(
             "listen",
             Function::new(
                 ctx.clone(),

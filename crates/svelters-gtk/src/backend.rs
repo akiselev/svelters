@@ -14,10 +14,11 @@
 use crate::convert::{self, Env, StrBuf};
 use crate::types::{self, TypeTable};
 use crate::generated::{slots, tables::*};
-use crate::gi::{Gi, GiErr, Ret};
+use crate::gi::{self, Called, Gi, GiErr, Ret};
 use crate::lookup;
+use crate::reflect::{self, Reflect};
 use crate::util::AttrV;
-use gtk::glib;
+use gtk::glib::{self, Type};
 use gtk::prelude::*;
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
@@ -99,6 +100,8 @@ pub(crate) struct Inner {
     error: RefCell<CString>,
     out: RefCell<StrBuf>,
     types: RefCell<TypeTable>,
+    /// Reflected kinds, properties and signals (see `reflect.rs`).
+    reflect: RefCell<Reflect>,
     descs: DescStore,
     /// The pending `schedule_wake` source, if any. Cleared by the source's own callback.
     wake_timer: RefCell<Option<glib::SourceId>>,
@@ -132,6 +135,19 @@ const FRAME_FALLBACK_MS: u64 = 16;
 const FRAME_WATCHDOG_MS: u64 = 250;
 
 type Res<T> = Result<T, String>;
+
+/// The receiver of a dynamic call.
+enum Recv {
+    Obj(glib::Object),
+    Val(glib::Value),
+}
+
+fn gi_err(e: GiErr) -> CallErr {
+    match e {
+        GiErr::Plain(s) => CallErr::Plain(s),
+        GiErr::Gerror(e) => CallErr::Gerror(e),
+    }
+}
 
 fn attr_from_svl(v: &svl_value) -> Res<AttrV> {
     Ok(match v.tag {
@@ -169,10 +185,22 @@ impl Env for Inner {
         self.types.borrow_mut().id(t)
     }
 
-    fn borrow_object(&self, o: &glib::Object) -> u64 {
-        if !lookup::is_handle_type(o.type_()) {
-            return 0;
+    fn type_by_name(&self, name: &str) -> Option<Type> {
+        match self.gi() {
+            Ok(g) => g.type_by_name(name),
+            Err(_) => Type::from_name(name).filter(|t| *t != Type::INVALID),
         }
+    }
+
+    fn type_name(&self, t: Type) -> String {
+        match self.gi() {
+            Ok(g) => g.qualified_name(t),
+            Err(_) => t.name().to_string(),
+        }
+    }
+
+    fn borrow_object(&self, o: &glib::Object) -> u64 {
+        // Every GObject crosses as a handle: widgets BORROWED, everything else SHARED.
         self.intern(o.clone(), self.cur_owner.get(), false)
     }
 }
@@ -232,9 +260,15 @@ impl Inner {
         if h != 0 {
             return h;
         }
-        let kind = lookup::nearest_kind(o.type_());
-        let owned = adopt && !o.is::<gtk::Window>();
-        let (class, hold, note) = if owned {
+        let widget = o.is::<gtk::Widget>();
+        let kind = if widget { lookup::nearest_kind(o.type_()) } else { self.reflect.borrow_mut().kind_for_type(o.type_()) };
+        // Non-widget objects are SHARED: the table holds a strong reference until `destroy`, so
+        // identity by qdata is safe and the host may release the handle when the wrapper is collected.
+        let shared = !widget;
+        let owned = adopt && widget && !o.is::<gtk::Window>();
+        let (class, hold, note) = if shared {
+            (SVL_LIFE_SHARED, Some(o.clone()), std::ptr::null_mut())
+        } else if owned {
             (SVL_LIFE_OWNED, Some(o.clone()), std::ptr::null_mut())
         } else {
             let note = Box::into_raw(Box::new(WeakNote { inner: self.me.clone(), h: 0 }));
@@ -247,6 +281,7 @@ impl Inner {
             if !note.is_null() {
                 unsafe { (*note).h = h };
             }
+            let owner = if shared { 0 } else { owner };
             st.entries.insert(h, Entry { obj: o.downgrade(), hold, class, owner, note, kind, signals: HashMap::new(), slot: None, capture_prev: None });
             h
         };
@@ -301,7 +336,7 @@ impl Inner {
 
     /// `resolve(SVL_METHOD)` fallback: ids past the generated `METHODS` are typelib methods.
     fn resolve_dynamic(&self, kind: u32, name: &str) -> u32 {
-        let Some(k) = KINDS.get((kind as usize).wrapping_sub(1)) else { return 0 };
+        let Some(t) = self.reflect.borrow().type_of_kind(kind) else { return 0 };
         let gi = match self.gi() {
             Ok(g) => g,
             Err(e) => {
@@ -309,10 +344,36 @@ impl Inner {
                 return 0;
             }
         };
-        match gi.resolve(kind, k.gtype, name) {
+        match gi.resolve(kind, t, name) {
             Some(i) => METHODS.len() as u32 + 1 + i,
             None => 0,
         }
+    }
+
+    /// `resolve(SVL_KIND)` fallback: a qualified native name (`Gio.ListStore`) or a GType name
+    /// becomes a reflected kind.
+    fn resolve_kind_native(&self, name: &str) -> u32 {
+        let Ok(gi) = self.gi() else { return 0 };
+        let Some(t) = gi.type_by_name(name) else { return 0 };
+        if !(t.is_a(Type::OBJECT) || t.is_a(Type::BOXED) || t.is_a(Type::INTERFACE)) {
+            return 0;
+        }
+        self.reflect.borrow_mut().kind_for_type(t)
+    }
+
+    /// `describe(SVL_KIND, 0, kind)`: the qualified native name and the nearest bound ancestor kind.
+    fn describe_kind(&self, kind: u32) -> Option<MemberDesc> {
+        let t = self.reflect.borrow().type_of_kind(kind)?;
+        let name = match self.gi() {
+            Ok(g) => g.qualified_name(t),
+            Err(_) => t.name().to_string(),
+        };
+        let parent = if t.is_a(Type::OBJECT) || t.is_a(Type::INTERFACE) {
+            t.parent().map_or(0, |p| self.reflect.borrow_mut().kind_for_type(p))
+        } else {
+            0
+        };
+        Some(MemberDesc { name, params: vec![], ret: SlotDesc::new(SVL_NULL).typed(parent), flags: 0 })
     }
 
     fn set_error(&self, msg: String) {
@@ -329,6 +390,64 @@ impl Inner {
         if extras::is_extra(kind) {
             return self.create_extra(kind);
         }
+        if kind >= reflect::KIND_BASE {
+            return self.construct(kind, &[], &[]);
+        }
+        self.create_with(kind, Vec::new())
+    }
+
+    /// ABI v2.5 `construct`: an instance with construct-time properties (`g_object_new_with_properties`,
+    /// so construct-only properties work). Widgets get OWNED/TOPLEVEL handles like `create`; every other
+    /// object gets a SHARED one.
+    fn construct(self: &Rc<Self>, kind: u32, props: &[u32], values: &[svl_value]) -> Res<u64> {
+        if props.len() != values.len() {
+            return Err("construct: props and values differ in length".into());
+        }
+        if kind == vlist::KIND_VLIST || menus::is_menu_kind(kind) || extras::is_extra(kind) {
+            if !props.is_empty() {
+                return Err("construct: this kind takes its properties through setProp".into());
+            }
+            return self.create(kind);
+        }
+        let t = self.reflect.borrow().type_of_kind(kind).ok_or("unknown kind")?;
+        if !t.is_a(Type::OBJECT) || t.is_a(Type::INTERFACE) || unsafe { glib::gobject_ffi::g_type_test_flags(glib::translate::IntoGlib::into_glib(t), glib::gobject_ffi::G_TYPE_FLAG_ABSTRACT as u32) != 0 } {
+            return Err(format!("{} is not instantiable", t.name()));
+        }
+        let mut vals: Vec<(String, glib::Value)> = Vec::new();
+        for (p, v) in props.iter().zip(values) {
+            let ps = self.prop_pspec(kind, t, *p)?;
+            if !ps.flags().contains(glib::ParamFlags::WRITABLE) {
+                return Err(format!("property {} is read-only", ps.name()));
+            }
+            let value = unsafe { convert::to_value(ps.value_type(), v, &**self) }.map_err(|e| format!("{}: {e}", ps.name()))?;
+            vals.push((ps.name().to_string(), value));
+        }
+        if t.is_a(gtk::Widget::static_type()) {
+            return self.create_with(kind, vals);
+        }
+        let mut pairs: Vec<(&str, glib::Value)> = vals.iter().map(|(n, v)| (n.as_str(), v.clone())).collect();
+        let obj = glib::Object::with_mut_values(t, &mut pairs);
+        Ok(self.intern(obj, 0, true))
+    }
+
+    /// The `GParamSpec` behind property id `prop` of `kind` (a generated or a reflected id).
+    fn prop_pspec(&self, kind: u32, t: Type, prop: u32) -> Res<glib::ParamSpec> {
+        if prop >= reflect::DYN_BASE {
+            let r = self.reflect.borrow();
+            let ps = r.prop(prop).ok_or("unknown property")?;
+            if !t.is_a(ps.owner_type()) {
+                return Err(format!("property {} does not belong to {}", ps.name(), t.name()));
+            }
+            return Ok(ps.clone());
+        }
+        let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
+        if !lookup::in_chain(kind, p.kind) {
+            return Err(format!("property {} does not belong to {}", p.name, t.name()));
+        }
+        glib::object::ObjectClass::from_type(t).and_then(|c| c.find_property(p.name)).ok_or_else(|| format!("{} has no property {}", t.name(), p.name))
+    }
+
+    fn create_with(self: &Rc<Self>, kind: u32, props: Vec<(String, glib::Value)>) -> Res<u64> {
         let k = KINDS.get((kind as usize).wrapping_sub(1)).ok_or("unknown kind")?;
         if k.is_abstract || k.is_interface {
             return Err(format!("{} is not instantiable", k.gtype));
@@ -339,7 +458,8 @@ impl Inner {
         if !t.is_a(glib::Type::OBJECT) {
             return Err(format!("{} is not instantiable", k.gtype));
         }
-        let obj = glib::Object::with_type(t);
+        let mut pairs: Vec<(&str, glib::Value)> = props.iter().map(|(n, v)| (n.as_str(), v.clone())).collect();
+        let obj = glib::Object::with_mut_values(t, &mut pairs);
         if let Some(da) = obj.downcast_ref::<gtk::DrawingArea>() {
             canvas::install(da);
         }
@@ -690,7 +810,25 @@ impl Inner {
             Some(vlist::KIND_VLIST) | None => {}
             Some(_) => return self.extra_set_prop(h, prop, v),
         }
+        if self.state.borrow().boxed.contains_key(&h) {
+            return Err("a VALUE handle is immutable: it has no properties to set".into());
+        }
         let (obj, kind) = self.obj_of(h)?;
+        if prop >= reflect::DYN_BASE {
+            let ps = self.reflect.borrow().prop(prop).cloned().ok_or("unknown property")?;
+            if !obj.type_().is_a(ps.owner_type()) {
+                return Err(format!("property {} does not belong to {}", ps.name(), obj.type_().name()));
+            }
+            if !ps.flags().contains(glib::ParamFlags::WRITABLE) {
+                return Err(format!("property {} is read-only", ps.name()));
+            }
+            if ps.flags().contains(glib::ParamFlags::CONSTRUCT_ONLY) {
+                return Err(format!("property {} can only be set when the object is constructed", ps.name()));
+            }
+            let value = unsafe { convert::to_value(ps.value_type(), v, &**self) }.map_err(|e| format!("{}: {e}", ps.name()))?;
+            obj.set_property_from_value(ps.name(), &value);
+            return Ok(());
+        }
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
             return Err(format!("property {} does not belong to {}", p.name, KINDS[kind as usize - 1].gtype));
@@ -748,7 +886,25 @@ impl Inner {
             Some(vlist::KIND_VLIST) | None => {}
             Some(_) => return self.extra_get_prop(h, prop, out),
         }
+        if self.state.borrow().boxed.contains_key(&h) {
+            return Err("a VALUE handle has no properties".into());
+        }
         let (obj, kind) = self.obj_of(h)?;
+        if prop >= reflect::DYN_BASE {
+            let ps = self.reflect.borrow().prop(prop).cloned().ok_or("unknown property")?;
+            if !obj.type_().is_a(ps.owner_type()) {
+                return Err(format!("property {} does not belong to {}", ps.name(), obj.type_().name()));
+            }
+            if !ps.flags().contains(glib::ParamFlags::READABLE) {
+                return Err(format!("property {} is write-only", ps.name()));
+            }
+            let value = obj.property_value(ps.name());
+            let mut buf = self.out.borrow_mut();
+            *buf = StrBuf::default();
+            self.cur_owner.set(h);
+            *out = convert::from_value(&value, self, &mut buf);
+            return Ok(());
+        }
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
             return Err(format!("property {} does not belong to {}", p.name, KINDS[kind as usize - 1].gtype));
@@ -778,9 +934,17 @@ impl Inner {
     }
 
     fn call(&self, h: u64, method: u32, args: &[svl_value], out: &mut svl_value) -> Result<(), CallErr> {
+        // A VALUE handle: methods come from the typelib only.
+        let value = self.state.borrow().boxed.get(&h).cloned();
+        if let Some(v) = value {
+            if (method as usize).wrapping_sub(1) < METHODS.len() {
+                return Err("unknown method".to_string().into());
+            }
+            return self.call_dynamic(h, Recv::Val(v), method, args, out);
+        }
         let (obj, kind) = self.obj_of(h)?;
         let Some(m) = METHODS.get((method as usize).wrapping_sub(1)) else {
-            return self.call_dynamic(h, &obj, method, args, out);
+            return self.call_dynamic(h, Recv::Obj(obj), method, args, out);
         };
         if !lookup::in_chain(kind, m.kind) {
             return Err(format!("method {} does not belong to {}", m.name, KINDS[kind as usize - 1].gtype).into());
@@ -793,19 +957,61 @@ impl Inner {
         Ok(())
     }
 
-    /// A typelib method (ids past the generated `METHODS`), invoked through GIRepository.
-    fn call_dynamic(&self, h: u64, obj: &glib::Object, method: u32, args: &[svl_value], out: &mut svl_value) -> Result<(), CallErr> {
+    /// A typelib method (ids past the generated `METHODS`), invoked through GIRepository. The
+    /// function is looked up again on the receiver's own type when the id came from a sibling kind.
+    fn call_dynamic(&self, h: u64, recv: Recv, method: u32, args: &[svl_value], out: &mut svl_value) -> Result<(), CallErr> {
+        let idx = method - METHODS.len() as u32 - 1;
+        let gi = self.gi()?;
+        let mut dm = gi.method(idx).ok_or("unknown method")?;
+        let rt = match &recv {
+            Recv::Obj(o) => o.type_(),
+            Recv::Val(v) => v.type_(),
+        };
+        if !rt.is_a(dm.declaring()) {
+            dm = gi.resolve_on(rt, dm.name()).ok_or_else(|| format!("{} has no method {}", rt.name(), dm.name()))?;
+        }
+        self.cur_owner.set(h);
+        let called = match &recv {
+            Recv::Obj(o) => dm.call(o, args, self, &gi),
+            Recv::Val(v) => dm.call_boxed(v, args, self, &gi),
+        }
+        .map_err(gi_err)?;
+        self.write_called(&gi, &dm, called, h, out);
+        Ok(())
+    }
+
+    /// ABI v2.5 `call_static`: a static function or constructor of `kind`.
+    fn call_static(&self, kind: u32, method: u32, args: &[svl_value], out: &mut svl_value) -> Result<(), CallErr> {
+        if (method as usize).wrapping_sub(1) < METHODS.len() {
+            return Err("unknown static method".to_string().into());
+        }
+        let _ = kind;
         let idx = method - METHODS.len() as u32 - 1;
         let gi = self.gi()?;
         let dm = gi.method(idx).ok_or("unknown method")?;
-        self.cur_owner.set(h);
-        let ret = dm.call(obj, args, self).map_err(|e| match e {
-            GiErr::Plain(s) => CallErr::Plain(s),
-            GiErr::Gerror(e) => CallErr::Gerror(e),
-        })?;
+        self.cur_owner.set(0);
+        let called = dm.call_static(args, self, &gi).map_err(gi_err)?;
+        self.write_called(&gi, &dm, called, 0, out);
+        Ok(())
+    }
+
+    /// Writes a call result: the plain value, or `[ret, out...]` when the function has out parameters.
+    fn write_called(&self, gi: &Gi, dm: &gi::DynMethod, called: Called, owner: u64, out: &mut svl_value) {
         let mut buf = self.out.borrow_mut();
         *buf = StrBuf::default();
-        *out = match ret {
+        if dm.has_outs() {
+            let mut items = vec![self.ret_value(gi, called.ret, &mut buf, owner)];
+            for o in called.outs {
+                items.push(self.ret_value(gi, o, &mut buf, owner));
+            }
+            *out = buf.list_value(SVL_LIST, 0, items);
+        } else {
+            *out = self.ret_value(gi, called.ret, &mut buf, owner);
+        }
+    }
+
+    fn ret_value(&self, gi: &Gi, ret: Ret, buf: &mut StrBuf, owner: u64) -> svl_value {
+        match ret {
             Ret::Null => convert::null_value(),
             Ret::Bool(b) => svl_value::new(SVL_BOOL, svl_value_u { b }),
             Ret::Int(i) => svl_value::new(SVL_I64, svl_value_u { i }),
@@ -815,15 +1021,18 @@ impl Inner {
                 let items = v.iter().map(|s| buf.str_value(s)).collect();
                 buf.list_value(SVL_LIST, 0, items)
             }
-            Ret::Value(v) => convert::from_value(&v, self, &mut buf),
-            Ret::Object(o, owned) if lookup::is_handle_type(o.type_()) => match self.intern(o, h, owned) {
+            Ret::Value(v) => convert::from_value(&v, self, buf),
+            Ret::Object(o, owned) => match self.intern(o, owner, owned) {
                 0 => convert::null_value(),
                 x => svl_value::new(SVL_HANDLE, svl_value_u { h: x }),
             },
-            // Other objects (a layout, an icon) are opaque values: BOXED handles.
-            Ret::Object(o, _) => convert::from_value(&o.to_value(), self, &mut buf),
-        };
-        Ok(())
+            Ret::List(items) => {
+                let items = items.into_iter().map(|r| self.ret_value(gi, r, buf, owner)).collect();
+                buf.list_value(SVL_LIST, 0, items)
+            }
+            Ret::Bytes(b) => buf.bytes_value(b),
+            Ret::Gtype(t) => buf.str_value(&gi.qualified_name(t)),
+        }
     }
 
     fn listen(self: &Rc<Self>, h: u64, signal: u32, on: bool) -> Res<()> {
@@ -850,6 +1059,9 @@ impl Inner {
             return Ok(());
         }
         let (obj, kind) = self.obj_of(h)?;
+        if signal >= reflect::DYN_BASE {
+            return self.listen_dyn(h, &obj, signal, on, flags);
+        }
         let sig = SIGNALS.get((signal as usize).wrapping_sub(1)).ok_or("unknown signal")?;
         if !lookup::in_chain(kind, sig.kind) {
             return Err(format!("signal {} does not belong to {}", sig.name, KINDS[kind as usize - 1].gtype));
@@ -897,6 +1109,43 @@ impl Inner {
             }
         }
         Ok(())
+    }
+
+    /// `listen` for a reflected signal (a non-widget object's signal found by name): events are
+    /// posted with their arguments converted by GType, and the handler result is not used.
+    fn listen_dyn(self: &Rc<Self>, h: u64, obj: &glib::Object, signal: u32, on: bool, flags: u32) -> Res<()> {
+        if flags & !SVL_LISTEN_AFTER != 0 {
+            return Err(format!("unknown listener flags {flags:#x} for a reflected signal"));
+        }
+        let (_, name) = self.reflect.borrow().signal(signal).cloned().ok_or("unknown signal")?;
+        let key = signal | (flags << SVL_SIGNAL_FLAGS_SHIFT);
+        let connected = self.state.borrow().entries[&h].signals.contains_key(&key);
+        if on && !connected {
+            let weak = Rc::downgrade(self);
+            let closure = glib::RustClosure::new_local(move |vals| {
+                if let Some(i) = weak.upgrade() {
+                    i.deliver_dyn(h, key, vals);
+                }
+                None
+            });
+            let id = obj.connect_closure(&name, flags & SVL_LISTEN_AFTER != 0, closure);
+            self.state.borrow_mut().entries.get_mut(&h).unwrap().signals.insert(key, id);
+        } else if !on && connected {
+            let id = self.state.borrow_mut().entries.get_mut(&h).unwrap().signals.remove(&key).unwrap();
+            obj.disconnect(id);
+        }
+        Ok(())
+    }
+
+    fn deliver_dyn(&self, h: u64, wire: u32, vals: &[glib::Value]) {
+        let host = self.host.load(Ordering::Acquire);
+        if host.is_null() {
+            return;
+        }
+        let mut buf = StrBuf::default();
+        self.cur_owner.set(h);
+        let args: Vec<svl_value> = vals.iter().skip(1).map(|v| convert::from_value(v, self, &mut buf)).collect();
+        unsafe { ((*host).post_event)((*host).self_, h, wire, args.as_ptr(), args.len()) };
     }
 
     /// Native signal -> the host. Returns the value the signal's accumulator expects.
@@ -1042,6 +1291,31 @@ impl Inner {
     /// The descriptor of a property of the handle kind `kind` (`SVL_PROP` only; other member
     /// kinds have no value descriptors yet).
     fn describe_member(&self, what: u32, kind: u32, member: u32) -> Option<MemberDesc> {
+        if what == SVL_KIND {
+            return self.describe_kind(member);
+        }
+        if what == SVL_PROP && member >= reflect::DYN_BASE {
+            let r = self.reflect.borrow();
+            let ps = r.prop(member)?;
+            let t = r.type_of_kind(kind)?;
+            if !t.is_a(ps.owner_type()) {
+                return None;
+            }
+            let mut table = self.types.borrow_mut();
+            let flags = ps.flags();
+            let readable = flags.contains(glib::ParamFlags::READABLE);
+            let writable = flags.contains(glib::ParamFlags::WRITABLE) && !flags.contains(glib::ParamFlags::CONSTRUCT_ONLY);
+            let construct_only = flags.contains(glib::ParamFlags::WRITABLE) && flags.contains(glib::ParamFlags::CONSTRUCT_ONLY);
+            let slot = types::slot_for(&mut table, ps.value_type(), Some(ps));
+            let mut ret = if readable { slot.clone() } else { SlotDesc::new(SVL_NULL) };
+            if !writable {
+                ret.flags |= SVL_D_READONLY;
+            }
+            // A construct-only property is writable once: through `construct`. The descriptor keeps
+            // its parameter so the host can encode it there; `setProp` refuses it with a clear error.
+            let params = if writable || construct_only { vec![slot] } else { vec![] };
+            return Some(MemberDesc { name: ps.name().to_string(), params, ret, flags: 0 });
+        }
         let kind = if kind == vlist::KIND_VLIST && !vlist::is_own_member(member) { self.table_kind(kind) } else { kind };
         if menus::is_menu_kind(kind) {
             if menus::is_own_member(member) {
@@ -1112,7 +1386,13 @@ impl Inner {
         }
         let mut table = self.types.borrow_mut();
         let t = table.lookup(id)?;
-        Some(types::type_desc(&mut table, t))
+        let mut d = types::type_desc(&mut table, t);
+        if d.kind == SVL_BOXED {
+            if let Some(g) = self.gi.borrow().as_ref() {
+                d.name = g.qualified_name(t);
+            }
+        }
+        Some(d)
     }
 }
 
@@ -1217,6 +1497,7 @@ impl GtkBackend {
             error: RefCell::new(CString::default()),
             out: RefCell::new(StrBuf::default()),
             types: RefCell::new(TypeTable::default()),
+            reflect: RefCell::new(Reflect::default()),
             descs: DescStore::default(),
             wake_timer: RefCell::new(None),
             frame_pending: Cell::new(false),
@@ -1257,6 +1538,8 @@ impl GtkBackend {
             get_child_attr: Some(b_get_child_attr),
             listen_ex: Some(b_listen_ex),
             style: Some(b_style),
+            construct: Some(b_construct),
+            call_static: Some(b_call_static),
         });
         Ok(GtkBackend { vtable, ctl })
     }
@@ -1336,8 +1619,8 @@ fn run_int(c: &Ctl, f: impl FnOnce(&Rc<Inner>) -> Res<()>) -> c_int {
 
 fn resolve_generic(p: *mut c_void, what: u32, kind: svl_id, name: &str) -> svl_id {
     match what {
-        SVL_PROP => lookup::find_prop(kind, name),
-        SVL_SIGNAL => lookup::find_signal(kind, name),
+        SVL_PROP => find_prop(p, kind, name),
+        SVL_SIGNAL => find_signal(p, kind, name),
         SVL_METHOD => match lookup::find_method(kind, name) {
             0 => unsafe { ctl(p) }.local.resolve_dynamic(kind, name),
             id => id,
@@ -1347,13 +1630,31 @@ fn resolve_generic(p: *mut c_void, what: u32, kind: svl_id, name: &str) -> svl_i
     }
 }
 
+/// A generated property id, else a reflected one (non-widget types only).
+fn find_prop(p: *mut c_void, kind: svl_id, name: &str) -> svl_id {
+    match lookup::find_prop(kind, name) {
+        0 => unsafe { ctl(p) }.local.reflect.borrow_mut().find_prop(kind, name),
+        id => id,
+    }
+}
+
+fn find_signal(p: *mut c_void, kind: svl_id, name: &str) -> svl_id {
+    match lookup::find_signal(kind, name) {
+        0 => unsafe { ctl(p) }.local.reflect.borrow_mut().find_signal(kind, name),
+        id => id,
+    }
+}
+
 unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *const c_char, len: usize) -> svl_id {
     let bytes = unsafe { std::slice::from_raw_parts(name as *const u8, len) };
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
     match what {
         SVL_KIND if name == "virtual-list" => vlist::KIND_VLIST,
         SVL_KIND => match (menus::kind_by_name(name), extras::kind_by_name(name)) {
-            (0, 0) => lookup::kind_by_name(name),
+            (0, 0) => match lookup::kind_by_name(name) {
+                0 => unsafe { ctl(p) }.local.resolve_kind_native(name),
+                k => k,
+            },
             (0, k) | (k, _) => k,
         },
         _ if menus::is_menu_kind(kind) => match menus::find_member(what, kind, name) {
@@ -1371,8 +1672,8 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
             id => id,
         },
         _ if extras::is_extra(kind) => extras::find_member(what, kind, name),
-        SVL_PROP => lookup::find_prop(kind, name),
-        SVL_SIGNAL => lookup::find_signal(kind, name),
+        SVL_PROP => find_prop(p, kind, name),
+        SVL_SIGNAL => find_signal(p, kind, name),
         SVL_METHOD => match lookup::find_method(kind, name) {
             0 => unsafe { ctl(p) }.local.resolve_dynamic(kind, name),
             id => id,
@@ -1449,6 +1750,39 @@ unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, args:
     }
 }
 
+unsafe extern "C" fn b_construct(p: *mut c_void, kind: svl_id, props: *const svl_id, values: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
+    let (props, values): (&[svl_id], &[svl_value]) =
+        if n == 0 { (&[], &[]) } else { unsafe { (std::slice::from_raw_parts(props, n), std::slice::from_raw_parts(values, n)) } };
+    run_int(unsafe { ctl(p) }, |i| {
+        let h = i.construct(kind, props, values)?;
+        unsafe { *out = svl_value::new(SVL_HANDLE, svl_value_u { h }) };
+        Ok(())
+    })
+}
+
+unsafe extern "C" fn b_call_static(p: *mut c_void, kind: svl_id, method: svl_id, args: *const svl_value, n: usize, out: *mut svl_value) -> c_int {
+    let c = unsafe { ctl(p) };
+    let _t = crate::timing::scope();
+    let out = unsafe { &mut *out };
+    let r = catch_unwind(AssertUnwindSafe(|| c.local.call_static(kind, method, extras::args_of(args, n), out)));
+    match r {
+        Ok(Ok(())) => 0,
+        Ok(Err(CallErr::Plain(e))) => {
+            c.local.set_error(e);
+            -1
+        }
+        Ok(Err(CallErr::Gerror(e))) => {
+            c.local.set_error(e.message().to_string());
+            c.local.write_error(&e, out);
+            -1
+        }
+        Err(_) => {
+            c.local.set_error("internal panic in svelters-gtk".into());
+            -1
+        }
+    }
+}
+
 unsafe extern "C" fn b_cancel(p: *mut c_void, callback: u64) -> c_int {
     unsafe { ctl(p) }.local.cancel_callback(callback) as c_int
 }
@@ -1496,8 +1830,9 @@ unsafe extern "C" fn b_handle_info(p: *mut c_void, h: svl_handle, out: *mut svl_
     run_int(unsafe { ctl(p) }, |i| {
         let st = i.state.borrow();
         // A boxed value is a VALUE handle: refcounted and immutable, released by `destroy`.
-        if st.boxed.contains_key(&h) {
-            unsafe { *out = svl_handle_info { kind: 0, lifetime: SVL_LIFE_VALUE, flags: 0 } };
+        if let Some(v) = st.boxed.get(&h) {
+            let kind = i.reflect.borrow_mut().kind_for_type(v.type_());
+            unsafe { *out = svl_handle_info { kind, lifetime: SVL_LIFE_VALUE, flags: 0 } };
             return Ok(());
         }
         let e = st.entries.get(&h).ok_or_else(|| format!("stale or foreign handle {h}"))?;

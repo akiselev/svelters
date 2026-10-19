@@ -949,6 +949,60 @@ impl<'a> BackendRef<'a> {
         }
     }
 
+    /// ABI v2.5: whether the backend implements `construct`.
+    pub fn has_construct(&self) -> bool {
+        self.b().construct.is_some()
+    }
+
+    /// ABI v2.5: whether the backend implements `call_static`.
+    pub fn has_call_static(&self) -> bool {
+        self.b().call_static.is_some()
+    }
+
+    /// ABI v2.5: creates an instance of `kind` with construct-time properties (`props[i]` is a
+    /// property id of `kind`). The result is valid until the next backend call.
+    pub fn construct_raw(&self, kind: svl_id, props: &[svl_id], values: &[svl_value]) -> AbiResult<svl_value> {
+        let b = self.b();
+        let Some(f) = b.construct else {
+            return Err(AbiError::plain(-1, "this backend does not implement construct"));
+        };
+        if props.len() != values.len() {
+            return Err(AbiError::plain(-1, "construct: props and values differ in length"));
+        }
+        let mut out = null_value();
+        let rc = unsafe { f(b.self_, kind, props.as_ptr(), values.as_ptr(), props.len(), &mut out) };
+        if rc < 0 {
+            return Err(self.fail(rc, Some(&out)));
+        }
+        Ok(out)
+    }
+
+    pub fn construct(&self, kind: svl_id, props: &[svl_id], values: &[Value]) -> AbiResult<Value> {
+        let raw = RawValues::new(values);
+        let out = self.construct_raw(kind, props, raw.as_slice())?;
+        Ok(unsafe { Value::from_raw(&out) })
+    }
+
+    /// ABI v2.5: calls a static or constructor function of `kind`.
+    pub fn call_static_raw(&self, kind: svl_id, method: svl_id, args: &[svl_value]) -> AbiResult<svl_value> {
+        let b = self.b();
+        let Some(f) = b.call_static else {
+            return Err(AbiError::plain(-1, "this backend does not implement call_static"));
+        };
+        let mut out = null_value();
+        let rc = unsafe { f(b.self_, kind, method, args.as_ptr(), args.len(), &mut out) };
+        if rc < 0 {
+            return Err(self.fail(rc, Some(&out)));
+        }
+        Ok(out)
+    }
+
+    pub fn call_static(&self, kind: svl_id, method: svl_id, args: &[Value]) -> AbiResult<Value> {
+        let raw = RawValues::new(args);
+        let out = self.call_static_raw(kind, method, raw.as_slice())?;
+        Ok(unsafe { Value::from_raw(&out) })
+    }
+
     pub fn insert(
         &self,
         parent: svl_handle,
@@ -1278,6 +1332,22 @@ pub trait Backend: 'static {
         Err("this backend does not support listener phases (after, capture)".into())
     }
 
+    // ---- v2.5 ----
+
+    /// Whether this backend implements [`Backend::construct`] and [`Backend::call_static`]; the
+    /// vtable publishes the members only when this is true.
+    fn supports_construct(&self) -> bool {
+        false
+    }
+    /// ABI v2.5: creates an instance with construct-time properties.
+    fn construct(&self, _kind: svl_id, _props: &[svl_id], _values: &[Value]) -> StrResult<Value> {
+        Err("construct is not supported by this backend".into())
+    }
+    /// ABI v2.5: calls a static or constructor function of a kind.
+    fn call_static(&self, _kind: svl_id, _method: svl_id, _args: &[Value]) -> StrResult<Value> {
+        Err("call_static is not supported by this backend".into())
+    }
+
     // ---- v3 ----
 
     /// `SVL_CAP_*` bits.
@@ -1460,6 +1530,36 @@ unsafe extern "C" fn t_call(
     s.rc_value(out, |b| b.call_ref(h, method, args))
 }
 
+unsafe extern "C" fn t_construct(
+    s: *mut c_void,
+    kind: svl_id,
+    props: *const svl_id,
+    values: *const svl_value,
+    n: usize,
+    out: *mut svl_value,
+) -> c_int {
+    let s = unsafe { shim(s) };
+    let (props, values) = if n == 0 {
+        (Vec::new(), Vec::new())
+    } else {
+        (unsafe { std::slice::from_raw_parts(props, n) }.to_vec(), unsafe { Value::vec_from_raw(values, n) })
+    };
+    s.rc_value(out, |b| b.construct(kind, &props, &values))
+}
+
+unsafe extern "C" fn t_call_static(
+    s: *mut c_void,
+    kind: svl_id,
+    method: svl_id,
+    args: *const svl_value,
+    n: usize,
+    out: *mut svl_value,
+) -> c_int {
+    let s = unsafe { shim(s) };
+    let args = unsafe { Value::vec_from_raw(args, n) };
+    s.rc_value(out, |b| b.call_static(kind, method, &args))
+}
+
 unsafe extern "C" fn t_listen(s: *mut c_void, h: svl_handle, signal: svl_id, on: bool) -> c_int {
     let s = unsafe { shim(s) };
     s.rc(|b| b.listen(h, signal, on))
@@ -1601,6 +1701,7 @@ impl BackendVtable {
     pub fn new<B: Backend>(backend: B) -> BackendVtable {
         let waker = backend.waker();
         let caps = backend.caps();
+        let constructs = backend.supports_construct();
         let shim = Box::into_raw(Box::new(Shim {
             waker,
             backend: Box::new(backend),
@@ -1635,6 +1736,8 @@ impl BackendVtable {
             get_child_attr: Some(t_get_child_attr),
             listen_ex: Some(t_listen_ex),
             style: Some(t_style),
+            construct: constructs.then_some(t_construct as _),
+            call_static: constructs.then_some(t_call_static as _),
         });
         BackendVtable { raw, shim }
     }

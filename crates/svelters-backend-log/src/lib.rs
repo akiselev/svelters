@@ -621,6 +621,44 @@ impl Backend for LogBackend {
         Ok(())
     }
 
+    fn supports_construct(&self) -> bool {
+        true
+    }
+
+    /// ABI v2.5. Logs `construct #h Kind {props}`; the object is a plain log entry like any element.
+    fn construct(&self, kind: svl_id, props: &[svl_id], values: &[Value]) -> Result<Value, String> {
+        let mut st = self.shared.lock();
+        let h = st.next_handle;
+        st.next_handle += 1;
+        st.live.insert(h, kind);
+        let name = st.names.name(kind).to_string();
+        let entries: Vec<(String, Value)> = props.iter().zip(values).map(|(p, v)| (st.names.name(*p).to_string(), v.clone())).collect();
+        for (p, v) in props.iter().zip(values) {
+            st.props.insert((h, *p), v.clone());
+        }
+        let _ = writeln!(st.log, "construct #{h} {name} {}", json_string(&Value::Map(entries)));
+        Ok(Value::Handle(h))
+    }
+
+    /// ABI v2.5. Logs `static Kind.method [args]`. A constructor-shaped name (`new`, `new_*`, `from_*`)
+    /// answers a fresh handle (logged as a trailing `#h`), as the Node TestHost does; anything else null.
+    fn call_static(&self, kind: svl_id, method: svl_id, args: &[Value]) -> Result<Value, String> {
+        let mut st = self.shared.lock();
+        let kname = st.names.name(kind).to_string();
+        let mname = st.names.name(method).to_string();
+        let line = format!("static {kname}.{mname} {}", json_string(&Value::List(args.to_vec())));
+        if mname == "new" || mname.starts_with("new_") || mname.starts_with("from_") {
+            let h = st.next_handle;
+            st.next_handle += 1;
+            st.live.insert(h, kind);
+            let _ = writeln!(st.log, "{line} #{h}");
+            Ok(Value::Handle(h))
+        } else {
+            let _ = writeln!(st.log, "{line}");
+            Ok(Value::Null)
+        }
+    }
+
     fn destroy(&self, h: svl_handle) {
         let mut st = self.shared.lock();
         if st.live.remove(&h).is_some() {

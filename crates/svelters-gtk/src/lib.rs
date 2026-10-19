@@ -9,6 +9,7 @@ mod convert;
 mod gi;
 pub mod generated;
 mod lookup;
+mod reflect;
 pub mod testing;
 pub mod timing;
 mod types;

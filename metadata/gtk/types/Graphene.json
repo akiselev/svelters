@@ -1,0 +1,6138 @@
+{
+ "namespace": "Graphene",
+ "schema": "svelters-types/v1",
+ "toolkit": "gtk",
+ "types": {
+  "Box": {
+   "abstract": false,
+   "blocked": {
+    "get_vertices": "struct by value",
+    "init_from_points": "struct by value",
+    "init_from_vectors": "struct by value"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Box"
+     },
+     "since": "1.2"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneBox",
+   "hidden": [
+    "init",
+    "init_from_box",
+    "init_from_vec3"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "containsBox",
+     "name": "contains_box",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "containsPoint",
+     "name": "contains_point",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "expand",
+     "name": "expand",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "expandScalar",
+     "name": "expand_scalar",
+     "params": [
+      {
+       "js": "scalar",
+       "name": "scalar",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "expandVec3",
+     "name": "expand_vec3",
+     "params": [
+      {
+       "js": "vec",
+       "name": "vec",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getBoundingSphere",
+     "name": "get_bounding_sphere",
+     "params": [
+      {
+       "dir": "out",
+       "js": "sphere",
+       "name": "sphere",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Sphere"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getCenter",
+     "name": "get_center",
+     "params": [
+      {
+       "dir": "out",
+       "js": "center",
+       "name": "center",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getDepth",
+     "name": "get_depth",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getHeight",
+     "name": "get_height",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getMax",
+     "name": "get_max",
+     "params": [
+      {
+       "dir": "out",
+       "js": "max",
+       "name": "max",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getMin",
+     "name": "get_min",
+     "params": [
+      {
+       "dir": "out",
+       "js": "min",
+       "name": "min",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getSize",
+     "name": "get_size",
+     "params": [
+      {
+       "dir": "out",
+       "js": "size",
+       "name": "size",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getWidth",
+     "name": "get_width",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "intersection",
+     "name": "intersection",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "union",
+     "name": "union",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    }
+   ],
+   "name": "Box",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Box",
+   "refs": [
+    "Graphene.Point3D",
+    "Graphene.Sphere",
+    "Graphene.Vec3"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.2",
+   "statics": [
+    {
+     "js": "empty",
+     "name": "empty",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Box"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "infinite",
+     "name": "infinite",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Box"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "minusOne",
+     "name": "minus_one",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Box"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "one",
+     "name": "one",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Box"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "oneMinusOne",
+     "name": "one_minus_one",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Box"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Box"
+     },
+     "since": "1.2"
+    }
+   ],
+   "undecided": []
+  },
+  "Euler": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Euler"
+     },
+     "since": "1.2"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneEuler",
+   "hidden": [
+    "init",
+    "init_from_euler",
+    "init_from_matrix",
+    "init_from_quaternion",
+    "init_from_radians",
+    "init_from_vec3",
+    "init_with_order"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Euler"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getAlpha",
+     "name": "get_alpha",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getBeta",
+     "name": "get_beta",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getGamma",
+     "name": "get_gamma",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getOrder",
+     "name": "get_order",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Graphene.EulerOrder"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getX",
+     "name": "get_x",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getY",
+     "name": "get_y",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getZ",
+     "name": "get_z",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "reorder",
+     "name": "reorder",
+     "params": [
+      {
+       "js": "order",
+       "name": "order",
+       "type": {
+        "k": "enum",
+        "t": "Graphene.EulerOrder"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Euler"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "toMatrix",
+     "name": "to_matrix",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "toQuaternion",
+     "name": "to_quaternion",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "toVec3",
+     "name": "to_vec3",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    }
+   ],
+   "name": "Euler",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Euler",
+   "refs": [
+    "Graphene.EulerOrder",
+    "Graphene.Matrix",
+    "Graphene.Quaternion",
+    "Graphene.Vec3"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.2",
+   "statics": [],
+   "undecided": []
+  },
+  "Matrix": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Matrix"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneMatrix",
+   "hidden": [
+    "init_from_2d",
+    "init_from_float",
+    "init_from_matrix",
+    "init_from_vec4",
+    "init_frustum",
+    "init_identity",
+    "init_look_at",
+    "init_ortho",
+    "init_perspective",
+    "init_rotate",
+    "init_scale",
+    "init_skew",
+    "init_translate",
+    "rotate",
+    "rotate_euler",
+    "rotate_quaternion",
+    "rotate_x",
+    "rotate_y",
+    "rotate_z",
+    "scale",
+    "skew_xy",
+    "skew_xz",
+    "skew_yz",
+    "translate"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "decompose",
+     "name": "decompose",
+     "params": [
+      {
+       "dir": "out",
+       "js": "translate",
+       "name": "translate",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "scale",
+       "name": "scale",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "rotate",
+       "name": "rotate",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "shear",
+       "name": "shear",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "perspective",
+       "name": "perspective",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     }
+    },
+    {
+     "js": "determinant",
+     "name": "determinant",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "equalFast",
+     "name": "equal_fast",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getRow",
+     "name": "get_row",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getValue",
+     "name": "get_value",
+     "params": [
+      {
+       "js": "row",
+       "name": "row",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      },
+      {
+       "js": "col",
+       "name": "col",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXScale",
+     "name": "get_x_scale",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXTranslation",
+     "name": "get_x_translation",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getYScale",
+     "name": "get_y_scale",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getYTranslation",
+     "name": "get_y_translation",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getZScale",
+     "name": "get_z_scale",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getZTranslation",
+     "name": "get_z_translation",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "inverse",
+     "name": "inverse",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "is2d",
+     "name": "is_2d",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "isBackfaceVisible",
+     "name": "is_backface_visible",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "isIdentity",
+     "name": "is_identity",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "isSingular",
+     "name": "is_singular",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "multiply",
+     "name": "multiply",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "near",
+     "name": "near",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      },
+      {
+       "js": "epsilon",
+       "name": "epsilon",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "perspective",
+     "name": "perspective",
+     "params": [
+      {
+       "js": "depth",
+       "name": "depth",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "print",
+     "name": "print",
+     "params": [],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "projectPoint",
+     "name": "project_point",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "projectRect",
+     "name": "project_rect",
+     "params": [
+      {
+       "js": "r",
+       "name": "r",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quad"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "projectRectBounds",
+     "name": "project_rect_bounds",
+     "params": [
+      {
+       "js": "r",
+       "name": "r",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "to2d",
+     "name": "to_2d",
+     "params": [
+      {
+       "dir": "out",
+       "js": "xx",
+       "name": "xx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "yx",
+       "name": "yx",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "xy",
+       "name": "xy",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "yy",
+       "name": "yy",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "x0",
+       "name": "x_0",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "y0",
+       "name": "y_0",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toFloat",
+     "name": "to_float",
+     "params": [
+      {
+       "dir": "out",
+       "js": "v",
+       "name": "v",
+       "type": {
+        "elem": {
+         "k": "float"
+        },
+        "fixed": true,
+        "k": "array",
+        "len": 16
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "transformBounds",
+     "name": "transform_bounds",
+     "params": [
+      {
+       "js": "r",
+       "name": "r",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "transformBox",
+     "name": "transform_box",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "transformPoint",
+     "name": "transform_point",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "transformPoint3d",
+     "name": "transform_point3d",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "transformRay",
+     "name": "transform_ray",
+     "params": [
+      {
+       "js": "r",
+       "name": "r",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Ray"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Ray"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "transformRect",
+     "name": "transform_rect",
+     "params": [
+      {
+       "js": "r",
+       "name": "r",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quad"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "transformSphere",
+     "name": "transform_sphere",
+     "params": [
+      {
+       "js": "s",
+       "name": "s",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Sphere"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Sphere"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "transformVec3",
+     "name": "transform_vec3",
+     "params": [
+      {
+       "js": "v",
+       "name": "v",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "transformVec4",
+     "name": "transform_vec4",
+     "params": [
+      {
+       "js": "v",
+       "name": "v",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "transpose",
+     "name": "transpose",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "unprojectPoint3d",
+     "name": "unproject_point3d",
+     "params": [
+      {
+       "js": "modelview",
+       "name": "modelview",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      },
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "untransformBounds",
+     "name": "untransform_bounds",
+     "params": [
+      {
+       "js": "r",
+       "name": "r",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "js": "bounds",
+       "name": "bounds",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "untransformPoint",
+     "name": "untransform_point",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "js": "bounds",
+       "name": "bounds",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Matrix",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Matrix",
+   "refs": [
+    "Graphene.Box",
+    "Graphene.Point",
+    "Graphene.Point3D",
+    "Graphene.Quad",
+    "Graphene.Quaternion",
+    "Graphene.Ray",
+    "Graphene.Rect",
+    "Graphene.Sphere",
+    "Graphene.Vec3",
+    "Graphene.Vec4"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [],
+   "undecided": []
+  },
+  "Plane": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Plane"
+     },
+     "since": "1.2"
+    }
+   ],
+   "curated": false,
+   "gtype": "GraphenePlane",
+   "hidden": [
+    "init",
+    "init_from_plane",
+    "init_from_point",
+    "init_from_points",
+    "init_from_vec4"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "distance",
+     "name": "distance",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Plane"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getConstant",
+     "name": "get_constant",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getNormal",
+     "name": "get_normal",
+     "params": [
+      {
+       "dir": "out",
+       "js": "normal",
+       "name": "normal",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "negate",
+     "name": "negate",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Plane"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Plane"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "transform",
+     "name": "transform",
+     "params": [
+      {
+       "js": "matrix",
+       "name": "matrix",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      },
+      {
+       "js": "normalMatrix",
+       "name": "normal_matrix",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Plane"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    }
+   ],
+   "name": "Plane",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Plane",
+   "refs": [
+    "Graphene.Matrix",
+    "Graphene.Point3D",
+    "Graphene.Vec3"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.2",
+   "statics": [],
+   "undecided": []
+  },
+  "Point": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "record",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Point"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "fields": [
+    {
+     "name": "x",
+     "type": "gfloat"
+    },
+    {
+     "name": "y",
+     "type": "gfloat"
+    }
+   ],
+   "gtype": "GraphenePoint",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "record",
+   "methods": [
+    {
+     "js": "distance",
+     "name": "distance",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "dX",
+       "name": "d_x",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "dY",
+       "name": "d_y",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "init",
+     "name": "init",
+     "params": [
+      {
+       "js": "x",
+       "name": "x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "y",
+       "name": "y",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Point"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "initFromPoint",
+     "name": "init_from_point",
+     "params": [
+      {
+       "js": "src",
+       "name": "src",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Point"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "initFromVec2",
+     "name": "init_from_vec2",
+     "params": [
+      {
+       "js": "src",
+       "name": "src",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Point"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "near",
+     "name": "near",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "js": "epsilon",
+       "name": "epsilon",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toVec2",
+     "name": "to_vec2",
+     "params": [
+      {
+       "dir": "out",
+       "js": "v",
+       "name": "v",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    }
+   ],
+   "name": "Point",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Point",
+   "refs": [
+    "Graphene.Vec2"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.0",
+   "statics": [
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Point"
+     },
+     "since": "1.0"
+    }
+   ],
+   "undecided": []
+  },
+  "Point3D": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Point3D"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "gtype": "GraphenePoint3D",
+   "hidden": [
+    "init",
+    "init_from_point",
+    "init_from_vec3"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "cross",
+     "name": "cross",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "distance",
+     "name": "distance",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "delta",
+       "name": "delta",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "dot",
+     "name": "dot",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "length",
+     "name": "length",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "near",
+     "name": "near",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "js": "epsilon",
+       "name": "epsilon",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "normalizeViewport",
+     "name": "normalize_viewport",
+     "params": [
+      {
+       "js": "viewport",
+       "name": "viewport",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "js": "zNear",
+       "name": "z_near",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "zFar",
+       "name": "z_far",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toVec3",
+     "name": "to_vec3",
+     "params": [
+      {
+       "dir": "out",
+       "js": "v",
+       "name": "v",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Point3D",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Point3D",
+   "refs": [
+    "Graphene.Rect",
+    "Graphene.Vec3"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.0",
+   "statics": [
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Point3D"
+     },
+     "since": "1.0"
+    }
+   ],
+   "undecided": []
+  },
+  "Quad": {
+   "abstract": false,
+   "blocked": {
+    "init_from_points": "struct by value"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Quad"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneQuad",
+   "hidden": [
+    "init",
+    "init_from_rect"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "bounds",
+     "name": "bounds",
+     "params": [
+      {
+       "dir": "out",
+       "js": "r",
+       "name": "r",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "contains",
+     "name": "contains",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getPoint",
+     "name": "get_point",
+     "params": [
+      {
+       "js": "index",
+       "name": "index_",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Point"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Quad",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Quad",
+   "refs": [
+    "Graphene.Point",
+    "Graphene.Rect"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.0",
+   "statics": [],
+   "undecided": []
+  },
+  "Quaternion": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Quaternion"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneQuaternion",
+   "hidden": [
+    "init",
+    "init_from_angle_vec3",
+    "init_from_angles",
+    "init_from_euler",
+    "init_from_matrix",
+    "init_from_quaternion",
+    "init_from_radians",
+    "init_from_vec4",
+    "init_identity"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "add",
+     "name": "add",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "dot",
+     "name": "dot",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "invert",
+     "name": "invert",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "multiply",
+     "name": "multiply",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "slerp",
+     "name": "slerp",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Quaternion"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toAngleVec3",
+     "name": "to_angle_vec3",
+     "params": [
+      {
+       "dir": "out",
+       "js": "angle",
+       "name": "angle",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "axis",
+       "name": "axis",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toAngles",
+     "name": "to_angles",
+     "params": [
+      {
+       "dir": "out",
+       "js": "degX",
+       "name": "deg_x",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "degY",
+       "name": "deg_y",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "degZ",
+       "name": "deg_z",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "toMatrix",
+     "name": "to_matrix",
+     "params": [
+      {
+       "dir": "out",
+       "js": "m",
+       "name": "m",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Matrix"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toRadians",
+     "name": "to_radians",
+     "params": [
+      {
+       "dir": "out",
+       "js": "radX",
+       "name": "rad_x",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "radY",
+       "name": "rad_y",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "radZ",
+       "name": "rad_z",
+       "nullable": true,
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "toVec4",
+     "name": "to_vec4",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Quaternion",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Quaternion",
+   "refs": [
+    "Graphene.Matrix",
+    "Graphene.Vec3",
+    "Graphene.Vec4"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.0",
+   "statics": [],
+   "undecided": []
+  },
+  "Ray": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Ray"
+     },
+     "since": "1.4"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneRay",
+   "hidden": [
+    "init",
+    "init_from_ray",
+    "init_from_vec3"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Ray"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getClosestPointToPoint",
+     "name": "get_closest_point_to_point",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getDirection",
+     "name": "get_direction",
+     "params": [
+      {
+       "dir": "out",
+       "js": "direction",
+       "name": "direction",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getDistanceToPlane",
+     "name": "get_distance_to_plane",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Plane"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getDistanceToPoint",
+     "name": "get_distance_to_point",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getOrigin",
+     "name": "get_origin",
+     "params": [
+      {
+       "dir": "out",
+       "js": "origin",
+       "name": "origin",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getPositionAt",
+     "name": "get_position_at",
+     "params": [
+      {
+       "js": "t",
+       "name": "t",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "position",
+       "name": "position",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "intersectBox",
+     "name": "intersect_box",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "tOut",
+       "name": "t_out",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "enum",
+      "t": "Graphene.RayIntersectionKind"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "intersectSphere",
+     "name": "intersect_sphere",
+     "params": [
+      {
+       "js": "s",
+       "name": "s",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Sphere"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "tOut",
+       "name": "t_out",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "enum",
+      "t": "Graphene.RayIntersectionKind"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "intersectTriangle",
+     "name": "intersect_triangle",
+     "params": [
+      {
+       "js": "t",
+       "name": "t",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Triangle"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "tOut",
+       "name": "t_out",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "enum",
+      "t": "Graphene.RayIntersectionKind"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "intersectsBox",
+     "name": "intersects_box",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "intersectsSphere",
+     "name": "intersects_sphere",
+     "params": [
+      {
+       "js": "s",
+       "name": "s",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Sphere"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "intersectsTriangle",
+     "name": "intersects_triangle",
+     "params": [
+      {
+       "js": "t",
+       "name": "t",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Triangle"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.10"
+    }
+   ],
+   "name": "Ray",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Ray",
+   "refs": [
+    "Graphene.Box",
+    "Graphene.Plane",
+    "Graphene.Point3D",
+    "Graphene.RayIntersectionKind",
+    "Graphene.Sphere",
+    "Graphene.Triangle",
+    "Graphene.Vec3"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.4",
+   "statics": [],
+   "undecided": []
+  },
+  "Rect": {
+   "abstract": false,
+   "blocked": {
+    "get_vertices": "struct by value"
+   },
+   "builder": false,
+   "category": "record",
+   "constructors": [],
+   "curated": false,
+   "fields": [
+    {
+     "name": "origin",
+     "type": "Point"
+    },
+    {
+     "name": "size",
+     "type": "Size"
+    }
+   ],
+   "gtype": "GrapheneRect",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "record",
+   "methods": [
+    {
+     "js": "containsPoint",
+     "name": "contains_point",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "containsRect",
+     "name": "contains_rect",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "expand",
+     "name": "expand",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "getArea",
+     "name": "get_area",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getBottomLeft",
+     "name": "get_bottom_left",
+     "params": [
+      {
+       "dir": "out",
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getBottomRight",
+     "name": "get_bottom_right",
+     "params": [
+      {
+       "dir": "out",
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getCenter",
+     "name": "get_center",
+     "params": [
+      {
+       "dir": "out",
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getHeight",
+     "name": "get_height",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getTopLeft",
+     "name": "get_top_left",
+     "params": [
+      {
+       "dir": "out",
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getTopRight",
+     "name": "get_top_right",
+     "params": [
+      {
+       "dir": "out",
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Point"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getWidth",
+     "name": "get_width",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getX",
+     "name": "get_x",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getY",
+     "name": "get_y",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "init",
+     "name": "init",
+     "params": [
+      {
+       "js": "x",
+       "name": "x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "y",
+       "name": "y",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "width",
+       "name": "width",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "height",
+       "name": "height",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Rect"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "initFromRect",
+     "name": "init_from_rect",
+     "params": [
+      {
+       "js": "src",
+       "name": "src",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Rect"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "inset",
+     "name": "inset",
+     "params": [
+      {
+       "js": "dX",
+       "name": "d_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "dY",
+       "name": "d_y",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Rect"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "insetR",
+     "name": "inset_r",
+     "params": [
+      {
+       "js": "dX",
+       "name": "d_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "dY",
+       "name": "d_y",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "intersection",
+     "name": "intersection",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "nullable": true,
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Rect"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "normalizeR",
+     "name": "normalize_r",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "offset",
+     "name": "offset",
+     "params": [
+      {
+       "js": "dX",
+       "name": "d_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "dY",
+       "name": "d_y",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Rect"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "offsetR",
+     "name": "offset_r",
+     "params": [
+      {
+       "js": "dX",
+       "name": "d_x",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "dY",
+       "name": "d_y",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.4"
+    },
+    {
+     "js": "roundExtents",
+     "name": "round_extents",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "sH",
+       "name": "s_h",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "sV",
+       "name": "s_v",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "union",
+     "name": "union",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Rect"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Rect",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Rect",
+   "refs": [
+    "Graphene.Point"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.0",
+   "statics": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Rect"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Rect"
+     },
+     "since": "1.4"
+    }
+   ],
+   "undecided": []
+  },
+  "Size": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "record",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Size"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "fields": [
+    {
+     "name": "width",
+     "type": "gfloat"
+    },
+    {
+     "name": "height",
+     "type": "gfloat"
+    }
+   ],
+   "gtype": "GrapheneSize",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "record",
+   "methods": [
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Size"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "init",
+     "name": "init",
+     "params": [
+      {
+       "js": "width",
+       "name": "width",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "js": "height",
+       "name": "height",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Size"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "initFromSize",
+     "name": "init_from_size",
+     "params": [
+      {
+       "js": "src",
+       "name": "src",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Size"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Size"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Size"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Size"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "record",
+        "t": "Graphene.Size"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Size",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Size",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.0",
+   "statics": [
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "record",
+      "t": "Graphene.Size"
+     },
+     "since": "1.0"
+    }
+   ],
+   "undecided": []
+  },
+  "Sphere": {
+   "abstract": false,
+   "blocked": {
+    "init_from_points": "struct by value",
+    "init_from_vectors": "struct by value"
+   },
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Sphere"
+     },
+     "since": "1.2"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneSphere",
+   "hidden": [
+    "init"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "containsPoint",
+     "name": "contains_point",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "distance",
+     "name": "distance",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Sphere"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getBoundingBox",
+     "name": "get_bounding_box",
+     "params": [
+      {
+       "dir": "out",
+       "js": "box",
+       "name": "box",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getCenter",
+     "name": "get_center",
+     "params": [
+      {
+       "dir": "out",
+       "js": "center",
+       "name": "center",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getRadius",
+     "name": "get_radius",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "isEmpty",
+     "name": "is_empty",
+     "params": [],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "translate",
+     "name": "translate",
+     "params": [
+      {
+       "js": "point",
+       "name": "point",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Sphere"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    }
+   ],
+   "name": "Sphere",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Sphere",
+   "refs": [
+    "Graphene.Box",
+    "Graphene.Point3D"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.2",
+   "statics": [],
+   "undecided": []
+  },
+  "Triangle": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Triangle"
+     },
+     "since": "1.2"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneTriangle",
+   "hidden": [
+    "init_from_float",
+    "init_from_point3d",
+    "init_from_vec3"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "containsPoint",
+     "name": "contains_point",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Triangle"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getArea",
+     "name": "get_area",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getBarycoords",
+     "name": "get_barycoords",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getBoundingBox",
+     "name": "get_bounding_box",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Box"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getMidpoint",
+     "name": "get_midpoint",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getNormal",
+     "name": "get_normal",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getPlane",
+     "name": "get_plane",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Plane"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getPoints",
+     "name": "get_points",
+     "params": [
+      {
+       "dir": "out",
+       "js": "a",
+       "name": "a",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "b",
+       "name": "b",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "c",
+       "name": "c",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getUv",
+     "name": "get_uv",
+     "params": [
+      {
+       "js": "p",
+       "name": "p",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Point3D"
+       }
+      },
+      {
+       "js": "uvA",
+       "name": "uv_a",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "js": "uvB",
+       "name": "uv_b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "js": "uvC",
+       "name": "uv_c",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "getVertices",
+     "name": "get_vertices",
+     "params": [
+      {
+       "dir": "out",
+       "js": "a",
+       "name": "a",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "b",
+       "name": "b",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "c",
+       "name": "c",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    }
+   ],
+   "name": "Triangle",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Triangle",
+   "refs": [
+    "Graphene.Box",
+    "Graphene.Plane",
+    "Graphene.Point3D",
+    "Graphene.Vec2",
+    "Graphene.Vec3"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": "1.2",
+   "statics": [],
+   "undecided": []
+  },
+  "Vec2": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec2"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneVec2",
+   "hidden": [
+    "init",
+    "init_from_float",
+    "init_from_vec2"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "add",
+     "name": "add",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "divide",
+     "name": "divide",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "dot",
+     "name": "dot",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getX",
+     "name": "get_x",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getY",
+     "name": "get_y",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "length",
+     "name": "length",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "max",
+     "name": "max",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "min",
+     "name": "min",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "multiply",
+     "name": "multiply",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "near",
+     "name": "near",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "js": "epsilon",
+       "name": "epsilon",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "negate",
+     "name": "negate",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "subtract",
+     "name": "subtract",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toFloat",
+     "name": "to_float",
+     "params": [
+      {
+       "dir": "out",
+       "js": "dest",
+       "name": "dest",
+       "type": {
+        "elem": {
+         "k": "float"
+        },
+        "fixed": true,
+        "k": "array",
+        "len": 2
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Vec2",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Vec2",
+   "refs": [],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "one",
+     "name": "one",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec2"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "xAxis",
+     "name": "x_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec2"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "yAxis",
+     "name": "y_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec2"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec2"
+     },
+     "since": "1.0"
+    }
+   ],
+   "undecided": []
+  },
+  "Vec3": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec3"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneVec3",
+   "hidden": [
+    "init",
+    "init_from_float",
+    "init_from_vec3"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "add",
+     "name": "add",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "cross",
+     "name": "cross",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "divide",
+     "name": "divide",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "dot",
+     "name": "dot",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getX",
+     "name": "get_x",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXy",
+     "name": "get_xy",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXy0",
+     "name": "get_xy0",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXyz0",
+     "name": "get_xyz0",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXyz1",
+     "name": "get_xyz1",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXyzw",
+     "name": "get_xyzw",
+     "params": [
+      {
+       "js": "w",
+       "name": "w",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getY",
+     "name": "get_y",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getZ",
+     "name": "get_z",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "length",
+     "name": "length",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "max",
+     "name": "max",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "min",
+     "name": "min",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "multiply",
+     "name": "multiply",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "near",
+     "name": "near",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "js": "epsilon",
+       "name": "epsilon",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "negate",
+     "name": "negate",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "subtract",
+     "name": "subtract",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toFloat",
+     "name": "to_float",
+     "params": [
+      {
+       "dir": "out",
+       "js": "dest",
+       "name": "dest",
+       "type": {
+        "elem": {
+         "k": "float"
+        },
+        "fixed": true,
+        "k": "array",
+        "len": 3
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Vec3",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Vec3",
+   "refs": [
+    "Graphene.Vec2",
+    "Graphene.Vec4"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "one",
+     "name": "one",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec3"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "xAxis",
+     "name": "x_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec3"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "yAxis",
+     "name": "y_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec3"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "zAxis",
+     "name": "z_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec3"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec3"
+     },
+     "since": "1.0"
+    }
+   ],
+   "undecided": []
+  },
+  "Vec4": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "value",
+   "constructors": [
+    {
+     "js": "alloc",
+     "name": "alloc",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec4"
+     },
+     "since": "1.0"
+    }
+   ],
+   "curated": false,
+   "gtype": "GrapheneVec4",
+   "hidden": [
+    "init",
+    "init_from_float",
+    "init_from_vec2",
+    "init_from_vec3",
+    "init_from_vec4"
+   ],
+   "interfaces": [],
+   "kind": "boxed",
+   "lifetime": "value",
+   "methods": [
+    {
+     "js": "add",
+     "name": "add",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "divide",
+     "name": "divide",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "dot",
+     "name": "dot",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "equal",
+     "name": "equal",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "getW",
+     "name": "get_w",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getX",
+     "name": "get_x",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXy",
+     "name": "get_xy",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec2"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getXyz",
+     "name": "get_xyz",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec3"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getY",
+     "name": "get_y",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "getZ",
+     "name": "get_z",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "interpolate",
+     "name": "interpolate",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.10"
+    },
+    {
+     "js": "length",
+     "name": "length",
+     "params": [],
+     "ret": {
+      "k": "float"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "max",
+     "name": "max",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "min",
+     "name": "min",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "multiply",
+     "name": "multiply",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "near",
+     "name": "near",
+     "params": [
+      {
+       "js": "v2",
+       "name": "v2",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "js": "epsilon",
+       "name": "epsilon",
+       "type": {
+        "k": "float"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "negate",
+     "name": "negate",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "normalize",
+     "name": "normalize",
+     "params": [
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "scale",
+     "name": "scale",
+     "params": [
+      {
+       "js": "factor",
+       "name": "factor",
+       "type": {
+        "k": "float"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.2"
+    },
+    {
+     "js": "subtract",
+     "name": "subtract",
+     "params": [
+      {
+       "js": "b",
+       "name": "b",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "res",
+       "name": "res",
+       "type": {
+        "k": "boxed",
+        "t": "Graphene.Vec4"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "toFloat",
+     "name": "to_float",
+     "params": [
+      {
+       "dir": "out",
+       "js": "dest",
+       "name": "dest",
+       "type": {
+        "elem": {
+         "k": "float"
+        },
+        "fixed": true,
+        "k": "array",
+        "len": 4
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "1.0"
+    }
+   ],
+   "name": "Vec4",
+   "ns": "Graphene",
+   "parent": null,
+   "prerequisites": [],
+   "properties": [],
+   "qualified": "Graphene.Vec4",
+   "refs": [
+    "Graphene.Vec2",
+    "Graphene.Vec3"
+   ],
+   "scope": "closure",
+   "signals": [],
+   "since": null,
+   "statics": [
+    {
+     "js": "one",
+     "name": "one",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec4"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "wAxis",
+     "name": "w_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec4"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "xAxis",
+     "name": "x_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec4"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "yAxis",
+     "name": "y_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec4"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "zAxis",
+     "name": "z_axis",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec4"
+     },
+     "since": "1.0"
+    },
+    {
+     "js": "zero",
+     "name": "zero",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "Graphene.Vec4"
+     },
+     "since": "1.0"
+    }
+   ],
+   "undecided": []
+  }
+ },
+ "version": "1.0"
+}

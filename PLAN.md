@@ -90,5 +90,5 @@ See `docs/notes/gtk-v1-archaeology.md`.
 ## Agent protocol
 
 - Research and lane agents write notes incrementally to `docs/notes/<topic>.md`. Scripts go in `docs/notes/scripts/`. Large generated output stays out of git.
-- Status lives in `plans/STATUS.md`. Work lands on `master` after the milestone's acceptance checks pass.
+- Status lives in `STATUS.md`. Work lands on `master` after the milestone's acceptance checks pass.
 - Lane agents edit only their lane's directories. ABI changes go through `plans/architecture/backend-abi.md` first.

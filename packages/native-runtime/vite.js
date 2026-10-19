@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { compile as svelteCompile } from 'svelte/compiler';
 import { extractNative, translateSheet } from '@svelters/style/build';
+import { typesAliases } from '@svelters/types/vite';
 import { formatDiagnostic } from '@svelters/style/runtime';
 
 /** The specifier src/index.js imports for block/branch/destroy_effect/component_root. */
@@ -60,6 +61,8 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
         // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native
         // implementation (same component API and host protocol, see src/lists.js)
         { find: /^@svelters\/(native-runtime\/)?lists$/, replacement: listsPath },
+        // generated non-UI types: `import { File } from 'svelters:gtk/gio'`
+        ...typesAliases(),
       ],
       dedupe: ['svelte'],
     },

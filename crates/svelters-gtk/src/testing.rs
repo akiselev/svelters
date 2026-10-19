@@ -211,6 +211,8 @@ pub struct Harness {
     rec: Box<Recorder>,
     _host: Box<svl_host>,
     kinds: RefCell<HashMap<u64, u32>>,
+    /// Names of the signals this harness resolved, by id (reflected signals are not in the tables).
+    sig_names: RefCell<HashMap<u32, String>>,
 }
 
 impl Harness {
@@ -228,7 +230,7 @@ impl Harness {
             frame: h_frame,
         });
         unsafe { backend.attach_host(&*host) };
-        Harness { backend, rec, _host: host, kinds: RefCell::new(HashMap::new()) }
+        Harness { backend, rec, _host: host, kinds: RefCell::new(HashMap::new()), sig_names: RefCell::new(HashMap::new()) }
     }
 
     fn vt(&self) -> &svl_backend {
@@ -419,6 +421,7 @@ impl Harness {
                 V::Record(t.fields.iter().zip(fields).map(|(f, x)| (f.name.clone().unwrap_or_default(), self.name_value(x))).collect())
             }
             Value::Boxed { handle, .. } => V::Boxed(*handle),
+            Value::Bytes(b) => V::List(b.iter().map(|x| V::I64(*x as i64)).collect()),
             other => panic!("unexpected value {other:?}"),
         }
     }
@@ -482,11 +485,83 @@ impl Harness {
             Err(e) => Err(e.message),
         }
     }
+    /// ABI v2.5 `construct` by native kind name, with named construct-time properties.
+    pub fn construct(&self, kind: &str, props: &[(&str, V)]) -> Result<u64, String> {
+        let k = self.kind_id(kind);
+        let mut ids = Vec::new();
+        let mut vals = Vec::new();
+        for (name, v) in props {
+            let id = self.resolve(SVL_PROP, k, name);
+            if id == 0 {
+                return Err(format!("unknown property {name}"));
+            }
+            let desc = self.backend_ref().describe(NameKind::Prop, k, id);
+            let slot = desc.as_ref().and_then(|d| d.params.first().cloned()).unwrap_or_else(|| SlotDesc::new(SVL_NULL));
+            ids.push(id);
+            vals.push(self.encode_arg(&slot, v)?);
+        }
+        match self.backend_ref().construct(k, &ids, &vals) {
+            Ok(Value::Handle(h)) => {
+                self.kinds.borrow_mut().insert(h, k);
+                Ok(h)
+            }
+            Ok(other) => Err(format!("construct answered {other:?}")),
+            Err(e) => Err(e.message),
+        }
+    }
+
+    /// The wire tag a property of the native kind `kind` expects (from its descriptor).
+    pub fn prop_slot_tag(&self, kind: &str, prop: &str) -> Option<u16> {
+        let k = self.kind_id(kind);
+        let id = self.resolve(SVL_PROP, k, prop);
+        let d = self.backend_ref().describe(NameKind::Prop, k, id)?;
+        Some(d.params.first().unwrap_or(&d.ret).tag)
+    }
+
+    /// ABI v2.5 `call_static` by native kind name and method name.
+    pub fn call_static(&self, kind: &str, method: &str, args: &[V]) -> Result<V, String> {
+        let k = self.kind_id(kind);
+        let id = self.resolve(SVL_METHOD, k, method);
+        if id == 0 {
+            return Err(format!("unknown method {method}"));
+        }
+        let desc = self.backend_ref().describe(NameKind::Method, k, id);
+        let mut vals = Vec::new();
+        for (i, a) in args.iter().enumerate() {
+            let slot = desc.as_ref().and_then(|d| d.params.get(i).cloned()).unwrap_or_else(|| SlotDesc::new(SVL_NULL));
+            vals.push(self.encode_arg(&slot, a)?);
+        }
+        match self.backend_ref().call_static(k, id, &vals) {
+            Ok(v) => Ok(self.name_value(&v)),
+            Err(e) => Err(e.message),
+        }
+    }
+
+    /// The qualified native names of `h`'s kind and its ancestors (`describe(SVL_KIND, 0, kind)`).
+    pub fn type_chain(&self, h: u64) -> Vec<String> {
+        let mut k = self.kind_of(h);
+        let mut out = Vec::new();
+        while k != 0 {
+            let Some(d) = self.backend_ref().describe(NameKind::Kind, 0, k) else { break };
+            out.push(d.name.clone());
+            k = d.ret.ty;
+        }
+        out
+    }
+
     /// The descriptor of a method as the host would see it.
     pub fn method_desc(&self, h: u64, method: &str) -> Option<MemberDesc> {
         let k = self.kind_of(h);
         let id = self.resolve(SVL_METHOD, k, method);
         self.backend_ref().describe(NameKind::Method, k, id)
+    }
+    /// Whether `h`'s kind has property `prop` in the running library.
+    pub fn has_prop(&self, h: u64, prop: &str) -> bool {
+        self.resolve(SVL_PROP, self.kind_of(h), prop) != 0
+    }
+    /// Whether `h`'s kind has signal `signal` in the running library.
+    pub fn has_signal(&self, h: u64, signal: &str) -> bool {
+        self.resolve(SVL_SIGNAL, self.kind_of(h), signal) != 0
     }
     /// The id `resolve(SVL_METHOD)` gives `method` on `h`'s kind (0: unknown).
     pub fn resolve_method(&self, h: u64, method: &str) -> u32 {
@@ -589,6 +664,7 @@ impl Harness {
         if id == 0 {
             return Err(format!("unknown signal {signal}"));
         }
+        self.sig_names.borrow_mut().insert(id, signal.to_string());
         let vt = self.vt();
         self.check(unsafe { (vt.listen)(vt.self_, h, id, on) })
     }
@@ -621,7 +697,13 @@ impl Harness {
     }
     pub fn take_events_with_args(&self) -> Vec<(u64, String, Vec<V>)> {
         let evs: Vec<_> = self.rec.events.borrow_mut().drain(..).collect();
-        evs.into_iter().map(|(h, s, a)| (h, signal_name(s & SVL_SIGNAL_ID_MASK), a.iter().map(|x| self.name_value(x)).collect())).collect()
+        evs.into_iter()
+            .map(|(h, s, a)| {
+                let id = s & SVL_SIGNAL_ID_MASK;
+                let name = self.sig_names.borrow().get(&id).cloned().filter(|_| id >= 0x0100_0000).unwrap_or_else(|| signal_name(id));
+                (h, name, a.iter().map(|x| self.name_value(x)).collect())
+            })
+            .collect()
     }
     pub fn take_destroyed(&self) -> Vec<u64> {
         self.rec.destroyed.borrow_mut().drain(..).map(|(h, _)| h).collect()

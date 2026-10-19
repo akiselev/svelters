@@ -19,7 +19,7 @@ Two toolkit backends run today (GTK4 and QtWidgets). Everything else on this pag
 | SwiftUI | not a backend | needs an inverted observable-model design; hosted leaf components only after M4 | none |
 
 :::note[What "done" means]
-"Done" is the milestone state in `plans/STATUS.md`: the counter, keyed list, keyed stress, timers (and if-toggle on GTK) run from one JS bundle on the backend, with tests. Only the prototype kinds are annotated. See [Metadata and annotations](/guides/annotation-workflow/).
+"Done" is the milestone state in `STATUS.md`: the counter, keyed list, keyed stress, timers (and if-toggle on GTK) run from one JS bundle on the backend, with tests. Only the prototype kinds are annotated. See [Metadata and annotations](/guides/annotation-workflow/).
 :::
 
 ## GTK4
@@ -74,4 +74,4 @@ M7, after M4 (native semantics). `PLAN.md` lists egui as the third L3 backend (R
 
 P5 measurements point the same way: on a 1000-row keyed list, QuickJS time dominates while host and ABI cost is under 20 ms. See [Lists and snippets](/guides/lists-and-snippets/) and [Architecture](/guides/architecture/).
 
-Sources: `plans/STATUS.md`, `PLAN.md`, `docs/notes/windows-gui-backend.md`, `docs/notes/apple-gui-backend.md`, `docs/notes/quickjs-jit-cranelift.md`, `docs/notes/node-deno-integration.md`, `docs/notes/p3-gtk-lane.md`, `docs/notes/p4-qt-lane.md`, `docs/notes/p5-integration.md`.
+Sources: `STATUS.md`, `PLAN.md`, `docs/notes/windows-gui-backend.md`, `docs/notes/apple-gui-backend.md`, `docs/notes/quickjs-jit-cranelift.md`, `docs/notes/node-deno-integration.md`, `docs/notes/p3-gtk-lane.md`, `docs/notes/p4-qt-lane.md`, `docs/notes/p5-integration.md`.

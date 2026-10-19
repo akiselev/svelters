@@ -384,6 +384,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/gtk-types:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/if-toggle:
     dependencies:
       svelte:
@@ -777,6 +793,9 @@ importers:
       '@svelters/style':
         specifier: workspace:*
         version: link:../style
+      '@svelters/types':
+        specifier: workspace:*
+        version: link:../types
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -819,6 +838,9 @@ importers:
       '@svelters/style':
         specifier: workspace:*
         version: link:../style
+      '@svelters/types':
+        specifier: workspace:*
+        version: link:../types
       svelte:
         specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
@@ -853,6 +875,28 @@ importers:
         version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
 
   packages/testhost: {}
+
+  packages/types:
+    devDependencies:
+      typescript:
+        specifier: ~6.0.3
+        version: 6.0.3
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  tests/gtk-types-gc:
+    dependencies:
+      svelte:
+        specifier: file:../../vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+        version: file:vendor/svelte/svelte-5.57.2-27b7dfb.tgz
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
   tests/renderer-conformance:
     dependencies:
