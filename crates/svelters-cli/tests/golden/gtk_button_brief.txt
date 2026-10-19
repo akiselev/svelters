@@ -1,0 +1,14 @@
+$ svelters docs gtk button --brief
+exit: 0
+--- stdout
+<button> · GtkButton (gtk:Gtk.Button) · GTK 4 class · annotated, tested (21/21 facts verified)
+inherits: Gtk.Widget → GObject.InitiallyUnowned → GObject.Object
+Calls a callback function when the button is clicked.
+props: can-shrink boolean rw · child Widget rw · has-frame boolean rw · icon-name string rw · label string rw · use-underline boolean rw
+events: activate · clicked · notify::can-shrink · notify::has-frame · notify::use-underline
+slots: child
+methods: get_can_shrink · get_child · get_has_frame · get_icon_name · get_label · get_use_underline · set_can_shrink · set_child · set_has_frame · set_icon_name · set_label · set_use_underline
+ctors: new · new_from_icon_name · new_with_label · new_with_mnemonic
+dangerous: property:child · method:set_child · method:insert_after · method:insert_before · method:set_parent · method:unparent
+inherited props/events/methods: Widget 5/2/9, Actionable 2/0/6 (--all)
+--- stderr

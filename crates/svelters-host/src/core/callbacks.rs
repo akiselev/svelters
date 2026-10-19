@@ -10,6 +10,10 @@
 //!   the owner handle dies, whichever comes first;
 //! - `forever` is refused at registration.
 //!
+//! An async completion (the one-shot callback behind an `SVL_M_ASYNC` Promise) is settled, not
+//! dropped, when its owner dies: it is detached from the owner and rejected at the next checkpoint
+//! with `NativeError { domain: 'svelters', code: 'disposed' }`, so an awaited call never hangs.
+//!
 //! A call on a released id is a clean error, never a crash. The generation in the id makes a reused
 //! slot a different id. JS function objects are dropped at the next checkpoint (`process_releases`),
 //! never inside `on_destroyed` or a finalizer. An invocation is synchronous and re-entrant like
@@ -36,6 +40,10 @@ struct Slot {
     owner: svl_handle,
     scope: u16,
     sig: svl_id,
+    /// The completion of an async method (settled, not dropped, when the owner dies).
+    completion: bool,
+    /// A completion whose owner died: only the host's `disposed` settlement may run it now.
+    orphan: bool,
 }
 
 #[derive(Default)]
@@ -45,6 +53,8 @@ pub(crate) struct CbTable {
     by_owner: HashMap<svl_handle, Vec<u64>>,
     /// Released ids whose JS function is dropped at the next checkpoint.
     to_free: Vec<u64>,
+    /// Completions whose owner died: rejected at the next checkpoint.
+    orphans: Vec<u64>,
 }
 
 fn pack(gen_: u16, index: u32) -> u64 {
@@ -85,7 +95,7 @@ impl Core {
         let index = match t.free.pop() {
             Some(i) => i,
             None => {
-                t.slots.push(Slot { gen_: 0, live: false, owner: 0, scope: 0, sig: 0 });
+                t.slots.push(Slot { gen_: 0, live: false, owner: 0, scope: 0, sig: 0, completion: false, orphan: false });
                 (t.slots.len() - 1) as u32
             }
         };
@@ -94,8 +104,18 @@ impl Core {
         s.owner = owner;
         s.scope = scope;
         s.sig = sig;
+        s.completion = false;
+        s.orphan = false;
         let id = pack(s.gen_, index);
         t.by_owner.entry(owner).or_default().push(id);
+        Ok(id)
+    }
+
+    /// Like [`Core::cb_register`], for the completion of an async method.
+    pub(crate) fn cb_register_completion(&self, owner: svl_handle, sig: svl_id, scope: u16) -> Result<u64, String> {
+        let id = self.cb_register(owner, sig, scope)?;
+        let (_, i) = unpack(id);
+        self.st.borrow_mut().callbacks.slots[i].completion = true;
         Ok(id)
     }
 
@@ -123,14 +143,49 @@ impl Core {
 
     /// The owner died: every callback tied to it is dead.
     pub(crate) fn cb_release_owner(&self, owner: svl_handle) {
-        let ids = self.st.borrow().callbacks.by_owner.get(&owner).cloned().unwrap_or_default();
+        let ids = self.st.borrow_mut().callbacks.by_owner.remove(&owner).unwrap_or_default();
         for id in ids {
+            let mut st = self.st.borrow_mut();
+            let t = &mut st.callbacks;
+            let (g, i) = unpack(id);
+            let orphan = t.slots.get_mut(i).filter(|s| s.live && s.gen_ == g && s.completion);
+            if let Some(s) = orphan {
+                // Detached from the dead owner; settled at the next checkpoint (outside any JS entry).
+                s.owner = 0;
+                s.orphan = true;
+                t.orphans.push(id);
+                continue;
+            }
+            drop(st);
             self.cb_release(id);
         }
     }
 
+    /// Rejects the completions whose owner died. Called at checkpoints, outside any JS entry.
+    pub(crate) fn cb_settle_orphans(&self) {
+        let ids = std::mem::take(&mut self.st.borrow_mut().callbacks.orphans);
+        if ids.is_empty() {
+            return;
+        }
+        for id in ids {
+            if !self.st.borrow().callbacks.is_live(id) {
+                continue;
+            }
+            let err = svelters_abi::NativeError {
+                domain: "svelters".into(),
+                code: Value::Str("disposed".into()),
+                message: "the object was disposed before the operation completed".into(),
+            };
+            let _ = self.invoke_callback_as(id, &[Value::Error(Box::new(err))], true);
+            self.cb_release(id);
+        }
+        // The Promise reactions run at the next checkpoint.
+        self.backend.wake();
+    }
+
     /// Drops the JS functions of released callbacks. Called at checkpoints, outside any JS entry.
     pub(crate) fn cb_process_frees(&self) {
+        self.cb_settle_orphans();
         let ids = std::mem::take(&mut self.st.borrow_mut().callbacks.to_free);
         if ids.is_empty() {
             return;
@@ -162,11 +217,17 @@ impl Core {
 
     /// `host->invoke_callback`: runs the JS function behind `id` synchronously.
     pub(crate) fn invoke_callback(&self, id: u64, args: &[Value]) -> Result<Value, String> {
+        self.invoke_callback_as(id, args, false)
+    }
+
+    /// `settle`: the host itself settles an orphaned completion; the backend never may.
+    fn invoke_callback_as(&self, id: u64, args: &[Value], settle: bool) -> Result<Value, String> {
         let (owner, scope, sig) = {
             let st = self.st.borrow();
             let s = st
                 .callbacks
                 .live(id)
+                .filter(|s| settle || !s.orphan)
                 .ok_or_else(|| "callback was released or its owner is gone".to_string())?;
             (s.owner, s.scope, s.sig)
         };
@@ -175,6 +236,11 @@ impl Core {
             return Err("callback owner is gone".into());
         }
         let eng = self.cb_engine.borrow().clone().ok_or("no JS engine for callbacks")?;
+        // Objects the backend minted for this call (a completion result, a callback argument) join
+        // the handle table like the results of a host op.
+        for a in args {
+            self.adopt_handles(a);
+        }
         // From idle, hold the JS guard so a nested checkpoint is deferred; from inside a host op the
         // guard is already held up the stack.
         let guard = if self.busy.get() == 0 { self.enter() } else { None };

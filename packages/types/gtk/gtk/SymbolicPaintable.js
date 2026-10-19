@@ -11,7 +11,7 @@ export class SymbolicPaintable extends NativeObject {
 
   computeConcreteSize(specifiedWidth, specifiedHeight, defaultWidth, defaultHeight) {
     const __res = call(this, 'compute_concrete_size', [specifiedWidth, specifiedHeight, defaultWidth, defaultHeight]);
-    return { concreteWidth: __res.concreteWidth, concreteHeight: __res.concreteHeight };
+    return { concreteWidth: __res.concrete_width, concreteHeight: __res.concrete_height };
   }
 
   getCurrentImage() {

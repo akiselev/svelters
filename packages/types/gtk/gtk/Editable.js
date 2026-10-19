@@ -32,6 +32,10 @@ export class Editable extends NativeObject {
     return call(this, 'get_chars', [startPos, endPos]);
   }
 
+  getCompleteText() {
+    return call(this, 'get_complete_text', []);
+  }
+
   getDelegate() {
     return wrapObject(Editable, call(this, 'get_delegate', []));
   }
@@ -44,6 +48,10 @@ export class Editable extends NativeObject {
     return call(this, 'get_enable_undo', []);
   }
 
+  getInputInterceptor() {
+    return call(this, 'get_input_interceptor', []);
+  }
+
   getMaxWidthChars() {
     return call(this, 'get_max_width_chars', []);
   }
@@ -54,7 +62,7 @@ export class Editable extends NativeObject {
 
   getSelectionBounds() {
     const __res = call(this, 'get_selection_bounds', []);
-    return { ret: __res.ret, startPos: __res.startPos, endPos: __res.endPos };
+    return { ret: __res.ret, startPos: __res.start_pos, endPos: __res.end_pos };
   }
 
   getText() {
@@ -90,6 +98,10 @@ export class Editable extends NativeObject {
     call(this, 'set_enable_undo', [enableUndo]);
   }
 
+  setInputInterceptor(interceptor = null) {
+    call(this, 'set_input_interceptor', [interceptor]);
+  }
+
   setMaxWidthChars(nChars) {
     call(this, 'set_max_width_chars', [nChars]);
   }
@@ -104,6 +116,10 @@ export class Editable extends NativeObject {
 
   setWidthChars(nChars) {
     call(this, 'set_width_chars', [nChars]);
+  }
+
+  get completeText() {
+    return getProp(this, 'complete-text');
   }
 
   get cursorPosition() {
@@ -122,6 +138,13 @@ export class Editable extends NativeObject {
   }
   set enableUndo(v) {
     setProp(this, 'enable-undo', v);
+  }
+
+  get inputInterceptor() {
+    return getProp(this, 'input-interceptor');
+  }
+  set inputInterceptor(v) {
+    setProp(this, 'input-interceptor', v);
   }
 
   get maxWidthChars() {

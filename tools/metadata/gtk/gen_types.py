@@ -103,8 +103,12 @@ class Gen:
         for r in self.types.values():
             for m in r["constructors"] + r["statics"] + r["methods"]:
                 walk(m["ret"])
-                for p in m["params"]:
+                for p in m["params"] + (m.get("async") or {}).get("outs", []):
                     walk(p["type"])
+                    if p["type"]["k"] == "callback":
+                        walk(p["type"]["sig"]["ret"])
+                        for a in p["type"]["sig"]["args"]:
+                            walk(a["type"])
             for p in r["properties"]:
                 walk(p["type"])
             for s in r["signals"]:
@@ -240,6 +244,12 @@ class Gen:
             for p in m["params"]:
                 if p.get("dir") in ("out", "inout") and not p.get("hidden"):
                     add(p["type"])
+                if p["type"]["k"] == "callback":
+                    for a in p["type"]["sig"]["args"]:
+                        add(a["type"])
+            for p in (m.get("async") or {}).get("outs", []):
+                if not p.get("hidden"):
+                    add(p["type"])
         for p in eff["properties"]:
             add(p["type"])
         for s in eff["signals"]:
@@ -338,6 +348,11 @@ class Gen:
         return e
 
     @staticmethod
+    def io_priority(p: dict) -> bool:
+        """A trailing GIO `io_priority` defaults to 0 (G_PRIORITY_DEFAULT)."""
+        return p["name"] == "io_priority" and p["type"]["k"] == "int"
+
+    @staticmethod
     def needs_wrap(t: dict) -> bool:
         return (t["k"] in ("object", "boxed")) or (t["k"] in ("list", "array") and t["elem"]["k"] in ("object", "boxed"))
 
@@ -353,20 +368,34 @@ class Gen:
         trailing = True
         flags = []
         for p in reversed(ins):
-            if trailing and p.get("nullable"):
+            if trailing and (p.get("nullable") or self.io_priority(p)):
                 flags.append(True)
             else:
                 trailing = False
                 flags.append(False)
         flags.reverse()
         for p, d in zip(ins, flags):
-            sig.append(f"{ident(p['js'])} = null" if d else ident(p["js"]))
+            sig.append(f"{ident(p['js'])} = {'0' if self.io_priority(p) else 'null'}" if d else ident(p["js"]))
         args = []
         for p in ins:
             n = ident(p["js"])
-            args.append(f"typeArg({n})" if p["type"]["k"] == "gtype" else n)
+            if p["type"]["k"] == "gtype":
+                args.append(f"typeArg({n})")
+            elif p["type"]["k"] == "callback":
+                args.append(self.cb_expr(q, p["type"], n, alias))
+            else:
+                args.append(n)
         arglist = "[" + ", ".join(args) + "]"
         name = static_name(m["js"]) if static else inst_name(m["js"])
+        if m.get("async"):
+            sig.append("options")
+            shape = self.async_shape(q, m, alias)
+            tail = f", options{', ' + shape if shape else ''}"
+            if static:
+                call = f"callStaticAsync({native!r}, {m['name']!r}, {arglist}{tail})"
+            else:
+                call = f"callAsync(this, {m['name']!r}, {arglist}{tail})"
+            return f"  {'static ' if static else ''}{name}({', '.join(sig)}) {{\n    return {call};\n  }}"
         if static:
             call = f"callStatic({native!r}, {m['name']!r}, {arglist})"
         else:
@@ -382,9 +411,34 @@ class Gen:
         if m["ret"]["k"] != "void":
             parts.append(f"ret: {self.w_expr(q, m['ret'], '__res.ret', alias)}")
         for p in outs:
+            # the host keys out values by the slot name, the native parameter name
             key = TF.camel(p["name"])
-            parts.append(f"{key}: {self.w_expr(q, p['type'], '__res.' + key, alias)}")
+            parts.append(f"{key}: {self.w_expr(q, p['type'], '__res.' + p['name'], alias)}")
         return f"{head}\n    const __res = {call};\n    return {{ {', '.join(parts)} }};\n  }}"
+
+    def cb_expr(self, q: str, t: dict, n: str, alias: dict[str, str]) -> str:
+        """A callback argument: the JS function itself, or a wrapper that turns object arguments into
+        generated classes (the host passes handles)."""
+        args = t["sig"]["args"]
+        if not any(self.needs_wrap(a["type"]) and self.w_expr(q, a["type"], "x", alias) != "x" for a in args):
+            return n
+        names = [f"a{i}" for i in range(len(args))]
+        conv = ", ".join(self.w_expr(q, a["type"], v, alias) for a, v in zip(args, names))
+        return f"(typeof {n} === 'function' ? ({', '.join(names)}) => {n}({conv}) : {n})"
+
+    def async_shape(self, q: str, m: dict, alias: dict[str, str]) -> str:
+        """The function that shapes a folded async result: the finish return value (wrapped), or
+        `{ret?, out...}` from the `{ret, <native out name>...}` object the backend sends."""
+        outs = [p for p in m["async"]["outs"] if not p.get("hidden")]
+        if not outs:
+            w = self.w_expr(q, m["ret"], "r", alias)
+            return "" if w == "r" else f"(r) => {w}"
+        parts = []
+        if m["ret"]["k"] != "void":
+            parts.append(f"ret: {self.w_expr(q, m['ret'], 'r.ret', alias)}")
+        for p in outs:
+            parts.append(f"{TF.camel(p['name'])}: {self.w_expr(q, p['type'], 'r.' + p['name'], alias)}")
+        return "(r) => ({ " + ", ".join(parts) + " })"
 
     def prop_js(self, q: str, p: dict, alias: dict[str, str]) -> str:
         n = inst_name(p["js"])
@@ -464,7 +518,7 @@ class Gen:
         # imports
         core = ["WRAP"] if False else []
         needed = ["NativeValue" if is_value else "NativeObject"] if not parent else []
-        for fn in ("call", "callStatic", "getProp", "setProp", "construct", "constructProps", "typeArg", "wrapObject", "wrapValue", "CONSTRUCT", "NativeObject", "NativeValue"):
+        for fn in ("call", "callStatic", "callAsync", "callStaticAsync", "getProp", "setProp", "construct", "constructProps", "typeArg", "wrapObject", "wrapValue", "CONSTRUCT", "NativeObject", "NativeValue"):
             if re.search(r"(?<![\w.])" + re.escape(fn) + r"\b", code.split("\n", 1)[1]) or (fn == "NativeObject" and not parent and not is_value) or (fn == "NativeValue" and not parent and is_value):
                 needed.append(fn)
         needed = sorted(set(needed))
@@ -485,10 +539,15 @@ class Gen:
         k = t["k"]
         s = {"bool": "boolean", "int": "number", "float": "number", "str": "string", "unichar": "number", "strv": "string[]",
              "void": "void", "enum": "string", "flags": "string | string[] | number", "gtype": "string | { readonly native: string }",
-             "variant": "unknown", "record": "Record<string, number>"}.get(k)
+             "variant": "unknown", "record": "Record<string, number>", "widget": "NativeElement"}.get(k)
         if s is None:
             if k in ("object", "boxed"):
                 s = imports.get(t["t"], "unknown") if t["t"] in self.classes else "unknown"
+            elif k == "callback":
+                sig = t["sig"]
+                a = ", ".join(f"{ident(TF.camel(x['name']))}: {self.ts_type(q, x['type'], imports, x.get('nullable', False))}" for x in sig["args"])
+                r = self.ts_type(q, sig["ret"], imports)
+                s = f"(({a}) => {r})"
             elif k == "list" or k == "array":
                 if k == "array" and t["elem"]["k"] == "int" and t["elem"].get("t") in ("guint8", "gint8", "guchar"):
                     s = "Uint8Array"
@@ -506,7 +565,7 @@ class Gen:
         flags = []
         trailing = True
         for p in reversed(ins):
-            if trailing and p.get("nullable"):
+            if trailing and (p.get("nullable") or self.io_priority(p)):
                 flags.append(True)
             else:
                 trailing = False
@@ -514,19 +573,25 @@ class Gen:
         flags.reverse()
         sig = ", ".join(f"{ident(p['js'])}{'?' if d else ''}: {self.ts_type(q, p['type'], imports, p.get('nullable', False))}" for p, d in zip(ins, flags))
         ret = self.ts_type(q, m["ret"], imports, m.get("ret_nullable", False))
+        if m.get("async"):
+            outs = [p for p in m["async"]["outs"] if not p.get("hidden")]
         if outs:
             parts = []
             if m["ret"]["k"] != "void":
                 parts.append(f"ret: {ret}")
             parts += [f"{TF.camel(p['name'])}: {self.ts_type(q, p['type'], imports, p.get('nullable', False))}" for p in outs]
             ret = "{ " + "; ".join(parts) + " }"
+        if m.get("async"):
+            sig = (sig + ", " if sig else "") + "options?: AsyncOptions"
+            ret = f"Promise<{ret}>"
         name = static_name(m["js"]) if static else inst_name(m["js"])
-        doc = f"  /** `{m['name']}`" + (f", since {m['since']}" if m.get("since") else "") + (", throws" if m.get("throws") else "") + " */\n"
+        doc = (f"  /** `{m['name']}`" + (f" + `{m['async']['finish']}`, async (rejects with a NativeError; `options.signal` cancels)" if m.get("async") else "")
+               + (f", since {m['since']}" if m.get("since") else "") + (", throws" if m.get("throws") and not m.get("async") else "") + " */\n")
         return f"{doc}  {'static ' if static else ''}{name}({sig}): {ret};"
 
     @staticmethod
     def sig_key(m: dict) -> str:
-        return json.dumps([m["ret"], [(p["type"], p.get("dir"), p.get("hidden")) for p in m["params"]]], sort_keys=True)
+        return json.dumps([m["ret"], [(p["type"], p.get("dir"), p.get("hidden")) for p in m["params"]], m.get("async")], sort_keys=True)
 
     def ancestor_members(self, q: str) -> tuple[dict, dict]:
         """Static and instance members the ancestors define, by JS name, as signature keys."""
@@ -557,7 +622,7 @@ class Gen:
                     ext.setdefault(self.types[w]["ns"], set()).add(w)
         lines = ["// Generated by tools/metadata/gtk/gen_types.py from metadata/gtk/types/*.json. Do not edit.",
                  f"declare module 'svelters:gtk/{nsdir(ns)}' {{",
-                 "  import type { NativeObject, NativeValue } from '@svelters/types/core';"]
+                 "  import type { AsyncOptions, NativeElement, NativeObject, NativeValue } from '@svelters/types/core';"]
         imports: dict[str, str] = {}
         taken = {self.types[q]["name"] for q in qs}
         for q in qs:

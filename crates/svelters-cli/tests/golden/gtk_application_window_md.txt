@@ -1,0 +1,132 @@
+$ svelters docs gtk application-window
+exit: 0
+--- stdout
+# <application-window> · GtkApplicationWindow
+`gtk:Gtk.ApplicationWindow` · GTK 4 class · annotated, tested (4/4 facts verified) · lifetime toplevel
+Inherits: Gtk.Window → Gtk.Widget → GObject.InitiallyUnowned → GObject.Object
+Interfaces: Gio.ActionGroup, Gio.ActionMap, Gtk.Accessible, Gtk.Buildable, Gtk.ConstraintTarget, Gtk.Native, Gtk.Root, Gtk.ShortcutManager
+Site: /api/gtk/application-window/ · Upstream: https://docs.gtk.org/gtk4/class.ApplicationWindow.html
+
+## Description
+A `GtkWindow` subclass that integrates with `GtkApplication`.
+
+Notably, `GtkApplicationWindow` can handle an application menubar.
+
+This class implements the `ActionGroup` and `ActionMap`
+interfaces, to let you add window-specific actions that will be exported
+by the associated `Application`, together with its application-wide
+actions. Window-specific actions are prefixed with the “win.”
+prefix and application-wide actions are prefixed with the “app.”
+prefix. Actions must be addressed with the prefixed name when
+referring to them from a menu model.
+
+Note that widgets that are placed inside a `GtkApplicationWindow`
+can also activate these actions, if they implement the
+`Actionable` interface.
+
+The settings `Settings:gtk-shell-shows-app-menu` and
+`Settings:gtk-shell-shows-menubar` tell GTK whether the
+desktop environment is showing the application menu and menubar
+models outside the application as part of the desktop shell.
+For instance, on OS X, both menus will be displayed remotely;
+on Windows neither will be.
+
+If the desktop environment does not display the menubar, it can be shown in
+the `GtkApplicationWindow` by setting the
+`ApplicationWindow:show-menubar` property to true. If the
+desktop environment does not display the application menu, then it will
+automatically be included in the menubar or in the window’s client-side
+decorations.
+
+See `PopoverMenu` for information about the XML language
+used by `GtkBuilder` for menu models.
+
+See also: `Application.set_menubar()`.
+
+## A GtkApplicationWindow with a menubar
+
+The code sample below shows how to set up a `GtkApplicationWindow`
+with a menu bar defined on the `Application`:
+
+```c
+GtkApplication *app = gtk_application_new ("org.gtk.test", 0);
+
+GtkBuilder *builder = gtk_builder_new_from_string (
+    "<interface>"
+    "  <menu id='menubar'>"
+    "    <submenu>"
+    "      <attribute name='label' translatable='yes'>_Edit</attribute>"
+    "      <item>"
+    "        <attribute name='label' translatable='yes'>_Copy</attribute>"
+    "        <attribute name='action'>win.copy</attribute>"
+    "      </item>"
+    "      <item>"
+    "        <attribute name='label' translatable='yes'>_Paste</attribute>"
+    "        <attribute name='action'>win.paste</attribute>"
+    "      </item>"
+    "    </submenu>"
+    "  </menu>"
+    "</interface>",
+    -1);
+
+GMenuModel *menubar = G_MENU_MODEL (gtk_builder_get_object (builder, "menubar"));
+gtk_application_set_menubar (GTK_APPLICATION (app), menubar);
+g_object_unref (builder);
+
+// ...
+
+GtkWidget *window = gtk_application_window_new (app);
+```
+
+## Properties
+- `show-menubar`: `boolean`, rw, default `false`, bindable — If this property is true, the window will display a menubar unless it is shown by the desktop shell.
+
+## Events
+- `notify::show-menubar` (`onnotify::show-menubar`) ()
+
+## Children
+Policy `named_slots`, default slot `child`
+- `child` (default): one Gtk.Widget (from Gtk.Window)
+- `titlebar`: one Gtk.Widget (from Gtk.Window)
+
+## Dangerous members
+- property `application` (from Gtk.Window): owned by the backend. Set by the backend on every toplevel at creation (crates/svelters-gtk/src/backend.rs:472-475); an app write (null) detaches the window from the app. AI1 review rejected Window.application for this reason. Use instead: Nothing to set; every <window> belongs to the app.
+- property `child` (from Gtk.Window): corrupts the widget tree. The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692). Use instead: Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes.
+- property `display` (from Gtk.Window): backend-owned state. Window-system state (the default display the backend opened), as set_display; AI1 review rejected writes to Window.display. Use instead: Nothing; svelters runs on the default display.
+- property `titlebar` (from Gtk.Window): corrupts the widget tree. The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692). Use instead: Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes.
+- method `set_application` (from Gtk.Window): owned by the backend. The backend sets every toplevel's application at creation (crates/svelters-gtk/src/backend.rs:472-475) and keeps the shared app alive itself (backend.rs:1917-1918); changing or clearing it takes the window out of the app's window list. Use instead: Nothing to set; every <window> belongs to the app.
+- method `set_child` (from Gtk.Window): corrupts the widget tree. Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md). Use instead: Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot="titlebar">`); remove it with {#if}.
+- method `set_display` (from Gtk.Window): backend-owned state. Window-system state, not app state: moving a toplevel to another GdkDisplay unrealizes and re-realizes it behind the renderer, and the backend opens one display only. AI1 review rejected set_display and Window.display (docs/notes/ai1-gtk-review.md). Use instead: Nothing; svelters runs on the default display.
+- method `set_titlebar` (from Gtk.Window): corrupts the widget tree. Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md). Use instead: Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot="titlebar">`); remove it with {#if}.
+- method `insert_after` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+- method `insert_before` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+- method `set_parent` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+- method `unparent` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+
+## Constructors
+- `new(application: Application): self` — Creates a new `GtkApplicationWindow`.
+
+## Methods
+- `get_help_overlay(): ShortcutsWindow`, deprecated — Gets the `GtkShortcutsWindow` that is associated with `window`.
+- `get_id(): number` — Returns the unique ID of the window.
+- `get_show_menubar(): boolean` — Returns whether the window will display a menubar for the app menu and menubar as needed.
+- `set_help_overlay(help_overlay: ShortcutsWindow): void`, deprecated — Associates a shortcuts window with the application window.
+- `set_show_menubar(show_menubar: boolean): void` — Sets whether the window will display a menubar for the app menu and menubar as needed.
+
+Inherited: Window (6 properties, 1 event, 6 methods); Widget (5 properties, 2 events, 9 methods). List them with `--all`.
+
+gtk: get_type `gtk_application_window_get_type` · gtype `GtkApplicationWindow` · source `gtk/gtkapplicationwindow.c:36`
+
+## Example: Using <application-window>
+```svelte
+<script>
+  let count = $state(0);
+</script>
+
+<application-window show-menubar={true} onnotify::show-menubar={() => count++} />
+```
+(generated from metadata, illustrative)
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr

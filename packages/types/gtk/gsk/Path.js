@@ -17,6 +17,10 @@ export class Path extends NativeValue {
     return call(this, 'equal', [path2]);
   }
 
+  foreachIntersection(path2, func) {
+    return call(this, 'foreach_intersection', [path2, (typeof func === 'function' ? (a0, a1, a2, a3, a4) => func(wrapValue(Path, a0), wrapValue(PathPoint, a1), wrapValue(Path, a2), wrapValue(PathPoint, a3), a4) : func)]);
+  }
+
   getBounds() {
     const __res = call(this, 'get_bounds', []);
     return { ret: __res.ret, bounds: __res.bounds };

@@ -36,6 +36,10 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | NT0 non-GUI types pilot (GTK, N0) | DONE | 49bc8290 | ABI v2.5 additive (SHARED, construct, call_static, SVL_T_TYPE, STATIC/CTOR flags); every GObject a handle; gi.rs over 8 typelibs; types_facts.py classifies 301 types; packages/types ES modules (file per class, sideEffects:false) + signature-closure manifest; curated 10 types: 50 types_verify tests in the GTK ledger (564/564); Qt oplog replay skips construct/static logs (Qt types are N2); local 996/996 nextest, pnpm test, test:meta, docs:test; all 5 CI workflows green incl. gtk-4-14; handoff `docs/notes/nt0-handoff.md` |
 | R1a ABI v2.6 observe/prop_changed (mechanics) | DONE | a4f9af4b | additive: backend `observe(h, prop, on)` (nested per (h, prop), `SVL_OBSERVE_UNSUPPORTED`), host `prop_changed(h, prop)` (no value), `SVL_M_OBSERVABLE`; GTK via `notify::<prop>` on any GObject handle incl. forwarded props (thread-safe, no strong refs, cleaned on destroy/window close); Qt via NOTIFY relays, refused without NOTIFY; AppKit/WinUI null; host `__svelters_host.observe` + `__svelters_prop_changed` per checkpoint (no coalescing/read-back/batching yet); TestHost/log/oplog-compare lines; 1953/1953 nextest, all 5 CI green; semantics and the other §12 decisions open; gaps: Qt descriptors lack the observable flag, GTK forwarded observation not re-attached on target swap |
 | DM1 dangerous members (metadata + docs) | DONE | 3ca7ceba | `metadata/dangerous/<tk>.yaml` pattern families + `dangerous:` blocks in overrides (severity, reason citing backend code, use_instead, reachable); read at use time by `tools/metadata/common/dangerous.py` (facts and ledger untouched); GTK 131 / Qt 50 / AppKit 15 / WinUI 2 marked; docs callouts + per-kind sections, typings `@remarks Dangerous`, `GtkDangerousMethods`, `metadata/coverage/dangerous.md`; `dangerous.py --check` in test:meta (never inferred or bound); no runtime guard yet (options in `docs/notes/dangerous-members.md`) |
+| CL0 `svelters` CLI: docs probe (Rust) | DONE | e8d5994d | new crate `crates/svelters-cli` (binary `svelters`, Rust per user decision 2026-10-19): `svelters docs [<tk>] <element>[.<member>]` with inheritance, did-you-mean, ambiguity exit 2, md/`--brief`/`--json` (schema `svelters-docs/1`), `-k` search; docs pack built from the IR (per-entity compressed JSON, GTK 0.92 MB / Qt 0.59 MB, lookups 11–18 ms), optional embedded build; Qt IR tag gap was a stale IR (55/55 tags); 60/60 nextest incl. pack/site consistency (871 pages), all 5 CI green; open: style table not in the IR (C1.5), 273 Qt props still camelCase, QWidget page routed to `/api/qt/box-layout/`; `plans/milestones/CL0-cli-docs.md` |
+| RT1 retire fork + renderer, runtime phases 0–1 | IN PROGRESS | | lane agent in a worktree, branch `ci/rt1` |
+| NT1 GTK async types (N1) | IN PROGRESS | | lane agent in a worktree, branch `ci/nt1` |
+| NT2 Qt non-GUI types (N2) | IN PROGRESS | | lane agent in a worktree, branch `ci/nt2` |
 | X1 object returns + GTK GI calls | DONE | 5ea82a6 | borrowed handles with stable identity + weak refs (GTK qdata, Qt by_obj map); GTK dynamic calls via GIRepository (scalars, strings, enums/flags, objects, GStrv, boxed); ~110 Qt object getters; 156/156 nextest; out params wait on S2 |
 | X2 sync handlers + frame clock | DONE | ba5bb65 | call_sync with event-object results (e.result / preventDefault), close-request per-event veto, key handled on GTK+Qt, rAF on GdkFrameClock / QWindow::requestUpdate; ABI v2.1 additive; 127/127 nextest; listen phases deferred (listen_ex proposal) |
 | P5 integration | DONE | 1b22e76 | counter on GTK+Qt; 57/57 nextest incl. 12 integration; first frame GTK ~1.2 s / Qt ~0.2 s; binaries 3.4 / 2.6 MB; JS dominates the 1000-row split (host/ABI < 20 ms) |
@@ -49,7 +53,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 
 ## Handoff (2026-10-19)
 
-`master` is green: NT0 and AI1 merged, all five CI workflows green on both branches before merge (incl. gtk-4-14). No lanes are paused.
+`master` is green: CL0 merged 2026-10-19 (all five CI workflows green on its branch). Lanes RT1, NT1 and NT2 are running in worktrees.
 
 **Local test environment (this WSL machine):**
 - GUI tests always run on a private Xvfb via `tools/dev/headless`. nextest wraps every Linux test in it, and `ledger.py refresh` wraps the whole run. Windows never reach the WSLg desktop. `SVELTERS_SHOW_GUI=1` opts out. For speed, wrap a whole run once (`tools/dev/headless cargo nextest run ...`): a plain run starts one Xvfb per test (1690 GUI tests: 20 min instead of ~10).
@@ -57,16 +61,13 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 - Needed packages: `gobject-introspection-runtime` (cairo-1.0.typelib; without it GI silently disables and NT0's types tests fail), `cargo-nextest` in `~/.cargo/bin`, pytest in the pyenv Python (`test:meta`). pnpm is only available through `corepack pnpm`.
 
 **Next:**
-1. Decide the reactivity questions (`plans/research/REACTIVITY.md` §12, 11 decisions with recommendations). Bug found there: GTK non-widget objects can't listen to `notify::<prop>` (`crates/svelters-gtk/src/reflect.rs:128` drops the `::detail`).
+1. Reactivity: all 11 §12 decisions made 2026-10-19 (`plans/research/REACTIVITY.md` §13; `bind:` migrates all at once, minimum macOS 11, `|lazy` later). Next work is R0 facts and the R1 host batch/compare/read-back (the GTK `notify::` bug on reflected kinds is fixed, 6bc336f1). N3 is unblocked once NT1/NT2 land.
 2. Decide the mobile questions: iOS I1–I9 (`docs/notes/ios-uikit-backend.md`), Android A1–A10 (`docs/notes/android-backend.md`). Both need the host start-order change (non-blocking `run` plus a started hook).
-3. AI1 Qt slice: accept-by-pattern, table-driven tests. Then WinUI: rules only, verified via CI. The 135 mid/low GTK facts in `_review.json` await a decision on agent review. Watch `bindings.generated.js` size (60KB).
+3. Merge the RT1, NT1 and NT2 lanes as their gates and CI go green. Then N3 (native models, reactive accessors) and N4 (AppKit/WinUI types).
 
 **Decided, not started:**
-- NT N1–N4 (GTK async, Qt with runtime overload dispatch, native models, WinUI/AppKit).
-- CLI C0 (`plans/research/CLI.md`).
-- Retiring the stock renderer and Svelte fork in favour of the Rust compiler.
-- Runtime phases 0–1 (`plans/research/RUNTIME.md`).
-- The dev module loader (`plans/research/QUICKJS-RUNTIME.md`).
+- NT N3–N4 (native models + reactive accessors; WinUI/AppKit). N1/N2 are in progress.
+- The dev module loader (`plans/research/QUICKJS-RUNTIME.md`): deferred by the user on 2026-10-19.
 - The libadwaita widget-pack pilot (`plans/research/CUSTOM-WIDGETS.md`).
 
 **Open user questions:** the custom-widgets questions, the runtime research questions, and the QuickJS decisions (CSS scoping port order, alias table location, CJS, release format, debugger, Intl, Rust CLI). See each research doc.

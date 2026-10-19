@@ -79,7 +79,7 @@ export class Device extends GObject_Object {
 
   getSurfaceAtPosition() {
     const __res = call(this, 'get_surface_at_position', []);
-    return { ret: wrapObject(Surface, __res.ret), winX: __res.winX, winY: __res.winY };
+    return { ret: wrapObject(Surface, __res.ret), winX: __res.win_x, winY: __res.win_y };
   }
 
   getTimestamp() {

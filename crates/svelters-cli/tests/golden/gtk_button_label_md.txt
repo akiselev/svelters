@@ -1,0 +1,12 @@
+$ svelters docs gtk button.label
+exit: 0
+--- stdout
+# <button>.label · property
+`gtk button.prop:label` · declared here · Site: /api/gtk/button/#property-label
+Type `string` or `null` · rw · notify `notify::label` · bindable (`bind:label`) · accessors get `gtk_button_get_label`, set `gtk_button_set_label` · annotated, verified
+
+Text of the label inside the button, if the button contains a label widget.
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr

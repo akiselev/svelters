@@ -1,0 +1,8 @@
+$ svelters docs qt QMainWindow::DockOption.AnimatedDocks
+exit: 0
+--- stdout
+# QMainWindow::DockOption.AnimatedDocks · value
+`qt QMainWindow::DockOption.value:AnimatedDocks` · declared here · Site: /api/qt/types/qmainwindow-dockoption/#value-animateddocks
+value `"0x01"`
+
+--- stderr

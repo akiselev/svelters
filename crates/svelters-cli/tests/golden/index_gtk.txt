@@ -1,0 +1,13 @@
+$ svelters docs gtk
+exit: 0
+--- stdout
+# GTK 4 elements (gtk)
+- gtk: GTK 4 4.22.4, 4 elements, 7 types; data 4.22.4+85362d027d09a88b (built from IR <fixtures>/gtk.json); docs text LGPL-2.1-or-later, policy full
+
+- `<application-window>` GtkApplicationWindow — A GtkWindow subclass that integrates with GtkApplication.
+- `<button>` GtkButton — Calls a callback function when the button is clicked.
+- `<grid>` GtkGrid — Arranges its child widgets in rows and columns.
+- `<window>` GtkWindow — A toplevel window which can contain other widgets.
+
+3 more types (enums, interfaces, non-element classes): `svelters docs gtk --all`.
+--- stderr

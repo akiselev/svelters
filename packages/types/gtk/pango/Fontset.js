@@ -11,6 +11,10 @@ export class Fontset extends GObject_Object {
 
   static bases = ["Pango.Fontset", "GObject.Object"];
 
+  foreach(func) {
+    call(this, 'foreach', [(typeof func === 'function' ? (a0, a1) => func(wrapObject(Fontset, a0), wrapObject(Font, a1)) : func)]);
+  }
+
   getFont(wc) {
     return wrapObject(Font, call(this, 'get_font', [wc]));
   }

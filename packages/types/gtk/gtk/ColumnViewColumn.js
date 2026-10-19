@@ -20,6 +20,10 @@ export class ColumnViewColumn extends GObject_Object {
     return wrapObject(ColumnViewColumn, callStatic('Gtk.ColumnViewColumn', 'new', [title, factory]));
   }
 
+  getColumnView() {
+    return call(this, 'get_column_view', []);
+  }
+
   getExpand() {
     return call(this, 'get_expand', []);
   }
@@ -90,6 +94,10 @@ export class ColumnViewColumn extends GObject_Object {
 
   setVisible(visible) {
     call(this, 'set_visible', [visible]);
+  }
+
+  get columnView() {
+    return getProp(this, 'column-view');
   }
 
   get expand() {

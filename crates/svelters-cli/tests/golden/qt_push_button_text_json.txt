@@ -1,0 +1,40 @@
+$ svelters docs qt push-button.text --json
+exit: 0
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "member",
+  "toolkit": "qt",
+  "data_version": "6.11.0+f0960f1ddc2925fd",
+  "entity": {
+    "id": "qt:QPushButton",
+    "address": "qt push-button",
+    "native": "QPushButton",
+    "tags": [
+      "push-button"
+    ],
+    "site": "/api/qt/push-button/"
+  },
+  "member": {
+    "kind": "property",
+    "name": "text",
+    "address": "qt push-button.prop:text",
+    "declared_in": "qt:QPushButton",
+    "site": "/api/qt/push-button/#property-text",
+    "annotated": true,
+    "verified": true,
+    "doc": "The text shown on the button",
+    "native": "text",
+    "type": {
+      "display": "string",
+      "native": "QString"
+    },
+    "access": "rw",
+    "bindable": false
+  },
+  "notices": [
+    "Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3. Only short briefs are reproduced here (text policy: brief); see doc.qt.io for the full documentation."
+  ],
+  "notes": []
+}
+--- stderr

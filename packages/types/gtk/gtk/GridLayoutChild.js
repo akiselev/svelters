@@ -10,7 +10,7 @@ export class GridLayoutChild extends LayoutChild {
   static bases = ["Gtk.GridLayoutChild", "Gtk.LayoutChild", "GObject.Object"];
 
   static [CONSTRUCT](props) {
-    return construct(this.native, constructProps(this, props, {'column': ['column'], 'columnSpan': ['column-span'], 'layoutManager': ['layout-manager'], 'row': ['row'], 'rowSpan': ['row-span']}));
+    return construct(this.native, constructProps(this, props, {'childWidget': ['child-widget'], 'column': ['column'], 'columnSpan': ['column-span'], 'layoutManager': ['layout-manager'], 'row': ['row'], 'rowSpan': ['row-span']}));
   }
 
   getColumn() {

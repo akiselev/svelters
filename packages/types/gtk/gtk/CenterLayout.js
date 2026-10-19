@@ -21,6 +21,14 @@ export class CenterLayout extends LayoutManager {
     return call(this, 'get_baseline_position', []);
   }
 
+  getCenterWidget() {
+    return call(this, 'get_center_widget', []);
+  }
+
+  getEndWidget() {
+    return call(this, 'get_end_widget', []);
+  }
+
   getOrientation() {
     return call(this, 'get_orientation', []);
   }
@@ -29,8 +37,20 @@ export class CenterLayout extends LayoutManager {
     return call(this, 'get_shrink_center_last', []);
   }
 
+  getStartWidget() {
+    return call(this, 'get_start_widget', []);
+  }
+
   setBaselinePosition(baselinePosition) {
     call(this, 'set_baseline_position', [baselinePosition]);
+  }
+
+  setCenterWidget(widget = null) {
+    call(this, 'set_center_widget', [widget]);
+  }
+
+  setEndWidget(widget = null) {
+    call(this, 'set_end_widget', [widget]);
   }
 
   setOrientation(orientation) {
@@ -39,6 +59,10 @@ export class CenterLayout extends LayoutManager {
 
   setShrinkCenterLast(shrinkCenterLast) {
     call(this, 'set_shrink_center_last', [shrinkCenterLast]);
+  }
+
+  setStartWidget(widget = null) {
+    call(this, 'set_start_widget', [widget]);
   }
 
   get shrinkCenterLast() {

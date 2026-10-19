@@ -10,7 +10,7 @@ export class OverlayLayoutChild extends LayoutChild {
   static bases = ["Gtk.OverlayLayoutChild", "Gtk.LayoutChild", "GObject.Object"];
 
   static [CONSTRUCT](props) {
-    return construct(this.native, constructProps(this, props, {'clipOverlay': ['clip-overlay'], 'layoutManager': ['layout-manager'], 'measure': ['measure']}));
+    return construct(this.native, constructProps(this, props, {'childWidget': ['child-widget'], 'clipOverlay': ['clip-overlay'], 'layoutManager': ['layout-manager'], 'measure': ['measure']}));
   }
 
   getClipOverlay() {

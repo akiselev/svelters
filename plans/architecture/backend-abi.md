@@ -472,7 +472,21 @@ Everything here is additive within v3; a backend that implements none of it keep
 - **`call_static(self, kind, method, args, n, out)`** (nullable) calls a static function or constructor function (`g_file_new_for_path`, `pango_font_description_from_string`). `resolve(SVL_METHOD, kind, name)` gives the id; the member descriptor carries `SVL_M_STATIC`, and `SVL_M_CTOR` when it returns a new reference. Out parameters follow the S2 convention (`LIST [ret, outs...]`).
 - **`SVL_T_TYPE = 11`:** a `STR` slot (or value) carrying a native type name (`Gio.ListStore`, or the GType name), for GType-valued properties and parameters (`Gio.ListStore:item-type`, `g_list_store_new`). JS passes the generated class; the module turns it into its `native` name.
 - **Host ops** `host.construct(kind, props)`, `host.callStatic(kind, method, args)` and `host.typeChain(h)`. The op log has two new lines, `construct #h Kind {json}` and `static Kind.method [json]`; a constructor-shaped method name (`new`, `new_*`, `from_*`) answers a fresh handle and the line ends with ` #h`. The Node TestHost and the log backend both implement them.
-- **GTK invoker** (`crates/svelters-gtk/src/gi.rs`) now loads the Gtk, Gdk, Gsk, Gio, GLib, GObject, Pango and Graphene typelibs and dispatches on the receiver's GType (objects, boxed values, interfaces the runtime class implements). It marshals out and inout parameters, caller-allocated out structs, `GList` / `GSList` and C arrays of strings, objects, boxed values and numbers (length arguments hidden), `GType`, `gunichar`, statics and constructors. Still refused with a clear error: callbacks and async pairs (N1), `GVariant`, hash tables, `GArray` / `GPtrArray`, fundamental classes, unions, structs passed by value.
+- **GTK invoker** (`crates/svelters-gtk/src/gi.rs`) now loads the Gtk, Gdk, Gsk, Gio, GLib, GObject, Pango and Graphene typelibs and dispatches on the receiver's GType (objects, boxed values, interfaces the runtime class implements). It marshals out and inout parameters, caller-allocated out structs, `GList` / `GSList` and C arrays of strings, objects, boxed values and numbers (length arguments hidden), `GType`, `gunichar`, statics and constructors (N1 added callbacks by scope and `_async`/`_finish` pairs, below). Still refused with a clear error: `GVariant`, hash tables, `GArray` / `GPtrArray`, fundamental classes, unions, structs passed by value.
+
+### N1: GTK async members and GI closures (no ABI change)
+
+NT1 (`plans/milestones/NT1-gtk-async.md`) uses the v3 `CALLBACK` / `SVL_M_ASYNC` model unchanged.
+
+- **GTK invoker.**
+  - Callback parameters of typelib functions are `CALLBACK` slots. Their type descriptor (`describe_type`, ids from `SVL_T_FIRST_BACKEND + 0x0100_0000`) carries the argument slots, the result slot and the scope. `forever` is described as `notified`, because the host refuses `forever`.
+  - `_async` functions with a `GAsyncReadyCallback` fold with their `_finish` into one `SVL_M_ASYNC` member. Its completion type is `SVL_T_FIRST_BACKEND + 0x00FF_0000`.
+  - The completion value is the finish result, or a `MAP` `{ret?, <native out name>...}` when the finish function has out parameters. A `GError` crosses as `ERROR`, with the code named through the domain's registered error enum (`gi_repository_find_by_error_domain`).
+  - Async statics are `SVL_M_STATIC | SVL_M_ASYNC`.
+- **Host** (not ABI):
+  - Handles inside `invoke_callback` arguments and `post_event` arguments join the handle table, as call results already did.
+  - When an owner dies, an async completion tied to it is detached and settled at the next checkpoint with `NativeError { domain: 'svelters', code: 'disposed' }`, instead of being dropped. Other scopes are released as before.
+  - `callStatic` of an `SVL_M_ASYNC` member returns a Promise; it has no owner.
 
 ### Qt non-GUI types (NT2, no ABI change)
 

@@ -182,8 +182,7 @@
   "Path": {
    "abstract": false,
    "blocked": {
-    "foreach": "callback",
-    "foreach_intersection": "callback",
+    "foreach": "callback: array with length",
     "to_cairo": "unbound:cairo.Context"
    },
    "builder": false,
@@ -213,6 +212,76 @@
       "k": "bool"
      },
      "since": "4.22"
+    },
+    {
+     "js": "foreachIntersection",
+     "name": "foreach_intersection",
+     "params": [
+      {
+       "js": "path2",
+       "name": "path2",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Gsk.Path"
+       }
+      },
+      {
+       "js": "func",
+       "name": "func",
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "path1",
+           "type": {
+            "k": "boxed",
+            "t": "Gsk.Path"
+           }
+          },
+          {
+           "name": "point1",
+           "type": {
+            "k": "boxed",
+            "t": "Gsk.PathPoint"
+           }
+          },
+          {
+           "name": "path2",
+           "type": {
+            "k": "boxed",
+            "t": "Gsk.Path"
+           }
+          },
+          {
+           "name": "point2",
+           "type": {
+            "k": "boxed",
+            "t": "Gsk.PathPoint"
+           }
+          },
+          {
+           "name": "kind",
+           "type": {
+            "k": "enum",
+            "t": "Gsk.PathIntersection"
+           }
+          }
+         ],
+         "ret": {
+          "k": "bool"
+         }
+        },
+        "t": "Gsk.PathIntersectionFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.20"
     },
     {
      "js": "getBounds",
@@ -481,6 +550,7 @@
     "Graphene.Point",
     "Graphene.Rect",
     "Gsk.FillRule",
+    "Gsk.PathIntersection",
     "Gsk.PathPoint",
     "Gsk.Stroke"
    ],

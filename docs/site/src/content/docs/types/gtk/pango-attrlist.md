@@ -29,9 +29,5 @@ Facts come from the GIR; the tests behind them are listed in the ledger (`metada
 
 ## Hidden mutators
 
-Value handles are immutable in JS; these native methods are not exposed: `change`, `insert`, `insert_before`, `splice`, `update`.
-
-## Not bound yet
-
-1 members are not bound; reasons: callback 1.
+Value handles are immutable in JS; these native methods are not exposed: `change`, `filter`, `insert`, `insert_before`, `splice`, `update`.
 

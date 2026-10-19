@@ -1,0 +1,82 @@
+$ svelters docs gtk button
+exit: 0
+--- stdout
+# <button> · GtkButton
+`gtk:Gtk.Button` · GTK 4 class · annotated, tested (21/21 facts verified) · lifetime owned
+Inherits: Gtk.Widget → GObject.InitiallyUnowned → GObject.Object
+Interfaces: Gtk.Accessible, Gtk.Actionable, Gtk.Buildable, Gtk.ConstraintTarget
+Site: /api/gtk/button/ · Upstream: https://docs.gtk.org/gtk4/class.Button.html
+
+## Description
+Calls a callback function when the button is clicked.
+
+The `GtkButton` widget can hold any valid child widget. That is, it can hold
+almost any other standard `GtkWidget`. The most commonly used child is the
+`GtkLabel`.
+
+## Properties
+- `can-shrink`: `boolean`, rw, default `false`, bindable, since 4.12 — Whether the size of the button can be made smaller than the natural size of its contents.
+- `child`: `Widget` or `null`, rw, bindable ⚠ dangerous — The child widget.
+- `has-frame`: `boolean`, rw, default `true`, bindable — Whether the button has a frame.
+- `icon-name`: `string` or `null`, rw, bindable — The name of the icon used to automatically populate the button.
+- `label`: `string` or `null`, rw, bindable — Text of the label inside the button, if the button contains a label widget.
+- `use-underline`: `boolean`, rw, default `false`, bindable — If set, an underline in the text indicates that the following character is to be used as mnemonic.
+
+## Events
+- `activate` (`onactivate`) () — Emitted to animate press then release.
+- `clicked` (`onclicked`) () — Emitted when the button has been activated (pressed and released).
+- `notify::can-shrink` (`onnotify::can-shrink`) ()
+- `notify::has-frame` (`onnotify::has-frame`) ()
+- `notify::use-underline` (`onnotify::use-underline`) ()
+
+## Children
+Policy `single_child`, default slot `child`
+- `child` (default): one Gtk.Widget
+
+## Dangerous members
+- property `child`: corrupts the widget tree. The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692). Use instead: Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes.
+- method `set_child`: corrupts the widget tree. Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md). Use instead: Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot="titlebar">`); remove it with {#if}.
+- method `insert_after` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+- method `insert_before` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+- method `set_parent` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+- method `unparent` (from Gtk.Widget): corrupts the widget tree. Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting. Use instead: Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.
+
+## Constructors
+- `new(): self` — Creates a new `GtkButton` widget.
+- `new_from_icon_name(icon_name: string): self` — Creates a new button containing an icon from the current icon theme.
+- `new_with_label(label: string): self` — Creates a `GtkButton` widget with a `GtkLabel` child.
+- `new_with_mnemonic(label: string): self` — Creates a new `GtkButton` containing a label.
+
+## Methods
+- `get_can_shrink(): boolean`, since 4.12 — Retrieves whether the button can be smaller than the natural size of its contents.
+- `get_child(): Widget` — Gets the child widget of `button`.
+- `get_has_frame(): boolean` — Returns whether the button has a frame.
+- `get_icon_name(): string` — Returns the icon name of the button.
+- `get_label(): string` — Fetches the text from the label of the button.
+- `get_use_underline(): boolean` — gets whether underlines are interpreted as mnemonics.
+- `set_can_shrink(can_shrink: boolean): void`, since 4.12 — Sets whether the button size can be smaller than the natural size of its contents.
+- `set_child(child: Widget): void` ⚠ dangerous — Sets the child widget of `button`.
+- `set_has_frame(has_frame: boolean): void` — Sets the style of the button.
+- `set_icon_name(icon_name: string): void` — Adds a `GtkImage` with the given icon name as a child.
+- `set_label(label: string): void` — Sets the text of the label of the button to `label`.
+- `set_use_underline(use_underline: boolean): void` — Sets whether to use underlines as mnemonics.
+
+Inherited: Widget (5 properties, 2 events, 9 methods); Actionable (2 properties, 6 methods). List them with `--all`.
+
+gtk: get_type `gtk_button_get_type` · gtype `GtkButton` · source `gtk/gtkbutton.c:25`
+
+## Example: Using <button>
+```svelte
+<script>
+  let count = $state(0);
+</script>
+
+<button label="Hello" can-shrink={true} has-frame={false} onactivate={() => count++}>
+  <label>Child content</label>
+</button>
+```
+(generated from metadata, illustrative)
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr

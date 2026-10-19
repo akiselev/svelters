@@ -1,0 +1,3909 @@
+{
+ "coverage": {
+  "annotated_events": 336,
+  "annotated_kinds": 107,
+  "annotated_properties": 412,
+  "dangerous": {
+   "events": 0,
+   "methods": 91,
+   "properties": 40
+  },
+  "docs": {
+   "events_with_doc": 340,
+   "kinds_with_description": 443,
+   "methods_with_doc": 3318,
+   "properties_with_doc": 1214
+  },
+  "elements": 72,
+  "events": 580,
+  "kinds": 443,
+  "kinds_by_type": {
+   "boxed": 15,
+   "class": 269,
+   "enum": 110,
+   "flags": 20,
+   "interface": 29
+  },
+  "methods": 3319,
+  "properties": 1316,
+  "properties_by_origin": {
+   "gir": 1303,
+   "manual": 13
+  },
+  "serdes": {
+   "status": "unknown",
+   "supported_types": null,
+   "total_types": null
+  },
+  "tested_kinds": 78
+ },
+ "entities": [
+  {
+   "abi_symbols": [
+    "get_prop",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [],
+   "children": {
+    "candidates": [],
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+   },
+   "constructors": [],
+   "description": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Provides a way to associate widgets with actions.\n\nIt primarily consists of two properties: [`Actionable:action-name`](xref:gtk:Gtk.Actionable#property:action-name)\nand [`Actionable:action-target`](xref:gtk:Gtk.Actionable#property:action-target). There are also some convenience\nAPIs for setting these properties.\n\nThe action will be looked up in action groups that are found among\nthe widgets ancestors. Most commonly, these will be the actions with\nthe “win.” or “app.” prefix that are associated with the\n`GtkApplicationWindow` or `GtkApplication`, but other action groups that\nare added with [`Widget.insert_action_group()`](xref:gtk:Gtk.Widget#method:insert_action_group) will be consulted\nas well.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/iface.Actionable.html"
+   },
+   "events": [],
+   "extensions": {
+    "gtk": {
+     "get_type": "gtk_actionable_get_type",
+     "gtype": "GtkActionable",
+     "source": "gtk/gtkactionable.c:26"
+    }
+   },
+   "id": "gtk:Gtk.Actionable",
+   "interfaces": [],
+   "kind": "interface",
+   "methods": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Gets the action name for `actionable`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_actionable_get_action_name",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_action_name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:get_action_name",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "string"
+     },
+     "signature": "get_action_name(): string",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Gets the current target value of `actionable`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_actionable_get_action_target_value",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_action_target_value",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:get_action_target_value",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "unknown"
+     },
+     "signature": "get_action_target_value(): unknown",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Specifies the name of the action with which this widget should be\nassociated.\n\nIf `action_name` is `NULL` then the widget will be unassociated from\nany previous action.\n\nUsually this function is used when the widget is located (or will be\nlocated) within the hierarchy of a `GtkApplicationWindow`.\n\nNames are of the form “win.save” or “app.quit” for actions on the\ncontaining [`ApplicationWindow`](xref:gtk:ApplicationWindow) or its associated [`Application`](xref:gtk:Application),\nrespectively. This is the same form used for actions in the [`Menu`](xref:gtk:Gio.Menu)\nassociated with the window.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_actionable_set_action_name",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_action_name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_action_name",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "action_name",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_action_name(action_name: string): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the target of an actionable widget.\n\nThis is a convenience function that calls [`Variant.new()`](xref:gtk:GLib.Variant#constructor:new) for\n`format_string` and uses the result to call\n[`Actionable.set_action_target_value()`](xref:gtk:Gtk.Actionable#method:set_action_target_value).\n\nIf you are setting a string-valued target and want to set\nthe action name at the same time, you can use\n[`Actionable.set_detailed_action_name()`](xref:gtk:Gtk.Actionable#method:set_detailed_action_name).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_actionable_set_action_target",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_action_target",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_action_target",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "format_string",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string"
+       }
+      },
+      {
+       "name": "...",
+       "type": {
+        "display": "unknown",
+        "neutral": "varargs"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_action_target(format_string: string, ...: unknown): void",
+     "unsupported_reason": "non_introspectable"
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the target value of an actionable widget.\n\nIf `target_value` is `NULL` then the target value is unset.\n\nThe target value has two purposes. First, it is used as the parameter\nto activation of the action associated with the `GtkActionable` widget.\nSecond, it is used to determine if the widget should be rendered as\n“active” — the widget is active if the state is equal to the given target.\n\nConsider the example of associating a set of buttons with a [`Action`](xref:gtk:Gio.Action)\nwith string state in a typical “radio button” situation. Each button\nwill be associated with the same action, but with a different target\nvalue for that action. Clicking on a particular button will activate\nthe action with the target of that button, which will typically cause\nthe action’s state to change to that value. Since the action’s state\nis now equal to the target value of the button, the button will now\nbe rendered as active (and the other buttons, with different targets,\nrendered inactive).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_actionable_set_action_target_value",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_action_target_value",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_action_target_value",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "target_value",
+       "type": {
+        "display": "unknown",
+        "native": "GVariant*",
+        "neutral": "variant",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_action_target_value(target_value: unknown): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the action-name and associated string target value of an\nactionable widget.\n\n`detailed_action_name` is a string in the format accepted by\n`parse_detailed_name`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_actionable_set_detailed_action_name",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_detailed_action_name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:method:set_detailed_action_name",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "detailed_action_name",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_detailed_action_name(detailed_action_name: string): void",
+     "unsupported_reason": null
+    }
+   ],
+   "name": "Actionable",
+   "native_name": "GtkActionable",
+   "properties": [
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_actionable_get_action_name",
+      "set": "gtk_actionable_set_action_name"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The name of the action with which this widget should be associated.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/iface.Actionable.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gchararray",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE"
+       ]
+      }
+     },
+     "js_name": "action-name",
+     "name": "action-name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-name",
+     "notify": "notify::action-name",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "gchar*",
+      "neutral": "string",
+      "nullable": true
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "set": "gtk_actionable_set_action_target"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The target value of the actionable widget's action.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/iface.Actionable.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "GVariant",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE"
+       ]
+      }
+     },
+     "js_name": "action-target",
+     "name": "action-target",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-target",
+     "notify": "notify::action-target",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "inferred",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "unknown",
+      "neutral": "variant",
+      "nullable": true
+     },
+     "verified": true
+    }
+   ],
+   "qualified": "Gtk.Actionable",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/gtk/Actionable.yaml"
+    ],
+    "metadata_file": "metadata/gtk/Actionable.json",
+    "note": "",
+    "test_note": "Annotated facts have generated verification tests (crates/svelters-gtk); results are in metadata/verified/gtk.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     5,
+     5
+    ]
+   },
+   "summary": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Provides a way to associate widgets with actions.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/iface.Actionable.html"
+   },
+   "tags": [],
+   "upstream": {
+    "label": "GTK 4 reference: GTK Actionable",
+    "url": "https://docs.gtk.org/gtk4/iface.Actionable.html"
+   },
+   "values": []
+  },
+  {
+   "abi_symbols": [
+    "create",
+    "destroy",
+    "get_prop",
+    "listen",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [
+    "gtk:Gtk.Window",
+    "gtk:Gtk.Widget",
+    "gtk:GObject.InitiallyUnowned",
+    "gtk:GObject.Object"
+   ],
+   "children": {
+    "candidates": [],
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+   },
+   "constructors": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Creates a new `GtkApplicationWindow`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_application_window_new",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "constructor",
+     "name": "new",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:ctor:new",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "application",
+       "type": {
+        "display": "Application",
+        "native": "GtkApplication*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Application>",
+        "ref": "gtk:Gtk.Application"
+       }
+      }
+     ],
+     "returns": {
+      "display": "self"
+     },
+     "signature": "new(application: Application): self",
+     "unsupported_reason": null
+    }
+   ],
+   "description": {
+    "license": "LGPL-2.1-or-later",
+    "md": "A `GtkWindow` subclass that integrates with `GtkApplication`.\n\nNotably, `GtkApplicationWindow` can handle an application menubar.\n\nThis class implements the [`ActionGroup`](xref:gtk:Gio.ActionGroup) and [`ActionMap`](xref:gtk:Gio.ActionMap)\ninterfaces, to let you add window-specific actions that will be exported\nby the associated [`Application`](xref:gtk:Gtk.Application), together with its application-wide\nactions. Window-specific actions are prefixed with the “win.”\nprefix and application-wide actions are prefixed with the “app.”\nprefix. Actions must be addressed with the prefixed name when\nreferring to them from a menu model.\n\nNote that widgets that are placed inside a `GtkApplicationWindow`\ncan also activate these actions, if they implement the\n[`Actionable`](xref:gtk:Gtk.Actionable) interface.\n\nThe settings [`Settings:gtk-shell-shows-app-menu`](xref:gtk:Gtk.Settings#property:gtk-shell-shows-app-menu) and\n[`Settings:gtk-shell-shows-menubar`](xref:gtk:Gtk.Settings#property:gtk-shell-shows-menubar) tell GTK whether the\ndesktop environment is showing the application menu and menubar\nmodels outside the application as part of the desktop shell.\nFor instance, on OS X, both menus will be displayed remotely;\non Windows neither will be.\n\nIf the desktop environment does not display the menubar, it can be shown in\nthe `GtkApplicationWindow` by setting the\n[`ApplicationWindow:show-menubar`](xref:gtk:Gtk.ApplicationWindow#property:show-menubar) property to true. If the\ndesktop environment does not display the application menu, then it will\nautomatically be included in the menubar or in the window’s client-side\ndecorations.\n\nSee [`PopoverMenu`](xref:gtk:Gtk.PopoverMenu) for information about the XML language\nused by `GtkBuilder` for menu models.\n\nSee also: [`Application.set_menubar()`](xref:gtk:Gtk.Application#method:set_menubar).\n\n## A GtkApplicationWindow with a menubar\n\nThe code sample below shows how to set up a `GtkApplicationWindow`\nwith a menu bar defined on the [`Application`](xref:gtk:Gtk.Application):\n\n```c\nGtkApplication *app = gtk_application_new (\"org.gtk.test\", 0);\n\nGtkBuilder *builder = gtk_builder_new_from_string (\n    \"<interface>\"\n    \"  <menu id='menubar'>\"\n    \"    <submenu>\"\n    \"      <attribute name='label' translatable='yes'>_Edit</attribute>\"\n    \"      <item>\"\n    \"        <attribute name='label' translatable='yes'>_Copy</attribute>\"\n    \"        <attribute name='action'>win.copy</attribute>\"\n    \"      </item>\"\n    \"      <item>\"\n    \"        <attribute name='label' translatable='yes'>_Paste</attribute>\"\n    \"        <attribute name='action'>win.paste</attribute>\"\n    \"      </item>\"\n    \"    </submenu>\"\n    \"  </menu>\"\n    \"</interface>\",\n    -1);\n\nGMenuModel *menubar = G_MENU_MODEL (gtk_builder_get_object (builder, \"menubar\"));\ngtk_application_set_menubar (GTK_APPLICATION (app), menubar);\ng_object_unref (builder);\n\n// ...\n\nGtkWidget *window = gtk_application_window_new (app);\n```",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.ApplicationWindow.html"
+   },
+   "events": [
+    {
+     "annotated": true,
+     "extensions": {
+      "gtk": {
+       "signal_flags": [
+        "detailed"
+       ],
+       "when": "first"
+      }
+     },
+     "flags": [
+      "detailed"
+     ],
+     "handler_prop": "onnotify::show-menubar",
+     "handler_result": "none",
+     "js_event": "notify::show-menubar",
+     "name": "notify::show-menubar",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:signal:notify::show-menubar",
+     "origin": "inferred",
+     "origins": [
+      "inferred",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "first",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    }
+   ],
+   "examples": [
+    {
+     "code": "<script>\n  let count = $state(0);\n</script>\n\n<application-window show-menubar={true} onnotify::show-menubar={() => count++} />\n",
+     "generated": true,
+     "lang": "svelte",
+     "tested": false,
+     "title": "Using <application-window>"
+    }
+   ],
+   "extensions": {
+    "gtk": {
+     "get_type": "gtk_application_window_get_type",
+     "gtype": "GtkApplicationWindow",
+     "source": "gtk/gtkapplicationwindow.c:36"
+    }
+   },
+   "id": "gtk:Gtk.ApplicationWindow",
+   "interfaces": [
+    "gtk:Gio.ActionGroup",
+    "gtk:Gio.ActionMap",
+    "gtk:Gtk.Accessible",
+    "gtk:Gtk.Buildable",
+    "gtk:Gtk.ConstraintTarget",
+    "gtk:Gtk.Native",
+    "gtk:Gtk.Root",
+    "gtk:Gtk.ShortcutManager"
+   ],
+   "kind": "class",
+   "lifetime": {
+    "class": "toplevel",
+    "note": "derived: GtkWindow subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "availability": {
+      "deprecated": "4.18",
+      "deprecated_note": "`GtkShortcutsWindow` will be removed in GTK 5"
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Gets the `GtkShortcutsWindow` that is associated with `window`.\n\nSee [`ApplicationWindow.set_help_overlay()`](xref:gtk:Gtk.ApplicationWindow#method:set_help_overlay).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_application_window_get_help_overlay",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_help_overlay",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:method:get_help_overlay",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "ShortcutsWindow"
+     },
+     "signature": "get_help_overlay(): ShortcutsWindow",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Returns the unique ID of the window.\n\n If the window has not yet been added to a `GtkApplication`, returns `0`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_application_window_get_id",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_id",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:method:get_id",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "number"
+     },
+     "signature": "get_id(): number",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Returns whether the window will display a menubar for the app menu\nand menubar as needed.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_application_window_get_show_menubar",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_show_menubar",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:method:get_show_menubar",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "get_show_menubar(): boolean",
+     "unsupported_reason": null
+    },
+    {
+     "availability": {
+      "deprecated": "4.18",
+      "deprecated_note": "`GtkShortcutsWindow` will be removed in GTK 5"
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Associates a shortcuts window with the application window.\n\nAdditionally, sets up an action with the name\n`win.show-help-overlay` to present it.\n\nThe window takes responsibility for destroying the help overlay.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_application_window_set_help_overlay",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_help_overlay",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:method:set_help_overlay",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "help_overlay",
+       "type": {
+        "display": "ShortcutsWindow",
+        "native": "GtkShortcutsWindow*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:ShortcutsWindow>",
+        "nullable": true,
+        "ref": "gtk:Gtk.ShortcutsWindow"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_help_overlay(help_overlay: ShortcutsWindow): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets whether the window will display a menubar for the app menu\nand menubar as needed.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_application_window_set_show_menubar",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_show_menubar",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:method:set_show_menubar",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "show_menubar",
+       "type": {
+        "display": "boolean",
+        "native": "gboolean",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_show_menubar(show_menubar: boolean): void",
+     "unsupported_reason": null
+    }
+   ],
+   "name": "ApplicationWindow",
+   "native_name": "GtkApplicationWindow",
+   "properties": [
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_application_window_get_show_menubar",
+      "set": "gtk_application_window_set_show_menubar"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "false",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "If this property is true, the window will display a menubar\nunless it is shown by the desktop shell.\n\nSee [`Application.set_menubar()`](xref:gtk:Gtk.Application#method:set_menubar).\n\nIf false, the window will not display a menubar, regardless\nof whether the desktop shell is showing it or not.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.ApplicationWindow.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "CONSTRUCT",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "show-menubar",
+     "name": "show-menubar",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:prop:show-menubar",
+     "notify": "notify::show-menubar",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "inferred",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    }
+   ],
+   "qualified": "Gtk.ApplicationWindow",
+   "screenshot": "gtk/application-window",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/gtk/ApplicationWindow.yaml"
+    ],
+    "metadata_file": "metadata/gtk/ApplicationWindow.json",
+    "note": "",
+    "test_note": "Annotated facts have generated verification tests (crates/svelters-gtk); results are in metadata/verified/gtk.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     4,
+     4
+    ]
+   },
+   "summary": {
+    "license": "LGPL-2.1-or-later",
+    "md": "A `GtkWindow` subclass that integrates with `GtkApplication`.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.ApplicationWindow.html"
+   },
+   "tags": [
+    "application-window"
+   ],
+   "upstream": {
+    "label": "GTK 4 reference: GTK ApplicationWindow",
+    "url": "https://docs.gtk.org/gtk4/class.ApplicationWindow.html"
+   },
+   "values": []
+  },
+  {
+   "abi_symbols": [
+    "create",
+    "destroy",
+    "get_prop",
+    "insert",
+    "listen",
+    "remove",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [
+    "gtk:Gtk.Widget",
+    "gtk:GObject.InitiallyUnowned",
+    "gtk:GObject.Object"
+   ],
+   "children": {
+    "candidates": [
+     "method:set_child",
+     "property:child"
+    ],
+    "default_slot": "child",
+    "policy": "single_child",
+    "slots": [
+     {
+      "accepts": [
+       "Gtk.Widget"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "one",
+      "default": true,
+      "name": "child",
+      "on_remove": "empty",
+      "ops": {
+       "get": "GtkButton::get_child() const",
+       "remove": "GtkButton::set_child(GtkWidget*)",
+       "set": "GtkButton::set_child(GtkWidget*)"
+      },
+      "order": "none",
+      "ownership": {
+       "remove": "child unparented",
+       "set": "child parented, old unparented"
+      },
+      "provenance": [
+       "probe: set parents the child (direct); old child finalized on replace; set(None) unparents"
+      ]
+     }
+    ]
+   },
+   "constructors": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Creates a new `GtkButton` widget.\n\nTo add a child widget to the button, use [`Button.set_child()`](xref:gtk:Gtk.Button#method:set_child).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_new",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "constructor",
+     "name": "new",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:ctor:new",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "self"
+     },
+     "signature": "new(): self",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Creates a new button containing an icon from the current icon theme.\n\nIf the icon name isn’t known, a “broken image” icon will be\ndisplayed instead. If the current icon theme is changed, the icon\nwill be updated appropriately.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_new_from_icon_name",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "constructor",
+     "name": "new_from_icon_name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:ctor:new_from_icon_name",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "icon_name",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "self"
+     },
+     "signature": "new_from_icon_name(icon_name: string): self",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Creates a `GtkButton` widget with a `GtkLabel` child.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_new_with_label",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "constructor",
+     "name": "new_with_label",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:ctor:new_with_label",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "label",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "self"
+     },
+     "signature": "new_with_label(label: string): self",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Creates a new `GtkButton` containing a label.\n\nIf characters in `label` are preceded by an underscore, they are underlined.\nIf you need a literal underscore character in a label, use “__” (two\nunderscores). The first underlined character represents a keyboard\naccelerator called a mnemonic. Pressing <kbd>Alt</kbd> and that key\nactivates the button.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_new_with_mnemonic",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "constructor",
+     "name": "new_with_mnemonic",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:ctor:new_with_mnemonic",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "label",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "self"
+     },
+     "signature": "new_with_mnemonic(label: string): self",
+     "unsupported_reason": null
+    }
+   ],
+   "description": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Calls a callback function when the button is clicked.\n\nThe `GtkButton` widget can hold any valid child widget. That is, it can hold\nalmost any other standard `GtkWidget`. The most commonly used child is the\n`GtkLabel`.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+   },
+   "events": [
+    {
+     "annotated": true,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Emitted to animate press then release.\n\nThis is an action signal. Applications should never connect\nto this signal, but use the [`Button::clicked`](xref:gtk:Gtk.Button#event:clicked) signal.\n\nThe default bindings for this signal are all forms of the\n<kbd>␣</kbd> and <kbd>Enter</kbd> keys.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "signal_flags": [
+        "action"
+       ],
+       "when": "first"
+      }
+     },
+     "flags": [
+      "action"
+     ],
+     "handler_prop": "onactivate",
+     "handler_result": "none",
+     "js_event": "activate",
+     "name": "activate",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:signal:activate",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "first",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false,
+     "verified": true
+    },
+    {
+     "annotated": true,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Emitted when the button has been activated (pressed and released).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "signal_flags": [
+        "action"
+       ],
+       "when": "first"
+      }
+     },
+     "flags": [
+      "action"
+     ],
+     "handler_prop": "onclicked",
+     "handler_result": "none",
+     "js_event": "clicked",
+     "name": "clicked",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:signal:clicked",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "first",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false,
+     "verified": true
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "gtk": {
+       "signal_flags": [
+        "detailed"
+       ],
+       "when": "first"
+      }
+     },
+     "flags": [
+      "detailed"
+     ],
+     "handler_prop": "onnotify::can-shrink",
+     "handler_result": "none",
+     "js_event": "notify::can-shrink",
+     "name": "notify::can-shrink",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:signal:notify::can-shrink",
+     "origin": "inferred",
+     "origins": [
+      "inferred",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "first",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "gtk": {
+       "signal_flags": [
+        "detailed"
+       ],
+       "when": "first"
+      }
+     },
+     "flags": [
+      "detailed"
+     ],
+     "handler_prop": "onnotify::has-frame",
+     "handler_result": "none",
+     "js_event": "notify::has-frame",
+     "name": "notify::has-frame",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:signal:notify::has-frame",
+     "origin": "inferred",
+     "origins": [
+      "inferred",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "first",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "gtk": {
+       "signal_flags": [
+        "detailed"
+       ],
+       "when": "first"
+      }
+     },
+     "flags": [
+      "detailed"
+     ],
+     "handler_prop": "onnotify::use-underline",
+     "handler_result": "none",
+     "js_event": "notify::use-underline",
+     "name": "notify::use-underline",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:signal:notify::use-underline",
+     "origin": "inferred",
+     "origins": [
+      "inferred",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "first",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    }
+   ],
+   "examples": [
+    {
+     "code": "<script>\n  let count = $state(0);\n</script>\n\n<button label=\"Hello\" can-shrink={true} has-frame={false} onactivate={() => count++}>\n  <label>Child content</label>\n</button>\n",
+     "generated": true,
+     "lang": "svelte",
+     "tested": false,
+     "title": "Using <button>"
+    }
+   ],
+   "extensions": {
+    "gtk": {
+     "accessibility": "`GtkButton` uses the [`AccessibleRole.button`](xref:gtk:Gtk.AccessibleRole#value:button) role.",
+     "css_nodes": "`GtkButton` has a single CSS node with name button. The node will get the\nstyle classes .image-button or .text-button, if the content is just an\nimage or label, respectively. It may also receive the .flat style class.\nWhen activating a button via the keyboard, the button will temporarily\ngain the .keyboard-activating style class.\n\nOther style classes that are commonly used with `GtkButton` include\n.suggested-action and .destructive-action. In special cases, buttons\ncan be made round by adding the .circular style class.\n\nButton-like widgets like [`ToggleButton`](xref:gtk:Gtk.ToggleButton), [`MenuButton`](xref:gtk:Gtk.MenuButton),\n[`VolumeButton`](xref:gtk:Gtk.VolumeButton), [`LockButton`](xref:gtk:Gtk.LockButton), [`ColorButton`](xref:gtk:Gtk.ColorButton)\nor [`FontButton`](xref:gtk:Gtk.FontButton) use style classes such as .toggle, .popup, .scale,\n.lock, .color on the button node to differentiate themselves from a plain\n`GtkButton`.",
+     "get_type": "gtk_button_get_type",
+     "gtype": "GtkButton",
+     "shortcuts": "The following signals have default keybindings:\n\n- [`Button::activate`](xref:gtk:Gtk.Button#event:activate)",
+     "source": "gtk/gtkbutton.c:25"
+    }
+   },
+   "id": "gtk:Gtk.Button",
+   "interfaces": [
+    "gtk:Gtk.Accessible",
+    "gtk:Gtk.Actionable",
+    "gtk:Gtk.Buildable",
+    "gtk:Gtk.ConstraintTarget"
+   ],
+   "kind": "class",
+   "lifetime": {
+    "class": "owned",
+    "note": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "availability": {
+      "since": "4.12"
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Retrieves whether the button can be smaller than the natural\nsize of its contents.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_get_can_shrink",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_can_shrink",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:get_can_shrink",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "get_can_shrink(): boolean",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Gets the child widget of `button`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_get_child",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_child",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:get_child",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "Widget"
+     },
+     "signature": "get_child(): Widget",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Returns whether the button has a frame.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_get_has_frame",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_has_frame",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:get_has_frame",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "get_has_frame(): boolean",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Returns the icon name of the button.\n\nIf the icon name has not been set with [`Button.set_icon_name()`](xref:gtk:Gtk.Button#method:set_icon_name)\nthe return value will be `NULL`. This will be the case if you create\nan empty button with [`Button.new()`](xref:gtk:Gtk.Button#constructor:new) to use as a container.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_get_icon_name",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_icon_name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:get_icon_name",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "string"
+     },
+     "signature": "get_icon_name(): string",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Fetches the text from the label of the button.\n\nIf the label text has not been set with [`Button.set_label()`](xref:gtk:Gtk.Button#method:set_label)\nthe return value will be `NULL`. This will be the case if you create\nan empty button with [`Button.new()`](xref:gtk:Gtk.Button#constructor:new) to use as a container.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_get_label",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_label",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:get_label",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "string"
+     },
+     "signature": "get_label(): string",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "gets whether underlines are interpreted as mnemonics.\n\nSee [`Button.set_use_underline()`](xref:gtk:Gtk.Button#method:set_use_underline).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_get_use_underline",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_use_underline",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:get_use_underline",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "get_use_underline(): boolean",
+     "unsupported_reason": null
+    },
+    {
+     "availability": {
+      "since": "4.12"
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets whether the button size can be smaller than the natural size of\nits contents.\n\nFor text buttons, setting `can_shrink` to true will ellipsize the label.\n\nFor icons and custom children, this function has no effect.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_set_can_shrink",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_can_shrink",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:set_can_shrink",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "can_shrink",
+       "type": {
+        "display": "boolean",
+        "native": "gboolean",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_can_shrink(can_shrink: boolean): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:674-693",
+       "metadata/overrides/gtk/Window.yaml:86-106"
+      ],
+      "reason": "Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md).",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#child-setters",
+      "use_instead": "Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot=\"titlebar\">`); remove it with {#if}."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the child widget of `button`.\n\nNote that by using this API, you take full responsibility for setting\nup the proper accessibility label and description information for `button`.\nMost likely, you'll either set the accessibility label or description\nfor `button` explicitly, or you'll set a labelled-by or described-by\nrelations from `child` to `button`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_set_child",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_child",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:set_child",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "child",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "nullable": true,
+        "ref": "gtk:Gtk.Widget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_child(child: Widget): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the style of the button.\n\nButtons can have a flat appearance or have a frame drawn around them.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_set_has_frame",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_has_frame",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:set_has_frame",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "has_frame",
+       "type": {
+        "display": "boolean",
+        "native": "gboolean",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_has_frame(has_frame: boolean): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Adds a `GtkImage` with the given icon name as a child.\n\nIf `button` already contains a child widget, that child widget will\nbe removed and replaced with the image.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_set_icon_name",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_icon_name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:set_icon_name",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "icon_name",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_icon_name(icon_name: string): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the text of the label of the button to `label`.\n\nThis will also clear any previously set labels.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_set_label",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_label",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:set_label",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "label",
+       "type": {
+        "display": "string",
+        "native": "const char*",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_label(label: string): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets whether to use underlines as mnemonics.\n\nIf true, an underline in the text of the button label indicates\nthe next character should be used for the mnemonic accelerator key.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_button_set_use_underline",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_use_underline",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:method:set_use_underline",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "use_underline",
+       "type": {
+        "display": "boolean",
+        "native": "gboolean",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_use_underline(use_underline: boolean): void",
+     "unsupported_reason": null
+    }
+   ],
+   "name": "Button",
+   "native_name": "GtkButton",
+   "properties": [
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_button_get_can_shrink",
+      "set": "gtk_button_set_can_shrink"
+     },
+     "annotated": true,
+     "availability": {
+      "since": "4.12"
+     },
+     "bindable": true,
+     "default": "false",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Whether the size of the button can be made smaller than the natural\nsize of its contents.\n\nFor text buttons, setting this property will allow ellipsizing the label.\n\nIf the contents of a button are an icon or a custom widget, setting this\nproperty has no effect.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "can-shrink",
+     "name": "can-shrink",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:prop:can-shrink",
+     "notify": "notify::can-shrink",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_button_get_child",
+      "set": "gtk_button_set_child"
+     },
+     "annotated": false,
+     "bindable": true,
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:674-693"
+      ],
+      "reason": "The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692).",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#child-properties",
+      "use_instead": "Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes."
+     },
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The child widget.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "GtkWidget",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "child",
+     "name": "child",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:prop:child",
+     "notify": "notify::child",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "Widget",
+      "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+      "nullable": true,
+      "ref": "gtk:Gtk.Widget"
+     }
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_button_get_has_frame",
+      "set": "gtk_button_set_has_frame"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "true",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Whether the button has a frame.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "has-frame",
+     "name": "has-frame",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:prop:has-frame",
+     "notify": "notify::has-frame",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_button_get_icon_name",
+      "set": "gtk_button_set_icon_name"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The name of the icon used to automatically populate the button.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gchararray",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "icon-name",
+     "name": "icon-name",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:prop:icon-name",
+     "notify": "notify::icon-name",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "gchar*",
+      "neutral": "string",
+      "nullable": true
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_button_get_label",
+      "set": "gtk_button_set_label"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Text of the label inside the button, if the button contains a label widget.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gchararray",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "label",
+     "name": "label",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:prop:label",
+     "notify": "notify::label",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "gchar*",
+      "neutral": "string",
+      "nullable": true
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_button_get_use_underline",
+      "set": "gtk_button_set_use_underline"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "false",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "If set, an underline in the text indicates that the following character is\nto be used as mnemonic.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "use-underline",
+     "name": "use-underline",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Button:prop:use-underline",
+     "notify": "notify::use-underline",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    }
+   ],
+   "qualified": "Gtk.Button",
+   "screenshot": "gtk/button",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/gtk/Button.yaml"
+    ],
+    "metadata_file": "metadata/gtk/Button.json",
+    "note": "",
+    "test_note": "Annotated facts have generated verification tests (crates/svelters-gtk); results are in metadata/verified/gtk.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     21,
+     21
+    ]
+   },
+   "summary": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Calls a callback function when the button is clicked.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Button.html"
+   },
+   "tags": [
+    "button"
+   ],
+   "upstream": {
+    "label": "GTK 4 reference: GTK Button",
+    "url": "https://docs.gtk.org/gtk4/class.Button.html"
+   },
+   "values": []
+  },
+  {
+   "abi_symbols": [
+    "create",
+    "destroy",
+    "get_prop",
+    "insert",
+    "listen",
+    "remove",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [
+    "gtk:Gtk.Widget",
+    "gtk:GObject.InitiallyUnowned",
+    "gtk:GObject.Object"
+   ],
+   "children": {
+    "candidates": [
+     "method:attach",
+     "method:attach_next_to",
+     "method:insert_next_to",
+     "method:remove"
+    ],
+    "default_slot": "cells",
+    "policy": "layout_managed",
+    "slots": [
+     {
+      "accepts": [
+       "Gtk.Widget"
+      ],
+      "annotated": true,
+      "attrs": [
+       "column",
+       "row",
+       "column-span",
+       "row-span"
+      ],
+      "cardinality": "many",
+      "default": true,
+      "name": "cells",
+      "on_remove": "empty",
+      "ops": {
+       "get": "contains: parent",
+       "insert": "GtkGrid::attach(GtkWidget*, int, int, int, int)",
+       "remove": "GtkGrid::remove(GtkWidget*)"
+      },
+      "order": "unordered",
+      "ownership": {
+       "insert": "child parented",
+       "remove": "child unparented"
+      },
+      "provenance": [
+       "gir: gtk_grid_attach",
+       "gir: gtk_grid_remove"
+      ]
+     }
+    ]
+   },
+   "constructors": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Creates a new grid widget.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_grid_new",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "constructor",
+     "name": "new",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Grid:ctor:new",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "self"
+     },
+     "signature": "new(): self",
+     "unsupported_reason": null
+    }
+   ],
+   "description": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Arranges its child widgets in rows and columns.\n\nIt supports arbitrary positions and horizontal/vertical spans.\n\nChildren are added using [`Grid.attach()`](xref:gtk:Gtk.Grid#method:attach). They can span multiple\nrows or columns. It is also possible to add a child next to an existing\nchild, using [`Grid.attach_next_to()`](xref:gtk:Gtk.Grid#method:attach_next_to). To remove a child from the\ngrid, use [`Grid.remove()`](xref:gtk:Gtk.Grid#method:remove).\n\nThe behaviour of `GtkGrid` when several children occupy the same grid\ncell is undefined.\n\n#### GtkGrid as GtkBuildable\n\nEvery child in a `GtkGrid` has access to a custom [`Buildable`](xref:gtk:Gtk.Buildable)\nelement, called `<layout>`. It can by used to specify a position in the\ngrid and optionally spans. All properties that can be used in the `<layout>`\nelement are implemented by [`GridLayoutChild`](xref:gtk:Gtk.GridLayoutChild).\n\nIt is implemented by `GtkWidget` using [`LayoutManager`](xref:gtk:Gtk.LayoutManager).\n\nTo showcase it, here is a simple example:\n\n```xml\n<object class=\"GtkGrid\" id=\"my_grid\">\n  <child>\n    <object class=\"GtkButton\" id=\"button1\">\n      <property name=\"label\">Button 1</property>\n      <layout>\n        <property name=\"column\">0</property>\n        <property name=\"row\">0</property>\n      </layout>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkButton\" id=\"button2\">\n      <property name=\"label\">Button 2</property>\n      <layout>\n        <property name=\"column\">1</property>\n        <property name=\"row\">0</property>\n      </layout>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkButton\" id=\"button3\">\n      <property name=\"label\">Button 3</property>\n      <layout>\n        <property name=\"column\">2</property>\n        <property name=\"row\">0</property>\n        <property name=\"row-span\">2</property>\n      </layout>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkButton\" id=\"button4\">\n      <property name=\"label\">Button 4</property>\n      <layout>\n        <property name=\"column\">0</property>\n        <property name=\"row\">1</property>\n        <property name=\"column-span\">2</property>\n      </layout>\n    </object>\n  </child>\n</object>\n```\n\nIt organizes the first two buttons side-by-side in one cell each.\nThe third button is in the last column but spans across two rows.\nThis is defined by the `row-span` property. The last button is\nlocated in the second row and spans across two columns, which is\ndefined by the `column-span` property.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Grid.html"
+   },
+   "events": [],
+   "examples": [
+    {
+     "code": "<script>\n  let count = $state(0);\n</script>\n\n<grid baseline-row={8} column-homogeneous={true} column-spacing={8} onnotify::baseline-row={() => count++}>\n  <label>Child content</label>\n</grid>\n",
+     "generated": true,
+     "lang": "svelte",
+     "tested": false,
+     "title": "Using <grid>"
+    }
+   ],
+   "extensions": {
+    "gtk": {
+     "accessibility": "Until GTK 4.10, `GtkGrid` used the [`AccessibleRole.group`](xref:gtk:Gtk.AccessibleRole#value:group) role.\n\nStarting from GTK 4.12, `GtkGrid` uses the [`AccessibleRole.generic`](xref:gtk:Gtk.AccessibleRole#value:generic) role.",
+     "css_nodes": "`GtkGrid` uses a single CSS node with name `grid`.",
+     "get_type": "gtk_grid_get_type",
+     "gtype": "GtkGrid",
+     "source": "gtk/gtkgrid.c:35"
+    }
+   },
+   "id": "gtk:Gtk.Grid",
+   "interfaces": [
+    "gtk:Gtk.Accessible",
+    "gtk:Gtk.Buildable",
+    "gtk:Gtk.ConstraintTarget",
+    "gtk:Gtk.Orientable"
+   ],
+   "kind": "class",
+   "lifetime": {
+    "class": "owned",
+    "note": "derived: GtkWidget (floating ref sunk by the handle table; the parent holds a ref while inserted)",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/gtk/Grid.yaml:61-62"
+      ],
+      "reason": "The Grid slot attaches and removes children itself (metadata/overrides/gtk/Grid.yaml:61-62); remove_row/remove_column also destroy children the renderer still holds.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#grid-children",
+      "use_instead": "Children of <grid> with the `parent:` child attributes (column, row, spans)."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Adds a widget to the grid.\n\nThe position of `child` is determined by `column` and `row`.\nThe number of “cells” that `child` will occupy is determined\nby `width` and `height`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_grid_attach",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "attach",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Grid:method:attach",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "child",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "ref": "gtk:Gtk.Widget"
+       }
+      },
+      {
+       "name": "column",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      },
+      {
+       "name": "row",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      },
+      {
+       "name": "width",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      },
+      {
+       "name": "height",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "attach(child: Widget, column: number, row: number, width: number, height: number): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/gtk/Grid.yaml:61-62"
+      ],
+      "reason": "The Grid slot attaches and removes children itself (metadata/overrides/gtk/Grid.yaml:61-62); remove_row/remove_column also destroy children the renderer still holds.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#grid-children",
+      "use_instead": "Children of <grid> with the `parent:` child attributes (column, row, spans)."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Adds a widget to the grid.\n\nThe widget is placed next to `sibling`, on the side determined by\n`side`. When `sibling` is `NULL`, the widget is placed in row (for\nleft or right placement) or column 0 (for top or bottom placement),\nat the end indicated by `side`.\n\nAttaching widgets labeled `[1]`, `[2]`, `[3]` with `@sibling == `NULL`` and\n`@side == %GTK_POS_LEFT` yields a layout of `[3][2][1]`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_grid_attach_next_to",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "attach_next_to",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Grid:method:attach_next_to",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "child",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "ref": "gtk:Gtk.Widget"
+       }
+      },
+      {
+       "name": "sibling",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "nullable": true,
+        "ref": "gtk:Gtk.Widget"
+       }
+      },
+      {
+       "name": "side",
+       "type": {
+        "display": "PositionType",
+        "native": "GtkPositionType",
+        "neutral": "enum<svelters-api:v1:type:gtk:Gtk:PositionType>",
+        "ref": "gtk:Gtk.PositionType"
+       }
+      },
+      {
+       "name": "width",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      },
+      {
+       "name": "height",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "attach_next_to(child: Widget, sibling: Widget, side: PositionType, width: number, height: number): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/gtk/Grid.yaml:61-62"
+      ],
+      "reason": "The Grid slot attaches and removes children itself (metadata/overrides/gtk/Grid.yaml:61-62); remove_row/remove_column also destroy children the renderer still holds.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#grid-children",
+      "use_instead": "Children of <grid> with the `parent:` child attributes (column, row, spans)."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Removes a child from `grid`.\n\nThe child must have been added with\n[`Grid.attach()`](xref:gtk:Gtk.Grid#method:attach) or [`Grid.attach_next_to()`](xref:gtk:Gtk.Grid#method:attach_next_to).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_grid_remove",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "remove",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Grid:method:remove",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "child",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "ref": "gtk:Gtk.Widget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "remove(child: Widget): void",
+     "unsupported_reason": null
+    }
+   ],
+   "name": "Grid",
+   "native_name": "GtkGrid",
+   "properties": [
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_grid_get_column_homogeneous",
+      "set": "gtk_grid_set_column_homogeneous"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "false",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "If `TRUE`, the columns are all the same width.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Grid.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "column-homogeneous",
+     "name": "column-homogeneous",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:column-homogeneous",
+     "notify": "notify::column-homogeneous",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_grid_get_row_spacing",
+      "set": "gtk_grid_set_row_spacing"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "0",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The amount of space between two consecutive rows.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Grid.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gint",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "row-spacing",
+     "name": "row-spacing",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:row-spacing",
+     "notify": "notify::row-spacing",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": {
+      "max": 32767,
+      "min": 0
+     },
+     "role": "value",
+     "type": {
+      "display": "number",
+      "native": "gint",
+      "neutral": "i32"
+     },
+     "verified": true
+    }
+   ],
+   "qualified": "Gtk.Grid",
+   "screenshot": "gtk/grid",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/gtk/Grid.yaml"
+    ],
+    "metadata_file": "metadata/gtk/Grid.json",
+    "note": "",
+    "test_note": "Annotated facts have generated verification tests (crates/svelters-gtk); results are in metadata/verified/gtk.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     21,
+     21
+    ]
+   },
+   "summary": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Arranges its child widgets in rows and columns.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Grid.html"
+   },
+   "tags": [
+    "grid"
+   ],
+   "upstream": {
+    "label": "GTK 4 reference: GTK Grid",
+    "url": "https://docs.gtk.org/gtk4/class.Grid.html"
+   },
+   "values": []
+  },
+  {
+   "abi_symbols": [],
+   "abstract": false,
+   "bases": [],
+   "constructors": [],
+   "description": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Represents the orientation of widgets and other objects.\n\nTypical examples are [`Box`](xref:gtk:Box) or [`GesturePan`](xref:gtk:GesturePan).",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/enum.Orientation.html"
+   },
+   "events": [],
+   "extensions": {
+    "gtk": {
+     "get_type": "",
+     "gtype": "GtkOrientation",
+     "source": "gtk/gtkenums.h:428"
+    }
+   },
+   "id": "gtk:Gtk.Orientation",
+   "interfaces": [],
+   "kind": "enum",
+   "methods": [],
+   "name": "Orientation",
+   "native_name": "GtkOrientation",
+   "properties": [],
+   "qualified": "Gtk.Orientation",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "metadata_file": "metadata/gtk/Orientation.json",
+    "note": "Raw: GTK properties and signals of this kind are reachable through the generated tables (dynamic GObject access), but its child slots, ownership and signal semantics are neither annotated nor tested.",
+    "tested": false,
+    "tier": "ingested",
+    "verified_facts": [
+     0,
+     0
+    ]
+   },
+   "summary": {
+    "license": "LGPL-2.1-or-later",
+    "md": "Represents the orientation of widgets and other objects.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/enum.Orientation.html"
+   },
+   "tags": [],
+   "upstream": {
+    "label": "GTK 4 reference: GTK Orientation",
+    "url": "https://docs.gtk.org/gtk4/enum.Orientation.html"
+   },
+   "values": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The element is in horizontal orientation.",
+      "origin": "gir"
+     },
+     "name": "horizontal",
+     "native": "GTK_ORIENTATION_HORIZONTAL",
+     "nick": "horizontal",
+     "value": 0
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The element is in vertical orientation.",
+      "origin": "gir"
+     },
+     "name": "vertical",
+     "native": "GTK_ORIENTATION_VERTICAL",
+     "nick": "vertical",
+     "value": 1
+    }
+   ]
+  },
+  {
+   "abi_symbols": [
+    "get_prop",
+    "listen",
+    "set_prop"
+   ],
+   "abstract": true,
+   "bases": [
+    "gtk:GObject.InitiallyUnowned",
+    "gtk:GObject.Object"
+   ],
+   "children": {
+    "candidates": [
+     "method:add_mnemonic_label",
+     "method:insert_after",
+     "method:insert_before"
+    ],
+    "default_slot": null,
+    "policy": "unknown",
+    "slots": []
+   },
+   "constructors": [],
+   "description": {
+    "license": "LGPL-2.1-or-later",
+    "md": "The base class for all widgets.\n\nIt manages the widget lifecycle, layout, states and style.\n\n### Height-for-width Geometry Management\n\nGTK uses a height-for-width (and width-for-height) geometry management\nsystem. Height-for-width means that a widget can change how much\nvertical space it needs, depending on the amount of horizontal space\nthat it is given (and similar for width-for-height). The most common\nexample is a label that reflows to fill up the available width, wraps\nto fewer lines, and therefore needs less height.\n\nHeight-for-width geometry management is implemented in GTK by way\nof two virtual methods:\n\n- [`Widget.get_request_mode()`](xref:gtk:Gtk.Widget#vfunc:get_request_mode)\n- [`Widget.measure()`](xref:gtk:Gtk.Widget#vfunc:measure)\n\nThere are some important things to keep in mind when implementing\nheight-for-width and when using it in widget implementations.\n\nIf you implement a direct `GtkWidget` subclass that supports\nheight-for-width or width-for-height geometry management for itself\nor its child widgets, the [`Widget.get_request_mode()`](xref:gtk:Gtk.Widget#vfunc:get_request_mode) virtual\nfunction must be implemented as well and return the widget's preferred\nrequest mode. The default implementation of this virtual function\nreturns %GTK_SIZE_REQUEST_CONSTANT_SIZE, which means that the widget will\nonly ever get -1 passed as the for_size value to its\n[`Widget.measure()`](xref:gtk:Gtk.Widget#vfunc:measure) implementation.\n\nThe geometry management system will query a widget hierarchy in\nonly one orientation at a time. When widgets are initially queried\nfor their minimum sizes it is generally done in two initial passes\nin the [`SizeRequestMode`](xref:gtk:Gtk.SizeRequestMode) chosen by the toplevel.\n\nFor example, when queried in the normal %GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH mode:\n\nFirst, the default minimum and natural width for each widget\nin the interface will be computed using [`Widget.measure()`](xref:gtk:Gtk.Widget#method:measure) with an\norientation of %GTK_ORIENTATION_HORIZONTAL and a for_size of -1.\nBecause the preferred widths for each widget depend on the preferred\nwidths of their children, this information propagates up the hierarchy,\nand finally a minimum and natural width is determined for the entire\ntoplevel. Next, the toplevel will use the minimum width to query for the\nminimum height contextual to that width using [`Widget.measure()`](xref:gtk:Gtk.Widget#method:measure) with an\norientation of %GTK_ORIENTATION_VERTICAL and a for_size of the just computed\nwidth. This will also be a highly recursive operation. The minimum height\nfor the minimum width is normally used to set the minimum size constraint\non the toplevel.\n\nAfter the toplevel window has initially requested its size in both\ndimensions it can go on to allocate itself a reasonable size (or a size\npreviously specified with [`Window.set_default_size()`](xref:gtk:Gtk.Window#method:set_default_size)). During the\nrecursive allocation process it’s important to note that request cycles\nwill be recursively executed while widgets allocate their children.\nEach widget, once allocated a size, will go on to first share the\nspace in one orientation among its children and then request each child's\nheight for its target allocated width or its width for allocated height,\ndepending. In this way a widget will typically be requested its size\na number of times before actually being allocated a size. The size a\nwidget is finally allocated can of course differ from the size it has\nrequested. For this reason, `GtkWidget` caches a  small number of results\nto avoid re-querying for the same sizes in one allocation cycle.\n\nIf a widget does move content around to intelligently use up the\nallocated size then it must support the request in both\n`GtkSizeRequestMode`s even if the widget in question only\ntrades sizes in a single orientation.\n\nFor instance, a [`Label`](xref:gtk:Gtk.Label) that does height-for-width word wrapping\nwill not expect to have [`Widget.measure()`](xref:gtk:Gtk.Widget#vfunc:measure) with an orientation of\n%GTK_ORIENTATION_VERTICAL called because that call is specific to a\nwidth-for-height request. In this case the label must return the height\nrequired for its own minimum possible width. By following this rule any\nwidget that handles height-for-width or width-for-height requests will\nalways be allocated at least enough space to fit its own content.\n\nHere are some examples of how a %GTK_SIZE_REQUEST_HEIGHT_FOR_WIDTH widget\ngenerally deals with width-for-height requests:\n\n```c\nstatic void\nfoo_widget_measure (GtkWidget      *widget,\n                    GtkOrientation  orientation,\n                    int             for_size,\n                    int            *minimum_size,\n                    int            *natural_size,\n                    int            *minimum_baseline,\n                    int            *natural_baseline)\n{\n  if (orientation == GTK_ORIENTATION_HORIZONTAL)\n    {\n      // Calculate minimum and natural width\n    }\n  else // VERTICAL\n    {\n      if (i_am_in_height_for_width_mode)\n        {\n          int min_width, dummy;\n\n          // First, get the minimum width of our widget\n          GTK_WIDGET_GET_CLASS (widget)->measure (widget, GTK_ORIENTATION_HORIZONTAL, -1,\n                                                  &min_width, &dummy, &dummy, &dummy);\n\n          // Now use the minimum width to retrieve the minimum and natural height to display\n          // that width.\n          GTK_WIDGET_GET_CLASS (widget)->measure (widget, GTK_ORIENTATION_VERTICAL, min_width,\n                                                  minimum_size, natural_size, &dummy, &dummy);\n        }\n      else\n        {\n          // ... some widgets do both.\n        }\n    }\n}\n```\n\nOften a widget needs to get its own request during size request or\nallocation. For example, when computing height it may need to also\ncompute width. Or when deciding how to use an allocation, the widget\nmay need to know its natural size. In these cases, the widget should\nbe careful to call its virtual methods directly, like in the code\nexample above.\n\nIt will not work to use the wrapper function [`Widget.measure()`](xref:gtk:Gtk.Widget#method:measure)\ninside your own [`Widget.size_allocate()`](xref:gtk:Gtk.Widget#vfunc:size_allocate) implementation.\nThese return a request adjusted by [`SizeGroup`](xref:gtk:Gtk.SizeGroup), the widget's\nalign and expand flags, as well as its CSS style.\n\nIf a widget used the wrappers inside its virtual method implementations,\nthen the adjustments (such as widget margins) would be applied\ntwice. GTK therefore does not allow this and will warn if you try\nto do it.\n\nOf course if you are getting the size request for another widget, such\nas a child widget, you must use [`Widget.measure()`](xref:gtk:Gtk.Widget#method:measure); otherwise, you\nwould not properly consider widget margins, [`SizeGroup`](xref:gtk:Gtk.SizeGroup), and\nso forth.\n\nGTK also supports baseline vertical alignment of widgets. This\nmeans that widgets are positioned such that the typographical baseline of\nwidgets in the same row are aligned. This happens if a widget supports\nbaselines, has a vertical alignment using baselines, and is inside\na widget that supports baselines and has a natural “row” that it aligns to\nthe baseline, or a baseline assigned to it by the grandparent.\n\nBaseline alignment support for a widget is also done by the\n[`Widget.measure()`](xref:gtk:Gtk.Widget#vfunc:measure) virtual function. It allows you to report\nboth a minimum and natural size.\n\nIf a widget ends up baseline aligned it will be allocated all the space in\nthe parent as if it was %GTK_ALIGN_FILL, but the selected baseline can be\nfound via [`Widget.get_baseline()`](xref:gtk:Gtk.Widget#method:get_baseline). If the baseline has a\nvalue other than -1 you need to align the widget such that the baseline\nappears at the position.\n\n### GtkWidget as GtkBuildable\n\nThe `GtkWidget` implementation of the `GtkBuildable` interface\nsupports various custom elements to specify additional aspects of widgets\nthat are not directly expressed as properties.\n\nIf the widget uses a [`LayoutManager`](xref:gtk:Gtk.LayoutManager), `GtkWidget` supports\na custom `<layout>` element, used to define layout properties:\n\n```xml\n<object class=\"GtkGrid\" id=\"my_grid\">\n  <child>\n    <object class=\"GtkLabel\" id=\"label1\">\n      <property name=\"label\">Description</property>\n      <layout>\n        <property name=\"column\">0</property>\n        <property name=\"row\">0</property>\n        <property name=\"row-span\">1</property>\n        <property name=\"column-span\">1</property>\n      </layout>\n    </object>\n  </child>\n  <child>\n    <object class=\"GtkEntry\" id=\"description_entry\">\n      <layout>\n        <property name=\"column\">1</property>\n        <property name=\"row\">0</property>\n        <property name=\"row-span\">1</property>\n        <property name=\"column-span\">1</property>\n      </layout>\n    </object>\n  </child>\n</object>\n```\n\n`GtkWidget` allows style information such as style classes to\nbe associated with widgets, using the custom `<style>` element:\n\n```xml\n<object class=\"GtkButton\" id=\"button1\">\n  <style>\n    <class name=\"my-special-button-class\"/>\n    <class name=\"dark-button\"/>\n  </style>\n</object>\n```\n\n`GtkWidget` allows defining accessibility information, such as properties,\nrelations, and states, using the custom `<accessibility>` element:\n\n```xml\n<object class=\"GtkButton\" id=\"button1\">\n  <accessibility>\n    <property name=\"label\">Download</property>\n    <relation name=\"labelled-by\">label1</relation>\n  </accessibility>\n</object>\n```\n\n### Building composite widgets from template XML\n\n`GtkWidget `exposes some facilities to automate the procedure\nof creating composite widgets using \"templates\".\n\nTo create composite widgets with `GtkBuilder` XML, one must associate\nthe interface description with the widget class at class initialization\ntime using [`WidgetClass.set_template()`](xref:gtk:Gtk.WidgetClass#method:set_template).\n\nThe interface description semantics expected in composite template descriptions\nis slightly different from regular [`Builder`](xref:gtk:Gtk.Builder) XML.\n\nUnlike regular interface descriptions, [`WidgetClass.set_template()`](xref:gtk:Gtk.WidgetClass#method:set_template)\nwill expect a `<template>` tag as a direct child of the toplevel\n`<interface>` tag. The `<template>` tag must specify the “class” attribute\nwhich must be the type name of the widget. Optionally, the “parent”\nattribute may be specified to specify the direct parent type of the widget\ntype; this is ignored by `GtkBuilder` but can be used by UI design tools to\nintrospect what kind of properties and internal children exist for a given\ntype when the actual type does not exist.\n\nThe XML which is contained inside the `<template>` tag behaves as if it were\nadded to the `<object>` tag defining the widget itself. You may set properties\non a widget by inserting `<property>` tags into the `<template>` tag, and also\nadd `<child>` tags to add children and extend a widget in the normal way you\nwould with `<object>` tags.\n\nAdditionally, `<object>` tags can also be added before and after the initial\n`<template>` tag in the normal way, allowing one to define auxiliary objects\nwhich might be referenced by other widgets declared as children of the\n`<template>` tag.\n\nSince, unlike the `<object>` tag, the `<template>` tag does not contain an\n“id” attribute, if you need to refer to the instance of the object itself that\nthe template will create, simply refer to the template class name in an\napplicable element content.\n\nHere is an example of a template definition, which includes an example of\nthis in the `<signal>` tag:\n\n```xml\n<interface>\n  <template class=\"FooWidget\" parent=\"GtkBox\">\n    <property name=\"orientation\">horizontal</property>\n    <property name=\"spacing\">4</property>\n    <child>\n      <object class=\"GtkButton\" id=\"hello_button\">\n        <property name=\"label\">Hello World</property>\n        <signal name=\"clicked\" handler=\"hello_button_clicked\" object=\"FooWidget\" swapped=\"yes\"/>\n      </object>\n    </child>\n    <child>\n      <object class=\"GtkButton\" id=\"goodbye_button\">\n        <property name=\"label\">Goodbye World</property>\n      </object>\n    </child>\n  </template>\n</interface>\n```\n\nTypically, you'll place the template fragment into a file that is\nbundled with your project, using `GResource`. In order to load the\ntemplate, you need to call [`WidgetClass.set_template_from_resource()`](xref:gtk:Gtk.WidgetClass#method:set_template_from_resource)\nfrom the class initialization of your `GtkWidget` type:\n\n```c\nstatic void\nfoo_widget_class_init (FooWidgetClass *klass)\n{\n  // ...\n\n  gtk_widget_class_set_template_from_resource (GTK_WIDGET_CLASS (klass),\n                                               \"/com/example/ui/foowidget.ui\");\n}\n```\n\nYou will also need to call [`Widget.init_template()`](xref:gtk:Gtk.Widget#method:init_template) from the\ninstance initialization function:\n\n```c\nstatic void\nfoo_widget_init (FooWidget *self)\n{\n  gtk_widget_init_template (GTK_WIDGET (self));\n\n  // Initialize the rest of the widget...\n}\n```\n\nas well as calling [`Widget.dispose_template()`](xref:gtk:Gtk.Widget#method:dispose_template) from the dispose\nfunction:\n\n```c\nstatic void\nfoo_widget_dispose (GObject *gobject)\n{\n  FooWidget *self = FOO_WIDGET (gobject);\n\n  // Dispose objects for which you have a reference...\n\n  // Clear the template children for this widget type\n  gtk_widget_dispose_template (GTK_WIDGET (self), FOO_TYPE_WIDGET);\n\n  G_OBJECT_CLASS (foo_widget_parent_class)->dispose (gobject);\n}\n```\n\nYou can access widgets defined in the template using the\n[`Widget.get_template_child()`](xref:gtk:Gtk.Widget#method:get_template_child) function, but you will typically declare\na pointer in the instance private data structure of your type using the same\nname as the widget in the template definition, and call\n[`WidgetClass.bind_template_child_full()`](xref:gtk:Gtk.WidgetClass#method:bind_template_child_full) (or one of its wrapper macros\n`widget_class_bind_template_child` and `widget_class_bind_template_child_private`)\nwith that name, e.g.\n\n```c\ntypedef struct {\n  GtkWidget *hello_button;\n  GtkWidget *goodbye_button;\n} FooWidgetPrivate;\n\nG_DEFINE_TYPE_WITH_PRIVATE (FooWidget, foo_widget, GTK_TYPE_BOX)\n\nstatic void\nfoo_widget_dispose (GObject *gobject)\n{\n  gtk_widget_dispose_template (GTK_WIDGET (gobject), FOO_TYPE_WIDGET);\n\n  G_OBJECT_CLASS (foo_widget_parent_class)->dispose (gobject);\n}\n\nstatic void\nfoo_widget_class_init (FooWidgetClass *klass)\n{\n  // ...\n  G_OBJECT_CLASS (klass)->dispose = foo_widget_dispose;\n\n  gtk_widget_class_set_template_from_resource (GTK_WIDGET_CLASS (klass),\n                                               \"/com/example/ui/foowidget.ui\");\n  gtk_widget_class_bind_template_child_private (GTK_WIDGET_CLASS (klass),\n                                                FooWidget, hello_button);\n  gtk_widget_class_bind_template_child_private (GTK_WIDGET_CLASS (klass),\n                                                FooWidget, goodbye_button);\n}\n\nstatic void\nfoo_widget_init (FooWidget *widget)\n{\n  gtk_widget_init_template (GTK_WIDGET (widget));\n}\n```\n\nYou can also use [`WidgetClass.bind_template_callback_full()`](xref:gtk:Gtk.WidgetClass#method:bind_template_callback_full) (or\nis wrapper macro `widget_class_bind_template_callback`) to connect\na signal callback defined in the template with a function visible in the\nscope of the class, e.g.\n\n```c\n// the signal handler has the instance and user data swapped\n// because of the swapped=\"yes\" attribute in the template XML\nstatic void\nhello_button_clicked (FooWidget *self,\n                      GtkButton *button)\n{\n  g_print (\"Hello, world!\\n\");\n}\n\nstatic void\nfoo_widget_class_init (FooWidgetClass *klass)\n{\n  // ...\n  gtk_widget_class_set_template_from_resource (GTK_WIDGET_CLASS (klass),\n                                               \"/com/example/ui/foowidget.ui\");\n  gtk_widget_class_bind_template_callback (GTK_WIDGET_CLASS (klass), hello_button_clicked);\n}\n```",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Widget.html"
+   },
+   "events": [
+    {
+     "annotated": false,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Signals that all holders of a reference to the widget should release\nthe reference that they hold.\n\nMay result in finalization of the widget if all references are released.\n\nThis signal is not suitable for saving widget state.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "signal_flags": [
+        "no_recurse",
+        "no_hooks"
+       ],
+       "when": "cleanup"
+      }
+     },
+     "flags": [
+      "no_recurse",
+      "no_hooks"
+     ],
+     "handler_prop": "ondestroy",
+     "handler_result": "none",
+     "js_event": "destroy",
+     "name": "destroy",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:signal:destroy",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "cleanup",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": true,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Emitted when `widget` is shown.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "signal_flags": [],
+       "when": "first"
+      }
+     },
+     "flags": [],
+     "handler_prop": "onshow",
+     "handler_result": "none",
+     "js_event": "show",
+     "name": "show",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "first",
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false,
+     "verified": true
+    }
+   ],
+   "extensions": {
+    "gtk": {
+     "get_type": "gtk_widget_get_type",
+     "gtype": "GtkWidget",
+     "source": "gtk/gtkwidget.c:91"
+    }
+   },
+   "id": "gtk:Gtk.Widget",
+   "interfaces": [
+    "gtk:Gtk.Accessible",
+    "gtk:Gtk.Buildable",
+    "gtk:Gtk.ConstraintTarget"
+   ],
+   "kind": "class",
+   "lifetime": {
+    "class": "unknown",
+    "note": "derived: abstract type, JS cannot create it",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Activates the widget.\n\nThe activation will emit the signal set using\n[`WidgetClass.set_activate_signal()`](xref:gtk:Gtk.WidgetClass#method:set_activate_signal)\nduring class initialization.\n\nActivation is what happens when you press <kbd>Enter</kbd>\non a widget.\n\nIf you wish to handle the activation keybinding yourself,\nit is recommended to use [`WidgetClass.add_shortcut()`](xref:gtk:Gtk.WidgetClass#method:add_shortcut)\nwith an action created with [`SignalAction.new()`](xref:gtk:Gtk.SignalAction#constructor:new).\n\nIf `widget` is not activatable, the function returns false.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_activate",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "activate",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:activate",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "activate(): boolean",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Determines whether the widget is visible.\n\nIf you want to take into account whether the widget’s\nparent is also marked as visible, use\n[`Widget.is_visible()`](xref:gtk:Gtk.Widget#method:is_visible) instead.\n\nThis function does not check if the widget is\nobscured in any way.\n\nSee [`Widget.set_visible()`](xref:gtk:Gtk.Widget#method:set_visible).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_get_visible",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "get_visible",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "get_visible(): boolean",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Causes `widget` to have the keyboard focus for the window\nthat it belongs to.\n\nIf `widget` is not focusable, or its [`Widget.grab_focus()`](xref:gtk:Gtk.Widget#vfunc:grab_focus)\nimplementation cannot transfer the focus to a descendant of `widget`\nthat is focusable, it will not take focus and false will be returned.\n\nCalling [`Widget.grab_focus()`](xref:gtk:Gtk.Widget#method:grab_focus) on an already focused widget\nis allowed, should not have an effect, and return true.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_grab_focus",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "grab_focus",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "grab_focus(): boolean",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:643-739"
+      ],
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#widget-tree",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the parent widget of the widget.\n\nIn contrast to [`Widget.set_parent()`](xref:gtk:Gtk.Widget#method:set_parent), this function\ninserts `widget` at a specific position into the list of children\nof the `parent` widget.\n\nIt will be placed after `previous_sibling`, or at the beginning if\n`previous_sibling` is `NULL`.\n\nAfter calling this function, `gtk_widget_get_prev_sibling (widget)`\nwill return `previous_sibling`.\n\nIf `parent` is already set as the parent widget of `widget`, this\nfunction can also be used to reorder `widget` in the child widget\nlist of `parent`.\n\nThis function is primarily meant for widget implementations; if you are\njust using a widget, you *must* use its own API for adding children.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_insert_after",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "insert_after",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:insert_after",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "parent",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "ref": "gtk:Gtk.Widget"
+       }
+      },
+      {
+       "name": "previous_sibling",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "nullable": true,
+        "ref": "gtk:Gtk.Widget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "insert_after(parent: Widget, previous_sibling: Widget): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:643-739"
+      ],
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#widget-tree",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the parent widget of the widget.\n\nIn contrast to [`Widget.set_parent()`](xref:gtk:Gtk.Widget#method:set_parent), this function\ninserts `widget` at a specific position into the list of children\nof the `parent` widget.\n\nIt will be placed before `next_sibling`, or at the end if\n`next_sibling` is `NULL`.\n\nAfter calling this function, `gtk_widget_get_next_sibling (widget)`\nwill return `next_sibling`.\n\nIf `parent` is already set as the parent widget of `widget`, this function\ncan also be used to reorder `widget` in the child widget list of `parent`.\n\nThis function is primarily meant for widget implementations; if you are\njust using a widget, you *must* use its own API for adding children.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_insert_before",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "insert_before",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:insert_before",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "parent",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "ref": "gtk:Gtk.Widget"
+       }
+      },
+      {
+       "name": "next_sibling",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "nullable": true,
+        "ref": "gtk:Gtk.Widget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "insert_before(parent: Widget, next_sibling: Widget): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:643-739"
+      ],
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#widget-tree",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the parent widget of the widget.\n\nThis takes care of details such as updating the state and style\nof the child to reflect its new location and resizing the parent.\nThe opposite function is [`Widget.unparent()`](xref:gtk:Gtk.Widget#method:unparent).\n\nThis function is useful only when implementing subclasses of\n`GtkWidget`.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_set_parent",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_parent",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_parent",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "parent",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "ref": "gtk:Gtk.Widget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_parent(parent: Widget): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the visibility state of `widget`.\n\nNote that setting this to true doesn’t mean the widget is\nactually viewable, see [`Widget.get_visible()`](xref:gtk:Gtk.Widget#method:get_visible).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_set_visible",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_visible",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "visible",
+       "type": {
+        "display": "boolean",
+        "native": "gboolean",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_visible(visible: boolean): void",
+     "unsupported_reason": null
+    },
+    {
+     "availability": {
+      "deprecated": "4.10",
+      "deprecated_note": "Use [`Widget.set_visible()`](xref:gtk:Gtk.Widget#method:set_visible) instead"
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Flags a widget to be displayed.\n\nAny widget that isn’t shown will not appear on the screen.\n\nRemember that you have to show the containers containing a widget,\nin addition to the widget itself, before it will appear onscreen.\n\nWhen a toplevel widget is shown, it is immediately realized and\nmapped; other shown widgets are realized and mapped when their\ntoplevel widget is realized and mapped.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_show",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "show",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:show",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "show(): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:643-739"
+      ],
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#widget-tree",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Removes `widget` from its parent.\n\nThis function is only for use in widget implementations,\ntypically in dispose.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_widget_unparent",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "unparent",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:method:unparent",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "unparent(): void",
+     "unsupported_reason": null
+    }
+   ],
+   "name": "Widget",
+   "native_name": "GtkWidget",
+   "properties": [
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_widget_get_can_focus",
+      "set": "gtk_widget_set_can_focus"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "true",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Whether the widget or any of its descendents can accept\nthe input focus.\n\nThis property is meant to be set by widget implementations,\ntypically in their instance init function.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Widget.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "can-focus",
+     "name": "can-focus",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
+     "notify": "notify::can-focus",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_widget_get_css_classes",
+      "set": "gtk_widget_set_css_classes"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "\"[]\"",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "A list of css classes applied to this widget.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Widget.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "GStrv",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE"
+       ]
+      }
+     },
+     "js_name": "css-classes",
+     "name": "css-classes",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
+     "notify": "notify::css-classes",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string[]",
+      "neutral": "list<string>"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_widget_get_hexpand",
+      "set": "gtk_widget_set_hexpand"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "false",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Whether to expand horizontally.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Widget.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "hexpand",
+     "name": "hexpand",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand",
+     "notify": "notify::hexpand",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_widget_get_tooltip_text",
+      "set": "gtk_widget_set_tooltip_text"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the text of tooltip to be the given string.\n\nAlso see [`Tooltip.set_text()`](xref:gtk:Gtk.Tooltip#method:set_text).\n\nThis is a convenience property which will take care of getting the\ntooltip shown if the given string is not `NULL`:\n[`Widget:has-tooltip`](xref:gtk:Gtk.Widget#property:has-tooltip) will automatically be set to true\nand there will be taken care of [`Widget::query-tooltip`](xref:gtk:Gtk.Widget#event:query-tooltip) in\nthe default signal handler.\n\nNote that if both [`Widget:tooltip-text`](xref:gtk:Gtk.Widget#property:tooltip-text) and\n[`Widget:tooltip-markup`](xref:gtk:Gtk.Widget#property:tooltip-markup) are set, the last one wins.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Widget.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gchararray",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "tooltip-text",
+     "name": "tooltip-text",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:tooltip-text",
+     "notify": "notify::tooltip-text",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "gchar*",
+      "neutral": "string",
+      "nullable": true
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_widget_get_visible",
+      "set": "gtk_widget_set_visible"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "true",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Whether the widget is visible.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Widget.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "visible",
+     "name": "visible",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
+     "notify": "notify::visible",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    }
+   ],
+   "qualified": "Gtk.Widget",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/gtk/Widget.yaml"
+    ],
+    "metadata_file": "metadata/gtk/Widget.json",
+    "note": "",
+    "test_note": "Annotated facts have generated verification tests (crates/svelters-gtk); results are in metadata/verified/gtk.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     96,
+     96
+    ]
+   },
+   "summary": {
+    "license": "LGPL-2.1-or-later",
+    "md": "The base class for all widgets.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Widget.html"
+   },
+   "tags": [],
+   "upstream": {
+    "label": "GTK 4 reference: GTK Widget",
+    "url": "https://docs.gtk.org/gtk4/class.Widget.html"
+   },
+   "values": []
+  },
+  {
+   "abi_symbols": [
+    "create",
+    "destroy",
+    "get_prop",
+    "insert",
+    "listen",
+    "remove",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [
+    "gtk:Gtk.Widget",
+    "gtk:GObject.InitiallyUnowned",
+    "gtk:GObject.Object"
+   ],
+   "children": {
+    "candidates": [
+     "method:set_child",
+     "method:set_default_widget",
+     "property:child",
+     "property:default-widget",
+     "property:focus-widget",
+     "property:titlebar"
+    ],
+    "default_slot": "child",
+    "policy": "named_slots",
+    "slots": [
+     {
+      "accepts": [
+       "Gtk.Widget"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "one",
+      "default": true,
+      "name": "child",
+      "on_remove": "empty",
+      "ops": {
+       "get": "GtkWindow::get_child() const",
+       "remove": "GtkWindow::set_child(GtkWidget*)",
+       "set": "GtkWindow::set_child(GtkWidget*)"
+      },
+      "order": "none",
+      "ownership": {
+       "remove": "child unparented",
+       "set": "child parented, old unparented"
+      },
+      "provenance": [
+       "gir: gtk_window_set_child",
+       "manual: GtkWindow docs: replacing a child unparents the old one, it is not destroyed"
+      ]
+     },
+     {
+      "accepts": [
+       "Gtk.Widget"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "one",
+      "default": false,
+      "name": "titlebar",
+      "on_remove": "empty",
+      "ops": {
+       "get": "GtkWindow::get_titlebar() const",
+       "remove": "GtkWindow::set_titlebar(GtkWidget*)",
+       "set": "GtkWindow::set_titlebar(GtkWidget*)"
+      },
+      "order": "none",
+      "ownership": {
+       "remove": "child unparented",
+       "set": "child parented, old unparented"
+      },
+      "provenance": [
+       "gir: gtk_window_set_titlebar",
+       "manual: P1 fixture if-toggle places a headerbar here"
+      ]
+     }
+    ]
+   },
+   "constructors": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Creates a new `GtkWindow`.\n\nTo get an undecorated window (without window borders),\nuse [`Window.set_decorated()`](xref:gtk:Gtk.Window#method:set_decorated).\n\nAll top-level windows created by this function are stored\nin an internal top-level window list. This list can be obtained\nfrom `list_toplevels`. Due to GTK keeping a\nreference to the window internally, this function does not\nreturn a reference to the caller.\n\nTo delete a `GtkWindow`, call [`Window.destroy()`](xref:gtk:Gtk.Window#method:destroy).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_window_new",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "constructor",
+     "name": "new",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:ctor:new",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "self"
+     },
+     "signature": "new(): self",
+     "unsupported_reason": null
+    }
+   ],
+   "description": {
+    "license": "LGPL-2.1-or-later",
+    "md": "A toplevel window which can contain other widgets.\n\nWindows normally have decorations that are under the control\nof the windowing system and allow the user to manipulate the window\n(resize it, move it, close it,...).\n\n#### GtkWindow as GtkBuildable\n\nThe `GtkWindow` implementation of the [`Buildable`](xref:gtk:Gtk.Buildable) interface supports\nsetting a child as the titlebar by specifying “titlebar” as the “type”\nattribute of a `<child>` element.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+   },
+   "events": [
+    {
+     "annotated": false,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Emitted when the user clicks on the close button of the window.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "signal_flags": [],
+       "when": "last"
+      }
+     },
+     "flags": [],
+     "handler_prop": "onclose-request",
+     "handler_result": "bool_stop",
+     "js_event": "close-request",
+     "name": "close-request",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:signal:close-request",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "runtime"
+     ],
+     "params": [],
+     "phase": "last",
+     "returns": {
+      "display": "boolean"
+     },
+     "sync_required": false
+    }
+   ],
+   "examples": [
+    {
+     "code": "<script>\n  let count = $state(0);\n</script>\n\n<window title=\"Hello\" decorated={false} default-height={8} onactivate-focus={() => count++}>\n  <label>Child content</label>\n</window>\n",
+     "generated": true,
+     "lang": "svelte",
+     "tested": false,
+     "title": "Using <window>"
+    }
+   ],
+   "extensions": {
+    "gtk": {
+     "accessibility": "`GtkWindow` uses the [`AccessibleRole.window`](xref:gtk:Gtk.AccessibleRole#value:window) role.\n\nFrom GTK 4.12 to 4.18, it used the [`AccessibleRole.application`](xref:gtk:Gtk.AccessibleRole#value:application) role.",
+     "actions": "`GtkWindow` defines a set of built-in actions:\n\n- `default.activate` activates the default widget.\n- `window.minimize` minimizes the window.\n- `window.toggle-maximized` maximizes or restores the window.\n- `window.close` closes the window.",
+     "css_nodes": "```\nwindow.background [.csd / .solid-csd / .ssd] [.maximized / .fullscreen / .tiled]\n├── <child>\n╰── <titlebar child>.titlebar [.default-decoration]\n```\n\n`GtkWindow` has a main CSS node with name window and style class .background.\n\nStyle classes that are typically used with the main CSS node are .csd (when\nclient-side decorations are in use), .solid-csd (for client-side decorations\nwithout invisible borders), .ssd (used by mutter when rendering server-side\ndecorations). GtkWindow also represents window states with the following\nstyle classes on the main node: .maximized, .fullscreen, .tiled (when supported,\nalso .tiled-top, .tiled-left, .tiled-right, .tiled-bottom).\n\n`GtkWindow` subclasses often add their own discriminating style classes,\nsuch as .dialog, .popup or .tooltip.\n\nGenerally, some CSS properties don't make sense on the toplevel window node,\nsuch as margins or padding. When client-side decorations without invisible\nborders are in use (i.e. the .solid-csd style class is added to the\nmain window node), the CSS border of the toplevel window is used for\nresize drags. In the .csd case, the shadow area outside of the window\ncan be used to resize it.\n\n`GtkWindow` adds the .titlebar and .default-decoration style classes to the\nwidget that is added as a titlebar child.",
+     "get_type": "gtk_window_get_type",
+     "gtype": "GtkWindow",
+     "shortcuts": "`GtkWindow` supports the following keyboard shortcuts:\n\n- <kbd>F10</kbd> activates the menubar, if present.\n- <kbd>Alt</kbd> makes the mnemonics visible while pressed.\n\nThe following signals have default keybindings:\n\n- [`Window::activate-default`](xref:gtk:Gtk.Window#event:activate-default)\n- [`Window::activate-focus`](xref:gtk:Gtk.Window#event:activate-focus)\n- [`Window::enable-debugging`](xref:gtk:Gtk.Window#event:enable-debugging)",
+     "source": "gtk/gtkwindow.c:111"
+    }
+   },
+   "id": "gtk:Gtk.Window",
+   "interfaces": [
+    "gtk:Gtk.Accessible",
+    "gtk:Gtk.Buildable",
+    "gtk:Gtk.ConstraintTarget",
+    "gtk:Gtk.Native",
+    "gtk:Gtk.Root",
+    "gtk:Gtk.ShortcutManager"
+   ],
+   "kind": "class",
+   "lifetime": {
+    "class": "toplevel",
+    "note": "derived: GtkWindow subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Requests that the window is closed.\n\nThis is similar to what happens when a window manager\nclose button is clicked.\n\nThis function can be used with close buttons in custom\ntitlebars.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_window_close",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "close",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:method:close",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "close(): void",
+     "unsupported_reason": null
+    },
+    {
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Presents a window to the user.\n\nThis may mean raising the window in the stacking order,\nunminimizing it, moving it to the current desktop and/or\ngiving it the keyboard focus (possibly dependent on the user’s\nplatform, window manager and preferences).\n\nIf `window` is hidden, this function also makes it visible.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_window_present",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "present",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:method:present",
+     "origin": "gir",
+     "params": [],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "present(): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:472-475"
+      ],
+      "reason": "The backend sets every toplevel's application at creation (crates/svelters-gtk/src/backend.rs:472-475) and keeps the shared app alive itself (backend.rs:1917-1918); changing or clearing it takes the window out of the app's window list.",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/gtk.yaml#toplevel-application",
+      "use_instead": "Nothing to set; every <window> belongs to the app."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets or unsets the application object associated with the window.\n\nThe application will be kept alive for at least as long as it has\nany windows associated with it (see [`Application.hold()`](xref:gtk:Gio.Application#method:hold)\nfor a way to keep it alive without windows).\n\nNormally, the connection between the application and the window will\nremain until the window is destroyed, but you can explicitly remove\nit by setting the `application` to `NULL`.\n\nThis is equivalent to calling [`Application.remove_window()`](xref:gtk:Gtk.Application#method:remove_window)\nand/or [`Application.add_window()`](xref:gtk:Gtk.Application#method:add_window) on the old/new applications\nas relevant.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_window_set_application",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_application",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:method:set_application",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "application",
+       "type": {
+        "display": "Application",
+        "native": "GtkApplication*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Application>",
+        "nullable": true,
+        "ref": "gtk:Gtk.Application"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_application(application: Application): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:674-693",
+       "metadata/overrides/gtk/Window.yaml:86-106"
+      ],
+      "reason": "Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md).",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#child-setters",
+      "use_instead": "Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot=\"titlebar\">`); remove it with {#if}."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the child widget of the window.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_window_set_child",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_child",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:method:set_child",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "child",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "nullable": true,
+        "ref": "gtk:Gtk.Widget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_child(child: Widget): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "reason": "Window-system state, not app state: moving a toplevel to another GdkDisplay unrealizes and re-realizes it behind the renderer, and the backend opens one display only. AI1 review rejected set_display and Window.display (docs/notes/ai1-gtk-review.md).",
+      "severity": "other",
+      "source": "metadata/dangerous/gtk.yaml#toplevel-display",
+      "use_instead": "Nothing; svelters runs on the default display."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets the display where the window is displayed.\n\nIf the window is already mapped, it will be unmapped,\nand then remapped on the new display.",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_window_set_display",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_display",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:method:set_display",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "display",
+       "type": {
+        "display": "Gdk.Display",
+        "native": "GdkDisplay*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gdk:Display>"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_display(display: Gdk.Display): void",
+     "unsupported_reason": null
+    },
+    {
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:674-693",
+       "metadata/overrides/gtk/Window.yaml:86-106"
+      ],
+      "reason": "Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md).",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#child-setters",
+      "use_instead": "Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot=\"titlebar\">`); remove it with {#if}."
+     },
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "Sets a custom titlebar for the window.\n\nA typical widget used here is [`HeaderBar`](xref:gtk:Gtk.HeaderBar), as it\nprovides various features expected of a titlebar while allowing\nthe addition of child widgets to it.\n\nIf you set a custom titlebar, GTK will do its best to convince\nthe window manager not to put its own titlebar on the window.\nDepending on the system, this function may not work for a window\nthat is already visible, so you set the titlebar before calling\n[`Widget.show()`](xref:gtk:Gtk.Widget#method:show).",
+      "origin": "gir"
+     },
+     "extensions": {
+      "gtk": {
+       "c_symbol": "gtk_window_set_titlebar",
+       "invocation": "dev: introspected / release: generated_thunk"
+      }
+     },
+     "kind": "method",
+     "name": "set_titlebar",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:method:set_titlebar",
+     "origin": "gir",
+     "params": [
+      {
+       "name": "titlebar",
+       "type": {
+        "display": "Widget",
+        "native": "GtkWidget*",
+        "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+        "nullable": true,
+        "ref": "gtk:Gtk.Widget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "set_titlebar(titlebar: Widget): void",
+     "unsupported_reason": null
+    }
+   ],
+   "name": "Window",
+   "native_name": "GtkWindow",
+   "properties": [
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_window_get_application",
+      "set": "gtk_window_set_application"
+     },
+     "annotated": false,
+     "bindable": true,
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:472-475"
+      ],
+      "reason": "Set by the backend on every toplevel at creation (crates/svelters-gtk/src/backend.rs:472-475); an app write (null) detaches the window from the app. AI1 review rejected Window.application for this reason.",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/gtk.yaml#toplevel-application-prop",
+      "use_instead": "Nothing to set; every <window> belongs to the app."
+     },
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The `GtkApplication` associated with the window.\n\nThe application will be kept alive for at least as long as it\nhas any windows associated with it (see g_application_hold()\nfor a way to keep it alive without windows).\n\nNormally, the connection between the application and the window\nwill remain until the window is destroyed, but you can explicitly\nremove it by setting the this property to `NULL`.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "GtkApplication",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "application",
+     "name": "application",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:prop:application",
+     "notify": "notify::application",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "Application",
+      "neutral": "object<svelters-api:v1:type:gtk:Gtk:Application>",
+      "nullable": true,
+      "ref": "gtk:Gtk.Application"
+     }
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_window_get_child",
+      "set": "gtk_window_set_child"
+     },
+     "annotated": false,
+     "bindable": true,
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:674-693"
+      ],
+      "reason": "The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692).",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#child-properties",
+      "use_instead": "Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes."
+     },
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The child widget.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "GtkWidget",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "child",
+     "name": "child",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:prop:child",
+     "notify": "notify::child",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "Widget",
+      "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+      "nullable": true,
+      "ref": "gtk:Gtk.Widget"
+     }
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "set": "gtk_window_set_display"
+     },
+     "annotated": false,
+     "bindable": true,
+     "dangerous": {
+      "reason": "Window-system state (the default display the backend opened), as set_display; AI1 review rejected writes to Window.display.",
+      "severity": "other",
+      "source": "metadata/dangerous/gtk.yaml#toplevel-display-prop",
+      "use_instead": "Nothing; svelters runs on the default display."
+     },
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The display that will display this window.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "GdkDisplay",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "display",
+     "name": "display",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:prop:display",
+     "notify": "notify::display",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "Gdk.Display",
+      "neutral": "object<svelters-api:v1:type:gtk:Gdk:Display>",
+      "nullable": true
+     }
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_window_get_modal",
+      "set": "gtk_window_set_modal"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": "false",
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "If true, the window is modal.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gboolean",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "modal",
+     "name": "modal",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:prop:modal",
+     "notify": "notify::modal",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "gboolean",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_window_get_title",
+      "set": "gtk_window_set_title"
+     },
+     "annotated": true,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The title of the window.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "gchararray",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE"
+       ]
+      }
+     },
+     "js_name": "title",
+     "name": "title",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:prop:title",
+     "notify": "notify::title",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "manual",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "gchar*",
+      "neutral": "string",
+      "nullable": true
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "construct_only": false,
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "gtk_window_get_titlebar",
+      "set": "gtk_window_set_titlebar"
+     },
+     "annotated": false,
+     "availability": {
+      "since": "4.6"
+     },
+     "bindable": true,
+     "dangerous": {
+      "evidence": [
+       "crates/svelters-gtk/src/backend.rs:674-693"
+      ],
+      "reason": "The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692).",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/gtk.yaml#child-properties",
+      "use_instead": "Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes."
+     },
+     "default": null,
+     "doc": {
+      "license": "LGPL-2.1-or-later",
+      "md": "The titlebar widget.",
+      "origin": "gir",
+      "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+     },
+     "extensions": {
+      "gtk": {
+       "gtype": "GtkWidget",
+       "param_flags": [
+        "READABLE",
+        "WRITABLE",
+        "EXPLICIT_NOTIFY"
+       ]
+      }
+     },
+     "js_name": "titlebar",
+     "name": "titlebar",
+     "native_id": "svelters-api:v1:type:gtk:Gtk:Window:prop:titlebar",
+     "notify": "notify::titlebar",
+     "origin": "gir",
+     "origins": [
+      "gir",
+      "runtime"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "Widget",
+      "neutral": "object<svelters-api:v1:type:gtk:Gtk:Widget>",
+      "nullable": true,
+      "ref": "gtk:Gtk.Widget"
+     }
+    }
+   ],
+   "qualified": "Gtk.Window",
+   "screenshot": "gtk/window",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/gtk/Window.yaml"
+    ],
+    "metadata_file": "metadata/gtk/Window.json",
+    "note": "",
+    "test_note": "Annotated facts have generated verification tests (crates/svelters-gtk); results are in metadata/verified/gtk.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     72,
+     72
+    ]
+   },
+   "summary": {
+    "license": "LGPL-2.1-or-later",
+    "md": "A toplevel window which can contain other widgets.",
+    "origin": "gir",
+    "upstream_url": "https://docs.gtk.org/gtk4/class.Window.html"
+   },
+   "tags": [
+    "window"
+   ],
+   "upstream": {
+    "label": "GTK 4 reference: GTK Window",
+    "url": "https://docs.gtk.org/gtk4/class.Window.html"
+   },
+   "values": []
+  }
+ ],
+ "extension_schemas": {
+  "gtk": {
+   "fields": [
+    {
+     "format": "code",
+     "key": "gtype",
+     "label": "GType",
+     "scope": "entity"
+    },
+    {
+     "format": "code",
+     "key": "get_type",
+     "label": "get_type()",
+     "scope": "entity"
+    },
+    {
+     "format": "markdown",
+     "key": "css_nodes",
+     "label": "CSS nodes",
+     "scope": "entity"
+    },
+    {
+     "format": "markdown",
+     "key": "style_classes",
+     "label": "Style classes",
+     "scope": "entity"
+    },
+    {
+     "format": "markdown",
+     "key": "accessibility",
+     "label": "Accessibility",
+     "scope": "entity"
+    },
+    {
+     "format": "markdown",
+     "key": "shortcuts",
+     "label": "Shortcuts and gestures",
+     "scope": "entity"
+    },
+    {
+     "format": "markdown",
+     "key": "actions",
+     "label": "Actions",
+     "scope": "entity"
+    },
+    {
+     "format": "markdown",
+     "key": "builder_ui",
+     "label": "GtkBuilder UI definition",
+     "scope": "entity"
+    },
+    {
+     "format": "code",
+     "key": "source",
+     "label": "Documented in",
+     "scope": "entity"
+    },
+    {
+     "format": "list",
+     "key": "param_flags",
+     "label": "GParamFlags",
+     "scope": "property"
+    },
+    {
+     "format": "code",
+     "key": "gtype",
+     "label": "GType",
+     "scope": "property"
+    },
+    {
+     "format": "code",
+     "key": "when",
+     "label": "Emission phase",
+     "scope": "event"
+    },
+    {
+     "format": "list",
+     "key": "signal_flags",
+     "label": "Signal flags",
+     "scope": "event"
+    },
+    {
+     "format": "code",
+     "key": "c_symbol",
+     "label": "C symbol",
+     "scope": "method"
+    },
+    {
+     "format": "code",
+     "key": "invocation",
+     "label": "Invocation (dev / release)",
+     "scope": "method"
+    }
+   ],
+   "title": "GTK specifics"
+  }
+ },
+ "schema": "svelters-docs-ir/v0",
+ "toolkit": {
+  "doc_license": {
+   "attribution": "Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site.",
+   "name": "GNU Lesser General Public License v2.1 or later",
+   "redistribution": "full",
+   "spdx": "LGPL-2.1-or-later",
+   "url": "https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html"
+  },
+  "id": "gtk",
+  "language": "C / GObject",
+  "name": "GTK 4",
+  "notices": [
+   "Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later."
+  ],
+  "status": "working",
+  "text_policy": "full",
+  "upstream_docs": "https://docs.gtk.org/gtk4/",
+  "version": "4.22.4"
+ }
+}

@@ -35,7 +35,8 @@ globalThis.__svelters_dispatch = () => {
 
   // completing after the owner died is an error for the backend, not a crash
   const owner = h.create('thing');
-  h.call(owner, 'slow', []);
+  // ... and the Promise does not hang: the host rejects it with `disposed` at the next checkpoint
+  h.call(owner, 'slow', []).catch((e) => log('orphan rejected', e.domain, e.code));
   h.destroy(owner);
   try {
     h.call(t, 'complete', ['too late']);

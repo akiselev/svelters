@@ -27,6 +27,7 @@ impl Core {
         desc: &MemberDesc,
         mname: &str,
         args: &<E as JsReader>::V,
+        is_static: bool,
     ) -> Result<<E as JsReader>::V, OpError>
     where
         E: JsReader + JsWriter<V = <E as JsReader>::V> + JsPromises,
@@ -90,7 +91,7 @@ impl Core {
         // The completion callback: a JS function that settles the Promise.
         let ti = convert::TypeSource::type_info(self, cb_slot.ty)
             .ok_or_else(|| OpError::from(format!("no descriptor for callback type {}", cb_slot.ty)))?;
-        let id = self.cb_register(h, cb_slot.ty, ti.desc.scope)?;
+        let id = self.cb_register_completion(h, cb_slot.ty, ti.desc.scope)?;
         let promise = match e.new_completion(id) {
             Ok(p) => p,
             Err(msg) => {
@@ -99,12 +100,14 @@ impl Core {
             }
         };
         raw.push(svl_value::typed(SVL_CALLBACK, cb_slot.ty, svl_value_u { u: id }));
-        if self.kind_of(h).is_err() {
+        if !is_static && self.kind_of(h).is_err() {
             self.cb_release(id);
             self.finish_callbacks(&mut ar, false);
             return Err(format!("stale or foreign handle {h}").into());
         }
-        match self.backend.call_raw(h, m, &raw) {
+        // Static async functions (`callStatic` of an `SVL_M_STATIC | SVL_M_ASYNC` member) have no owner.
+        let started = if is_static { self.backend.call_static_raw(k, m, &raw) } else { self.backend.call_raw(h, m, &raw) };
+        match started {
             Ok(_) => {
                 self.finish_callbacks(&mut ar, true);
                 if let Some(s) = &signal {

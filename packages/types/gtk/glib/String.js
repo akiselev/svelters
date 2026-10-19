@@ -37,6 +37,10 @@ export class String extends NativeValue {
     return call(this, 'free_and_steal', []);
   }
 
+  freeDeep() {
+    call(this, 'free_deep', []);
+  }
+
   freeToBytes() {
     return wrapValue(Bytes, call(this, 'free_to_bytes', []));
   }

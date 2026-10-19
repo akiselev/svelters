@@ -31,4 +31,8 @@ export class FrameTimings extends NativeValue {
   getRefreshInterval() {
     return call(this, 'get_refresh_interval', []);
   }
+
+  getResult() {
+    return call(this, 'get_result', []);
+  }
 }

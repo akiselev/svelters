@@ -130,7 +130,7 @@ export class DBusMessage extends GObject_Object {
     call(this, 'set_destination', [value]);
   }
 
-  setErrorName(value) {
+  setErrorName(value = null) {
     call(this, 'set_error_name', [value]);
   }
 

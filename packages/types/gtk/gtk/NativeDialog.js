@@ -21,6 +21,10 @@ export class NativeDialog extends GObject_Object {
     return call(this, 'get_title', []);
   }
 
+  getTransientFor() {
+    return call(this, 'get_transient_for', []);
+  }
+
   getVisible() {
     return call(this, 'get_visible', []);
   }
@@ -35,6 +39,10 @@ export class NativeDialog extends GObject_Object {
 
   setTitle(title) {
     call(this, 'set_title', [title]);
+  }
+
+  setTransientFor(parent = null) {
+    call(this, 'set_transient_for', [parent]);
   }
 
   show() {
@@ -53,6 +61,13 @@ export class NativeDialog extends GObject_Object {
   }
   set title(v) {
     setProp(this, 'title', v);
+  }
+
+  get transientFor() {
+    return getProp(this, 'transient-for');
+  }
+  set transientFor(v) {
+    setProp(this, 'transient-for', v);
   }
 
   get visible() {

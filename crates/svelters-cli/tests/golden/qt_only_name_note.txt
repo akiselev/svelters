@@ -1,0 +1,6 @@
+$ svelters docs main-window.animated --brief
+exit: 0
+--- stdout
+property animated on <main-window>: `animated`: `boolean`, rw, default `true`
+--- stderr
+note: found only in qt

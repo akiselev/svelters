@@ -1,0 +1,4724 @@
+{
+ "coverage": {
+  "annotated_events": 806,
+  "annotated_kinds": 54,
+  "annotated_properties": 973,
+  "dangerous": {
+   "events": 0,
+   "methods": 60,
+   "properties": 1
+  },
+  "docs": {
+   "events_with_doc": 348,
+   "kinds_with_summary": 195,
+   "methods_with_doc": 4811,
+   "properties_with_doc": 1308
+  },
+  "elements": 54,
+  "events": 981,
+  "kinds": 428,
+  "kinds_by_type": {
+   "class": 195,
+   "enum": 233
+  },
+  "methods": 4864,
+  "properties": 1346,
+  "properties_by_origin": {
+   "manual": 8,
+   "qdoc": 1338
+  },
+  "serdes": {
+   "status": "unknown",
+   "supported_types": null,
+   "total_types": null
+  },
+  "tested_kinds": 57
+ },
+ "entities": [
+  {
+   "abi_symbols": [
+    "get_prop",
+    "listen",
+    "set_prop"
+   ],
+   "abstract": true,
+   "bases": [
+    "qt:QWidget",
+    "qt:QObject",
+    "qt:QPaintDevice"
+   ],
+   "constructors": [],
+   "events": [
+    {
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This signal is emitted when the button is activated (i.e., pressed down then released while the mouse cursor is inside the button), when the shortcut key is typed, or when...",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#clicked"
+     },
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [
+        "clicked()",
+        "clicked(bool)"
+       ],
+       "signature": "void clicked(bool checked)"
+      }
+     },
+     "flags": [],
+     "handler_prop": "onclicked",
+     "handler_result": "none",
+     "js_event": "clicked",
+     "name": "clicked",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:signal:void clicked(bool checked)",
+     "origin": "qdoc",
+     "origins": [
+      "metaobject",
+      "qdoc"
+     ],
+     "params": [
+      {
+       "default": "false",
+       "name": "checked",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "phase": null,
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This signal is emitted whenever a checkable button changes its state. *checked* is true if the button is checked, or false if the button is unchecked.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#toggled"
+     },
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [
+        "toggled(bool)"
+       ],
+       "signature": "void toggled(bool checked)"
+      }
+     },
+     "flags": [],
+     "handler_prop": "ontoggled",
+     "handler_result": "none",
+     "js_event": "toggled",
+     "name": "toggled",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:signal:void toggled(bool checked)",
+     "origin": "qdoc",
+     "origins": [
+      "metaobject",
+      "qdoc"
+     ],
+     "params": [
+      {
+       "name": "checked",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "phase": null,
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    }
+   ],
+   "extensions": {
+    "qt": {
+     "header": "qabstractbutton.h",
+     "module": "QtWidgets",
+     "qobject": "yes"
+    }
+   },
+   "id": "qt:QAbstractButton",
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": {
+    "class": "unknown",
+    "note": "derived: abstract or not a QObject; JS cannot create it",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Performs a click.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#click"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "slot",
+       "signature": "void click()"
+      }
+     },
+     "kind": "slot",
+     "name": "click",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:method:void click()",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void click()",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds whether the button is checked",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#checked-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "bool isChecked() const"
+      }
+     },
+     "kind": "method",
+     "name": "isChecked",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:method:bool isChecked() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "bool isChecked() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds the text shown on the button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#text-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setText(const QString &text)"
+      }
+     },
+     "kind": "method",
+     "name": "setText",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:method:void setText(const QString &text)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "text",
+       "type": {
+        "display": "string",
+        "native": "const QString &",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setText(const QString &text)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds the text shown on the button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#text-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QString text() const"
+      }
+     },
+     "kind": "method",
+     "name": "text",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:method:QString text() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "string"
+     },
+     "signature": "QString text() const",
+     "static": false,
+     "virtual": false
+    }
+   ],
+   "name": "QAbstractButton",
+   "native_name": "QAbstractButton",
+   "properties": [
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "isCheckable",
+      "set": "setCheckable"
+     },
+     "annotated": false,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the button is checkable",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#checkable-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "checkable",
+     "name": "checkable",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     }
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "isChecked",
+      "set": "setChecked"
+     },
+     "annotated": false,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the button is checked",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#checked-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored",
+        "user"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "checked",
+     "name": "checked",
+     "notify": "toggled(bool)",
+     "origin": "qdoc",
+     "origins": [
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     }
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "text",
+      "set": "setText"
+     },
+     "annotated": false,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The text shown on the button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#text-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "text",
+     "name": "text",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     }
+    }
+   ],
+   "qualified": "QAbstractButton",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "metadata_file": "metadata/qt/QAbstractButton.json",
+    "note": "Raw: ingested from qdoc and the QMetaObject only. This class has no element tag and no generated backend code yet, so it cannot be used from Svelte until it is annotated.",
+    "tested": true,
+    "tier": "ingested",
+    "verified_facts": [
+     12,
+     12
+    ]
+   },
+   "summary": {
+    "license": "GFDL-1.3-only",
+    "md": "The QAbstractButton class is the abstract base class of button widgets, providing functionality common to buttons.",
+    "origin": "qdoc-html",
+    "truncated": true,
+    "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html"
+   },
+   "tags": [],
+   "upstream": {
+    "label": "Qt 6 reference: QAbstractButton",
+    "url": "https://doc.qt.io/qt-6/qabstractbutton.html"
+   },
+   "values": []
+  },
+  {
+   "abi_symbols": [
+    "create",
+    "destroy",
+    "get_prop",
+    "insert",
+    "listen",
+    "remove",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [
+    "qt:QWidget",
+    "qt:QObject",
+    "qt:QPaintDevice"
+   ],
+   "children": {
+    "default_slot": "central",
+    "policy": "named_slots",
+    "slots": [
+     {
+      "accepts": [
+       "QWidget"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "one",
+      "default": true,
+      "name": "central",
+      "on_remove": "empty",
+      "ops": {
+       "get": "QMainWindow::centralWidget() const",
+       "remove": "QMainWindow::takeCentralWidget()",
+       "set": "QMainWindow::setCentralWidget(QWidget*)"
+      },
+      "order": null,
+      "ownership": {
+       "remove": "child unparented",
+       "set": "child parented, old deleted"
+      },
+      "provenance": [
+       "uic: WriteInitialization::acceptWidget",
+       "typesystem: replace_child",
+       "probe: qt_slot_ownership_probe.py"
+      ]
+     },
+     {
+      "accepts": [
+       "QMenuBar"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "one",
+      "default": false,
+      "name": "menubar",
+      "on_remove": "destroys_child",
+      "ops": {
+       "get": "QMainWindow::menuWidget() const",
+       "remove": "QMainWindow::setMenuBar(QMenuBar*)",
+       "set": "QMainWindow::setMenuBar(QMenuBar*)"
+      },
+      "order": null,
+      "ownership": {
+       "remove": "child deleted",
+       "set": "child parented, old deleted"
+      },
+      "provenance": [
+       "typesystem: replace_child",
+       "probe: qt_slot_ownership_probe.py"
+      ]
+     },
+     {
+      "accepts": [
+       "QStatusBar"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "one",
+      "default": false,
+      "name": "statusbar",
+      "on_remove": "destroys_child",
+      "ops": {
+       "get": "QMainWindow::findChild<QStatusBar*>(const QString&, Qt::FindChildOptions) const",
+       "remove": "QMainWindow::setStatusBar(QStatusBar*)",
+       "set": "QMainWindow::setStatusBar(QStatusBar*)"
+      },
+      "order": null,
+      "ownership": {
+       "remove": "child deleted",
+       "set": "child parented, old deleted"
+      },
+      "provenance": [
+       "typesystem: replace_child",
+       "probe: qt_slot_ownership_probe.py"
+      ]
+     },
+     {
+      "accepts": [
+       "QToolBar"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "many",
+      "default": false,
+      "name": "toolbars",
+      "on_remove": "empty",
+      "ops": {
+       "insert": "QMainWindow::addToolBar(QToolBar*)",
+       "remove": "QMainWindow::removeToolBar(QToolBar*)"
+      },
+      "order": "append_only",
+      "ownership": {
+       "insert": "child parented",
+       "remove": "child unparented"
+      },
+      "provenance": [
+       "qdoc: QMainWindow::addToolBar, removeToolBar: the toolbar is hidden, not deleted",
+       "typesystem: addownership-1"
+      ]
+     },
+     {
+      "accepts": [
+       "QDockWidget"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "many",
+      "default": false,
+      "name": "docks",
+      "on_remove": "empty",
+      "ops": {
+       "insert": "QMainWindow::addDockWidget(Qt::DockWidgetArea, QDockWidget*)",
+       "remove": "QMainWindow::removeDockWidget(QDockWidget*)"
+      },
+      "order": "append_only",
+      "ownership": {
+       "insert": "child parented",
+       "remove": "child unparented"
+      },
+      "provenance": [
+       "qdoc: QMainWindow::addDockWidget, removeDockWidget: the dock widget is hidden, not deleted"
+      ]
+     }
+    ]
+   },
+   "constructors": [
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Constructs a QMainWindow with the given *parent* and the specified widget *flags*.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#QMainWindow"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "constructor",
+       "signature": "QMainWindow(QWidget *parent, Qt::WindowFlags flags)"
+      }
+     },
+     "kind": "constructor",
+     "name": "QMainWindow",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:ctor:QMainWindow(QWidget *parent, Qt::WindowFlags flags)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "default": "nullptr",
+       "name": "parent",
+       "type": {
+        "display": "QWidget",
+        "native": "QWidget *",
+        "neutral": "object<QWidget>",
+        "nullable": true,
+        "ref": "qt:QWidget"
+       }
+      },
+      {
+       "default": "Qt::WindowFlags()",
+       "name": "flags",
+       "type": {
+        "display": "Qt::WindowType",
+        "native": "Qt::WindowFlags",
+        "neutral": "flags<Qt::WindowType>"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "QMainWindow(QWidget *parent, Qt::WindowFlags flags)",
+     "static": false,
+     "virtual": false
+    }
+   ],
+   "events": [
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "close_request"
+      }
+     },
+     "handler_prop": "onclose",
+     "js_event": "close",
+     "name": "close_request",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [],
+     "returns": {
+      "display": "void"
+     }
+    }
+   ],
+   "examples": [
+    {
+     "code": "<script>\n  let count = $state(0);\n</script>\n\n<main-window accessible-name=\"Hello\" onclose={() => count++}>\n  <label>Child content</label>\n</main-window>\n",
+     "generated": true,
+     "lang": "svelte",
+     "tested": false,
+     "title": "Using <main-window>"
+    }
+   ],
+   "extensions": {
+    "qt": {
+     "header": "qmainwindow.h",
+     "module": "QtWidgets",
+     "ownership": [
+      "`addDockWidget(Qt::DockWidgetArea,QDockWidget*)`: argument 2 gets its parent from `this`",
+      "`addDockWidget(Qt::DockWidgetArea,QDockWidget*,Qt::Orientation)`: argument 2 gets its parent from `this`",
+      "`addToolBar(QToolBar*)`: argument 1 gets its parent from `this`",
+      "`addToolBar(Qt::ToolBarArea,QToolBar*)`: argument 2 gets its parent from `this`",
+      "`addToolBar(const QString&)`: argument return gets its parent from `this`",
+      "`removeDockWidget(QDockWidget*)`: argument 1 gets its parent from `this`",
+      "`removeDockWidget(QDockWidget*)`: argument 2 gets its parent from `this`",
+      "`removeToolBar(QToolBar*)`: argument 1 gets its parent from `this`",
+      "`setCentralWidget(QWidget*)`: replace_child",
+      "`setMenuBar(QMenuBar*)`: replace_child",
+      "`setMenuWidget(QWidget*)`: replace_child",
+      "`setStatusBar(QStatusBar*)`: replace_child"
+     ],
+     "qobject": "yes",
+     "qss": "Sub-controls: `::separator`. [Qt Style Sheets reference](https://doc.qt.io/qt-6/stylesheet-reference.html#qmainwindow-widget)"
+    }
+   },
+   "id": "qt:QMainWindow",
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": {
+    "class": "toplevel",
+    "note": "derived: QMainWindow/QDialog subclass; ABI v2 toplevel class (plans/architecture/backend-abi.md)",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:39-163"
+      ],
+      "reachable": false,
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#main-window-slots",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>)."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Adds the given *dockwidget* to the specified *area*.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#addDockWidget"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget)"
+      }
+     },
+     "kind": "method",
+     "name": "addDockWidget",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "area",
+       "type": {
+        "display": "Qt::DockWidgetArea",
+        "native": "Qt::DockWidgetArea",
+        "neutral": "enum<Qt::DockWidgetArea>"
+       }
+      },
+      {
+       "name": "dockwidget",
+       "type": {
+        "display": "QDockWidget",
+        "native": "QDockWidget *",
+        "neutral": "object<QDockWidget>",
+        "nullable": true,
+        "ref": "qt:QDockWidget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:39-163"
+      ],
+      "reachable": false,
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#main-window-slots",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>)."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Adds *dockwidget* into the given *area* in the direction specified by the *orientation*.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#addDockWidget-1"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget, Qt::Orientation orientation)"
+      }
+     },
+     "kind": "method",
+     "name": "addDockWidget",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget, Qt::Orientation orientation)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "area",
+       "type": {
+        "display": "Qt::DockWidgetArea",
+        "native": "Qt::DockWidgetArea",
+        "neutral": "enum<Qt::DockWidgetArea>"
+       }
+      },
+      {
+       "name": "dockwidget",
+       "type": {
+        "display": "QDockWidget",
+        "native": "QDockWidget *",
+        "neutral": "object<QDockWidget>",
+        "nullable": true,
+        "ref": "qt:QDockWidget"
+       }
+      },
+      {
+       "name": "orientation",
+       "type": {
+        "display": "Qt::Orientation",
+        "native": "Qt::Orientation",
+        "neutral": "enum<Qt::Orientation>"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget, Qt::Orientation orientation)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:39-163"
+      ],
+      "reachable": false,
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#main-window-slots",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>)."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Creates a [QToolBar](xref:qt:QToolBar) object, setting its window title to *title*, and inserts it into the top toolbar area.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#addToolBar-2"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QToolBar * addToolBar(const QString &title)"
+      }
+     },
+     "kind": "method",
+     "name": "addToolBar",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:QToolBar * addToolBar(const QString &title)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "title",
+       "type": {
+        "display": "string",
+        "native": "const QString &",
+        "neutral": "string"
+       }
+      }
+     ],
+     "returns": {
+      "display": "QToolBar"
+     },
+     "signature": "QToolBar * addToolBar(const QString &title)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:39-163"
+      ],
+      "reachable": false,
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#main-window-slots",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>)."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Equivalent of calling addToolBar([Qt::TopToolBarArea](https://doc.qt.io/qt-6/qt.html#ToolBarArea-enum), *toolbar*)",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#addToolBar-1"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void addToolBar(QToolBar *toolbar)"
+      }
+     },
+     "kind": "method",
+     "name": "addToolBar",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:void addToolBar(QToolBar *toolbar)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "toolbar",
+       "type": {
+        "display": "QToolBar",
+        "native": "QToolBar *",
+        "neutral": "object<QToolBar>",
+        "nullable": true,
+        "ref": "qt:QToolBar"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void addToolBar(QToolBar *toolbar)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:39-163"
+      ],
+      "reachable": false,
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#main-window-slots",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>)."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Adds the *toolbar* into the specified *area* in this main window.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#addToolBar"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)"
+      }
+     },
+     "kind": "method",
+     "name": "addToolBar",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:void addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "area",
+       "type": {
+        "display": "Qt::ToolBarArea",
+        "native": "Qt::ToolBarArea",
+        "neutral": "enum<Qt::ToolBarArea>"
+       }
+      },
+      {
+       "name": "toolbar",
+       "type": {
+        "display": "QToolBar",
+        "native": "QToolBar *",
+        "neutral": "object<QToolBar>",
+        "nullable": true,
+        "ref": "qt:QToolBar"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Returns the central widget for the main window.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#centralWidget"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QWidget * centralWidget() const"
+      }
+     },
+     "kind": "method",
+     "name": "centralWidget",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:QWidget * centralWidget() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "QWidget"
+     },
+     "signature": "QWidget * centralWidget() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds the docking behavior of [QMainWindow](xref:qt:QMainWindow)",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#dockOptions-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QMainWindow::DockOptions dockOptions() const"
+      }
+     },
+     "kind": "method",
+     "name": "dockOptions",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:QMainWindow::DockOptions dockOptions() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "QMainWindow::DockOption"
+     },
+     "signature": "QMainWindow::DockOptions dockOptions() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:39-163"
+      ],
+      "reachable": false,
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#main-window-slots",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>)."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Inserts the *toolbar* into the area occupied by the *before* toolbar so that it appears before it.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#insertToolBar"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void insertToolBar(QToolBar *before, QToolBar *toolbar)"
+      }
+     },
+     "kind": "method",
+     "name": "insertToolBar",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:void insertToolBar(QToolBar *before, QToolBar *toolbar)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "before",
+       "type": {
+        "display": "QToolBar",
+        "native": "QToolBar *",
+        "neutral": "object<QToolBar>",
+        "nullable": true,
+        "ref": "qt:QToolBar"
+       }
+      },
+      {
+       "name": "toolbar",
+       "type": {
+        "display": "QToolBar",
+        "native": "QToolBar *",
+        "neutral": "object<QToolBar>",
+        "nullable": true,
+        "ref": "qt:QToolBar"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void insertToolBar(QToolBar *before, QToolBar *toolbar)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:55",
+       "metadata/overrides/qt/QMainWindow.yaml:74"
+      ],
+      "reason": "Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because \"menuBar() would create one\" (metadata/overrides/qt/QMainWindow.yaml:55, 74).",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/qt.yaml#main-window-lazy-getters",
+      "use_instead": "Insert a <menu-bar> / <status-bar> child."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Returns the menu bar for the main window.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#menuBar"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QMenuBar * menuBar() const"
+      }
+     },
+     "kind": "method",
+     "name": "menuBar",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:QMenuBar * menuBar() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "QMenuBar"
+     },
+     "signature": "QMenuBar * menuBar() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:39-163"
+      ],
+      "reachable": false,
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#main-window-slots",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>)."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Sets the given *widget* to be the main window's central widget.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#setCentralWidget"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setCentralWidget(QWidget *widget)"
+      }
+     },
+     "kind": "method",
+     "name": "setCentralWidget",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:void setCentralWidget(QWidget *widget)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "widget",
+       "type": {
+        "display": "QWidget",
+        "native": "QWidget *",
+        "neutral": "object<QWidget>",
+        "nullable": true,
+        "ref": "qt:QWidget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setCentralWidget(QWidget *widget)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "metadata/overrides/qt/QMainWindow.yaml:55",
+       "metadata/overrides/qt/QMainWindow.yaml:74"
+      ],
+      "reason": "Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because \"menuBar() would create one\" (metadata/overrides/qt/QMainWindow.yaml:55, 74).",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/qt.yaml#main-window-lazy-getters",
+      "use_instead": "Insert a <menu-bar> / <status-bar> child."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Returns the status bar for the main window.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#statusBar"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QStatusBar * statusBar() const"
+      }
+     },
+     "kind": "method",
+     "name": "statusBar",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QMainWindow:method:QStatusBar * statusBar() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "QStatusBar"
+     },
+     "signature": "QStatusBar * statusBar() const",
+     "static": false,
+     "virtual": false
+    }
+   ],
+   "name": "QMainWindow",
+   "native_name": "QMainWindow",
+   "properties": [
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "isAnimated",
+      "set": "setAnimated"
+     },
+     "annotated": true,
+     "bindable": false,
+     "default": "true",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether manipulating dock widgets and tool bars is animated",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#animated-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "animated",
+     "name": "animated",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "dockOptions",
+      "set": "setDockOptions"
+     },
+     "annotated": false,
+     "bindable": false,
+     "default": "\"AnimatedDocks|AllowTabbedDocks\"",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The docking behavior of QMainWindow",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#dockOptions-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "QMainWindow::DockOptions"
+      }
+     },
+     "js_name": "dockOptions",
+     "name": "dockOptions",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "QMainWindow::DockOption",
+      "native": "QMainWindow::DockOptions",
+      "neutral": "flags<QMainWindow::DockOption>"
+     }
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "documentMode",
+      "set": "setDocumentMode"
+     },
+     "annotated": true,
+     "bindable": false,
+     "default": "false",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the tab bar for tabbed dockwidgets is set to document mode",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html#documentMode-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "document-mode",
+     "name": "documentMode",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": true,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The window title (caption)",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#windowTitle-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "window-title",
+     "name": "windowTitle",
+     "notify": "windowTitleChanged(QString)",
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    }
+   ],
+   "qualified": "QMainWindow",
+   "screenshot": "qt/main-window",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/qt/QMainWindow.yaml"
+    ],
+    "metadata_file": "metadata/qt/QMainWindow.json",
+    "note": "",
+    "test_note": "Annotated facts have generated C++ verification tests (svl_qt_verify.cpp from gen_cpp.py); results are in metadata/verified/qt.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     20,
+     20
+    ]
+   },
+   "summary": {
+    "license": "GFDL-1.3-only",
+    "md": "The QMainWindow class provides a main application window.",
+    "origin": "qdoc-html",
+    "truncated": true,
+    "upstream_url": "https://doc.qt.io/qt-6/qmainwindow.html"
+   },
+   "tags": [
+    "main-window"
+   ],
+   "upstream": {
+    "label": "Qt 6 reference: QMainWindow",
+    "url": "https://doc.qt.io/qt-6/qmainwindow.html"
+   },
+   "values": []
+  },
+  {
+   "abstract": false,
+   "bases": [],
+   "constructors": [],
+   "events": [],
+   "extensions": {
+    "qt": {
+     "header": "qmainwindow.h",
+     "module": "QtWidgets"
+    }
+   },
+   "id": "qt:QMainWindow.DockOption",
+   "interfaces": [],
+   "kind": "enum",
+   "methods": [],
+   "name": "DockOption",
+   "native_name": "QMainWindow::DockOption",
+   "properties": [],
+   "qualified": "QMainWindow::DockOption",
+   "see_also": [
+    "qt:QMainWindow"
+   ],
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "metadata_file": "metadata/qt/QMainWindow.json",
+    "tested": false,
+    "tier": "ingested"
+   },
+   "tags": [],
+   "upstream": {
+    "label": "Qt 6 reference: QMainWindow",
+    "url": "https://doc.qt.io/qt-6/qmainwindow.html"
+   },
+   "values": [
+    {
+     "name": "AnimatedDocks",
+     "value": "0x01"
+    },
+    {
+     "name": "AllowNestedDocks",
+     "value": "0x02"
+    },
+    {
+     "name": "AllowTabbedDocks",
+     "value": "0x04"
+    },
+    {
+     "name": "ForceTabbedDocks",
+     "value": "0x08"
+    },
+    {
+     "name": "VerticalTabs",
+     "value": "0x10"
+    },
+    {
+     "name": "GroupedDragging",
+     "value": "0x20"
+    }
+   ]
+  },
+  {
+   "abi_symbols": [
+    "create",
+    "destroy",
+    "get_prop",
+    "listen",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [
+    "qt:QAbstractButton",
+    "qt:QWidget",
+    "qt:QObject",
+    "qt:QPaintDevice"
+   ],
+   "constructors": [
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Constructs a push button with no text and a *parent*.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#QPushButton"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "constructor",
+       "signature": "QPushButton(QWidget *parent)"
+      }
+     },
+     "kind": "constructor",
+     "name": "QPushButton",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:ctor:QPushButton(QWidget *parent)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "default": "nullptr",
+       "name": "parent",
+       "type": {
+        "display": "QWidget",
+        "native": "QWidget *",
+        "neutral": "object<QWidget>",
+        "nullable": true,
+        "ref": "qt:QWidget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "QPushButton(QWidget *parent)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Constructs a push button with an *icon* and a *text*, and a *parent*.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#QPushButton-2"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "constructor",
+       "signature": "QPushButton(const QIcon &icon, const QString &text, QWidget *parent)"
+      }
+     },
+     "kind": "constructor",
+     "name": "QPushButton",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:ctor:QPushButton(const QIcon &icon, const QString &text, QWidget *parent)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "icon",
+       "type": {
+        "display": "QIcon",
+        "native": "const QIcon &",
+        "neutral": "boxed<QIcon>"
+       }
+      },
+      {
+       "name": "text",
+       "type": {
+        "display": "string",
+        "native": "const QString &",
+        "neutral": "string"
+       }
+      },
+      {
+       "default": "nullptr",
+       "name": "parent",
+       "type": {
+        "display": "QWidget",
+        "native": "QWidget *",
+        "neutral": "object<QWidget>",
+        "nullable": true,
+        "ref": "qt:QWidget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "QPushButton(const QIcon &icon, const QString &text, QWidget *parent)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Constructs a push button with the parent *parent* and the text *text*.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#QPushButton-1"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "constructor",
+       "signature": "QPushButton(const QString &text, QWidget *parent)"
+      }
+     },
+     "kind": "constructor",
+     "name": "QPushButton",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:ctor:QPushButton(const QString &text, QWidget *parent)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "text",
+       "type": {
+        "display": "string",
+        "native": "const QString &",
+        "neutral": "string"
+       }
+      },
+      {
+       "default": "nullptr",
+       "name": "parent",
+       "type": {
+        "display": "QWidget",
+        "native": "QWidget *",
+        "neutral": "object<QWidget>",
+        "nullable": true,
+        "ref": "qt:QWidget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "QPushButton(const QString &text, QWidget *parent)",
+     "static": false,
+     "virtual": false
+    }
+   ],
+   "events": [
+    {
+     "annotated": true,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This signal is emitted when the button is activated (i.e., pressed down then released while the mouse cursor is inside the button), when the shortcut key is typed, or when...",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#clicked"
+     },
+     "extensions": {
+      "qt": {
+       "collapses": [
+        "clicked()",
+        "clicked(bool)"
+       ],
+       "connect": "clicked(bool)",
+       "metaobject_signatures": [
+        "clicked()",
+        "clicked(bool)"
+       ],
+       "signature": "void clicked(bool checked)"
+      }
+     },
+     "flags": [],
+     "handler_prop": "onclicked",
+     "handler_result": "none",
+     "js_event": "clicked",
+     "name": "clicked",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:signal:void clicked(bool checked)",
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "params": [
+      {
+       "default": "false",
+       "name": "checked",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "phase": null,
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "context_menu"
+      }
+     },
+     "handler_prop": "oncontext-menu",
+     "js_event": "context-menu",
+     "name": "context_menu",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg2",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "enter"
+      }
+     },
+     "handler_prop": "onenter",
+     "js_event": "enter",
+     "name": "enter",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "focus_in"
+      }
+     },
+     "handler_prop": "onfocus-in",
+     "js_event": "focus-in",
+     "name": "focus_in",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "focus_out"
+      }
+     },
+     "handler_prop": "onfocus-out",
+     "js_event": "focus-out",
+     "name": "focus_out",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "key_release"
+      }
+     },
+     "handler_prop": "onkey-release",
+     "js_event": "key-release",
+     "name": "key_release",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg2",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "leave"
+      }
+     },
+     "handler_prop": "onleave",
+     "js_event": "leave",
+     "name": "leave",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "mouse_double_click"
+      }
+     },
+     "handler_prop": "onmouse-double-click",
+     "js_event": "mouse-double-click",
+     "name": "mouse_double_click",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg2",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg3",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "mouse_move"
+      }
+     },
+     "handler_prop": "onmouse-move",
+     "js_event": "mouse-move",
+     "name": "mouse_move",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg2",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg3",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "mouse_press"
+      }
+     },
+     "handler_prop": "onmouse-press",
+     "js_event": "mouse-press",
+     "name": "mouse_press",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg2",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg3",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "mouse_release"
+      }
+     },
+     "handler_prop": "onmouse-release",
+     "js_event": "mouse-release",
+     "name": "mouse_release",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg2",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg3",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This signal is emitted when the button is pressed down.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#pressed"
+     },
+     "extensions": {
+      "qt": {
+       "connect": "pressed()",
+       "metaobject_signatures": [
+        "pressed()"
+       ],
+       "signature": "void pressed()"
+      }
+     },
+     "flags": [],
+     "handler_prop": "onpressed",
+     "handler_result": "none",
+     "js_event": "pressed",
+     "name": "pressed",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:signal:void pressed()",
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "params": [],
+     "phase": null,
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": true,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This signal is emitted when the button is released.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#released"
+     },
+     "extensions": {
+      "qt": {
+       "connect": "released()",
+       "metaobject_signatures": [
+        "released()"
+       ],
+       "signature": "void released()"
+      }
+     },
+     "flags": [],
+     "handler_prop": "onreleased",
+     "handler_result": "none",
+     "js_event": "released",
+     "name": "released",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:signal:void released()",
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "params": [],
+     "phase": null,
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "resize"
+      }
+     },
+     "handler_prop": "onresize",
+     "js_event": "resize",
+     "name": "resize",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    },
+    {
+     "annotated": true,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This signal is emitted whenever a checkable button changes its state. *checked* is true if the button is checked, or false if the button is unchecked.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#toggled"
+     },
+     "extensions": {
+      "qt": {
+       "connect": "toggled(bool)",
+       "metaobject_signatures": [
+        "toggled(bool)"
+       ],
+       "signature": "void toggled(bool checked)"
+      }
+     },
+     "flags": [],
+     "handler_prop": "ontoggled",
+     "handler_result": "none",
+     "js_event": "toggled",
+     "name": "toggled",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QAbstractButton:signal:void toggled(bool checked)",
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "params": [
+      {
+       "name": "checked",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "phase": null,
+     "returns": {
+      "display": "void"
+     },
+     "sync_required": false
+    },
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "wheel"
+      }
+     },
+     "handler_prop": "onwheel",
+     "js_event": "wheel",
+     "name": "wheel",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg2",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg3",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    }
+   ],
+   "examples": [
+    {
+     "code": "<script>\n  let count = $state(0);\n</script>\n\n<push-button accessible-name=\"Hello\" onclicked={() => count++} />\n",
+     "generated": true,
+     "lang": "svelte",
+     "tested": false,
+     "title": "Using <push-button>"
+    }
+   ],
+   "extensions": {
+    "qt": {
+     "header": "qpushbutton.h",
+     "module": "QtWidgets",
+     "qobject": "yes",
+     "qss": "Supports the box model. Sub-controls: `::menu-indicator`. Pseudo-states: `:checked`, `:closed`, `:default`, `:flat`, `:open`. [Qt Style Sheets reference](https://doc.qt.io/qt-6/stylesheet-reference.html#qpushbutton-widget)"
+    }
+   },
+   "id": "qt:QPushButton",
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": {
+    "class": "owned",
+    "note": "derived: QObject; deleted with its parent or by destroy (deleteLater)",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds whether the push button is an auto default button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#autoDefault-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "bool autoDefault() const"
+      }
+     },
+     "kind": "method",
+     "name": "autoDefault",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:bool autoDefault() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "bool autoDefault() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements: [QAbstractButton::event](xref:qt:QAbstractButton)(QEvent *e).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#event"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "bool event(QEvent *e) override"
+      }
+     },
+     "kind": "method",
+     "name": "event",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:bool event(QEvent *e) override",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "e",
+       "type": {
+        "display": "unknown",
+        "native": "QEvent *",
+        "neutral": "opaque",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "bool event(QEvent *e) override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements: [QAbstractButton::focusInEvent](xref:qt:QAbstractButton)(QFocusEvent *e).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#focusInEvent"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "void focusInEvent(QFocusEvent *e) override"
+      }
+     },
+     "kind": "method",
+     "name": "focusInEvent",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void focusInEvent(QFocusEvent *e) override",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "e",
+       "type": {
+        "display": "unknown",
+        "native": "QFocusEvent *",
+        "neutral": "opaque",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void focusInEvent(QFocusEvent *e) override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements: [QAbstractButton::focusOutEvent](xref:qt:QAbstractButton)(QFocusEvent *e).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#focusOutEvent"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "void focusOutEvent(QFocusEvent *e) override"
+      }
+     },
+     "kind": "method",
+     "name": "focusOutEvent",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void focusOutEvent(QFocusEvent *e) override",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "e",
+       "type": {
+        "display": "unknown",
+        "native": "QFocusEvent *",
+        "neutral": "opaque",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void focusOutEvent(QFocusEvent *e) override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements: [QAbstractButton::hitButton](xref:qt:QAbstractButton)(const QPoint &pos) const.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#hitButton"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "bool hitButton(const QPoint &pos) const override"
+      }
+     },
+     "kind": "method",
+     "name": "hitButton",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:bool hitButton(const QPoint &pos) const override",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "pos",
+       "type": {
+        "display": "unknown",
+        "native": "const QPoint &",
+        "neutral": "record<Point>"
+       }
+      }
+     ],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "bool hitButton(const QPoint &pos) const override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Initialize *option* with the values from this [QPushButton](xref:qt:QPushButton).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#initStyleOption"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "void initStyleOption(QStyleOptionButton *option) const"
+      }
+     },
+     "kind": "method",
+     "name": "initStyleOption",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void initStyleOption(QStyleOptionButton *option) const",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "option",
+       "type": {
+        "display": "unknown",
+        "native": "QStyleOptionButton *",
+        "neutral": "opaque",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void initStyleOption(QStyleOptionButton *option) const",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds whether the push button is the default button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#default-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "bool isDefault() const"
+      }
+     },
+     "kind": "method",
+     "name": "isDefault",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:bool isDefault() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "bool isDefault() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds whether the button border is raised",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#flat-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "bool isFlat() const"
+      }
+     },
+     "kind": "method",
+     "name": "isFlat",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:bool isFlat() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "bool isFlat() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements: [QAbstractButton::keyPressEvent](xref:qt:QAbstractButton)(QKeyEvent *e).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#keyPressEvent"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "void keyPressEvent(QKeyEvent *e) override"
+      }
+     },
+     "kind": "method",
+     "name": "keyPressEvent",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void keyPressEvent(QKeyEvent *e) override",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "e",
+       "type": {
+        "display": "unknown",
+        "native": "QKeyEvent *",
+        "neutral": "opaque",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void keyPressEvent(QKeyEvent *e) override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Returns the button's associated popup menu or `nullptr` if no popup menu has been set.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#menu"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QMenu * menu() const"
+      }
+     },
+     "kind": "method",
+     "name": "menu",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:QMenu * menu() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "QMenu"
+     },
+     "signature": "QMenu * menu() const",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements an access function for property: [QWidget::minimumSizeHint](xref:qt:QWidget).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#minimumSizeHint"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QSize minimumSizeHint() const override"
+      }
+     },
+     "kind": "method",
+     "name": "minimumSizeHint",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:QSize minimumSizeHint() const override",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "unknown"
+     },
+     "signature": "QSize minimumSizeHint() const override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements: [QAbstractButton::mouseMoveEvent](xref:qt:QAbstractButton)(QMouseEvent *e).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#mouseMoveEvent"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "void mouseMoveEvent(QMouseEvent *e) override"
+      }
+     },
+     "kind": "method",
+     "name": "mouseMoveEvent",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void mouseMoveEvent(QMouseEvent *e) override",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "e",
+       "type": {
+        "display": "unknown",
+        "native": "QMouseEvent *",
+        "neutral": "opaque",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void mouseMoveEvent(QMouseEvent *e) override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "protected",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements: [QAbstractButton::paintEvent](xref:qt:QAbstractButton)(QPaintEvent *e).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#paintEvent"
+     },
+     "extensions": {
+      "qt": {
+       "access": "protected",
+       "meta": "plain",
+       "signature": "void paintEvent(QPaintEvent *) override"
+      }
+     },
+     "kind": "method",
+     "name": "paintEvent",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void paintEvent(QPaintEvent *) override",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "",
+       "type": {
+        "display": "unknown",
+        "native": "QPaintEvent *",
+        "neutral": "opaque",
+        "nullable": true
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void paintEvent(QPaintEvent *) override",
+     "static": false,
+     "virtual": true
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds whether the push button is an auto default button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#autoDefault-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setAutoDefault(bool)"
+      }
+     },
+     "kind": "method",
+     "name": "setAutoDefault",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void setAutoDefault(bool)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setAutoDefault(bool)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds whether the push button is the default button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#default-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setDefault(bool)"
+      }
+     },
+     "kind": "method",
+     "name": "setDefault",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void setDefault(bool)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setDefault(bool)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds whether the button border is raised",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#flat-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setFlat(bool)"
+      }
+     },
+     "kind": "method",
+     "name": "setFlat",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void setFlat(bool)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setFlat(bool)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Associates the popup menu *menu* with this push button.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#setMenu"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setMenu(QMenu *menu)"
+      }
+     },
+     "kind": "method",
+     "name": "setMenu",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void setMenu(QMenu *menu)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "menu",
+       "type": {
+        "display": "QMenu",
+        "native": "QMenu *",
+        "neutral": "object<QMenu>",
+        "nullable": true,
+        "ref": "qt:QMenu"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setMenu(QMenu *menu)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Shows (pops up) the associated popup menu.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#showMenu"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "slot",
+       "signature": "void showMenu()"
+      }
+     },
+     "kind": "slot",
+     "name": "showMenu",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:void showMenu()",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void showMenu()",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Reimplements an access function for property: [QWidget::sizeHint](xref:qt:QWidget).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#sizeHint"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QSize sizeHint() const override"
+      }
+     },
+     "kind": "method",
+     "name": "sizeHint",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QPushButton:method:QSize sizeHint() const override",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "unknown"
+     },
+     "signature": "QSize sizeHint() const override",
+     "static": false,
+     "virtual": true
+    }
+   ],
+   "name": "QPushButton",
+   "native_name": "QPushButton",
+   "properties": [
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's name as seen by assistive technologies",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#accessibleName-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "accessible-name",
+     "name": "accessibleName",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "autoDefault",
+      "set": "setAutoDefault"
+     },
+     "annotated": true,
+     "bindable": false,
+     "default": "false",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the push button is an auto default button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#autoDefault-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "auto-default",
+     "name": "autoDefault",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether auto-exclusivity is enabled",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoExclusive-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "auto-exclusive",
+     "name": "autoExclusive",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether autoRepeat is enabled",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#autoRepeat-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "auto-repeat",
+     "name": "autoRepeat",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the button is checkable",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#checkable-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "checkable",
+     "name": "checkable",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "isDefault",
+      "set": "setDefault"
+     },
+     "annotated": true,
+     "bindable": false,
+     "default": "false",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the push button is the default button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#default-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "default",
+     "name": "default",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the widget is enabled",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#enabled-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "enabled",
+     "name": "enabled",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "isFlat",
+      "set": "setFlat"
+     },
+     "annotated": true,
+     "bindable": false,
+     "default": "false",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the button border is raised",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html#flat-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "flat",
+     "name": "flat",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The icon shown on the button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#icon-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QIcon"
+      }
+     },
+     "js_name": "icon",
+     "name": "icon",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "QIcon",
+      "native": "QIcon",
+      "neutral": "boxed<QIcon>"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The icon size used for this button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#iconSize-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QSize"
+      }
+     },
+     "js_name": "icon-size",
+     "name": "iconSize",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "unknown",
+      "native": "QSize",
+      "neutral": "record<Size>"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's maximum height in pixels",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#maximumHeight-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "int"
+      }
+     },
+     "js_name": "maximum-height",
+     "name": "maximumHeight",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "number",
+      "native": "int",
+      "neutral": "i32"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's maximum width in pixels",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#maximumWidth-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "int"
+      }
+     },
+     "js_name": "maximum-width",
+     "name": "maximumWidth",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "number",
+      "native": "int",
+      "neutral": "i32"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's minimum height in pixels",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#minimumHeight-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "int"
+      }
+     },
+     "js_name": "minimum-height",
+     "name": "minimumHeight",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "number",
+      "native": "int",
+      "neutral": "i32"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's minimum width in pixels",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#minimumWidth-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "int"
+      }
+     },
+     "js_name": "minimum-width",
+     "name": "minimumWidth",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "number",
+      "native": "int",
+      "neutral": "i32"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The mnemonic associated with the button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#shortcut-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QKeySequence"
+      }
+     },
+     "js_name": "shortcut",
+     "name": "shortcut",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "QKeySequence",
+      "native": "QKeySequence",
+      "neutral": "boxed<QKeySequence>"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's status tip",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#statusTip-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "status-tip",
+     "name": "statusTip",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's style sheet",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#styleSheet-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "style-sheet",
+     "name": "styleSheet",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The text shown on the button",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qabstractbutton.html#text-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "text",
+     "name": "text",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's tooltip",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#toolTip-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "tool-tip",
+     "name": "toolTip",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {},
+     "annotated": true,
+     "bindable": false,
+     "default": null,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's What's This help text",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#whatsThis-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "whats-this",
+     "name": "whatsThis",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    }
+   ],
+   "qualified": "QPushButton",
+   "screenshot": "qt/push-button",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/qt/QPushButton.yaml"
+    ],
+    "metadata_file": "metadata/qt/QPushButton.json",
+    "note": "",
+    "test_note": "Annotated facts have generated C++ verification tests (svl_qt_verify.cpp from gen_cpp.py); results are in metadata/verified/qt.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     10,
+     10
+    ]
+   },
+   "summary": {
+    "license": "GFDL-1.3-only",
+    "md": "The QPushButton widget provides a command button.",
+    "origin": "qdoc-html",
+    "truncated": true,
+    "upstream_url": "https://doc.qt.io/qt-6/qpushbutton.html"
+   },
+   "tags": [
+    "push-button"
+   ],
+   "upstream": {
+    "label": "Qt 6 reference: QPushButton",
+    "url": "https://doc.qt.io/qt-6/qpushbutton.html"
+   },
+   "values": []
+  },
+  {
+   "abi_symbols": [
+    "create",
+    "destroy",
+    "get_prop",
+    "insert",
+    "listen",
+    "remove",
+    "set_prop"
+   ],
+   "abstract": false,
+   "bases": [
+    "qt:QObject",
+    "qt:QPaintDevice"
+   ],
+   "children": {
+    "default_slot": "children",
+    "policy": "layout_managed",
+    "slots": [
+     {
+      "accepts": [
+       "QWidget"
+      ],
+      "annotated": true,
+      "attrs": [],
+      "cardinality": "many",
+      "default": true,
+      "name": "children",
+      "on_remove": "empty",
+      "ops": {
+       "index_of": "QLayout::indexOf(const QWidget*) const",
+       "insert": "QBoxLayout::addWidget(QWidget*, int, Qt::Alignment)",
+       "list": "QLayout::count() const",
+       "remove": "QLayout::removeWidget(QWidget*)"
+      },
+      "order": "native_index",
+      "ownership": {
+       "insert": "child parented",
+       "remove": "child unparented"
+      },
+      "provenance": [
+       "uic: layout/item",
+       "typesystem: addownership-1",
+       "probe: qt_slot_ownership_probe.py"
+      ]
+     }
+    ]
+   },
+   "constructors": [],
+   "events": [
+    {
+     "annotated": true,
+     "extensions": {
+      "qt": {
+       "metaobject_signatures": [],
+       "signature": "",
+       "synthetic": "resize"
+      }
+     },
+     "handler_prop": "onresize",
+     "js_event": "resize",
+     "name": "resize",
+     "origin": "manual",
+     "origins": [
+      "manual"
+     ],
+     "params": [
+      {
+       "name": "arg0",
+       "type": {
+        "display": "unknown"
+       }
+      },
+      {
+       "name": "arg1",
+       "type": {
+        "display": "unknown"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     }
+    }
+   ],
+   "examples": [
+    {
+     "code": "<script>\n  let count = $state(0);\n</script>\n\n<box-layout accessible-name=\"Hello\" direction=\"bottom-to-top\" oncontext-menu={() => count++}>\n  <label>Child content</label>\n</box-layout>\n",
+     "generated": true,
+     "lang": "svelte",
+     "tested": false,
+     "title": "Using <box-layout>"
+    }
+   ],
+   "extensions": {
+    "qt": {
+     "header": "qwidget.h",
+     "module": "QtWidgets",
+     "ownership": [
+      "`addAction(const QIcon&,const QString&)`: argument return gets its parent from `this`",
+      "`addAction(const QIcon&,const QString&,const QKeySequence&)`: argument return gets its parent from `this`",
+      "`addAction(const QIcon&,const QString&,const QKeySequence&,const QObject*,const char*,Qt::ConnectionType)`: argument return gets its parent from `this`",
+      "`addAction(const QIcon&,const QString&,const QObject*,const char*,Qt::ConnectionType)`: argument return gets its parent from `this`",
+      "`addAction(const QString&)`: argument return gets its parent from `this`",
+      "`addAction(const QString&,const QKeySequence&)`: argument return gets its parent from `this`",
+      "`addAction(const QString&,const QKeySequence&,const QObject*,const char*,Qt::ConnectionType)`: argument return gets its parent from `this`",
+      "`addAction(const QString&,const QObject*,const char*,Qt::ConnectionType)`: argument return gets its parent from `this`",
+      "`insertAction(QAction*,QAction*)`: argument 2 gets its parent from `this`",
+      "`nativeEvent(const QByteArray &,void*,qintptr*)`: return_native_eventfilter_conversion",
+      "`nativeEvent(const QByteArray &,void*,qintptr*)`: return_native_eventfilter_conversion_variables",
+      "`nativeEvent(const QByteArray &,void*,qintptr*)`: snippet",
+      "`nativeParentWidget()const`: define_ownership",
+      "`parentWidget()const`: define_ownership",
+      "`setFocusProxy(QWidget*)`: argument 1 gets its parent from `this`",
+      "`setLayout(QLayout*)`: snippet",
+      "`setParent(QWidget*)`: argument this gets its parent from `1`",
+      "`setParent(QWidget*,QFlags<Qt::WindowType>)`: argument this gets its parent from `1`",
+      "`setStyle(QStyle*)`: snippet",
+      "`style()const`: define_ownership",
+      "`style()const`: snippet",
+      "`window()const`: define_ownership"
+     ],
+     "qobject": "yes",
+     "qss": "[Qt Style Sheets reference](https://doc.qt.io/qt-6/stylesheet-reference.html#qwidget-widget)"
+    }
+   },
+   "id": "qt:QWidget",
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": {
+    "class": "owned",
+    "note": "derived: QObject; deleted with its parent or by destroy (deleteLater)",
+    "origin": "derived"
+   },
+   "methods": [
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Closes this widget. Returns `true` if the widget was closed; otherwise returns `false`.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#close"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "slot",
+       "signature": "bool close()"
+      }
+     },
+     "kind": "slot",
+     "name": "close",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:bool close()",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "boolean"
+     },
+     "signature": "bool close()",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "reachable": false,
+      "reason": "Toplevel insert/remove keep the window type by passing windowFlags() into setParent (tools/metadata/qt/templates/backend.cpp.in:887, 911); changing the flags re-creates the native window. The windowFlags property is denied to inference as renderer-owned (metadata/rules/qt.yaml).",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/qt.yaml#window-flags",
+      "use_instead": "A toplevel element (<main-window>, <dialog>) nested where it belongs."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Sets the window flags for the widget to *flags*, *without* telling the window system.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#overrideWindowFlags"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void overrideWindowFlags(Qt::WindowFlags flags)"
+      }
+     },
+     "kind": "method",
+     "name": "overrideWindowFlags",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void overrideWindowFlags(Qt::WindowFlags flags)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "flags",
+       "type": {
+        "display": "Qt::WindowType",
+        "native": "Qt::WindowFlags",
+        "neutral": "flags<Qt::WindowType>"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void overrideWindowFlags(Qt::WindowFlags flags)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": true,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds the size of the widget excluding any window frame",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#size-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void resize(const QSize &)"
+      }
+     },
+     "kind": "method",
+     "name": "resize",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void resize(const QSize &)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "",
+       "type": {
+        "display": "unknown",
+        "native": "const QSize &",
+        "neutral": "record<Size>"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void resize(const QSize &)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": true,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This corresponds to resize([QSize](xref:qt:QSize)(*w*, *h*)).",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#resize"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void resize(int w, int h)"
+      }
+     },
+     "kind": "method",
+     "name": "resize",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void resize(int w, int h)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "w",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      },
+      {
+       "name": "h",
+       "type": {
+        "display": "number",
+        "native": "int",
+        "neutral": "i32"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void resize(int w, int h)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "reachable": false,
+      "reason": "Composite elements install their layout at create (tools/metadata/qt/gen_cpp.py:930-933) and the slot ops cast layout() to that class (gen_cpp.py:862); another layout breaks every later insert/remove.",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/qt.yaml#layout",
+      "use_instead": "<box-layout>/<grid-layout> children."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Sets the layout manager for this widget to *layout*.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#setLayout"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setLayout(QLayout *layout)"
+      }
+     },
+     "kind": "method",
+     "name": "setLayout",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void setLayout(QLayout *layout)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "layout",
+       "type": {
+        "display": "QLayout",
+        "native": "QLayout *",
+        "neutral": "object<QLayout>",
+        "nullable": true,
+        "ref": "qt:QLayout"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setLayout(QLayout *layout)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "tools/metadata/qt/templates/backend.cpp.in:885-912"
+      ],
+      "reachable": false,
+      "reason": "The backend re-parents widgets itself: toplevel insert/remove (tools/metadata/qt/templates/backend.cpp.in:887, 911), the menu glue (tools/metadata/qt/templates/menus.hpp.in:69-71) and every slot's remove (metadata/overrides/qt/QWidget.yaml:134). A widget moved behind it keeps a stale placement record.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#reparent",
+      "use_instead": "Put the child element inside its parent; {#if}/{#each} move it."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Sets the parent of the widget to *parent*, and resets the window flags.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#setParent"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setParent(QWidget *parent)"
+      }
+     },
+     "kind": "method",
+     "name": "setParent",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void setParent(QWidget *parent)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "parent",
+       "type": {
+        "display": "QWidget",
+        "native": "QWidget *",
+        "neutral": "object<QWidget>",
+        "nullable": true,
+        "ref": "qt:QWidget"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setParent(QWidget *parent)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "evidence": [
+       "tools/metadata/qt/templates/backend.cpp.in:885-912"
+      ],
+      "reachable": false,
+      "reason": "The backend re-parents widgets itself: toplevel insert/remove (tools/metadata/qt/templates/backend.cpp.in:887, 911), the menu glue (tools/metadata/qt/templates/menus.hpp.in:69-71) and every slot's remove (metadata/overrides/qt/QWidget.yaml:134). A widget moved behind it keeps a stale placement record.",
+      "severity": "corrupts-tree",
+      "source": "metadata/dangerous/qt.yaml#reparent",
+      "use_instead": "Put the child element inside its parent; {#if}/{#each} move it."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This function also takes widget flags, *f* as an argument.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#setParent-1"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setParent(QWidget *parent, Qt::WindowFlags f)"
+      }
+     },
+     "kind": "method",
+     "name": "setParent",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void setParent(QWidget *parent, Qt::WindowFlags f)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "parent",
+       "type": {
+        "display": "QWidget",
+        "native": "QWidget *",
+        "neutral": "object<QWidget>",
+        "nullable": true,
+        "ref": "qt:QWidget"
+       }
+      },
+      {
+       "name": "f",
+       "type": {
+        "display": "Qt::WindowType",
+        "native": "Qt::WindowFlags",
+        "neutral": "flags<Qt::WindowType>"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setParent(QWidget *parent, Qt::WindowFlags f)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "dangerous": {
+      "reachable": false,
+      "reason": "Toplevel insert/remove keep the window type by passing windowFlags() into setParent (tools/metadata/qt/templates/backend.cpp.in:887, 911); changing the flags re-creates the native window. The windowFlags property is denied to inference as renderer-owned (metadata/rules/qt.yaml).",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/qt.yaml#window-flags",
+      "use_instead": "A toplevel element (<main-window>, <dialog>) nested where it belongs."
+     },
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Sets the window flag *flag* on this widget if *on* is true; otherwise clears the flag.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#setWindowFlag"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "void setWindowFlag(Qt::WindowType flag, bool on)"
+      }
+     },
+     "kind": "method",
+     "name": "setWindowFlag",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void setWindowFlag(Qt::WindowType flag, bool on)",
+     "origin": "qdoc",
+     "params": [
+      {
+       "name": "flag",
+       "type": {
+        "display": "Qt::WindowType",
+        "native": "Qt::WindowType",
+        "neutral": "enum<Qt::WindowType>"
+       }
+      },
+      {
+       "default": "true",
+       "name": "on",
+       "type": {
+        "display": "boolean",
+        "native": "bool",
+        "neutral": "bool"
+       }
+      }
+     ],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void setWindowFlag(Qt::WindowType flag, bool on)",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": true,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Shows the widget and its child widgets.",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#show"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "slot",
+       "signature": "void show()"
+      }
+     },
+     "kind": "slot",
+     "name": "show",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:void show()",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "void"
+     },
+     "signature": "void show()",
+     "static": false,
+     "virtual": false
+    },
+    {
+     "access": "public",
+     "annotated": false,
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "This property holds the window title (caption)",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#windowTitle-prop"
+     },
+     "extensions": {
+      "qt": {
+       "access": "public",
+       "meta": "plain",
+       "signature": "QString windowTitle() const"
+      }
+     },
+     "kind": "method",
+     "name": "windowTitle",
+     "native_id": "svelters-api:v1:type:qt:QtWidgets:QWidget:method:QString windowTitle() const",
+     "origin": "qdoc",
+     "params": [],
+     "returns": {
+      "display": "string"
+     },
+     "signature": "QString windowTitle() const",
+     "static": false,
+     "virtual": false
+    }
+   ],
+   "name": "QWidget",
+   "native_name": "QWidget",
+   "properties": [
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "isEnabled",
+      "set": "setEnabled"
+     },
+     "annotated": true,
+     "bindable": false,
+     "default": "true",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "Whether the widget is enabled",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#enabled-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "bool"
+      }
+     },
+     "js_name": "enabled",
+     "name": "enabled",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "boolean",
+      "native": "bool",
+      "neutral": "bool"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "toolTip",
+      "set": "setToolTip"
+     },
+     "annotated": true,
+     "bindable": false,
+     "default": "\"\"",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The widget's tooltip",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#toolTip-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "tool-tip",
+     "name": "toolTip",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "manual",
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     },
+     "verified": true
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "windowFlags",
+      "set": "setWindowFlags"
+     },
+     "annotated": false,
+     "bindable": false,
+     "dangerous": {
+      "reachable": false,
+      "reason": "The property behind setWindowFlags; toplevel insert/remove rely on it (tools/metadata/qt/templates/backend.cpp.in:887, 911).",
+      "severity": "owned-by-backend",
+      "source": "metadata/dangerous/qt.yaml#window-flags-prop",
+      "use_instead": "A toplevel element (<main-window>, <dialog>)."
+     },
+     "default": null,
+     "extensions": {
+      "qt": {
+       "meta_flags": [],
+       "native_type": "Qt::WindowFlags"
+      }
+     },
+     "js_name": "windowFlags",
+     "name": "windowFlags",
+     "notify": null,
+     "origin": "qdoc",
+     "origins": [
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "Qt::WindowType",
+      "native": "Qt::WindowFlags",
+      "neutral": "flags<Qt::WindowType>"
+     }
+    },
+    {
+     "access": {
+      "read": true,
+      "write": true
+     },
+     "accessors": {
+      "get": "windowTitle",
+      "set": "setWindowTitle"
+     },
+     "annotated": false,
+     "bindable": true,
+     "default": "\"\"",
+     "doc": {
+      "license": "GFDL-1.3-only",
+      "md": "The window title (caption)",
+      "origin": "qdoc-html",
+      "truncated": true,
+      "upstream_url": "https://doc.qt.io/qt-6/qwidget.html#windowTitle-prop"
+     },
+     "extensions": {
+      "qt": {
+       "meta_flags": [
+        "designable",
+        "stored"
+       ],
+       "native_type": "QString"
+      }
+     },
+     "js_name": "windowTitle",
+     "name": "windowTitle",
+     "notify": "windowTitleChanged(QString)",
+     "origin": "qdoc",
+     "origins": [
+      "metaobject",
+      "qdoc"
+     ],
+     "range": null,
+     "role": "value",
+     "type": {
+      "display": "string",
+      "native": "QString",
+      "neutral": "string"
+     }
+    }
+   ],
+   "qualified": "QWidget",
+   "screenshot": "qt/box-layout",
+   "serdes": {
+    "status": "unknown"
+   },
+   "status": {
+    "annotation_files": [
+     "metadata/overrides/qt/QWidget.yaml"
+    ],
+    "metadata_file": "metadata/qt/QWidget.json",
+    "note": "",
+    "test_note": "Annotated facts have generated C++ verification tests (svl_qt_verify.cpp from gen_cpp.py); results are in metadata/verified/qt.json.",
+    "tested": true,
+    "tier": "annotated",
+    "verified_facts": [
+     52,
+     52
+    ]
+   },
+   "summary": {
+    "license": "GFDL-1.3-only",
+    "md": "The QWidget class is the base class of all user interface objects.",
+    "origin": "qdoc-html",
+    "truncated": true,
+    "upstream_url": "https://doc.qt.io/qt-6/qwidget.html"
+   },
+   "tags": [
+    "box-layout",
+    "grid-layout"
+   ],
+   "upstream": {
+    "label": "Qt 6 reference: QWidget",
+    "url": "https://doc.qt.io/qt-6/qwidget.html"
+   },
+   "values": []
+  }
+ ],
+ "extension_schemas": {
+  "qt": {
+   "fields": [
+    {
+     "format": "code",
+     "key": "header",
+     "label": "Header",
+     "scope": "entity"
+    },
+    {
+     "format": "code",
+     "key": "module",
+     "label": "Qt module",
+     "scope": "entity"
+    },
+    {
+     "format": "text",
+     "key": "qobject",
+     "label": "QObject-derived",
+     "scope": "entity"
+    },
+    {
+     "format": "markdown",
+     "key": "qss",
+     "label": "Style sheet (QSS) selector support",
+     "scope": "entity"
+    },
+    {
+     "format": "list",
+     "key": "ownership",
+     "label": "Ownership facts (PySide typesystem)",
+     "scope": "entity"
+    },
+    {
+     "format": "code",
+     "key": "signature",
+     "label": "C++ signature",
+     "scope": "method"
+    },
+    {
+     "format": "text",
+     "key": "access",
+     "label": "Access",
+     "scope": "method"
+    },
+    {
+     "format": "text",
+     "key": "meta",
+     "label": "Meta kind",
+     "scope": "method"
+    },
+    {
+     "format": "code",
+     "key": "signature",
+     "label": "C++ signature",
+     "scope": "event"
+    },
+    {
+     "format": "list",
+     "key": "metaobject_signatures",
+     "label": "Meta-method signatures",
+     "scope": "event"
+    },
+    {
+     "format": "code",
+     "key": "connect",
+     "label": "Connected overload",
+     "scope": "event"
+    },
+    {
+     "format": "list",
+     "key": "collapses",
+     "label": "Collapses overloads",
+     "scope": "event"
+    },
+    {
+     "format": "code",
+     "key": "native_type",
+     "label": "C++ type",
+     "scope": "property"
+    },
+    {
+     "format": "list",
+     "key": "meta_flags",
+     "label": "Q_PROPERTY flags",
+     "scope": "property"
+    }
+   ],
+   "title": "Qt specifics"
+  }
+ },
+ "schema": "svelters-docs-ir/v0",
+ "toolkit": {
+  "doc_license": {
+   "attribution": "Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3.",
+   "name": "GNU Free Documentation License v1.3",
+   "redistribution": "brief_only",
+   "spdx": "GFDL-1.3-only",
+   "url": "https://www.gnu.org/licenses/fdl-1.3.html"
+  },
+  "id": "qt",
+  "language": "C++",
+  "name": "Qt 6 (Widgets)",
+  "notices": [
+   "Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3. Only short briefs are reproduced here (text policy: brief); see doc.qt.io for the full documentation."
+  ],
+  "status": "working",
+  "text_policy": "brief",
+  "upstream_docs": "https://doc.qt.io/qt-6/",
+  "version": "6.11.0"
+ }
+}

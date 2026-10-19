@@ -675,6 +675,8 @@ fn async_methods_return_promises_settled_by_the_backend() {
             "start failure rejected: svelters cannot start",
             "aborted NativeError g-io-error-quark cancelled Operation was cancelled",
             "pre-aborted NativeError g-io-error-quark cancelled Operation was cancelled",
+            // the completion orphaned by its owner's death is rejected by the host (N1), never left pending
+            "orphan rejected svelters disposed",
         ],
         "{out:?} {errs:?}"
     );

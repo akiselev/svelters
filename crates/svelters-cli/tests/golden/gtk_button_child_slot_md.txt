@@ -1,0 +1,8 @@
+$ svelters docs gtk button.child
+exit: 0
+--- stdout
+# <button>.child · slot
+`gtk button.slot:child` · declared here · Site: /api/gtk/button/
+one child, default slot · accepts Gtk.Widget · order `none` · get `GtkButton::get_child() const` · remove `GtkButton::set_child(GtkWidget*)` · set `GtkButton::set_child(GtkWidget*)` · on remove: child unparented · on set: child parented, old unparented · on remove `empty` · annotated
+
+--- stderr

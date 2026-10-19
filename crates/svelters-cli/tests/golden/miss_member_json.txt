@@ -1,0 +1,30 @@
+$ svelters docs qt main-window.titel --json
+exit: 1
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "not_found",
+  "query": "main-window.titel",
+  "toolkits": [
+    "qt"
+  ],
+  "suggestions": [
+    {
+      "address": "qt main-window.prop:window-title",
+      "toolkit": "qt",
+      "kind": "property",
+      "brief": "The window title (caption)",
+      "site": "/api/qt/main-window/#property-windowtitle"
+    },
+    {
+      "address": "qt main-window.method:windowTitle",
+      "toolkit": "qt",
+      "kind": "method",
+      "declared_in": "qt:QWidget",
+      "brief": "This property holds the window title (caption)",
+      "site": "/api/qt/box-layout/#method-windowtitle"
+    }
+  ],
+  "notes": []
+}
+--- stderr

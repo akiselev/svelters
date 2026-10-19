@@ -39,6 +39,15 @@ Construct-time properties (construct-only ones can only be given here): `display
 - `isLocal()`
 - `setContent(provider)`
 
+## Async methods
+
+Each folds a native `_async`/`_finish` pair into one call that returns a Promise. It resolves with the finish result (an object of the out parameters where there are any) and rejects with a `NativeError`. The native `GCancellable` is not exposed: pass `{ signal }` (an `AbortSignal`) as the last argument to cancel, which rejects with code `cancelled`. See [Async calls and callbacks](../async/).
+
+- `readAsync(mimeTypes, ioPriority, { signal }?)` → `Promise<{ ret, outMimeType }>` (`read_async` + `read_finish`)
+- `readTextAsync({ signal }?)` → `Promise<str>` (`read_text_async` + `read_text_finish`)
+- `readTextureAsync({ signal }?)` → `Promise<object>` (`read_texture_async` + `read_texture_finish`)
+- `storeAsync(ioPriority, { signal }?)` → `Promise<bool>` (`store_async` + `store_finish`)
+
 ## Events
 
 Listen with `obj.on('name', fn)`; it returns its disposer.
@@ -47,5 +56,5 @@ Listen with `obj.on('name', fn)`; it returns its disposer.
 
 ## Not bound yet
 
-7 members are not bound; reasons: async 5, struct by value 1, variant 1.
+3 members are not bound; reasons: struct by value 1, variant 2.
 

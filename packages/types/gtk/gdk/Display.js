@@ -119,7 +119,7 @@ export class Display extends GObject_Object {
 
   translateKey(keycode, state, group) {
     const __res = call(this, 'translate_key', [keycode, state, group]);
-    return { ret: __res.ret, keyval: __res.keyval, effectiveGroup: __res.effectiveGroup, level: __res.level, consumed: __res.consumed };
+    return { ret: __res.ret, keyval: __res.keyval, effectiveGroup: __res.effective_group, level: __res.level, consumed: __res.consumed };
   }
 
   get composited() {

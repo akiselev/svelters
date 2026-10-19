@@ -7,6 +7,7 @@ mod backend;
 pub mod compat;
 mod convert;
 mod gi;
+pub mod closures;
 pub mod generated;
 mod lookup;
 mod reflect;

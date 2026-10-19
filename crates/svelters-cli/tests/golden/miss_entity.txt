@@ -1,0 +1,7 @@
+$ svelters docs gtk butonn
+exit: 1
+--- stdout
+No `butonn` in gtk.
+Did you mean:
+  gtk button  (element)  Calls a callback function when the button is clicked.
+--- stderr

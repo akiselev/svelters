@@ -25,12 +25,24 @@ export class UnixFDList extends GObject_Object {
     return call(this, 'append', [fd]);
   }
 
+  appendTake(fd) {
+    return call(this, 'append_take', [fd]);
+  }
+
   get(index) {
     return call(this, 'get', [index]);
   }
 
   getLength() {
     return call(this, 'get_length', []);
+  }
+
+  lookup(index) {
+    return call(this, 'lookup', [index]);
+  }
+
+  peek(index) {
+    return call(this, 'peek', [index]);
   }
 
   peekFds() {

@@ -1,0 +1,52 @@
+$ svelters docs -k title --json --limit 5
+exit: 0
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "search",
+  "query": "title",
+  "toolkits": [
+    "gtk",
+    "qt"
+  ],
+  "results": [
+    {
+      "address": "gtk window.prop:title",
+      "toolkit": "gtk",
+      "kind": "property",
+      "brief": "The title of the window.",
+      "site": "/api/gtk/window/#property-title"
+    },
+    {
+      "address": "gtk window.prop:titlebar",
+      "toolkit": "gtk",
+      "kind": "property",
+      "brief": "The titlebar widget.",
+      "site": "/api/gtk/window/#property-titlebar"
+    },
+    {
+      "address": "gtk window.slot:titlebar",
+      "toolkit": "gtk",
+      "kind": "slot",
+      "brief": "",
+      "site": "/api/gtk/window/"
+    },
+    {
+      "address": "gtk window.method:set_titlebar",
+      "toolkit": "gtk",
+      "kind": "method",
+      "brief": "Sets a custom titlebar for the window.",
+      "site": "/api/gtk/window/#method-set-titlebar"
+    },
+    {
+      "address": "qt box-layout.method:windowTitle",
+      "toolkit": "qt",
+      "kind": "method",
+      "brief": "This property holds the window title (caption)",
+      "site": "/api/qt/box-layout/#method-windowtitle"
+    }
+  ],
+  "truncated": true,
+  "notes": []
+}
+--- stderr

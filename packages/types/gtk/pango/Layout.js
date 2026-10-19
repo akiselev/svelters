@@ -151,7 +151,7 @@ export class Layout extends GObject_Object {
 
   indexToLineX(index, trailing) {
     const __res = call(this, 'index_to_line_x', [index, trailing]);
-    return { line: __res.line, xPos: __res.xPos };
+    return { line: __res.line, xPos: __res.x_pos };
   }
 
   isEllipsized() {
@@ -164,7 +164,7 @@ export class Layout extends GObject_Object {
 
   moveCursorVisually(strong, oldIndex, oldTrailing, direction) {
     const __res = call(this, 'move_cursor_visually', [strong, oldIndex, oldTrailing, direction]);
-    return { newIndex: __res.newIndex, newTrailing: __res.newTrailing };
+    return { newIndex: __res.new_index, newTrailing: __res.new_trailing };
   }
 
   serialize(flags) {
@@ -217,7 +217,7 @@ export class Layout extends GObject_Object {
 
   setMarkupWithAccel(markup, length, accelMarker) {
     const __res = call(this, 'set_markup_with_accel', [markup, length, accelMarker]);
-    return { accelChar: __res.accelChar };
+    return { accelChar: __res.accel_char };
   }
 
   setSingleParagraphMode(setting) {
@@ -250,6 +250,6 @@ export class Layout extends GObject_Object {
 
   xyToIndex(x, y) {
     const __res = call(this, 'xy_to_index', [x, y]);
-    return { ret: __res.ret, index: __res.index, trailing: __res.trailing };
+    return { ret: __res.ret, index: __res.index_, trailing: __res.trailing };
   }
 }

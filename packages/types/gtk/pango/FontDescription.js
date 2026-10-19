@@ -80,6 +80,10 @@ export class FontDescription extends NativeValue {
     return call(this, 'get_weight', []);
   }
 
+  getWidth() {
+    return call(this, 'get_width', []);
+  }
+
   hash() {
     return call(this, 'hash', []);
   }

@@ -13,6 +13,10 @@ export class Tooltip extends GObject_Object {
     return construct(this.native, constructProps(this, props, {}));
   }
 
+  setCustom(customWidget = null) {
+    call(this, 'set_custom', [customWidget]);
+  }
+
   setIcon(paintable = null) {
     call(this, 'set_icon', [paintable]);
   }

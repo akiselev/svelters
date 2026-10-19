@@ -1,0 +1,5 @@
+$ svelters docs qt push-button.clicked --brief
+exit: 0
+--- stdout
+event clicked on <push-button>: `clicked` (`onclicked`) (checked: boolean)
+--- stderr

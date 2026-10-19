@@ -1,0 +1,7 @@
+$ svelters docs qt main-window.close
+exit: 2
+--- stdout
+`main-window.close` is ambiguous; use one of:
+  qt main-window.event:close  (event)
+  qt main-window.method:close  (method, from QWidget)  Closes this widget. Returns true if the widget was closed; otherwise returns false.
+--- stderr

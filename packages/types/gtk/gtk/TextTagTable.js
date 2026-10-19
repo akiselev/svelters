@@ -28,6 +28,10 @@ export class TextTagTable extends GObject_Object {
     return call(this, 'add', [tag]);
   }
 
+  foreach(func) {
+    call(this, 'foreach', [(typeof func === 'function' ? (a0) => func(wrapObject(TextTag, a0)) : func)]);
+  }
+
   getSize() {
     return call(this, 'get_size', []);
   }

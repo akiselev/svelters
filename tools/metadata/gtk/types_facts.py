@@ -23,8 +23,10 @@ Classification (section 3.1 of the plan), rules only; the lists live in
 A member is bound ("auto") when every slot is one the backend's generic invoker marshals in N0
 (crates/svelters-gtk/src/gi.rs): numbers, strings, enums, flags, objects, boxed structs by pointer,
 GStrv, GType, unichar, GList/GSList and C arrays of those, out/inout parameters, caller-allocated
-out structs, GError. Callbacks, async pairs, GVariant, hash tables, GArray/GPtrArray, fundamentals
-and by-value structs are blocked with a reason (N1 lifts callbacks and async).
+out structs, GError; since N1 also callbacks by scope (call / async / notified / forever, user data and
+destroy notify hidden) and `_async`/`_finish` pairs folded into one Promise-returning member
+(`async: {finish, outs}`; GCancellable, GAsyncReadyCallback and user data hidden). GVariant, hash
+tables, GArray/GPtrArray, fundamentals, by-value structs and async statics are blocked with a reason.
 
 Usage:
   python3 tools/metadata/gtk/types_facts.py --report          # tables of the classification
@@ -274,6 +276,10 @@ class Conv:
         if c in ("object", "model", "widget", "async-infra"):
             if c == "async-infra":
                 raise Blocked("async")
+            if c == "widget":
+                # N1: widgets are elements, not classes; a widget slot takes an element (its handle) and
+                # answers the renderer node (FileDialog.open(parent)).
+                return {"k": "widget", "t": n}
             self.need(n)
             return {"k": "object", "t": n}
         if c == "value-fundamental":
@@ -322,7 +328,7 @@ class Conv:
 
     def elem(self, inner: ET.Element, ns: str) -> dict:
         t = self.named(inner.get("name"), ns, inner.get(CNS + "type", "") or "x*", False)
-        if t["k"] in ("str", "int", "float", "bool", "enum", "flags", "object", "boxed"):
+        if t["k"] in ("str", "int", "float", "bool", "enum", "flags", "object", "boxed", "widget"):
             return t
         raise Blocked(f"list element {t['k']}")
 
@@ -335,14 +341,65 @@ def refs_of(t: dict | None) -> set[str]:
         out.add(t["t"])
     if "elem" in t:
         out |= refs_of(t["elem"])
+    if t.get("k") == "callback":
+        for a in t["sig"]["args"]:
+            out |= refs_of(a["type"])
+        out |= refs_of(t["sig"]["ret"])
     return out
 
 
-def sig_of(m: ET.Element, ns: str, cv: Conv, g: Gir, name_over: str | None = None) -> dict:
-    """The bound signature of a callable, or {'blocked': reason}."""
+def callback_sig(g: Gir, cv: "Conv", cb_full: str) -> dict:
+    """The signature of a callback type as crates/svelters-gtk/src/gi.rs `plan_callback` accepts it:
+    in-arguments the invoker reads back plus one trailing user-data pointer, no GError, no out
+    arguments, no arrays with a length, no nested callbacks, no list/array return."""
+    tag, el, ns = g.t[cb_full]
+    if el.get("throws") == "1":
+        raise Blocked("callback: throws")
+    ps = el.find(C + "parameters")
+    params = ps.findall(C + "parameter") if ps is not None else []
+    args: list[dict] = []
+    for i, p in enumerate(params):
+        if p.get("direction", "in") != "in":
+            raise Blocked("callback: out argument")
+        t = p.find(C + "type")
+        if t is not None and t.get("name") in ("gpointer", "gconstpointer"):
+            if i + 1 == len(params):
+                continue
+            raise Blocked("callback: gpointer")
+        a = p.find(C + "array")
+        if a is not None and a.get("length") is not None:
+            raise Blocked("callback: array with length")
+        try:
+            ty = cv.slot(p, ns)
+        except Blocked as b:
+            raise Blocked(f"callback: {b}")
+        if ty["k"] == "callback":
+            raise Blocked("callback: nested callback")
+        entry = {"name": p.get("name"), "type": ty}
+        if p.get("nullable") == "1" or p.get("allow-none") == "1":
+            entry["nullable"] = True
+        args.append(entry)
+    rv = el.find(C + "return-value")
+    try:
+        ret = cv.slot(rv, ns) if rv is not None else {"k": "void"}
+    except Blocked as b:
+        raise Blocked(f"callback: {b}")
+    if ret["k"] in ("list", "array", "strv"):
+        raise Blocked("callback: list return")
+    return {"args": args, "ret": ret}
+
+
+def sig_of(m: ET.Element, ns: str, cv: Conv, g: Gir, name_over: str | None = None, finish: bool = False) -> dict:
+    """The bound signature of a callable, or {'blocked': reason}.
+
+    N1: callback parameters are bound with their GIR scope (their user data and destroy notify are
+    hidden); the `GCancellable`, `GAsyncReadyCallback` and user data of an `_async` function are hidden
+    (the call returns a Promise, abort goes through `{ signal }`); with `finish`, the `GAsyncResult`
+    parameter of a finish function is hidden."""
     ps = m.find(C + "parameters")
     params = ps.findall(C + "parameter") if ps is not None else []
     hidden_idx: set[int] = set()
+    internal_idx: set[int] = set()
     for i, p in enumerate(params):
         a = p.find(C + "array")
         if a is not None and a.get("length") is not None:
@@ -352,17 +409,53 @@ def sig_of(m: ET.Element, ns: str, cv: Conv, g: Gir, name_over: str | None = Non
         a = rv.find(C + "array")
         if a is not None and a.get("length") is not None:
             hidden_idx.add(int(a.get("length")))
+    # callback companions and async machinery
+    is_async = False
+    for i, p in enumerate(params):
+        t = p.find(C + "type")
+        tn = g.q(t.get("name"), ns) if t is not None else None
+        if tn == "Gio.AsyncReadyCallback":
+            is_async = True
+            internal_idx.add(i)
+            if p.get("closure") is not None:
+                internal_idx.add(int(p.get("closure")))
+        elif tn and cv.cats.get(tn) == "callback":
+            if p.get("closure") is not None:
+                internal_idx.add(int(p.get("closure")))
+            if p.get("destroy") is not None:
+                internal_idx.add(int(p.get("destroy")))
+    if is_async:
+        for i, p in enumerate(params):
+            t = p.find(C + "type")
+            if t is not None and g.q(t.get("name"), ns) == "Gio.Cancellable":
+                internal_idx.add(i)
     out_params: list[dict] = []
     try:
         for i, p in enumerate(params):
+            if i in internal_idx:
+                continue
             if p.find(C + "varargs") is not None or p.get("name") == "...":
                 raise Blocked("varargs")
             direction = p.get("direction", "in")
             caller_alloc = p.get("caller-allocates") == "1"
-            t = cv.slot(p, ns, by_ref=caller_alloc and direction == "out")
-            if t["k"] == "void":
+            t = p.find(C + "type")
+            tn = g.q(t.get("name"), ns) if t is not None else None
+            if finish and tn == "Gio.AsyncResult":
+                continue
+            if tn == "GLib.DestroyNotify":
+                raise Blocked("callback: unpaired destroy notify")
+            if tn and cv.cats.get(tn) == "callback":
+                if direction != "in":
+                    raise Blocked("callback: out")
+                scope = p.get("scope") or "call"
+                if is_async and scope == "call":
+                    raise Blocked("async: call-scope callback")
+                ty = {"k": "callback", "t": tn, "scope": scope, "sig": callback_sig(g, cv, tn)}
+            else:
+                ty = cv.slot(p, ns, by_ref=caller_alloc and direction == "out")
+            if ty["k"] == "void":
                 raise Blocked("void parameter")
-            entry = {"name": p.get("name"), "js": camel(p.get("name")), "type": t}
+            entry = {"name": p.get("name"), "js": camel(p.get("name")), "type": ty}
             if direction != "in":
                 entry["dir"] = direction
             if p.get("nullable") == "1" or p.get("allow-none") == "1" or (p.get("optional") == "1" and direction == "out"):
@@ -378,12 +471,38 @@ def sig_of(m: ET.Element, ns: str, cv: Conv, g: Gir, name_over: str | None = Non
         r["ret_nullable"] = True
     if m.get("throws") == "1":
         r["throws"] = True
+    if is_async:
+        r["async_start"] = True
+    return r
+
+
+def async_sig(m: ET.Element, fin: ET.Element, ns: str, cv: Conv, g: Gir) -> dict:
+    """An `_async` function folded with its `_finish`: the JS parameters of the start, the result of the
+    finish (its return value, or `{ret?, outs...}` when it has out parameters), its GError."""
+    start = sig_of(m, ns, cv, g)
+    if "blocked" in start:
+        return start
+    if start["ret"]["k"] != "void":
+        return {"blocked": "async: start returns a value"}
+    if any(p.get("dir") for p in start["params"]):
+        return {"blocked": "async: start has out parameters"}
+    end = sig_of(fin, ns, cv, g, finish=True)
+    if "blocked" in end:
+        return {"blocked": end["blocked"]}
+    if [p for p in end["params"] if not p.get("dir")]:
+        return {"blocked": "async: finish takes more than the result"}
+    outs = [p for p in end["params"] if p.get("dir")]
+    r: dict = {"params": start["params"], "ret": end["ret"], "async": {"finish": fin.get("name"), "outs": outs}}
+    if end.get("ret_nullable"):
+        r["ret_nullable"] = True
+    if end.get("throws"):
+        r["throws"] = True
     return r
 
 
 def sig_refs(sig: dict) -> set[str]:
     out = refs_of(sig.get("ret"))
-    for p in sig.get("params", []):
+    for p in sig.get("params", []) + (sig.get("async") or {}).get("outs", []):
         out |= refs_of(p["type"])
     return out
 
@@ -403,10 +522,23 @@ def callables(g: Gir, full: str, cats: dict[str, str], cv: Conv, ov: dict) -> di
             nm = m.get("name") or ""
             if skipped(m) or nm in CORE_NAMES or nm.endswith("_finish") or m.get("shadowed-by"):
                 continue
-            if m.get(GL + "finish-func") or m.get("async") == "1":
-                blocked[nm] = "async"
-                continue
-            sig = sig_of(m, ns, cv, g)
+            fin_name = m.get(GL + "finish-func")
+            takes_ready = any((pt.find(C + "type") is not None and g.q(pt.find(C + "type").get("name"), ns) == "Gio.AsyncReadyCallback")
+                              for pt in m.findall(C + "parameters/" + C + "parameter"))
+            if fin_name or takes_ready:
+                # N1: `_async` + `_finish` fold into one member returning a Promise. The backend pairs
+                # them by name (`<stem>_finish`), as the typelib names the pair only from GLib 2.84 on.
+                stem = nm[: -len("_async")] if nm.endswith("_async") else nm
+                fin = next((f for f in el if f.get("name") == stem + "_finish" and f.tag in (C + "method", C + "function", C + "constructor")), None)
+                if fin is None:
+                    blocked[nm] = "async: no finish function"
+                    continue
+                if fin_name and fin_name != fin.get("name"):
+                    blocked[nm] = "async: finish-func naming"
+                    continue
+                sig = async_sig(m, fin, ns, cv, g)
+            else:
+                sig = sig_of(m, ns, cv, g)
             if "blocked" in sig:
                 blocked[nm] = sig["blocked"]
                 continue

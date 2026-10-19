@@ -1,0 +1,8 @@
+$ svelters docs gtk application-window.titlebar
+exit: 0
+--- stdout
+# <application-window>.titlebar · slot
+`gtk application-window.slot:titlebar` · declared in Gtk.Window · Site: /api/gtk/window/
+one child · accepts Gtk.Widget · order `none` · get `GtkWindow::get_titlebar() const` · remove `GtkWindow::set_titlebar(GtkWidget*)` · set `GtkWindow::set_titlebar(GtkWidget*)` · on remove: child unparented · on set: child parented, old unparented · on remove `empty` · annotated
+
+--- stderr
