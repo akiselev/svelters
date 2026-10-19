@@ -31,6 +31,7 @@
         "ownership": "floating_sink",
         "type": "self"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -73,6 +74,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -91,6 +93,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -109,6 +112,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gtk:PageSetup>"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -127,6 +131,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:Gtk:PrintSettings>"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -145,6 +150,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -199,6 +205,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -260,6 +267,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -286,6 +294,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.14",
       "throws": true,
       "unsupported_reason": null
     },
@@ -313,6 +322,7 @@
         "ownership": "owned",
         "type": "object<svelters-api:v1:type:gtk:Gio:OutputStream>"
       },
+      "since": "4.14",
       "throws": true,
       "unsupported_reason": null
     },
@@ -340,6 +350,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -366,6 +377,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -392,6 +404,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -418,6 +431,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -444,6 +458,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -491,6 +506,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": "callback_scope"
     },
     {
@@ -517,6 +533,7 @@
         "ownership": "owned",
         "type": "boxed<svelters-api:v1:type:gtk:Gtk:PrintSetup>"
       },
+      "since": "4.14",
       "throws": true,
       "unsupported_reason": null
     }

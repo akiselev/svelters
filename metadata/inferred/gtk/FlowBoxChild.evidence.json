@@ -1,0 +1,33 @@
+{
+ "methods:get_index": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": -1,
+   "stable": true
+  }
+ },
+ "methods:is_selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "slots:child": {
+  "confidence": 0.95,
+  "evidence": {
+   "accepts": "GtkLabel",
+   "clear_unparents": true,
+   "log": [],
+   "old_on_replace": "finalized",
+   "parent": "direct",
+   "readback": true,
+   "revealed_by": null,
+   "role": "slot"
+  }
+ }
+}

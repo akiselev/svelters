@@ -1,0 +1,581 @@
+verify_subject:
+  tag: label
+properties:
+- name: can-focus
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: can-target
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: focus-on-click
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: focusable
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: halign
+  sample: start
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: has-tooltip
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: height-request
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: hexpand
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: hexpand-set
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: layout-manager
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: limit-events
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: margin-bottom
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: margin-end
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: margin-start
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: margin-top
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: name
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: overflow
+  sample: hidden
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: receives-default
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: sensitive
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: tooltip-markup
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: tooltip-text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: valign
+  sample: start
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: vexpand
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: vexpand-set
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: visible
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: width-request
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+methods:
+- name: get_baseline
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(-1)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned -1
+- name: get_can_focus
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "can-focus")
+  provenance:
+  - origin: probe
+    ref: equals property can-focus
+- name: get_can_target
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "can-target")
+  provenance:
+  - origin: probe
+    ref: equals property can-target
+- name: get_child_visible
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned True
+- name: get_css_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "css-name")
+  provenance:
+  - origin: probe
+    ref: equals property css-name
+- name: get_direction
+  dispatch: dynamic
+  args: []
+  expect: r == V::Str("ltr".into())
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 'ltr'
+- name: get_focus_on_click
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "focus-on-click")
+  provenance:
+  - origin: probe
+    ref: equals property focus-on-click
+- name: get_focusable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "focusable")
+  provenance:
+  - origin: probe
+    ref: equals property focusable
+- name: get_halign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "halign")
+  provenance:
+  - origin: probe
+    ref: equals property halign
+- name: get_has_tooltip
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "has-tooltip")
+  provenance:
+  - origin: probe
+    ref: equals property has-tooltip
+- name: get_height
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 0
+- name: get_hexpand
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "hexpand")
+  provenance:
+  - origin: probe
+    ref: equals property hexpand
+- name: get_hexpand_set
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "hexpand-set")
+  provenance:
+  - origin: probe
+    ref: equals property hexpand-set
+- name: get_limit_events
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "limit-events")
+  provenance:
+  - origin: probe
+    ref: equals property limit-events
+- name: get_mapped
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: get_margin_bottom
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "margin-bottom")
+  provenance:
+  - origin: probe
+    ref: equals property margin-bottom
+- name: get_margin_end
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "margin-end")
+  provenance:
+  - origin: probe
+    ref: equals property margin-end
+- name: get_margin_start
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "margin-start")
+  provenance:
+  - origin: probe
+    ref: equals property margin-start
+- name: get_margin_top
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "margin-top")
+  provenance:
+  - origin: probe
+    ref: equals property margin-top
+- name: get_opacity
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "opacity")
+  provenance:
+  - origin: probe
+    ref: equals property opacity
+- name: get_overflow
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "overflow")
+  provenance:
+  - origin: probe
+    ref: equals property overflow
+- name: get_realized
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: get_receives_default
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "receives-default")
+  provenance:
+  - origin: probe
+    ref: equals property receives-default
+- name: get_request_mode
+  dispatch: dynamic
+  args: []
+  expect: r == V::Str("constant-size".into())
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 'constant-size'
+- name: get_scale_factor
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "scale-factor")
+  provenance:
+  - origin: probe
+    ref: equals property scale-factor
+- name: get_sensitive
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "sensitive")
+  provenance:
+  - origin: probe
+    ref: equals property sensitive
+- name: get_tooltip_markup
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "tooltip-markup")
+  provenance:
+  - origin: probe
+    ref: equals property tooltip-markup
+- name: get_tooltip_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "tooltip-text")
+  provenance:
+  - origin: probe
+    ref: equals property tooltip-text
+- name: get_valign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "valign")
+  provenance:
+  - origin: probe
+    ref: equals property valign
+- name: get_vexpand
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "vexpand")
+  provenance:
+  - origin: probe
+    ref: equals property vexpand
+- name: get_vexpand_set
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "vexpand-set")
+  provenance:
+  - origin: probe
+    ref: equals property vexpand-set
+- name: get_visible
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "visible")
+  provenance:
+  - origin: probe
+    ref: equals property visible
+- name: get_width
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 0
+- name: has_default
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: has_focus
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: has_visible_focus
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: is_drawable
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: is_focus
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: is_sensitive
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "sensitive")
+  provenance:
+  - origin: probe
+    ref: equals property sensitive
+- name: is_visible
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "visible")
+  provenance:
+  - origin: probe
+    ref: equals property visible
+- name: set_can_focus
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "can-focus") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property can-focus: exact'
+- name: set_can_target
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "can-target") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property can-target: exact'
+- name: set_halign
+  dispatch: dynamic
+  args:
+  - start
+  expect: h.get(o, "halign") == V::Str("start".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property halign: exact'
+- name: set_has_tooltip
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "has-tooltip") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property has-tooltip: exact'
+- name: set_hexpand
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "hexpand") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property hexpand: exact'
+- name: set_hexpand_set
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "hexpand-set") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property hexpand-set: exact'
+- name: set_limit_events
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "limit-events") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property limit-events: exact'
+- name: set_margin_bottom
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "margin-bottom") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property margin-bottom: exact'
+- name: set_margin_end
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "margin-end") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property margin-end: exact'
+- name: set_margin_start
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "margin-start") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property margin-start: exact'
+- name: set_margin_top
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "margin-top") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property margin-top: exact'
+- name: set_name
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "name") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property name: exact'
+- name: set_overflow
+  dispatch: dynamic
+  args:
+  - hidden
+  expect: h.get(o, "overflow") == V::Str("hidden".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property overflow: exact'
+- name: set_receives_default
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "receives-default") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property receives-default: exact'
+- name: set_sensitive
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "sensitive") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property sensitive: exact'
+- name: set_tooltip_markup
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "tooltip-markup") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property tooltip-markup: exact'
+- name: set_tooltip_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "tooltip-text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property tooltip-text: exact'
+- name: set_valign
+  dispatch: dynamic
+  args:
+  - start
+  expect: h.get(o, "valign") == V::Str("start".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property valign: exact'
+- name: set_vexpand
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "vexpand") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property vexpand: exact'
+- name: set_vexpand_set
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "vexpand-set") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property vexpand-set: exact'
+- name: set_visible
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "visible") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property visible: exact'

@@ -9,6 +9,336 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::accept-unpaired-release",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "1f2776a73e537397",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:accept-unpaired-release",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "accept-unpaired-release",
+      "origin": "inferred",
+      "property": "accept-unpaired-release",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:accept-unpaired-release is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::activate-on-single-click",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "f5a9043e1145b96e",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:activate-on-single-click",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "activate-on-single-click",
+      "origin": "inferred",
+      "property": "activate-on-single-click",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:activate-on-single-click is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::column-spacing",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "1022cdc9da14becd",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:column-spacing",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "column-spacing",
+      "origin": "inferred",
+      "property": "column-spacing",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:column-spacing is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "u32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::homogeneous",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "a73638a32efda1c9",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:homogeneous",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "homogeneous",
+      "origin": "inferred",
+      "property": "homogeneous",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:homogeneous is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::max-children-per-line",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "ae831f7d8c6641d7",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:max-children-per-line",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "max-children-per-line",
+      "origin": "inferred",
+      "property": "max-children-per-line",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:max-children-per-line is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "u32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::min-children-per-line",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "b7bc85691241ae57",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:min-children-per-line",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "min-children-per-line",
+      "origin": "inferred",
+      "property": "min-children-per-line",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:min-children-per-line is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "u32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::row-spacing",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "3a70208f9f964234",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:row-spacing",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "row-spacing",
+      "origin": "inferred",
+      "property": "row-spacing",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:row-spacing is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "u32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::selection-mode",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "1997c764fe14678b",
+      "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:binding:selection-mode",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "selection-mode",
+      "origin": "inferred",
+      "property": "selection-mode",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkFlowBox:selection-mode is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [
@@ -143,10 +473,256 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_baseline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_baseline",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_child_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_child_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_css_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_css_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_direction",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_direction",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focus_on_click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focus_on_click",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focusable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_height",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_mapped",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_mapped",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_opacity",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:get_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "get_orientation",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_realized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_realized",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_request_mode",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_request_mode",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_scale_factor",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_scale_factor",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_width",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_visible_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_visible_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_drawable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_drawable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_visible",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
@@ -159,6 +735,138 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_resize",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:set_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "set_orientation",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_visible",
+        "origin": "inferred"
       }
     ],
     "properties": [
@@ -167,6 +875,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "can-focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-target",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
@@ -181,6 +895,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focus-on-click",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -193,6 +913,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has-tooltip",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "height-request",
@@ -203,6 +929,24 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand-set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "layout-manager",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "limit-events",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
@@ -247,6 +991,18 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "receives-default",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "sensitive",
@@ -275,6 +1031,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "vexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand-set",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
@@ -346,6 +1108,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.6",
       "unsupported_reason": null
     },
     {
@@ -396,6 +1159,24 @@
       "unsupported_reason": "callback_scope"
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "1a8525171027abe2",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property activate-on-single-click"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"activate-on-single-click\")",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:get_activate_on_single_click",
       "invocation": {
         "dev": "introspected",
@@ -473,6 +1254,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "3b5d066db7209c99",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property column-spacing"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"column-spacing\")",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:get_column_spacing",
       "invocation": {
         "dev": "introspected",
@@ -491,6 +1290,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "72cd7dcdafb3346a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property homogeneous"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"homogeneous\")",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:get_homogeneous",
       "invocation": {
         "dev": "introspected",
@@ -509,6 +1326,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "061cd12481fc1ae2",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property max-children-per-line"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"max-children-per-line\")",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:get_max_children_per_line",
       "invocation": {
         "dev": "introspected",
@@ -527,6 +1362,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "8b412f796952d71a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property min-children-per-line"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"min-children-per-line\")",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:get_min_children_per_line",
       "invocation": {
         "dev": "introspected",
@@ -545,6 +1398,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "210dd628b006c253",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property row-spacing"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"row-spacing\")",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:get_row_spacing",
       "invocation": {
         "dev": "introspected",
@@ -581,6 +1452,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "47be38f5407f0d3b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property selection-mode"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"selection-mode\")",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:get_selection_mode",
       "invocation": {
         "dev": "introspected",
@@ -691,6 +1580,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.6",
       "unsupported_reason": null
     },
     {
@@ -735,6 +1625,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -815,6 +1706,26 @@
       "unsupported_reason": "callback_scope"
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "a8d9958e28dbeb51",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property activate-on-single-click: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"activate-on-single-click\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:set_activate_on_single_click",
       "invocation": {
         "dev": "introspected",
@@ -841,6 +1752,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "2dbf2134ec72c407",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property column-spacing: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"column-spacing\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:set_column_spacing",
       "invocation": {
         "dev": "introspected",
@@ -933,6 +1864,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "a8460b494b9f2e62",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property homogeneous: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"homogeneous\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:set_homogeneous",
       "invocation": {
         "dev": "introspected",
@@ -959,6 +1910,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "8363fa949a2455f8",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property max-children-per-line: exact"
+          }
+        ]
+      },
+      "args": [
+        8
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"max-children-per-line\") == V::I64(8)",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:set_max_children_per_line",
       "invocation": {
         "dev": "introspected",
@@ -985,6 +1956,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "0a7d2f8fdb2aad03",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property min-children-per-line: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"min-children-per-line\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:set_min_children_per_line",
       "invocation": {
         "dev": "introspected",
@@ -1011,6 +2002,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "14fbf3f16d534c54",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property row-spacing: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"row-spacing\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:set_row_spacing",
       "invocation": {
         "dev": "introspected",
@@ -1037,6 +2048,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "968077256e18a0fe",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property selection-mode: exact"
+          }
+        ]
+      },
+      "args": [
+        "none"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"selection-mode\") == V::Str(\"none\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:method:set_selection_mode",
       "invocation": {
         "dev": "introspected",
@@ -1192,6 +2223,19 @@
         "get": null,
         "set": null
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "a44c5c965331908d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:accept-unpaired-release",
       "invocation": "reflected",
@@ -1214,6 +2258,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -1231,6 +2276,19 @@
       "accessors": {
         "get": "gtk_flow_box_get_activate_on_single_click",
         "set": "gtk_flow_box_set_activate_on_single_click"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "8bad997c02c6d51c",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": true,
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:prop:activate-on-single-click",
@@ -1254,6 +2312,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -1302,6 +2361,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": 1,
       "type": {
         "gtype": "guint",
         "native": "guint",
@@ -1347,6 +2407,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -1395,6 +2456,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": 8,
       "type": {
         "gtype": "guint",
         "native": "guint",
@@ -1443,6 +2505,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": 1,
       "type": {
         "gtype": "guint",
         "native": "guint",
@@ -1491,6 +2554,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": 1,
       "type": {
         "gtype": "guint",
         "native": "guint",
@@ -1536,6 +2600,7 @@
         "origin": "runtime",
         "owner": "GtkFlowBox"
       },
+      "sample": "none",
       "type": {
         "gtype": "GtkSelectionMode",
         "native": null,
@@ -1547,6 +2612,24 @@
   "schema": "svelters-element-kind/v0",
   "signals": [
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "8c51e93d17bd1a02",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1670,6 +2753,24 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "1fc6cec0f75681cb",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1712,6 +2813,7 @@
           "native_destroy"
         ]
       },
+      "delivery_only": true,
       "flags": [],
       "handler_result": "none",
       "id": "svelters-api:v1:type:gtk:Gtk:FlowBox:signal:selected-children-changed",
@@ -1740,6 +2842,24 @@
       }
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "9240636b785f753d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1766,6 +2886,24 @@
       "sync_required": false
     },
     {
+      "annotated": {
+        "fields": [
+          "handler_result",
+          "sync_required"
+        ],
+        "fp": "b0cbba7118a713e8",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "runtime",
+            "ref": "returns void, run-last"
+          },
+          {
+            "origin": "probe",
+            "ref": "action signal, emitted and delivered"
+          }
+        ]
+      },
       "connection": {
         "disconnect_on": [
           "handle_drop",
@@ -1790,6 +2928,470 @@
         "return_gtype": "void"
       },
       "sync_required": false
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "2d90cf6f8f864f5e",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:accept-unpaired-release"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "accept-unpaired-release"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::accept-unpaired-release",
+      "name": "notify::accept-unpaired-release",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "accept-unpaired-release",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "a4bdddd4506b61cd",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:activate-on-single-click"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "activate-on-single-click"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::activate-on-single-click",
+      "name": "notify::activate-on-single-click",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "activate-on-single-click",
+        "values": [
+          false,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "f8075aadc0dc4707",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:column-spacing"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "column-spacing"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::column-spacing",
+      "name": "notify::column-spacing",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "column-spacing",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "af5288942861ec8b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:homogeneous"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "homogeneous"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::homogeneous",
+      "name": "notify::homogeneous",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "homogeneous",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "23ad2ac5475c44d1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:max-children-per-line"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "max-children-per-line"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::max-children-per-line",
+      "name": "notify::max-children-per-line",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "max-children-per-line",
+        "values": [
+          8,
+          7,
+          8
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "291a842a6410de60",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:min-children-per-line"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "min-children-per-line"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::min-children-per-line",
+      "name": "notify::min-children-per-line",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "min-children-per-line",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "1cd498d4185fe2aa",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:row-spacing"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "row-spacing"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::row-spacing",
+      "name": "notify::row-spacing",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "row-spacing",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "b4bd17ecdc750713",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkFlowBox:selection-mode"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "selection-mode"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::selection-mode",
+      "name": "notify::selection-mode",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "selection-mode",
+        "values": [
+          "none",
+          "single",
+          "none"
+        ]
+      }
     }
   ],
   "source": {
@@ -1798,6 +3400,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/FlowBox.yaml",
     "overrides": "overrides/gtk/FlowBox.yaml",
     "runtime": {
       "gtk": "4.22.4",

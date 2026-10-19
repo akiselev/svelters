@@ -1,0 +1,170 @@
+{
+ "bindings:baseline-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:baseline-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "top"
+  }
+ },
+ "bindings:homogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:spacing": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "methods:get_baseline_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "baseline-child",
+   "ret": -1
+  }
+ },
+ "methods:get_baseline_position": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "baseline-position",
+   "ret": "center"
+  }
+ },
+ "methods:get_homogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "homogeneous",
+   "ret": false
+  }
+ },
+ "methods:get_spacing": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "spacing",
+   "ret": 0
+  }
+ },
+ "methods:set_baseline_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "baseline-child",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_baseline_position": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "baseline-position",
+   "recipe": null,
+   "sample": "top"
+  }
+ },
+ "methods:set_homogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "homogeneous",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_spacing": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "spacing",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "properties:baseline-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:baseline-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "center",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "top",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "top",
+   "signals": []
+  }
+ },
+ "properties:homogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:spacing": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ }
+}

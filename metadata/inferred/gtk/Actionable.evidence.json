@@ -1,0 +1,39 @@
+{
+ "methods:get_action_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "action-name",
+   "ret": null
+  }
+ },
+ "methods:set_action_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "action-name",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "properties:action-name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::sensitive",
+    "state-flags-changed"
+   ]
+  }
+ }
+}

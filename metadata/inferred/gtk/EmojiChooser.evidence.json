@@ -1,0 +1,22 @@
+{
+ "signals:emoji-picked": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 1,
+   "params": [
+    "gchararray"
+   ],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [
+     "x"
+    ],
+    "emit": "delivered"
+   }
+  }
+ }
+}

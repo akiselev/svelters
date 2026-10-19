@@ -1,0 +1,507 @@
+properties:
+- name: min-chars
+  sample: 4
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: min-lines
+  sample: 2
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: nat-chars
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: nat-lines
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: text-overflow
+  sample: ellipsize-start
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: wrap-mode
+  sample: word
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: xalign
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::min-chars
+  derived_from:
+    property: min-chars
+  js_event: notify::min-chars
+  trigger:
+    property: min-chars
+    values:
+    - 4
+    - 3
+    - 4
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkInscription:min-chars
+- name: notify::min-lines
+  derived_from:
+    property: min-lines
+  js_event: notify::min-lines
+  trigger:
+    property: min-lines
+    values:
+    - 2
+    - 1
+    - 2
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkInscription:min-lines
+- name: notify::nat-chars
+  derived_from:
+    property: nat-chars
+  js_event: notify::nat-chars
+  trigger:
+    property: nat-chars
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkInscription:nat-chars
+- name: notify::nat-lines
+  derived_from:
+    property: nat-lines
+  js_event: notify::nat-lines
+  trigger:
+    property: nat-lines
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkInscription:nat-lines
+- name: notify::text-overflow
+  derived_from:
+    property: text-overflow
+  js_event: notify::text-overflow
+  trigger:
+    property: text-overflow
+    values:
+    - ellipsize-start
+    - clip
+    - ellipsize-start
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkInscription:text-overflow
+- name: notify::wrap-mode
+  derived_from:
+    property: wrap-mode
+  js_event: notify::wrap-mode
+  trigger:
+    property: wrap-mode
+    values:
+    - word
+    - word-char
+    - word
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkInscription:wrap-mode
+- name: notify::xalign
+  derived_from:
+    property: xalign
+  js_event: notify::xalign
+  trigger:
+    property: xalign
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkInscription:xalign
+methods:
+- name: get_min_chars
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "min-chars")
+  provenance:
+  - origin: probe
+    ref: equals property min-chars
+- name: get_min_lines
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "min-lines")
+  provenance:
+  - origin: probe
+    ref: equals property min-lines
+- name: get_nat_chars
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "nat-chars")
+  provenance:
+  - origin: probe
+    ref: equals property nat-chars
+- name: get_nat_lines
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "nat-lines")
+  provenance:
+  - origin: probe
+    ref: equals property nat-lines
+- name: get_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "text")
+  provenance:
+  - origin: probe
+    ref: equals property text
+- name: get_text_overflow
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "text-overflow")
+  provenance:
+  - origin: probe
+    ref: equals property text-overflow
+- name: get_wrap_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "wrap-mode")
+  provenance:
+  - origin: probe
+    ref: equals property wrap-mode
+- name: get_xalign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "xalign")
+  provenance:
+  - origin: probe
+    ref: equals property xalign
+- name: get_yalign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "yalign")
+  provenance:
+  - origin: probe
+    ref: equals property yalign
+- name: set_min_chars
+  dispatch: dynamic
+  args:
+  - 4
+  expect: h.get(o, "min-chars") == V::I64(4)
+  provenance:
+  - origin: probe
+    ref: 'set then read property min-chars: exact'
+- name: set_min_lines
+  dispatch: dynamic
+  args:
+  - 2
+  expect: h.get(o, "min-lines") == V::I64(2)
+  provenance:
+  - origin: probe
+    ref: 'set then read property min-lines: exact'
+- name: set_nat_chars
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "nat-chars") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property nat-chars: exact'
+- name: set_nat_lines
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "nat-lines") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property nat-lines: exact'
+- name: set_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property text: exact'
+- name: set_text_overflow
+  dispatch: dynamic
+  args:
+  - ellipsize-start
+  expect: h.get(o, "text-overflow") == V::Str("ellipsize-start".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property text-overflow: exact'
+- name: set_wrap_mode
+  dispatch: dynamic
+  args:
+  - word
+  expect: h.get(o, "wrap-mode") == V::Str("word".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property wrap-mode: exact'
+- name: set_xalign
+  dispatch: dynamic
+  args:
+  - 1.0
+  expect: h.get(o, "xalign") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property xalign: exact'
+bindings:
+- name: min-chars
+  direction: two_way
+  property: min-chars
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::min-chars
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkInscription:min-chars is writable, scalar and notifies; the renderer compares before set'
+- name: min-lines
+  direction: two_way
+  property: min-lines
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::min-lines
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkInscription:min-lines is writable, scalar and notifies; the renderer compares before set'
+- name: nat-chars
+  direction: two_way
+  property: nat-chars
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::nat-chars
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkInscription:nat-chars is writable, scalar and notifies; the renderer compares before set'
+- name: nat-lines
+  direction: two_way
+  property: nat-lines
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::nat-lines
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkInscription:nat-lines is writable, scalar and notifies; the renderer compares before set'
+- name: text-overflow
+  direction: two_way
+  property: text-overflow
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:InscriptionOverflow>
+    nullable: false
+  change:
+    signal: notify::text-overflow
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkInscription:text-overflow is writable, scalar and notifies; the renderer compares before set'
+- name: wrap-mode
+  direction: two_way
+  property: wrap-mode
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Pango:WrapMode>
+    nullable: false
+  change:
+    signal: notify::wrap-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkInscription:wrap-mode is writable, scalar and notifies; the renderer compares before set'
+- name: xalign
+  direction: two_way
+  property: xalign
+  type:
+    ref: f32
+    nullable: false
+  change:
+    signal: notify::xalign
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkInscription:xalign is writable, scalar and notifies; the renderer compares before set'

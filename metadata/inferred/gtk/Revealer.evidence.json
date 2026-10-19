@@ -1,0 +1,139 @@
+{
+ "bindings:reveal-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:transition-duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 251
+  }
+ },
+ "bindings:transition-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "none"
+  }
+ },
+ "methods:get_child_revealed": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "child-revealed",
+   "ret": false
+  }
+ },
+ "methods:get_reveal_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "reveal-child",
+   "ret": false
+  }
+ },
+ "methods:get_transition_duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "transition-duration",
+   "ret": 250
+  }
+ },
+ "methods:get_transition_type": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "transition-type",
+   "ret": "slide-down"
+  }
+ },
+ "methods:set_reveal_child": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "reveal-child",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_transition_duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "transition-duration",
+   "recipe": null,
+   "sample": 251
+  }
+ },
+ "methods:set_transition_type": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "transition-type",
+   "recipe": null,
+   "sample": "none"
+  }
+ },
+ "properties:reveal-child": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::child-revealed"
+   ]
+  }
+ },
+ "properties:transition-duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 250,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 251,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 251,
+   "signals": []
+  }
+ },
+ "properties:transition-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "slide-down",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "none",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "none",
+   "signals": []
+  }
+ }
+}

@@ -1,0 +1,976 @@
+{
+ "methods:get_baseline": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": -1,
+   "stable": true
+  }
+ },
+ "methods:get_can_focus": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "can-focus",
+   "ret": true
+  }
+ },
+ "methods:get_can_target": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "can-target",
+   "ret": true
+  }
+ },
+ "methods:get_child_visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": true,
+   "stable": true
+  }
+ },
+ "methods:get_css_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "css-name",
+   "ret": "label"
+  }
+ },
+ "methods:get_direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": "ltr",
+   "stable": true
+  }
+ },
+ "methods:get_focus_on_click": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "focus-on-click",
+   "ret": true
+  }
+ },
+ "methods:get_focusable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "focusable",
+   "ret": false
+  }
+ },
+ "methods:get_halign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "halign",
+   "ret": "fill"
+  }
+ },
+ "methods:get_has_tooltip": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "has-tooltip",
+   "ret": false
+  }
+ },
+ "methods:get_height": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": 0,
+   "stable": true
+  }
+ },
+ "methods:get_hexpand": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "hexpand",
+   "ret": false
+  }
+ },
+ "methods:get_hexpand_set": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "hexpand-set",
+   "ret": false
+  }
+ },
+ "methods:get_limit_events": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "limit-events",
+   "ret": false
+  }
+ },
+ "methods:get_mapped": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:get_margin_bottom": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "margin-bottom",
+   "ret": 0
+  }
+ },
+ "methods:get_margin_end": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "margin-end",
+   "ret": 0
+  }
+ },
+ "methods:get_margin_start": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "margin-start",
+   "ret": 0
+  }
+ },
+ "methods:get_margin_top": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "margin-top",
+   "ret": 0
+  }
+ },
+ "methods:get_opacity": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "opacity",
+   "ret": 1.0
+  }
+ },
+ "methods:get_overflow": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "overflow",
+   "ret": "visible"
+  }
+ },
+ "methods:get_realized": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:get_receives_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "receives-default",
+   "ret": false
+  }
+ },
+ "methods:get_request_mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": "constant-size",
+   "stable": true
+  }
+ },
+ "methods:get_scale_factor": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "scale-factor",
+   "ret": 1
+  }
+ },
+ "methods:get_sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "sensitive",
+   "ret": true
+  }
+ },
+ "methods:get_tooltip_markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "tooltip-markup",
+   "ret": null
+  }
+ },
+ "methods:get_tooltip_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "tooltip-text",
+   "ret": null
+  }
+ },
+ "methods:get_valign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "valign",
+   "ret": "fill"
+  }
+ },
+ "methods:get_vexpand": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "vexpand",
+   "ret": false
+  }
+ },
+ "methods:get_vexpand_set": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "vexpand-set",
+   "ret": false
+  }
+ },
+ "methods:get_visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "visible",
+   "ret": true
+  }
+ },
+ "methods:get_width": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": 0,
+   "stable": true
+  }
+ },
+ "methods:has_default": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:has_focus": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:has_visible_focus": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:is_drawable": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:is_focus": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:is_sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "sensitive",
+   "ret": true
+  }
+ },
+ "methods:is_visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "visible",
+   "ret": true
+  }
+ },
+ "methods:set_can_focus": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "can-focus",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_can_target": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "can-target",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_halign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "halign",
+   "recipe": null,
+   "sample": "start"
+  }
+ },
+ "methods:set_has_tooltip": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "has-tooltip",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_hexpand": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "hexpand",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_hexpand_set": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "hexpand-set",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_limit_events": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "limit-events",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_margin_bottom": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "margin-bottom",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_margin_end": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "margin-end",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_margin_start": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "margin-start",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_margin_top": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "margin-top",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "name",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_overflow": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "overflow",
+   "recipe": null,
+   "sample": "hidden"
+  }
+ },
+ "methods:set_receives_default": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "receives-default",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "sensitive",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_tooltip_markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "tooltip-markup",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_tooltip_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "tooltip-text",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_valign": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "valign",
+   "recipe": null,
+   "sample": "start"
+  }
+ },
+ "methods:set_vexpand": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "vexpand",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_vexpand_set": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "vexpand-set",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "visible",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "properties:can-focus": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:can-target": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:focus-on-click": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:focusable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:halign": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "fill",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "start",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "start",
+   "signals": []
+  }
+ },
+ "properties:has-tooltip": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:height-request": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:hexpand": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::hexpand-set"
+   ]
+  }
+ },
+ "properties:hexpand-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:layout-manager": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<BoxLayout>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<BoxLayout>",
+   "signals": []
+  }
+ },
+ "properties:limit-events": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:margin-bottom": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:margin-end": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:margin-start": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:margin-top": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:name": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:overflow": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "visible",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "hidden",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "hidden",
+   "signals": []
+  }
+ },
+ "properties:receives-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:sensitive": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "state-flags-changed"
+   ]
+  }
+ },
+ "properties:tooltip-markup": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::has-tooltip",
+    "notify::tooltip-text"
+   ]
+  }
+ },
+ "properties:tooltip-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::has-tooltip",
+    "notify::tooltip-markup"
+   ]
+  }
+ },
+ "properties:valign": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "fill",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "start",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "start",
+   "signals": []
+  }
+ },
+ "properties:vexpand": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::vexpand-set"
+   ]
+  }
+ },
+ "properties:vexpand-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "hide"
+   ]
+  }
+ },
+ "properties:width-request": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ }
+}

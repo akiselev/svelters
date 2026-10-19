@@ -9,6 +9,213 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::baseline-row",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "f20fef60c2dcd640",
+      "id": "svelters-api:v1:type:gtk:Gtk:Grid:binding:baseline-row",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "baseline-row",
+      "origin": "inferred",
+      "property": "baseline-row",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkGrid:baseline-row is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::column-homogeneous",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "305842ca420976fd",
+      "id": "svelters-api:v1:type:gtk:Gtk:Grid:binding:column-homogeneous",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "column-homogeneous",
+      "origin": "inferred",
+      "property": "column-homogeneous",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkGrid:column-homogeneous is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::column-spacing",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "a6ade31d252df359",
+      "id": "svelters-api:v1:type:gtk:Gtk:Grid:binding:column-spacing",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "column-spacing",
+      "origin": "inferred",
+      "property": "column-spacing",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkGrid:column-spacing is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::row-homogeneous",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "a1e683d88f700945",
+      "id": "svelters-api:v1:type:gtk:Gtk:Grid:binding:row-homogeneous",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "row-homogeneous",
+      "origin": "inferred",
+      "property": "row-homogeneous",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkGrid:row-homogeneous is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::row-spacing",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "c5a26a62b5580e61",
+      "id": "svelters-api:v1:type:gtk:Gtk:Grid:binding:row-spacing",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "row-spacing",
+      "origin": "inferred",
+      "property": "row-spacing",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkGrid:row-spacing is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [
@@ -233,10 +440,256 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_baseline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_baseline",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_child_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_child_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_css_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_css_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_direction",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_direction",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focus_on_click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focus_on_click",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focusable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_height",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_mapped",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_mapped",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_opacity",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:get_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "get_orientation",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_realized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_realized",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_request_mode",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_request_mode",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_scale_factor",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_scale_factor",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_width",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_visible_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_visible_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_drawable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_drawable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_visible",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
@@ -249,6 +702,138 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_resize",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:set_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "set_orientation",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_visible",
+        "origin": "inferred"
       }
     ],
     "properties": [
@@ -257,6 +842,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "can-focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-target",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
@@ -271,6 +862,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focus-on-click",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -283,6 +880,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has-tooltip",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "height-request",
@@ -293,6 +896,24 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand-set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "layout-manager",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "limit-events",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
@@ -337,6 +958,18 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "receives-default",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "sensitive",
@@ -365,6 +998,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "vexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand-set",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
@@ -521,6 +1160,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "132dac23b306b23d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property baseline-row"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"baseline-row\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:method:get_baseline_row",
       "invocation": {
         "dev": "introspected",
@@ -572,6 +1229,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "29e029f39a0af663",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property column-homogeneous"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"column-homogeneous\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:method:get_column_homogeneous",
       "invocation": {
         "dev": "introspected",
@@ -634,6 +1309,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "6f1ec919151ff26b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property row-homogeneous"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"row-homogeneous\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:method:get_row_homogeneous",
       "invocation": {
         "dev": "introspected",
@@ -887,6 +1580,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "9abb33b138c400df",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property baseline-row: exact"
+          }
+        ]
+      },
+      "args": [
+        1
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"baseline-row\") == V::I64(1)",
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:method:set_baseline_row",
       "invocation": {
         "dev": "introspected",
@@ -913,6 +1626,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "5b0cf11ef69e38bb",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property column-homogeneous: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"column-homogeneous\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:method:set_column_homogeneous",
       "invocation": {
         "dev": "introspected",
@@ -998,6 +1731,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "7d1dfcf76dad7547",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property row-homogeneous: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"row-homogeneous\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:method:set_row_homogeneous",
       "invocation": {
         "dev": "introspected",
@@ -1069,6 +1822,19 @@
         "get": "gtk_grid_get_baseline_row",
         "set": "gtk_grid_set_baseline_row"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "d98d5542e42b7239",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": 0,
       "id": "svelters-api:v1:type:gtk:Gtk:Grid:prop:baseline-row",
       "invocation": "reflected",
@@ -1094,6 +1860,7 @@
         "origin": "runtime",
         "owner": "GtkGrid"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -1139,6 +1906,7 @@
         "origin": "runtime",
         "owner": "GtkGrid"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -1187,6 +1955,7 @@
         "origin": "runtime",
         "owner": "GtkGrid"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -1232,6 +2001,7 @@
         "origin": "runtime",
         "owner": "GtkGrid"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -1280,6 +2050,7 @@
         "origin": "runtime",
         "owner": "GtkGrid"
       },
+      "sample": 1,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -1289,13 +2060,305 @@
     }
   ],
   "schema": "svelters-element-kind/v0",
-  "signals": [],
+  "signals": [
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "d9894db2a80c1d91",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkGrid:baseline-row"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "baseline-row"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::baseline-row",
+      "name": "notify::baseline-row",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "baseline-row",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "aa3f743b20cd1328",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkGrid:column-homogeneous"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "column-homogeneous"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::column-homogeneous",
+      "name": "notify::column-homogeneous",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "column-homogeneous",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "79b7350446cd658a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkGrid:column-spacing"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "column-spacing"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::column-spacing",
+      "name": "notify::column-spacing",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "column-spacing",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "858b75cf0e6adec5",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkGrid:row-homogeneous"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "row-homogeneous"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::row-homogeneous",
+      "name": "notify::row-homogeneous",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "row-homogeneous",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "8a68b5bb7bf4956a",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkGrid:row-spacing"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "row-spacing"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::row-spacing",
+      "name": "notify::row-spacing",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "row-spacing",
+        "values": [
+          1,
+          0,
+          1
+        ]
+      }
+    }
+  ],
   "source": {
     "gir": {
       "file": "Gtk-4.0.gir",
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Grid.yaml",
     "overrides": "overrides/gtk/Grid.yaml",
     "runtime": {
       "gtk": "4.22.4",

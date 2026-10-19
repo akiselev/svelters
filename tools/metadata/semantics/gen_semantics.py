@@ -85,6 +85,9 @@ def need_prov(where: str, rec: dict) -> str:
     p = rec.get("provenance")
     if not p:
         fail(f"{where}: missing provenance")
+    if isinstance(p, list):
+        # Inferred facts (AI1) carry [{origin, ref}, ...]; the spec keeps one string.
+        p = "; ".join(f"{e.get('origin')}: {e.get('ref')}" if isinstance(e, dict) else str(e) for e in p)
     return p
 
 

@@ -1,0 +1,76 @@
+{
+ "bindings:search-mode-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:show-close-button": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_search_mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:get_show_close_button": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "show-close-button",
+   "ret": false
+  }
+ },
+ "methods:set_show_close_button": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "show-close-button",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:search-mode-enabled": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:show-close-button": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ }
+}

@@ -129,6 +129,14 @@
         "$ref": "#/$defs/binding"
       }
     },
+    "deny": {
+      "description": "Removes inferred facts (metadata/inferred/gtk) of this kind: entries are `<section>:<glob>` over fact names, e.g. `methods:set_*`, `properties:wrap-mode`. Sections: properties, signals, methods, slots, bindings.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(properties|signals|methods|slots|bindings):.+$"
+      }
+    },
     "text_prop": {
       "description": "Prop that Text children of the element set (`<button>Save</button>`), native or JS name; the compiler and the renderer fold static and {expr} text into it. Inherited along the kind chain (Button applies to ToggleButton). Not merged into metadata/gtk: tools/metadata/semantics/gen_semantics.py reads it from here.",
       "type": "object",
@@ -171,6 +179,7 @@
                   "runtime",
                   "manual",
                   "probe",
+                  "rule",
                   "docs",
                   "source"
                 ]
@@ -363,6 +372,10 @@
         },
         "sync_required": {
           "type": "boolean"
+        },
+        "delivery_only": {
+          "type": "boolean",
+          "description": "The trigger emits the signal synthetically (`emit_by_name` with sampled arguments): the test checks delivery, listen-off and destroy, not native causation. Coverage reports such facts as `verified: delivery`."
         },
         "out_params": {
           "type": "array",

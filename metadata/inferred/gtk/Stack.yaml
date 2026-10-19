@@ -1,0 +1,358 @@
+properties:
+- name: hhomogeneous
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: interpolate-size
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: transition-duration
+  sample: 201
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: transition-type
+  sample: crossfade
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: vhomogeneous
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::hhomogeneous
+  derived_from:
+    property: hhomogeneous
+  js_event: notify::hhomogeneous
+  trigger:
+    property: hhomogeneous
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkStack:hhomogeneous
+- name: notify::interpolate-size
+  derived_from:
+    property: interpolate-size
+  js_event: notify::interpolate-size
+  trigger:
+    property: interpolate-size
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkStack:interpolate-size
+- name: notify::transition-duration
+  derived_from:
+    property: transition-duration
+  js_event: notify::transition-duration
+  trigger:
+    property: transition-duration
+    values:
+    - 201
+    - 200
+    - 201
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkStack:transition-duration
+- name: notify::transition-type
+  derived_from:
+    property: transition-type
+  js_event: notify::transition-type
+  trigger:
+    property: transition-type
+    values:
+    - crossfade
+    - none
+    - crossfade
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkStack:transition-type
+- name: notify::vhomogeneous
+  derived_from:
+    property: vhomogeneous
+  js_event: notify::vhomogeneous
+  trigger:
+    property: vhomogeneous
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkStack:vhomogeneous
+methods:
+- name: get_hhomogeneous
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "hhomogeneous")
+  provenance:
+  - origin: probe
+    ref: equals property hhomogeneous
+- name: get_interpolate_size
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "interpolate-size")
+  provenance:
+  - origin: probe
+    ref: equals property interpolate-size
+- name: get_transition_duration
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "transition-duration")
+  provenance:
+  - origin: probe
+    ref: equals property transition-duration
+- name: get_transition_running
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "transition-running")
+  provenance:
+  - origin: probe
+    ref: equals property transition-running
+- name: get_transition_type
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "transition-type")
+  provenance:
+  - origin: probe
+    ref: equals property transition-type
+- name: get_vhomogeneous
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "vhomogeneous")
+  provenance:
+  - origin: probe
+    ref: equals property vhomogeneous
+- name: get_visible_child_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "visible-child-name")
+  provenance:
+  - origin: probe
+    ref: equals property visible-child-name
+- name: set_hhomogeneous
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "hhomogeneous") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property hhomogeneous: exact'
+- name: set_interpolate_size
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "interpolate-size") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property interpolate-size: exact'
+- name: set_transition_duration
+  dispatch: dynamic
+  args:
+  - 201
+  expect: h.get(o, "transition-duration") == V::I64(201)
+  provenance:
+  - origin: probe
+    ref: 'set then read property transition-duration: exact'
+- name: set_transition_type
+  dispatch: dynamic
+  args:
+  - crossfade
+  expect: h.get(o, "transition-type") == V::Str("crossfade".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property transition-type: exact'
+- name: set_vhomogeneous
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "vhomogeneous") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property vhomogeneous: exact'
+bindings:
+- name: hhomogeneous
+  direction: two_way
+  property: hhomogeneous
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::hhomogeneous
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkStack:hhomogeneous is writable, scalar and notifies; the renderer compares before set'
+- name: interpolate-size
+  direction: two_way
+  property: interpolate-size
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::interpolate-size
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkStack:interpolate-size is writable, scalar and notifies; the renderer compares before set'
+- name: transition-duration
+  direction: two_way
+  property: transition-duration
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::transition-duration
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkStack:transition-duration is writable, scalar and notifies; the renderer compares before set'
+- name: transition-type
+  direction: two_way
+  property: transition-type
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:StackTransitionType>
+    nullable: false
+  change:
+    signal: notify::transition-type
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkStack:transition-type is writable, scalar and notifies; the renderer compares before set'
+- name: vhomogeneous
+  direction: two_way
+  property: vhomogeneous
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::vhomogeneous
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkStack:vhomogeneous is writable, scalar and notifies; the renderer compares before set'

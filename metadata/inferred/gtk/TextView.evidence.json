@@ -1,0 +1,855 @@
+{
+ "bindings:accepts-tab": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:bottom-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:cursor-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:indent": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "alpha"
+  }
+ },
+ "bindings:justification": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "right"
+  }
+ },
+ "bindings:left-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:monospace": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:overwrite": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:pixels-above-lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:pixels-below-lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:pixels-inside-wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:right-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:top-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 1
+  }
+ },
+ "bindings:wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "char"
+  }
+ },
+ "methods:get_accepts_tab": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "accepts-tab",
+   "ret": true
+  }
+ },
+ "methods:get_bottom_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "bottom-margin",
+   "ret": 0
+  }
+ },
+ "methods:get_cursor_visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "cursor-visible",
+   "ret": true
+  }
+ },
+ "methods:get_editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "editable",
+   "ret": true
+  }
+ },
+ "methods:get_indent": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "indent",
+   "ret": 0
+  }
+ },
+ "methods:get_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "ret": "free-form"
+  }
+ },
+ "methods:get_justification": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "justification",
+   "ret": "left"
+  }
+ },
+ "methods:get_left_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "left-margin",
+   "ret": 0
+  }
+ },
+ "methods:get_monospace": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "monospace",
+   "ret": false
+  }
+ },
+ "methods:get_overwrite": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "overwrite",
+   "ret": false
+  }
+ },
+ "methods:get_pixels_above_lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "pixels-above-lines",
+   "ret": 0
+  }
+ },
+ "methods:get_pixels_below_lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "pixels-below-lines",
+   "ret": 0
+  }
+ },
+ "methods:get_pixels_inside_wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "pixels-inside-wrap",
+   "ret": 0
+  }
+ },
+ "methods:get_right_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "right-margin",
+   "ret": 0
+  }
+ },
+ "methods:get_top_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "top-margin",
+   "ret": 0
+  }
+ },
+ "methods:get_wrap_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "wrap-mode",
+   "ret": "none"
+  }
+ },
+ "methods:set_accepts_tab": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "accepts-tab",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_bottom_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "bottom-margin",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_cursor_visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "cursor-visible",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "editable",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_indent": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "indent",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "recipe": null,
+   "sample": "alpha"
+  }
+ },
+ "methods:set_justification": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "justification",
+   "recipe": null,
+   "sample": "right"
+  }
+ },
+ "methods:set_left_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "left-margin",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_monospace": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "monospace",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_overwrite": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "overwrite",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_pixels_above_lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "pixels-above-lines",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_pixels_below_lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "pixels-below-lines",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_pixels_inside_wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "pixels-inside-wrap",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_right_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "right-margin",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_top_margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "top-margin",
+   "recipe": null,
+   "sample": 1
+  }
+ },
+ "methods:set_wrap_mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "wrap-mode",
+   "recipe": null,
+   "sample": "char"
+  }
+ },
+ "properties:accepts-tab": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:bottom-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:buffer": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<TextBuffer>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<TextBuffer>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<TextBuffer>",
+   "signals": []
+  }
+ },
+ "properties:cursor-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:extra-menu": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Menu>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<Menu>",
+   "signals": []
+  }
+ },
+ "properties:im-module": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "notify::cursor",
+    "preedit-changed"
+   ]
+  }
+ },
+ "properties:indent": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "free-form",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "alpha",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "alpha",
+   "signals": []
+  }
+ },
+ "properties:justification": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "left",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "right",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "right",
+   "signals": []
+  }
+ },
+ "properties:left-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:monospace": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:overwrite": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:pixels-above-lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:pixels-below-lines": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:pixels-inside-wrap": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:right-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:top-margin": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1,
+   "signals": []
+  }
+ },
+ "properties:wrap-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "none",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "char",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "char",
+   "signals": []
+  }
+ },
+ "signals:backspace": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:copy-clipboard": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:cut-clipboard": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:insert-at-cursor": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "none",
+   "n_params": 1,
+   "params": [
+    "gchararray"
+   ],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [
+     "x"
+    ],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:paste-clipboard": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:select-all": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": true,
+   "handler_result": "none",
+   "n_params": 1,
+   "params": [
+    "gboolean"
+   ],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [
+     true
+    ],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:set-anchor": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:toggle-cursor-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:toggle-overwrite": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ }
+}

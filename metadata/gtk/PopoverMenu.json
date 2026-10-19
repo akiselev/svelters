@@ -95,12 +95,314 @@
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:PopoverMenu",
   "inherited": {
+    "bindings": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:binding:autohide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "autohide",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:binding:cascade-popdown",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "cascade-popdown",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:binding:has-arrow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "has-arrow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:binding:mnemonics-visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "mnemonics-visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:binding:position",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "position",
+        "origin": "inferred"
+      }
+    ],
     "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:get_autohide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "get_autohide",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_baseline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_baseline",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:get_cascade_popdown",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "get_cascade_popdown",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_child_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_child_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_css_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_css_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_direction",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_direction",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focus_on_click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focus_on_click",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focusable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:get_has_arrow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "get_has_arrow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_height",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_mapped",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_mapped",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:get_mnemonics_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "get_mnemonics_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_opacity",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:get_position",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "get_position",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_realized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_realized",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_request_mode",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_request_mode",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_scale_factor",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_scale_factor",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_width",
+        "origin": "inferred"
+      },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_visible_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_visible_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_drawable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_drawable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_visible",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:popdown",
@@ -125,6 +427,162 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_resize",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:set_autohide",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "set_autohide",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:set_cascade_popdown",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "set_cascade_popdown",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:set_has_arrow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "set_has_arrow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:set_mnemonics_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "set_mnemonics_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:method:set_position",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "set_position",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_visible",
+        "origin": "inferred"
       }
     ],
     "properties": [
@@ -139,6 +597,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "can-focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-target",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:cascade-popdown",
@@ -159,6 +623,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focus-on-click",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -177,6 +647,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has-tooltip",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "height-request",
@@ -187,6 +663,24 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand-set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "layout-manager",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "limit-events",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
@@ -213,6 +707,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:mnemonics-visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "mnemonics-visible",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:name",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "name",
@@ -225,10 +725,22 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "overflow",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:position",
         "from": "svelters-api:v1:type:gtk:Gtk:Popover",
         "name": "position",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "receives-default",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
@@ -261,6 +773,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand-set",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "visible",
@@ -291,6 +809,36 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hide",
         "origin": "manual"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "notify::autohide",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "notify::cascade-popdown",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "notify::has-arrow",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "notify::mnemonics-visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Popover",
+        "name": "notify::position",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
@@ -376,6 +924,7 @@
         "ownership": "borrowed",
         "type": "flags<svelters-api:v1:type:gtk:Gtk:PopoverMenuFlags>"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -446,6 +995,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
@@ -535,6 +1085,17 @@
         "get": "gtk_popover_menu_get_menu_model",
         "set": "gtk_popover_menu_set_menu_model"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "6b16f23fbde30c7b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:PopoverMenu:prop:menu-model",
       "invocation": "reflected",
@@ -611,6 +1172,7 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/PopoverMenu.yaml",
     "overrides": null,
     "runtime": {
       "gtk": "4.22.4",

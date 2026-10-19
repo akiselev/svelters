@@ -1,0 +1,132 @@
+properties:
+- name: search-mode-enabled
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-close-button
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::search-mode-enabled
+  derived_from:
+    property: search-mode-enabled
+  js_event: notify::search-mode-enabled
+  trigger:
+    property: search-mode-enabled
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSearchBar:search-mode-enabled
+- name: notify::show-close-button
+  derived_from:
+    property: show-close-button
+  js_event: notify::show-close-button
+  trigger:
+    property: show-close-button
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSearchBar:show-close-button
+methods:
+- name: get_search_mode
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: get_show_close_button
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-close-button")
+  provenance:
+  - origin: probe
+    ref: equals property show-close-button
+- name: set_show_close_button
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "show-close-button") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-close-button: exact'
+bindings:
+- name: search-mode-enabled
+  direction: two_way
+  property: search-mode-enabled
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::search-mode-enabled
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSearchBar:search-mode-enabled is writable, scalar and notifies; the renderer compares before set'
+- name: show-close-button
+  direction: two_way
+  property: show-close-button
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-close-button
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSearchBar:show-close-button is writable, scalar and notifies; the renderer compares before set'

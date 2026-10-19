@@ -1,0 +1,1001 @@
+properties:
+- name: decorated
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: default-height
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: default-width
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: deletable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: destroy-with-parent
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: focus-visible
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: fullscreened
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: gravity
+  sample: top-left
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: handle-menubar-accel
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: hide-on-close
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: icon-name
+  sample: edit-copy
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: maximized
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: mnemonics-visible
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: modal
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: resizable
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: title
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: activate-focus
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: enable-debugging
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    rust: let _ = o.emit_by_name::<bool>("enable-debugging", &[&true]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: keys-changed
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("keys-changed", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::decorated
+  derived_from:
+    property: decorated
+  js_event: notify::decorated
+  trigger:
+    property: decorated
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:decorated
+- name: notify::default-height
+  derived_from:
+    property: default-height
+  js_event: notify::default-height
+  trigger:
+    property: default-height
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:default-height
+- name: notify::default-width
+  derived_from:
+    property: default-width
+  js_event: notify::default-width
+  trigger:
+    property: default-width
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:default-width
+- name: notify::deletable
+  derived_from:
+    property: deletable
+  js_event: notify::deletable
+  trigger:
+    property: deletable
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:deletable
+- name: notify::destroy-with-parent
+  derived_from:
+    property: destroy-with-parent
+  js_event: notify::destroy-with-parent
+  trigger:
+    property: destroy-with-parent
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:destroy-with-parent
+- name: notify::focus-visible
+  derived_from:
+    property: focus-visible
+  js_event: notify::focus-visible
+  trigger:
+    property: focus-visible
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:focus-visible
+- name: notify::fullscreened
+  derived_from:
+    property: fullscreened
+  js_event: notify::fullscreened
+  trigger:
+    property: fullscreened
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:fullscreened
+- name: notify::gravity
+  derived_from:
+    property: gravity
+  js_event: notify::gravity
+  trigger:
+    property: gravity
+    values:
+    - top-left
+    - top-start
+    - top-left
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:gravity
+- name: notify::handle-menubar-accel
+  derived_from:
+    property: handle-menubar-accel
+  js_event: notify::handle-menubar-accel
+  trigger:
+    property: handle-menubar-accel
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:handle-menubar-accel
+- name: notify::hide-on-close
+  derived_from:
+    property: hide-on-close
+  js_event: notify::hide-on-close
+  trigger:
+    property: hide-on-close
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:hide-on-close
+- name: notify::maximized
+  derived_from:
+    property: maximized
+  js_event: notify::maximized
+  trigger:
+    property: maximized
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:maximized
+- name: notify::mnemonics-visible
+  derived_from:
+    property: mnemonics-visible
+  js_event: notify::mnemonics-visible
+  trigger:
+    property: mnemonics-visible
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:mnemonics-visible
+- name: notify::modal
+  derived_from:
+    property: modal
+  js_event: notify::modal
+  trigger:
+    property: modal
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:modal
+- name: notify::resizable
+  derived_from:
+    property: resizable
+  js_event: notify::resizable
+  trigger:
+    property: resizable
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindow:resizable
+methods:
+- name: get_decorated
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "decorated")
+  provenance:
+  - origin: probe
+    ref: equals property decorated
+- name: get_deletable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "deletable")
+  provenance:
+  - origin: probe
+    ref: equals property deletable
+- name: get_destroy_with_parent
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "destroy-with-parent")
+  provenance:
+  - origin: probe
+    ref: equals property destroy-with-parent
+- name: get_focus_visible
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "focus-visible")
+  provenance:
+  - origin: probe
+    ref: equals property focus-visible
+- name: get_gravity
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "gravity")
+  provenance:
+  - origin: probe
+    ref: equals property gravity
+- name: get_handle_menubar_accel
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "handle-menubar-accel")
+  provenance:
+  - origin: probe
+    ref: equals property handle-menubar-accel
+- name: get_hide_on_close
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "hide-on-close")
+  provenance:
+  - origin: probe
+    ref: equals property hide-on-close
+- name: get_icon_name
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "icon-name")
+  provenance:
+  - origin: probe
+    ref: equals property icon-name
+- name: get_mnemonics_visible
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "mnemonics-visible")
+  provenance:
+  - origin: probe
+    ref: equals property mnemonics-visible
+- name: get_modal
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "modal")
+  provenance:
+  - origin: probe
+    ref: equals property modal
+- name: get_resizable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "resizable")
+  provenance:
+  - origin: probe
+    ref: equals property resizable
+- name: get_title
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "title")
+  provenance:
+  - origin: probe
+    ref: equals property title
+- name: has_group
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: is_active
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: is_fullscreen
+  dispatch: dynamic
+  args: []
+  expect: r == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned False
+- name: is_maximized
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "maximized")
+  provenance:
+  - origin: probe
+    ref: equals property maximized
+- name: is_suspended
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "suspended")
+  provenance:
+  - origin: probe
+    ref: equals property suspended
+- name: set_decorated
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "decorated") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property decorated: exact'
+- name: set_deletable
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "deletable") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property deletable: exact'
+- name: set_destroy_with_parent
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "destroy-with-parent") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property destroy-with-parent: exact'
+- name: set_gravity
+  dispatch: dynamic
+  args:
+  - top-left
+  expect: h.get(o, "gravity") == V::Str("top-left".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property gravity: exact'
+- name: set_handle_menubar_accel
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "handle-menubar-accel") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property handle-menubar-accel: exact'
+- name: set_hide_on_close
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "hide-on-close") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property hide-on-close: exact'
+- name: set_icon_name
+  dispatch: dynamic
+  args:
+  - edit-copy
+  expect: h.get(o, "icon-name") == V::Str("edit-copy".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property icon-name: exact'
+- name: set_mnemonics_visible
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "mnemonics-visible") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property mnemonics-visible: exact'
+- name: set_modal
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "modal") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property modal: exact'
+- name: set_resizable
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "resizable") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property resizable: exact'
+- name: set_title
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "title") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property title: exact'
+bindings:
+- name: decorated
+  direction: two_way
+  property: decorated
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::decorated
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:decorated is writable, scalar and notifies; the renderer compares before set'
+- name: default-height
+  direction: two_way
+  property: default-height
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::default-height
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:default-height is writable, scalar and notifies; the renderer compares before set'
+- name: default-width
+  direction: two_way
+  property: default-width
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::default-width
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:default-width is writable, scalar and notifies; the renderer compares before set'
+- name: deletable
+  direction: two_way
+  property: deletable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::deletable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:deletable is writable, scalar and notifies; the renderer compares before set'
+- name: destroy-with-parent
+  direction: two_way
+  property: destroy-with-parent
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::destroy-with-parent
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:destroy-with-parent is writable, scalar and notifies; the renderer compares before set'
+- name: focus-visible
+  direction: two_way
+  property: focus-visible
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::focus-visible
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:focus-visible is writable, scalar and notifies; the renderer compares before set'
+- name: fullscreened
+  direction: two_way
+  property: fullscreened
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::fullscreened
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:fullscreened is writable, scalar and notifies; the renderer compares before set'
+- name: gravity
+  direction: two_way
+  property: gravity
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:WindowGravity>
+    nullable: false
+  change:
+    signal: notify::gravity
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:gravity is writable, scalar and notifies; the renderer compares before set'
+- name: handle-menubar-accel
+  direction: two_way
+  property: handle-menubar-accel
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::handle-menubar-accel
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:handle-menubar-accel is writable, scalar and notifies; the renderer compares before set'
+- name: hide-on-close
+  direction: two_way
+  property: hide-on-close
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::hide-on-close
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:hide-on-close is writable, scalar and notifies; the renderer compares before set'
+- name: maximized
+  direction: two_way
+  property: maximized
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::maximized
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:maximized is writable, scalar and notifies; the renderer compares before set'
+- name: mnemonics-visible
+  direction: two_way
+  property: mnemonics-visible
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::mnemonics-visible
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:mnemonics-visible is writable, scalar and notifies; the renderer compares before set'
+- name: modal
+  direction: two_way
+  property: modal
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::modal
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:modal is writable, scalar and notifies; the renderer compares before set'
+- name: resizable
+  direction: two_way
+  property: resizable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::resizable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindow:resizable is writable, scalar and notifies; the renderer compares before set'

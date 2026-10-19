@@ -57,6 +57,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -75,6 +76,7 @@
         "ownership": "borrowed",
         "type": "string"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -93,6 +95,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -111,6 +114,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -129,6 +133,7 @@
         "ownership": "borrowed",
         "type": "object<svelters-api:v1:type:gtk:GObject:Object>"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -147,6 +152,7 @@
         "ownership": "borrowed",
         "type": "u32"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -165,6 +171,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -183,6 +190,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -209,6 +217,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -235,6 +244,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -261,6 +271,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -287,6 +298,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -313,6 +325,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     }
   ],

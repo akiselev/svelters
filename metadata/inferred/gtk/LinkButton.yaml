@@ -1,0 +1,107 @@
+properties:
+- name: uri
+  sample: https://example.org/
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: visited
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: activate-link
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    rust: let _ = o.emit_by_name::<bool>("activate-link", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::visited
+  derived_from:
+    property: visited
+  js_event: notify::visited
+  trigger:
+    property: visited
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLinkButton:visited
+methods:
+- name: get_uri
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "uri")
+  provenance:
+  - origin: probe
+    ref: equals property uri
+- name: get_visited
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "visited")
+  provenance:
+  - origin: probe
+    ref: equals property visited
+- name: set_uri
+  dispatch: dynamic
+  args:
+  - https://example.org/
+  expect: h.get(o, "uri") == V::Str("https://example.org/".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property uri: exact'
+- name: set_visited
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "visited") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property visited: exact'
+bindings:
+- name: visited
+  direction: two_way
+  property: visited
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::visited
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLinkButton:visited is writable, scalar and notifies; the renderer compares before set'

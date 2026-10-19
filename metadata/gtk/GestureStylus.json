@@ -193,6 +193,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.10",
       "unsupported_reason": null
     },
     {
@@ -219,6 +220,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.10",
       "unsupported_reason": null
     }
   ],

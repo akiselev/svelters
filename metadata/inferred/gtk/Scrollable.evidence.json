@@ -1,0 +1,100 @@
+{
+ "methods:get_hscroll_policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "hscroll-policy",
+   "ret": "minimum"
+  }
+ },
+ "methods:get_vscroll_policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "vscroll-policy",
+   "ret": "minimum"
+  }
+ },
+ "methods:set_hscroll_policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "hscroll-policy",
+   "recipe": null,
+   "sample": "natural"
+  }
+ },
+ "methods:set_vscroll_policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "vscroll-policy",
+   "recipe": null,
+   "sample": "natural"
+  }
+ },
+ "properties:hadjustment": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<Adjustment>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Adjustment>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<Adjustment>",
+   "signals": []
+  }
+ },
+ "properties:hscroll-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "minimum",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "natural",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "natural",
+   "signals": []
+  }
+ },
+ "properties:vadjustment": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<Adjustment>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Adjustment>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<Adjustment>",
+   "signals": []
+  }
+ },
+ "properties:vscroll-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "minimum",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "natural",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "natural",
+   "signals": []
+  }
+ }
+}

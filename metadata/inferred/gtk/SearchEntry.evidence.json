@@ -1,0 +1,214 @@
+{
+ "bindings:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "alpha"
+  }
+ },
+ "bindings:search-delay": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 151
+  }
+ },
+ "methods:get_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "ret": "free-form"
+  }
+ },
+ "methods:get_placeholder_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "placeholder-text",
+   "ret": null
+  }
+ },
+ "methods:get_search_delay": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "search-delay",
+   "ret": 150
+  }
+ },
+ "methods:set_input_purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "input-purpose",
+   "recipe": null,
+   "sample": "alpha"
+  }
+ },
+ "methods:set_placeholder_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "placeholder-text",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_search_delay": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "search-delay",
+   "recipe": null,
+   "sample": 151
+  }
+ },
+ "properties:activates-default": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:input-purpose": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "free-form",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "alpha",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "alpha",
+   "signals": []
+  }
+ },
+ "properties:placeholder-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:search-delay": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 150,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 151,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 151,
+   "signals": []
+  }
+ },
+ "signals:next-match": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:previous-match": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ },
+ "signals:search-changed": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:search-started": {
+  "confidence": 0.9,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ },
+ "signals:stop-search": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": true,
+   "emit": "delivered",
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "last",
+   "sync_required": false
+  }
+ }
+}

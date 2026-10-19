@@ -10,6 +10,172 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::digits",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": true,
+        "strategy": "none"
+      },
+      "fp": "6973e7a67adbe994",
+      "id": "svelters-api:v1:type:gtk:Gtk:Scale:binding:digits",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "digits",
+      "origin": "inferred",
+      "property": "digits",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkScale:digits is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "i32"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::draw-value",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "80fee47df0e9d039",
+      "id": "svelters-api:v1:type:gtk:Gtk:Scale:binding:draw-value",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "draw-value",
+      "origin": "inferred",
+      "property": "draw-value",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkScale:draw-value is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::has-origin",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "39af7bcc2b29bfe5",
+      "id": "svelters-api:v1:type:gtk:Gtk:Scale:binding:has-origin",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "has-origin",
+      "origin": "inferred",
+      "property": "has-origin",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkScale:has-origin is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::value-pos",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "57430ba5a8adf6e1",
+      "id": "svelters-api:v1:type:gtk:Gtk:Scale:binding:value-pos",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "value-pos",
+      "origin": "inferred",
+      "property": "value-pos",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkScale:value-pos is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:PositionType>"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -116,6 +282,36 @@
   "inherited": {
     "bindings": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:fill-level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "fill-level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:inverted",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "inverted",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:restrict-to-fill-level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "restrict-to-fill-level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:round-digits",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "round-digits",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:show-fill-level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "show-fill-level",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:binding:value",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "value",
@@ -124,16 +320,304 @@
     ],
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_baseline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_baseline",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_child_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_child_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_css_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_css_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_direction",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_direction",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_fill_level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_fill_level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_flippable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_flippable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focus_on_click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focus_on_click",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focusable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_height",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_inverted",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_inverted",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_mapped",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_mapped",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_opacity",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:get_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "get_orientation",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_realized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_realized",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_request_mode",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_request_mode",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_restrict_to_fill_level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_restrict_to_fill_level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_round_digits",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_round_digits",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_scale_factor",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_scale_factor",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_show_fill_level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_show_fill_level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_slider_size_fixed",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "get_slider_size_fixed",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_valign",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:get_value",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "get_value",
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_width",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_visible_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_visible_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_drawable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_drawable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_visible",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
@@ -148,10 +632,106 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_fill_level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_fill_level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand_set",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_increments",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "set_increments",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_inverted",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_inverted",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:set_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "set_orientation",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_overflow",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_range",
@@ -160,18 +740,96 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_restrict_to_fill_level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_restrict_to_fill_level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_round_digits",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_round_digits",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_show_fill_level",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "set_show_fill_level",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_valign",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:method:set_value",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "set_value",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_visible",
+        "origin": "inferred"
       }
     ],
     "properties": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:adjustment",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "adjustment",
+        "origin": "inferred"
+      },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "can-focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-target",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
@@ -192,6 +850,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focus-on-click",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -202,6 +866,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "halign",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has-tooltip",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
@@ -216,10 +886,28 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand-set",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:inverted",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "inverted",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "layout-manager",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "limit-events",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:lower",
@@ -270,6 +958,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "overflow",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:page-increment",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "page-increment",
@@ -282,10 +976,22 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "receives-default",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:restrict-to-fill-level",
         "from": "svelters-api:v1:type:gtk:Gtk:Range",
         "name": "restrict-to-fill-level",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:round-digits",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "round-digits",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
@@ -342,6 +1048,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand-set",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "visible",
@@ -356,10 +1068,46 @@
     ],
     "signals": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Range:signal:adjust-bounds",
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "adjust-bounds",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:hide",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hide",
         "origin": "manual"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "notify::fill-level",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "notify::inverted",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "notify::restrict-to-fill-level",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "notify::round-digits",
+        "origin": "inferred"
+      },
+      {
+        "fact": null,
+        "from": "svelters-api:v1:type:gtk:Gtk:Range",
+        "name": "notify::show-fill-level",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:signal:show",
@@ -453,6 +1201,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "24341e6423978f32",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property digits"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"digits\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:get_digits",
       "invocation": {
         "dev": "introspected",
@@ -471,6 +1237,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "993a4b082a200486",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property draw-value"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"draw-value\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:get_draw_value",
       "invocation": {
         "dev": "introspected",
@@ -489,6 +1273,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "7d17cb46a4d30187",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property has-origin"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"has-origin\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:get_has_origin",
       "invocation": {
         "dev": "introspected",
@@ -558,6 +1360,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "9112244d0ad273ac",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property value-pos"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"value-pos\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:get_value_pos",
       "invocation": {
         "dev": "introspected",
@@ -576,6 +1396,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "728967f7c01b0a5d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property digits: exact"
+          }
+        ]
+      },
+      "args": [
+        2
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"digits\") == V::I64(2)",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:set_digits",
       "invocation": {
         "dev": "introspected",
@@ -602,6 +1442,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "22857b517b862b61",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property draw-value: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"draw-value\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:set_draw_value",
       "invocation": {
         "dev": "introspected",
@@ -668,6 +1528,26 @@
       "unsupported_reason": "callback_scope"
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "8bf40175ef46b064",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property has-origin: exact"
+          }
+        ]
+      },
+      "args": [
+        false
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"has-origin\") == V::Bool(false)",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:set_has_origin",
       "invocation": {
         "dev": "introspected",
@@ -694,6 +1574,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "23849339a2dfa940",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property value-pos: exact"
+          }
+        ]
+      },
+      "args": [
+        "left"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"value-pos\") == V::Str(\"left\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Scale:method:set_value_pos",
       "invocation": {
         "dev": "introspected",
@@ -769,6 +1669,7 @@
         "origin": "runtime",
         "owner": "GtkScale"
       },
+      "sample": 2,
       "type": {
         "gtype": "gint",
         "native": "gint",
@@ -814,6 +1715,7 @@
         "origin": "runtime",
         "owner": "GtkScale"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -859,6 +1761,7 @@
         "origin": "runtime",
         "owner": "GtkScale"
       },
+      "sample": false,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -904,6 +1807,7 @@
         "origin": "runtime",
         "owner": "GtkScale"
       },
+      "sample": "left",
       "type": {
         "gtype": "GtkPositionType",
         "native": null,
@@ -913,13 +1817,247 @@
     }
   ],
   "schema": "svelters-element-kind/v0",
-  "signals": [],
+  "signals": [
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "b280de43e5482b39",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkScale:digits"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "digits"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::digits",
+      "name": "notify::digits",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "digits",
+        "values": [
+          2,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "16f73134ea6372aa",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkScale:draw-value"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "draw-value"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::draw-value",
+      "name": "notify::draw-value",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "draw-value",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "0240eccd29d944da",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkScale:has-origin"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "has-origin"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::has-origin",
+      "name": "notify::has-origin",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "has-origin",
+        "values": [
+          false,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "18156cf5721df440",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkScale:value-pos"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "value-pos"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::value-pos",
+      "name": "notify::value-pos",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "value-pos",
+        "values": [
+          "left",
+          "top",
+          "left"
+        ]
+      }
+    }
+  ],
   "source": {
     "gir": {
       "file": "Gtk-4.0.gir",
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Scale.yaml",
     "overrides": "overrides/gtk/Scale.yaml",
     "runtime": {
       "gtk": "4.22.4",

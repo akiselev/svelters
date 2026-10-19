@@ -186,7 +186,7 @@ class Frontend:
                 "native_id": p["id"],
                 "extensions": {TK: {"gtype": (p.get("runtime") or {}).get("gtype", ""), "param_flags": (p.get("runtime") or {}).get("flags", [])}},
             }
-            origins = sorted({p["origin"]} | ({"runtime"} if p.get("runtime") else set()) | ({"manual"} if "annotated" in p else set()))
+            origins = sorted({p["origin"]} | ({"runtime"} if p.get("runtime") else set()) | ({p["annotated"].get("origin", "manual")} if "annotated" in p else set()))
             rec["origins"] = origins
             av = self.avail(doc, p)
             if av:
@@ -214,7 +214,7 @@ class Frontend:
                 "phase": s.get("phase"),
                 "flags": s.get("flags", []),
                 "origin": s["origin"],
-                "origins": sorted({s["origin"], "runtime"} | ({"manual"} if "annotated" in s else set())),
+                "origins": sorted({s["origin"], "runtime"} | ({s["annotated"].get("origin", "manual")} if "annotated" in s else set())),
                 "annotated": "annotated" in s,
                 **({"verified": True} if s.get("id") in self.verified else {}),
                 "native_id": s.get("id", m["id"] + ":signal:" + s["name"]),

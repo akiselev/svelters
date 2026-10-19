@@ -3,7 +3,13 @@
 
 Per kind: exposed as an element (or why not), props/signals/methods exposed out of the kind's own
 total, slots annotated, ownership annotated, signal results annotated, bindings annotated,
-verified facts out of the manual facts, and whether a gallery page shows it.
+verified facts out of the facts (manual and inferred), and whether a gallery page shows it.
+
+Every fact is in one state: verified (manual), verified (inferred), parked (an inferred fact whose
+generated test failed), pending (inferred, no passing test yet) or not covered. A signal whose test
+emits it synthetically is `verified: delivery`: delivery, listen-off and destroy are checked, not
+native causation. The inferred candidates below the promotion threshold are counted from
+metadata/inferred/<tk>/_review.json.
 
 What "exposed" means differs per toolkit, so each toolkit has a small adapter:
 - GTK: properties and signals of every element are reachable by reflection (dynamic GObject
@@ -60,6 +66,7 @@ def gtk_rows() -> list[dict]:
     facts_by_kind: dict[str, list[str]] = {}
     for f in man["facts"]:
         facts_by_kind.setdefault(f["kind"], []).append(f["fact"])
+    info = {f["fact"]: f for f in man["facts"]}
     pages = gallery_kinds("gtk")
     rows = []
     for name, d in docs.items():
@@ -87,11 +94,37 @@ def gtk_rows() -> list[dict]:
             "signal_results": sum(1 for s in sigs if "handler_result" in (s.get("annotated") or {}).get("fields", [])),
             "bindings": len(d.get("bindings", [])) + len(inh.get("bindings", [])),
             "verified": [sum(1 for f in facts if f in verified), len(facts)],
+            "verified_inferred": [sum(1 for f in facts if f in verified and info[f].get("origin") == "inferred"),
+                                  sum(1 for f in facts if info[f].get("origin") == "inferred")],
+            "delivery": sum(1 for f in facts if f in verified and info[f].get("strength") == "delivery"),
             "inherited": sum(len(v) for v in inh.values()),
             "gallery": pages.get(name),
             "lifetime": (d.get("lifetime") or {}).get("class"),
         })
     return rows
+
+
+def gtk_fact_table() -> dict:
+    """Facts by section and state: manual / inferred verified, delivery-only, pending; parked and unreviewed counts."""
+    man = json.loads(ledger.GTK_FACTS.read_text())
+    verified = ledger.verified_facts("gtk")
+    sections: dict[str, dict[str, int]] = {}
+    for f in man["facts"]:
+        row = sections.setdefault(f["section"], {"manual": 0, "inferred": 0, "delivery": 0, "pending": 0})
+        origin = f.get("origin", "manual")
+        if f["fact"] in verified:
+            row[origin] += 1
+            row["delivery"] += f.get("strength") == "delivery"
+        else:
+            row["pending"] += 1
+    parked: dict[str, int] = {}
+    for r in ledger.load_parked("gtk"):
+        parked[r["section"]] = parked.get(r["section"], 0) + 1
+    review = {}
+    rp = ROOT / "metadata/inferred/gtk/_review.json"
+    if rp.exists():
+        review = json.loads(rp.read_text()).get("unreviewed", {})
+    return {"sections": dict(sorted(sections.items())), "parked": dict(sorted(parked.items())), "unreviewed": review}
 
 
 # ---- Qt ----------------------------------------------------------------------------------------
@@ -161,14 +194,29 @@ def render(tk: str, rows: list[dict]) -> str:
          f"| Methods exposed | {tot('methods', 0)}/{tot('methods', 1)} |",
          f"| Child slots annotated (own, not inherited) | {sum(r['slots_own'] for r in rows)} |",
          f"| Two-way bindings | {sum(r['bindings'] for r in rows)} |",
-         f"| Manual facts verified | {vf}/{vt} |",
+         f"| Facts verified (manual and inferred) | {vf}/{vt} |",
          f"| Kinds on a gallery page | {sum(1 for r in rows if r['gallery'])} |",
          ""]
     if tk == "gtk":
+        ft = gtk_fact_table()
+        o += ["## Facts by state\n",
+              "| Section | Verified (manual) | Verified (inferred) | of which `verified: delivery` | Pending | Parked |",
+              "| --- | --- | --- | --- | --- | --- |"]
+        for sec, r in ft["sections"].items():
+            o.append(f"| {sec} | {r['manual']} | {r['inferred']} | {r['delivery'] or '-'} | {r['pending'] or '-'} | {ft['parked'].get(sec, '-')} |")
+        tot = lambda k: sum(r[k] for r in ft["sections"].values())  # noqa: E731
+        o.append(f"| **all** | {tot('manual')} | {tot('inferred')} | {tot('delivery') or '-'} | {tot('pending') or '-'} | {sum(ft['parked'].values()) or '-'} |\n")
+        un = ft["unreviewed"]
+        if un:
+            o += ["Inferred candidates below the promotion threshold stay unreviewed "
+                  f"({un.get('middle', 0)} middle band, {un.get('low', 0)} low band); by pattern:\n",
+                  "| Band and pattern | Candidates |", "| --- | --- |"]
+            o += [f"| `{k}` | {v} |" for k, v in un.get("by_pattern", {}).items()]
+            o.append("")
         o.append("GTK exposes every property whose type the backend converts and every signal by reflection, and "
                  "every introspectable method through GIRepository (X1; no out params, arrays or callbacks). The "
                  "methods column counts annotated methods, which have generated tests; the annotated and verified "
-                 "columns say which facts are tested.\n")
+                 "columns say which facts are tested. Properties without a passing test are marked `@unverified` in the typings.\n")
     else:
         o.append("Qt exposes only annotated facts (the generated C++ backend has no reflection fallback); "
                  f"{sum(r.get('defaults', 0) for r in rows)} properties carry a typed default read from a default-constructed instance.\n")

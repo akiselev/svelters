@@ -321,6 +321,7 @@
         "typesystem",
         "apiextractor",
         "manual",
+        "inferred",
         "derived"
       ]
     },
@@ -899,7 +900,7 @@
               },
               "minItems": 2,
               "maxItems": 2,
-              "description": "[verified, total] manual facts of this kind in the verified ledger."
+              "description": "[verified, total] facts of this kind (manual and inferred) in the verified ledger."
             }
           }
         },

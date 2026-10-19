@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "common"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import ledger  # noqa: E402
 import svmeta  # noqa: E402
 from tsvalues import write_values_dts  # noqa: E402
 
@@ -722,6 +724,16 @@ def rust_lit(ref: str, v) -> str:
     raise Untestable(f"no literal for {ref}")
 
 
+def prop_set_stmt(p: dict, v) -> str:
+    """A Rust expression setting property `p` of the GObject `o` natively to `v` (an enum by its nick)."""
+    ref = p["type"]["ref"]
+    if ref.split("<")[0] == "enum":
+        n = rs(p["name"])
+        return (f"{{ let pspec = o.find_property({n}).unwrap(); let ev = gtk::glib::EnumClass::with_type(pspec.value_type()).unwrap(); "
+                f"o.set_property_from_value({n}, &ev.to_value_by_nick({rs(str(v))}).unwrap()) }}")
+    return f"o.set_property({rs(p['name'])}, {rust_lit(ref, v)})"
+
+
 def find_prop(m: Model, d: dict, name: str) -> dict | None:
     """Property `name` on kind d, its bases or interfaces."""
     for doc in [d] + [m.by_id.get(TYPE_PREFIX + x.replace(".", ":")) for x in d.get("bases", []) + d.get("interfaces", [])]:
@@ -745,8 +757,7 @@ def trigger_parts(m: Model, d: dict, s: dict) -> tuple[str, list[str]]:
             p = find_prop(m, d, trig["property"])
             if p is None:
                 raise Untestable(f"trigger property {trig['property']} not found")
-            arms = "".join(f"                {i} => o.set_property({rs(p['name'])}, {rust_lit(p['type']['ref'], v)}),\n"
-                           for i, v in enumerate(vals[:3]))
+            arms = "".join(f"                {i} => {prop_set_stmt(p, v)},\n" for i, v in enumerate(vals[:3]))
             return ("let _ = v;\n            match i {\n" + arms + "                _ => unreachable!(),\n            }"), [str(v) for v in vals]
         if "rust" in trig:
             return trig["rust"], [str(v) for v in vals]
@@ -818,19 +829,31 @@ def ann_prov(r: dict) -> str:
     return prov_str((r.get("annotated") or {}).get("provenance") or r.get("provenance") or "")
 
 
+def fact_origin(record: dict) -> str:
+    """Which annotation layer wrote the fact: `manual` or `inferred` (see svmeta.LAYERS)."""
+    o = (record.get("annotated") or {}).get("origin") or record.get("origin")
+    return o if o in svmeta.LAYERS else "manual"
+
+
 class Facts:
     def __init__(self):
         self.tests: list[str] = []
         self.facts: list[dict] = []
         self.errors: list[str] = []
+        self.untestable: list[dict] = []     # inferred facts the generator cannot test: the ledger parks them
 
     def add(self, fact_id: str, section: str, kind: str, name: str, record: dict, fns: list[tuple[str, str]]) -> None:
         """fns: [(test fn name, full source)]."""
         for _, src in fns:
             self.tests.append(src)
-        self.facts.append({"fact": fact_id, "section": section, "kind": kind, "name": name,
-                           "tests": [f"generated::verify::{n}" for n, _ in fns],
-                           "fingerprint": svmeta.fingerprint({"record": record, "tests": [src for _, src in fns]})})
+        f = {"fact": fact_id, "section": section, "kind": kind, "name": name, "origin": fact_origin(record),
+             "tests": [f"generated::verify::{n}" for n, _ in fns],
+             "fingerprint": svmeta.fingerprint({"record": record, "tests": [src for _, src in fns]})}
+        if f["origin"] == "inferred":
+            f["record_fp"] = (record.get("annotated") or {}).get("fp") or record.get("fp")
+        if record.get("delivery_only"):
+            f["strength"] = "delivery"
+        self.facts.append(f)
 
 
 def wrap(name: str, doc: str, body: str) -> tuple[str, str]:
@@ -1056,6 +1079,20 @@ def prop_tests(m: Model, d: dict, p: dict) -> list[tuple[str, str]]:
     return out
 
 
+def v_for(ref: str, v) -> str:
+    """The testing::V a property of type `ref` reads as when it holds `v`."""
+    head = ref.split("<")[0]
+    if head == "bool":
+        return f"V::Bool({str(bool(v)).lower()})"
+    if head in ("i32", "u32", "i64", "u64"):
+        return f"V::I64({int(v)})"
+    if head in ("f32", "f64"):
+        return f"V::F64({float(v)!r})"
+    if head in ("string", "enum"):
+        return f"V::Str({rs(str(v))}.into())"
+    raise Untestable(f"no value literal for {ref}")
+
+
 def binding_test(m: Model, d: dict, b: dict) -> tuple[str, str]:
     """The change signal carries the new native value (or the property reads it back)."""
     subj = m.subject(d)
@@ -1079,8 +1116,24 @@ def binding_test(m: Model, d: dict, b: dict) -> tuple[str, str]:
              f"        assert_eq!(arg, h.get(o, {rs(p['js_name'])}), \"the change signal's first argument is the new value\");\n"
              if value_from == "arg0" else
              f"        assert_ne!(h.get(o, {rs(p['js_name'])}), V::Null, \"the property reads the new value\");\n")
+    setup = (srec.get("trigger") or {}).get("setup", "")
+    setup = f"        {setup}\n" if setup else ""
+    if fact_origin(b) == "inferred":
+        # The generic `bind:<prop>` (B1): the renderer compares before it sets and leaves the echo to the toolkit, so the
+        # contract is that the property reads the native change, and that a programmatic set reaches the listener too.
+        smp = prop_sample(m, d, p)
+        if smp is None:
+            raise Untestable(f"binding {b['name']}: property {b['property']} has no scalar sample for the echo test")
+        setc, expect = smp
+        js = rs(p["js_name"])
+        raw = srec["trigger"]["values"]            # typed: the strings in `vals` would make "False" true
+        check = (f"        assert_eq!(h.get(o, {js}), {v_for(p['type']['ref'], raw[1])}, \"the property reads the value the native change set\");\n"
+                 "        h.take_events_with_args();\n"
+                 f"        {setc}\n"
+                 "        assert!(!h.take_events_with_args().is_empty(), \"a programmatic set echoes to the listener; the renderer compares before set\");\n"
+                 f"        assert_eq!(h.get(o, {js}), {expect}, \"the property reads the programmatic value\");\n")
     return wrap(fn_ident("binding", gir_name(d), b["name"]), f"bind:{b['name']} on {gir_name(d)}: {prov_str(b['provenance'])}", f"""        let o = {m.make(d)};
-        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {{
+{setup}        let fire = |ob: &gtk::glib::Object, v: &str, i: usize| {{
             let o = ob;
             let _ = (v, i);
             {fire}
@@ -1096,16 +1149,21 @@ def binding_test(m: Model, d: dict, b: dict) -> tuple[str, str]:
 LIFE = {"owned": "SVL_LIFE_OWNED", "toplevel": "SVL_LIFE_TOPLEVEL"}
 
 
-def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
+def gen_verify(m: Model) -> tuple[str, list[dict], list[str], list[dict]]:
     f = Facts()
 
-    def attempt(fact_id, section, d, name, record, make):
+    def attempt(fact_id, section, d, name, record, make, extra=()):
         try:
             fns = make()
         except (Untestable, ValueError, KeyError) as e:
-            f.errors.append(f"{fact_id}: {e}")
+            if fact_origin(record) == "inferred":
+                f.untestable.append({"fact": fact_id, "section": section, "kind": gir_name(d), "name": name,
+                                     "record_fp": (record.get("annotated") or {}).get("fp") or record.get("fp"),
+                                     "message": f"generator: {e!r}"})
+            else:
+                f.errors.append(f"{fact_id}: {e}")
             return
-        v = needs(d, record)
+        v = needs(d, record, *extra)
         if v:
             # Kinds and members newer than the build minimum: skipped (with a message) on older GTK.
             skip = f"() {{\n    if crate::testing::skip_below_gtk({v[0]}, {v[1]}) {{\n        return;\n    }}\n    on_gtk("
@@ -1120,7 +1178,7 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
                 lambda k=k, sid=sid, s=s, d=d, a=a: [attr_test(m, k, sid, s, d, a)])
     for d in m.kinds:
         for s in d["signals"]:
-            if "annotated" in s:
+            if "annotated" in s and not (fact_origin(s) == "inferred" and s.get("derived_from")):
                 attempt(s["id"] if "id" in s else f"{d['id']}:signal:{s['name']}", "signals", d, s["name"], s,
                         lambda s=s, d=d: [signal_test(m, d, s)] + ([sync_result_test(m, d, s)] if s.get("sync_result") else []))
         for p in sorted(d["properties"], key=lambda p: p["name"]):
@@ -1153,7 +1211,9 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
 """)]
             attempt(me["id"], "methods", d, me["name"], me, mk)
         for b in d.get("bindings", []):
-            attempt(b.get("id") or f"{d['id']}:binding:{b['name']}", "bindings", d, b["name"], b, lambda b=b, d=d: [binding_test(m, d, b)])
+            # A binding is as new as its property (e.g. Window:gravity, 4.20).
+            attempt(b.get("id") or f"{d['id']}:binding:{b['name']}", "bindings", d, b["name"], b, lambda b=b, d=d: [binding_test(m, d, b)],
+                    extra=(find_prop(m, d, b["property"]),))
         life = d.get("lifetime")
         if life and life.get("origin") == "manual":
             def mkl(d=d, life=life):
@@ -1164,7 +1224,7 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str]]:
 """)]
             attempt(life["id"], "lifetime", d, "lifetime", life, mkl)
     src = HEADER + "\n#![allow(unused_mut, unused_variables, unused_imports, clippy::all)]\nuse crate::testing::{on_gtk, Harness, SyncReply, V};\nuse gtk::prelude::*;\nuse svelters_abi::Value;\n" + "".join(f.tests)
-    return src, f.facts, f.errors
+    return src, f.facts, f.errors, f.untestable
 
 
 # ---- .d.ts -----------------------------------------------------------------------------------
@@ -1247,8 +1307,13 @@ def attr_types(m: Model) -> dict[str, str]:
     return {n: " | ".join(ts) for n, ts in out.items()}
 
 
+UNVERIFIED = "/** @unverified */ "
+
+
 def gen_dts(m: Model) -> str:
+    verified = ledger.verified_facts("gtk")
     o = ["// @generated by tools/metadata/gtk/gen_backend.py from metadata/gtk/*.json. Do not edit.\n",
+         "// `@unverified`: the property is reachable, but no generated test has passed for it (metadata/verified/gtk.json).\n",
          "export interface SvlEvent { type: string; target: unknown; args: unknown[]; }\n",
          "export type SvlHandler = (e: SvlEvent) => void;\n",
          "import type { Boxed, Color, Insets, Point, Rect, Size } from './values';\n\n"]
@@ -1264,7 +1329,9 @@ def gen_dts(m: Model) -> str:
         lines = []
         for p in sorted(d["properties"], key=lambda p: p["js_name"]):
             if p["access"]["write"] and not p["access"]["construct_only"] or p.get("virtual"):
-                lines.append(f"  {ts_key(p['js_name'])}?: {ts_type(p['type']['ref'], m)};\n")
+                # Reachable by reflection, but no generated test passed for it (never tested, or parked).
+                mark = "" if (p.get("id") or f"{d['id']}:prop:{p['name']}") in verified else UNVERIFIED
+                lines.append(f"  {mark}{ts_key(p['js_name'])}?: {ts_type(p['type']['ref'], m)};\n")
         if name == "Widget":
             for an, aty in sorted(attr_types(m).items()):
                 lines.append(f"  'parent:{an}'?: {aty};\n")
@@ -1319,14 +1386,15 @@ def main() -> int:
     write(OUT / "tables.rs", gen_tables(m))
     write(OUT / "slots.rs", gen_slots(m))
     write(OUT / "types.rs", gen_types(m))
-    verify, facts, errors = gen_verify(m)
+    verify, facts, errors, untestable = gen_verify(m)
     if errors:
         print("gen_backend: manual facts without a working generated test (fix or drop them):", file=sys.stderr)
         for e in errors:
             print("  " + e, file=sys.stderr)
         return 1
     write(OUT / "verify.rs", verify)
-    write(OUT / "facts.json", json.dumps({"toolkit": "gtk", "version": toolkit_version(m), "facts": facts}, indent=1, sort_keys=True) + "\n")
+    write(OUT / "facts.json", json.dumps({"toolkit": "gtk", "version": toolkit_version(m), "facts": facts, "untestable": untestable},
+                                         indent=1, sort_keys=True) + "\n")
     write(DTS, gen_dts(m))
     write(SCHEMA, gen_schema(m))
     write_values_dts(ROOT / "packages/renderer/types/values.d.ts")

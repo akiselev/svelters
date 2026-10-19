@@ -1,0 +1,605 @@
+properties:
+- name: activates-default
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: adjustment
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: climb-rate
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: digits
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: numeric
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: snap-to-ticks
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: update-policy
+  sample: if-valid
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: value
+  sample: 1.0
+  setup: h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+  provenance:
+  - origin: probe
+    ref: round trip exact after recipe range; notify fired
+- name: wrap
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: output
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    property: climb-rate
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted when climb-rate is set
+- name: value-changed
+  handler_result: none
+  sync_required: false
+  trigger:
+    property: climb-rate
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted when climb-rate is set
+- name: wrapped
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("wrapped", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: notify::activates-default
+  derived_from:
+    property: activates-default
+  js_event: notify::activates-default
+  trigger:
+    property: activates-default
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:activates-default
+- name: notify::climb-rate
+  derived_from:
+    property: climb-rate
+  js_event: notify::climb-rate
+  trigger:
+    property: climb-rate
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:climb-rate
+- name: notify::digits
+  derived_from:
+    property: digits
+  js_event: notify::digits
+  trigger:
+    property: digits
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:digits
+- name: notify::numeric
+  derived_from:
+    property: numeric
+  js_event: notify::numeric
+  trigger:
+    property: numeric
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:numeric
+- name: notify::snap-to-ticks
+  derived_from:
+    property: snap-to-ticks
+  js_event: notify::snap-to-ticks
+  trigger:
+    property: snap-to-ticks
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:snap-to-ticks
+- name: notify::update-policy
+  derived_from:
+    property: update-policy
+  js_event: notify::update-policy
+  trigger:
+    property: update-policy
+    values:
+    - if-valid
+    - always
+    - if-valid
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:update-policy
+- name: notify::value
+  derived_from:
+    property: value
+  js_event: notify::value
+  trigger:
+    property: value
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+    setup: h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:value
+- name: notify::wrap
+  derived_from:
+    property: wrap
+  js_event: notify::wrap
+  trigger:
+    property: wrap
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkSpinButton:wrap
+methods:
+- name: get_activates_default
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "activates-default")
+  provenance:
+  - origin: probe
+    ref: equals property activates-default
+- name: get_climb_rate
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "climb-rate")
+  provenance:
+  - origin: probe
+    ref: equals property climb-rate
+- name: get_digits
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "digits")
+  provenance:
+  - origin: probe
+    ref: equals property digits
+- name: get_numeric
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "numeric")
+  provenance:
+  - origin: probe
+    ref: equals property numeric
+- name: get_snap_to_ticks
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "snap-to-ticks")
+  provenance:
+  - origin: probe
+    ref: equals property snap-to-ticks
+- name: get_update_policy
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "update-policy")
+  provenance:
+  - origin: probe
+    ref: equals property update-policy
+- name: get_value
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "value")
+  provenance:
+  - origin: probe
+    ref: equals property value
+- name: get_value_as_int
+  dispatch: dynamic
+  args: []
+  expect: r == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 0
+- name: get_wrap
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "wrap")
+  provenance:
+  - origin: probe
+    ref: equals property wrap
+- name: set_activates_default
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "activates-default") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property activates-default: exact'
+- name: set_climb_rate
+  dispatch: dynamic
+  args:
+  - 1.0
+  expect: h.get(o, "climb-rate") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property climb-rate: exact'
+- name: set_digits
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "digits") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property digits: exact'
+- name: set_numeric
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "numeric") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property numeric: exact'
+- name: set_snap_to_ticks
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "snap-to-ticks") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property snap-to-ticks: exact'
+- name: set_update_policy
+  dispatch: dynamic
+  args:
+  - if-valid
+  expect: h.get(o, "update-policy") == V::Str("if-valid".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property update-policy: exact'
+- name: set_value
+  dispatch: dynamic
+  setup: h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();
+  args:
+  - 1.0
+  expect: h.get(o, "value") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property value: exact'
+- name: set_wrap
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "wrap") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property wrap: exact'
+bindings:
+- name: activates-default
+  direction: two_way
+  property: activates-default
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::activates-default
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:activates-default is writable, scalar and notifies; the renderer compares before set'
+- name: climb-rate
+  direction: two_way
+  property: climb-rate
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::climb-rate
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:climb-rate is writable, scalar and notifies; the renderer compares before set'
+- name: digits
+  direction: two_way
+  property: digits
+  type:
+    ref: u32
+    nullable: false
+  change:
+    signal: notify::digits
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:digits is writable, scalar and notifies; the renderer compares before set'
+- name: numeric
+  direction: two_way
+  property: numeric
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::numeric
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:numeric is writable, scalar and notifies; the renderer compares before set'
+- name: snap-to-ticks
+  direction: two_way
+  property: snap-to-ticks
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::snap-to-ticks
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:snap-to-ticks is writable, scalar and notifies; the renderer compares before set'
+- name: update-policy
+  direction: two_way
+  property: update-policy
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:SpinButtonUpdatePolicy>
+    nullable: false
+  change:
+    signal: notify::update-policy
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:update-policy is writable, scalar and notifies; the renderer compares before set'
+- name: value
+  direction: two_way
+  property: value
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::value
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:value is writable, scalar and notifies; the renderer compares before set'
+- name: wrap
+  direction: two_way
+  property: wrap
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::wrap
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkSpinButton:wrap is writable, scalar and notifies; the renderer compares before set'

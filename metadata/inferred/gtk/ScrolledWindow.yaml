@@ -1,0 +1,790 @@
+properties:
+- name: hadjustment
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: has-frame
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: hscrollbar-policy
+  sample: always
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: kinetic-scrolling
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-content-height
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-content-width
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: min-content-height
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: min-content-width
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: overlay-scrolling
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: propagate-natural-height
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: propagate-natural-width
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: vadjustment
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: vscrollbar-policy
+  sample: always
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: window-placement
+  sample: bottom-left
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::has-frame
+  derived_from:
+    property: has-frame
+  js_event: notify::has-frame
+  trigger:
+    property: has-frame
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:has-frame
+- name: notify::hscrollbar-policy
+  derived_from:
+    property: hscrollbar-policy
+  js_event: notify::hscrollbar-policy
+  trigger:
+    property: hscrollbar-policy
+    values:
+    - always
+    - automatic
+    - always
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:hscrollbar-policy
+- name: notify::kinetic-scrolling
+  derived_from:
+    property: kinetic-scrolling
+  js_event: notify::kinetic-scrolling
+  trigger:
+    property: kinetic-scrolling
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:kinetic-scrolling
+- name: notify::max-content-height
+  derived_from:
+    property: max-content-height
+  js_event: notify::max-content-height
+  trigger:
+    property: max-content-height
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:max-content-height
+- name: notify::max-content-width
+  derived_from:
+    property: max-content-width
+  js_event: notify::max-content-width
+  trigger:
+    property: max-content-width
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:max-content-width
+- name: notify::min-content-height
+  derived_from:
+    property: min-content-height
+  js_event: notify::min-content-height
+  trigger:
+    property: min-content-height
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:min-content-height
+- name: notify::min-content-width
+  derived_from:
+    property: min-content-width
+  js_event: notify::min-content-width
+  trigger:
+    property: min-content-width
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:min-content-width
+- name: notify::overlay-scrolling
+  derived_from:
+    property: overlay-scrolling
+  js_event: notify::overlay-scrolling
+  trigger:
+    property: overlay-scrolling
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:overlay-scrolling
+- name: notify::propagate-natural-height
+  derived_from:
+    property: propagate-natural-height
+  js_event: notify::propagate-natural-height
+  trigger:
+    property: propagate-natural-height
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:propagate-natural-height
+- name: notify::propagate-natural-width
+  derived_from:
+    property: propagate-natural-width
+  js_event: notify::propagate-natural-width
+  trigger:
+    property: propagate-natural-width
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:propagate-natural-width
+- name: notify::vscrollbar-policy
+  derived_from:
+    property: vscrollbar-policy
+  js_event: notify::vscrollbar-policy
+  trigger:
+    property: vscrollbar-policy
+    values:
+    - always
+    - automatic
+    - always
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:vscrollbar-policy
+- name: notify::window-placement
+  derived_from:
+    property: window-placement
+  js_event: notify::window-placement
+  trigger:
+    property: window-placement
+    values:
+    - bottom-left
+    - top-left
+    - bottom-left
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkScrolledWindow:window-placement
+methods:
+- name: get_has_frame
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "has-frame")
+  provenance:
+  - origin: probe
+    ref: equals property has-frame
+- name: get_kinetic_scrolling
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "kinetic-scrolling")
+  provenance:
+  - origin: probe
+    ref: equals property kinetic-scrolling
+- name: get_max_content_height
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-content-height")
+  provenance:
+  - origin: probe
+    ref: equals property max-content-height
+- name: get_max_content_width
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-content-width")
+  provenance:
+  - origin: probe
+    ref: equals property max-content-width
+- name: get_min_content_height
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "min-content-height")
+  provenance:
+  - origin: probe
+    ref: equals property min-content-height
+- name: get_min_content_width
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "min-content-width")
+  provenance:
+  - origin: probe
+    ref: equals property min-content-width
+- name: get_overlay_scrolling
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "overlay-scrolling")
+  provenance:
+  - origin: probe
+    ref: equals property overlay-scrolling
+- name: get_placement
+  dispatch: dynamic
+  args: []
+  expect: r == V::Str("top-left".into())
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned 'top-left'
+- name: get_propagate_natural_height
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "propagate-natural-height")
+  provenance:
+  - origin: probe
+    ref: equals property propagate-natural-height
+- name: get_propagate_natural_width
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "propagate-natural-width")
+  provenance:
+  - origin: probe
+    ref: equals property propagate-natural-width
+- name: set_has_frame
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "has-frame") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property has-frame: exact'
+- name: set_kinetic_scrolling
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "kinetic-scrolling") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property kinetic-scrolling: exact'
+- name: set_max_content_height
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "max-content-height") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-content-height: exact'
+- name: set_max_content_width
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "max-content-width") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-content-width: exact'
+- name: set_min_content_height
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "min-content-height") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property min-content-height: exact'
+- name: set_min_content_width
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "min-content-width") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property min-content-width: exact'
+- name: set_overlay_scrolling
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "overlay-scrolling") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property overlay-scrolling: exact'
+- name: set_propagate_natural_height
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "propagate-natural-height") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property propagate-natural-height: exact'
+- name: set_propagate_natural_width
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "propagate-natural-width") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property propagate-natural-width: exact'
+bindings:
+- name: has-frame
+  direction: two_way
+  property: has-frame
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::has-frame
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:has-frame is writable, scalar and notifies; the renderer compares before set'
+- name: hscrollbar-policy
+  direction: two_way
+  property: hscrollbar-policy
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:PolicyType>
+    nullable: false
+  change:
+    signal: notify::hscrollbar-policy
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:hscrollbar-policy is writable, scalar and notifies; the renderer compares before set'
+- name: kinetic-scrolling
+  direction: two_way
+  property: kinetic-scrolling
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::kinetic-scrolling
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:kinetic-scrolling is writable, scalar and notifies; the renderer compares before set'
+- name: max-content-height
+  direction: two_way
+  property: max-content-height
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::max-content-height
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:max-content-height is writable, scalar and notifies; the renderer compares before set'
+- name: max-content-width
+  direction: two_way
+  property: max-content-width
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::max-content-width
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:max-content-width is writable, scalar and notifies; the renderer compares before set'
+- name: min-content-height
+  direction: two_way
+  property: min-content-height
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::min-content-height
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:min-content-height is writable, scalar and notifies; the renderer compares before set'
+- name: min-content-width
+  direction: two_way
+  property: min-content-width
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::min-content-width
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:min-content-width is writable, scalar and notifies; the renderer compares before set'
+- name: overlay-scrolling
+  direction: two_way
+  property: overlay-scrolling
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::overlay-scrolling
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:overlay-scrolling is writable, scalar and notifies; the renderer compares before set'
+- name: propagate-natural-height
+  direction: two_way
+  property: propagate-natural-height
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::propagate-natural-height
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:propagate-natural-height is writable, scalar and notifies; the renderer compares before set'
+- name: propagate-natural-width
+  direction: two_way
+  property: propagate-natural-width
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::propagate-natural-width
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:propagate-natural-width is writable, scalar and notifies; the renderer compares before set'
+- name: vscrollbar-policy
+  direction: two_way
+  property: vscrollbar-policy
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:PolicyType>
+    nullable: false
+  change:
+    signal: notify::vscrollbar-policy
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:vscrollbar-policy is writable, scalar and notifies; the renderer compares before set'
+- name: window-placement
+  direction: two_way
+  property: window-placement
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:CornerType>
+    nullable: false
+  change:
+    signal: notify::window-placement
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkScrolledWindow:window-placement is writable, scalar and notifies; the renderer compares before set'

@@ -1,0 +1,63 @@
+{
+ "bindings:active": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_active": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "active",
+   "ret": false
+  }
+ },
+ "methods:set_active": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "active",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:active": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "state-flags-changed",
+    "toggled"
+   ]
+  }
+ },
+ "signals:toggled": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": false,
+   "handler_result": "none",
+   "n_params": 0,
+   "params": [],
+   "returns": "void",
+   "run": "first",
+   "sync_required": false,
+   "synthetic": {
+    "args": [],
+    "emit": "delivered"
+   }
+  }
+ }
+}

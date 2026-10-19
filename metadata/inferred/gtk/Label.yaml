@@ -1,0 +1,951 @@
+properties:
+- name: ellipsize
+  sample: start
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: extra-menu
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: justify
+  sample: right
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: label
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: lines
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: max-width-chars
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: natural-wrap-mode
+  sample: none
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: selectable
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: single-line-mode
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-markup
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-underline
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: width-chars
+  sample: 0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: wrap
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: wrap-mode
+  sample: char
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: activate-current-link
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: activate-link
+  handler_result: bool_stop
+  sync_required: true
+  trigger:
+    rust: let _ = o.emit_by_name::<bool>("activate-link", &[&"x"]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns gboolean, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: copy-clipboard
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: notify::ellipsize
+  derived_from:
+    property: ellipsize
+  js_event: notify::ellipsize
+  trigger:
+    property: ellipsize
+    values:
+    - start
+    - none
+    - start
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:ellipsize
+- name: notify::justify
+  derived_from:
+    property: justify
+  js_event: notify::justify
+  trigger:
+    property: justify
+    values:
+    - right
+    - left
+    - right
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:justify
+- name: notify::label
+  derived_from:
+    property: label
+  js_event: notify::label
+  trigger:
+    property: label
+    values:
+    - svl probe
+    - ''
+    - svl probe
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:label
+- name: notify::lines
+  derived_from:
+    property: lines
+  js_event: notify::lines
+  trigger:
+    property: lines
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:lines
+- name: notify::max-width-chars
+  derived_from:
+    property: max-width-chars
+  js_event: notify::max-width-chars
+  trigger:
+    property: max-width-chars
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:max-width-chars
+- name: notify::natural-wrap-mode
+  derived_from:
+    property: natural-wrap-mode
+  js_event: notify::natural-wrap-mode
+  trigger:
+    property: natural-wrap-mode
+    values:
+    - none
+    - inherit
+    - none
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:natural-wrap-mode
+- name: notify::selectable
+  derived_from:
+    property: selectable
+  js_event: notify::selectable
+  trigger:
+    property: selectable
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:selectable
+- name: notify::single-line-mode
+  derived_from:
+    property: single-line-mode
+  js_event: notify::single-line-mode
+  trigger:
+    property: single-line-mode
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:single-line-mode
+- name: notify::use-markup
+  derived_from:
+    property: use-markup
+  js_event: notify::use-markup
+  trigger:
+    property: use-markup
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:use-markup
+- name: notify::use-underline
+  derived_from:
+    property: use-underline
+  js_event: notify::use-underline
+  trigger:
+    property: use-underline
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:use-underline
+- name: notify::width-chars
+  derived_from:
+    property: width-chars
+  js_event: notify::width-chars
+  trigger:
+    property: width-chars
+    values:
+    - 0
+    - -1
+    - 0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:width-chars
+- name: notify::wrap
+  derived_from:
+    property: wrap
+  js_event: notify::wrap
+  trigger:
+    property: wrap
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:wrap
+- name: notify::wrap-mode
+  derived_from:
+    property: wrap-mode
+  js_event: notify::wrap-mode
+  trigger:
+    property: wrap-mode
+    values:
+    - char
+    - word
+    - char
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkLabel:wrap-mode
+methods:
+- name: get_ellipsize
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "ellipsize")
+  provenance:
+  - origin: probe
+    ref: equals property ellipsize
+- name: get_justify
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "justify")
+  provenance:
+  - origin: probe
+    ref: equals property justify
+- name: get_label
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "label")
+  provenance:
+  - origin: probe
+    ref: equals property label
+- name: get_lines
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "lines")
+  provenance:
+  - origin: probe
+    ref: equals property lines
+- name: get_max_width_chars
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "max-width-chars")
+  provenance:
+  - origin: probe
+    ref: equals property max-width-chars
+- name: get_mnemonic_keyval
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "mnemonic-keyval")
+  provenance:
+  - origin: probe
+    ref: equals property mnemonic-keyval
+- name: get_natural_wrap_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "natural-wrap-mode")
+  provenance:
+  - origin: probe
+    ref: equals property natural-wrap-mode
+- name: get_selectable
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "selectable")
+  provenance:
+  - origin: probe
+    ref: equals property selectable
+- name: get_single_line_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "single-line-mode")
+  provenance:
+  - origin: probe
+    ref: equals property single-line-mode
+- name: get_text
+  dispatch: dynamic
+  args: []
+  expect: r == V::Str("".into())
+  provenance:
+  - origin: probe
+    ref: called on a new instance, returned ''
+- name: get_use_markup
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-markup")
+  provenance:
+  - origin: probe
+    ref: equals property use-markup
+- name: get_use_underline
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-underline")
+  provenance:
+  - origin: probe
+    ref: equals property use-underline
+- name: get_width_chars
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "width-chars")
+  provenance:
+  - origin: probe
+    ref: equals property width-chars
+- name: get_wrap
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "wrap")
+  provenance:
+  - origin: probe
+    ref: equals property wrap
+- name: get_wrap_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "wrap-mode")
+  provenance:
+  - origin: probe
+    ref: equals property wrap-mode
+- name: get_xalign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "xalign")
+  provenance:
+  - origin: probe
+    ref: equals property xalign
+- name: get_yalign
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "yalign")
+  provenance:
+  - origin: probe
+    ref: equals property yalign
+- name: set_ellipsize
+  dispatch: dynamic
+  args:
+  - start
+  expect: h.get(o, "ellipsize") == V::Str("start".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property ellipsize: exact'
+- name: set_justify
+  dispatch: dynamic
+  args:
+  - right
+  expect: h.get(o, "justify") == V::Str("right".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property justify: exact'
+- name: set_label
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "label") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property label: exact'
+- name: set_lines
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "lines") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property lines: exact'
+- name: set_max_width_chars
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "max-width-chars") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property max-width-chars: exact'
+- name: set_natural_wrap_mode
+  dispatch: dynamic
+  args:
+  - none
+  expect: h.get(o, "natural-wrap-mode") == V::Str("none".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property natural-wrap-mode: exact'
+- name: set_selectable
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "selectable") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property selectable: exact'
+- name: set_single_line_mode
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "single-line-mode") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property single-line-mode: exact'
+- name: set_use_markup
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-markup") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-markup: exact'
+- name: set_use_underline
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-underline") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-underline: exact'
+- name: set_width_chars
+  dispatch: dynamic
+  args:
+  - 0
+  expect: h.get(o, "width-chars") == V::I64(0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property width-chars: exact'
+- name: set_wrap
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "wrap") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property wrap: exact'
+- name: set_wrap_mode
+  dispatch: dynamic
+  args:
+  - char
+  expect: h.get(o, "wrap-mode") == V::Str("char".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property wrap-mode: exact'
+bindings:
+- name: ellipsize
+  direction: two_way
+  property: ellipsize
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Pango:EllipsizeMode>
+    nullable: false
+  change:
+    signal: notify::ellipsize
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:ellipsize is writable, scalar and notifies; the renderer compares before set'
+- name: justify
+  direction: two_way
+  property: justify
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:Justification>
+    nullable: false
+  change:
+    signal: notify::justify
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:justify is writable, scalar and notifies; the renderer compares before set'
+- name: label
+  direction: two_way
+  property: label
+  type:
+    ref: string
+    nullable: false
+  change:
+    signal: notify::label
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:label is writable, scalar and notifies; the renderer compares before set'
+- name: lines
+  direction: two_way
+  property: lines
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::lines
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:lines is writable, scalar and notifies; the renderer compares before set'
+- name: max-width-chars
+  direction: two_way
+  property: max-width-chars
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::max-width-chars
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:max-width-chars is writable, scalar and notifies; the renderer compares before set'
+- name: natural-wrap-mode
+  direction: two_way
+  property: natural-wrap-mode
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:NaturalWrapMode>
+    nullable: false
+  change:
+    signal: notify::natural-wrap-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:natural-wrap-mode is writable, scalar and notifies; the renderer compares before set'
+- name: selectable
+  direction: two_way
+  property: selectable
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::selectable
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:selectable is writable, scalar and notifies; the renderer compares before set'
+- name: single-line-mode
+  direction: two_way
+  property: single-line-mode
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::single-line-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:single-line-mode is writable, scalar and notifies; the renderer compares before set'
+- name: use-markup
+  direction: two_way
+  property: use-markup
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-markup
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:use-markup is writable, scalar and notifies; the renderer compares before set'
+- name: use-underline
+  direction: two_way
+  property: use-underline
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-underline
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:use-underline is writable, scalar and notifies; the renderer compares before set'
+- name: width-chars
+  direction: two_way
+  property: width-chars
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::width-chars
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:width-chars is writable, scalar and notifies; the renderer compares before set'
+- name: wrap
+  direction: two_way
+  property: wrap
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::wrap
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:wrap is writable, scalar and notifies; the renderer compares before set'
+- name: wrap-mode
+  direction: two_way
+  property: wrap-mode
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Pango:WrapMode>
+    nullable: false
+  change:
+    signal: notify::wrap-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkLabel:wrap-mode is writable, scalar and notifies; the renderer compares before set'

@@ -1,0 +1,16 @@
+signals:
+- name: emoji-picked
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("emoji-picked", &[&"x"]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger

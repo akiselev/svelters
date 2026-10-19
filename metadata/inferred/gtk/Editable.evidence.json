@@ -1,0 +1,198 @@
+{
+ "methods:get_editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "editable",
+   "ret": true
+  }
+ },
+ "methods:get_enable_undo": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "enable-undo",
+   "ret": true
+  }
+ },
+ "methods:get_max_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "max-width-chars",
+   "ret": -1
+  }
+ },
+ "methods:get_position": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": 0,
+   "stable": true
+  }
+ },
+ "methods:get_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "text",
+   "ret": ""
+  }
+ },
+ "methods:get_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "width-chars",
+   "ret": -1
+  }
+ },
+ "methods:set_editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "editable",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_enable_undo": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "enable-undo",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_max_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "max-width-chars",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "text",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_width_chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "width-chars",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "properties:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:enable-undo": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:max-width-chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": [
+    "changed"
+   ]
+  }
+ },
+ "properties:width-chars": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:xalign": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 0.0,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 1.0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 1.0,
+   "signals": []
+  }
+ }
+}

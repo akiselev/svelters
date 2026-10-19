@@ -1,0 +1,314 @@
+properties:
+- name: baseline-row
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: column-homogeneous
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: column-spacing
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: row-homogeneous
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: row-spacing
+  sample: 1
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::baseline-row
+  derived_from:
+    property: baseline-row
+  js_event: notify::baseline-row
+  trigger:
+    property: baseline-row
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkGrid:baseline-row
+- name: notify::column-homogeneous
+  derived_from:
+    property: column-homogeneous
+  js_event: notify::column-homogeneous
+  trigger:
+    property: column-homogeneous
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkGrid:column-homogeneous
+- name: notify::column-spacing
+  derived_from:
+    property: column-spacing
+  js_event: notify::column-spacing
+  trigger:
+    property: column-spacing
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkGrid:column-spacing
+- name: notify::row-homogeneous
+  derived_from:
+    property: row-homogeneous
+  js_event: notify::row-homogeneous
+  trigger:
+    property: row-homogeneous
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkGrid:row-homogeneous
+- name: notify::row-spacing
+  derived_from:
+    property: row-spacing
+  js_event: notify::row-spacing
+  trigger:
+    property: row-spacing
+    values:
+    - 1
+    - 0
+    - 1
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkGrid:row-spacing
+methods:
+- name: get_baseline_row
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "baseline-row")
+  provenance:
+  - origin: probe
+    ref: equals property baseline-row
+- name: get_column_homogeneous
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "column-homogeneous")
+  provenance:
+  - origin: probe
+    ref: equals property column-homogeneous
+- name: get_row_homogeneous
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "row-homogeneous")
+  provenance:
+  - origin: probe
+    ref: equals property row-homogeneous
+- name: set_baseline_row
+  dispatch: dynamic
+  args:
+  - 1
+  expect: h.get(o, "baseline-row") == V::I64(1)
+  provenance:
+  - origin: probe
+    ref: 'set then read property baseline-row: exact'
+- name: set_column_homogeneous
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "column-homogeneous") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property column-homogeneous: exact'
+- name: set_row_homogeneous
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "row-homogeneous") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property row-homogeneous: exact'
+bindings:
+- name: baseline-row
+  direction: two_way
+  property: baseline-row
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::baseline-row
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkGrid:baseline-row is writable, scalar and notifies; the renderer compares before set'
+- name: column-homogeneous
+  direction: two_way
+  property: column-homogeneous
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::column-homogeneous
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkGrid:column-homogeneous is writable, scalar and notifies; the renderer compares before set'
+- name: column-spacing
+  direction: two_way
+  property: column-spacing
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::column-spacing
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkGrid:column-spacing is writable, scalar and notifies; the renderer compares before set'
+- name: row-homogeneous
+  direction: two_way
+  property: row-homogeneous
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::row-homogeneous
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkGrid:row-homogeneous is writable, scalar and notifies; the renderer compares before set'
+- name: row-spacing
+  direction: two_way
+  property: row-spacing
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: notify::row-spacing
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkGrid:row-spacing is writable, scalar and notifies; the renderer compares before set'

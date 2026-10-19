@@ -1,0 +1,172 @@
+{
+ "bindings:digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 2
+  }
+ },
+ "bindings:draw-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:has-origin": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:value-pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "left"
+  }
+ },
+ "methods:get_digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "digits",
+   "ret": 1
+  }
+ },
+ "methods:get_draw_value": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "draw-value",
+   "ret": false
+  }
+ },
+ "methods:get_has_origin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "has-origin",
+   "ret": true
+  }
+ },
+ "methods:get_value_pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "value-pos",
+   "ret": "top"
+  }
+ },
+ "methods:set_digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "digits",
+   "recipe": null,
+   "sample": 2
+  }
+ },
+ "methods:set_draw_value": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "draw-value",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_has_origin": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "has-origin",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_value_pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "value-pos",
+   "recipe": null,
+   "sample": "left"
+  }
+ },
+ "properties:digits": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 2,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 2,
+   "signals": []
+  }
+ },
+ "properties:draw-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::round-digits"
+   ]
+  }
+ },
+ "properties:has-origin": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:value-pos": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "top",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "left",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "left",
+   "signals": []
+  }
+ }
+}

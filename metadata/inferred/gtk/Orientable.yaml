@@ -1,0 +1,24 @@
+verify_subject:
+  tag: box
+properties:
+- name: orientation
+  sample: vertical
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+methods:
+- name: get_orientation
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "orientation")
+  provenance:
+  - origin: probe
+    ref: equals property orientation
+- name: set_orientation
+  dispatch: dynamic
+  args:
+  - vertical
+  expect: h.get(o, "orientation") == V::Str("vertical".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property orientation: exact'

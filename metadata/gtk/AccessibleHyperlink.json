@@ -60,6 +60,7 @@
         "ownership": "floating_sink",
         "type": "self"
       },
+      "since": "4.22",
       "unsupported_reason": null
     },
     {
@@ -119,6 +120,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.22",
       "unsupported_reason": null
     }
   ],

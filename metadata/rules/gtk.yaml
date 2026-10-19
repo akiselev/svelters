@@ -1,0 +1,51 @@
+# Data the GTK inference rules read (tools/metadata/gtk/infer.py; plans/research/ANNOTATION-AUTOMATION.md section 5.1).
+# Decisions made by reviews belong here (patterns), single-fact decisions in metadata/overrides/gtk (`deny:` or a manual record).
+schema: svelters-rules/v1
+toolkit: gtk
+
+# Facts below this confidence are not written to metadata/inferred/gtk; they are listed in _review.json
+# (middle band 0.6-0.9, low band < 0.6) and stay unreviewed until someone decides on them.
+promote_at: 0.9
+
+# V1: the gtk4-rs feature baseline of crates/svelters-gtk (Cargo.toml `features = ["v4_6"]`). Slots are generated as
+# typed gtk4-rs calls, so a slot whose setter, getter or kind is newer than this does not compile and is not inferred.
+# Everything else goes through GIRepository at run time; members newer than the build minimum (4.14) are skipped on
+# older GTK by the generated test (`skip_below_gtk`), so the required GTK 4.14 CI job still passes.
+typed_baseline: "4.6"
+
+# M2, exposure policy for GTK is deny-by-pattern: every introspectable method is reachable through GI, so a method
+# is inferred unless a pattern denies it. Patterns match the C-style method name.
+deny_methods:
+  - pattern: '^(run|.*_run|main|block.*|grab_add|dispose|destroy|realize|unrealize|map|unmap|show|present)$'
+    reason: blocking or lifecycle call; changes the widget's state machine, not a property
+  - pattern: '^(measure|size_allocate|allocate|snapshot.*|queue_\w+|init_template|dispose_template|unparent|compute_\w+|pick|get_allocat\w+)$'
+    reason: vfunc-context call that needs a layout or snapshot pass
+  - pattern: '^(insert_after|insert_before|.*_with_time|activate_default|activate|close|fullscreen|maximize|minimize|.*_dialog|error_bell|keynav_failed|mnemonic_activate|popup|popdown|emit_\w+|spin|update)$'
+    reason: acts on the window system or a running main loop
+  - pattern: '^(grab_focus|set_focus.*|focus|child_focus|move_focus|set_cursor_from_name|set_cursor)$'
+    reason: depends on the realized window and the focus chain
+
+# Signals that are never emitted synthetically (their class handler acts on the window system or needs a drag).
+deny_signals:
+  - pattern: '^(popup-menu|move-focus|keynav-failed|mnemonic-activate|show-help|query-tooltip|drag-.*|close-request|activate-default|insert-emoji)$'
+    reason: class handler needs a realized window, a drag, or crashes on an unrooted widget
+
+# S1: widget-typed properties that reference another widget in the tree instead of owning it as a child.
+reference_names: [default, focus, mnemonic, transient, relative, buddy, key-capture, stack, popover-parent]
+
+# B1: properties that do not get a generic `bind:` (no notify, or the binding table cannot carry the type).
+bind_exclude_types: [u64]
+
+# Preconditions the probe found necessary for a round trip, with their Rust twin (test `setup`).
+recipes:
+  range: 'h.call_args(o, "set_range", &[V::F64(0.0), V::F64(100.0)]).unwrap();'
+  text: 'h.set_str(o, "text", "hello world").unwrap();'
+
+# Abstract kinds and interfaces are probed, and their facts tested, on an instance of a concrete subject (the
+# element tag is that kind's tag). Kinds that already declare `verify_subject` in their manual override keep it.
+subjects:
+  Actionable: Button
+  Editable: Entry
+  Orientable: Box
+  Scrollable: TextView
+  Widget: Label

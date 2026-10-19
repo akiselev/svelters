@@ -249,6 +249,7 @@
         "ownership": "borrowed",
         "type": "bool"
       },
+      "since": "4.2",
       "unsupported_reason": null
     },
     {

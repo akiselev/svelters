@@ -1,0 +1,119 @@
+{
+ "bindings:activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "methods:get_activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "activatable",
+   "ret": true
+  }
+ },
+ "methods:get_index": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": -1,
+   "stable": true
+  }
+ },
+ "methods:get_selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "selectable",
+   "ret": true
+  }
+ },
+ "methods:is_selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": false,
+   "stable": true
+  }
+ },
+ "methods:set_activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "activatable",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "selectable",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "properties:activatable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "slots:child": {
+  "confidence": 0.95,
+  "evidence": {
+   "accepts": "GtkLabel",
+   "clear_unparents": true,
+   "log": [],
+   "old_on_replace": "finalized",
+   "parent": "direct",
+   "readback": true,
+   "revealed_by": null,
+   "role": "slot"
+  }
+ }
+}

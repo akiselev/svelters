@@ -1,0 +1,494 @@
+{
+ "bindings:has-frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:hscrollbar-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "always"
+  }
+ },
+ "bindings:kinetic-scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:max-content-height": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:max-content-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:min-content-height": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:min-content-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 0
+  }
+ },
+ "bindings:overlay-scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:propagate-natural-height": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:propagate-natural-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:vscrollbar-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "always"
+  }
+ },
+ "bindings:window-placement": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "bottom-left"
+  }
+ },
+ "methods:get_has_frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "has-frame",
+   "ret": false
+  }
+ },
+ "methods:get_kinetic_scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "kinetic-scrolling",
+   "ret": true
+  }
+ },
+ "methods:get_max_content_height": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "max-content-height",
+   "ret": -1
+  }
+ },
+ "methods:get_max_content_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "max-content-width",
+   "ret": -1
+  }
+ },
+ "methods:get_min_content_height": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "min-content-height",
+   "ret": -1
+  }
+ },
+ "methods:get_min_content_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "min-content-width",
+   "ret": -1
+  }
+ },
+ "methods:get_overlay_scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "overlay-scrolling",
+   "ret": true
+  }
+ },
+ "methods:get_placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "class": "pure_getter",
+   "outcome": "ok",
+   "ret": "top-left",
+   "stable": true
+  }
+ },
+ "methods:get_propagate_natural_height": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "propagate-natural-height",
+   "ret": false
+  }
+ },
+ "methods:get_propagate_natural_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "propagate-natural-width",
+   "ret": false
+  }
+ },
+ "methods:set_has_frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "has-frame",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_kinetic_scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "kinetic-scrolling",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_max_content_height": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "max-content-height",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_max_content_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "max-content-width",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_min_content_height": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "min-content-height",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_min_content_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "min-content-width",
+   "recipe": null,
+   "sample": 0
+  }
+ },
+ "methods:set_overlay_scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "overlay-scrolling",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_propagate_natural_height": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "propagate-natural-height",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_propagate_natural_width": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "propagate-natural-width",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:hadjustment": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<Adjustment>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Adjustment>",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "<Adjustment>",
+   "signals": []
+  }
+ },
+ "properties:has-frame": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::css-classes"
+   ]
+  }
+ },
+ "properties:hscrollbar-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "automatic",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "always",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "always",
+   "signals": [
+    "notify::vscrollbar-policy"
+   ]
+  }
+ },
+ "properties:kinetic-scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:max-content-height": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:max-content-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:min-content-height": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:min-content-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": -1,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 0,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 0,
+   "signals": []
+  }
+ },
+ "properties:overlay-scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:propagate-natural-height": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:propagate-natural-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:vadjustment": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": "<Adjustment>",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<Adjustment>",
+   "recipe": null,
+   "repeat": false,
+   "reset_log": [],
+   "sample": "<Adjustment>",
+   "signals": []
+  }
+ },
+ "properties:vscrollbar-policy": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "automatic",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "always",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "always",
+   "signals": [
+    "notify::hscrollbar-policy"
+   ]
+  }
+ },
+ "properties:window-placement": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "top-left",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "bottom-left",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "bottom-left",
+   "signals": []
+  }
+ }
+}

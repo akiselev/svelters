@@ -2,11 +2,13 @@
 """Ingest the Gtk-4.0 namespace into svelters-element-kind/v0 metadata.
 
 Sources: Gtk-4.0.gir (+ transitive includes) and a PyGObject live pass (GParamSpec / signal
-query on the installed libgtk). Hand/agent annotations from metadata/overrides/gtk/<Kind>.yaml
-are merged over the ingested facts. Output: metadata/gtk/<Kind>.json, one file per type.
+query on the installed libgtk). Annotations are merged over the ingested facts in two layers,
+lowest precedence first: the inferred layer (metadata/inferred/gtk/<Kind>.yaml, written by
+infer.py; facts parked by the ledger are left out) and the hand/agent annotations from
+metadata/overrides/gtk/<Kind>.yaml. Output: metadata/gtk/<Kind>.json, one file per type.
 
-Deterministic: inputs are the GIR, the live type registry (no display needed), the overrides
-and the constants below. No clocks, env or network. Run from anywhere:
+Deterministic: inputs are the GIR, the live type registry (no display needed), the overrides,
+the inferred layer, the parked list and the constants below. No clocks, env or network. Run from anywhere:
 
     python3 tools/metadata/gtk/ingest.py [--girdir /usr/share/gir-1.0]
 """
@@ -28,6 +30,10 @@ import gir as G  # noqa: E402
 
 META_DIR = ROOT / "metadata/gtk"
 OVERRIDE_DIR = ROOT / "metadata/overrides/gtk"
+INFERRED_DIR = ROOT / "metadata/inferred/gtk"
+PARKED_PATH = INFERRED_DIR / "_parked.json"
+# Sections the inferred layer may write (it never changes tags, exposure, lifetime or text props).
+INFERRED_KEYS = ("properties", "signals", "methods", "children", "bindings", "verify_subject")
 SCHEMA_PATH = Path(__file__).resolve().parent / "override.schema.json"
 CHILD_RE = re.compile(r"^(append|prepend|insert.*|remove|pack_.*|add_.*|set_.*_widget|set_child|reorder.*|put|attach.*)$")
 
@@ -117,6 +123,8 @@ class Ingest:
             rec["throws"] = True
         if m.get("deprecated") == "1":
             rec["deprecated"] = True
+        if m.get("version"):
+            rec["since"] = m.get("version")
         reason = None
         if m.get("introspectable") == "0":
             reason = "non_introspectable"
@@ -245,10 +253,13 @@ class Ingest:
                 break
         return chain
 
-    def source(self, name, has_override):
-        return {"gir": {"file": "Gtk-4.0.gir", "sha256": G.sha256(self.repo.files["Gtk"]), "version": self.gtk_version},
-                "runtime": {"pygobject": self.gi.__version__, "gtk": self.gtk_version},
-                "overrides": f"overrides/gtk/{name}.yaml" if has_override else None}
+    def source(self, name, has_override, has_inferred=False):
+        src = {"gir": {"file": "Gtk-4.0.gir", "sha256": G.sha256(self.repo.files["Gtk"]), "version": self.gtk_version},
+               "runtime": {"pygobject": self.gi.__version__, "gtk": self.gtk_version},
+               "overrides": f"overrides/gtk/{name}.yaml" if has_override else None}
+        if has_inferred:
+            src["inferred"] = f"inferred/gtk/{name}.yaml"
+        return src
 
     def object_kind(self, tag, el, overrides):
         name = el.get("name")
@@ -354,34 +365,120 @@ def load_overrides() -> dict[str, dict]:
     return out
 
 
-def split_provenance(rec: dict) -> tuple[dict, dict]:
+def load_inferred() -> dict[str, dict]:
+    out = {}
+    for p in sorted(INFERRED_DIR.glob("*.yaml")):
+        if not p.stem.startswith("_"):
+            out[p.stem] = svmeta.load_yaml(p)
+    return out
+
+
+def load_parked(version: str) -> dict[tuple[str, str, str], str]:
+    """(kind, section, name) -> record fingerprint of inferred facts whose generated test failed
+    (written by `ledger.py refresh`). A parked fact stays out of the merged metadata until its
+    record changes (a new probe or rule) or the toolkit version does."""
+    if not PARKED_PATH.exists():
+        return {}
+    doc = svmeta.load_json(PARKED_PATH)
+    if doc.get("version") != version:
+        return {}
+    return {(r["kind"], r["section"], r["name"]): r["record_fp"] for r in doc["parked"]}
+
+
+def drop_parked_and_denied(kind: str, ov: dict, parked: dict, deny: list[str]) -> dict:
+    """The inferred layer of one kind without parked facts and without facts a manual `deny:` removes.
+    `deny` entries are `<section>:<glob>` over fact names (`methods:set_*`)."""
+    import fnmatch
+
+    def gone(section: str, name: str, rec: dict) -> bool:
+        if parked.get((kind, section, name)) == svmeta.fingerprint(rec):
+            return True
+        return any(d.split(":", 1)[0] == section and fnmatch.fnmatch(name, d.split(":", 1)[1]) for d in deny)
+
+    out = {}
+    gone_bindings = {r["name"] for r in ov.get("bindings", []) if gone("bindings", r["name"], r)}
+    for key, val in ov.items():
+        if key == "signals":
+            # the notify signal of a generic binding goes with the binding
+            out[key] = [r for r in val if not gone(key, r["name"], r)
+                        and not (r.get("derived_from") and r["derived_from"].get("property") in gone_bindings)]
+        elif key in ("properties", "methods", "bindings"):
+            out[key] = [r for r in val if not gone(key, r["name"], r)]
+        elif key == "children":
+            slots = [s for s in val.get("slots", []) if not gone("slots", s["name"], s)]
+            out[key] = {**val, "slots": slots} if slots else None
+        else:
+            out[key] = val
+    return {k: v for k, v in out.items() if v not in (None, [], {})}
+
+
+def split_provenance(rec: dict, layer: str = "manual") -> tuple[dict, dict]:
+    raw = rec
     rec = dict(rec)
     prov = rec.pop("provenance", None)
-    return rec, {"origin": "manual", "provenance": prov, "fields": sorted(k for k in rec if k != "name")}
+    ann = {"origin": layer, "provenance": prov, "fields": sorted(k for k in rec if k != "name")}
+    if layer == "inferred":
+        ann["fp"] = svmeta.fingerprint(raw)
+    return rec, ann
 
 
 EXPLICIT_NEW = ("new", "virtual", "derived_from")  # markers that let an override add a record GTK does not have
 
 
-def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
+def drop_inferred_fields(doc: dict, manual: dict) -> dict:
+    """A manual record wins over an inferred one field by field, and a nested field (a trigger, an op, a change
+    signal) is replaced as a whole: merging `{rust: ...}` into an inferred `{property: ...}` would give a trigger
+    that is neither."""
+    def inferred(r: dict) -> bool:
+        return (r.get("annotated") or {}).get("origin") == "inferred" or r.get("origin") == "inferred"
+
+    def strip(base: list, over: list) -> list:
+        by = {r["name"]: r for r in over}
+        out = []
+        for r in base:
+            m = by.get(r["name"])
+            if m is not None and inferred(r):
+                r = {k: v for k, v in r.items() if not (isinstance(v, dict) and k in m and k not in ("annotated",))}
+            out.append(r)
+        return out
+
+    out = dict(doc)
+    for key in ("properties", "signals", "methods", "bindings"):
+        if key in manual and key in out:
+            out[key] = strip(out[key], manual[key])
+    if "children" in manual and "children" in out:
+        ch = dict(out["children"])
+        ch["slots"] = strip(ch.get("slots", []), manual["children"].get("slots", []))
+        out["children"] = ch
+    return out
+
+
+def apply_override(doc: dict, ov: dict, errors: list[str], layer: str = "manual") -> dict:
     """Strict merge: every property/signal/method record must match an ingested record by name,
     unless it is explicitly new (`new: true`, `virtual: {...}`, `derived_from: {...}`). Slots,
-    bindings and the lifetime block are annotation-only and always new."""
-    ov = dict(ov)
+    bindings and the lifetime block are annotation-only and always new. `layer` is `inferred` or
+    `manual`: records the layer introduces carry it as their origin, and `annotated.origin`
+    says which layer wrote the winning annotation of a fact."""
+    ov = {k: v for k, v in ov.items() if k != "deny"}
     marks: list[tuple[list, str, dict]] = []  # (path, record name, annotation)
     clean: dict = {}
+    if layer == "inferred":
+        for key in ov:
+            if key not in INFERRED_KEYS:
+                errors.append(f"{doc['id']}: the inferred layer may not write {key!r}")
     for key, val in ov.items():
         if key in ("properties", "signals", "methods"):
             have = {r["name"] for r in doc.get(key, [])}
+            upstream = {r["name"] for r in doc.get(key, []) if r.get("origin") != "inferred"}
             recs = []
             for r in val:
-                r2, ann = split_provenance(r)
+                r2, ann = split_provenance(r, layer)
                 if not ann["provenance"]:
                     errors.append(f"{doc['id']}: {key} {r.get('name')} lacks provenance")
                 if r["name"] not in have and not any(m in r for m in EXPLICIT_NEW):
                     errors.append(f"{doc['id']}: {key} {r['name']!r} matches no ingested record "
                                   f"(typo? mark it `new: true` if it really is additional)")
-                if r["name"] in have and r.get("new"):
+                if r["name"] in upstream and r.get("new"):
                     errors.append(f"{doc['id']}: {key} {r['name']!r} is marked new but exists upstream")
                 recs.append(r2)
                 marks.append(([key], r["name"], ann))
@@ -390,7 +487,7 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
             ch = dict(val)
             recs = []
             for r in ch.get("slots", []):
-                r2, ann = split_provenance(r)
+                r2, ann = split_provenance(r, layer)
                 if not ann["provenance"]:
                     errors.append(f"{doc['id']}: slot {r.get('name')} lacks provenance")
                 r2["id"] = f"{doc['id']}:slot:{r['name']}"
@@ -404,7 +501,8 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
             ch["slots"] = recs
             clean[key] = ch
         elif key == "bindings":
-            clean[key] = [{**r, "id": f"{doc['id']}:binding:{r['name']}", "origin": "manual"} for r in val]
+            clean[key] = [{**r, "id": f"{doc['id']}:binding:{r['name']}", "origin": layer,
+                           **({"fp": svmeta.fingerprint(r)} if layer == "inferred" else {})} for r in val]
         elif key == "lifetime":
             clean[key] = {**val, "id": f"{doc['id']}:lifetime", "origin": "manual"}
         elif key == "text_prop":
@@ -415,7 +513,9 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
             clean[key] = val
     if "lifetime" in clean:
         doc = {k: v for k, v in doc.items() if k != "lifetime"}  # replaced, not merged
-    merged = svmeta.merge(doc, clean)
+    if layer == "manual":
+        doc = drop_inferred_fields(doc, clean)
+    merged = svmeta.merge(doc, clean, None, layer)
     for path, name, ann in marks:
         lst = merged
         for p in path:
@@ -423,7 +523,11 @@ def apply_override(doc: dict, ov: dict, errors: list[str]) -> dict:
         for rec in lst:
             if rec["name"] == name:
                 rec["annotated"] = ann
-                rec["origin"] = rec.get("origin") or "manual"
+                rec["origin"] = rec.get("origin") or layer
+    if layer == "manual":
+        for b in merged.get("bindings", []):
+            if b.get("origin") == "manual":
+                b.pop("fp", None)  # a manual binding replaced an inferred one
     if "element" in ov:
         # Tags are derived (tools/metadata/common/naming.py); an override may restate the tag, or
         # differ only with a `tag_reason`.
@@ -492,7 +596,8 @@ def inherited_facts(kinds: dict[str, dict]) -> None:
                 for r in annotated(src, sec):
                     if r["name"] in own[sec] or any(x["name"] == r["name"] for x in inh.get(sec, [])):
                         continue
-                    inh.setdefault(sec, []).append({"name": r["name"], "from": src["id"], "fact": r.get("id"), "origin": "manual"})
+                    inh.setdefault(sec, []).append({"name": r["name"], "from": src["id"], "fact": r.get("id"),
+                                                    "origin": (r.get("annotated") or {}).get("origin") or r.get("origin") or "manual"})
         if inh:
             doc["inherited"] = {k: sorted(v, key=lambda r: r["name"]) for k, v in sorted(inh.items())}
         else:
@@ -505,19 +610,25 @@ def main() -> int:
     args = ap.parse_args()
     ing = Ingest(args.girdir)
     overrides = load_overrides()
+    inferred = load_inferred()
+    parked = load_parked(ing.gtk_version)
     errors: list[str] = []
-    for p in sorted(OVERRIDE_DIR.glob("*.yaml")):
+    for p in sorted(OVERRIDE_DIR.glob("*.yaml")) + sorted(q for q in INFERRED_DIR.glob("*.yaml") if not q.stem.startswith("_")):
         errors += svmeta.check_override(p, SCHEMA_PATH)
     kinds = ing.all_kinds(overrides)
-    for name in overrides:
+    for name in list(overrides) + list(inferred):
         if name not in kinds:
             errors.append(f"override for unknown kind {name}")
 
     for name, doc in sorted(kinds.items()):
-        doc["source"] = ing.source(name, name in overrides)
         life = derived_lifetime(doc)
         if life:
             doc["lifetime"] = life
+        inf = drop_parked_and_denied(name, inferred.get(name, {}), parked, (overrides.get(name) or {}).get("deny", []))
+        doc["source"] = ing.source(name, name in overrides, bool(inf))
+        if inf:
+            doc = apply_override(doc, inf, errors, "inferred")
+            kinds[name] = doc
         if name in overrides:
             doc = apply_override(doc, overrides[name], errors)
             kinds[name] = doc

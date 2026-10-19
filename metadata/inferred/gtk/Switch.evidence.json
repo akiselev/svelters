@@ -1,0 +1,112 @@
+{
+ "bindings:active": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:state": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_active": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "active",
+   "ret": false
+  }
+ },
+ "methods:get_state": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "state",
+   "ret": false
+  }
+ },
+ "methods:set_active": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "active",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_state": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "state",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:active": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "notify::state",
+    "state-flags-changed",
+    "state-set"
+   ]
+  }
+ },
+ "properties:state": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": [
+    "state-flags-changed"
+   ]
+  }
+ },
+ "signals:state-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "action": false,
+   "handler_result": "bool_stop",
+   "n_params": 1,
+   "params": [
+    "gboolean"
+   ],
+   "returns": "gboolean",
+   "run": "last",
+   "sync_required": true,
+   "synthetic": {
+    "args": [
+     true
+    ],
+    "emit": "delivered"
+   }
+  }
+ }
+}

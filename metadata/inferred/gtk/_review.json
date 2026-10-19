@@ -1,0 +1,1128 @@
+{
+ "inferred": {
+  "bindings": 228,
+  "methods": 580,
+  "properties": 329,
+  "signals": 62,
+  "slots": 3
+ },
+ "promote_at": 0.9,
+ "rows": [
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "AboutDialog",
+   "name": "set_artists",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "AboutDialog",
+   "name": "set_authors",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "AboutDialog",
+   "name": "set_documenters",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "AboutDialog",
+   "name": "set_logo",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "AboutDialog",
+   "name": "artists",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "AboutDialog",
+   "name": "authors",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "AboutDialog",
+   "name": "documenters",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "AboutDialog",
+   "name": "logo",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Actionable",
+   "name": "action-target",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "AspectFrame",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "AspectFrame",
+   "name": "set_xalign",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "AspectFrame",
+   "name": "set_yalign",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "AspectFrame",
+   "name": "xalign",
+   "pattern": "prop:scalar-identity",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "AspectFrame",
+   "name": "yalign",
+   "pattern": "prop:scalar-identity",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Button",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Calendar",
+   "name": "set_date",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Calendar",
+   "name": "date",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "CenterBox",
+   "name": "set_center_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "CenterBox",
+   "name": "set_end_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "CenterBox",
+   "name": "set_start_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "CheckButton",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "CheckButton",
+   "name": "set_group",
+   "pattern": "method:glib-warning",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "ColorDialogButton",
+   "name": "set_rgba",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "ColorDialogButton",
+   "name": "rgba",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "EditableLabel",
+   "name": "start_editing",
+   "pattern": "method:action",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Entry",
+   "name": "set_attributes",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Entry",
+   "name": "set_input_hints",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Entry",
+   "name": "set_tabs",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Entry",
+   "name": "attributes",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Entry",
+   "name": "input-hints",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Entry",
+   "name": "invisible-char",
+   "pattern": "prop:error",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Entry",
+   "name": "primary-icon-gicon",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Entry",
+   "name": "primary-icon-paintable",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Entry",
+   "name": "secondary-icon-gicon",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Entry",
+   "name": "secondary-icon-paintable",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Entry",
+   "name": "tabs",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Expander",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Expander",
+   "name": "set_label_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "FlowBoxChild",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "FontDialogButton",
+   "name": "get_font_desc",
+   "pattern": "method:accessor_get-differs",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "FontDialogButton",
+   "name": "set_font_desc",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "FontDialogButton",
+   "name": "set_language",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "FontDialogButton",
+   "name": "font-desc",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "FontDialogButton",
+   "name": "language",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Frame",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Frame",
+   "name": "set_label_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "GraphicsOffload",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "HeaderBar",
+   "name": "set_title_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Image",
+   "name": "file",
+   "pattern": "prop:needs-fixture",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Image",
+   "name": "gicon",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Image",
+   "name": "paintable",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Image",
+   "name": "resource",
+   "pattern": "prop:ignored",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Inscription",
+   "name": "set_attributes",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Inscription",
+   "name": "set_markup",
+   "pattern": "method:glib-warning",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Inscription",
+   "name": "set_yalign",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Inscription",
+   "name": "attributes",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Inscription",
+   "name": "yalign",
+   "pattern": "prop:scalar-identity",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Label",
+   "name": "set_attributes",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Label",
+   "name": "set_mnemonic_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Label",
+   "name": "set_tabs",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Label",
+   "name": "set_xalign",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Label",
+   "name": "set_yalign",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Label",
+   "name": "attributes",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Label",
+   "name": "tabs",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Label",
+   "name": "xalign",
+   "pattern": "prop:scalar-identity",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Label",
+   "name": "yalign",
+   "pattern": "prop:scalar-identity",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "ListBoxRow",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "MediaControls",
+   "name": "set_media_stream",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "MediaControls",
+   "name": "media-stream",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "MenuButton",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Notebook",
+   "name": "popup_enable",
+   "pattern": "method:action",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Notebook",
+   "name": "page",
+   "pattern": "prop:recipe-populate",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Overlay",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Paned",
+   "name": "set_end_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Paned",
+   "name": "set_start_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "PasswordEntry",
+   "name": "set_extra_menu",
+   "pattern": "method:accessor_set-differs",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "PasswordEntry",
+   "name": "extra-menu",
+   "pattern": "prop:ignored",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Picture",
+   "name": "set_paintable",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Picture",
+   "name": "paintable",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Popover",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Popover",
+   "name": "set_default_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Popover",
+   "name": "set_pointing_to",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Popover",
+   "name": "pointing-to",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "PopoverMenu",
+   "name": "set_flags",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "PopoverMenu",
+   "name": "flags",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "PopoverMenu",
+   "name": "visible-submenu",
+   "pattern": "prop:ignored",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Revealer",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "ScaleButton",
+   "name": "set_icons",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "ScaleButton",
+   "name": "icons",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "ScrolledWindow",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "SearchBar",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "SearchBar",
+   "name": "set_key_capture_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "SearchEntry",
+   "name": "set_input_hints",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "SearchEntry",
+   "name": "set_key_capture_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "SearchEntry",
+   "name": "input-hints",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Spinner",
+   "name": "start",
+   "pattern": "method:action",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Stack",
+   "name": "set_visible_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Stack",
+   "name": "set_visible_child_name",
+   "pattern": "method:accessor_set-differs",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Stack",
+   "name": "visible-child-name",
+   "pattern": "prop:ignored",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "StackSidebar",
+   "name": "set_stack",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "StackSwitcher",
+   "name": "set_stack",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Text",
+   "name": "set_attributes",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Text",
+   "name": "set_input_hints",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Text",
+   "name": "set_tabs",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Text",
+   "name": "attributes",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Text",
+   "name": "input-hints",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Text",
+   "name": "invisible-char",
+   "pattern": "prop:error",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Text",
+   "name": "tabs",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Text",
+   "name": "preedit-changed",
+   "pattern": "signal:trigger-default-unsampled",
+   "section": "signals"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "TextView",
+   "name": "set_input_hints",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "TextView",
+   "name": "set_tabs",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "TextView",
+   "name": "input-hints",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "TextView",
+   "name": "tabs",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "TextView",
+   "name": "preedit-changed",
+   "pattern": "signal:trigger-default-unsampled",
+   "section": "signals"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "ToggleButton",
+   "name": "set_group",
+   "pattern": "method:glib-warning",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Video",
+   "name": "set_media_stream",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Video",
+   "name": "media-stream",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Viewport",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Widget",
+   "name": "get_name",
+   "pattern": "method:accessor_get-differs",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Widget",
+   "name": "set_css_classes",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Widget",
+   "name": "set_opacity",
+   "pattern": "method:accessor_set-differs",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Widget",
+   "name": "set_parent",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Widget",
+   "name": "css-classes",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Widget",
+   "name": "cursor",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Widget",
+   "name": "opacity",
+   "pattern": "prop:normalized",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Window",
+   "name": "set_application",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Window",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Window",
+   "name": "set_default_widget",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Window",
+   "name": "set_display",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Window",
+   "name": "set_startup_id",
+   "pattern": "method:glib-warning",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Window",
+   "name": "set_titlebar",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "Window",
+   "name": "set_transient_for",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Window",
+   "name": "application",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.8,
+   "kind": "Window",
+   "name": "display",
+   "pattern": "prop:round-trip",
+   "section": "properties"
+  },
+  {
+   "band": "low",
+   "confidence": 0.5,
+   "kind": "WindowHandle",
+   "name": "set_child",
+   "pattern": "method:accessor_set-no_sample",
+   "section": "methods"
+  }
+ ],
+ "schema": "svelters-inferred-review/v1",
+ "skipped": {
+  "method:action-no-visible-effect": 35,
+  "method:denied (acts on the window system or a running main loop)": 21,
+  "method:denied (blocking or lifecycle call; changes the widget's state machine, not a property)": 7,
+  "method:denied (depends on the realized window and the focus chain)": 6,
+  "method:denied (vfunc-context call that needs a layout or snapshot pass)": 16,
+  "method:get-non-scalar": 91,
+  "method:getter-unsnapshotable": 38,
+  "method:set-non-scalar": 24,
+  "signal:denied (class handler needs a realized window, a drag, or crashes on an unrooted widget)": 3,
+  "signal:no-trigger": 49,
+  "slot:kind-has-manual-children": 22,
+  "slot:newer-than-typed-baseline": 2
+ },
+ "toolkit": "gtk",
+ "unreviewed": {
+  "by_pattern": {
+   "low:method:accessor_get-differs": 2,
+   "low:method:accessor_set-differs": 3,
+   "low:method:accessor_set-no_sample": 70,
+   "low:method:glib-warning": 4,
+   "low:prop:error": 2,
+   "low:prop:ignored": 4,
+   "low:prop:needs-fixture": 1,
+   "low:prop:normalized": 1,
+   "low:prop:recipe-populate": 1,
+   "low:signal:trigger-default-unsampled": 2,
+   "middle:method:action": 3,
+   "middle:prop:round-trip": 37,
+   "middle:prop:scalar-identity": 5
+  },
+  "low": 90,
+  "middle": 45
+ },
+ "version": "4.22.4"
+}

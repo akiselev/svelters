@@ -7,7 +7,7 @@
 <window title="Diagnostics">
   <box orientation="diagonal" spacing="4">
     hello
-    <label bind:label={count}>x</label>
+    <inscription bind:text={count} />
     <button onklick={() => count++}>Go</button>
     <entry colour="red" />
     <frobnicator />

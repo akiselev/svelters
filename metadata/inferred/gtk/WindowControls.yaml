@@ -1,0 +1,167 @@
+properties:
+- name: decoration-layout
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: side
+  sample: end
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: use-native-controls
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::side
+  derived_from:
+    property: side
+  js_event: notify::side
+  trigger:
+    property: side
+    values:
+    - end
+    - start
+    - end
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindowControls:side
+- name: notify::use-native-controls
+  derived_from:
+    property: use-native-controls
+  js_event: notify::use-native-controls
+  trigger:
+    property: use-native-controls
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkWindowControls:use-native-controls
+methods:
+- name: get_decoration_layout
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "decoration-layout")
+  provenance:
+  - origin: probe
+    ref: equals property decoration-layout
+- name: get_empty
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "empty")
+  provenance:
+  - origin: probe
+    ref: equals property empty
+- name: get_side
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "side")
+  provenance:
+  - origin: probe
+    ref: equals property side
+- name: get_use_native_controls
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "use-native-controls")
+  provenance:
+  - origin: probe
+    ref: equals property use-native-controls
+- name: set_decoration_layout
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "decoration-layout") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property decoration-layout: exact'
+- name: set_side
+  dispatch: dynamic
+  args:
+  - end
+  expect: h.get(o, "side") == V::Str("end".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property side: exact'
+- name: set_use_native_controls
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "use-native-controls") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property use-native-controls: exact'
+bindings:
+- name: side
+  direction: two_way
+  property: side
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:PackType>
+    nullable: false
+  change:
+    signal: notify::side
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindowControls:side is writable, scalar and notifies; the renderer compares before set'
+- name: use-native-controls
+  direction: two_way
+  property: use-native-controls
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::use-native-controls
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkWindowControls:use-native-controls is writable, scalar and notifies; the renderer compares before set'

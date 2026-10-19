@@ -1,0 +1,64 @@
+properties:
+- name: editing
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::editing
+  derived_from:
+    property: editing
+  js_event: notify::editing
+  trigger:
+    property: editing
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkEditableLabel:editing
+methods:
+- name: get_editing
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "editing")
+  provenance:
+  - origin: probe
+    ref: equals property editing
+bindings:
+- name: editing
+  direction: two_way
+  property: editing
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::editing
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkEditableLabel:editing is writable, scalar and notifies; the renderer compares before set'

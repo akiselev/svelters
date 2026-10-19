@@ -67,6 +67,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "3b5230fd34df5f50",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property hscroll-policy"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"hscroll-policy\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_hscroll_policy",
       "invocation": {
         "dev": "introspected",
@@ -103,6 +121,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "dfa5117153d1122b",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property vscroll-policy"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"vscroll-policy\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:get_vscroll_policy",
       "invocation": {
         "dev": "introspected",
@@ -147,6 +183,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "b067f4d4bd6a8575",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property hscroll-policy: exact"
+          }
+        ]
+      },
+      "args": [
+        "natural"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"hscroll-policy\") == V::Str(\"natural\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_hscroll_policy",
       "invocation": {
         "dev": "introspected",
@@ -199,6 +255,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "8b3accce28649501",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property vscroll-policy: exact"
+          }
+        ]
+      },
+      "args": [
+        "natural"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"vscroll-policy\") == V::Str(\"natural\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:method:set_vscroll_policy",
       "invocation": {
         "dev": "introspected",
@@ -244,6 +320,17 @@
         "get": "gtk_scrollable_get_hadjustment",
         "set": "gtk_scrollable_set_hadjustment"
       },
+      "annotated": {
+        "fields": [],
+        "fp": "f61883ebd671c81d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hadjustment",
       "invocation": "reflected",
@@ -284,6 +371,19 @@
         "get": "gtk_scrollable_get_hscroll_policy",
         "set": "gtk_scrollable_set_hscroll_policy"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "f51c3125ed120880",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": "minimum",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hscroll-policy",
       "invocation": "reflected",
@@ -306,6 +406,7 @@
         "origin": "runtime",
         "owner": "GtkScrollable"
       },
+      "sample": "natural",
       "type": {
         "gtype": "GtkScrollablePolicy",
         "native": null,
@@ -323,6 +424,17 @@
       "accessors": {
         "get": "gtk_scrollable_get_vadjustment",
         "set": "gtk_scrollable_set_vadjustment"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "66e217e866cf660f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vadjustment",
@@ -364,6 +476,19 @@
         "get": "gtk_scrollable_get_vscroll_policy",
         "set": "gtk_scrollable_set_vscroll_policy"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "8a7d7a5a60009134",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": "minimum",
       "id": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vscroll-policy",
       "invocation": "reflected",
@@ -386,6 +511,7 @@
         "origin": "runtime",
         "owner": "GtkScrollable"
       },
+      "sample": "natural",
       "type": {
         "gtype": "GtkScrollablePolicy",
         "native": null,
@@ -402,11 +528,15 @@
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Scrollable.yaml",
     "overrides": null,
     "runtime": {
       "gtk": "4.22.4",
       "pygobject": "3.56.2"
     }
   },
-  "toolkit": "gtk"
+  "toolkit": "gtk",
+  "verify_subject": {
+    "tag": "text-view"
+  }
 }

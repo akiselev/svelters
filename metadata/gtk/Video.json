@@ -9,6 +9,131 @@
     "GObject.InitiallyUnowned",
     "GObject.Object"
   ],
+  "bindings": [
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::autoplay",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "11255b5474e9a991",
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:binding:autoplay",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "autoplay",
+      "origin": "inferred",
+      "property": "autoplay",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkVideo:autoplay is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::graphics-offload",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "545deca9812b2627",
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:binding:graphics-offload",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "graphics-offload",
+      "origin": "inferred",
+      "property": "graphics-offload",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkVideo:graphics-offload is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "enum<svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled>"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    },
+    {
+      "change": {
+        "origin": "inferred",
+        "role": "any_change",
+        "signal": "notify::loop",
+        "value": "prop"
+      },
+      "direction": "two_way",
+      "echo": {
+        "compare_before_set": true,
+        "origin": "inferred",
+        "read_back": false,
+        "strategy": "none"
+      },
+      "fp": "3db62f55d4a63631",
+      "id": "svelters-api:v1:type:gtk:Gtk:Video:binding:loop",
+      "lifetime": {
+        "on_destroy": "idempotent_disconnect",
+        "on_native_death": "end_binding",
+        "on_stale_update": "warn_noop",
+        "origin": "inferred"
+      },
+      "name": "loop",
+      "origin": "inferred",
+      "property": "loop",
+      "provenance": [
+        {
+          "origin": "rule",
+          "ref": "B1: GtkVideo:loop is writable, scalar and notifies; the renderer compares before set"
+        }
+      ],
+      "type": {
+        "nullable": false,
+        "origin": "inferred",
+        "ref": "bool"
+      },
+      "write": {
+        "natively_normalizes": false,
+        "origin": "inferred"
+      }
+    }
+  ],
   "children": {
     "candidates": {
       "child_ops": [],
@@ -151,10 +276,250 @@
   "inherited": {
     "methods": [
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_baseline",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_baseline",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_child_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_child_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_css_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_css_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_direction",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_direction",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focus_on_click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focus_on_click",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_focusable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_focusable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_height",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_height",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_mapped",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_mapped",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_opacity",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_opacity",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_realized",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_realized",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_request_mode",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_request_mode",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_scale_factor",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_scale_factor",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_visible",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:get_width",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "get_width",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:grab_focus",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "grab_focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:has_visible_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has_visible_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_drawable",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_drawable",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:is_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "is_visible",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:queue_draw",
@@ -167,6 +532,132 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "queue_resize",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_focus",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_focus",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_can_target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_can_target",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_halign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_halign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_has_tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_has_tooltip",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_hexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_hexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_limit_events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_limit_events",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_bottom",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_bottom",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_end",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_end",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_start",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_start",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_margin_top",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_margin_top",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_name",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_name",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_receives_default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_receives_default",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_sensitive",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_sensitive",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_markup",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_markup",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_tooltip_text",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_tooltip_text",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_valign",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_valign",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_vexpand_set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_vexpand_set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:method:set_visible",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "set_visible",
+        "origin": "inferred"
       }
     ],
     "properties": [
@@ -175,6 +666,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "can-focus",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:can-target",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "can-target",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:css-classes",
@@ -189,6 +686,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focus-on-click",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "focus-on-click",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:focusable",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "focusable",
@@ -201,6 +704,12 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "has-tooltip",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:height-request",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "height-request",
@@ -211,6 +720,24 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "hexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:hexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "hexpand-set",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "layout-manager",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:limit-events",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "limit-events",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:margin-bottom",
@@ -249,6 +776,18 @@
         "origin": "manual"
       },
       {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:overflow",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "overflow",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "receives-default",
+        "origin": "inferred"
+      },
+      {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:sensitive",
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "sensitive",
@@ -277,6 +816,12 @@
         "from": "svelters-api:v1:type:gtk:Gtk:Widget",
         "name": "vexpand",
         "origin": "manual"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:vexpand-set",
+        "from": "svelters-api:v1:type:gtk:Gtk:Widget",
+        "name": "vexpand-set",
+        "origin": "inferred"
       },
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:visible",
@@ -324,6 +869,24 @@
   },
   "methods": [
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "6f12d7ef6a30fce7",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property autoplay"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"autoplay\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_autoplay",
       "invocation": {
         "dev": "introspected",
@@ -360,6 +923,24 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "3ed1f3118ea15d98",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property graphics-offload"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"graphics-offload\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_graphics_offload",
       "invocation": {
         "dev": "introspected",
@@ -375,9 +956,28 @@
         "ownership": "borrowed",
         "type": "enum<svelters-api:v1:type:gtk:Gtk:GraphicsOffloadEnabled>"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "12a97741f1d10d1d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "equals property loop"
+          }
+        ]
+      },
+      "args": [],
+      "dispatch": "dynamic",
+      "expect": "r == h.get(o, \"loop\")",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:method:get_loop",
       "invocation": {
         "dev": "introspected",
@@ -414,6 +1014,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "777ed54ba62048b0",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property autoplay: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"autoplay\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_autoplay",
       "invocation": {
         "dev": "introspected",
@@ -492,6 +1112,26 @@
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "04b498cd51603b36",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property graphics-offload: exact"
+          }
+        ]
+      },
+      "args": [
+        "enabled"
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"graphics-offload\") == V::Str(\"enabled\".into())",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_graphics_offload",
       "invocation": {
         "dev": "introspected",
@@ -515,9 +1155,30 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.14",
       "unsupported_reason": null
     },
     {
+      "annotated": {
+        "fields": [
+          "args",
+          "dispatch",
+          "expect"
+        ],
+        "fp": "12763bf0d3b50f1f",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "set then read property loop: exact"
+          }
+        ]
+      },
+      "args": [
+        true
+      ],
+      "dispatch": "dynamic",
+      "expect": "h.get(o, \"loop\") == V::Bool(true)",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:method:set_loop",
       "invocation": {
         "dev": "introspected",
@@ -615,6 +1276,19 @@
         "get": "gtk_video_get_autoplay",
         "set": "gtk_video_set_autoplay"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "333a685eb01669d8",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:autoplay",
       "invocation": "reflected",
@@ -637,6 +1311,7 @@
         "origin": "runtime",
         "owner": "GtkVideo"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -654,6 +1329,17 @@
       "accessors": {
         "get": "gtk_video_get_file",
         "set": "gtk_video_set_file"
+      },
+      "annotated": {
+        "fields": [],
+        "fp": "706e9137b6a8cc79",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": null,
       "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:file",
@@ -695,6 +1381,19 @@
         "get": "gtk_video_get_graphics_offload",
         "set": "gtk_video_set_graphics_offload"
       },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "c3266d8c03a069ea",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
+      },
       "default": "disabled",
       "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:graphics-offload",
       "invocation": "reflected",
@@ -717,6 +1416,7 @@
         "origin": "runtime",
         "owner": "GtkVideo"
       },
+      "sample": "enabled",
       "since": "4.14",
       "type": {
         "gtype": "GtkGraphicsOffloadEnabled",
@@ -735,6 +1435,19 @@
       "accessors": {
         "get": "gtk_video_get_loop",
         "set": "gtk_video_set_loop"
+      },
+      "annotated": {
+        "fields": [
+          "sample"
+        ],
+        "fp": "ceca2ba6af92ea07",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "probe",
+            "ref": "round trip exact; notify fired"
+          }
+        ]
       },
       "default": false,
       "id": "svelters-api:v1:type:gtk:Gtk:Video:prop:loop",
@@ -758,6 +1471,7 @@
         "origin": "runtime",
         "owner": "GtkVideo"
       },
+      "sample": true,
       "type": {
         "gtype": "gboolean",
         "native": "gboolean",
@@ -807,13 +1521,189 @@
     }
   ],
   "schema": "svelters-element-kind/v0",
-  "signals": [],
+  "signals": [
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "b8e92052117dedf7",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkVideo:autoplay"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "autoplay"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::autoplay",
+      "name": "notify::autoplay",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "autoplay",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "ce7a029f2b0ed4c1",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkVideo:graphics-offload"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "graphics-offload"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::graphics-offload",
+      "name": "notify::graphics-offload",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "graphics-offload",
+        "values": [
+          "enabled",
+          "disabled",
+          "enabled"
+        ]
+      }
+    },
+    {
+      "annotated": {
+        "fields": [
+          "connection",
+          "derived_from",
+          "flags",
+          "handler_result",
+          "js_event",
+          "params",
+          "phase",
+          "returns",
+          "sync_required",
+          "trigger"
+        ],
+        "fp": "7104723897005c6d",
+        "origin": "inferred",
+        "provenance": [
+          {
+            "origin": "rule",
+            "ref": "GObject::notify for GtkVideo:loop"
+          }
+        ]
+      },
+      "connection": {
+        "disconnect_on": [
+          "handle_drop",
+          "native_destroy"
+        ],
+        "origin": "inferred"
+      },
+      "derived_from": {
+        "origin": "inferred",
+        "property": "loop"
+      },
+      "flags": [
+        "detailed"
+      ],
+      "handler_result": "none",
+      "js_event": "notify::loop",
+      "name": "notify::loop",
+      "origin": "inferred",
+      "params": [],
+      "phase": "first",
+      "returns": {
+        "origin": "inferred",
+        "type": "void"
+      },
+      "sync_required": false,
+      "trigger": {
+        "origin": "inferred",
+        "property": "loop",
+        "values": [
+          true,
+          false,
+          true
+        ]
+      }
+    }
+  ],
   "source": {
     "gir": {
       "file": "Gtk-4.0.gir",
       "sha256": "3500fe342c146386244db2d8f2df0d2cec6ffe2a2bbb2348e4f2ace759647b3c",
       "version": "4.22.4"
     },
+    "inferred": "inferred/gtk/Video.yaml",
     "overrides": null,
     "runtime": {
       "gtk": "4.22.4",

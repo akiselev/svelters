@@ -1,0 +1,181 @@
+{
+ "bindings:can-shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:content-fit": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "fill"
+  }
+ },
+ "bindings:isolate-contents": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "methods:get_alternative_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "alternative-text",
+   "ret": null
+  }
+ },
+ "methods:get_can_shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "can-shrink",
+   "ret": true
+  }
+ },
+ "methods:get_content_fit": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "content-fit",
+   "ret": "contain"
+  }
+ },
+ "methods:get_isolate_contents": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "isolate-contents",
+   "ret": true
+  }
+ },
+ "methods:set_alternative_text": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "alternative-text",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_can_shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "can-shrink",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_content_fit": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "content-fit",
+   "recipe": null,
+   "sample": "fill"
+  }
+ },
+ "methods:set_isolate_contents": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "isolate-contents",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "properties:alternative-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:can-shrink": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:content-fit": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "contain",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "fill",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "fill",
+   "signals": [
+    "notify::keep-aspect-ratio"
+   ]
+  }
+ },
+ "properties:file": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<GLocalFile>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<GLocalFile>",
+   "signals": [
+    "notify::paintable"
+   ]
+  }
+ },
+ "properties:isolate-contents": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ }
+}

@@ -56,6 +56,20 @@
   ],
   "id": "svelters-api:v1:type:gtk:Gtk:BoxLayout",
   "inherited": {
+    "methods": [
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:get_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "get_orientation",
+        "origin": "inferred"
+      },
+      {
+        "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:method:set_orientation",
+        "from": "svelters-api:v1:type:gtk:Gtk:Orientable",
+        "name": "set_orientation",
+        "origin": "inferred"
+      }
+    ],
     "properties": [
       {
         "fact": "svelters-api:v1:type:gtk:Gtk:Orientable:prop:orientation",
@@ -96,6 +110,7 @@
         "ownership": "borrowed",
         "type": "i32"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {
@@ -176,6 +191,7 @@
         "ownership": "borrowed",
         "type": "void"
       },
+      "since": "4.12",
       "unsupported_reason": null
     },
     {

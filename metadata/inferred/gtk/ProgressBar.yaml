@@ -1,0 +1,364 @@
+properties:
+- name: ellipsize
+  sample: start
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: fraction
+  sample: 1.0
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: inverted
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: pulse-step
+  sample: 0.5
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-text
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: text
+  sample: svl probe
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: notify::ellipsize
+  derived_from:
+    property: ellipsize
+  js_event: notify::ellipsize
+  trigger:
+    property: ellipsize
+    values:
+    - start
+    - none
+    - start
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkProgressBar:ellipsize
+- name: notify::fraction
+  derived_from:
+    property: fraction
+  js_event: notify::fraction
+  trigger:
+    property: fraction
+    values:
+    - 1.0
+    - 0.0
+    - 1.0
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkProgressBar:fraction
+- name: notify::inverted
+  derived_from:
+    property: inverted
+  js_event: notify::inverted
+  trigger:
+    property: inverted
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkProgressBar:inverted
+- name: notify::pulse-step
+  derived_from:
+    property: pulse-step
+  js_event: notify::pulse-step
+  trigger:
+    property: pulse-step
+    values:
+    - 0.5
+    - 0.1
+    - 0.5
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkProgressBar:pulse-step
+- name: notify::show-text
+  derived_from:
+    property: show-text
+  js_event: notify::show-text
+  trigger:
+    property: show-text
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkProgressBar:show-text
+methods:
+- name: get_ellipsize
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "ellipsize")
+  provenance:
+  - origin: probe
+    ref: equals property ellipsize
+- name: get_fraction
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "fraction")
+  provenance:
+  - origin: probe
+    ref: equals property fraction
+- name: get_inverted
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "inverted")
+  provenance:
+  - origin: probe
+    ref: equals property inverted
+- name: get_pulse_step
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "pulse-step")
+  provenance:
+  - origin: probe
+    ref: equals property pulse-step
+- name: get_show_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-text")
+  provenance:
+  - origin: probe
+    ref: equals property show-text
+- name: get_text
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "text")
+  provenance:
+  - origin: probe
+    ref: equals property text
+- name: set_ellipsize
+  dispatch: dynamic
+  args:
+  - start
+  expect: h.get(o, "ellipsize") == V::Str("start".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property ellipsize: exact'
+- name: set_fraction
+  dispatch: dynamic
+  args:
+  - 1.0
+  expect: h.get(o, "fraction") == V::F64(1.0)
+  provenance:
+  - origin: probe
+    ref: 'set then read property fraction: exact'
+- name: set_inverted
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "inverted") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property inverted: exact'
+- name: set_pulse_step
+  dispatch: dynamic
+  args:
+  - 0.5
+  expect: h.get(o, "pulse-step") == V::F64(0.5)
+  provenance:
+  - origin: probe
+    ref: 'set then read property pulse-step: exact'
+- name: set_show_text
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "show-text") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-text: exact'
+- name: set_text
+  dispatch: dynamic
+  args:
+  - svl probe
+  expect: h.get(o, "text") == V::Str("svl probe".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property text: exact'
+bindings:
+- name: ellipsize
+  direction: two_way
+  property: ellipsize
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Pango:EllipsizeMode>
+    nullable: false
+  change:
+    signal: notify::ellipsize
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkProgressBar:ellipsize is writable, scalar and notifies; the renderer compares before set'
+- name: fraction
+  direction: two_way
+  property: fraction
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::fraction
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkProgressBar:fraction is writable, scalar and notifies; the renderer compares before set'
+- name: inverted
+  direction: two_way
+  property: inverted
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::inverted
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkProgressBar:inverted is writable, scalar and notifies; the renderer compares before set'
+- name: pulse-step
+  direction: two_way
+  property: pulse-step
+  type:
+    ref: f64
+    nullable: false
+  change:
+    signal: notify::pulse-step
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: true
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkProgressBar:pulse-step is writable, scalar and notifies; the renderer compares before set'
+- name: show-text
+  direction: two_way
+  property: show-text
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-text
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkProgressBar:show-text is writable, scalar and notifies; the renderer compares before set'

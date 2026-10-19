@@ -1,0 +1,376 @@
+properties:
+- name: accept-unpaired-release
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: activate-on-single-click
+  sample: false
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: selection-mode
+  sample: none
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: show-separators
+  sample: true
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+- name: tab-behavior
+  sample: item
+  provenance:
+  - origin: probe
+    ref: round trip exact; notify fired
+signals:
+- name: activate-cursor-row
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: select-all
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: selected-rows-changed
+  handler_result: none
+  sync_required: false
+  trigger:
+    rust: o.emit_by_name::<()>("selected-rows-changed", &[]);
+    values:
+    - a
+    - b
+    - c
+  delivery_only: true
+  provenance:
+  - origin: runtime
+    ref: returns void, run-first
+  - origin: probe
+    ref: emitted synthetically with sampled arguments; delivery only, no native trigger
+- name: toggle-cursor-row
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: unselect-all
+  handler_result: none
+  sync_required: false
+  provenance:
+  - origin: runtime
+    ref: returns void, run-last
+  - origin: probe
+    ref: action signal, emitted and delivered
+- name: notify::accept-unpaired-release
+  derived_from:
+    property: accept-unpaired-release
+  js_event: notify::accept-unpaired-release
+  trigger:
+    property: accept-unpaired-release
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkListBox:accept-unpaired-release
+- name: notify::activate-on-single-click
+  derived_from:
+    property: activate-on-single-click
+  js_event: notify::activate-on-single-click
+  trigger:
+    property: activate-on-single-click
+    values:
+    - false
+    - true
+    - false
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkListBox:activate-on-single-click
+- name: notify::selection-mode
+  derived_from:
+    property: selection-mode
+  js_event: notify::selection-mode
+  trigger:
+    property: selection-mode
+    values:
+    - none
+    - single
+    - none
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkListBox:selection-mode
+- name: notify::show-separators
+  derived_from:
+    property: show-separators
+  js_event: notify::show-separators
+  trigger:
+    property: show-separators
+    values:
+    - true
+    - false
+    - true
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkListBox:show-separators
+- name: notify::tab-behavior
+  derived_from:
+    property: tab-behavior
+  js_event: notify::tab-behavior
+  trigger:
+    property: tab-behavior
+    values:
+    - item
+    - all
+    - item
+  params: []
+  returns:
+    type: void
+  handler_result: none
+  sync_required: false
+  phase: first
+  flags:
+  - detailed
+  connection:
+    disconnect_on:
+    - handle_drop
+    - native_destroy
+  provenance:
+  - origin: rule
+    ref: GObject::notify for GtkListBox:tab-behavior
+methods:
+- name: get_activate_on_single_click
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "activate-on-single-click")
+  provenance:
+  - origin: probe
+    ref: equals property activate-on-single-click
+- name: get_selection_mode
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "selection-mode")
+  provenance:
+  - origin: probe
+    ref: equals property selection-mode
+- name: get_show_separators
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "show-separators")
+  provenance:
+  - origin: probe
+    ref: equals property show-separators
+- name: get_tab_behavior
+  dispatch: dynamic
+  args: []
+  expect: r == h.get(o, "tab-behavior")
+  provenance:
+  - origin: probe
+    ref: equals property tab-behavior
+- name: set_activate_on_single_click
+  dispatch: dynamic
+  args:
+  - false
+  expect: h.get(o, "activate-on-single-click") == V::Bool(false)
+  provenance:
+  - origin: probe
+    ref: 'set then read property activate-on-single-click: exact'
+- name: set_selection_mode
+  dispatch: dynamic
+  args:
+  - none
+  expect: h.get(o, "selection-mode") == V::Str("none".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property selection-mode: exact'
+- name: set_show_separators
+  dispatch: dynamic
+  args:
+  - true
+  expect: h.get(o, "show-separators") == V::Bool(true)
+  provenance:
+  - origin: probe
+    ref: 'set then read property show-separators: exact'
+- name: set_tab_behavior
+  dispatch: dynamic
+  args:
+  - item
+  expect: h.get(o, "tab-behavior") == V::Str("item".into())
+  provenance:
+  - origin: probe
+    ref: 'set then read property tab-behavior: exact'
+bindings:
+- name: accept-unpaired-release
+  direction: two_way
+  property: accept-unpaired-release
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::accept-unpaired-release
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkListBox:accept-unpaired-release is writable, scalar and notifies; the renderer compares before set'
+- name: activate-on-single-click
+  direction: two_way
+  property: activate-on-single-click
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::activate-on-single-click
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkListBox:activate-on-single-click is writable, scalar and notifies; the renderer compares before set'
+- name: selection-mode
+  direction: two_way
+  property: selection-mode
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:SelectionMode>
+    nullable: false
+  change:
+    signal: notify::selection-mode
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkListBox:selection-mode is writable, scalar and notifies; the renderer compares before set'
+- name: show-separators
+  direction: two_way
+  property: show-separators
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::show-separators
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkListBox:show-separators is writable, scalar and notifies; the renderer compares before set'
+- name: tab-behavior
+  direction: two_way
+  property: tab-behavior
+  type:
+    ref: enum<svelters-api:v1:type:gtk:Gtk:ListTabBehavior>
+    nullable: false
+  change:
+    signal: notify::tab-behavior
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance:
+  - origin: rule
+    ref: 'B1: GtkListBox:tab-behavior is writable, scalar and notifies; the renderer compares before set'

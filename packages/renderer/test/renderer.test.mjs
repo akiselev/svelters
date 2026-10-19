@@ -355,9 +355,11 @@ test('bind: update before the widget exists is replayed on realize', () => {
 
 test('bind: unsupported names and kinds throw with the element kind', () => {
   const lbl = el('label');
-  assert.throws(() => r.bind(lbl, 'text', () => '', () => {}), /bind:text is not supported on <label> \(it has no bindable properties\)/);
+  assert.throws(() => r.bind(lbl, 'text', () => '', () => {}), /bind:text is not supported on <label> \(bindable: [^)]*\blabel\b/);
+  const sep = el('separator');
+  assert.throws(() => r.bind(sep, 'text', () => '', () => {}), /bind:text is not supported on <separator> \(it has no bindable properties\)/);
   const e = el('entry');
-  assert.throws(() => r.bind(e, 'value', () => '', () => {}), /bind:value is not supported on <entry> \(bindable: text\)/);
+  assert.throws(() => r.bind(e, 'value', () => '', () => {}), /bind:value is not supported on <entry> \(bindable: [^)]*\btext\b/);
 });
 
 test('bind: valueFrom prop reads the property when the change signal has no value', async () => {

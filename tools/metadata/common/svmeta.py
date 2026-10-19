@@ -14,10 +14,12 @@ from typing import Any
 import yaml
 
 SCHEMA = "svelters-element-kind/v0"
-ORIGINS = {"gir", "runtime", "qdoc", "metaobject", "typesystem", "apiextractor", "uic", "manual", "derived"}
+ORIGINS = {"gir", "runtime", "qdoc", "metaobject", "typesystem", "apiextractor", "uic", "manual", "inferred", "probe", "rule", "docs", "source", "derived"}
 REQUIRED = ("schema", "toolkit", "id", "native", "kind")
 # Lists of records merged by this key instead of replaced wholesale.
-LIST_KEYS = {"properties": "name", "signals": "name", "methods": "name", "constructors": "id", "slots": "name"}
+LIST_KEYS = {"properties": "name", "signals": "name", "methods": "name", "constructors": "id", "slots": "name", "bindings": "name"}
+# Annotation layers, lowest precedence first: ingested < inferred < manual (plans/research/ANNOTATION-AUTOMATION.md section 5.2).
+LAYERS = ("inferred", "manual")
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -39,26 +41,28 @@ def write_json(path: Path, data: Any) -> bool:
     return True
 
 
-def _mark_manual(value: Any) -> Any:
+def _mark(value: Any, origin: str) -> Any:
     if isinstance(value, dict):
-        out = {k: _mark_manual(v) for k, v in value.items()}
-        out.setdefault("origin", "manual")
+        out = {k: _mark(v, origin) for k, v in value.items()}
+        out.setdefault("origin", origin)
         return out
     if isinstance(value, list):
-        return [_mark_manual(v) for v in value]
+        return [_mark(v, origin) for v in value]
     return value
 
 
-def merge(base: Any, override: Any, key: str | None = None) -> Any:
-    """Merge an override (hand/agent annotation) over ingested facts.
+def merge(base: Any, override: Any, key: str | None = None, origin: str = "manual") -> Any:
+    """Merge an override layer (hand/agent annotation, or the inferred layer) over lower-precedence facts.
 
     Dicts merge recursively; keyed record lists (LIST_KEYS) merge by key; anything else is
-    replaced. Records introduced by the override are marked origin: manual.
+    replaced. Records introduced by the override are marked with the layer's `origin`
+    (`manual` or `inferred`); a record that already has an origin keeps it, so a manual field
+    merged into an inferred record is still told apart by the record's `annotated.origin`.
     """
     if isinstance(base, dict) and isinstance(override, dict):
         out = dict(base)
         for k, v in override.items():
-            out[k] = merge(base[k], v, k) if k in base else _mark_manual(copy.deepcopy(v))
+            out[k] = merge(base[k], v, k, origin) if k in base else _mark(copy.deepcopy(v), origin)
         return out
     if isinstance(base, list) and isinstance(override, list) and key in LIST_KEYS:
         ident = LIST_KEYS[key]
@@ -67,12 +71,12 @@ def merge(base: Any, override: Any, key: str | None = None) -> Any:
         for rec in override:
             if rec.get(ident) in index:
                 i = index[rec[ident]]
-                out[i] = merge(out[i], rec)
-                out[i]["origin"] = "manual" if out[i].get("origin") is None else out[i]["origin"]
+                out[i] = merge(out[i], rec, None, origin)
+                out[i]["origin"] = origin if out[i].get("origin") is None else out[i]["origin"]
             else:
-                out.append(_mark_manual(copy.deepcopy(rec)))
+                out.append(_mark(copy.deepcopy(rec), origin))
         return out
-    return _mark_manual(copy.deepcopy(override))
+    return _mark(copy.deepcopy(override), origin)
 
 
 def validate(kind: dict[str, Any]) -> list[str]:

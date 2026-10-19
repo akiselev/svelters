@@ -89,6 +89,7 @@
         "ownership": "owned",
         "type": "boxed<svelters-api:v1:type:gtk:Gtk:CssSection>"
       },
+      "since": "4.16",
       "unsupported_reason": null
     }
   ],
@@ -112,6 +113,7 @@
         "ownership": "borrowed",
         "type": "boxed<svelters-api:v1:type:gtk:GLib:Bytes>"
       },
+      "since": "4.16",
       "unsupported_reason": null
     },
     {

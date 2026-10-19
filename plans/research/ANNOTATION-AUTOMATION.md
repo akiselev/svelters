@@ -1,6 +1,8 @@
 # Widget annotation automation: rules, probes, and a small review queue
 
-Status: research proposal, 2026-10-17. Nothing here is implemented.
+Status: research proposal, 2026-10-17; decisions in section 11. Implementation (lane AI1): the GTK slice is in
+`tools/metadata/gtk/{probe,infer}.py` and `metadata/{probe,rules,inferred}/gtk`, see `tools/metadata/gtk/README.md` and
+`docs/notes/ai1-inference.md` for what was built and the resulting counts.
 
 - **Working notes and raw numbers:** `docs/notes/annotation-automation-research.md`.
 - **Prototypes** are in `docs/notes/scripts/annot/`:

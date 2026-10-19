@@ -1,0 +1,177 @@
+{
+ "bindings:level": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "family"
+  }
+ },
+ "bindings:use-font": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:use-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "methods:get_font_features": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "font-features",
+   "ret": null
+  }
+ },
+ "methods:get_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "level",
+   "ret": "font"
+  }
+ },
+ "methods:get_use_font": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "use-font",
+   "ret": false
+  }
+ },
+ "methods:get_use_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "use-size",
+   "ret": false
+  }
+ },
+ "methods:set_font_features": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "font-features",
+   "recipe": null,
+   "sample": "svl probe"
+  }
+ },
+ "methods:set_level": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "level",
+   "recipe": null,
+   "sample": "family"
+  }
+ },
+ "methods:set_use_font": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "use-font",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_use_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "use-size",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "properties:dialog": {
+  "confidence": 0.9,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "<FontDialog>",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "<FontDialog>",
+   "signals": []
+  }
+ },
+ "properties:font-features": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": null,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "svl probe",
+   "signals": []
+  }
+ },
+ "properties:level": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "font",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "family",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "family",
+   "signals": []
+  }
+ },
+ "properties:use-font": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:use-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ }
+}

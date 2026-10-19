@@ -1,0 +1,230 @@
+{
+ "bindings:hhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "bindings:interpolate-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": true
+  }
+ },
+ "bindings:transition-duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": 201
+  }
+ },
+ "bindings:transition-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": "crossfade"
+  }
+ },
+ "bindings:vhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "notify": true,
+   "outcome": "exact",
+   "sample": false
+  }
+ },
+ "methods:get_hhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "hhomogeneous",
+   "ret": true
+  }
+ },
+ "methods:get_interpolate_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "interpolate-size",
+   "ret": false
+  }
+ },
+ "methods:get_transition_duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "transition-duration",
+   "ret": 200
+  }
+ },
+ "methods:get_transition_running": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "transition-running",
+   "ret": false
+  }
+ },
+ "methods:get_transition_type": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "transition-type",
+   "ret": "none"
+  }
+ },
+ "methods:get_vhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "vhomogeneous",
+   "ret": true
+  }
+ },
+ "methods:get_visible_child_name": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_get",
+   "outcome": "exact",
+   "prop": "visible-child-name",
+   "ret": null
+  }
+ },
+ "methods:set_hhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "hhomogeneous",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "methods:set_interpolate_size": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "interpolate-size",
+   "recipe": null,
+   "sample": true
+  }
+ },
+ "methods:set_transition_duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "transition-duration",
+   "recipe": null,
+   "sample": 201
+  }
+ },
+ "methods:set_transition_type": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "transition-type",
+   "recipe": null,
+   "sample": "crossfade"
+  }
+ },
+ "methods:set_vhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "class": "accessor_set",
+   "outcome": "exact",
+   "prop": "vhomogeneous",
+   "recipe": null,
+   "sample": false
+  }
+ },
+ "properties:hhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ },
+ "properties:interpolate-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": false,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": true,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": true,
+   "signals": []
+  }
+ },
+ "properties:transition-duration": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": 200,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": 201,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": 201,
+   "signals": []
+  }
+ },
+ "properties:transition-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": "none",
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": "crossfade",
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": "crossfade",
+   "signals": []
+  }
+ },
+ "properties:vhomogeneous": {
+  "confidence": 0.95,
+  "evidence": {
+   "default": true,
+   "log": [],
+   "notify": true,
+   "outcome": "exact",
+   "read": false,
+   "recipe": null,
+   "repeat": true,
+   "reset_log": [],
+   "sample": false,
+   "signals": []
+  }
+ }
+}
