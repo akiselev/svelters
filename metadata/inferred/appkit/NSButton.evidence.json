@@ -1,7 +1,46 @@
 {
+ "bindings:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 2,
+    "default": 0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 1,
+    "sample": {
+     "t": "i64",
+     "v": 1
+    }
+   }
+  }
+ },
+ "bindings:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 2,
+    "default": 0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 1,
+    "sample": {
+     "t": "i64",
+     "v": 1
+    }
+   }
+  }
+ },
  "props:allows-mixed-state": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -16,6 +55,7 @@
  "props:alternate-title": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "",
    "events": [],
    "kvo": true,
@@ -30,6 +70,7 @@
  "props:attributed-alternate-title": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "",
    "events": [],
    "kvo": true,
@@ -44,6 +85,7 @@
  "props:attributed-title": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "Button",
    "events": [],
    "kvo": true,
@@ -58,6 +100,7 @@
  "props:bezel-style": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "automatic",
    "events": [],
    "kvo": true,
@@ -72,6 +115,7 @@
  "props:border-shape": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "automatic",
    "events": [],
    "kvo": true,
@@ -86,6 +130,7 @@
  "props:bordered": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -100,6 +145,7 @@
  "props:has-destructive-action": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -114,6 +160,7 @@
  "props:image-hugs-title": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -128,6 +175,7 @@
  "props:image-position": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "no-image",
    "events": [],
    "kvo": true,
@@ -142,6 +190,7 @@
  "props:image-scaling": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "image-scale-none",
    "events": [],
    "kvo": true,
@@ -153,9 +202,42 @@
    }
   }
  },
+ "props:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "t": "i64",
+    "v": 1
+   }
+  }
+ },
+ "props:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "t": "i64",
+    "v": 1
+   }
+  }
+ },
  "props:key-equivalent": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "",
    "events": [],
    "kvo": true,
@@ -170,6 +252,7 @@
  "props:key-equivalent-modifier-mask": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0,
    "events": [],
    "kvo": true,
@@ -190,6 +273,7 @@
  "props:shows-border-only-while-mouse-inside": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -204,6 +288,7 @@
  "props:spring-loaded": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -215,9 +300,25 @@
    }
   }
  },
+ "props:state": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": "off",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "on",
+   "sample": {
+    "t": "str",
+    "v": "on"
+   }
+  }
+ },
  "props:tint-prominence": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "automatic",
    "events": [],
    "kvo": true,
@@ -232,6 +333,7 @@
  "props:title": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "Button",
    "events": [],
    "kvo": true,
@@ -246,6 +348,7 @@
  "props:transparent": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,

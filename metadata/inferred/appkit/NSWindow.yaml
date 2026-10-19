@@ -91,6 +91,9 @@ props:
 - name: opaque
   sample: false
   provenance: 'inferred from the probe on <window>: BOOL, assign; round trip exact; KVO fired on the programmatic set'
+- name: ordered-index
+  sample: 1
+  provenance: 'inferred from the probe on <window>: NSInteger, assign; round trip exact; KVO fired on the programmatic set'
 - name: preserves-content-during-live-resize
   sample: false
   provenance: 'inferred from the probe on <window>: BOOL, assign; round trip exact; KVO fired on the programmatic set'

@@ -2,6 +2,7 @@
  "props:alignment": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "center-y",
    "events": [],
    "kvo": true,
@@ -16,6 +17,7 @@
  "props:detaches-hidden-views": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -30,6 +32,7 @@
  "props:distribution": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "gravity-areas",
    "events": [],
    "kvo": true,
@@ -44,6 +47,7 @@
  "props:edge-insets": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": {
     "record": [
      0.0,
@@ -77,6 +81,7 @@
  "props:orientation": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "horizontal",
    "events": [],
    "kvo": true,
@@ -91,6 +96,7 @@
  "props:spacing": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 8.0,
    "events": [],
    "kvo": true,

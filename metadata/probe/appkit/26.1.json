@@ -6,6 +6,7 @@
    "notifications": {},
    "props": {
     "border-width": {
+     "attempts": 1,
      "default": 1.0,
      "events": [],
      "kvo": true,
@@ -17,6 +18,7 @@
      }
     },
     "box-type": {
+     "attempts": 1,
      "default": "primary",
      "events": [],
      "kvo": true,
@@ -28,6 +30,7 @@
      }
     },
     "content-view-margins": {
+     "attempts": 1,
      "default": {
       "record": [
        5.0,
@@ -52,6 +55,7 @@
      }
     },
     "corner-radius": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -63,6 +67,7 @@
      }
     },
     "title": {
+     "attempts": 1,
      "default": "Title",
      "events": [],
      "kvo": true,
@@ -74,6 +79,7 @@
      }
     },
     "title-position": {
+     "attempts": 1,
      "default": "at-top",
      "events": [],
      "kvo": true,
@@ -85,6 +91,7 @@
      }
     },
     "transparent": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -96,7 +103,16 @@
      }
     }
    },
-   "signals": {},
+   "signals": {
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
+     "delivered": true
+    }
+   },
    "subject": "box"
   },
   "NSButton": {
@@ -105,6 +121,7 @@
    "notifications": {},
    "props": {
     "allows-mixed-state": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -116,6 +133,7 @@
      }
     },
     "alternate-title": {
+     "attempts": 1,
      "default": "",
      "events": [],
      "kvo": true,
@@ -127,6 +145,7 @@
      }
     },
     "attributed-alternate-title": {
+     "attempts": 1,
      "default": "",
      "events": [],
      "kvo": true,
@@ -138,6 +157,7 @@
      }
     },
     "attributed-title": {
+     "attempts": 1,
      "default": "Button",
      "events": [],
      "kvo": true,
@@ -149,6 +169,7 @@
      }
     },
     "bezel-style": {
+     "attempts": 1,
      "default": "automatic",
      "events": [],
      "kvo": true,
@@ -160,6 +181,7 @@
      }
     },
     "border-shape": {
+     "attempts": 1,
      "default": "automatic",
      "events": [],
      "kvo": true,
@@ -171,6 +193,7 @@
      }
     },
     "bordered": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -182,6 +205,7 @@
      }
     },
     "double-value": {
+     "attempts": 3,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -194,6 +218,7 @@
      }
     },
     "float-value": {
+     "attempts": 3,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -206,6 +231,7 @@
      }
     },
     "has-destructive-action": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -217,6 +243,7 @@
      }
     },
     "image-hugs-title": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -228,6 +255,7 @@
      }
     },
     "image-position": {
+     "attempts": 1,
      "default": "no-image",
      "events": [],
      "kvo": true,
@@ -239,6 +267,7 @@
      }
     },
     "image-scaling": {
+     "attempts": 1,
      "default": "image-scale-none",
      "events": [],
      "kvo": true,
@@ -250,30 +279,33 @@
      }
     },
     "int-value": {
+     "attempts": 2,
      "default": 0,
      "events": [],
      "inherited": true,
      "kvo": true,
-     "outcome": "normalized",
+     "outcome": "exact",
      "read": 1,
      "sample": {
       "t": "i64",
-      "v": 3
+      "v": 1
      }
     },
     "integer-value": {
+     "attempts": 2,
      "default": 0,
      "events": [],
      "inherited": true,
      "kvo": true,
-     "outcome": "normalized",
+     "outcome": "exact",
      "read": 1,
      "sample": {
       "t": "i64",
-      "v": 3
+      "v": 1
      }
     },
     "key-equivalent": {
+     "attempts": 1,
      "default": "",
      "events": [],
      "kvo": true,
@@ -285,6 +317,7 @@
      }
     },
     "key-equivalent-modifier-mask": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "kvo": true,
@@ -302,6 +335,7 @@
      }
     },
     "max-accelerator-level": {
+     "attempts": 2,
      "default": 1,
      "events": [],
      "kvo": true,
@@ -313,6 +347,7 @@
      }
     },
     "shows-border-only-while-mouse-inside": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -324,6 +359,7 @@
      }
     },
     "spring-loaded": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -335,17 +371,19 @@
      }
     },
     "state": {
+     "attempts": 2,
      "default": "off",
      "events": [],
      "kvo": true,
-     "outcome": "normalized",
+     "outcome": "exact",
      "read": "on",
      "sample": {
       "t": "str",
-      "v": "mixed"
+      "v": "on"
      }
     },
     "string-value": {
+     "attempts": 2,
      "default": "0",
      "events": [],
      "inherited": true,
@@ -358,6 +396,7 @@
      }
     },
     "tint-prominence": {
+     "attempts": 1,
      "default": "automatic",
      "events": [],
      "kvo": true,
@@ -369,6 +408,7 @@
      }
     },
     "title": {
+     "attempts": 1,
      "default": "Button",
      "events": [],
      "kvo": true,
@@ -380,6 +420,7 @@
      }
     },
     "transparent": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -393,6 +434,14 @@
    },
    "signals": {
     "action": {
+     "args": [],
+     "delivered": true
+    },
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
      "args": [],
      "delivered": true
     }
@@ -405,6 +454,7 @@
    "notifications": {},
    "props": {
     "alignment": {
+     "attempts": 1,
      "default": "center",
      "events": [],
      "kvo": true,
@@ -416,6 +466,7 @@
      }
     },
     "allows-expansion-tool-tips": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -427,8 +478,9 @@
      }
     },
     "attributed-string-value": {
+     "attempts": 2,
      "default": "0",
-     "error": "attributedStringValue: Objective-C exception: -[NSTaggedPointerString string]: unrecognized selector sent to instance 0x8451c8d0f8265d9c",
+     "error": "attributedStringValue: Objective-C exception: -[NSTaggedPointerString string]: unrecognized selector sent to instance 0x9b6c0cda10a081c3",
      "events": [],
      "kvo": false,
      "outcome": "error",
@@ -439,6 +491,7 @@
      }
     },
     "base-writing-direction": {
+     "attempts": 1,
      "default": "natural",
      "events": [],
      "kvo": true,
@@ -450,6 +503,7 @@
      }
     },
     "continuous": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -461,6 +515,7 @@
      }
     },
     "control-size": {
+     "attempts": 1,
      "default": "regular",
      "events": [],
      "kvo": true,
@@ -472,6 +527,7 @@
      }
     },
     "double-value": {
+     "attempts": 3,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -483,6 +539,7 @@
      }
     },
     "enabled": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -494,6 +551,7 @@
      }
     },
     "float-value": {
+     "attempts": 3,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -505,6 +563,7 @@
      }
     },
     "highlighted": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -516,6 +575,7 @@
      }
     },
     "ignores-multi-click": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -527,28 +587,31 @@
      }
     },
     "int-value": {
+     "attempts": 2,
      "default": 0,
      "events": [],
      "kvo": true,
-     "outcome": "normalized",
+     "outcome": "exact",
      "read": 1,
      "sample": {
       "t": "i64",
-      "v": 3
+      "v": 1
      }
     },
     "integer-value": {
+     "attempts": 2,
      "default": 0,
      "events": [],
      "kvo": true,
-     "outcome": "normalized",
+     "outcome": "exact",
      "read": 1,
      "sample": {
       "t": "i64",
-      "v": 3
+      "v": 1
      }
     },
     "line-break-mode": {
+     "attempts": 1,
      "default": "word-wrapping",
      "events": [],
      "kvo": true,
@@ -560,6 +623,7 @@
      }
     },
     "refuses-first-responder": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -571,6 +635,7 @@
      }
     },
     "string-value": {
+     "attempts": 2,
      "default": "0",
      "events": [],
      "kvo": true,
@@ -582,6 +647,7 @@
      }
     },
     "tag": {
+     "attempts": 1,
      "default": -1,
      "events": [],
      "kvo": true,
@@ -593,6 +659,7 @@
      }
     },
     "uses-single-line-mode": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -608,6 +675,14 @@
     "action": {
      "args": [],
      "delivered": true
+    },
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
+     "delivered": true
     }
    },
    "subject": "button"
@@ -618,6 +693,7 @@
    "notifications": {},
    "props": {
     "control-size": {
+     "attempts": 1,
      "default": "regular",
      "events": [],
      "kvo": true,
@@ -629,6 +705,7 @@
      }
     },
     "displayed-when-stopped": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -640,6 +717,7 @@
      }
     },
     "double-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -651,6 +729,7 @@
      }
     },
     "indeterminate": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -662,6 +741,7 @@
      }
     },
     "max-value": {
+     "attempts": 1,
      "default": 100.0,
      "events": [],
      "kvo": true,
@@ -673,6 +753,7 @@
      }
     },
     "min-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -684,6 +765,7 @@
      }
     },
     "style": {
+     "attempts": 1,
      "default": "bar",
      "events": [],
      "kvo": true,
@@ -695,6 +777,7 @@
      }
     },
     "uses-threaded-animation": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -706,7 +789,16 @@
      }
     }
    },
-   "signals": {},
+   "signals": {
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
+     "delivered": true
+    }
+   },
    "subject": "progress-indicator"
   },
   "NSSecureTextField": {
@@ -715,6 +807,7 @@
    "notifications": {},
    "props": {
     "double-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -727,6 +820,7 @@
      }
     },
     "float-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -739,6 +833,7 @@
      }
     },
     "int-value": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "inherited": true,
@@ -751,6 +846,7 @@
      }
     },
     "integer-value": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "inherited": true,
@@ -763,6 +859,7 @@
      }
     },
     "string-value": {
+     "attempts": 1,
      "default": "",
      "events": [],
      "inherited": true,
@@ -780,6 +877,12 @@
      "args": [],
      "delivered": true
     },
+    "control-text-did-begin-editing": {
+     "args": [
+      ""
+     ],
+     "delivered": true
+    },
     "control-text-did-change": {
      "args": [
       ""
@@ -791,6 +894,14 @@
       ""
      ],
      "delivered": true
+    },
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
+     "delivered": true
     }
    },
    "subject": "secure-text-field"
@@ -801,6 +912,7 @@
    "notifications": {},
    "props": {
     "allows-tick-mark-values-only": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -812,6 +924,7 @@
      }
     },
     "alt-increment-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -823,6 +936,7 @@
      }
     },
     "double-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -835,6 +949,7 @@
      }
     },
     "float-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -847,30 +962,33 @@
      }
     },
     "int-value": {
+     "attempts": 2,
      "default": 0,
      "events": [],
      "inherited": true,
      "kvo": true,
-     "outcome": "normalized",
+     "outcome": "exact",
      "read": 1,
      "sample": {
       "t": "i64",
-      "v": 3
+      "v": 1
      }
     },
     "integer-value": {
+     "attempts": 2,
      "default": 0,
      "events": [],
      "inherited": true,
      "kvo": true,
-     "outcome": "normalized",
+     "outcome": "exact",
      "read": 1,
      "sample": {
       "t": "i64",
-      "v": 3
+      "v": 1
      }
     },
     "max-value": {
+     "attempts": 1,
      "default": 1.0,
      "events": [],
      "kvo": true,
@@ -882,6 +1000,7 @@
      }
     },
     "min-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -893,6 +1012,7 @@
      }
     },
     "neutral-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -904,6 +1024,7 @@
      }
     },
     "number-of-tick-marks": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "kvo": true,
@@ -915,6 +1036,7 @@
      }
     },
     "slider-type": {
+     "attempts": 1,
      "default": "linear",
      "events": [],
      "kvo": true,
@@ -926,6 +1048,7 @@
      }
     },
     "string-value": {
+     "attempts": 2,
      "default": "0",
      "events": [],
      "inherited": true,
@@ -938,6 +1061,7 @@
      }
     },
     "tick-mark-position": {
+     "attempts": 1,
      "default": "below",
      "events": [],
      "kvo": true,
@@ -949,6 +1073,7 @@
      }
     },
     "tint-prominence": {
+     "attempts": 1,
      "default": "automatic",
      "events": [],
      "kvo": true,
@@ -960,6 +1085,7 @@
      }
     },
     "vertical": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -975,6 +1101,14 @@
     "action": {
      "args": [],
      "delivered": true
+    },
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
+     "delivered": true
     }
    },
    "subject": "slider"
@@ -985,6 +1119,7 @@
    "notifications": {},
    "props": {
     "alignment": {
+     "attempts": 1,
      "default": "center-y",
      "events": [],
      "kvo": true,
@@ -996,6 +1131,7 @@
      }
     },
     "detaches-hidden-views": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1007,6 +1143,7 @@
      }
     },
     "distribution": {
+     "attempts": 1,
      "default": "gravity-areas",
      "events": [],
      "kvo": true,
@@ -1018,6 +1155,7 @@
      }
     },
     "edge-insets": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -1048,6 +1186,7 @@
      }
     },
     "orientation": {
+     "attempts": 1,
      "default": "horizontal",
      "events": [],
      "kvo": true,
@@ -1059,6 +1198,7 @@
      }
     },
     "spacing": {
+     "attempts": 1,
      "default": 8.0,
      "events": [],
      "kvo": true,
@@ -1070,7 +1210,16 @@
      }
     }
    },
-   "signals": {},
+   "signals": {
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
+     "delivered": true
+    }
+   },
    "subject": "stack-view"
   },
   "NSTextField": {
@@ -1083,6 +1232,7 @@
    },
    "props": {
     "allows-character-picker-touch-bar-item": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1094,6 +1244,7 @@
      }
     },
     "allows-default-tightening-for-truncation": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1105,6 +1256,7 @@
      }
     },
     "allows-editing-text-attributes": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1116,6 +1268,7 @@
      }
     },
     "allows-writing-tools": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1127,6 +1280,7 @@
      }
     },
     "allows-writing-tools-affordance": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1138,6 +1292,7 @@
      }
     },
     "automatic-text-completion-enabled": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1149,6 +1304,7 @@
      }
     },
     "bezel-style": {
+     "attempts": 1,
      "default": "square-bezel",
      "events": [],
      "kvo": true,
@@ -1160,6 +1316,7 @@
      }
     },
     "bezeled": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1171,6 +1328,7 @@
      }
     },
     "bordered": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1182,6 +1340,7 @@
      }
     },
     "double-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -1194,6 +1353,7 @@
      }
     },
     "draws-background": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1205,6 +1365,7 @@
      }
     },
     "editable": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1216,6 +1377,7 @@
      }
     },
     "float-value": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "inherited": true,
@@ -1228,6 +1390,7 @@
      }
     },
     "imports-graphics": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1239,6 +1402,7 @@
      }
     },
     "int-value": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "inherited": true,
@@ -1251,6 +1415,7 @@
      }
     },
     "integer-value": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "inherited": true,
@@ -1263,6 +1428,7 @@
      }
     },
     "line-break-strategy": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "kvo": true,
@@ -1280,6 +1446,7 @@
      }
     },
     "maximum-number-of-lines": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "kvo": true,
@@ -1291,8 +1458,9 @@
      }
     },
     "placeholder-attributed-string": {
+     "attempts": 2,
      "default": null,
-     "error": "placeholderAttributedString: Objective-C exception: -[NSTaggedPointerString _mayRequireIntentResolution]: unrecognized selector sent to instance 0x8d46f929235d50e8",
+     "error": "placeholderAttributedString: Objective-C exception: -[NSTaggedPointerString _mayRequireIntentResolution]: unrecognized selector sent to instance 0xb996eb7a91e36460",
      "events": [],
      "kvo": false,
      "outcome": "error",
@@ -1303,6 +1471,7 @@
      }
     },
     "placeholder-string": {
+     "attempts": 1,
      "default": null,
      "events": [],
      "kvo": true,
@@ -1314,6 +1483,7 @@
      }
     },
     "preferred-max-layout-width": {
+     "attempts": 1,
      "default": 0.0,
      "events": [],
      "kvo": true,
@@ -1325,6 +1495,7 @@
      }
     },
     "resolves-natural-alignment-with-base-writing-direction": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1336,6 +1507,7 @@
      }
     },
     "selectable": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1347,6 +1519,7 @@
      }
     },
     "string-value": {
+     "attempts": 1,
      "default": "",
      "events": [],
      "inherited": true,
@@ -1364,6 +1537,12 @@
      "args": [],
      "delivered": true
     },
+    "control-text-did-begin-editing": {
+     "args": [
+      ""
+     ],
+     "delivered": true
+    },
     "control-text-did-change": {
      "args": [
       ""
@@ -1374,6 +1553,14 @@
      "args": [
       ""
      ],
+     "delivered": true
+    },
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
      "delivered": true
     }
    },
@@ -1392,6 +1579,7 @@
    },
    "props": {
     "additional-safe-area-insets": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -1422,6 +1610,7 @@
      }
     },
     "allowed-touch-types": {
+     "attempts": 1,
      "default": 1,
      "events": [],
      "kvo": true,
@@ -1439,6 +1628,7 @@
      }
     },
     "alpha-value": {
+     "attempts": 1,
      "default": 1.0,
      "events": [],
      "kvo": true,
@@ -1450,6 +1640,7 @@
      }
     },
     "autoresizes-subviews": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1461,6 +1652,7 @@
      }
     },
     "autoresizing-mask": {
+     "attempts": 1,
      "default": 0,
      "events": [],
      "kvo": true,
@@ -1478,6 +1670,7 @@
      }
     },
     "bounds": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -1486,7 +1679,9 @@
        0.0
       ]
      },
-     "events": [],
+     "events": [
+      "view-bounds-did-change"
+     ],
      "kvo": true,
      "outcome": "normalized",
      "read": {
@@ -1508,8 +1703,11 @@
      }
     },
     "bounds-rotation": {
+     "attempts": 1,
      "default": 0.0,
-     "events": [],
+     "events": [
+      "view-bounds-did-change"
+     ],
      "kvo": true,
      "outcome": "exact",
      "read": 0.5,
@@ -1519,6 +1717,7 @@
      }
     },
     "can-draw-concurrently": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1530,6 +1729,7 @@
      }
     },
     "can-draw-subviews-into-layer": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1541,6 +1741,7 @@
      }
     },
     "clips-to-bounds": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1552,6 +1753,7 @@
      }
     },
     "focus-ring-type": {
+     "attempts": 1,
      "default": "default",
      "events": [],
      "kvo": true,
@@ -1563,6 +1765,7 @@
      }
     },
     "frame": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -1571,7 +1774,9 @@
        0.0
       ]
      },
-     "events": [],
+     "events": [
+      "view-frame-did-change"
+     ],
      "kvo": true,
      "outcome": "exact",
      "read": {
@@ -1593,8 +1798,11 @@
      }
     },
     "frame-center-rotation": {
+     "attempts": 1,
      "default": 0.0,
-     "events": [],
+     "events": [
+      "view-frame-did-change"
+     ],
      "kvo": true,
      "outcome": "exact",
      "read": 0.5,
@@ -1604,8 +1812,11 @@
      }
     },
     "frame-rotation": {
+     "attempts": 1,
      "default": 0.0,
-     "events": [],
+     "events": [
+      "view-frame-did-change"
+     ],
      "kvo": true,
      "outcome": "exact",
      "read": 0.5,
@@ -1615,6 +1826,7 @@
      }
     },
     "hidden": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1626,6 +1838,7 @@
      }
     },
     "horizontal-content-size-constraint-active": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1637,6 +1850,7 @@
      }
     },
     "layer-contents-placement": {
+     "attempts": 1,
      "default": "scale-axes-independently",
      "events": [],
      "kvo": true,
@@ -1648,6 +1862,7 @@
      }
     },
     "layer-contents-redraw-policy": {
+     "attempts": 1,
      "default": "on-set-needs-display",
      "events": [],
      "kvo": true,
@@ -1659,6 +1874,7 @@
      }
     },
     "layer-uses-core-image-filters": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1670,6 +1886,7 @@
      }
     },
     "needs-display": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1681,6 +1898,7 @@
      }
     },
     "needs-layout": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1692,6 +1910,7 @@
      }
     },
     "needs-update-constraints": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1703,6 +1922,7 @@
      }
     },
     "posts-bounds-changed-notifications": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1714,6 +1934,7 @@
      }
     },
     "posts-frame-changed-notifications": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1725,6 +1946,7 @@
      }
     },
     "prefers-compact-control-size-metrics": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1736,6 +1958,7 @@
      }
     },
     "prepared-content-rect": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -1766,6 +1989,7 @@
      }
     },
     "tool-tip": {
+     "attempts": 1,
      "default": null,
      "events": [],
      "kvo": true,
@@ -1777,6 +2001,7 @@
      }
     },
     "translates-autoresizing-mask-into-constraints": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1788,6 +2013,7 @@
      }
     },
     "user-interface-layout-direction": {
+     "attempts": 1,
      "default": "left-to-right",
      "events": [],
      "kvo": true,
@@ -1799,6 +2025,7 @@
      }
     },
     "vertical-content-size-constraint-active": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1810,6 +2037,7 @@
      }
     },
     "wants-layer": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1821,6 +2049,7 @@
      }
     },
     "wants-resting-touches": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1832,7 +2061,16 @@
      }
     }
    },
-   "signals": {},
+   "signals": {
+    "view-bounds-did-change": {
+     "args": [],
+     "delivered": true
+    },
+    "view-frame-did-change": {
+     "args": [],
+     "delivered": true
+    }
+   },
    "subject": "view"
   },
   "NSWindow": {
@@ -1881,6 +2119,7 @@
    },
    "props": {
     "accepts-mouse-moved-events": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1892,6 +2131,7 @@
      }
     },
     "allows-tool-tips-when-application-is-inactive": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1903,6 +2143,7 @@
      }
     },
     "alpha-value": {
+     "attempts": 1,
      "default": 1.0,
      "events": [],
      "kvo": true,
@@ -1914,6 +2155,7 @@
      }
     },
     "aspect-ratio": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -1938,6 +2180,7 @@
      }
     },
     "autorecalculates-key-view-loop": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1949,6 +2192,7 @@
      }
     },
     "can-become-visible-without-login": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -1960,6 +2204,7 @@
      }
     },
     "can-hide": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -1971,6 +2216,7 @@
      }
     },
     "content-aspect-ratio": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -1995,6 +2241,7 @@
      }
     },
     "content-max-size": {
+     "attempts": 1,
      "default": {
       "record": [
        3.4028234663852886e+38,
@@ -2019,6 +2266,7 @@
      }
     },
     "content-min-size": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -2043,6 +2291,7 @@
      }
     },
     "content-resize-increments": {
+     "attempts": 1,
      "default": {
       "record": [
        1.0,
@@ -2067,6 +2316,7 @@
      }
     },
     "displays-when-screen-profile-changes": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -2078,6 +2328,7 @@
      }
     },
     "document-edited": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -2089,6 +2340,7 @@
      }
     },
     "excluded-from-windows-menu": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -2100,6 +2352,7 @@
      }
     },
     "has-shadow": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -2111,6 +2364,7 @@
      }
     },
     "hides-on-deactivate": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -2122,6 +2376,7 @@
      }
     },
     "max-full-screen-content-size": {
+     "attempts": 1,
      "default": {
       "record": [
        100000.0,
@@ -2146,6 +2401,7 @@
      }
     },
     "max-size": {
+     "attempts": 1,
      "default": {
       "record": [
        3.4028234663852886e+38,
@@ -2170,6 +2426,7 @@
      }
     },
     "min-full-screen-content-size": {
+     "attempts": 1,
      "default": {
       "record": [
        87.0,
@@ -2194,6 +2451,7 @@
      }
     },
     "min-size": {
+     "attempts": 1,
      "default": {
       "record": [
        0.0,
@@ -2218,6 +2476,7 @@
      }
     },
     "miniwindow-title": {
+     "attempts": 1,
      "default": "appkit_probe",
      "events": [],
      "kvo": true,
@@ -2229,6 +2488,7 @@
      }
     },
     "movable": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -2240,6 +2500,7 @@
      }
     },
     "movable-by-window-background": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -2251,6 +2512,7 @@
      }
     },
     "opaque": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -2262,17 +2524,19 @@
      }
     },
     "ordered-index": {
-     "default": 1,
+     "attempts": 2,
+     "default": 2,
      "events": [],
      "kvo": true,
-     "outcome": "ignored",
+     "outcome": "exact",
      "read": 1,
      "sample": {
       "t": "i64",
-      "v": 3
+      "v": 1
      }
     },
     "preserves-content-during-live-resize": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -2284,6 +2548,7 @@
      }
     },
     "prevents-application-termination-when-modal": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -2294,22 +2559,8 @@
       "v": false
      }
     },
-    "released-when-closed": {
-     "error": "signal 11",
-     "outcome": "crash"
-    },
-    "represented-filename": {
-     "default": "",
-     "events": [],
-     "kvo": true,
-     "outcome": "normalized",
-     "read": "/Users/runner/work/svelters/svelters/~/work/svelters/svelters/svl probe",
-     "sample": {
-      "t": "str",
-      "v": "svl probe"
-     }
-    },
     "resize-increments": {
+     "attempts": 1,
      "default": {
       "record": [
        1.0,
@@ -2334,6 +2585,7 @@
      }
     },
     "subtitle": {
+     "attempts": 1,
      "default": "",
      "events": [],
      "kvo": true,
@@ -2345,6 +2597,7 @@
      }
     },
     "title": {
+     "attempts": 1,
      "default": "",
      "events": [],
      "kvo": true,
@@ -2356,6 +2609,7 @@
      }
     },
     "title-visibility": {
+     "attempts": 1,
      "default": "visible",
      "events": [],
      "kvo": true,
@@ -2367,6 +2621,7 @@
      }
     },
     "titlebar-appears-transparent": {
+     "attempts": 1,
      "default": false,
      "events": [],
      "kvo": true,
@@ -2378,6 +2633,7 @@
      }
     },
     "titlebar-separator-style": {
+     "attempts": 1,
      "default": "automatic",
      "events": [],
      "kvo": true,
@@ -2389,6 +2645,7 @@
      }
     },
     "toolbar-style": {
+     "attempts": 1,
      "default": "automatic",
      "events": [],
      "kvo": true,
@@ -2400,6 +2657,7 @@
      }
     },
     "views-need-display": {
+     "attempts": 1,
      "default": true,
      "events": [],
      "kvo": true,
@@ -2411,7 +2669,60 @@
      }
     }
    },
-   "signals": {},
+   "signals": {
+    "window-did-become-key": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-become-main": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-change-backing-properties": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-change-occlusion-state": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-change-screen": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-deminiaturize": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-enter-full-screen": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-exit-full-screen": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-miniaturize": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-move": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-resign-key": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-resign-main": {
+     "args": [],
+     "delivered": true
+    },
+    "window-did-resize": {
+     "args": [],
+     "delivered": true
+    }
+   },
    "subject": "window"
   }
  },

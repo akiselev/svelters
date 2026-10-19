@@ -55,6 +55,8 @@ export interface BindableProps {
   button: {
     "can-shrink": boolean; // gtk
     "has-frame": boolean; // gtk
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     state: string; // appkit
     "use-underline": boolean; // gtk
   };
@@ -360,6 +362,8 @@ export interface BindableProps {
   slider: {
     "double-value": number; // appkit
     "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     value: number; // qt/winui
   };
   "spin-box": {

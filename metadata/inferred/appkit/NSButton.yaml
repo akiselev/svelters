@@ -36,6 +36,12 @@ props:
   sample: image-scale-proportionally-down
   provenance: 'inferred from the probe on <button>: NSImageScaling, assign, since macOS 10.5; round trip exact; KVO fired on the programmatic
     set'
+- name: int-value
+  sample: 1
+  provenance: 'inferred from the probe on <button>: int, assign; round trip exact; KVO fired on the programmatic set'
+- name: integer-value
+  sample: 1
+  provenance: 'inferred from the probe on <button>: NSInteger, assign; round trip exact; KVO fired on the programmatic set'
 - name: key-equivalent
   sample: svl probe
   provenance: 'inferred from the probe on <button>: NSString *, copy; round trip exact; KVO fired on the programmatic set'
@@ -50,6 +56,9 @@ props:
 - name: spring-loaded
   sample: true
   provenance: 'inferred from the probe on <button>: BOOL, assign, since macOS 10.10.3; round trip exact; KVO fired on the programmatic set'
+- name: state
+  sample: 'on'
+  provenance: 'inferred from the probe on <button>: NSControlStateValue, assign; round trip exact; KVO fired on the programmatic set'
 - name: tint-prominence
   sample: none
   provenance: 'inferred from the probe on <button>: NSTintProminence, assign, since macOS 26.0; round trip exact; KVO fired on the programmatic
@@ -60,3 +69,59 @@ props:
 - name: transparent
   sample: true
   provenance: 'inferred from the probe on <button>: BOOL, assign; round trip exact; KVO fired on the programmatic set'
+bindings:
+- name: int-value
+  direction: two_way
+  property: int-value
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: action
+    role: user_edit
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  observability:
+    class: partial
+    missed: &id001
+    - programmatic
+  provenance: 'inferred (rules binding_sources NSControl): two-way bind:int-value through the control''s action, value read back. NSControl target-action:
+    the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read
+    back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <button>: round trip exact, the programmatic set did
+    not emit action; delivery seen'
+- name: integer-value
+  direction: two_way
+  property: integer-value
+  type:
+    ref: i64
+    nullable: false
+  change:
+    signal: action
+    role: user_edit
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  observability:
+    class: partial
+    missed: *id001
+  provenance: 'inferred (rules binding_sources NSControl): two-way bind:integer-value through the control''s action, value read back. NSControl
+    target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the
+    value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <button>: round trip exact, the programmatic
+    set did not emit action; delivery seen'

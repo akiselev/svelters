@@ -1,7 +1,7 @@
 {
  "inferred": {
-  "bindings": 7,
-  "props": 153,
+  "bindings": 11,
+  "props": 161,
   "signals": 16
  },
  "probe": true,
@@ -21,22 +21,6 @@
    "kind": "NSButton",
    "name": "float-value",
    "pattern": "binding:prop-ignored",
-   "section": "bindings"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSButton",
-   "name": "int-value",
-   "pattern": "binding:prop-normalized",
-   "section": "bindings"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSButton",
-   "name": "integer-value",
-   "pattern": "binding:prop-normalized",
    "section": "bindings"
   },
   {
@@ -67,32 +51,8 @@
    "band": "low",
    "confidence": 0.5,
    "kind": "NSButton",
-   "name": "int-value",
-   "pattern": "prop:normalized",
-   "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSButton",
-   "name": "integer-value",
-   "pattern": "prop:normalized",
-   "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSButton",
    "name": "max-accelerator-level",
    "pattern": "prop:ignored",
-   "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSButton",
-   "name": "state",
-   "pattern": "prop:normalized",
    "section": "props"
   },
   {
@@ -131,41 +91,9 @@
    "band": "low",
    "confidence": 0.5,
    "kind": "NSControl",
-   "name": "int-value",
-   "pattern": "prop:normalized",
-   "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSControl",
-   "name": "integer-value",
-   "pattern": "prop:normalized",
-   "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSControl",
    "name": "string-value",
    "pattern": "prop:normalized",
    "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSSlider",
-   "name": "int-value",
-   "pattern": "binding:prop-normalized",
-   "section": "bindings"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSSlider",
-   "name": "integer-value",
-   "pattern": "binding:prop-normalized",
-   "section": "bindings"
   },
   {
    "band": "low",
@@ -174,22 +102,6 @@
    "name": "string-value",
    "pattern": "binding:prop-ignored",
    "section": "bindings"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSSlider",
-   "name": "int-value",
-   "pattern": "prop:normalized",
-   "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSSlider",
-   "name": "integer-value",
-   "pattern": "prop:normalized",
-   "section": "props"
   },
   {
    "band": "low",
@@ -238,32 +150,23 @@
    "name": "needs-update-constraints",
    "pattern": "prop:ignored",
    "section": "props"
-  },
-  {
-   "band": "low",
-   "confidence": 0.5,
-   "kind": "NSWindow",
-   "name": "ordered-index",
-   "pattern": "prop:ignored",
-   "section": "props"
   }
  ],
  "schema": "svelters-inferred-review/v1",
  "skipped": {
   "binding:enum-prop": 1,
-  "binding:inherited": 1,
-  "prop:denied": 2
+  "binding:inherited": 1
  },
  "toolkit": "appkit",
  "unreviewed": {
   "by_pattern": {
    "low:binding:prop-ignored": 3,
-   "low:binding:prop-normalized": 5,
+   "low:binding:prop-normalized": 1,
    "low:prop:error": 2,
-   "low:prop:ignored": 10,
-   "low:prop:normalized": 10
+   "low:prop:ignored": 9,
+   "low:prop:normalized": 3
   },
-  "low": 30,
+  "low": 18,
   "middle": 0
  },
  "version": "26.1"

@@ -4,6 +4,7 @@
   "evidence": {
    "delivered": true,
    "prop": {
+    "attempts": 1,
     "default": 0.0,
     "events": [],
     "inherited": true,
@@ -22,6 +23,7 @@
   "evidence": {
    "delivered": true,
    "prop": {
+    "attempts": 1,
     "default": 0.0,
     "events": [],
     "inherited": true,
@@ -40,6 +42,7 @@
   "evidence": {
    "delivered": true,
    "prop": {
+    "attempts": 1,
     "default": 0,
     "events": [],
     "inherited": true,
@@ -58,6 +61,7 @@
   "evidence": {
    "delivered": true,
    "prop": {
+    "attempts": 1,
     "default": 0,
     "events": [],
     "inherited": true,
@@ -76,6 +80,7 @@
   "evidence": {
    "delivered": true,
    "prop": {
+    "attempts": 1,
     "default": "",
     "events": [],
     "inherited": true,
@@ -92,6 +97,7 @@
  "props:allows-character-picker-touch-bar-item": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -106,6 +112,7 @@
  "props:allows-default-tightening-for-truncation": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -120,6 +127,7 @@
  "props:allows-editing-text-attributes": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -134,6 +142,7 @@
  "props:allows-writing-tools": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -148,6 +157,7 @@
  "props:allows-writing-tools-affordance": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -162,6 +172,7 @@
  "props:automatic-text-completion-enabled": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -176,6 +187,7 @@
  "props:bezel-style": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "square-bezel",
    "events": [],
    "kvo": true,
@@ -190,6 +202,7 @@
  "props:bezeled": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -204,6 +217,7 @@
  "props:bordered": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -218,6 +232,7 @@
  "props:double-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "inherited": true,
@@ -233,6 +248,7 @@
  "props:draws-background": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -247,6 +263,7 @@
  "props:editable": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -261,6 +278,7 @@
  "props:float-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "inherited": true,
@@ -276,6 +294,7 @@
  "props:imports-graphics": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -290,6 +309,7 @@
  "props:int-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0,
    "events": [],
    "inherited": true,
@@ -305,6 +325,7 @@
  "props:integer-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0,
    "events": [],
    "inherited": true,
@@ -320,6 +341,7 @@
  "props:line-break-strategy": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0,
    "events": [],
    "kvo": true,
@@ -340,6 +362,7 @@
  "props:maximum-number-of-lines": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0,
    "events": [],
    "kvo": true,
@@ -354,6 +377,7 @@
  "props:placeholder-string": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": null,
    "events": [],
    "kvo": true,
@@ -368,6 +392,7 @@
  "props:preferred-max-layout-width": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "kvo": true,
@@ -382,6 +407,7 @@
  "props:resolves-natural-alignment-with-base-writing-direction": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -396,6 +422,7 @@
  "props:selectable": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -410,6 +437,7 @@
  "props:string-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "",
    "events": [],
    "inherited": true,

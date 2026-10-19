@@ -243,15 +243,16 @@ def regenerate(tk: str) -> None:
         subprocess.run([sys.executable, str(ROOT / step[0])] + step[1:], cwd=ROOT, check=True)
 
 
-def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str]) -> bool:
-    """Park the inferred facts whose test failed (or that the generator could not test). True if the list changed."""
+def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str], park_missing: bool = True) -> bool:
+    """Park the inferred facts whose test failed (or that the generator could not test). True if the list changed.
+    `park_missing=False` (import): a test without a result was not run there, so its fact stays pending."""
     old = load_parked(tk)
     keep = {(r["kind"], r["section"], r["name"]): r for r in old if r.get("version", man["version"]) == man["version"]}
     new = dict(keep)
     for f in man["facts"]:
         if f.get("origin") != "inferred":
             continue
-        bad = [t for t in f["tests"] if results.get(t, "missing") != "pass"]
+        bad = [t for t in f["tests"] if results.get(t, "missing") != "pass" and (park_missing or t in results)]
         if bad:
             new[(f["kind"], f["section"], f["name"])] = {
                 "fact": f["fact"], "kind": f["kind"], "section": f["section"], "name": f["name"], "record_fp": f.get("record_fp"),
@@ -295,12 +296,15 @@ def read_results(path: Path) -> tuple[dict[str, str], dict[str, str]]:
     return res, msgs
 
 
-def record(tk: str, man: dict, results: dict[str, str], write: bool = True) -> tuple[list[dict], int, int]:
-    """Ledger entries for every test of the manifest: (entries, manual not passing, inferred not passing)."""
+def record(tk: str, man: dict, results: dict[str, str], write: bool = True, pending_ok: bool = False) -> tuple[list[dict], int, int]:
+    """Ledger entries for every test of the manifest: (entries, manual not passing, inferred not passing).
+    `pending_ok` (import): an inferred fact without a result is left out of the ledger (pending), not recorded missing."""
     entries, bad, soft = [], 0, 0
     for f in man["facts"]:
         for t in f["tests"]:
             r = results.get(t, "missing")
+            if r == "missing" and pending_ok and f.get("origin") == "inferred":
+                continue
             if r != "pass":
                 if f.get("origin") == "inferred":
                     soft += 1
@@ -321,7 +325,7 @@ def import_results(tk: str, path: Path, dry_run: bool = False) -> int:
     known = {t for f in man["facts"] for t in f["tests"]}
     stray = sorted(set(results) - known)
     if dry_run:
-        entries, bad, soft = record(tk, man, results, write=False)
+        entries, bad, soft = record(tk, man, results, write=False, pending_ok=True)
         old = {(e["fact"], e["test"]): (e["result"], e["fingerprint"]) for e in load(tk)["entries"]}
         changed = sum(1 for e in entries if old.get((e["fact"], e["test"])) != (e["result"], e["fingerprint"]))
         fails = sorted(t for f in man["facts"] for t in f["tests"] if results.get(t, "missing") != "pass")
@@ -330,10 +334,10 @@ def import_results(tk: str, path: Path, dry_run: bool = False) -> int:
         for t in fails[:60]:
             print(f"  {results.get(t, 'missing')}: {t}" + (f": {msgs[t]}" if t in msgs else ""))
         return 0
-    if park(tk, man, results, msgs):
+    if park(tk, man, results, msgs, park_missing=False):
         regenerate(tk)
         man = manifest(tk)
-    _, bad, soft = record(tk, man, results)
+    _, bad, soft = record(tk, man, results, pending_ok=True)
     if tk in GEN_AFTER_LEDGER:
         subprocess.run([sys.executable, str(ROOT / GEN_AFTER_LEDGER[tk])], cwd=ROOT, check=True)
     n = sum(len(f["tests"]) for f in man["facts"])

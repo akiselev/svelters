@@ -2,6 +2,7 @@
  "props:additional-safe-area-insets": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": {
     "record": [
      0.0,
@@ -35,6 +36,7 @@
  "props:allowed-touch-types": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 1,
    "events": [],
    "kvo": true,
@@ -55,6 +57,7 @@
  "props:alpha-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 1.0,
    "events": [],
    "kvo": true,
@@ -69,6 +72,7 @@
  "props:autoresizes-subviews": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -83,6 +87,7 @@
  "props:autoresizing-mask": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0,
    "events": [],
    "kvo": true,
@@ -103,8 +108,11 @@
  "props:bounds-rotation": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
-   "events": [],
+   "events": [
+    "view-bounds-did-change"
+   ],
    "kvo": true,
    "outcome": "exact",
    "read": 0.5,
@@ -117,6 +125,7 @@
  "props:can-draw-concurrently": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -131,6 +140,7 @@
  "props:can-draw-subviews-into-layer": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -145,6 +155,7 @@
  "props:clips-to-bounds": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -159,6 +170,7 @@
  "props:focus-ring-type": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "default",
    "events": [],
    "kvo": true,
@@ -173,6 +185,7 @@
  "props:frame": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": {
     "record": [
      0.0,
@@ -181,7 +194,9 @@
      0.0
     ]
    },
-   "events": [],
+   "events": [
+    "view-frame-did-change"
+   ],
    "kvo": true,
    "outcome": "exact",
    "read": {
@@ -206,8 +221,11 @@
  "props:frame-center-rotation": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
-   "events": [],
+   "events": [
+    "view-frame-did-change"
+   ],
    "kvo": true,
    "outcome": "exact",
    "read": 0.5,
@@ -220,8 +238,11 @@
  "props:frame-rotation": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
-   "events": [],
+   "events": [
+    "view-frame-did-change"
+   ],
    "kvo": true,
    "outcome": "exact",
    "read": 0.5,
@@ -234,6 +255,7 @@
  "props:hidden": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -248,6 +270,7 @@
  "props:horizontal-content-size-constraint-active": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -262,6 +285,7 @@
  "props:layer-contents-placement": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "scale-axes-independently",
    "events": [],
    "kvo": true,
@@ -276,6 +300,7 @@
  "props:layer-contents-redraw-policy": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "on-set-needs-display",
    "events": [],
    "kvo": true,
@@ -290,6 +315,7 @@
  "props:layer-uses-core-image-filters": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -304,6 +330,7 @@
  "props:posts-bounds-changed-notifications": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -318,6 +345,7 @@
  "props:posts-frame-changed-notifications": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -332,6 +360,7 @@
  "props:prefers-compact-control-size-metrics": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -346,6 +375,7 @@
  "props:prepared-content-rect": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": {
     "record": [
      0.0,
@@ -379,6 +409,7 @@
  "props:tool-tip": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": null,
    "events": [],
    "kvo": true,
@@ -393,6 +424,7 @@
  "props:translates-autoresizing-mask-into-constraints": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -407,6 +439,7 @@
  "props:user-interface-layout-direction": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "left-to-right",
    "events": [],
    "kvo": true,
@@ -421,6 +454,7 @@
  "props:vertical-content-size-constraint-active": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": true,
    "events": [],
    "kvo": true,
@@ -435,6 +469,7 @@
  "props:wants-layer": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -449,6 +484,7 @@
  "props:wants-resting-touches": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,

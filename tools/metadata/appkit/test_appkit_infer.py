@@ -6,10 +6,18 @@ from pathlib import Path
 import yaml
 
 HERE = Path(__file__).resolve().parent
+# The GTK tools have modules of the same names (infer, gen_backend): import the AppKit ones, then take the
+# generic names out of sys.modules again so the GTK tests in the same session import their own.
+_SHARED = ("infer", "layers", "probe", "gen_backend", "names")
+_saved = {n: sys.modules.pop(n) for n in _SHARED if n in sys.modules}
 sys.path.insert(0, str(HERE))
 import infer  # noqa: E402
 import layers  # noqa: E402
 import probe  # noqa: E402
+sys.path.remove(str(HERE))
+for _n in _SHARED:
+    sys.modules.pop(_n, None)
+sys.modules.update(_saved)
 
 RULES = yaml.safe_load((HERE.parents[2] / "metadata/rules/appkit.yaml").read_text())
 
@@ -164,8 +172,7 @@ def test_probe_records_a_class_level_crash_and_still_probes_the_props():
 
 
 def test_probe_plan_covers_writable_probeable_props_and_binding_props():
-    import gen_backend
-    plan = probe.build_plan(gen_backend.Model(), RULES)
+    plan = probe.build_plan(probe.gen_backend.Model(), RULES)
     by = {c["class"]: c for c in plan["classes"]}
     slider = {p["name"]: p for p in by["NSSlider"]["props"]}
     assert slider["int-value"]["inherited"] and slider["int-value"]["samples"][0] == {"t": "i64", "v": 3}

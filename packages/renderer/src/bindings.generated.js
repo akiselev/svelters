@@ -56,6 +56,8 @@ export const BINDINGS = {
   button: {
     "can-shrink": { prop: "can-shrink", signal: "notify::can-shrink", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
     "has-frame": { prop: "has-frame", signal: "notify::has-frame", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     state: { prop: "state", signal: "action", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "use-underline": { prop: "use-underline", signal: "notify::use-underline", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
@@ -361,6 +363,8 @@ export const BINDINGS = {
   slider: {
     "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     value: { prop: "value", signal: "value-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt", "winui"] },
   },
   "spin-box": {

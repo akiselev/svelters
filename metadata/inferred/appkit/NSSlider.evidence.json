@@ -4,6 +4,7 @@
   "evidence": {
    "delivered": true,
    "prop": {
+    "attempts": 1,
     "default": 0.0,
     "events": [],
     "inherited": true,
@@ -22,6 +23,7 @@
   "evidence": {
    "delivered": true,
    "prop": {
+    "attempts": 1,
     "default": 0.0,
     "events": [],
     "inherited": true,
@@ -35,9 +37,48 @@
    }
   }
  },
+ "bindings:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 2,
+    "default": 0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 1,
+    "sample": {
+     "t": "i64",
+     "v": 1
+    }
+   }
+  }
+ },
+ "bindings:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 2,
+    "default": 0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 1,
+    "sample": {
+     "t": "i64",
+     "v": 1
+    }
+   }
+  }
+ },
  "props:allows-tick-mark-values-only": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,
@@ -52,6 +93,7 @@
  "props:alt-increment-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "kvo": true,
@@ -66,6 +108,7 @@
  "props:double-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "inherited": true,
@@ -81,6 +124,7 @@
  "props:float-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "inherited": true,
@@ -93,9 +137,42 @@
    }
   }
  },
+ "props:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "t": "i64",
+    "v": 1
+   }
+  }
+ },
+ "props:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 1,
+   "sample": {
+    "t": "i64",
+    "v": 1
+   }
+  }
+ },
  "props:max-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 1.0,
    "events": [],
    "kvo": true,
@@ -110,6 +187,7 @@
  "props:min-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "kvo": true,
@@ -124,6 +202,7 @@
  "props:neutral-value": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0.0,
    "events": [],
    "kvo": true,
@@ -138,6 +217,7 @@
  "props:number-of-tick-marks": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": 0,
    "events": [],
    "kvo": true,
@@ -152,6 +232,7 @@
  "props:slider-type": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "linear",
    "events": [],
    "kvo": true,
@@ -166,6 +247,7 @@
  "props:tick-mark-position": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "below",
    "events": [],
    "kvo": true,
@@ -180,6 +262,7 @@
  "props:tint-prominence": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": "automatic",
    "events": [],
    "kvo": true,
@@ -194,6 +277,7 @@
  "props:vertical": {
   "confidence": 0.95,
   "evidence": {
+   "attempts": 1,
    "default": false,
    "events": [],
    "kvo": true,

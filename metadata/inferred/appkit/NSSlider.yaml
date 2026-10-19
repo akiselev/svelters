@@ -13,6 +13,12 @@ props:
 - name: float-value
   sample: 0.5
   provenance: 'inferred from the probe on <slider>: float, assign; round trip exact; KVO fired on the programmatic set'
+- name: int-value
+  sample: 1
+  provenance: 'inferred from the probe on <slider>: int, assign; round trip exact; KVO fired on the programmatic set'
+- name: integer-value
+  sample: 1
+  provenance: 'inferred from the probe on <slider>: NSInteger, assign; round trip exact; KVO fired on the programmatic set'
 - name: max-value
   sample: 0.5
   provenance: 'inferred from the probe on <slider>: double, assign; round trip exact; KVO fired on the programmatic set'
@@ -91,6 +97,60 @@ bindings:
     class: partial
     missed: *id001
   provenance: 'inferred (rules binding_sources NSControl): two-way bind:float-value through the control''s action, value read back. NSControl
+    target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the
+    value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <slider>: round trip exact, the programmatic
+    set did not emit action; delivery seen'
+- name: int-value
+  direction: two_way
+  property: int-value
+  type:
+    ref: i32
+    nullable: false
+  change:
+    signal: action
+    role: user_edit
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  observability:
+    class: partial
+    missed: *id001
+  provenance: 'inferred (rules binding_sources NSControl): two-way bind:int-value through the control''s action, value read back. NSControl target-action:
+    the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read
+    back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <slider>: round trip exact, the programmatic set did
+    not emit action; delivery seen'
+- name: integer-value
+  direction: two_way
+  property: integer-value
+  type:
+    ref: i64
+    nullable: false
+  change:
+    signal: action
+    role: user_edit
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  observability:
+    class: partial
+    missed: *id001
+  provenance: 'inferred (rules binding_sources NSControl): two-way bind:integer-value through the control''s action, value read back. NSControl
     target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the
     value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <slider>: round trip exact, the programmatic
     set did not emit action; delivery seen'

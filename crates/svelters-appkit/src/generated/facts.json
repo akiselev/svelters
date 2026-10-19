@@ -115,6 +115,30 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:bindings:int-value",
+   "fingerprint": "9a98f800bfa1f09e",
+   "kind": "NSButton",
+   "name": "int-value",
+   "origin": "inferred",
+   "record_fp": "40a5b30adf02c7c9",
+   "section": "bindings",
+   "tests": [
+    "bind_nsbutton_int_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:bindings:integer-value",
+   "fingerprint": "9465caa14e78ce12",
+   "kind": "NSButton",
+   "name": "integer-value",
+   "origin": "inferred",
+   "record_fp": "c4a69497b332712a",
+   "section": "bindings",
+   "tests": [
+    "bind_nsbutton_integer_value"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:bindings:state",
    "fingerprint": "5bea3e70022bca04",
    "kind": "NSButton",
@@ -274,6 +298,30 @@
    "section": "props",
    "tests": [
     "prop_nsbutton_image_scaling"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:props:int-value",
+   "fingerprint": "4084258c4fd104f7",
+   "kind": "NSButton",
+   "name": "int-value",
+   "origin": "inferred",
+   "record_fp": "ace8bf26ffab0a9b",
+   "section": "props",
+   "tests": [
+    "prop_nsbutton_int_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:props:integer-value",
+   "fingerprint": "02c249ad89b9d2cc",
+   "kind": "NSButton",
+   "name": "integer-value",
+   "origin": "inferred",
+   "record_fp": "c8df5d5b64aa35c1",
+   "section": "props",
+   "tests": [
+    "prop_nsbutton_integer_value"
    ]
   },
   {
@@ -484,6 +532,30 @@
    "section": "props",
    "tests": [
     "prop_nscontrol_ignores_multi_click"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:props:int-value",
+   "fingerprint": "4084258c4fd104f7",
+   "kind": "NSControl",
+   "name": "int-value",
+   "origin": "inferred",
+   "record_fp": "ace8bf26ffab0a9b",
+   "section": "props",
+   "tests": [
+    "prop_nscontrol_int_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:props:integer-value",
+   "fingerprint": "02c249ad89b9d2cc",
+   "kind": "NSControl",
+   "name": "integer-value",
+   "origin": "inferred",
+   "record_fp": "c8df5d5b64aa35c1",
+   "section": "props",
+   "tests": [
+    "prop_nscontrol_integer_value"
    ]
   },
   {
@@ -786,6 +858,30 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:bindings:int-value",
+   "fingerprint": "0c24bed53fb71b60",
+   "kind": "NSSlider",
+   "name": "int-value",
+   "origin": "inferred",
+   "record_fp": "0eaa5cefa0132c09",
+   "section": "bindings",
+   "tests": [
+    "bind_nsslider_int_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:bindings:integer-value",
+   "fingerprint": "7ccf58281cc56565",
+   "kind": "NSSlider",
+   "name": "integer-value",
+   "origin": "inferred",
+   "record_fp": "32f15191223020cf",
+   "section": "bindings",
+   "tests": [
+    "bind_nsslider_integer_value"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:element:kind",
    "fingerprint": "b745f670b3a255de",
    "kind": "NSSlider",
@@ -851,6 +947,30 @@
    "section": "props",
    "tests": [
     "prop_nsslider_float_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:props:int-value",
+   "fingerprint": "a672c128284b730d",
+   "kind": "NSSlider",
+   "name": "int-value",
+   "origin": "inferred",
+   "record_fp": "42bb5efa620803d3",
+   "section": "props",
+   "tests": [
+    "prop_nsslider_int_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:props:integer-value",
+   "fingerprint": "62eaf18e8400b787",
+   "kind": "NSSlider",
+   "name": "integer-value",
+   "origin": "inferred",
+   "record_fp": "0eed81024bc6c31e",
+   "section": "props",
+   "tests": [
+    "prop_nsslider_integer_value"
    ]
   },
   {
@@ -2172,6 +2292,18 @@
    "section": "props",
    "tests": [
     "prop_nswindow_opaque"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:props:ordered-index",
+   "fingerprint": "da98498885819806",
+   "kind": "NSWindow",
+   "name": "ordered-index",
+   "origin": "inferred",
+   "record_fp": "9054f2cdc7beebf4",
+   "section": "props",
+   "tests": [
+    "prop_nswindow_ordered_index"
    ]
   },
   {
