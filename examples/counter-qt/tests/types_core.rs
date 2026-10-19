@@ -301,7 +301,7 @@ fn element_handles_reach_their_type_and_the_meta_fallback() {
     let dl = be().resolve(NameKind::Method, k, "deleteLater");
     assert!(dl >= 0x1000000, "a dynamic id: {dl:#x}");
     let unknown = be().call(t, be().resolve(NameKind::Method, k, "noSuchThing"), &[]).unwrap_err().message;
-    assert!(unknown.contains("has no method noSuchThing"), "{unknown}");
+    assert!(unknown.contains("unknown method noSuchThing"), "{unknown}");
     be().call(t, dl, &[]).unwrap();
     pump(20);
     assert!(rec.borrow().gone.iter().any(|g| g.0 == t), "native death after deleteLater: {:?}", rec.borrow().gone);

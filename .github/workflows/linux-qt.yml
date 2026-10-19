@@ -60,7 +60,7 @@ jobs:
 
       - uses: ./.github/actions/setup-pnpm
       - name: Build bundles
-        run: pnpm --filter './fixtures/*' build
+        run: pnpm --filter './fixtures/*' --filter './tests/qt-types-*' build
 
       # counter is built with only its Qt feature; its *_gtk tests run in linux-gtk.yml.
       - name: Build tests

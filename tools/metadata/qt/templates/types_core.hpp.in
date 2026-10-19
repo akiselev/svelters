@@ -364,7 +364,7 @@ inline bool meta_in(QMetaType mt, const svl_value *v, QVariant &q, std::string &
 inline int meta_get(QObject *o, const char *name, svl_value *out) {
   const QMetaObject *mo = o->metaObject();
   const int i = mo->indexOfProperty(name);
-  if (i < 0) return fail(std::string("get_prop: ") + mo->className() + " has no property " + name);
+  if (i < 0) return fail(std::string("get_prop: unknown property ") + name + " (" + mo->className() + " has no Q_PROPERTY of that name)");
   const QMetaProperty mp = mo->property(i);
   if (!mp.isReadable()) return fail(std::string("get_prop: ") + name + " is write-only");
   const QVariant v = mp.read(o);
@@ -375,7 +375,7 @@ inline int meta_get(QObject *o, const char *name, svl_value *out) {
 inline int meta_set(QObject *o, const char *name, const svl_value *v) {
   const QMetaObject *mo = o->metaObject();
   const int i = mo->indexOfProperty(name);
-  if (i < 0) return fail(std::string("set_prop: ") + mo->className() + " has no property " + name);
+  if (i < 0) return fail(std::string("set_prop: unknown property ") + name + " (" + mo->className() + " has no Q_PROPERTY of that name)");
   const QMetaProperty mp = mo->property(i);
   if (!mp.isWritable()) return fail(std::string("set_prop: ") + name + " is read-only");
   QVariant q;
@@ -388,10 +388,15 @@ inline int meta_set(QObject *o, const char *name, const svl_value *v) {
 // A slot or Q_INVOKABLE by name: the first with this many parameters whose arguments convert.
 inline int meta_invoke(QObject *o, const char *name, const svl_value *a, size_t n, svl_value *out) {
   const QMetaObject *mo = o->metaObject();
-  std::string last = std::string("call: ") + mo->className() + " has no method " + name + " with " + std::to_string(n) + " argument(s)";
+  // No member of that name at all is an *unknown* method (callers probe names, as for element methods).
+  std::string last = std::string("call: unknown method ") + name + " (" + mo->className() + " has no member of that name)";
   for (int i = mo->methodCount() - 1; i >= 0; --i) {
     const QMetaMethod m = mo->method(i);
-    if (m.name() != name || static_cast<size_t>(m.parameterCount()) != n || m.methodType() == QMetaMethod::Signal) continue;
+    if (m.name() != name || m.methodType() == QMetaMethod::Signal) continue;
+    if (static_cast<size_t>(m.parameterCount()) != n) {
+      last = std::string("call: ") + mo->className() + "::" + name + " takes " + std::to_string(m.parameterCount()) + " argument(s), got " + std::to_string(n);
+      continue;
+    }
     if (n > 9) break;
     std::vector<QVariant> vals(n);
     std::string e;
@@ -460,7 +465,7 @@ inline int listen(svl_handle h, Entry &e, svl_id sig, bool on, uint32_t flags) {
         (best < 0 || m.parameterCount() > mo->method(best).parameterCount()))
       best = i;
   }
-  if (best < 0) return fail(std::string("listen: ") + mo->className() + " has no signal " + name);
+  if (best < 0) return fail(std::string("listen: unknown signal ") + name + " (" + mo->className() + " has no signal of that name)");
   auto *r = new SignalRelay(h, sig | (flags << SVL_SIGNAL_FLAGS_SHIFT), mo->method(best));
   static const int slot = QObject::staticMetaObject.methodCount();
   if (!QMetaObject::connect(o, best, r, slot, Qt::DirectConnection, nullptr)) {
