@@ -1,0 +1,836 @@
+$ svelters docs gtk button --json
+exit: 0
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "entity",
+  "toolkit": "gtk",
+  "data_version": "4.22.4+85362d027d09a88b",
+  "entity": {
+    "id": "gtk:Gtk.Button",
+    "address": "gtk button",
+    "kind": "class",
+    "name": "Button",
+    "native": "GtkButton",
+    "qualified": "Gtk.Button",
+    "tags": [
+      "button"
+    ],
+    "tier": "annotated",
+    "tested": true,
+    "verified_facts": [
+      21,
+      21
+    ],
+    "abstract": false,
+    "summary": "Calls a callback function when the button is clicked.",
+    "description": "Calls a callback function when the button is clicked.\n\nThe `GtkButton` widget can hold any valid child widget. That is, it can hold\nalmost any other standard `GtkWidget`. The most commonly used child is the\n`GtkLabel`.",
+    "site": "/api/gtk/button/",
+    "upstream": "https://docs.gtk.org/gtk4/class.Button.html",
+    "bases": [
+      "gtk:Gtk.Widget",
+      "gtk:GObject.InitiallyUnowned",
+      "gtk:GObject.Object"
+    ],
+    "interfaces": [
+      "gtk:Gtk.Accessible",
+      "gtk:Gtk.Actionable",
+      "gtk:Gtk.Buildable",
+      "gtk:Gtk.ConstraintTarget"
+    ],
+    "lifetime": "owned",
+    "extensions": {
+      "gtk": {
+        "accessibility": "`GtkButton` uses the [`AccessibleRole.button`](xref:gtk:Gtk.AccessibleRole#value:button) role.",
+        "css_nodes": "`GtkButton` has a single CSS node with name button. The node will get the\nstyle classes .image-button or .text-button, if the content is just an\nimage or label, respectively. It may also receive the .flat style class.\nWhen activating a button via the keyboard, the button will temporarily\ngain the .keyboard-activating style class.\n\nOther style classes that are commonly used with `GtkButton` include\n.suggested-action and .destructive-action. In special cases, buttons\ncan be made round by adding the .circular style class.\n\nButton-like widgets like [`ToggleButton`](xref:gtk:Gtk.ToggleButton), [`MenuButton`](xref:gtk:Gtk.MenuButton),\n[`VolumeButton`](xref:gtk:Gtk.VolumeButton), [`LockButton`](xref:gtk:Gtk.LockButton), [`ColorButton`](xref:gtk:Gtk.ColorButton)\nor [`FontButton`](xref:gtk:Gtk.FontButton) use style classes such as .toggle, .popup, .scale,\n.lock, .color on the button node to differentiate themselves from a plain\n`GtkButton`.",
+        "get_type": "gtk_button_get_type",
+        "gtype": "GtkButton",
+        "shortcuts": "The following signals have default keybindings:\n\n- [`Button::activate`](xref:gtk:Gtk.Button#event:activate)",
+        "source": "gtk/gtkbutton.c:25"
+      }
+    },
+    "see_also": []
+  },
+  "children_policy": "single_child",
+  "default_slot": "child",
+  "properties": [
+    {
+      "kind": "property",
+      "name": "can-shrink",
+      "address": "gtk button.prop:can-shrink",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#property-can-shrink",
+      "annotated": true,
+      "verified": true,
+      "since": "4.12",
+      "doc": "Whether the size of the button can be made smaller than the natural\nsize of its contents.\n\nFor text buttons, setting this property will allow ellipsizing the label.\n\nIf the contents of a button are an icon or a custom widget, setting this\nproperty has no effect.",
+      "native": "can-shrink",
+      "type": {
+        "display": "boolean",
+        "native": "gboolean"
+      },
+      "access": "rw",
+      "default": "false",
+      "notify": "notify::can-shrink",
+      "bindable": true,
+      "accessors": {
+        "get": "gtk_button_get_can_shrink",
+        "set": "gtk_button_set_can_shrink"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "child",
+      "address": "gtk button.prop:child",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#property-child",
+      "annotated": false,
+      "verified": false,
+      "doc": "The child widget.",
+      "dangerous": {
+        "severity": "corrupts-tree",
+        "reason": "The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692).",
+        "use_instead": "Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes.",
+        "reachable": true,
+        "source": "metadata/dangerous/gtk.yaml#child-properties"
+      },
+      "native": "child",
+      "type": {
+        "display": "Widget",
+        "ref": "gtk:Gtk.Widget",
+        "nullable": true
+      },
+      "access": "rw",
+      "notify": "notify::child",
+      "bindable": true,
+      "accessors": {
+        "get": "gtk_button_get_child",
+        "set": "gtk_button_set_child"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "has-frame",
+      "address": "gtk button.prop:has-frame",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#property-has-frame",
+      "annotated": true,
+      "verified": true,
+      "doc": "Whether the button has a frame.",
+      "native": "has-frame",
+      "type": {
+        "display": "boolean",
+        "native": "gboolean"
+      },
+      "access": "rw",
+      "default": "true",
+      "notify": "notify::has-frame",
+      "bindable": true,
+      "accessors": {
+        "get": "gtk_button_get_has_frame",
+        "set": "gtk_button_set_has_frame"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "icon-name",
+      "address": "gtk button.prop:icon-name",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#property-icon-name",
+      "annotated": true,
+      "verified": true,
+      "doc": "The name of the icon used to automatically populate the button.",
+      "native": "icon-name",
+      "type": {
+        "display": "string",
+        "native": "gchar*",
+        "nullable": true
+      },
+      "access": "rw",
+      "notify": "notify::icon-name",
+      "bindable": true,
+      "accessors": {
+        "get": "gtk_button_get_icon_name",
+        "set": "gtk_button_set_icon_name"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "label",
+      "address": "gtk button.prop:label",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#property-label",
+      "annotated": true,
+      "verified": true,
+      "doc": "Text of the label inside the button, if the button contains a label widget.",
+      "native": "label",
+      "type": {
+        "display": "string",
+        "native": "gchar*",
+        "nullable": true
+      },
+      "access": "rw",
+      "notify": "notify::label",
+      "bindable": true,
+      "accessors": {
+        "get": "gtk_button_get_label",
+        "set": "gtk_button_set_label"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "use-underline",
+      "address": "gtk button.prop:use-underline",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#property-use-underline",
+      "annotated": true,
+      "verified": true,
+      "doc": "If set, an underline in the text indicates that the following character is\nto be used as mnemonic.",
+      "native": "use-underline",
+      "type": {
+        "display": "boolean",
+        "native": "gboolean"
+      },
+      "access": "rw",
+      "default": "false",
+      "notify": "notify::use-underline",
+      "bindable": true,
+      "accessors": {
+        "get": "gtk_button_get_use_underline",
+        "set": "gtk_button_set_use_underline"
+      }
+    }
+  ],
+  "events": [
+    {
+      "kind": "event",
+      "name": "activate",
+      "address": "gtk button.event:activate",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#event-activate",
+      "annotated": true,
+      "verified": true,
+      "doc": "Emitted to animate press then release.\n\nThis is an action signal. Applications should never connect\nto this signal, but use the `Button::clicked` signal.\n\nThe default bindings for this signal are all forms of the\n`␣` and `Enter` keys.",
+      "native": "activate",
+      "attr": "onactivate",
+      "aliases": [],
+      "params": [],
+      "returns": {
+        "display": "void"
+      },
+      "sync": false,
+      "result": "none",
+      "phase": "first",
+      "flags": [
+        "action"
+      ]
+    },
+    {
+      "kind": "event",
+      "name": "clicked",
+      "address": "gtk button.event:clicked",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#event-clicked",
+      "annotated": true,
+      "verified": true,
+      "doc": "Emitted when the button has been activated (pressed and released).",
+      "native": "clicked",
+      "attr": "onclicked",
+      "aliases": [],
+      "params": [],
+      "returns": {
+        "display": "void"
+      },
+      "sync": false,
+      "result": "none",
+      "phase": "first",
+      "flags": [
+        "action"
+      ]
+    },
+    {
+      "kind": "event",
+      "name": "notify::can-shrink",
+      "address": "gtk button.event:notify::can-shrink",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#event-notify-can-shrink",
+      "annotated": true,
+      "verified": false,
+      "native": "notify::can-shrink",
+      "attr": "onnotify::can-shrink",
+      "aliases": [],
+      "params": [],
+      "returns": {
+        "display": "void"
+      },
+      "sync": false,
+      "result": "none",
+      "phase": "first",
+      "flags": [
+        "detailed"
+      ]
+    },
+    {
+      "kind": "event",
+      "name": "notify::has-frame",
+      "address": "gtk button.event:notify::has-frame",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#event-notify-has-frame",
+      "annotated": true,
+      "verified": false,
+      "native": "notify::has-frame",
+      "attr": "onnotify::has-frame",
+      "aliases": [],
+      "params": [],
+      "returns": {
+        "display": "void"
+      },
+      "sync": false,
+      "result": "none",
+      "phase": "first",
+      "flags": [
+        "detailed"
+      ]
+    },
+    {
+      "kind": "event",
+      "name": "notify::use-underline",
+      "address": "gtk button.event:notify::use-underline",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#event-notify-use-underline",
+      "annotated": true,
+      "verified": false,
+      "native": "notify::use-underline",
+      "attr": "onnotify::use-underline",
+      "aliases": [],
+      "params": [],
+      "returns": {
+        "display": "void"
+      },
+      "sync": false,
+      "result": "none",
+      "phase": "first",
+      "flags": [
+        "detailed"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "kind": "slot",
+      "name": "child",
+      "address": "gtk button.slot:child",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/",
+      "annotated": true,
+      "verified": false,
+      "default": true,
+      "cardinality": "one",
+      "accepts": [
+        "Gtk.Widget"
+      ],
+      "attrs": [],
+      "order": "none",
+      "ops": {
+        "get": "GtkButton::get_child() const",
+        "remove": "GtkButton::set_child(GtkWidget*)",
+        "set": "GtkButton::set_child(GtkWidget*)"
+      },
+      "ownership": {
+        "remove": "child unparented",
+        "set": "child parented, old unparented"
+      },
+      "on_remove": "empty"
+    }
+  ],
+  "methods": [
+    {
+      "kind": "method",
+      "name": "get_can_shrink",
+      "address": "gtk button.method:get_can_shrink",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-get-can-shrink",
+      "annotated": false,
+      "verified": false,
+      "since": "4.12",
+      "doc": "Retrieves whether the button can be smaller than the natural\nsize of its contents.",
+      "signatures": [
+        "get_can_shrink(): boolean"
+      ],
+      "params": [],
+      "returns": {
+        "display": "boolean"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "get_child",
+      "address": "gtk button.method:get_child",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-get-child",
+      "annotated": false,
+      "verified": false,
+      "doc": "Gets the child widget of `button`.",
+      "signatures": [
+        "get_child(): Widget"
+      ],
+      "params": [],
+      "returns": {
+        "display": "Widget"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "get_has_frame",
+      "address": "gtk button.method:get_has_frame",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-get-has-frame",
+      "annotated": false,
+      "verified": false,
+      "doc": "Returns whether the button has a frame.",
+      "signatures": [
+        "get_has_frame(): boolean"
+      ],
+      "params": [],
+      "returns": {
+        "display": "boolean"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "get_icon_name",
+      "address": "gtk button.method:get_icon_name",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-get-icon-name",
+      "annotated": false,
+      "verified": false,
+      "doc": "Returns the icon name of the button.\n\nIf the icon name has not been set with `Button.set_icon_name()`\nthe return value will be `NULL`. This will be the case if you create\nan empty button with `Button.new()` to use as a container.",
+      "signatures": [
+        "get_icon_name(): string"
+      ],
+      "params": [],
+      "returns": {
+        "display": "string"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "get_label",
+      "address": "gtk button.method:get_label",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-get-label",
+      "annotated": false,
+      "verified": false,
+      "doc": "Fetches the text from the label of the button.\n\nIf the label text has not been set with `Button.set_label()`\nthe return value will be `NULL`. This will be the case if you create\nan empty button with `Button.new()` to use as a container.",
+      "signatures": [
+        "get_label(): string"
+      ],
+      "params": [],
+      "returns": {
+        "display": "string"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "get_use_underline",
+      "address": "gtk button.method:get_use_underline",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-get-use-underline",
+      "annotated": false,
+      "verified": false,
+      "doc": "gets whether underlines are interpreted as mnemonics.\n\nSee `Button.set_use_underline()`.",
+      "signatures": [
+        "get_use_underline(): boolean"
+      ],
+      "params": [],
+      "returns": {
+        "display": "boolean"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "set_can_shrink",
+      "address": "gtk button.method:set_can_shrink",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-set-can-shrink",
+      "annotated": false,
+      "verified": false,
+      "since": "4.12",
+      "doc": "Sets whether the button size can be smaller than the natural size of\nits contents.\n\nFor text buttons, setting `can_shrink` to true will ellipsize the label.\n\nFor icons and custom children, this function has no effect.",
+      "signatures": [
+        "set_can_shrink(can_shrink: boolean): void"
+      ],
+      "params": [
+        {
+          "name": "can_shrink",
+          "type": {
+            "display": "boolean",
+            "native": "gboolean"
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "set_child",
+      "address": "gtk button.method:set_child",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-set-child",
+      "annotated": false,
+      "verified": false,
+      "doc": "Sets the child widget of `button`.\n\nNote that by using this API, you take full responsibility for setting\nup the proper accessibility label and description information for `button`.\nMost likely, you'll either set the accessibility label or description\nfor `button` explicitly, or you'll set a labelled-by or described-by\nrelations from `child` to `button`.",
+      "dangerous": {
+        "severity": "corrupts-tree",
+        "reason": "Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md).",
+        "use_instead": "Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot=\"titlebar\">`); remove it with {#if}.",
+        "reachable": true,
+        "source": "metadata/dangerous/gtk.yaml#child-setters"
+      },
+      "signatures": [
+        "set_child(child: Widget): void"
+      ],
+      "params": [
+        {
+          "name": "child",
+          "type": {
+            "display": "Widget",
+            "native": "GtkWidget*",
+            "ref": "gtk:Gtk.Widget",
+            "nullable": true
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "set_has_frame",
+      "address": "gtk button.method:set_has_frame",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-set-has-frame",
+      "annotated": false,
+      "verified": false,
+      "doc": "Sets the style of the button.\n\nButtons can have a flat appearance or have a frame drawn around them.",
+      "signatures": [
+        "set_has_frame(has_frame: boolean): void"
+      ],
+      "params": [
+        {
+          "name": "has_frame",
+          "type": {
+            "display": "boolean",
+            "native": "gboolean"
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "set_icon_name",
+      "address": "gtk button.method:set_icon_name",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-set-icon-name",
+      "annotated": false,
+      "verified": false,
+      "doc": "Adds a `GtkImage` with the given icon name as a child.\n\nIf `button` already contains a child widget, that child widget will\nbe removed and replaced with the image.",
+      "signatures": [
+        "set_icon_name(icon_name: string): void"
+      ],
+      "params": [
+        {
+          "name": "icon_name",
+          "type": {
+            "display": "string",
+            "native": "const char*"
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "set_label",
+      "address": "gtk button.method:set_label",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-set-label",
+      "annotated": false,
+      "verified": false,
+      "doc": "Sets the text of the label of the button to `label`.\n\nThis will also clear any previously set labels.",
+      "signatures": [
+        "set_label(label: string): void"
+      ],
+      "params": [
+        {
+          "name": "label",
+          "type": {
+            "display": "string",
+            "native": "const char*"
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "set_use_underline",
+      "address": "gtk button.method:set_use_underline",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#method-set-use-underline",
+      "annotated": false,
+      "verified": false,
+      "doc": "Sets whether to use underlines as mnemonics.\n\nIf true, an underline in the text of the button label indicates\nthe next character should be used for the mnemonic accelerator key.",
+      "signatures": [
+        "set_use_underline(use_underline: boolean): void"
+      ],
+      "params": [
+        {
+          "name": "use_underline",
+          "type": {
+            "display": "boolean",
+            "native": "gboolean"
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    }
+  ],
+  "constructors": [
+    {
+      "kind": "constructor",
+      "name": "new",
+      "address": "gtk button.ctor:new",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#constructor-new",
+      "annotated": false,
+      "verified": false,
+      "doc": "Creates a new `GtkButton` widget.\n\nTo add a child widget to the button, use `Button.set_child()`.",
+      "signatures": [
+        "new(): self"
+      ],
+      "params": [],
+      "returns": {
+        "display": "self"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "constructor",
+      "name": "new_from_icon_name",
+      "address": "gtk button.ctor:new_from_icon_name",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#constructor-new-from-icon-name",
+      "annotated": false,
+      "verified": false,
+      "doc": "Creates a new button containing an icon from the current icon theme.\n\nIf the icon name isn’t known, a “broken image” icon will be\ndisplayed instead. If the current icon theme is changed, the icon\nwill be updated appropriately.",
+      "signatures": [
+        "new_from_icon_name(icon_name: string): self"
+      ],
+      "params": [
+        {
+          "name": "icon_name",
+          "type": {
+            "display": "string",
+            "native": "const char*"
+          }
+        }
+      ],
+      "returns": {
+        "display": "self"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "constructor",
+      "name": "new_with_label",
+      "address": "gtk button.ctor:new_with_label",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#constructor-new-with-label",
+      "annotated": false,
+      "verified": false,
+      "doc": "Creates a `GtkButton` widget with a `GtkLabel` child.",
+      "signatures": [
+        "new_with_label(label: string): self"
+      ],
+      "params": [
+        {
+          "name": "label",
+          "type": {
+            "display": "string",
+            "native": "const char*"
+          }
+        }
+      ],
+      "returns": {
+        "display": "self"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "constructor",
+      "name": "new_with_mnemonic",
+      "address": "gtk button.ctor:new_with_mnemonic",
+      "declared_in": "gtk:Gtk.Button",
+      "site": "/api/gtk/button/#constructor-new-with-mnemonic",
+      "annotated": false,
+      "verified": false,
+      "doc": "Creates a new `GtkButton` containing a label.\n\nIf characters in `label` are preceded by an underscore, they are underlined.\nIf you need a literal underscore character in a label, use “__” (two\nunderscores). The first underlined character represents a keyboard\naccelerator called a mnemonic. Pressing `Alt` and that key\nactivates the button.",
+      "signatures": [
+        "new_with_mnemonic(label: string): self"
+      ],
+      "params": [
+        {
+          "name": "label",
+          "type": {
+            "display": "string",
+            "native": "const char*"
+          }
+        }
+      ],
+      "returns": {
+        "display": "self"
+      },
+      "static": false,
+      "virtual": false
+    }
+  ],
+  "values": [],
+  "dangerous": [
+    {
+      "kind": "property",
+      "name": "child",
+      "address": "gtk button.prop:child",
+      "declared_in": "gtk:Gtk.Button",
+      "severity": "corrupts-tree",
+      "reason": "The widget-typed twins of the child setters, generated as writable attributes (crates/svelters-gtk/src/generated/tables.rs, packages/renderer/types/gtk.d.ts): writing one re-parents a widget behind the slot records the backend keeps (crates/svelters-gtk/src/backend.rs:679-692).",
+      "use_instead": "Put the child element inside the parent (`data-slot` picks a named slot); never pass a handle to these attributes.",
+      "reachable": true,
+      "source": "metadata/dangerous/gtk.yaml#child-properties"
+    },
+    {
+      "kind": "method",
+      "name": "set_child",
+      "address": "gtk button.method:set_child",
+      "declared_in": "gtk:Gtk.Button",
+      "severity": "corrupts-tree",
+      "reason": "Re-parents a widget behind the slot model: the single-child slots are exactly these setters (metadata/overrides/gtk/Window.yaml:88-89 child, :104-105 titlebar; Paned.yaml:17-18; CenterBox.yaml:17-18; Frame.yaml:17-18; HeaderBar.yaml:73-74; MenuButton.yaml:59-60 popover), and the backend records the slot of every child it inserts (crates/svelters-gtk/src/backend.rs:679-692). AI1 review: rejected as re-parenting (docs/notes/ai1-gtk-review.md).",
+      "use_instead": "Put the child element inside the parent and pick the slot with `data-slot` (`<header-bar data-slot=\"titlebar\">`); remove it with {#if}.",
+      "reachable": true,
+      "source": "metadata/dangerous/gtk.yaml#child-setters"
+    },
+    {
+      "kind": "method",
+      "name": "insert_after",
+      "address": "gtk button.method:insert_after",
+      "declared_in": "gtk:Gtk.Widget",
+      "severity": "corrupts-tree",
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.",
+      "reachable": true,
+      "source": "metadata/dangerous/gtk.yaml#widget-tree"
+    },
+    {
+      "kind": "method",
+      "name": "insert_before",
+      "address": "gtk button.method:insert_before",
+      "declared_in": "gtk:Gtk.Widget",
+      "severity": "corrupts-tree",
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.",
+      "reachable": true,
+      "source": "metadata/dangerous/gtk.yaml#widget-tree"
+    },
+    {
+      "kind": "method",
+      "name": "set_parent",
+      "address": "gtk button.method:set_parent",
+      "declared_in": "gtk:Gtk.Widget",
+      "severity": "corrupts-tree",
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.",
+      "reachable": true,
+      "source": "metadata/dangerous/gtk.yaml#widget-tree"
+    },
+    {
+      "kind": "method",
+      "name": "unparent",
+      "address": "gtk button.method:unparent",
+      "declared_in": "gtk:Gtk.Widget",
+      "severity": "corrupts-tree",
+      "reason": "Moves a widget in GTK's widget tree without the backend: its insert refuses a child that already has a parent and remove errors on a child it did not insert (crates/svelters-gtk/src/backend.rs:677-678, 726-733). AI1 review rejected set_parent as re-parenting.",
+      "use_instead": "Svelte markup order ({#if}, {#each}); the renderer inserts and removes through the slots.",
+      "reachable": true,
+      "source": "metadata/dangerous/gtk.yaml#widget-tree"
+    }
+  ],
+  "inherited": [
+    {
+      "from": "gtk:Gtk.Widget",
+      "name": "Widget",
+      "properties": 5,
+      "events": 2,
+      "methods": 9
+    },
+    {
+      "from": "gtk:Gtk.Actionable",
+      "name": "Actionable",
+      "properties": 2,
+      "events": 0,
+      "methods": 6
+    }
+  ],
+  "all": false,
+  "examples": [
+    {
+      "title": "Using <button>",
+      "lang": "svelte",
+      "code": "<script>\n  let count = $state(0);\n</script>\n\n<button label=\"Hello\" can-shrink={true} has-frame={false} onactivate={() => count++}>\n  <label>Child content</label>\n</button>\n",
+      "generated": true
+    }
+  ],
+  "notices": [
+    "Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later."
+  ],
+  "notes": []
+}
+--- stderr

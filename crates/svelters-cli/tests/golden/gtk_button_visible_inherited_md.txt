@@ -1,0 +1,12 @@
+$ svelters docs gtk button.visible
+exit: 0
+--- stdout
+# <button>.visible · property
+`gtk button.prop:visible` · declared in Gtk.Widget · Site: /api/gtk/types/gtkwidget/#property-visible
+Type `boolean` · rw · default `true` · notify `notify::visible` · bindable (`bind:visible`) · accessors get `gtk_widget_get_visible`, set `gtk_widget_set_visible` · annotated, verified
+
+Whether the widget is visible.
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr

@@ -1,0 +1,29 @@
+$ svelters docs gtk button --all --section properties
+exit: 0
+--- stdout
+# <button> · GtkButton
+`gtk:Gtk.Button` · GTK 4 class · annotated, tested (21/21 facts verified) · lifetime owned
+Inherits: Gtk.Widget → GObject.InitiallyUnowned → GObject.Object
+Interfaces: Gtk.Accessible, Gtk.Actionable, Gtk.Buildable, Gtk.ConstraintTarget
+Site: /api/gtk/button/ · Upstream: https://docs.gtk.org/gtk4/class.Button.html
+
+Calls a callback function when the button is clicked.
+
+## Properties
+- `can-shrink`: `boolean`, rw, default `false`, bindable, since 4.12 — Whether the size of the button can be made smaller than the natural size of its contents.
+- `child`: `Widget` or `null`, rw, bindable ⚠ dangerous — The child widget.
+- `has-frame`: `boolean`, rw, default `true`, bindable — Whether the button has a frame.
+- `icon-name`: `string` or `null`, rw, bindable — The name of the icon used to automatically populate the button.
+- `label`: `string` or `null`, rw, bindable — Text of the label inside the button, if the button contains a label widget.
+- `use-underline`: `boolean`, rw, default `false`, bindable — If set, an underline in the text indicates that the following character is to be used as mnemonic.
+- `can-focus`: `boolean`, rw, default `true`, bindable (from Gtk.Widget) — Whether the widget or any of its descendents can accept the input focus.
+- `css-classes`: `string[]`, rw, default `"[]"`, bindable (from Gtk.Widget) — A list of css classes applied to this widget.
+- `hexpand`: `boolean`, rw, default `false`, bindable (from Gtk.Widget) — Whether to expand horizontally.
+- `tooltip-text`: `string` or `null`, rw, bindable (from Gtk.Widget) — Sets the text of tooltip to be the given string.
+- `visible`: `boolean`, rw, default `true`, bindable (from Gtk.Widget) — Whether the widget is visible.
+- `action-name`: `string` or `null`, rw, bindable (from Gtk.Actionable) — The name of the action with which this widget should be associated.
+- `action-target`: `unknown` or `null`, rw, bindable (from Gtk.Actionable) — The target value of the actionable widget's action.
+
+---
+Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later.
+--- stderr

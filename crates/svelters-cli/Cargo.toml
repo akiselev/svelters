@@ -1,0 +1,22 @@
+[package]
+name = "svelters-cli"
+description = "The `svelters` command line (C0: `svelters docs`, the offline docs probe)"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "svelters"
+path = "src/main.rs"
+
+# Deliberately small (build time matters): no clap, no toml, no zstd-sys. miniz_oxide is pure Rust
+# deflate with one dependency (adler2). Never depend on a toolkit crate here: `svelters docs` must
+# work on a machine with neither GTK nor Qt installed.
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json.workspace = true
+miniz_oxide = "0.8"

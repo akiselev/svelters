@@ -1,0 +1,10 @@
+$ svelters docs gtk button.lable
+exit: 1
+--- stdout
+No `button.lable` in gtk.
+Did you mean:
+  gtk button.prop:label  (property)  Text of the label inside the button, if the button contains a label widget.
+  gtk button.method:get_label  (method)  Fetches the text from the label of the button.
+  gtk button.method:set_label  (method)  Sets the text of the label of the button to label.
+  gtk button.ctor:new_with_label  (constructor)  Creates a GtkButton widget with a GtkLabel child.
+--- stderr

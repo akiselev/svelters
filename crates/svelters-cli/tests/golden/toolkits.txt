@@ -1,0 +1,11 @@
+$ svelters docs 
+exit: 0
+--- stdout
+# svelters docs
+No svelters.toml here: name a toolkit, or the CLI picks the one that has the name.
+
+- gtk: GTK 4 4.22.4, 4 elements, 7 types; data 4.22.4+85362d027d09a88b (built from IR <fixtures>/gtk.json); docs text LGPL-2.1-or-later, policy full
+- qt: Qt 6 (Widgets) 6.11.0, 3 elements, 5 types; data 6.11.0+f0960f1ddc2925fd (built from IR <fixtures>/qt.json); docs text GFDL-1.3-only, policy brief
+
+Usage: svelters docs [<toolkit>] <element>[.<member>] [--brief|--json|--all] · -k <query> · --help
+--- stderr

@@ -1,0 +1,46 @@
+$ svelters docs gtk button.visible --json
+exit: 0
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "member",
+  "toolkit": "gtk",
+  "data_version": "4.22.4+85362d027d09a88b",
+  "entity": {
+    "id": "gtk:Gtk.Button",
+    "address": "gtk button",
+    "native": "GtkButton",
+    "tags": [
+      "button"
+    ],
+    "site": "/api/gtk/button/"
+  },
+  "member": {
+    "kind": "property",
+    "name": "visible",
+    "address": "gtk button.prop:visible",
+    "declared_in": "gtk:Gtk.Widget",
+    "site": "/api/gtk/types/gtkwidget/#property-visible",
+    "annotated": true,
+    "verified": true,
+    "doc": "Whether the widget is visible.",
+    "native": "visible",
+    "type": {
+      "display": "boolean",
+      "native": "gboolean"
+    },
+    "access": "rw",
+    "default": "true",
+    "notify": "notify::visible",
+    "bindable": true,
+    "accessors": {
+      "get": "gtk_widget_get_visible",
+      "set": "gtk_widget_set_visible"
+    }
+  },
+  "notices": [
+    "Documentation text from the GTK project (GIR documentation comments), (c) the GTK authors. Cross-reference markup has been converted for this site. Licensed under LGPL-2.1-or-later."
+  ],
+  "notes": []
+}
+--- stderr

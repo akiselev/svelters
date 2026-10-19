@@ -1,0 +1,8 @@
+$ svelters docs gtk grid.attr:row
+exit: 0
+--- stdout
+# <grid>.row · attr
+`gtk grid.attr:row` · declared here · Site: /api/gtk/grid/
+written on the child as `parent:row={…}` · given by slot `cells`; see `gtk grid.slot:cells` · annotated
+
+--- stderr

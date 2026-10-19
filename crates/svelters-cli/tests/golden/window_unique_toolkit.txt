@@ -1,0 +1,15 @@
+$ svelters docs window --brief
+exit: 0
+--- stdout
+<window> · GtkWindow (gtk:Gtk.Window) · GTK 4 class · annotated, tested (72/72 facts verified)
+inherits: Gtk.Widget → GObject.InitiallyUnowned → GObject.Object
+A toplevel window which can contain other widgets.
+props: application Application rw · child Widget rw · display Gdk.Display rw · modal boolean rw · title string rw · titlebar Widget rw
+events: close-request
+slots: child · titlebar
+methods: close · present · set_application · set_child · set_display · set_titlebar
+ctors: new
+dangerous: property:application · property:child · property:display · property:titlebar · method:set_application · method:set_child · method:set_display · method:set_titlebar · method:insert_after · method:insert_before · method:set_parent · method:unparent
+inherited props/events/methods: Widget 5/2/9 (--all)
+--- stderr
+note: found only in gtk

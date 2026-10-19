@@ -1,10 +1,10 @@
 # `svelters` CLI: design proposal
 
-Status: research proposal, 2026-10-17. Nothing here is implemented. Evidence, file references and prior-art links are in `docs/notes/cli-research.md`.
+Status: research proposal, 2026-10-17; implementation language decided 2026-10-19 (Rust, see §5 and the Decisions list). C0 (`svelters docs`) is implemented in `crates/svelters-cli` (`plans/milestones/CL0-cli-docs.md`). Evidence, file references and prior-art links are in `docs/notes/cli-research.md`.
 
 ## Summary
 
-- **One command, `svelters`.** It is a Node/TypeScript CLI (`@svelters/cli`). It drives Vite in-process and spawns the Rust pieces: one runner binary per toolkit, plus `svelters-compile` for the native frontend.
+- **One command, `svelters`.** It is a Rust binary (`crates/svelters-cli`), decided 2026-10-19. It spawns the other Rust pieces (one runner binary per toolkit, `svelters-compile`) and, until the QuickJS dev module loader lands, drives Vite as a child process for `dev`/`build`. npm stays the package manager only.
 - **Distribution.**
   - Users get it with `npm create svelters@latest` or `npx svelters`.
   - Runner binaries come as per-platform npm packages, the way esbuild and biome ship theirs. When no prebuilt binary fits, they are built from source with cargo.
@@ -13,7 +13,7 @@ Status: research proposal, 2026-10-17. Nothing here is implemented. Evidence, fi
   - Addresses look like `go doc`: `svelters docs [<toolkit>] <element>[.<member>]`.
   - Output is terminal markdown by default, with `--brief` and `--json`.
   - Its data is a pack built from the same docs IR as the site, so the CLI and the site cannot drift.
-  - `svelters mcp` exposes the same backend over MCP.
+  - No MCP server for now (decision 7); `--json` is the agent interface.
 - **MVP.**
   - `docs` can be built today, on the current IR.
   - `create`, `dev`, `build`, `run` and `doctor` work inside the repo once `examples/counter` becomes a generic runner.
@@ -284,6 +284,21 @@ It is not a web app: there is no DOM, no HTML elements, and no browser CSS.
 
 ## 5. Implementation language and packaging
 
+**Decision (user, 2026-10-19): the CLI is written in Rust.** The 2026-10-17 proposal recommended a Node/TypeScript CLI; it is kept below, collapsed, for the record.
+
+Why Rust:
+- **The pieces it drives are Rust.** The runner (host + backend), `svelters-compile` and the planned QuickJS dev module loader are all Rust. A Rust CLI can call into them as libraries or exec them, with no Node process in between.
+- **The Node constraint is gone.** The proposal's main argument was that "every build already needs Node" for Vite. `plans/research/QUICKJS-RUNTIME.md` §3.6 removes it: with the dev module loader, the runner is host + loader + compiler + watcher, and `dev`/`build` can be Rust-only.
+- **npm remains, as the package manager only.** Apps still have a `package.json` and `node_modules`; `npm create`/`npx` can still be the entry points by shipping the binary in per-platform npm packages (the esbuild/biome model), with `cargo install` as the second channel.
+
+Consequences:
+- **Until the dev module loader lands, `dev` and `build` still drive Vite** (or `svelters-compile` through `@svelters/native-runtime/vite`) as a child process, exactly as `pnpm watch` does today. C0 does not depend on either, and the C1 command layer must keep "which bundler" behind one function so the loader can replace Vite without touching the commands.
+- **`svelters docs` is self-contained.** The docs pack is built from the site's IR by the same Rust code that reads it (`svelters docs-pack`), so the pack schema has one definition. The binary links neither GTK nor Qt and works offline.
+- **The runners stay separate binaries**, so the CLI never links a toolkit: `docs` and `create` work on a machine with neither installed. That part of the proposal is unchanged.
+- **Build cost is watched.** The CLI crate depends only on serde, serde_json and miniz_oxide (pure Rust deflate); argument parsing is hand-written for C0 (see the milestone file for when `clap` would pay off).
+
+<details><summary>Superseded proposal (2026-10-17): a Node/TypeScript CLI</summary>
+
 **Recommendation: a TypeScript (Node ≥ 22) CLI orchestrating Rust binaries, shipped through npm. `cargo install` is a secondary channel for the Rust pieces only.**
 
 The reasons for Node:
@@ -291,20 +306,17 @@ The reasons for Node:
 - **The renderers are already JavaScript.** The docs page renderer (`render.mjs`) and the reference MCP SDK are both JS. A Node CLI can reuse them, so the human output stays close to the site.
 - **The project is a Node project.** Every app has a `package.json`, and `npm create` and `npx` are the scaffolding conventions users expect (as with `sv` and `create-tauri-app`).
 
-These parts stay in Rust:
-- **The runners** (host and backend per toolkit). They are separate binaries, so the CLI never links GTK or Qt. That keeps `svelters docs` and `create` working on a machine with neither toolkit installed.
-- **`svelters-compile`.**
-- **Later, the M6 release linker.**
-
-The model is the esbuild/biome one: `@svelters/cli` plus optional per-platform packages for the binaries.
+These parts stay in Rust: the runners, `svelters-compile`, and later the M6 release linker.
 
 **What was rejected:** a single Rust binary embedding the host. It would either link both toolkits, or ship two CLIs. It would still need Node for Vite, and it would make `docs` depend on Qt or GTK shared libraries. This can be revisited if Vite is ever replaced (for example, if the native compiler gains its own bundler).
+
+</details>
 
 ## 6. Phasing
 
 | Phase | Scope | Size | Depends on |
 | --- | --- | --- | --- |
-| **C0 docs probe** | `packages/cli` with `svelters docs` (address resolver, md/brief/json, `-k`, inheritance), reading `docs/site/.generated/ir`; `build_pack.py`; pack/site consistency test | ~2–3 agent-days | **first** fix or verify the Qt IR tag gap (8 tagged entities vs 57 override tags, notes §1) |
+| **C0 docs probe** | `crates/svelters-cli` (Rust, decided 2026-10-19) with `svelters docs` (address resolver, md/brief/json, `-k`, inheritance), reading a docs pack built from `docs/site/.generated/ir` (`svelters docs-pack`); pack/site consistency test | ~2–3 agent-days | **first** fix or verify the Qt IR tag gap (8 tagged entities vs 57 override tags, notes §1) |
 | **C1 MVP loop** | generic runner `crates/svelters-run` (from `examples/counter`, `--bundle`, one toolkit per feature/binary); `create` (minimal template per toolkit, in-repo workspace linking), `build`, `run`, `dev` (Vite watch + runner `--watch`, `--json-events`), `doctor`, `check`; `svelters.toml` | ~4–6 agent-days | M2b (done); runner refactor touches `examples/counter` |
 | **C1.5 style + names** | `style` section/table in docs; templates and AGENTS.md on native kebab tags; old-tag aliases in the resolver | ~1–2 days each | **ST1** (style table in IR), **N1** (tag rename) |
 | **C2 agents** | `svelters mcp`, `add agents`, `add component/window/test/lists/canvas`, `app` templates | ~3–4 days | C0, C1 |
@@ -334,3 +346,7 @@ The model is the esbuild/biome one: `@svelters/cli` plus optional per-platform p
 6. The native compiler is not behind `--experimental`; it is the only frontend.
 7. No MCP server for now. Agents with a shell get everything through `svelters docs … --json`. MCP would only matter for clients without a shell, so it waits until someone needs that.
 8. The `ad-` namespace needs no planning now.
+
+## Decisions (user, 2026-10-19)
+
+9. The CLI is written in Rust, not Node/TypeScript (§5). The runner, the compiler and the future module loader are Rust, and `plans/research/QUICKJS-RUNTIME.md` §3.6 removed the "needs Node for Vite" constraint. npm remains the package manager only. The QuickJS dev module loader is deferred, so C1's `dev`/`build` still drive Vite or `svelters-compile` for now.

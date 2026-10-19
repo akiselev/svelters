@@ -1,0 +1,733 @@
+$ svelters docs qt main-window --json
+exit: 0
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "entity",
+  "toolkit": "qt",
+  "data_version": "6.11.0+f0960f1ddc2925fd",
+  "entity": {
+    "id": "qt:QMainWindow",
+    "address": "qt main-window",
+    "kind": "class",
+    "name": "QMainWindow",
+    "native": "QMainWindow",
+    "qualified": "QMainWindow",
+    "tags": [
+      "main-window"
+    ],
+    "tier": "annotated",
+    "tested": true,
+    "verified_facts": [
+      20,
+      20
+    ],
+    "abstract": false,
+    "summary": "The QMainWindow class provides a main application window.",
+    "site": "/api/qt/main-window/",
+    "upstream": "https://doc.qt.io/qt-6/qmainwindow.html",
+    "bases": [
+      "qt:QWidget",
+      "qt:QObject",
+      "qt:QPaintDevice"
+    ],
+    "interfaces": [],
+    "lifetime": "toplevel",
+    "extensions": {
+      "qt": {
+        "header": "qmainwindow.h",
+        "module": "QtWidgets",
+        "ownership": [
+          "`addDockWidget(Qt::DockWidgetArea,QDockWidget*)`: argument 2 gets its parent from `this`",
+          "`addDockWidget(Qt::DockWidgetArea,QDockWidget*,Qt::Orientation)`: argument 2 gets its parent from `this`",
+          "`addToolBar(QToolBar*)`: argument 1 gets its parent from `this`",
+          "`addToolBar(Qt::ToolBarArea,QToolBar*)`: argument 2 gets its parent from `this`",
+          "`addToolBar(const QString&)`: argument return gets its parent from `this`",
+          "`removeDockWidget(QDockWidget*)`: argument 1 gets its parent from `this`",
+          "`removeDockWidget(QDockWidget*)`: argument 2 gets its parent from `this`",
+          "`removeToolBar(QToolBar*)`: argument 1 gets its parent from `this`",
+          "`setCentralWidget(QWidget*)`: replace_child",
+          "`setMenuBar(QMenuBar*)`: replace_child",
+          "`setMenuWidget(QWidget*)`: replace_child",
+          "`setStatusBar(QStatusBar*)`: replace_child"
+        ],
+        "qobject": "yes",
+        "qss": "Sub-controls: `::separator`. [Qt Style Sheets reference](https://doc.qt.io/qt-6/stylesheet-reference.html#qmainwindow-widget)"
+      }
+    },
+    "see_also": []
+  },
+  "children_policy": "named_slots",
+  "default_slot": "central",
+  "properties": [
+    {
+      "kind": "property",
+      "name": "animated",
+      "address": "qt main-window.prop:animated",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#property-animated",
+      "annotated": true,
+      "verified": true,
+      "doc": "Whether manipulating dock widgets and tool bars is animated",
+      "native": "animated",
+      "type": {
+        "display": "boolean",
+        "native": "bool"
+      },
+      "access": "rw",
+      "default": "true",
+      "bindable": false,
+      "accessors": {
+        "get": "isAnimated",
+        "set": "setAnimated"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "dockOptions",
+      "address": "qt main-window.prop:dockOptions",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#property-dockoptions",
+      "annotated": false,
+      "verified": false,
+      "doc": "The docking behavior of QMainWindow",
+      "native": "dockOptions",
+      "type": {
+        "display": "QMainWindow::DockOption",
+        "native": "QMainWindow::DockOptions"
+      },
+      "access": "rw",
+      "default": "\"AnimatedDocks|AllowTabbedDocks\"",
+      "bindable": false,
+      "accessors": {
+        "get": "dockOptions",
+        "set": "setDockOptions"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "document-mode",
+      "address": "qt main-window.prop:document-mode",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#property-documentmode",
+      "annotated": true,
+      "verified": true,
+      "doc": "Whether the tab bar for tabbed dockwidgets is set to document mode",
+      "native": "documentMode",
+      "type": {
+        "display": "boolean",
+        "native": "bool"
+      },
+      "access": "rw",
+      "default": "false",
+      "bindable": false,
+      "accessors": {
+        "get": "documentMode",
+        "set": "setDocumentMode"
+      }
+    },
+    {
+      "kind": "property",
+      "name": "window-title",
+      "address": "qt main-window.prop:window-title",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#property-windowtitle",
+      "annotated": true,
+      "verified": true,
+      "doc": "The window title (caption)",
+      "native": "windowTitle",
+      "type": {
+        "display": "string",
+        "native": "QString"
+      },
+      "access": "rw",
+      "notify": "windowTitleChanged(QString)",
+      "bindable": true
+    }
+  ],
+  "events": [
+    {
+      "kind": "event",
+      "name": "close",
+      "address": "qt main-window.event:close",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#event-close-request",
+      "annotated": true,
+      "verified": false,
+      "native": "close_request",
+      "attr": "onclose",
+      "aliases": [],
+      "params": [],
+      "returns": {
+        "display": "void"
+      },
+      "sync": false,
+      "flags": []
+    }
+  ],
+  "slots": [
+    {
+      "kind": "slot",
+      "name": "central",
+      "address": "qt main-window.slot:central",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/",
+      "annotated": true,
+      "verified": false,
+      "default": true,
+      "cardinality": "one",
+      "accepts": [
+        "QWidget"
+      ],
+      "attrs": [],
+      "ops": {
+        "get": "QMainWindow::centralWidget() const",
+        "remove": "QMainWindow::takeCentralWidget()",
+        "set": "QMainWindow::setCentralWidget(QWidget*)"
+      },
+      "ownership": {
+        "remove": "child unparented",
+        "set": "child parented, old deleted"
+      },
+      "on_remove": "empty"
+    },
+    {
+      "kind": "slot",
+      "name": "menubar",
+      "address": "qt main-window.slot:menubar",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/",
+      "annotated": true,
+      "verified": false,
+      "default": false,
+      "cardinality": "one",
+      "accepts": [
+        "QMenuBar"
+      ],
+      "attrs": [],
+      "ops": {
+        "get": "QMainWindow::menuWidget() const",
+        "remove": "QMainWindow::setMenuBar(QMenuBar*)",
+        "set": "QMainWindow::setMenuBar(QMenuBar*)"
+      },
+      "ownership": {
+        "remove": "child deleted",
+        "set": "child parented, old deleted"
+      },
+      "on_remove": "destroys_child"
+    },
+    {
+      "kind": "slot",
+      "name": "statusbar",
+      "address": "qt main-window.slot:statusbar",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/",
+      "annotated": true,
+      "verified": false,
+      "default": false,
+      "cardinality": "one",
+      "accepts": [
+        "QStatusBar"
+      ],
+      "attrs": [],
+      "ops": {
+        "get": "QMainWindow::findChild<QStatusBar*>(const QString&, Qt::FindChildOptions) const",
+        "remove": "QMainWindow::setStatusBar(QStatusBar*)",
+        "set": "QMainWindow::setStatusBar(QStatusBar*)"
+      },
+      "ownership": {
+        "remove": "child deleted",
+        "set": "child parented, old deleted"
+      },
+      "on_remove": "destroys_child"
+    },
+    {
+      "kind": "slot",
+      "name": "toolbars",
+      "address": "qt main-window.slot:toolbars",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/",
+      "annotated": true,
+      "verified": false,
+      "default": false,
+      "cardinality": "many",
+      "accepts": [
+        "QToolBar"
+      ],
+      "attrs": [],
+      "order": "append_only",
+      "ops": {
+        "insert": "QMainWindow::addToolBar(QToolBar*)",
+        "remove": "QMainWindow::removeToolBar(QToolBar*)"
+      },
+      "ownership": {
+        "insert": "child parented",
+        "remove": "child unparented"
+      },
+      "on_remove": "empty"
+    },
+    {
+      "kind": "slot",
+      "name": "docks",
+      "address": "qt main-window.slot:docks",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/",
+      "annotated": true,
+      "verified": false,
+      "default": false,
+      "cardinality": "many",
+      "accepts": [
+        "QDockWidget"
+      ],
+      "attrs": [],
+      "order": "append_only",
+      "ops": {
+        "insert": "QMainWindow::addDockWidget(Qt::DockWidgetArea, QDockWidget*)",
+        "remove": "QMainWindow::removeDockWidget(QDockWidget*)"
+      },
+      "ownership": {
+        "insert": "child parented",
+        "remove": "child unparented"
+      },
+      "on_remove": "empty"
+    }
+  ],
+  "methods": [
+    {
+      "kind": "method",
+      "name": "addDockWidget",
+      "address": "qt main-window.method:addDockWidget",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-adddockwidget",
+      "annotated": false,
+      "verified": false,
+      "doc": "Adds the given *dockwidget* to the specified *area*.",
+      "dangerous": {
+        "severity": "corrupts-tree",
+        "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+        "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+        "reachable": false,
+        "source": "metadata/dangerous/qt.yaml#main-window-slots"
+      },
+      "signatures": [
+        "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget)",
+        "void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget, Qt::Orientation orientation)"
+      ],
+      "params": [
+        {
+          "name": "area",
+          "type": {
+            "display": "Qt::DockWidgetArea",
+            "native": "Qt::DockWidgetArea"
+          }
+        },
+        {
+          "name": "dockwidget",
+          "type": {
+            "display": "QDockWidget",
+            "native": "QDockWidget *",
+            "ref": "qt:QDockWidget",
+            "nullable": true
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "addToolBar",
+      "address": "qt main-window.method:addToolBar",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-addtoolbar",
+      "annotated": false,
+      "verified": false,
+      "doc": "Creates a QToolBar object, setting its window title to *title*, and inserts it into the top toolbar area.",
+      "dangerous": {
+        "severity": "corrupts-tree",
+        "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+        "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+        "reachable": false,
+        "source": "metadata/dangerous/qt.yaml#main-window-slots"
+      },
+      "signatures": [
+        "QToolBar * addToolBar(const QString &title)",
+        "void addToolBar(QToolBar *toolbar)",
+        "void addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)"
+      ],
+      "params": [
+        {
+          "name": "title",
+          "type": {
+            "display": "string",
+            "native": "const QString &"
+          }
+        }
+      ],
+      "returns": {
+        "display": "QToolBar"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "centralWidget",
+      "address": "qt main-window.method:centralWidget",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-centralwidget",
+      "annotated": false,
+      "verified": false,
+      "doc": "Returns the central widget for the main window.",
+      "signatures": [
+        "QWidget * centralWidget() const"
+      ],
+      "params": [],
+      "returns": {
+        "display": "QWidget"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "dockOptions",
+      "address": "qt main-window.method:dockOptions",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-dockoptions",
+      "annotated": false,
+      "verified": false,
+      "doc": "This property holds the docking behavior of QMainWindow",
+      "signatures": [
+        "QMainWindow::DockOptions dockOptions() const"
+      ],
+      "params": [],
+      "returns": {
+        "display": "QMainWindow::DockOption"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "insertToolBar",
+      "address": "qt main-window.method:insertToolBar",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-inserttoolbar",
+      "annotated": false,
+      "verified": false,
+      "doc": "Inserts the *toolbar* into the area occupied by the *before* toolbar so that it appears before it.",
+      "dangerous": {
+        "severity": "corrupts-tree",
+        "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+        "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+        "reachable": false,
+        "source": "metadata/dangerous/qt.yaml#main-window-slots"
+      },
+      "signatures": [
+        "void insertToolBar(QToolBar *before, QToolBar *toolbar)"
+      ],
+      "params": [
+        {
+          "name": "before",
+          "type": {
+            "display": "QToolBar",
+            "native": "QToolBar *",
+            "ref": "qt:QToolBar",
+            "nullable": true
+          }
+        },
+        {
+          "name": "toolbar",
+          "type": {
+            "display": "QToolBar",
+            "native": "QToolBar *",
+            "ref": "qt:QToolBar",
+            "nullable": true
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "menuBar",
+      "address": "qt main-window.method:menuBar",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-menubar",
+      "annotated": false,
+      "verified": false,
+      "doc": "Returns the menu bar for the main window.",
+      "dangerous": {
+        "severity": "owned-by-backend",
+        "reason": "Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because \"menuBar() would create one\" (metadata/overrides/qt/QMainWindow.yaml:55, 74).",
+        "use_instead": "Insert a <menu-bar> / <status-bar> child.",
+        "reachable": true,
+        "source": "metadata/dangerous/qt.yaml#main-window-lazy-getters"
+      },
+      "signatures": [
+        "QMenuBar * menuBar() const"
+      ],
+      "params": [],
+      "returns": {
+        "display": "QMenuBar"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "setCentralWidget",
+      "address": "qt main-window.method:setCentralWidget",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-setcentralwidget",
+      "annotated": false,
+      "verified": false,
+      "doc": "Sets the given *widget* to be the main window's central widget.",
+      "dangerous": {
+        "severity": "corrupts-tree",
+        "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+        "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+        "reachable": false,
+        "source": "metadata/dangerous/qt.yaml#main-window-slots"
+      },
+      "signatures": [
+        "void setCentralWidget(QWidget *widget)"
+      ],
+      "params": [
+        {
+          "name": "widget",
+          "type": {
+            "display": "QWidget",
+            "native": "QWidget *",
+            "ref": "qt:QWidget",
+            "nullable": true
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    },
+    {
+      "kind": "method",
+      "name": "statusBar",
+      "address": "qt main-window.method:statusBar",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#method-statusbar",
+      "annotated": false,
+      "verified": false,
+      "doc": "Returns the status bar for the main window.",
+      "dangerous": {
+        "severity": "owned-by-backend",
+        "reason": "Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because \"menuBar() would create one\" (metadata/overrides/qt/QMainWindow.yaml:55, 74).",
+        "use_instead": "Insert a <menu-bar> / <status-bar> child.",
+        "reachable": true,
+        "source": "metadata/dangerous/qt.yaml#main-window-lazy-getters"
+      },
+      "signatures": [
+        "QStatusBar * statusBar() const"
+      ],
+      "params": [],
+      "returns": {
+        "display": "QStatusBar"
+      },
+      "static": false,
+      "virtual": false
+    }
+  ],
+  "constructors": [
+    {
+      "kind": "constructor",
+      "name": "QMainWindow",
+      "address": "qt main-window.ctor:QMainWindow",
+      "declared_in": "qt:QMainWindow",
+      "site": "/api/qt/main-window/#constructor-qmainwindow",
+      "annotated": false,
+      "verified": false,
+      "doc": "Constructs a QMainWindow with the given *parent* and the specified widget *flags*.",
+      "signatures": [
+        "QMainWindow(QWidget *parent, Qt::WindowFlags flags)"
+      ],
+      "params": [
+        {
+          "name": "parent",
+          "type": {
+            "display": "QWidget",
+            "native": "QWidget *",
+            "ref": "qt:QWidget",
+            "nullable": true
+          }
+        },
+        {
+          "name": "flags",
+          "type": {
+            "display": "Qt::WindowType",
+            "native": "Qt::WindowFlags"
+          }
+        }
+      ],
+      "returns": {
+        "display": "void"
+      },
+      "static": false,
+      "virtual": false
+    }
+  ],
+  "values": [],
+  "dangerous": [
+    {
+      "kind": "property",
+      "name": "windowFlags",
+      "address": "qt main-window.prop:windowFlags",
+      "declared_in": "qt:QWidget",
+      "severity": "owned-by-backend",
+      "reason": "The property behind setWindowFlags; toplevel insert/remove rely on it (tools/metadata/qt/templates/backend.cpp.in:887, 911).",
+      "use_instead": "A toplevel element (<main-window>, <dialog>).",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#window-flags-prop"
+    },
+    {
+      "kind": "method",
+      "name": "addDockWidget",
+      "address": "qt main-window.method:addDockWidget",
+      "declared_in": "qt:QMainWindow",
+      "severity": "corrupts-tree",
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#main-window-slots"
+    },
+    {
+      "kind": "method",
+      "name": "addToolBar",
+      "address": "qt main-window.method:addToolBar",
+      "declared_in": "qt:QMainWindow",
+      "severity": "corrupts-tree",
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#main-window-slots"
+    },
+    {
+      "kind": "method",
+      "name": "insertToolBar",
+      "address": "qt main-window.method:insertToolBar",
+      "declared_in": "qt:QMainWindow",
+      "severity": "corrupts-tree",
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#main-window-slots"
+    },
+    {
+      "kind": "method",
+      "name": "menuBar",
+      "address": "qt main-window.method:menuBar",
+      "declared_in": "qt:QMainWindow",
+      "severity": "owned-by-backend",
+      "reason": "Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because \"menuBar() would create one\" (metadata/overrides/qt/QMainWindow.yaml:55, 74).",
+      "use_instead": "Insert a <menu-bar> / <status-bar> child.",
+      "reachable": true,
+      "source": "metadata/dangerous/qt.yaml#main-window-lazy-getters"
+    },
+    {
+      "kind": "method",
+      "name": "setCentralWidget",
+      "address": "qt main-window.method:setCentralWidget",
+      "declared_in": "qt:QMainWindow",
+      "severity": "corrupts-tree",
+      "reason": "The central, menubar, statusbar, toolbars and docks slots are these calls (metadata/overrides/qt/QMainWindow.yaml:39-163); setCentralWidget/setMenuBar/setStatusBar also delete the widget they replace, which the renderer may still hold.",
+      "use_instead": "Children of <main-window> (default central slot; <menu-bar>, <status-bar>, <tool-bar parent:area>, <dock-widget parent:area>).",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#main-window-slots"
+    },
+    {
+      "kind": "method",
+      "name": "statusBar",
+      "address": "qt main-window.method:statusBar",
+      "declared_in": "qt:QMainWindow",
+      "severity": "owned-by-backend",
+      "reason": "Reachable through the object-getter table (tools/metadata/qt/gen_cpp.py:1509-1531), and each lazily creates an unmanaged bar in a backend slot; the backend reads menuWidget() and findChild instead because \"menuBar() would create one\" (metadata/overrides/qt/QMainWindow.yaml:55, 74).",
+      "use_instead": "Insert a <menu-bar> / <status-bar> child.",
+      "reachable": true,
+      "source": "metadata/dangerous/qt.yaml#main-window-lazy-getters"
+    },
+    {
+      "kind": "method",
+      "name": "overrideWindowFlags",
+      "address": "qt main-window.method:overrideWindowFlags",
+      "declared_in": "qt:QWidget",
+      "severity": "owned-by-backend",
+      "reason": "Toplevel insert/remove keep the window type by passing windowFlags() into setParent (tools/metadata/qt/templates/backend.cpp.in:887, 911); changing the flags re-creates the native window. The windowFlags property is denied to inference as renderer-owned (metadata/rules/qt.yaml).",
+      "use_instead": "A toplevel element (<main-window>, <dialog>) nested where it belongs.",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#window-flags"
+    },
+    {
+      "kind": "method",
+      "name": "setLayout",
+      "address": "qt main-window.method:setLayout",
+      "declared_in": "qt:QWidget",
+      "severity": "owned-by-backend",
+      "reason": "Composite elements install their layout at create (tools/metadata/qt/gen_cpp.py:930-933) and the slot ops cast layout() to that class (gen_cpp.py:862); another layout breaks every later insert/remove.",
+      "use_instead": "<box-layout>/<grid-layout> children.",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#layout"
+    },
+    {
+      "kind": "method",
+      "name": "setParent",
+      "address": "qt main-window.method:setParent",
+      "declared_in": "qt:QWidget",
+      "severity": "corrupts-tree",
+      "reason": "The backend re-parents widgets itself: toplevel insert/remove (tools/metadata/qt/templates/backend.cpp.in:887, 911), the menu glue (tools/metadata/qt/templates/menus.hpp.in:69-71) and every slot's remove (metadata/overrides/qt/QWidget.yaml:134). A widget moved behind it keeps a stale placement record.",
+      "use_instead": "Put the child element inside its parent; {#if}/{#each} move it.",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#reparent"
+    },
+    {
+      "kind": "method",
+      "name": "setWindowFlag",
+      "address": "qt main-window.method:setWindowFlag",
+      "declared_in": "qt:QWidget",
+      "severity": "owned-by-backend",
+      "reason": "Toplevel insert/remove keep the window type by passing windowFlags() into setParent (tools/metadata/qt/templates/backend.cpp.in:887, 911); changing the flags re-creates the native window. The windowFlags property is denied to inference as renderer-owned (metadata/rules/qt.yaml).",
+      "use_instead": "A toplevel element (<main-window>, <dialog>) nested where it belongs.",
+      "reachable": false,
+      "source": "metadata/dangerous/qt.yaml#window-flags"
+    }
+  ],
+  "inherited": [
+    {
+      "from": "qt:QWidget",
+      "name": "QWidget",
+      "properties": 3,
+      "events": 1,
+      "methods": 8
+    }
+  ],
+  "all": false,
+  "examples": [
+    {
+      "title": "Using <main-window>",
+      "lang": "svelte",
+      "code": "<script>\n  let count = $state(0);\n</script>\n\n<main-window accessible-name=\"Hello\" onclose={() => count++}>\n  <label>Child content</label>\n</main-window>\n",
+      "generated": true
+    }
+  ],
+  "notices": [
+    "Documentation excerpts from Qt, (c) The Qt Company Ltd. and other contributors, licensed under the GNU Free Documentation License v1.3. Only short briefs are reproduced here (text policy: brief); see doc.qt.io for the full documentation."
+  ],
+  "notes": []
+}
+--- stderr

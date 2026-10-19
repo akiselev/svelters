@@ -1,0 +1,27 @@
+$ svelters docs gtk button.activate --json
+exit: 2
+--- stdout
+{
+  "schema": "svelters-docs/1",
+  "kind": "ambiguous",
+  "query": "button.activate",
+  "candidates": [
+    {
+      "address": "gtk button.event:activate",
+      "toolkit": "gtk",
+      "kind": "event",
+      "brief": "Emitted to animate press then release.",
+      "site": "/api/gtk/button/#event-activate"
+    },
+    {
+      "address": "gtk button.method:activate",
+      "toolkit": "gtk",
+      "kind": "method",
+      "declared_in": "gtk:Gtk.Widget",
+      "brief": "Activates the widget.",
+      "site": "/api/gtk/types/gtkwidget/#method-activate"
+    }
+  ],
+  "notes": []
+}
+--- stderr
