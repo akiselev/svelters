@@ -78,6 +78,36 @@ fn a_non_widget_property_notifies_on_native_edits() {
 }
 
 #[test]
+fn observe_and_a_notify_listener_are_independent_connections() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let store = h.construct("Gio.ListStore", &[("item-type", s("Gio.File"))]).unwrap();
+        if !h.has_prop(store, "n-items") {
+            eprintln!("SKIP: GListStore:n-items needs GLib 2.74");
+            return;
+        }
+        let n = h.resolve_prop("Gio.ListStore", "n-items");
+        h.listen(store, "notify::nItems", true).unwrap();
+        h.observe(store, "n-items", true).unwrap();
+        let file = h.call_static("Gio.File", "new_for_path", &[s("/tmp")]).unwrap();
+        h.call_args(store, "append", &[file.clone()]).unwrap();
+        assert_eq!(changed_of(&h, store, n), 1);
+        let ev: Vec<String> = h.take_events().into_iter().map(|(_, s)| s).collect();
+        assert_eq!(ev.len(), 1, "{ev:?}");
+        // Dropping the observation leaves the listener alone, and the other way round.
+        h.observe(store, "n-items", false).unwrap();
+        h.call_args(store, "append", &[file.clone()]).unwrap();
+        assert!(h.take_changed().is_empty());
+        assert_eq!(h.take_events().len(), 1);
+        h.listen(store, "notify::nItems", false).unwrap();
+        h.observe(store, "n-items", true).unwrap();
+        h.call_args(store, "append", &[file]).unwrap();
+        assert_eq!(changed_of(&h, store, n), 1);
+        assert!(h.take_events().is_empty());
+    });
+}
+
+#[test]
 fn a_reflected_property_of_a_type_without_tables_notifies() {
     on_gtk(|| {
         let h = Harness::new();

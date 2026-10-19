@@ -523,8 +523,9 @@ SVL_M_OBSERVABLE = 64
   captures ids and the host pointer cell only; a `via` target is held weakly. A notify on another
   thread is moved to the main context with an idle. Refused: virtual (svelters-computed) props, menu,
   `virtual-list` and service-kind own members (unsupported); write-only and construct-only props (-1).
-  The detailed-signal fix for `listen('notify::x')` on reflected kinds (REACTIVITY.md §11.1) is not
-  needed by `observe`, which connects through `connect_notify`.
+  `listen('notify::x')` (detailed reflected signals, master 6bc336f1) stays a separate path: an
+  ordinary listener that posts an event; `observe` connects its own handler with the same canonical
+  property name as the detail, for widgets, non-widgets and `via` targets alike.
 - **Qt** (`tools/metadata/qt/templates/backend.cpp.in`): the prop's JS name in camelCase is looked up
   on the object's metaobject; a `Q_PROPERTY` with a NOTIFY signal is connected to a per-(h, prop) relay
   object through `QMetaObject::connect(sender, notifyIndex, relay, slot)` with no receiver metaobject,

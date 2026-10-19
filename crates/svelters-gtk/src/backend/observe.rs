@@ -13,6 +13,13 @@
 //! host pointer cell: never the object, never a JS value, so an observation keeps nothing alive. A
 //! `via` target is held weakly.
 //!
+//! Relation to `listen('notify::<prop>')`: that is an ordinary signal listener (reflected kinds resolve
+//! the detail in `Reflect::find_signal`, generated kinds through the tables) and posts an event with
+//! the `GParamSpec` argument. `observe` is separate on purpose: it works the same for widgets,
+//! non-widgets and forwarded properties, reports through `prop_changed` instead of `post_event`, and
+//! needs a `Send` handler. Both use the property's canonical name as the detail, so the two never
+//! disagree about which property they watch; each has its own connection.
+//!
 //! Threads: `notify` is emitted on the thread that changed the object. On the backend's thread the
 //! host is called synchronously; from any other thread the call is moved to the default main
 //! context with an idle (plans/research/REACTIVITY.md §5.6).
