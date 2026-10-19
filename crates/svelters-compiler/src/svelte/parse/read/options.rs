@@ -49,7 +49,6 @@ fn first_chunk(value: &AttributeValue) -> Option<Chunk<'_>> {
 }
 
 pub fn read_options(node: ElementData) -> PResult<SvelteOptions> {
-    let span = Span { start: node.start, end: node.end };
 
     let mut attributes: Vec<Attribute> = Vec::with_capacity(node.attributes.len());
     for attribute in node.attributes {

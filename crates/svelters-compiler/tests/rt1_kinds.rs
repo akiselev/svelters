@@ -75,6 +75,15 @@ fn attached_kinds_go_into_any_widget_and_next_to_text() {
 }
 
 #[test]
+fn dynamic_component_bind_this_closes_the_component_call() {
+    // found by the stock-Svelte conformance run (binding-property-non-reactive-ignored): the
+    // `$n.component(` call was left open after the bind callback
+    let out = js("gtk", r#"<script>let arr = []; let C = $state();</script><svelte:component this={C} bind:this={arr[0]} />"#);
+    let line = out.lines().find(|l| l.contains("$n.component(")).unwrap();
+    assert_eq!(line.matches('(').count(), line.matches(')').count(), "{line}");
+}
+
+#[test]
 fn gtk_menu_kinds_and_canvas_are_in_the_spec() {
     let out = js(
         "gtk",

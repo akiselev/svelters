@@ -20,7 +20,8 @@ The 2021 prototype is preserved at the `v1-legacy` tag.
 
 | Path | What |
 | --- | --- |
-| `packages/dom`, `packages/testhost`, `fixtures/` | JS: DOM-style shim, Node op-log TestHost, fixture apps |
+| `crates/svelters-compiler` | the Svelte compiler (`svelters-compile`): Rust ports of Svelte's parser and acorn, native lowering from `metadata/semantics` |
+| `packages/native-runtime`, `packages/build`, `packages/testhost`, `fixtures/` | JS: the runtime compiled components target, the app build (`svelteConfig`, `svelters-build`), Node op-log TestHost, fixture apps |
 | `crates/svelters-abi` | backend C ABI (`include/svelters_backend.h`) + Rust mirror |
 | `crates/svelters-host` | QuickJS-NG host core |
 | `crates/svelters-backend-log` | op-recording backend, used as a test oracle |

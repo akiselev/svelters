@@ -7,6 +7,7 @@
   "description": "Runtime for components compiled by the svelters compiler (svelters-compile): host ops, blocks, styling and lists over Svelte's signals",
   "exports": {
     ".": "./src/index.js",
+    "./core": "./src/core/index.js",
     "./lists": "./src/lists.js",
     "./style": { "types": "./src/style.d.ts", "default": "./src/style.js" },
     "./bindings": "./src/bindings.generated.js",
@@ -24,7 +25,7 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "test": "node --import ./test/register.mjs --test test/*.test.mjs && pnpm run check",
+    "test": "node ../../tools/check-svelte-internals.mjs && node --import ./test/register.mjs --test test/*.test.mjs && pnpm run check",
     "check": "svelte-check --workspace check --tsconfig ./tsconfig.json --threshold error --diagnostic-sources js"
   }
 }

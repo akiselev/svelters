@@ -1,5 +1,7 @@
-// Vite config helper for bundles built on @svelters/native-runtime: one self-contained ES module
-// (dist/app.js) like packages/build, plus the aliases that expose Svelte's internal effects and task modules.
+// Vite config and plugin for apps compiled by the svelters compiler (svelters-compile) onto
+// @svelters/native-runtime: one self-contained ES module (dist/app.js; @svelters/build wraps it for an
+// app directory), the aliases that resolve the runtime's modules from any component, and the three
+// Svelte modules the core adapter (src/core/svelte.js) imports that Svelte's exports map hides.
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
@@ -11,16 +13,16 @@ import { extractNative, translateSheet } from '@svelters/style/build';
 import { typesAliases } from '@svelters/types/vite';
 import { formatDiagnostic } from '@svelters/style/runtime';
 
-/** The specifier src/index.js imports for block/branch/destroy_effect/component_root. */
+/** The specifier src/core/svelte.js imports for block/branch/destroy_effect/component_root. */
 export const EFFECTS_SPECIFIER = 'svelte/internal/client/reactivity/effects';
 
-/** Absolute path of this package's runtime entry. */
+/** Absolute path of this package's runtime entry (`$n` in generated code). */
 export const runtimePath = fileURLToPath(new URL('./src/index.js', import.meta.url));
 
-/**
- * The native implementation of `@svelters/lists` (`ListView`): compiled components that import
- * the JS pipeline's list package get the same component API over the same host protocol.
- */
+/** The core generated code imports as `$` (`@svelters/native-runtime/core`, RUNTIME.md phase 1). */
+export const corePath = fileURLToPath(new URL('./src/core/index.js', import.meta.url));
+
+/** The implementation of `@svelters/lists` (`ListView`, virtualized native lists). */
 export const listsPath = fileURLToPath(new URL('./src/lists.js', import.meta.url));
 
 /** The X6 styling runtime (`registerStyles`, `setColorScheme`, `setTokens`): `@svelters/native-runtime/style`. */
@@ -40,12 +42,12 @@ export const taskPath = path.join(path.dirname(effectsPath), '../dom/task.js');
 export const CONTEXT_SPECIFIER = 'svelte/internal/client/context';
 export const contextPath = path.join(path.dirname(effectsPath), '../context.js');
 
-/** Every hidden Svelte module src/ imports: specifier -> absolute path. */
+/** Every hidden Svelte module src/core/svelte.js imports: specifier -> absolute path. */
 export const HIDDEN_MODULES = { [EFFECTS_SPECIFIER]: effectsPath, [TASK_SPECIFIER]: taskPath, [CONTEXT_SPECIFIER]: contextPath };
 
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not
- * minified, with a source map, resolved with the same conditions as packages/build.
+ * minified, with a source map, resolved with the `browser` condition (Svelte's client build).
  */
 export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins = [] } = {}) {
   return {
@@ -61,6 +63,7 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
         { find: /^svelte\/internal\/client\/context(\.js)?$/, replacement: contextPath },
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
+        { find: /^@svelters\/native-runtime\/core$/, replacement: corePath },
         // the styling API (`setColorScheme`, `setTokens`), also for apps that do not depend on it
         { find: /^@svelters\/native-runtime\/style$/, replacement: registerPath },
         // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native

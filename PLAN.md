@@ -2,7 +2,7 @@
 
 Status: adopted 2026-10-16. Supersedes `plans/archive/PLAN-2026-08.md`.
 
-Svelters v2 runs stock Svelte 5 components in embedded QuickJS-NG and renders them with native toolkits: GTK4 first, QtWidgets second, egui later. Application code is ordinary Svelte/TypeScript. Native toolkit APIs remain reachable from JS.
+Svelters v2 runs Svelte 5 components in embedded QuickJS-NG and renders them with native toolkits: GTK4 first, QtWidgets second, AppKit and WinUI in progress, egui later. Application code is ordinary Svelte/TypeScript, compiled by our own Rust compiler. Native toolkit APIs remain reachable from JS.
 
 The 2026-08 plan had a sound architecture but an infrastructure-first order: nothing reached the screen until its tenth phase, and it depended on eight sibling projects. This plan keeps the useful decisions and reorders the work around an on-screen vertical slice built by parallel lanes.
 
@@ -18,12 +18,13 @@ The 2026-08 plan had a sound architecture but an infrastructure-first order: not
 ## Core layers
 
 ```text
-L0  build        Vite + stock Svelte 5 (generate: client, fragments: "tree")
-                 → ESM bundle (browser export condition) + source maps
+L0  build        Vite + svelters-compile (Rust Svelte compiler, native lowering
+                 from per-backend semantic specs) via @svelters/build
+                 → one ESM bundle (dist/app.js) + source maps
                               │
-L1  renderer     @svelters/dom: DOM-style shim (Node/Element/Text/Comment,
-    adapter      document, window) — OR — a custom renderer via the Svelte
-                 PR #18042 fork. Both sit behind the same host-op interface.
+L1  runtime      @svelters/native-runtime: host ops, blocks, styling, lists;
+                 reactivity from its core (`/core`, Svelte 5's signals behind
+                 one adapter file; an own core is RUNTIME phase 2+)
                               │  host ops: create / insert / remove / setProp /
                               │  listen / call / destroy; events come back queued
 L2  host core    Rust (rquickjs/QuickJS-NG): module loading, job pump, timers,
@@ -36,11 +37,10 @@ L4  toolkit      GTK4 / Qt 6 / egui
 
 Widget metadata and codegen run alongside these layers: upstream sources plus annotations produce element-kind tables, the TypeScript typings, the Qt C++ dispatch code, and the GTK method bindings.
 
-- L1 decision (2026-10-16): Svelte PR #18042 (custom renderer API) is our Svelte fork until it merges upstream (`docs/notes/custom-renderer-trial.md`).
-  - It's vendored as a tarball pinned in `vendor/svelte/PIN`.
-  - An agent tracks upstream weekly (`tests/renderer-conformance/WEEKLY.md`).
-  - Handler return values reach the host directly, because the PR doesn't delegate events.
-  - The DOM shim (`@svelters/dom`) stays as a fallback.
+- L0/L1 decision (user, 2026-10-17, `plans/research/CLI.md` decisions 2 and 6; done in RT1, `plans/milestones/RT1-retire-fork-runtime-core.md`): the Rust compiler (`crates/svelters-compiler`, `svelters-compile`) plus `@svelters/native-runtime` is the only frontend, not behind a flag.
+  - The 2026-10-16 L1 (stock Svelte compiling through a vendored fork of Svelte PR #18042 into `@svelters/renderer`, with the `@svelters/dom` shim as fallback and weekly upstream tracking) is retired; history in `docs/notes/custom-renderer-trial.md`, `docs/notes/fork-bindings.md` and `plans/milestones/P1-js-lane.md`.
+  - Svelte is the stock npm `svelte@5.57.2`: its runtime backs the core (`packages/native-runtime/src/core/svelte.js`, the only importer of `svelte/internal/*`, checked by `tools/check-svelte-internals.mjs`) and its compiler only scopes component CSS. Owning the runtime: `plans/research/RUNTIME.md`.
+  - Element facts the compiler needs come from the semantic specs (`metadata/semantics/<toolkit>.json`, `docs/notes/native-compiler/semantic-spec.md`); generated code targets `docs/notes/native-compiler/runtime-contract.md`.
 - L2/L3 boundary: `plans/architecture/backend-abi.md`. The ABI is generic and never grows per native method. Per-method knowledge lives in generated backend code keyed by IDs.
 - Backends are generated from widget metadata from the first prototype. The generators stay Python through development and move to Rust near release (M6), once their shape is final, so that `build.rs` scripts are self-contained. Ingestion scripts stay Python.
 - Qt backend: C++ generated from a project-level **leaf crate's** `build.rs`, compiled with `cc` and linked in. Only that crate's config/manifest changes rebuild it. See `plans/architecture/backend-abi.md#qt-build-leaf-crate`.
@@ -72,7 +72,7 @@ The four P lanes run in parallel once `plans/architecture/backend-abi.md` is agr
 
 These are still valid. The archive has the reasoning.
 
-- Stock Svelte 5 + `@sveltejs/vite-plugin-svelte` + Vite 8. No custom esbuild plugin, no Svelte compiler inside QuickJS, no SWC fork. A Svelte fork is allowed only as a tracked fork of PR #18042 (see L1).
+- Vite 8 bundles; components are compiled by `svelters-compile` through the `@svelters/native-runtime/vite` plugin (superseded 2026-10-17: stock Svelte + `@sveltejs/vite-plugin-svelte` and the PR #18042 fork, see L0/L1). No Svelte compiler inside QuickJS, no SWC/oxc.
 - QuickJS is execution-only: no TS/Svelte compilation and no npm resolution at runtime.
 - pnpm workspace, ESM only. Rust edition 2024, resolver 3, pinned stable toolchain.
 - Source maps in dev/test, mapping QuickJS stacks to `.svelte`/`.ts`.

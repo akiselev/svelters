@@ -207,7 +207,7 @@ GTK (`docs/notes/p3-gtk-lane.md`):
 
 ```sh
 python3 tools/metadata/gtk/ingest.py [--girdir /usr/share/gir-1.0]   # GIR + PyGObject + overrides -> metadata/gtk/<Kind>.json
-python3 tools/metadata/gtk/gen_backend.py                            # -> crates/svelters-gtk/src/generated/*.rs and packages/renderer/types/gtk.d.ts
+python3 tools/metadata/gtk/gen_backend.py                            # -> crates/svelters-gtk/src/generated/*.rs and packages/native-runtime/types/gtk.d.ts
 xvfb-run -a cargo nextest run -p svelters-gtk                        # generated verification tests
 ```
 
@@ -218,7 +218,9 @@ python3 tools/metadata/qt/ingest.py [--docdir /usr/share/doc/qt6] [--typesystem 
 python3 tools/metadata/qt/gen_cpp.py --config tools/metadata/qt/gen.dev.toml --out <dir>   # manual generator run
 ```
 
-In normal builds the Qt generator runs from the leaf crate's `build.rs` (`crates/svelters-qt-build`), which compiles the output with `cc`. The generated tests run as `counter-qt::generated verify_all` under `cargo nextest` (see [Getting started](/guides/getting-started/)). The generator output is `svl_qt_backend.cpp`, `svl_qt_verify.cpp` (one test per annotated fact) and `qt.d.ts`.
+In normal builds the Qt generator runs from the leaf crate's `build.rs` (`crates/svelters-qt-build`), which compiles the output with `cc`. The generated tests run as `counter-qt::generated verify_all` under `cargo nextest` (see [Getting started](/guides/getting-started/)). The generator output is `svl_qt_backend.cpp`, `svl_qt_verify.cpp` (one test per annotated fact) and `qt.d.ts`, which `examples/counter-qt/build.rs` writes to `packages/native-runtime/types/qt.d.ts`.
+
+After changing `bindings:` annotations, `python3 tools/metadata/common/gen_bindings.py` regenerates `packages/native-runtime/types/bindings.d.ts` (the `bind:<name>` types per tag). The compiler reads the same facts from the semantic specs: rerun `python3 tools/metadata/semantics/gen_semantics.py` so `metadata/semantics/<toolkit>.json` follows.
 
 ## The documentation-text pass
 

@@ -617,7 +617,7 @@ pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope:
         }
     }
     let mut w = Writer::new(src);
-    w.write("import * as $ from 'svelte/internal/client';\n");
+    w.write("import * as $ from '@svelters/native-runtime/core';\n");
     edits.emit(&mut w, src, 0, src.len() as u32);
     for h in cx.hoisted.borrow().iter() {
         w.write("\n");

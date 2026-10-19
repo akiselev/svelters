@@ -59,7 +59,7 @@ pub struct Codegen<'a, 's> {
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str) -> (String, String) {
     let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, _p: std::marker::PhantomData };
-    g.w.write("import * as $ from 'svelte/internal/client';\nimport * as $n from '@svelters/native-runtime';\n");
+    g.w.write("import * as $ from '@svelters/native-runtime/core';\nimport * as $n from '@svelters/native-runtime';\n");
     rw.script(&mut g.w, true);
     let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
     for s in hoisted {
@@ -952,7 +952,8 @@ impl Codegen<'_, '_> {
                     self.expr_text(target, Mode::Read);
                 }
             }
-            self.w.write(")");
+            // closes `$.bind_this(`, and for a dynamic component also `$n.component(`
+            self.w.write(if dynamic { "))" } else { ")" });
         }
         self.w.write(";");
         if scoped {

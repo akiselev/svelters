@@ -1,4 +1,4 @@
-// Styling for the renderer: the `class` / `style` / `id` attributes of native elements, component
+// Styling for the native runtime: the `class` / `style` / `id` attributes of native elements, component
 // stylesheets registered by the build (`registerStyles`), `--sv-*` tokens and the colour scheme.
 //
 // Everything reaches the backend through one host op, `host.style(op, handle, text)` (ABI v2.3,
@@ -55,7 +55,7 @@ const state = {
   elements: () => [],
 };
 
-/** The renderer tells this module how to enumerate live elements (for late sheet registration). */
+/** The runtime (index.js) tells this module how to enumerate live elements (for late sheet registration). */
 export function bindElements(fn) {
   state.elements = fn;
 }
@@ -278,7 +278,7 @@ export function applyStyle(el) {
   if (state.rules.length || sc.inlineSetters?.length || sc.setters) applySetters(el, sc, list, name);
 }
 
-/** The renderer's hooks into the element (index.js): explicit props and child attributes. */
+/** The runtime's hooks into the element (index.js): explicit props and child attributes. */
 let hooks = null;
 export function bindSetterHooks(h) {
   hooks = h;

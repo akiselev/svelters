@@ -858,6 +858,13 @@ impl<'a> Lower<'a, '_, '_> {
             self.diags.error("bind_and_prop", span, format!("`{p}` is both bound and set explicitly"));
         }
 
+        // Bindings write their value after the element's other attributes (as Svelte's own bindings,
+        // and the retired renderer, did): a bound value must not be written before the props that
+        // constrain it (`<scale bind:value lower upper>`: GTK clamps to the adjustment's range).
+        let (binds, rest): (Vec<_>, Vec<_>) = ops.into_iter().partition(|o| matches!(o, Op::Bind { .. }));
+        ops = rest;
+        ops.extend(binds);
+
         // the X6 styling: classes (with the CSS scope), inline style
         if native_style {
             if has_class || self.css_scope.is_some() {

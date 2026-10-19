@@ -15,6 +15,8 @@ export interface NativeElement {
    * borrowed node per native object. Nodes are accepted as arguments.
    */
   call(method: string, ...args: unknown[]): unknown;
+  /** Write a native property, e.g. `doc.setProp('undo-redo-enabled', true)`. Throws StaleHandleError when dead. */
+  setProp(name: string, value: unknown): void;
   /** Read a native property, e.g. `entry.getProp('text')`. Throws StaleHandleError when dead. Object results are nodes, as for `call`. */
   getProp(name: string): unknown;
 }

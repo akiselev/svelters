@@ -168,10 +168,9 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
 - **Text-content `{#if}`**: only `{#if}` (no `{#each}`/`{#key}`) folds into a text prop; branch
   edges are trimmed.
 - **`<ListView>` from `@svelters/lists`** (runtime-contract.md "Virtualized lists") is the
-  native runtime's own implementation (`src/lists.js`), not the package's `ListView.svelte`
-  compiled (that one needs `@svelters/renderer` and a spread on a native element). Same props,
-  exports and op log as the JS pipeline except the destroy order inside a teardown (content, then
-  outlet; the JS pipeline destroys the outlet first). Each row is a separate root mounted into its
+  native runtime's own implementation (`src/lists.js`; since RT1 the package only re-exports it).
+  Same props, exports and op log as the retired JS pipeline's `ListView.svelte` except the destroy
+  order inside a teardown (content, then outlet; the JS pipeline destroyed the outlet first). Each row is a separate root mounted into its
   outlet, with the list's contexts copied in (Svelte's `mount(RowHost, { context })` in the JS
   pipeline). Rest props reach the native `virtuallist` unchecked (it is not in the specs).
 - `transform.rs` hook: `BindingKind::Template` reads as `$.get(x)` (read-only), `BindingKind::Snippet`
@@ -182,8 +181,8 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
 - **Spreads with static keys** are expanded at compile time (`{...{ 'onnotify::x': f }}`, a
   top-level `const` object literal); keys added to such an object at runtime are not seen (Svelte
   would apply them). Shadowing of the const's name by a template binding is not detected.
-- **`listen()` import**: `@svelters/renderer` imports are rewritten to `@svelters/native-runtime`,
-  which provides `listen`, `NativeEvent`, `StaleHandleError`, `LISTEN_*` only.
+- **`listen()` import**: from `@svelters/native-runtime` (RT1: `@svelters/renderer` is gone),
+  which provides `listen`, `NativeEvent`, `StaleHandleError`, `LISTEN_*`.
 - **Explicit default slot names** (`slot="center"` naming the default slot) are passed by name to
   `insert`, as the renderer does (they used to be normalised to the default slot).
 - **`track` is passive** (renderer parity): a one-way `text={x}` with no listener no longer makes the
