@@ -31,6 +31,8 @@ export interface QtElementDescriptors {
       hovered: () => void;
       changed: () => void;
       "checkable-changed": (checkable: boolean) => void;
+      "enabled-changed": (enabled: boolean) => void;
+      "visible-changed": () => void;
     };
     methods: {
       trigger(): void;
@@ -279,7 +281,9 @@ export interface QtElementDescriptors {
       "current-index-changed": (index: number) => void;
       "current-text-changed": (text: string) => void;
       activated: (index: number) => void;
+      "edit-text-changed": (text: string) => void;
       highlighted: (index: number) => void;
+      "text-activated": (text: string) => void;
       "text-highlighted": (text: string) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -771,6 +775,10 @@ export interface QtElementDescriptors {
     };
     events: {
       accepted: () => void;
+      "current-changed": (path: string) => void;
+      "directory-entered": (directory: string) => void;
+      "file-selected": (file: string) => void;
+      "filter-selected": (filter: string) => void;
       rejected: () => void;
       finished: (result: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
@@ -1036,6 +1044,10 @@ export interface QtElementDescriptors {
     events: {
       "text-value-changed": (text: string) => void;
       "int-value-changed": (value: number) => void;
+      "double-value-changed": (value: number) => void;
+      "double-value-selected": (value: number) => void;
+      "int-value-selected": (value: number) => void;
+      "text-value-selected": (text: string) => void;
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
@@ -1244,6 +1256,7 @@ export interface QtElementDescriptors {
       "text-edited": (text: string) => void;
       "selection-changed": () => void;
       "cursor-position-changed": (oldPos: number, newPos: number) => void;
+      "input-rejected": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -1446,6 +1459,8 @@ export interface QtElementDescriptors {
       "accessible-name"?: string;
     };
     events: {
+      "about-to-hide": () => void;
+      "about-to-show": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -1599,6 +1614,10 @@ export interface QtElementDescriptors {
       "selection-changed": () => void;
       "cursor-position-changed": () => void;
       "block-count-changed": (newBlockCount: number) => void;
+      "copy-available": (yes: boolean) => void;
+      "modification-changed": (changed: boolean) => void;
+      "redo-available": (available: boolean) => void;
+      "undo-available": (available: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2099,6 +2118,8 @@ export interface QtElementDescriptors {
     };
     events: {
       "current-changed": (index: number) => void;
+      "widget-added": (index: number) => void;
+      "widget-removed": (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2246,6 +2267,7 @@ export interface QtElementDescriptors {
       "current-changed": (index: number) => void;
       "tab-close-requested": (index: number) => void;
       "tab-bar-clicked": (index: number) => void;
+      "tab-bar-double-clicked": (index: number) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2293,6 +2315,7 @@ export interface QtElementDescriptors {
     events: {
       "history-changed": () => void;
       "backward-available": (available: boolean) => void;
+      "forward-available": (available: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2338,6 +2361,10 @@ export interface QtElementDescriptors {
       "contents-changed": () => void;
       "block-count-changed": (newBlockCount: number) => void;
       "modification-changed": (changed: boolean) => void;
+      "contents-change": (position: number, charsRemoved: number, charsAdded: number) => void;
+      "document-layout-changed": () => void;
+      "redo-available": (available: boolean) => void;
+      "undo-available": (available: boolean) => void;
       "undo-command-added": () => void;
     };
     methods: {
@@ -2392,6 +2419,9 @@ export interface QtElementDescriptors {
       "text-changed": () => void;
       "selection-changed": () => void;
       "cursor-position-changed": () => void;
+      "copy-available": (yes: boolean) => void;
+      "redo-available": (available: boolean) => void;
+      "undo-available": (available: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2495,6 +2525,8 @@ export interface QtElementDescriptors {
       "movable-changed": (movable: boolean) => void;
       "orientation-changed": (orientation: "horizontal" | "vertical") => void;
       "tool-button-style-changed": (toolButtonStyle: "follow-style" | "icon-only" | "text-beside-icon" | "text-only" | "text-under-icon") => void;
+      "top-level-changed": (topLevel: boolean) => void;
+      "visibility-changed": (visible: boolean) => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;
@@ -2636,6 +2668,10 @@ export interface QtElementDescriptors {
     };
     events: {
       "current-id-changed": (id: number) => void;
+      "custom-button-clicked": (which: number) => void;
+      "help-requested": () => void;
+      "page-added": (id: number) => void;
+      "page-removed": (id: number) => void;
       accepted: () => void;
       rejected: () => void;
       finished: (result: number) => void;
@@ -2682,6 +2718,7 @@ export interface QtElementDescriptors {
       "accessible-name"?: string;
     };
     events: {
+      "complete-changed": () => void;
       "key-release": (key: number, text: string, modifiers: number) => void;
       "mouse-press": (position: Point, button: number, buttons: number, modifiers: number) => void;
       "mouse-release": (position: Point, button: number, buttons: number, modifiers: number) => void;

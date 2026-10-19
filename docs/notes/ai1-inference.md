@@ -34,3 +34,12 @@ Plan: `plans/research/ANNOTATION-AUTOMATION.md` (section 11 has the decisions). 
 - 2026-10-17: prototype moved, deterministic probe, infer/ingest/gen/ledger/coverage code written; first inference
   run over 57 kinds gave 291 props, 472 methods, 45 signals, 228 generic bindings, 3 slots (concrete kinds only,
   before abstract subjects and the synthetic-signal probe).
+
+## Slice 2 (Qt): design as built
+
+See `tools/metadata/qt/README.md`. Probe `metadata/probe/qt/6.11.0.json` (PySide6 6.11.0, 73 classes, 4 crashing
+ops recorded: QColumnView/QDockWidget property writes SEGV), `infer.py` + `metadata/rules/qt.yaml` (accept-by-pattern),
+`metadata/inferred/qt/` (43 classes), `layers.py` (merge), table-driven tests in `verify.cpp.in`, ledger parking for Qt.
+Net new verified facts after the manual layer wins: props 31, methods 24, signals 47 (37 `verified: delivery`),
+bindings 13; 0 parked. Not done: abstract-base subjects (inherit-level inference), `@unverified` in qt.d.ts,
+pure getters and actions (review rows only), enum-argument delivery-only signals.
