@@ -5,6 +5,16 @@ item 2: reactive getters, the per-(object, prop) subscription contract in the AB
 in the metadata, a compile-time opt-out, and how the Rust compiler stays generic over GUI platforms
 and JS runtimes.
 
+**Status 2026-10-19: mechanics only, semantics pending §12.** The ABI v2.6 surface of §5.1 is
+implemented: nullable backend `observe(h, prop, on)` (with `SVL_OBSERVE_UNSUPPORTED = -2` for a prop
+without a mechanism), nullable host `prop_changed(h, prop)`, `SVL_M_OBSERVABLE`. GTK observes through
+`notify::<prop>` on any GObject handle, Qt through the NOTIFY signal (no QBindable, no event filter);
+AppKit and WinUI leave the member `NULL`. The host refcounts per (h, prop) and hands each notification
+to `globalThis.__svelters_prop_changed(h, prop)` through the ordinary event queue: no dirty set, no
+read-back or compare, no batch, no `__svelters_changed`, no set-path read-back, no sync flush. Nothing
+in `@svelters/types` or the runtime subscribes yet. Every §12 decision is still open. Details:
+`plans/architecture/backend-abi.md` "ABI v2.6 additive".
+
 - **Prototypes and probes** (`docs/notes/scripts/reactivity/`):
 
   | File | Covers |

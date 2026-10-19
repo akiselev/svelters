@@ -119,7 +119,7 @@ void h_destroyed(void *, svl_handle h, uint32_t reason) {
 }
 int frames = 0;
 void h_frame(void *) { frames++; }
-const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed, nullptr, nullptr, h_frame};
+const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed, nullptr, nullptr, h_frame, /* prop_changed */ nullptr};
 
 const svl_backend *B = nullptr;
 

@@ -108,8 +108,12 @@ interface SveltersHost {
   construct(kind: string, props?: Record<string, unknown>): Handle;
   callStatic(kind: string, method: string, args: unknown[]): unknown;
   typeChain(h: Handle): string[];
+  // ABI v2.6: refcounted per (h, prop); answers whether (h, prop) is observed afterwards
+  // (false for `on`: the backend has no change notification for this prop)
+  observe(h: Handle, prop: string, on: boolean): boolean;
 }
 // events: globalThis.__svelters_dispatch(h, signal, args) is invoked at checkpoints
+// ABI v2.6: globalThis.__svelters_prop_changed(h, prop) for an observed prop that may have changed
 ```
 
 The JS host caches name→ID resolution per kind. The Node TestHost implements this interface in JS and records an op log. The QuickJS host implements it natively. A given fixture must produce the same op log in both.
@@ -166,9 +170,11 @@ result #<h> <json>|busy|error                # what call_sync returned, logged a
 gone #<h> <reason>                           # the native object died (ABI v2), logged when it happens
 construct #<h> <Kind> <json-props-object>    # ABI v2.5: a new instance with construct-time properties
 static <Kind>.<method> <json-args-array> [#<h>]  # ABI v2.5: a static call; new/new_*/from_* answer a fresh handle #h
+observe #<h> <prop> on|off                   # ABI v2.6: the backend starts/stops watching a prop (transitions only)
+changed #<h> <prop>                          # ABI v2.6: an injected "prop may have changed" notification (no value)
 ```
 
-Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}` and `{"checkpoint": true}` steps.
+Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}`, `{"changed": [<handle-number>, <prop>]}` (ABI v2.6) and `{"checkpoint": true}` steps.
 
 A `sync` step calls `__svelters_dispatch_sync(h, signal, args)` (Node) or `host.call_sync` (log backend) directly and does not checkpoint. The `result` line is the handler result as JSON (`null` = no decision, `true` = stop) or `busy`/`error` when the host refused. Ops the handler issues appear between the two lines; microtasks it queued run at the next `checkpoint` step. Toolkit replays skip fixtures with `sync` lines, because a result changes what the toolkit does next.
 
@@ -467,6 +473,68 @@ Everything here is additive within v3; a backend that implements none of it keep
 - **`SVL_T_TYPE = 11`:** a `STR` slot (or value) carrying a native type name (`Gio.ListStore`, or the GType name), for GType-valued properties and parameters (`Gio.ListStore:item-type`, `g_list_store_new`). JS passes the generated class; the module turns it into its `native` name.
 - **Host ops** `host.construct(kind, props)`, `host.callStatic(kind, method, args)` and `host.typeChain(h)`. The op log has two new lines, `construct #h Kind {json}` and `static Kind.method [json]`; a constructor-shaped method name (`new`, `new_*`, `from_*`) answers a fresh handle and the line ends with ` #h`. The Node TestHost and the log backend both implement them.
 - **GTK invoker** (`crates/svelters-gtk/src/gi.rs`) now loads the Gtk, Gdk, Gsk, Gio, GLib, GObject, Pango and Graphene typelibs and dispatches on the receiver's GType (objects, boxed values, interfaces the runtime class implements). It marshals out and inout parameters, caller-allocated out structs, `GList` / `GSList` and C arrays of strings, objects, boxed values and numbers (length arguments hidden), `GType`, `gunichar`, statics and constructors. Still refused with a clear error: callbacks and async pairs (N1), `GVariant`, hash tables, `GArray` / `GPtrArray`, fundamental classes, unions, structs passed by value.
+
+### ABI v2.6 additive (property observation: mechanics only)
+
+Status: the ABI surface and its plumbing are in; the semantics (coalescing, values carried in a
+batch, compare-with-last, echo strategy, default reactivity of getters, `|nonreactive`, polling) are
+the open decisions of `plans/research/REACTIVITY.md` §12 and are not implemented. Everything here is
+additive within v3: both new members are nullable.
+
+```c
+/* backend, after call_static. NULL = no property can be observed. */
+int (*observe)(void *self, svl_handle h, svl_id prop, bool on);
+/* host, after frame. NULL = a host that never observes. UI thread only. */
+void (*prop_changed)(void *self, svl_handle h, svl_id prop);
+/* member flag on SVL_PROP descriptors */
+SVL_M_OBSERVABLE = 64
+/* observe's answer for a prop with no change notification on this backend (other failures: -1) */
+#define SVL_OBSERVE_UNSUPPORTED (-2)
+```
+
+- **`observe(h, prop, on)`** starts or stops watching one property natively. Calls nest: the backend
+  counts per (h, prop), connects on the first `on` and disconnects on the matching last `off`; `off`
+  for an unobserved prop or a dead handle is `0`. `destroy(h)` and the native death of `h` drop every
+  observation of it. An observation never keeps the object alive and never holds a JS value.
+  `SVL_OBSERVE_UNSUPPORTED` means the prop is valid but has no change notification here; `-1` is a
+  dead handle or an unknown, write-only or constant (construct-only, `CONSTANT`) prop.
+- **`prop_changed(h, prop)`** says "this may have changed": no value, and not a promise that it did
+  (GTK re-notifies identical sets). A backend may report props nobody observes; the host ignores them.
+  UI thread only: a backend hops there first.
+- **`SVL_M_OBSERVABLE`** on a prop descriptor says `observe` can watch it. GTK sets it; Qt does not
+  yet (the generator does not carry NOTIFY facts; `observe` answers per instance).
+- **Host** (`crates/svelters-host`): `host.observe(h, prop, on)` refcounts per (h, prop) and calls the
+  backend's `observe` on the 0→1 and 1→0 transitions only, so several JS layers share one native
+  connection. It answers `true` while observed and `false` when the backend has no mechanism (or no
+  member). `prop_changed` queues an event in the ordinary FIFO, behind the signals posted before it,
+  and wakes the backend; at the checkpoint the host calls
+  `globalThis.__svelters_prop_changed(h, prop)` if the runtime installed it, once per notification,
+  for pairs still observed when the queue is drained. No coalescing, no read-back, no batch: that is
+  the §12 design. `destroy` and `on_destroyed` forget a handle's observations.
+- **Op log:** `observe #h prop on|off` (the transitions) and `changed #h prop` (a scripted
+  notification); scripts take `{"changed": [h, prop]}`. The Node TestHost refcounts like the host
+  and calls `__svelters_prop_changed` for observed pairs; the log backend logs every `observe` call
+  it receives and delivers `changed` steps through `host.prop_changed` plus a checkpoint.
+  `tools/oplog-compare.mjs` keeps the observed props per node in the compared state and treats
+  `changed` as a boundary.
+- **GTK** (`crates/svelters-gtk/src/backend/observe.rs`): `notify::<prop>` on any GObject handle,
+  widgets (generated ids) and non-widgets (reflected ids) alike, and on the object a `via` property is
+  forwarded to (GtkRange `value` on its adjustment, as it was when observation started). The handler
+  captures ids and the host pointer cell only; a `via` target is held weakly. A notify on another
+  thread is moved to the main context with an idle. Refused: virtual (svelters-computed) props, menu,
+  `virtual-list` and service-kind own members (unsupported); write-only and construct-only props (-1).
+  The detailed-signal fix for `listen('notify::x')` on reflected kinds (REACTIVITY.md §11.1) is not
+  needed by `observe`, which connects through `connect_notify`.
+- **Qt** (`tools/metadata/qt/templates/backend.cpp.in`): the prop's JS name in camelCase is looked up
+  on the object's metaobject; a `Q_PROPERTY` with a NOTIFY signal is connected to a per-(h, prop) relay
+  object through `QMetaObject::connect(sender, notifyIndex, relay, slot)` with no receiver metaobject,
+  so Qt calls the relay's `qt_metacall` (the QSignalSpy technique: no moc). A coarse NOTIFY
+  (`QAction::changed`) reports every observed prop that shares it. No NOTIFY, or not a `Q_PROPERTY`
+  (most `QWidget` props, `QLabel:text`, QBindable-only props): `SVL_OBSERVE_UNSUPPORTED`. `CONSTANT`
+  and write-only: -1. Relays are deleted with the handle (`drop_listeners`).
+- **AppKit, WinUI:** the member is `NULL` (trait default). WinUI's `RegisterPropertyChangedCallback`
+  for dependency properties is the natural mechanism; AppKit KVO needs the observer removed before
+  the observed object deallocates (REACTIVITY.md §5.5, decision 10), so it waits for that design.
 
 ## ABI v3: value model (M3)
 

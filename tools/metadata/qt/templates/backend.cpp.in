@@ -11,6 +11,8 @@
 #include <QtCore/QDebug>
 #include <QtCore/QEvent>
 #include <QtCore/QMetaObject>
+#include <QtCore/QMetaProperty>
+#include <QtCore/QThread>
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
 #include <QtCore/QSignalBlocker>
@@ -99,6 +101,7 @@
 
 #include <atomic>
 #include <chrono>
+#include <cctype>
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
@@ -167,6 +170,8 @@ struct Core {
   std::unordered_map<QObject *, svl_handle> by_obj;
   std::unordered_map<svl_handle, QVariant> boxed;    // BOXED values (implicitly shared Qt value classes)
   std::map<ListenKey, QMetaObject::Connection> listeners;
+  // ABI v2.6 observations: one PropRelay (see "property observation") per (handle, prop), owned here.
+  std::map<std::pair<svl_handle, svl_id>, QObject *> observers;
   // `after` connections: how to make them again, so they can be moved behind a later plain connection.
   std::map<ListenKey, std::function<QMetaObject::Connection()>> after_make;
   bool capture_filter_on = false;
@@ -245,6 +250,11 @@ Entry *find(svl_handle h) {
 
 void drop_listeners(svl_handle h) {
   g.listeners.erase(g.listeners.lower_bound({h, 0, 0}), g.listeners.lower_bound({h + 1, 0, 0}));
+  // Deleting a relay disconnects its NOTIFY connection (ABI v2.6 observations end with the handle).
+  for (auto it = g.observers.lower_bound({h, 0}); it != g.observers.end() && it->first.first == h;) {
+    delete it->second;
+    it = g.observers.erase(it);
+  }
   g.after_make.erase(g.after_make.lower_bound({h, 0, 0}), g.after_make.lower_bound({h + 1, 0, 0}));
 }
 
@@ -713,6 +723,101 @@ T from_int(int v) {
 //@@CONTEXT@@
 
 //@@GETTERS@@
+
+// ---- property observation (ABI v2.6) --------------------------------------------------------
+//
+// Mechanics only (plans/research/REACTIVITY.md §12 decides the semantics): while (handle, prop) is
+// observed, every emission of the property's NOTIFY signal calls host->prop_changed(h, prop), with no
+// value. A property without a NOTIFY signal (most QWidget properties, and every QBindable-only one) is
+// refused with SVL_OBSERVE_UNSUPPORTED. The Qt property is found by the JS name in camelCase
+// (`tool-tip` -> toolTip) on the object's own metaobject.
+//
+// One relay object per observation: QMetaObject::connect(sender, notifyIndex, relay, slot) with no
+// receiver metaobject makes Qt call relay->qt_metacall (the QSignalSpy technique), so no moc is needed.
+// The relay holds ids only, never the object; deleting it (last `off`, destroy, native death through
+// drop_listeners) disconnects it, and the sender's death disconnects it too.
+
+void notify_prop(svl_handle h, svl_id prop) {
+  QCoreApplication *app = QCoreApplication::instance();
+  if (app && QThread::currentThread() != app->thread()) {
+    QMetaObject::invokeMethod(app, [h, prop] { notify_prop(h, prop); }, Qt::QueuedConnection);
+    return;
+  }
+  if (g.host && g.host->prop_changed) g.host->prop_changed(g.host->self, h, prop);
+}
+
+struct PropRelay : QObject {
+  svl_handle h;
+  svl_id prop;
+  int count = 1;  // observe calls nest per (handle, prop)
+  PropRelay(svl_handle h_, svl_id p_) : h(h_), prop(p_) {}
+  int qt_metacall(QMetaObject::Call c, int id, void **a) override {
+    id = QObject::qt_metacall(c, id, a);
+    if (id < 0 || c != QMetaObject::InvokeMetaMethod) return id;
+    if (id == 0) notify_prop(h, prop);
+    return id - 1;
+  }
+};
+
+std::string camel_of(const char *name) {
+  std::string out;
+  bool up = false;
+  for (const char *c = name; *c; ++c) {
+    if (*c == '-' || *c == '_') {
+      up = true;
+    } else {
+      out.push_back(up ? static_cast<char>(std::toupper(static_cast<unsigned char>(*c))) : *c);
+      up = false;
+    }
+  }
+  return out;
+}
+
+int unsupported(const std::string &m) {
+  g.err = m;
+  return SVL_OBSERVE_UNSUPPORTED;
+}
+
+int b_observe(void *, svl_handle h, svl_id prop, bool on) {
+  TimeScope timing_;
+  const auto key = std::make_pair(h, prop);
+  auto it = g.observers.find(key);
+  if (!on) {
+    if (it == g.observers.end()) return 0;  // not observed (or the handle is gone): nothing to do
+    auto *r = static_cast<PropRelay *>(it->second);
+    if (--r->count > 0) return 0;
+    g.observers.erase(it);
+    delete r;
+    return 0;
+  }
+  Entry *e = find(h);
+  if (!e) return fail("observe: stale or unknown handle");
+  if (it != g.observers.end()) {
+    ++static_cast<PropRelay *>(it->second)->count;
+    return 0;
+  }
+  if (e->kind == kVListKind || e->kind == kCanvasKind) return unsupported("observe: virtual-list and canvas properties cannot be observed");
+  const svl_member_desc *d = gen_describe(SVL_PROP, e->kind, prop);
+  if (!d || !d->name) return fail("observe: unknown property id " + std::to_string(prop) + " for this kind");
+  QObject *o = e->obj.data();
+  const QMetaObject *mo = o->metaObject();
+  const std::string qname = camel_of(d->name);
+  const int pi = mo->indexOfProperty(qname.c_str());
+  if (pi < 0)
+    return unsupported("observe: " + std::string(d->name) + " is not a Q_PROPERTY of " + mo->className() + ", so it has no NOTIFY signal");
+  const QMetaProperty mp = mo->property(pi);
+  if (!mp.isReadable()) return fail("observe: " + qname + " is write-only");
+  if (mp.isConstant()) return fail("observe: " + qname + " is CONSTANT: it never changes");
+  if (!mp.hasNotifySignal()) return unsupported("observe: " + std::string(mo->className()) + "::" + qname + " has no NOTIFY signal");
+  auto *r = new PropRelay(h, prop);
+  static const int slot = QObject::staticMetaObject.methodCount();
+  if (!QMetaObject::connect(o, mp.notifySignalIndex(), r, slot, Qt::DirectConnection, nullptr)) {
+    delete r;
+    return fail("observe: connecting " + qname + "'s NOTIFY signal failed");
+  }
+  g.observers[key] = r;
+  return 0;
+}
 
 // ---- vtable ----------------------------------------------------------------------------------
 
@@ -1246,7 +1351,8 @@ const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert
                               b_set_prop, b_get_prop, b_call, b_listen, b_handle_info, b_run, b_wake, b_schedule_wake, b_quit,
                               b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel, b_request_frame,
                               b_set_child_attr, b_get_child_attr, b_listen_ex, b_style,
-                              /* ABI v2.5 construct, call_static: not implemented by Qt yet (N2) */ nullptr, nullptr};
+                              /* ABI v2.5 construct, call_static: not implemented by Qt yet (N2) */ nullptr, nullptr,
+                              /* ABI v2.6 */ b_observe};
 
 }  // namespace
 
