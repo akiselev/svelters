@@ -16,7 +16,7 @@ export class MenuLinkIter extends GObject_Object {
 
   getNext() {
     const __res = call(this, 'get_next', []);
-    return { ret: __res.ret, outLink: __res.outLink, value: wrapObject(MenuModel, __res.value) };
+    return { ret: __res.ret, outLink: __res.out_link, value: wrapObject(MenuModel, __res.value) };
   }
 
   getValue() {

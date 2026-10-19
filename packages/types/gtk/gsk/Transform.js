@@ -19,7 +19,7 @@ export class Transform extends NativeValue {
 
   static parse(string) {
     const __res = callStatic('Gsk.Transform', 'parse', [string]);
-    return { ret: __res.ret, outTransform: wrapValue(Transform, __res.outTransform) };
+    return { ret: __res.ret, outTransform: wrapValue(Transform, __res.out_transform) };
   }
 
   equal(second = null) {
@@ -72,22 +72,22 @@ export class Transform extends NativeValue {
 
   to2d() {
     const __res = call(this, 'to_2d', []);
-    return { outXx: __res.outXx, outYx: __res.outYx, outXy: __res.outXy, outYy: __res.outYy, outDx: __res.outDx, outDy: __res.outDy };
+    return { outXx: __res.out_xx, outYx: __res.out_yx, outXy: __res.out_xy, outYy: __res.out_yy, outDx: __res.out_dx, outDy: __res.out_dy };
   }
 
   to2dComponents() {
     const __res = call(this, 'to_2d_components', []);
-    return { outSkewX: __res.outSkewX, outSkewY: __res.outSkewY, outScaleX: __res.outScaleX, outScaleY: __res.outScaleY, outAngle: __res.outAngle, outDx: __res.outDx, outDy: __res.outDy };
+    return { outSkewX: __res.out_skew_x, outSkewY: __res.out_skew_y, outScaleX: __res.out_scale_x, outScaleY: __res.out_scale_y, outAngle: __res.out_angle, outDx: __res.out_dx, outDy: __res.out_dy };
   }
 
   toAffine() {
     const __res = call(this, 'to_affine', []);
-    return { outScaleX: __res.outScaleX, outScaleY: __res.outScaleY, outDx: __res.outDx, outDy: __res.outDy };
+    return { outScaleX: __res.out_scale_x, outScaleY: __res.out_scale_y, outDx: __res.out_dx, outDy: __res.out_dy };
   }
 
   toMatrix() {
     const __res = call(this, 'to_matrix', []);
-    return { outMatrix: wrapValue(Matrix, __res.outMatrix) };
+    return { outMatrix: wrapValue(Matrix, __res.out_matrix) };
   }
 
   toString() {
@@ -96,7 +96,7 @@ export class Transform extends NativeValue {
 
   toTranslate() {
     const __res = call(this, 'to_translate', []);
-    return { outDx: __res.outDx, outDy: __res.outDy };
+    return { outDx: __res.out_dx, outDy: __res.out_dy };
   }
 
   transform(other = null) {

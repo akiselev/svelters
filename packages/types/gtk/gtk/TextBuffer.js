@@ -28,6 +28,10 @@ export class TextBuffer extends GObject_Object {
     return wrapObject(TextBuffer, callStatic('Gtk.TextBuffer', 'new', [table]));
   }
 
+  addCommitNotify(flags, commitNotify) {
+    return call(this, 'add_commit_notify', [flags, (typeof commitNotify === 'function' ? (a0, a1, a2, a3) => commitNotify(wrapObject(TextBuffer, a0), a1, a2, a3) : commitNotify)]);
+  }
+
   addMark(mark, where) {
     call(this, 'add_mark', [mark, where]);
   }

@@ -26,6 +26,10 @@ export class PrintSettings extends GObject_Object {
     return wrapObject(PrintSettings, callStatic('Gtk.PrintSettings', 'new_from_key_file', [keyFile, groupName]));
   }
 
+  foreach(func) {
+    call(this, 'foreach', [func]);
+  }
+
   get(key) {
     return call(this, 'get', [key]);
   }

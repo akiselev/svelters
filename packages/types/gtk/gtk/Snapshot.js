@@ -134,6 +134,10 @@ export class Snapshot extends Gdk_Snapshot {
     call(this, 'scale_3d', [factorX, factorY, factorZ]);
   }
 
+  setSnap(snap) {
+    call(this, 'set_snap', [snap]);
+  }
+
   toPaintable(size = null) {
     return wrapObject(Paintable, call(this, 'to_paintable', [size]));
   }

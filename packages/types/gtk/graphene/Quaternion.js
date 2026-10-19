@@ -60,7 +60,7 @@ export class Quaternion extends NativeValue {
 
   toAngles() {
     const __res = call(this, 'to_angles', []);
-    return { degX: __res.degX, degY: __res.degY, degZ: __res.degZ };
+    return { degX: __res.deg_x, degY: __res.deg_y, degZ: __res.deg_z };
   }
 
   toMatrix() {
@@ -70,7 +70,7 @@ export class Quaternion extends NativeValue {
 
   toRadians() {
     const __res = call(this, 'to_radians', []);
-    return { radX: __res.radX, radY: __res.radY, radZ: __res.radZ };
+    return { radX: __res.rad_x, radY: __res.rad_y, radZ: __res.rad_z };
   }
 
   toVec4() {

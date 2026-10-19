@@ -48,17 +48,17 @@ export class Ray extends NativeValue {
 
   intersectBox(b) {
     const __res = call(this, 'intersect_box', [b]);
-    return { ret: __res.ret, tOut: __res.tOut };
+    return { ret: __res.ret, tOut: __res.t_out };
   }
 
   intersectSphere(s) {
     const __res = call(this, 'intersect_sphere', [s]);
-    return { ret: __res.ret, tOut: __res.tOut };
+    return { ret: __res.ret, tOut: __res.t_out };
   }
 
   intersectTriangle(t) {
     const __res = call(this, 'intersect_triangle', [t]);
-    return { ret: __res.ret, tOut: __res.tOut };
+    return { ret: __res.ret, tOut: __res.t_out };
   }
 
   intersectsBox(b) {

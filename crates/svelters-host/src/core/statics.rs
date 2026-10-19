@@ -92,7 +92,7 @@ impl Core {
         args: &<E as JsReader>::V,
     ) -> Result<<E as JsReader>::V, OpError>
     where
-        E: JsReader + JsWriter<V = <E as JsReader>::V>,
+        E: JsReader + JsWriter<V = <E as JsReader>::V> + crate::convert::JsPromises,
     {
         self.timed(|| {
             if !self.backend.has_call_static() {
@@ -107,11 +107,11 @@ impl Core {
                 (None, Name::Id(i)) => format!("#{i}"),
             };
             let kname = self.kind_name(k);
-            if desc.as_ref().is_some_and(|d| d.flags & SVL_M_ASYNC != 0) {
-                return Err(format!("<{kname}>.{mname}: asynchronous static methods are not supported yet").into());
-            }
             if desc.as_ref().is_some_and(|d| d.flags & SVL_M_STATIC == 0) {
                 return Err(format!("<{kname}>.{mname} is an instance method; call it on an object").into());
+            }
+            if let Some(d) = desc.as_ref().filter(|d| d.flags & SVL_M_ASYNC != 0) {
+                return self.op_call_async(e, 0, m, k, d, &mname, args, true);
             }
             let given = JsReader::len(e, args)?;
             let mut ar = Arena::new();

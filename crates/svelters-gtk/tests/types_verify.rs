@@ -889,6 +889,11 @@ fn pango_fontdescription_methods() {
             eprintln!("SKIP get_variations: not in the running library (since 1.42)");
         }
         h.call_args(s, "get_weight", &[]).unwrap_or_else(|e| panic!("get_weight: {e}"));
+        if h.resolve_method(s, "get_width") != 0 {
+            h.call_args(s, "get_width", &[]).unwrap_or_else(|e| panic!("get_width: {e}"));
+        } else {
+            eprintln!("SKIP get_width: not in the running library (since 1.58)");
+        }
         h.call_args(s, "hash", &[]).unwrap_or_else(|e| panic!("hash: {e}"));
         h.call_args(s, "to_filename", &[]).unwrap_or_else(|e| panic!("to_filename: {e}"));
         h.call_args(s, "to_string", &[]).unwrap_or_else(|e| panic!("to_string: {e}"));

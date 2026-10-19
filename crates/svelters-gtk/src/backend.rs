@@ -116,8 +116,8 @@ pub(crate) struct Inner {
     frame_timer: RefCell<Option<glib::SourceId>>,
     /// Frames delivered by the frame clock (the rest came from the fallback timer).
     frames_by_clock: Cell<u32>,
-    /// State of the `gio-file` services (see `extras.rs`).
-    files: RefCell<HashMap<u64, extras::FileState>>,
+    /// Folded async calls in flight, by completion callback id (see `extras.rs`, `closures.rs`).
+    pending: RefCell<HashMap<u64, extras::Pending>>,
     /// `virtual-list` widgets (see `vlist.rs`).
     vlists: RefCell<HashMap<u64, Rc<vlist::VList>>>,
     /// Menu and action nodes (see `menus.rs`).
@@ -394,7 +394,7 @@ impl Inner {
             return self.create_menu_node(kind);
         }
         if extras::is_extra(kind) {
-            return self.create_extra(kind);
+            return Err("unknown kind".into());
         }
         if kind >= reflect::KIND_BASE {
             return self.construct(kind, &[], &[]);
@@ -574,9 +574,8 @@ impl Inner {
             self.destroy_menu_node(h);
         } else if self.extra_kind(h) == Some(vlist::KIND_VLIST) {
             self.destroy_vlist(h);
-        } else if self.extra_kind(h).is_some() {
-            self.destroy_extra(h);
         }
+        self.cancel_owned(h);
         let mut entry = {
             let mut st = self.state.borrow_mut();
             let Some(e) = st.entries.remove(&h) else { return Ok(()) };
@@ -814,7 +813,7 @@ impl Inner {
         match self.extra_kind(h) {
             Some(vlist::KIND_VLIST) if vlist::is_own_member(prop) => return self.vlist_set_prop(h, prop, v),
             Some(vlist::KIND_VLIST) | None => {}
-            Some(_) => return self.extra_set_prop(h, prop, v),
+            Some(_) => return Err("unknown property".into()),
         }
         if self.state.borrow().boxed.contains_key(&h) {
             return Err("a VALUE handle is immutable: it has no properties to set".into());
@@ -891,7 +890,7 @@ impl Inner {
         match self.extra_kind(h) {
             Some(vlist::KIND_VLIST) if vlist::is_own_member(prop) => return self.vlist_get_prop(h, prop, out),
             Some(vlist::KIND_VLIST) | None => {}
-            Some(_) => return self.extra_get_prop(h, prop, out),
+            Some(_) => return Err("unknown property".into()),
         }
         if self.state.borrow().boxed.contains_key(&h) {
             return Err("a VALUE handle has no properties".into());
@@ -978,12 +977,35 @@ impl Inner {
             dm = gi.resolve_on(rt, dm.name()).ok_or_else(|| format!("{} has no method {}", rt.name(), dm.name()))?;
         }
         self.cur_owner.set(h);
+        if dm.is_async() {
+            let Recv::Obj(o) = &recv else { return Err("async methods of value types are not supported".to_string().into()) };
+            return self.start_async(&gi, &dm, Some(o), args, h, out);
+        }
+        let host: std::rc::Weak<dyn gi::Host> = self.me.clone();
+        let cx = gi::CallCx { presets: &[], host: Some(&host), owner: h };
         let called = match &recv {
-            Recv::Obj(o) => dm.call(o, args, self, &gi),
-            Recv::Val(v) => dm.call_boxed(v, args, self, &gi),
+            Recv::Obj(o) => dm.call(o, args, self, &gi, &cx),
+            Recv::Val(v) => dm.call_boxed(v, args, self, &gi, &cx),
         }
         .map_err(gi_err)?;
         self.write_called(&gi, &dm, called, h, out);
+        Ok(())
+    }
+
+    /// A folded `_async` call: the last argument is the host's completion callback (`SVL_M_ASYNC`).
+    /// The operation gets its own `GCancellable` (`backend.cancel`); its owner's destruction cancels it.
+    fn start_async(&self, gi: &Rc<Gi>, dm: &Rc<gi::DynMethod>, recv: Option<&glib::Object>, args: &[svl_value], h: u64, out: &mut svl_value) -> Result<(), CallErr> {
+        let (last, rest) = args.split_last().ok_or("missing completion callback")?;
+        if last.tag != SVL_CALLBACK {
+            return Err("the last argument of an async method must be the completion callback".to_string().into());
+        }
+        let done = unsafe { last.u.u };
+        let cancellable = gtk::gio::Cancellable::new();
+        let host: std::rc::Weak<dyn gi::Host> = self.me.clone();
+        dm.start_async(recv, rest, done, &cancellable, host, gi, h).map_err(gi_err)?;
+        // GIO never completes synchronously, so the entry is in place before the ready callback runs.
+        self.pending.borrow_mut().insert(done, extras::Pending { owner: h, cancellable });
+        *out = convert::null_value();
         Ok(())
     }
 
@@ -997,7 +1019,12 @@ impl Inner {
         let gi = self.gi()?;
         let dm = gi.method(idx).ok_or("unknown method")?;
         self.cur_owner.set(0);
-        let called = dm.call_static(args, self, &gi).map_err(gi_err)?;
+        if dm.is_async() {
+            return self.start_async(&gi, &dm, None, args, 0, out);
+        }
+        let host: std::rc::Weak<dyn gi::Host> = self.me.clone();
+        let cx = gi::CallCx { presets: &[], host: Some(&host), owner: 0 };
+        let called = dm.call_static(args, self, &gi, &cx).map_err(gi_err)?;
         self.write_called(&gi, &dm, called, 0, out);
         Ok(())
     }
@@ -1337,11 +1364,11 @@ impl Inner {
             return self.describe_member(what, self.table_kind(kind), member);
         }
         if extras::is_extra(kind) {
-            return extras::describe_member(what, member);
+            return None;
         }
         if what == SVL_METHOD && member as usize > METHODS.len() {
             let gi = self.gi.borrow().clone()?;
-            return gi.method(member - METHODS.len() as u32 - 1)?.describe(&mut self.types.borrow_mut());
+            return gi.method(member - METHODS.len() as u32 - 1)?.describe(&mut self.types.borrow_mut(), &gi);
         }
         if what != SVL_PROP {
             return None;
@@ -1394,8 +1421,11 @@ impl Inner {
     }
 
     fn describe_type(&self, id: u32) -> Option<TypeDesc> {
-        if let Some(t) = extras::describe_type(id) {
-            return Some(t);
+        if id == gi::T_ASYNC_DONE {
+            return Some(gi::async_done_desc());
+        }
+        if id >= gi::CB_TYPE_BASE {
+            return self.gi.borrow().as_ref()?.cb_type_desc(id);
         }
         let mut table = self.types.borrow_mut();
         let t = table.lookup(id)?;
@@ -1406,6 +1436,46 @@ impl Inner {
             }
         }
         Some(d)
+    }
+}
+
+impl gi::Host for Inner {
+    fn invoke_callback(&self, id: u64, args: &[Value]) -> Result<Value, String> {
+        let host = self.host.load(Ordering::Acquire);
+        if host.is_null() {
+            return Err("no host".into());
+        }
+        unsafe { HostRef::from_raw(host) }.invoke_callback(id, args).map_err(|e| e.message)
+    }
+
+    fn release_callback(&self, id: u64) {
+        let host = self.host.load(Ordering::Acquire);
+        if !host.is_null() {
+            unsafe { HostRef::from_raw(host) }.release_callback(id);
+        }
+    }
+
+    fn ret_to_value(&self, r: Ret, owner: u64) -> Value {
+        let Ok(gi) = self.gi() else { return Value::Null };
+        let mut buf = StrBuf::default();
+        let raw = self.ret_value(&gi, r, &mut buf, owner);
+        unsafe { Value::from_raw(&raw) }
+    }
+
+    fn error_value(&self, e: &glib::Error) -> Value {
+        self.gerror_value(e)
+    }
+
+    fn async_finished(&self, done: u64) -> bool {
+        self.pending.borrow_mut().remove(&done).is_some()
+    }
+
+    fn gi(&self) -> Option<Rc<Gi>> {
+        Inner::gi(self).ok()
+    }
+
+    fn as_env(&self) -> &dyn Env {
+        self
     }
 }
 
@@ -1517,7 +1587,7 @@ impl GtkBackend {
             frame_clock: RefCell::new(None),
             frame_timer: RefCell::new(None),
             frames_by_clock: Cell::new(0),
-            files: RefCell::new(HashMap::new()),
+            pending: RefCell::new(HashMap::new()),
             vlists: RefCell::new(HashMap::new()),
             menus: RefCell::new(HashMap::new()),
             style: RefCell::default(),
@@ -1674,12 +1744,12 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
     let Ok(name) = std::str::from_utf8(bytes) else { return 0 };
     match what {
         SVL_KIND if name == "virtual-list" => vlist::KIND_VLIST,
-        SVL_KIND => match (menus::kind_by_name(name), extras::kind_by_name(name)) {
-            (0, 0) => match lookup::kind_by_name(name) {
+        SVL_KIND => match menus::kind_by_name(name) {
+            0 => match lookup::kind_by_name(name) {
                 0 => unsafe { ctl(p) }.local.resolve_kind_native(name),
                 k => k,
             },
-            (0, k) | (k, _) => k,
+            k => k,
         },
         _ if menus::is_menu_kind(kind) => match menus::find_member(what, kind, name) {
             0 if menus::table_name(kind).is_some() => {
@@ -1695,7 +1765,7 @@ unsafe extern "C" fn b_resolve(p: *mut c_void, what: u32, kind: svl_id, name: *c
             0 => resolve_generic(p, what, unsafe { ctl(p) }.local.table_kind(kind), name),
             id => id,
         },
-        _ if extras::is_extra(kind) => extras::find_member(what, kind, name),
+        _ if extras::is_extra(kind) => 0,
         SVL_PROP => find_prop(p, kind, name),
         SVL_SIGNAL => find_signal(p, kind, name),
         SVL_METHOD => match lookup::find_method(kind, name) {
@@ -1749,8 +1819,6 @@ unsafe extern "C" fn b_call(p: *mut c_void, h: svl_handle, method: svl_id, args:
             c.local.menus_call(h, method, extras::args_of(args, n)).map_err(CallErr::Plain)
         } else if c.local.extra_kind(h) == Some(vlist::KIND_VLIST) && vlist::is_own_member(method) {
             c.local.vlist_call(h, method, extras::args_of(args, n), out)
-        } else if c.local.extra_kind(h).is_some_and(|k| k != vlist::KIND_VLIST) {
-            c.local.extra_call(h, method, args, n, out)
         } else {
             c.local.call(h, method, extras::args_of(args, n), out)
         }

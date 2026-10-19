@@ -10,6 +10,6 @@ export class ConstraintLayoutChild extends LayoutChild {
   static bases = ["Gtk.ConstraintLayoutChild", "Gtk.LayoutChild", "GObject.Object"];
 
   static [CONSTRUCT](props) {
-    return construct(this.native, constructProps(this, props, {'layoutManager': ['layout-manager']}));
+    return construct(this.native, constructProps(this, props, {'childWidget': ['child-widget'], 'layoutManager': ['layout-manager']}));
   }
 }

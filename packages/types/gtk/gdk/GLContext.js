@@ -89,10 +89,6 @@ export class GLContext extends DrawContext {
     call(this, 'set_required_version', [major, minor]);
   }
 
-  setUseEs(useEs) {
-    call(this, 'set_use_es', [useEs]);
-  }
-
   get allowedApis() {
     return getProp(this, 'allowed-apis');
   }

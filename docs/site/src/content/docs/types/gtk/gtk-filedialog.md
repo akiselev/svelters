@@ -50,6 +50,14 @@ Construct-time properties (construct-only ones can only be given here): `acceptL
 - `getInitialName()`, since 4.10
 - `getModal()`, since 4.10
 - `getTitle()`, since 4.10
+- `open(parent)`, since 4.10
+- `openMultiple(parent)`, since 4.10
+- `openMultipleTextFiles(parent)`, since 4.18
+- `openTextFile(parent)`, since 4.18
+- `save(parent)`, since 4.10
+- `saveTextFile(parent)`, since 4.18
+- `selectFolder(parent)`, since 4.10
+- `selectMultipleFolders(parent)`, since 4.10
 - `setAcceptLabel(acceptLabel)`, since 4.10
 - `setDefaultFilter(filter)`, since 4.10
 - `setFilters(filters)`, since 4.10
@@ -58,8 +66,4 @@ Construct-time properties (construct-only ones can only be given here): `acceptL
 - `setInitialName(name)`, since 4.10
 - `setModal(modal)`, since 4.10
 - `setTitle(title)`, since 4.10
-
-## Not bound yet
-
-8 members are not bound; reasons: async 8.
 

@@ -40,7 +40,7 @@ export class FrameClock extends GObject_Object {
 
   getRefreshInfo(baseTime) {
     const __res = call(this, 'get_refresh_info', [baseTime]);
-    return { refreshIntervalReturn: __res.refreshIntervalReturn, presentationTimeReturn: __res.presentationTimeReturn };
+    return { refreshIntervalReturn: __res.refresh_interval_return, presentationTimeReturn: __res.presentation_time_return };
   }
 
   getTimings(frameCounter) {

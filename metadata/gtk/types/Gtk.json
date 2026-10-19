@@ -457,7 +457,7 @@
    ],
    "scope": "gtk",
    "signals": [],
-   "since": null,
+   "since": "4.10",
    "statics": [],
    "undecided": []
   },
@@ -1272,10 +1272,7 @@
   },
   "AlertDialog": {
    "abstract": false,
-   "blocked": {
-    "choose": "async",
-    "show": "unbound:Gtk.Window"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -1286,6 +1283,31 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "async": {
+      "finish": "choose_finish",
+      "outs": []
+     },
+     "js": "choose",
+     "name": "choose",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     },
+     "since": "4.10",
+     "throws": true
+    },
     {
      "js": "getButtons",
      "name": "get_buttons",
@@ -1446,6 +1468,25 @@
       "k": "void"
      },
      "since": "4.10"
+    },
+    {
+     "js": "show",
+     "name": "show",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.10"
     }
    ],
    "name": "AlertDialog",
@@ -1540,7 +1581,7 @@
    "abstract": false,
    "blocked": {},
    "builder": false,
-   "category": "object",
+   "category": "model",
    "constructors": [
     {
      "js": "new",
@@ -1567,12 +1608,46 @@
       "k": "object",
       "t": "Gtk.ShortcutTrigger"
      }
+    },
+    {
+     "js": "newv",
+     "name": "newv",
+     "params": [
+      {
+       "js": "triggers",
+       "name": "triggers",
+       "type": {
+        "elem": {
+         "k": "object",
+         "t": "Gtk.ShortcutTrigger"
+        },
+        "k": "array",
+        "len": 1
+       }
+      },
+      {
+       "hidden": true,
+       "js": "nTriggers",
+       "name": "n_triggers",
+       "type": {
+        "k": "int",
+        "t": "gsize"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.ShortcutTrigger"
+     },
+     "since": "4.24"
     }
    ],
    "curated": false,
    "gtype": "GtkAlternativeTrigger",
    "hidden": [],
-   "interfaces": [],
+   "interfaces": [
+    "Gio.ListModel"
+   ],
    "kind": "class",
    "lifetime": "shared",
    "methods": [
@@ -1676,17 +1751,7 @@
   },
   "Application": {
    "abstract": false,
-   "blocked": {
-    "add_window": "unbound:Gtk.Window",
-    "get_active_window": "unbound:Gtk.Window",
-    "get_window_by_id": "unbound:Gtk.Window",
-    "get_windows": "unbound:Gtk.Window",
-    "inhibit": "unbound:Gtk.Window",
-    "prop:active-window": "unbound:Gtk.Window",
-    "remove_window": "unbound:Gtk.Window",
-    "signal:window-added": "unbound:Gtk.Window",
-    "signal:window-removed": "unbound:Gtk.Window"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -1728,6 +1793,23 @@
    "lifetime": "shared",
    "methods": [
     {
+     "js": "addWindow",
+     "name": "add_window",
+     "params": [
+      {
+       "js": "window",
+       "name": "window",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
      "js": "getAccelsForAction",
      "name": "get_accels_for_action",
      "params": [
@@ -1760,6 +1842,16 @@
      }
     },
     {
+     "js": "getActiveWindow",
+     "name": "get_active_window",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Window"
+     },
+     "ret_nullable": true
+    },
+    {
      "js": "getMenuById",
      "name": "get_menu_by_id",
      "params": [
@@ -1788,11 +1880,95 @@
      "ret_nullable": true
     },
     {
+     "js": "getWindowById",
+     "name": "get_window_by_id",
+     "params": [
+      {
+       "js": "id",
+       "name": "id",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Window"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getWindows",
+     "name": "get_windows",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "widget",
+       "t": "Gtk.Window"
+      },
+      "k": "list",
+      "slist": false
+     }
+    },
+    {
+     "js": "inhibit",
+     "name": "inhibit",
+     "params": [
+      {
+       "js": "window",
+       "name": "window",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gtk.ApplicationInhibitFlags"
+       }
+      },
+      {
+       "js": "reason",
+       "name": "reason",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     }
+    },
+    {
      "js": "listActionDescriptions",
      "name": "list_action_descriptions",
      "params": [],
      "ret": {
       "k": "strv"
+     }
+    },
+    {
+     "js": "removeWindow",
+     "name": "remove_window",
+     "params": [
+      {
+       "js": "window",
+       "name": "window",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
      }
     },
     {
@@ -1862,6 +2038,18 @@
     {
      "construct": false,
      "construct_only": false,
+     "js": "activeWindow",
+     "name": "active-window",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Window"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
      "js": "menubar",
      "name": "menubar",
      "readable": true,
@@ -1887,13 +2075,38 @@
    "refs": [
     "Gio.ApplicationFlags",
     "Gio.Menu",
-    "Gio.MenuModel"
+    "Gio.MenuModel",
+    "Gtk.ApplicationInhibitFlags"
    ],
    "scope": "gtk",
    "signals": [
     {
      "args": [],
      "name": "query-end"
+    },
+    {
+     "args": [
+      {
+       "name": "window",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "name": "window-added"
+    },
+    {
+     "args": [
+      {
+       "name": "window",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "name": "window-removed"
     }
    ],
    "since": null,
@@ -3177,9 +3390,7 @@
   },
   "BuilderCScope": {
    "abstract": false,
-   "blocked": {
-    "add_callback_symbol": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -3201,7 +3412,39 @@
    ],
    "kind": "class",
    "lifetime": "shared",
-   "methods": [],
+   "methods": [
+    {
+     "js": "addCallbackSymbol",
+     "name": "add_callback_symbol",
+     "params": [
+      {
+       "js": "callbackName",
+       "name": "callback_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "callbackSymbol",
+       "name": "callback_symbol",
+       "type": {
+        "k": "callback",
+        "scope": "async",
+        "sig": {
+         "args": [],
+         "ret": {
+          "k": "void"
+         }
+        },
+        "t": "GObject.Callback"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
    "name": "BuilderCScope",
    "ns": "Gtk",
    "parent": "GObject.Object",
@@ -3383,7 +3626,7 @@
   "CallbackAction": {
    "abstract": false,
    "blocked": {
-    "new": "callback"
+    "new": "callback: variant"
    },
    "builder": false,
    "category": "object",
@@ -3410,14 +3653,7 @@
   },
   "CenterLayout": {
    "abstract": false,
-   "blocked": {
-    "get_center_widget": "unbound:Gtk.Widget",
-    "get_end_widget": "unbound:Gtk.Widget",
-    "get_start_widget": "unbound:Gtk.Widget",
-    "set_center_widget": "unbound:Gtk.Widget",
-    "set_end_widget": "unbound:Gtk.Widget",
-    "set_start_widget": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -3448,6 +3684,26 @@
      }
     },
     {
+     "js": "getCenterWidget",
+     "name": "get_center_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getEndWidget",
+     "name": "get_end_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
+    },
+    {
      "js": "getOrientation",
      "name": "get_orientation",
      "params": [],
@@ -3466,6 +3722,16 @@
      "since": "4.12"
     },
     {
+     "js": "getStartWidget",
+     "name": "get_start_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
+    },
+    {
      "js": "setBaselinePosition",
      "name": "set_baseline_position",
      "params": [
@@ -3475,6 +3741,42 @@
        "type": {
         "k": "enum",
         "t": "Gtk.BaselinePosition"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setCenterWidget",
+     "name": "set_center_widget",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setEndWidget",
+     "name": "set_end_widget",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
        }
       }
      ],
@@ -3515,6 +3817,24 @@
       "k": "void"
      },
      "since": "4.12"
+    },
+    {
+     "js": "setStartWidget",
+     "name": "set_start_widget",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
     }
    ],
    "name": "CenterLayout",
@@ -3549,9 +3869,7 @@
   },
   "ColorDialog": {
    "abstract": false,
-   "blocked": {
-    "choose_rgba": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -3573,6 +3891,40 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "async": {
+      "finish": "choose_rgba_finish",
+      "outs": []
+     },
+     "js": "chooseRgba",
+     "name": "choose_rgba",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "initialColor",
+       "name": "initial_color",
+       "nullable": true,
+       "type": {
+        "k": "record",
+        "t": "Gdk.RGBA"
+       }
+      }
+     ],
+     "ret": {
+      "k": "record",
+      "t": "Gdk.RGBA"
+     },
+     "since": "4.10",
+     "throws": true
+    },
     {
      "js": "getModal",
      "name": "get_modal",
@@ -3695,7 +4047,9 @@
     }
    ],
    "qualified": "Gtk.ColorDialog",
-   "refs": [],
+   "refs": [
+    "Gdk.RGBA"
+   ],
    "scope": "gtk",
    "signals": [],
    "since": "4.10",
@@ -3704,11 +4058,7 @@
   },
   "ColumnViewCell": {
    "abstract": false,
-   "blocked": {
-    "get_child": "unbound:Gtk.Widget",
-    "prop:child": "unbound:Gtk.Widget",
-    "set_child": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -3719,6 +4069,17 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "getChild",
+     "name": "get_child",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true,
+     "since": "4.12"
+    },
     {
      "js": "getFocusable",
      "name": "get_focusable",
@@ -3759,6 +4120,25 @@
      "since": "4.12"
     },
     {
+     "js": "setChild",
+     "name": "set_child",
+     "params": [
+      {
+       "js": "child",
+       "name": "child",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.12"
+    },
+    {
      "js": "setFocusable",
      "name": "set_focusable",
      "params": [
@@ -3781,6 +4161,19 @@
    "parent": "Gtk.ListItem",
    "prerequisites": [],
    "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "child",
+     "name": "child",
+     "readable": true,
+     "since": "4.12",
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "writable": true
+    },
     {
      "construct": false,
      "construct_only": false,
@@ -3844,10 +4237,7 @@
   },
   "ColumnViewColumn": {
    "abstract": false,
-   "blocked": {
-    "get_column_view": "unbound:Gtk.ColumnView",
-    "prop:column-view": "unbound:Gtk.ColumnView"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -3886,6 +4276,16 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "getColumnView",
+     "name": "get_column_view",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.ColumnView"
+     },
+     "ret_nullable": true
+    },
     {
      "js": "getExpand",
      "name": "get_expand",
@@ -4128,6 +4528,18 @@
    "parent": "GObject.Object",
    "prerequisites": [],
    "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "columnView",
+     "name": "column-view",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.ColumnView"
+     },
+     "writable": false
+    },
     {
      "construct": false,
      "construct_only": false,
@@ -5813,27 +6225,95 @@
   },
   "CustomFilter": {
    "abstract": false,
-   "blocked": {
-    "new": "callback",
-    "set_filter_func": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
-   "constructors": [],
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "matchFunc",
+       "name": "match_func",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "item",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "bool"
+         }
+        },
+        "t": "Gtk.CustomFilterFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.CustomFilter"
+     }
+    }
+   ],
    "curated": false,
    "gtype": "GtkCustomFilter",
    "hidden": [],
    "interfaces": [],
    "kind": "class",
    "lifetime": "shared",
-   "methods": [],
+   "methods": [
+    {
+     "js": "setFilterFunc",
+     "name": "set_filter_func",
+     "params": [
+      {
+       "js": "matchFunc",
+       "name": "match_func",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "item",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "bool"
+         }
+        },
+        "t": "Gtk.CustomFilterFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
    "name": "CustomFilter",
    "ns": "Gtk",
    "parent": "Gtk.Filter",
    "prerequisites": [],
    "properties": [],
    "qualified": "Gtk.CustomFilter",
-   "refs": [],
+   "refs": [
+    "GObject.Object"
+   ],
    "scope": "gtk",
    "signals": [],
    "since": null,
@@ -5843,7 +6323,7 @@
   "CustomLayout": {
    "abstract": false,
    "blocked": {
-    "new": "callback"
+    "new": "callback: out argument"
    },
    "builder": false,
    "category": "object",
@@ -5871,8 +6351,8 @@
   "CustomSorter": {
    "abstract": false,
    "blocked": {
-    "new": "callback",
-    "set_sort_func": "callback"
+    "new": "callback: gpointer",
+    "set_sort_func": "callback: gpointer"
    },
    "builder": false,
    "category": "object",
@@ -7128,6 +7608,15 @@
      }
     },
     {
+     "js": "getCompleteText",
+     "name": "get_complete_text",
+     "params": [],
+     "ret": {
+      "k": "str"
+     },
+     "since": "4.24"
+    },
+    {
      "js": "getDelegate",
      "name": "get_delegate",
      "params": [],
@@ -7152,6 +7641,17 @@
      "ret": {
       "k": "bool"
      }
+    },
+    {
+     "js": "getInputInterceptor",
+     "name": "get_input_interceptor",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true,
+     "since": "4.24"
     },
     {
      "js": "getMaxWidthChars",
@@ -7332,6 +7832,25 @@
      }
     },
     {
+     "js": "setInputInterceptor",
+     "name": "set_input_interceptor",
+     "params": [
+      {
+       "js": "interceptor",
+       "name": "interceptor",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.24"
+    },
+    {
      "js": "setMaxWidthChars",
      "name": "set_max_width_chars",
      "params": [
@@ -7407,6 +7926,18 @@
     {
      "construct": false,
      "construct_only": false,
+     "js": "completeText",
+     "name": "complete-text",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
      "js": "cursorPosition",
      "name": "cursor-position",
      "readable": true,
@@ -7435,6 +7966,19 @@
      "readable": true,
      "type": {
       "k": "bool"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "inputInterceptor",
+     "name": "input-interceptor",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
      },
      "writable": true
     },
@@ -7525,6 +8069,11 @@
       }
      ],
      "name": "delete-text"
+    },
+    {
+     "args": [],
+     "name": "input-intercepted",
+     "since": "4.24"
     },
     {
      "args": [
@@ -7883,12 +8432,214 @@
    "statics": [],
    "undecided": []
   },
+  "EnumList": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "model",
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "enumType",
+       "name": "enum_type",
+       "type": {
+        "k": "gtype"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.EnumList"
+     },
+     "since": "4.24"
+    }
+   ],
+   "curated": false,
+   "gtype": "GtkEnumList",
+   "hidden": [],
+   "interfaces": [
+    "Gio.ListModel"
+   ],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "find",
+     "name": "find",
+     "params": [
+      {
+       "js": "value",
+       "name": "value",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "4.24"
+    },
+    {
+     "js": "getEnumType",
+     "name": "get_enum_type",
+     "params": [],
+     "ret": {
+      "k": "gtype"
+     },
+     "since": "4.24"
+    }
+   ],
+   "name": "EnumList",
+   "ns": "Gtk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "enumType",
+     "name": "enum-type",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "gtype"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "itemType",
+     "name": "item-type",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "gtype"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "nItems",
+     "name": "n-items",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "int",
+      "t": "guint"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gtk.EnumList",
+   "refs": [],
+   "scope": "gtk",
+   "signals": [],
+   "since": "4.24",
+   "statics": [],
+   "undecided": []
+  },
+  "EnumListItem": {
+   "abstract": false,
+   "blocked": {},
+   "builder": false,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "gtype": "GtkEnumListItem",
+   "hidden": [],
+   "interfaces": [],
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": [
+    {
+     "js": "getName",
+     "name": "get_name",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getNick",
+     "name": "get_nick",
+     "params": [],
+     "ret": {
+      "k": "str"
+     }
+    },
+    {
+     "js": "getValue",
+     "name": "get_value",
+     "params": [],
+     "ret": {
+      "k": "int",
+      "t": "gint"
+     }
+    }
+   ],
+   "name": "EnumListItem",
+   "ns": "Gtk",
+   "parent": "GObject.Object",
+   "prerequisites": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "name",
+     "name": "name",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "nick",
+     "name": "nick",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "str"
+     },
+     "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "value",
+     "name": "value",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "int",
+      "t": "gint"
+     },
+     "writable": false
+    }
+   ],
+   "qualified": "Gtk.EnumListItem",
+   "refs": [],
+   "scope": "gtk",
+   "signals": [],
+   "since": "4.24",
+   "statics": [],
+   "undecided": []
+  },
   "EventController": {
    "abstract": true,
    "blocked": {
-    "get_current_event": "fundamental",
-    "get_widget": "unbound:Gtk.Widget",
-    "prop:widget": "unbound:Gtk.Widget"
+    "get_current_event": "fundamental"
    },
    "builder": false,
    "category": "object",
@@ -7954,6 +8705,16 @@
       "k": "enum",
       "t": "Gtk.PropagationPhase"
      }
+    },
+    {
+     "js": "getWidget",
+     "name": "get_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
     },
     {
      "js": "reset",
@@ -8072,6 +8833,18 @@
       "t": "Gtk.PropagationPhase"
      },
      "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "widget",
+     "name": "widget",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "writable": false
     }
    ],
    "qualified": "Gtk.EventController",
@@ -8176,9 +8949,7 @@
   },
   "EventControllerKey": {
    "abstract": false,
-   "blocked": {
-    "forward": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -8693,16 +9464,7 @@
   },
   "FileDialog": {
    "abstract": false,
-   "blocked": {
-    "open": "async",
-    "open_multiple": "async",
-    "open_multiple_text_files": "async",
-    "open_text_file": "async",
-    "save": "async",
-    "save_text_file": "async",
-    "select_folder": "async",
-    "select_multiple_folders": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -8805,6 +9567,241 @@
       "k": "str"
      },
      "since": "4.10"
+    },
+    {
+     "async": {
+      "finish": "open_finish",
+      "outs": []
+     },
+     "js": "open",
+     "name": "open",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "open_multiple_finish",
+      "outs": []
+     },
+     "js": "openMultiple",
+     "name": "open_multiple",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.ListModel"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "open_multiple_text_files_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "encoding",
+        "name": "encoding",
+        "type": {
+         "k": "str"
+        }
+       }
+      ]
+     },
+     "js": "openMultipleTextFiles",
+     "name": "open_multiple_text_files",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.ListModel"
+     },
+     "since": "4.18",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "open_text_file_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "encoding",
+        "name": "encoding",
+        "type": {
+         "k": "str"
+        }
+       }
+      ]
+     },
+     "js": "openTextFile",
+     "name": "open_text_file",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "since": "4.18",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "save_finish",
+      "outs": []
+     },
+     "js": "save",
+     "name": "save",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "save_text_file_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "encoding",
+        "name": "encoding",
+        "type": {
+         "k": "str"
+        }
+       },
+       {
+        "dir": "out",
+        "js": "lineEnding",
+        "name": "line_ending",
+        "type": {
+         "k": "str"
+        }
+       }
+      ]
+     },
+     "js": "saveTextFile",
+     "name": "save_text_file",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "since": "4.18",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "select_folder_finish",
+      "outs": []
+     },
+     "js": "selectFolder",
+     "name": "select_folder",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.File"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "select_multiple_folders_finish",
+      "outs": []
+     },
+     "js": "selectMultipleFolders",
+     "name": "select_multiple_folders",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.ListModel"
+     },
+     "since": "4.10",
+     "throws": true
     },
     {
      "js": "setAcceptLabel",
@@ -9263,10 +10260,7 @@
   },
   "FileLauncher": {
    "abstract": false,
-   "blocked": {
-    "launch": "async",
-    "open_containing_folder": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -9326,6 +10320,54 @@
       "k": "bool"
      },
      "since": "4.14"
+    },
+    {
+     "async": {
+      "finish": "launch_finish",
+      "outs": []
+     },
+     "js": "launch",
+     "name": "launch",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "open_containing_folder_finish",
+      "outs": []
+     },
+     "js": "openContainingFolder",
+     "name": "open_containing_folder",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.10",
+     "throws": true
     },
     {
      "js": "setAlwaysAsk",
@@ -10019,10 +11061,6 @@
   "FontDialog": {
    "abstract": false,
    "blocked": {
-    "choose_face": "async",
-    "choose_family": "async",
-    "choose_font": "async",
-    "choose_font_and_features": "async",
     "prop:language": "struct by value"
    },
    "builder": false,
@@ -10046,6 +11084,168 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "async": {
+      "finish": "choose_face_finish",
+      "outs": []
+     },
+     "js": "chooseFace",
+     "name": "choose_face",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "initialValue",
+       "name": "initial_value",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Pango.FontFace"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontFace"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "choose_family_finish",
+      "outs": []
+     },
+     "js": "chooseFamily",
+     "name": "choose_family",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "initialValue",
+       "name": "initial_value",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Pango.FontFamily"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Pango.FontFamily"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "choose_font_finish",
+      "outs": []
+     },
+     "js": "chooseFont",
+     "name": "choose_font",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "initialValue",
+       "name": "initial_value",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Pango.FontDescription"
+     },
+     "since": "4.10",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "choose_font_and_features_finish",
+      "outs": [
+       {
+        "dir": "out",
+        "js": "fontDesc",
+        "name": "font_desc",
+        "type": {
+         "k": "boxed",
+         "t": "Pango.FontDescription"
+        }
+       },
+       {
+        "dir": "out",
+        "js": "fontFeatures",
+        "name": "font_features",
+        "type": {
+         "k": "str"
+        }
+       },
+       {
+        "dir": "out",
+        "js": "language",
+        "name": "language",
+        "type": {
+         "k": "boxed",
+         "t": "Pango.Language"
+        }
+       }
+      ]
+     },
+     "js": "chooseFontAndFeatures",
+     "name": "choose_font_and_features",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "initialValue",
+       "name": "initial_value",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Pango.FontDescription"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.10",
+     "throws": true
+    },
     {
      "js": "getFilter",
      "name": "get_filter",
@@ -10247,6 +11447,9 @@
    "qualified": "Gtk.FontDialog",
    "refs": [
     "Gtk.Filter",
+    "Pango.FontDescription",
+    "Pango.FontFace",
+    "Pango.FontFamily",
     "Pango.FontMap",
     "Pango.Language"
    ],
@@ -11989,8 +13192,7 @@
    "abstract": true,
    "blocked": {
     "activate_osk": "fundamental",
-    "filter_keypress": "fundamental",
-    "set_client_widget": "unbound:Gtk.Widget"
+    "filter_keypress": "fundamental"
    },
    "builder": false,
    "category": "object",
@@ -12108,6 +13310,17 @@
      }
     },
     {
+     "js": "getClientWidget",
+     "name": "get_client_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true,
+     "since": "4.24"
+    },
+    {
      "js": "getPreeditString",
      "name": "get_preedit_string",
      "params": [
@@ -12182,6 +13395,24 @@
      "js": "reset",
      "name": "reset",
      "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setClientWidget",
+     "name": "set_client_widget",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
      "ret": {
       "k": "void"
      }
@@ -13114,10 +14345,7 @@
   },
   "LayoutChild": {
    "abstract": true,
-   "blocked": {
-    "get_child_widget": "unbound:Gtk.Widget",
-    "prop:child-widget": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -13128,6 +14356,15 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "getChildWidget",
+     "name": "get_child_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     }
+    },
     {
      "js": "getLayoutManager",
      "name": "get_layout_manager",
@@ -13143,6 +14380,18 @@
    "parent": "GObject.Object",
    "prerequisites": [],
    "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "childWidget",
+     "name": "child-widget",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "writable": true
+    },
     {
      "construct": false,
      "construct_only": true,
@@ -13168,12 +14417,7 @@
   },
   "LayoutManager": {
    "abstract": true,
-   "blocked": {
-    "allocate": "unbound:Gtk.Widget",
-    "get_layout_child": "unbound:Gtk.Widget",
-    "get_widget": "unbound:Gtk.Widget",
-    "measure": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -13185,6 +14429,65 @@
    "lifetime": "shared",
    "methods": [
     {
+     "js": "allocate",
+     "name": "allocate",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      },
+      {
+       "js": "width",
+       "name": "width",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "height",
+       "name": "height",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "js": "baseline",
+       "name": "baseline",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "getLayoutChild",
+     "name": "get_layout_child",
+     "params": [
+      {
+       "js": "child",
+       "name": "child",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.LayoutChild"
+     }
+    },
+    {
      "js": "getRequestMode",
      "name": "get_request_mode",
      "params": [],
@@ -13194,9 +14497,92 @@
      }
     },
     {
+     "js": "getWidget",
+     "name": "get_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
+    },
+    {
      "js": "layoutChanged",
      "name": "layout_changed",
      "params": [],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "measure",
+     "name": "measure",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      },
+      {
+       "js": "orientation",
+       "name": "orientation",
+       "type": {
+        "k": "enum",
+        "t": "Gtk.Orientation"
+       }
+      },
+      {
+       "js": "forSize",
+       "name": "for_size",
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "minimum",
+       "name": "minimum",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "natural",
+       "name": "natural",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "minimumBaseline",
+       "name": "minimum_baseline",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      },
+      {
+       "dir": "out",
+       "js": "naturalBaseline",
+       "name": "natural_baseline",
+       "nullable": true,
+       "type": {
+        "k": "int",
+        "t": "gint"
+       }
+      }
+     ],
      "ret": {
       "k": "void"
      }
@@ -13209,6 +14595,8 @@
    "properties": [],
    "qualified": "Gtk.LayoutManager",
    "refs": [
+    "Gtk.LayoutChild",
+    "Gtk.Orientation",
     "Gtk.SizeRequestMode"
    ],
    "scope": "gtk",
@@ -13219,11 +14607,7 @@
   },
   "ListHeader": {
    "abstract": false,
-   "blocked": {
-    "get_child": "unbound:Gtk.Widget",
-    "prop:child": "unbound:Gtk.Widget",
-    "set_child": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -13234,6 +14618,17 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "getChild",
+     "name": "get_child",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true,
+     "since": "4.12"
+    },
     {
      "js": "getEnd",
      "name": "get_end",
@@ -13274,6 +14669,25 @@
       "t": "guint"
      },
      "since": "4.12"
+    },
+    {
+     "js": "setChild",
+     "name": "set_child",
+     "params": [
+      {
+       "js": "child",
+       "name": "child",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.12"
     }
    ],
    "name": "ListHeader",
@@ -13281,6 +14695,19 @@
    "parent": "GObject.Object",
    "prerequisites": [],
    "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "child",
+     "name": "child",
+     "readable": true,
+     "since": "4.12",
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "writable": true
+    },
     {
      "construct": false,
      "construct_only": false,
@@ -13346,11 +14773,7 @@
   },
   "ListItem": {
    "abstract": false,
-   "blocked": {
-    "get_child": "unbound:Gtk.Widget",
-    "prop:child": "unbound:Gtk.Widget",
-    "set_child": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -13386,6 +14809,16 @@
      "ret": {
       "k": "bool"
      }
+    },
+    {
+     "js": "getChild",
+     "name": "get_child",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
     },
     {
      "js": "getFocusable",
@@ -13482,6 +14915,24 @@
      }
     },
     {
+     "js": "setChild",
+     "name": "set_child",
+     "params": [
+      {
+       "js": "child",
+       "name": "child",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
      "js": "setFocusable",
      "name": "set_focusable",
      "params": [
@@ -13552,6 +15003,18 @@
      "readable": true,
      "type": {
       "k": "bool"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "child",
+     "name": "child",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
      },
      "writable": true
     },
@@ -13652,13 +15115,55 @@
   },
   "MapListModel": {
    "abstract": false,
-   "blocked": {
-    "new": "callback",
-    "set_map_func": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "model",
-   "constructors": [],
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "model",
+       "name": "model",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gio.ListModel"
+       }
+      },
+      {
+       "js": "mapFunc",
+       "name": "map_func",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "item",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "object",
+          "t": "GObject.Object"
+         }
+        },
+        "t": "Gtk.MapListModelMapFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.MapListModel"
+     }
+    }
+   ],
    "curated": false,
    "gtype": "GtkMapListModel",
    "hidden": [],
@@ -13685,6 +15190,40 @@
      "params": [],
      "ret": {
       "k": "bool"
+     }
+    },
+    {
+     "js": "setMapFunc",
+     "name": "set_map_func",
+     "params": [
+      {
+       "js": "mapFunc",
+       "name": "map_func",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "item",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "object",
+          "t": "GObject.Object"
+         }
+        },
+        "t": "Gtk.MapListModelMapFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
      }
     },
     {
@@ -13762,6 +15301,7 @@
    ],
    "qualified": "Gtk.MapListModel",
    "refs": [
+    "GObject.Object",
     "Gio.ListModel"
    ],
    "scope": "gtk",
@@ -14600,15 +16140,30 @@
   },
   "MountOperation": {
    "abstract": false,
-   "blocked": {
-    "get_parent": "unbound:Gtk.Window",
-    "new": "unbound:Gtk.Window",
-    "prop:parent": "unbound:Gtk.Window",
-    "set_parent": "unbound:Gtk.Window"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
-   "constructors": [],
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.MountOperation"
+     }
+    }
+   ],
    "curated": false,
    "gtype": "GtkMountOperation",
    "hidden": [],
@@ -14624,6 +16179,16 @@
       "k": "object",
       "t": "Gdk.Display"
      }
+    },
+    {
+     "js": "getParent",
+     "name": "get_parent",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Window"
+     },
+     "ret_nullable": true
     },
     {
      "js": "isShowing",
@@ -14643,6 +16208,24 @@
        "type": {
         "k": "object",
         "t": "Gdk.Display"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "setParent",
+     "name": "set_parent",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
        }
       }
      ],
@@ -14678,11 +16261,24 @@
       "k": "bool"
      },
      "writable": false
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "parent",
+     "name": "parent",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Window"
+     },
+     "writable": true
     }
    ],
    "qualified": "Gtk.MountOperation",
    "refs": [
-    "Gdk.Display"
+    "Gdk.Display",
+    "Gio.MountOperation"
    ],
    "scope": "gtk",
    "signals": [],
@@ -15181,11 +16777,7 @@
   },
   "NativeDialog": {
    "abstract": true,
-   "blocked": {
-    "get_transient_for": "unbound:Gtk.Window",
-    "prop:transient-for": "unbound:Gtk.Window",
-    "set_transient_for": "unbound:Gtk.Window"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -15218,6 +16810,16 @@
      "params": [],
      "ret": {
       "k": "str"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "getTransientFor",
+     "name": "get_transient_for",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Window"
      },
      "ret_nullable": true
     },
@@ -15270,6 +16872,24 @@
      }
     },
     {
+     "js": "setTransientFor",
+     "name": "set_transient_for",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
      "js": "show",
      "name": "show",
      "params": [],
@@ -15302,6 +16922,18 @@
      "readable": true,
      "type": {
       "k": "str"
+     },
+     "writable": true
+    },
+    {
+     "construct": true,
+     "construct_only": false,
+     "js": "transientFor",
+     "name": "transient-for",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Window"
      },
      "writable": true
     },
@@ -15495,12 +17127,7 @@
   },
   "NotebookPage": {
    "abstract": false,
-   "blocked": {
-    "get_child": "unbound:Gtk.Widget",
-    "prop:child": "unbound:Gtk.Widget",
-    "prop:menu": "unbound:Gtk.Widget",
-    "prop:tab": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -15510,12 +17137,34 @@
    "interfaces": [],
    "kind": "class",
    "lifetime": "shared",
-   "methods": [],
+   "methods": [
+    {
+     "js": "getChild",
+     "name": "get_child",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     }
+    }
+   ],
    "name": "NotebookPage",
    "ns": "Gtk",
    "parent": "GObject.Object",
    "prerequisites": [],
    "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "child",
+     "name": "child",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "writable": true
+    },
     {
      "construct": false,
      "construct_only": false,
@@ -15524,6 +17173,18 @@
      "readable": true,
      "type": {
       "k": "bool"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "menu",
+     "name": "menu",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
      },
      "writable": true
     },
@@ -15558,6 +17219,18 @@
      "readable": true,
      "type": {
       "k": "bool"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "tab",
+     "name": "tab",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
      },
      "writable": true
     },
@@ -17118,11 +18791,7 @@
   },
   "PrintDialog": {
    "abstract": false,
-   "blocked": {
-    "print": "async",
-    "print_file": "async",
-    "setup": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -17192,6 +18861,81 @@
       "k": "str"
      },
      "since": "4.14"
+    },
+    {
+     "async": {
+      "finish": "print_finish",
+      "outs": []
+     },
+     "js": "print",
+     "name": "print",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "setup",
+       "name": "setup",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Gtk.PrintSetup"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gio.OutputStream"
+     },
+     "since": "4.14",
+     "throws": true
+    },
+    {
+     "async": {
+      "finish": "print_file_finish",
+      "outs": []
+     },
+     "js": "printFile",
+     "name": "print_file",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      },
+      {
+       "js": "setup",
+       "name": "setup",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "Gtk.PrintSetup"
+       }
+      },
+      {
+       "js": "file",
+       "name": "file",
+       "type": {
+        "k": "object",
+        "t": "Gio.File"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.14",
+     "throws": true
     },
     {
      "js": "setAcceptLabel",
@@ -17279,6 +19023,31 @@
       "k": "void"
      },
      "since": "4.14"
+    },
+    {
+     "async": {
+      "finish": "setup_finish",
+      "outs": []
+     },
+     "js": "setup",
+     "name": "setup",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "boxed",
+      "t": "Gtk.PrintSetup"
+     },
+     "since": "4.14",
+     "throws": true
     }
    ],
    "name": "PrintDialog",
@@ -17351,8 +19120,11 @@
    ],
    "qualified": "Gtk.PrintDialog",
    "refs": [
+    "Gio.File",
+    "Gio.OutputStream",
     "Gtk.PageSetup",
-    "Gtk.PrintSettings"
+    "Gtk.PrintSettings",
+    "Gtk.PrintSetup"
    ],
    "scope": "gtk",
    "signals": [],
@@ -17365,7 +19137,7 @@
    "blocked": {
     "get_page_ranges": "type:needs-override:Gtk.PageRange",
     "get_surface": "unbound:cairo.Surface",
-    "send": "callback",
+    "send": "callback: gpointer",
     "set_page_ranges": "type:needs-override:Gtk.PageRange"
    },
    "builder": false,
@@ -17828,12 +19600,7 @@
   },
   "PrintOperation": {
    "abstract": false,
-   "blocked": {
-    "run": "unbound:Gtk.Window",
-    "signal:custom-widget-apply": "unbound:Gtk.Widget",
-    "signal:preview": "unbound:Gtk.Window",
-    "signal:update-custom-widget": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -17949,6 +19716,34 @@
      "ret": {
       "k": "bool"
      }
+    },
+    {
+     "js": "run",
+     "name": "run",
+     "params": [
+      {
+       "js": "action",
+       "name": "action",
+       "type": {
+        "k": "enum",
+        "t": "Gtk.PrintOperationAction"
+       }
+      },
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "enum",
+      "t": "Gtk.PrintOperationResult"
+     },
+     "throws": true
     },
     {
      "js": "setAllowAsync",
@@ -18422,6 +20217,8 @@
    "refs": [
     "Gtk.PageSetup",
     "Gtk.PrintContext",
+    "Gtk.PrintOperationAction",
+    "Gtk.PrintOperationPreview",
     "Gtk.PrintOperationResult",
     "Gtk.PrintSettings",
     "Gtk.PrintStatus",
@@ -18444,6 +20241,18 @@
     {
      "args": [],
      "name": "create-custom-widget"
+    },
+    {
+     "args": [
+      {
+       "name": "widget",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "name": "custom-widget-apply"
     },
     {
      "args": [
@@ -18503,6 +20312,32 @@
     {
      "args": [
       {
+       "name": "preview",
+       "type": {
+        "k": "object",
+        "t": "Gtk.PrintOperationPreview"
+       }
+      },
+      {
+       "name": "context",
+       "type": {
+        "k": "object",
+        "t": "Gtk.PrintContext"
+       }
+      },
+      {
+       "name": "parent",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "name": "preview"
+    },
+    {
+     "args": [
+      {
        "name": "context",
        "type": {
         "k": "object",
@@ -18529,6 +20364,32 @@
     {
      "args": [],
      "name": "status-changed"
+    },
+    {
+     "args": [
+      {
+       "name": "widget",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      },
+      {
+       "name": "setup",
+       "type": {
+        "k": "object",
+        "t": "Gtk.PageSetup"
+       }
+      },
+      {
+       "name": "settings",
+       "type": {
+        "k": "object",
+        "t": "Gtk.PrintSettings"
+       }
+      }
+     ],
+     "name": "update-custom-widget"
     }
    ],
    "since": null,
@@ -18642,7 +20503,6 @@
   "PrintSettings": {
    "abstract": false,
    "blocked": {
-    "foreach": "callback",
     "get_page_ranges": "type:needs-override:Gtk.PageRange",
     "new_from_gvariant": "variant",
     "set_page_ranges": "type:needs-override:Gtk.PageRange",
@@ -18713,6 +20573,43 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "foreach",
+     "name": "foreach",
+     "params": [
+      {
+       "js": "func",
+       "name": "func",
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "key",
+           "type": {
+            "k": "str"
+           }
+          },
+          {
+           "name": "value",
+           "type": {
+            "k": "str"
+           }
+          }
+         ],
+         "ret": {
+          "k": "void"
+         }
+        },
+        "t": "Gtk.PrintSettingsFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
     {
      "js": "get",
      "name": "get",
@@ -20792,10 +22689,7 @@
   },
   "Root": {
    "abstract": false,
-   "blocked": {
-    "get_focus": "unbound:Gtk.Widget",
-    "set_focus": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -20813,6 +22707,34 @@
      "ret": {
       "k": "object",
       "t": "Gdk.Display"
+     }
+    },
+    {
+     "js": "getFocus",
+     "name": "get_focus",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "setFocus",
+     "name": "set_focus",
+     "params": [
+      {
+       "js": "focus",
+       "name": "focus",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
      }
     }
    ],
@@ -21596,7 +23518,9 @@
   },
   "Settings": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "prop:gtk-accent-color": "struct by value"
+   },
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -21975,6 +23899,19 @@
      "type": {
       "k": "enum",
       "t": "Gtk.ReducedMotion"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "gtkKeyboardFocusVisibleTimeout",
+     "name": "gtk-keyboard-focus-visible-timeout",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "int",
+      "t": "gint"
      },
      "writable": true
     },
@@ -22416,7 +24353,7 @@
   "ShortcutAction": {
    "abstract": true,
    "blocked": {
-    "activate": "unbound:Gtk.Widget"
+    "activate": "variant"
    },
    "builder": false,
    "category": "object",
@@ -22880,12 +24817,51 @@
    "qualified": "Gtk.ShortcutTrigger",
    "refs": [
     "GLib.String",
-    "Gdk.Display"
+    "Gdk.Display",
+    "Gdk.ModifierType"
    ],
    "scope": "gtk",
    "signals": [],
    "since": null,
-   "statics": [],
+   "statics": [
+    {
+     "js": "createForMenu",
+     "name": "create_for_menu",
+     "params": [],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.ShortcutTrigger"
+     },
+     "since": "4.24"
+    },
+    {
+     "js": "createWithAliases",
+     "name": "create_with_aliases",
+     "params": [
+      {
+       "js": "keyval",
+       "name": "keyval",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      },
+      {
+       "js": "modifiers",
+       "name": "modifiers",
+       "type": {
+        "k": "flags",
+        "t": "Gdk.ModifierType"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.ShortcutTrigger"
+     },
+     "since": "4.24"
+    }
+   ],
    "undecided": []
   },
   "SignalAction": {
@@ -23293,11 +25269,7 @@
   },
   "SizeGroup": {
    "abstract": false,
-   "blocked": {
-    "add_widget": "unbound:Gtk.Widget",
-    "get_widgets": "unbound:Gtk.Widget",
-    "remove_widget": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -23330,12 +25302,59 @@
    "lifetime": "shared",
    "methods": [
     {
+     "js": "addWidget",
+     "name": "add_widget",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
      "js": "getMode",
      "name": "get_mode",
      "params": [],
      "ret": {
       "k": "enum",
       "t": "Gtk.SizeGroupMode"
+     }
+    },
+    {
+     "js": "getWidgets",
+     "name": "get_widgets",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "widget",
+       "t": "Gtk.Widget"
+      },
+      "k": "list",
+      "slist": true
+     }
+    },
+    {
+     "js": "removeWidget",
+     "name": "remove_widget",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
      }
     },
     {
@@ -24258,6 +26277,24 @@
      }
     },
     {
+     "js": "setSnap",
+     "name": "set_snap",
+     "params": [
+      {
+       "js": "snap",
+       "name": "snap",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.24"
+    },
+    {
      "js": "toPaintable",
      "name": "to_paintable",
      "params": [
@@ -24748,10 +26785,7 @@
   },
   "StackPage": {
    "abstract": false,
-   "blocked": {
-    "get_child": "unbound:Gtk.Widget",
-    "prop:child": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -24764,6 +26798,15 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "getChild",
+     "name": "get_child",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     }
+    },
     {
      "js": "getIconName",
      "name": "get_icon_name",
@@ -24917,6 +26960,18 @@
    "parent": "GObject.Object",
    "prerequisites": [],
    "properties": [
+    {
+     "construct": false,
+     "construct_only": true,
+     "js": "child",
+     "name": "child",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "writable": true
+    },
     {
      "construct": false,
      "construct_only": false,
@@ -25552,6 +27607,7 @@
   "Svg": {
    "abstract": false,
    "blocked": {
+    "prop:stylesheet": "struct by value",
     "signal:error": "gerror"
    },
    "builder": false,
@@ -25626,6 +27682,16 @@
      "since": "4.22"
     },
     {
+     "js": "getOverflow",
+     "name": "get_overflow",
+     "params": [],
+     "ret": {
+      "k": "enum",
+      "t": "Gtk.Overflow"
+     },
+     "since": "4.24"
+    },
+    {
      "js": "getState",
      "name": "get_state",
      "params": [],
@@ -25643,6 +27709,7 @@
        "dir": "out",
        "js": "length",
        "name": "length",
+       "nullable": true,
        "type": {
         "k": "int",
         "t": "guint"
@@ -25654,6 +27721,17 @@
      },
      "ret_nullable": true,
      "since": "4.22"
+    },
+    {
+     "js": "getStylesheet",
+     "name": "get_stylesheet",
+     "params": [],
+     "ret": {
+      "k": "boxed",
+      "t": "GLib.Bytes"
+     },
+     "ret_nullable": true,
+     "since": "4.24"
     },
     {
      "js": "getWeight",
@@ -25764,6 +27842,43 @@
      "since": "4.22"
     },
     {
+     "js": "setOverflow",
+     "name": "set_overflow",
+     "params": [
+      {
+       "js": "overflow",
+       "name": "overflow",
+       "type": {
+        "k": "enum",
+        "t": "Gtk.Overflow"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.24"
+    },
+    {
+     "js": "setSettings",
+     "name": "set_settings",
+     "params": [
+      {
+       "js": "settings",
+       "name": "settings",
+       "nullable": true,
+       "type": {
+        "k": "object",
+        "t": "Gtk.Settings"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.24"
+    },
+    {
      "js": "setState",
      "name": "set_state",
      "params": [
@@ -25780,6 +27895,25 @@
       "k": "void"
      },
      "since": "4.22"
+    },
+    {
+     "js": "setStylesheet",
+     "name": "set_stylesheet",
+     "params": [
+      {
+       "js": "bytes",
+       "name": "bytes",
+       "nullable": true,
+       "type": {
+        "k": "boxed",
+        "t": "GLib.Bytes"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "4.24"
     },
     {
      "js": "setWeight",
@@ -25838,6 +27972,19 @@
     {
      "construct": false,
      "construct_only": false,
+     "js": "overflow",
+     "name": "overflow",
+     "readable": true,
+     "since": "4.24",
+     "type": {
+      "k": "enum",
+      "t": "Gtk.Overflow"
+     },
+     "writable": true
+    },
+    {
+     "construct": false,
+     "construct_only": false,
      "js": "playing",
      "name": "playing",
      "readable": true,
@@ -25889,6 +28036,8 @@
    "refs": [
     "GLib.Bytes",
     "Gdk.FrameClock",
+    "Gtk.Overflow",
+    "Gtk.Settings",
     "Gtk.SvgFeatures"
    ],
    "scope": "gtk",
@@ -25931,7 +28080,6 @@
   "TextBuffer": {
    "abstract": false,
    "blocked": {
-    "add_commit_notify": "callback",
     "signal:apply-tag": "struct by value",
     "signal:delete-range": "struct by value",
     "signal:insert-child-anchor": "struct by value",
@@ -25970,6 +28118,69 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "addCommitNotify",
+     "name": "add_commit_notify",
+     "params": [
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "Gtk.TextBufferNotifyFlags"
+       }
+      },
+      {
+       "js": "commitNotify",
+       "name": "commit_notify",
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "buffer",
+           "type": {
+            "k": "object",
+            "t": "Gtk.TextBuffer"
+           }
+          },
+          {
+           "name": "flags",
+           "type": {
+            "k": "flags",
+            "t": "Gtk.TextBufferNotifyFlags"
+           }
+          },
+          {
+           "name": "position",
+           "type": {
+            "k": "int",
+            "t": "guint"
+           }
+          },
+          {
+           "name": "length",
+           "type": {
+            "k": "int",
+            "t": "guint"
+           }
+          }
+         ],
+         "ret": {
+          "k": "void"
+         }
+        },
+        "t": "Gtk.TextBufferCommitNotify"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "4.16"
+    },
     {
      "js": "addMark",
      "name": "add_mark",
@@ -27502,6 +29713,7 @@
     "Gdk.Clipboard",
     "Gdk.ContentProvider",
     "Gdk.Paintable",
+    "Gtk.TextBufferNotifyFlags",
     "Gtk.TextChildAnchor",
     "Gtk.TextIter",
     "Gtk.TextMark",
@@ -27565,9 +29777,7 @@
   },
   "TextChildAnchor": {
    "abstract": false,
-   "blocked": {
-    "get_widgets": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -27613,6 +29823,30 @@
      "ret": {
       "k": "bool"
      }
+    },
+    {
+     "js": "getWidgets",
+     "name": "get_widgets",
+     "params": [
+      {
+       "dir": "out",
+       "hidden": true,
+       "js": "outLen",
+       "name": "out_len",
+       "type": {
+        "k": "int",
+        "t": "guint"
+       }
+      }
+     ],
+     "ret": {
+      "elem": {
+       "k": "widget",
+       "t": "Gtk.Widget"
+      },
+      "k": "array",
+      "len": 0
+     }
     }
    ],
    "name": "TextChildAnchor",
@@ -27630,10 +29864,7 @@
   },
   "TextIter": {
    "abstract": false,
-   "blocked": {
-    "backward_find_char": "callback",
-    "forward_find_char": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "value",
    "constructors": [],
@@ -27645,6 +29876,7 @@
     "backward_chars",
     "backward_cursor_position",
     "backward_cursor_positions",
+    "backward_find_char",
     "backward_line",
     "backward_lines",
     "backward_sentence_start",
@@ -27662,6 +29894,7 @@
     "forward_chars",
     "forward_cursor_position",
     "forward_cursor_positions",
+    "forward_find_char",
     "forward_line",
     "forward_lines",
     "forward_sentence_end",
@@ -29464,9 +31697,7 @@
   },
   "TextTagTable": {
    "abstract": false,
-   "blocked": {
-    "foreach": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -29504,6 +31735,38 @@
      ],
      "ret": {
       "k": "bool"
+     }
+    },
+    {
+     "js": "foreach",
+     "name": "foreach",
+     "params": [
+      {
+       "js": "func",
+       "name": "func",
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "tag",
+           "type": {
+            "k": "object",
+            "t": "Gtk.TextTag"
+           }
+          }
+         ],
+         "ret": {
+          "k": "void"
+         }
+        },
+        "t": "Gtk.TextTagTableForeach"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
      }
     },
     {
@@ -29611,9 +31874,7 @@
   },
   "Tooltip": {
    "abstract": false,
-   "blocked": {
-    "set_custom": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -29624,6 +31885,24 @@
    "kind": "class",
    "lifetime": "shared",
    "methods": [
+    {
+     "js": "setCustom",
+     "name": "set_custom",
+     "params": [
+      {
+       "js": "customWidget",
+       "name": "custom_widget",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
     {
      "js": "setIcon",
      "name": "set_icon",
@@ -29748,12 +32027,67 @@
   },
   "TreeListModel": {
    "abstract": false,
-   "blocked": {
-    "new": "callback"
-   },
+   "blocked": {},
    "builder": false,
    "category": "model",
-   "constructors": [],
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "root",
+       "name": "root",
+       "type": {
+        "k": "object",
+        "t": "Gio.ListModel"
+       }
+      },
+      {
+       "js": "passthrough",
+       "name": "passthrough",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "js": "autoexpand",
+       "name": "autoexpand",
+       "type": {
+        "k": "bool"
+       }
+      },
+      {
+       "js": "createFunc",
+       "name": "create_func",
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "item",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "object",
+          "t": "Gio.ListModel"
+         }
+        },
+        "t": "Gtk.TreeListModelCreateModelFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.TreeListModel"
+     }
+    }
+   ],
    "curated": false,
    "gtype": "GtkTreeListModel",
    "hidden": [],
@@ -29910,6 +32244,7 @@
    ],
    "qualified": "Gtk.TreeListModel",
    "refs": [
+    "GObject.Object",
     "Gio.ListModel",
     "Gtk.TreeListRow"
    ],
@@ -30199,10 +32534,7 @@
   },
   "UriLauncher": {
    "abstract": false,
-   "blocked": {
-    "can_launch": "unbound:Gtk.Window",
-    "launch": "async"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -30234,6 +32566,25 @@
    "lifetime": "shared",
    "methods": [
     {
+     "js": "canLaunch",
+     "name": "can_launch",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.20"
+    },
+    {
      "js": "getUri",
      "name": "get_uri",
      "params": [],
@@ -30242,6 +32593,30 @@
      },
      "ret_nullable": true,
      "since": "4.10"
+    },
+    {
+     "async": {
+      "finish": "launch_finish",
+      "outs": []
+     },
+     "js": "launch",
+     "name": "launch",
+     "params": [
+      {
+       "js": "parent",
+       "name": "parent",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "4.10",
+     "throws": true
     },
     {
      "js": "setUri",
@@ -30290,15 +32665,30 @@
   },
   "WidgetPaintable": {
    "abstract": false,
-   "blocked": {
-    "get_widget": "unbound:Gtk.Widget",
-    "new": "unbound:Gtk.Widget",
-    "prop:widget": "unbound:Gtk.Widget",
-    "set_widget": "unbound:Gtk.Widget"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
-   "constructors": [],
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.WidgetPaintable"
+     }
+    }
+   ],
    "curated": false,
    "gtype": "GtkWidgetPaintable",
    "hidden": [],
@@ -30307,12 +32697,54 @@
    ],
    "kind": "class",
    "lifetime": "shared",
-   "methods": [],
+   "methods": [
+    {
+     "js": "getWidget",
+     "name": "get_widget",
+     "params": [],
+     "ret": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "ret_nullable": true
+    },
+    {
+     "js": "setWidget",
+     "name": "set_widget",
+     "params": [
+      {
+       "js": "widget",
+       "name": "widget",
+       "nullable": true,
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Widget"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
    "name": "WidgetPaintable",
    "ns": "Gtk",
    "parent": "GObject.Object",
    "prerequisites": [],
-   "properties": [],
+   "properties": [
+    {
+     "construct": false,
+     "construct_only": false,
+     "js": "widget",
+     "name": "widget",
+     "readable": true,
+     "type": {
+      "k": "widget",
+      "t": "Gtk.Widget"
+     },
+     "writable": true
+    }
+   ],
    "qualified": "Gtk.WidgetPaintable",
    "refs": [],
    "scope": "gtk",
@@ -30323,11 +32755,7 @@
   },
   "WindowGroup": {
    "abstract": false,
-   "blocked": {
-    "add_window": "unbound:Gtk.Window",
-    "list_windows": "unbound:Gtk.Window",
-    "remove_window": "unbound:Gtk.Window"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
    "constructors": [
@@ -30347,7 +32775,55 @@
    "interfaces": [],
    "kind": "class",
    "lifetime": "shared",
-   "methods": [],
+   "methods": [
+    {
+     "js": "addWindow",
+     "name": "add_window",
+     "params": [
+      {
+       "js": "window",
+       "name": "window",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    },
+    {
+     "js": "listWindows",
+     "name": "list_windows",
+     "params": [],
+     "ret": {
+      "elem": {
+       "k": "widget",
+       "t": "Gtk.Window"
+      },
+      "k": "list",
+      "slist": false
+     }
+    },
+    {
+     "js": "removeWindow",
+     "name": "remove_window",
+     "params": [
+      {
+       "js": "window",
+       "name": "window",
+       "type": {
+        "k": "widget",
+        "t": "Gtk.Window"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
    "name": "WindowGroup",
    "ns": "Gtk",
    "parent": "GObject.Object",

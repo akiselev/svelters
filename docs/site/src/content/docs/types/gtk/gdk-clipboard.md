@@ -37,7 +37,11 @@ Construct-time properties (construct-only ones can only be given here): `display
 - `getDisplay()`
 - `getFormats()`
 - `isLocal()`
+- `readAsync(mimeTypes, ioPriority)`
+- `readTextAsync()`
+- `readTextureAsync()`
 - `setContent(provider)`
+- `storeAsync(ioPriority)`
 
 ## Events
 
@@ -47,5 +51,5 @@ Listen with `obj.on('name', fn)`; it returns its disposer.
 
 ## Not bound yet
 
-7 members are not bound; reasons: async 5, struct by value 1, variant 1.
+3 members are not bound; reasons: struct by value 1, variant 2.
 

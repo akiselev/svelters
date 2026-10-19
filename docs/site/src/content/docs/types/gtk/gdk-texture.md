@@ -52,6 +52,7 @@ Facts come from the GIR; the tests behind them are listed in the ledger (`metada
 - `hash()`
 - `toString()`, since 2.20
 - `load(size, cancellable)`
+- `loadAsync(size)`
 
 ## Events
 

@@ -20,6 +20,6 @@ export class GestureSwipe extends GestureSingle {
 
   getVelocity() {
     const __res = call(this, 'get_velocity', []);
-    return { ret: __res.ret, velocityX: __res.velocityX, velocityY: __res.velocityY };
+    return { ret: __res.ret, velocityX: __res.velocity_x, velocityY: __res.velocity_y };
   }
 }

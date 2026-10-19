@@ -26,18 +26,26 @@ export class IMContext extends GObject_Object {
     call(this, 'focus_out', []);
   }
 
+  getClientWidget() {
+    return call(this, 'get_client_widget', []);
+  }
+
   getPreeditString() {
     const __res = call(this, 'get_preedit_string', []);
-    return { str: __res.str, attrs: wrapValue(AttrList, __res.attrs), cursorPos: __res.cursorPos };
+    return { str: __res.str, attrs: wrapValue(AttrList, __res.attrs), cursorPos: __res.cursor_pos };
   }
 
   getSurroundingWithSelection() {
     const __res = call(this, 'get_surrounding_with_selection', []);
-    return { ret: __res.ret, text: __res.text, cursorIndex: __res.cursorIndex, anchorIndex: __res.anchorIndex };
+    return { ret: __res.ret, text: __res.text, cursorIndex: __res.cursor_index, anchorIndex: __res.anchor_index };
   }
 
   reset() {
     call(this, 'reset', []);
+  }
+
+  setClientWidget(widget = null) {
+    call(this, 'set_client_widget', [widget]);
   }
 
   setCursorLocation(area) {

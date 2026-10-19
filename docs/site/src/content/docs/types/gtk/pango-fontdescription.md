@@ -37,11 +37,12 @@ Facts come from the GIR; the tests behind them are listed in the ledger (`metada
 - `getVariant()`
 - `getVariations()`, since 1.42
 - `getWeight()`
+- `getWidth()`, since 1.58
 - `hash()`
 - `toFilename()`
 - `toString()`
 
 ## Hidden mutators
 
-Value handles are immutable in JS; these native methods are not exposed: `merge`, `merge_static`, `set_absolute_size`, `set_color`, `set_family`, `set_family_static`, `set_features`, `set_features_static`, `set_gravity`, `set_size`, `set_stretch`, `set_style`, `set_variant`, `set_variations`, `set_variations_static`, `set_weight`, `unset_fields`.
+Value handles are immutable in JS; these native methods are not exposed: `merge`, `merge_static`, `set_absolute_size`, `set_color`, `set_family`, `set_family_static`, `set_features`, `set_features_static`, `set_gravity`, `set_size`, `set_stretch`, `set_style`, `set_variant`, `set_variations`, `set_variations_static`, `set_weight`, `set_width`, `unset_fields`.
 

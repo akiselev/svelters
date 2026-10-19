@@ -879,8 +879,8 @@
   "Error": {
    "abstract": false,
    "blocked": {
-    "domain_register": "callback",
-    "domain_register_static": "callback",
+    "domain_register": "callback: gerror",
+    "domain_register_static": "callback: gerror",
     "new_literal": "gerror"
    },
    "builder": false,
@@ -1737,6 +1737,72 @@
      "throws": true
     },
     {
+     "js": "loadUnixConfigurations",
+     "name": "load_unix_configurations",
+     "params": [
+      {
+       "js": "project",
+       "name": "project",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "etcSubdir",
+       "name": "etc_subdir",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "runSubdir",
+       "name": "run_subdir",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "usrSubdir",
+       "name": "usr_subdir",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "configName",
+       "name": "config_name",
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "configSuffix",
+       "name": "config_suffix",
+       "nullable": true,
+       "type": {
+        "k": "str"
+       }
+      },
+      {
+       "js": "flags",
+       "name": "flags",
+       "type": {
+        "k": "flags",
+        "t": "GLib.KeyFileFlags"
+       }
+      }
+     ],
+     "ret": {
+      "k": "bool"
+     },
+     "since": "2.90",
+     "throws": true
+    },
+    {
      "js": "saveToFile",
      "name": "save_to_file",
      "params": [
@@ -1806,8 +1872,7 @@
    "abstract": false,
    "blocked": {
     "add_entries": "type:needs-override:GLib.OptionEntry",
-    "new": "gpointer",
-    "set_translate_func": "callback"
+    "new": "gpointer"
    },
    "builder": false,
    "category": "value",
@@ -1815,6 +1880,7 @@
    "curated": false,
    "gtype": "GOptionGroup",
    "hidden": [
+    "set_translate_func",
     "set_translation_domain"
    ],
    "interfaces": [],
@@ -2002,6 +2068,15 @@
       "k": "str"
      },
      "since": "2.76"
+    },
+    {
+     "js": "freeDeep",
+     "name": "free_deep",
+     "params": [],
+     "ret": {
+      "k": "void"
+     },
+     "since": "2.90"
     },
     {
      "js": "freeToBytes",
@@ -2223,22 +2298,22 @@
   "Tree": {
    "abstract": false,
    "blocked": {
-    "foreach": "callback",
-    "foreach_node": "callback",
+    "foreach": "callback: gpointer",
+    "foreach_node": "callback: type:needs-override:GLib.TreeNode",
     "insert": "gpointer",
     "insert_node": "gpointer",
     "lookup": "gpointer",
     "lookup_extended": "gpointer",
     "lookup_node": "gpointer",
     "lower_bound": "gpointer",
-    "new_full": "callback",
+    "new_full": "callback: gpointer",
     "node_first": "type:needs-override:GLib.TreeNode",
     "node_last": "type:needs-override:GLib.TreeNode",
     "remove": "gpointer",
     "replace": "gpointer",
     "replace_node": "gpointer",
-    "search": "callback",
-    "search_node": "callback",
+    "search": "callback: gpointer",
+    "search_node": "callback: gpointer",
     "steal": "gpointer",
     "upper_bound": "gpointer"
    },

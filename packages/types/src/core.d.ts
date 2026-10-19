@@ -38,3 +38,13 @@ export class NativeValue {
   [Symbol.dispose](): void;
   static from<T extends NativeValue>(this: new (...args: any[]) => T, value: NativeValue | null): T | null;
 }
+
+/** Options of every generated async method: `signal` cancels the native operation (`GCancellable`). */
+export interface AsyncOptions {
+  signal?: AbortSignal | null;
+}
+
+/** An element (a renderer node) where a native widget is expected. */
+export interface NativeElement {
+  readonly svlHandle: number | null;
+}

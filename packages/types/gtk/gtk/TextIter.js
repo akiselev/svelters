@@ -16,7 +16,7 @@ export class TextIter extends NativeValue {
 
   backwardSearch(str, flags, limit = null) {
     const __res = call(this, 'backward_search', [str, flags, limit]);
-    return { ret: __res.ret, matchStart: wrapValue(TextIter, __res.matchStart), matchEnd: wrapValue(TextIter, __res.matchEnd) };
+    return { ret: __res.ret, matchStart: wrapValue(TextIter, __res.match_start), matchEnd: wrapValue(TextIter, __res.match_end) };
   }
 
   canInsert(defaultEditability) {
@@ -53,7 +53,7 @@ export class TextIter extends NativeValue {
 
   forwardSearch(str, flags, limit = null) {
     const __res = call(this, 'forward_search', [str, flags, limit]);
-    return { ret: __res.ret, matchStart: wrapValue(TextIter, __res.matchStart), matchEnd: wrapValue(TextIter, __res.matchEnd) };
+    return { ret: __res.ret, matchStart: wrapValue(TextIter, __res.match_start), matchEnd: wrapValue(TextIter, __res.match_end) };
   }
 
   getBuffer() {

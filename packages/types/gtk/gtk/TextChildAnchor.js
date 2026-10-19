@@ -24,4 +24,8 @@ export class TextChildAnchor extends GObject_Object {
   getDeleted() {
     return call(this, 'get_deleted', []);
   }
+
+  getWidgets() {
+    return call(this, 'get_widgets', []);
+  }
 }

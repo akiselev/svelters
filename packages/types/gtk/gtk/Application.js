@@ -19,12 +19,20 @@ export class Application extends Gio_Application {
     return wrapObject(Application, callStatic('Gtk.Application', 'new', [applicationId, flags]));
   }
 
+  addWindow(window) {
+    call(this, 'add_window', [window]);
+  }
+
   getAccelsForAction(detailedActionName) {
     return call(this, 'get_accels_for_action', [detailedActionName]);
   }
 
   getActionsForAccel(accel) {
     return call(this, 'get_actions_for_accel', [accel]);
+  }
+
+  getActiveWindow() {
+    return call(this, 'get_active_window', []);
   }
 
   getMenuById(id) {
@@ -35,8 +43,24 @@ export class Application extends Gio_Application {
     return wrapObject(MenuModel, call(this, 'get_menubar', []));
   }
 
+  getWindowById(id) {
+    return call(this, 'get_window_by_id', [id]);
+  }
+
+  getWindows() {
+    return call(this, 'get_windows', []);
+  }
+
+  inhibit(window, flags, reason = null) {
+    return call(this, 'inhibit', [window, flags, reason]);
+  }
+
   listActionDescriptions() {
     return call(this, 'list_action_descriptions', []);
+  }
+
+  removeWindow(window) {
+    call(this, 'remove_window', [window]);
   }
 
   setAccelsForAction(detailedActionName, accels) {
@@ -49,6 +73,10 @@ export class Application extends Gio_Application {
 
   uninhibit(cookie) {
     call(this, 'uninhibit', [cookie]);
+  }
+
+  get activeWindow() {
+    return getProp(this, 'active-window');
   }
 
   get menubar() {
