@@ -480,7 +480,7 @@
     "attributed-string-value": {
      "attempts": 2,
      "default": "0",
-     "error": "attributedStringValue: Objective-C exception: -[NSTaggedPointerString string]: unrecognized selector sent to instance 0x9b6c0cda10a081c3",
+     "error": "attributedStringValue: Objective-C exception: -[NSTaggedPointerString string]: unrecognized selector sent to instance 0x…",
      "events": [],
      "kvo": false,
      "outcome": "error",
@@ -1460,7 +1460,7 @@
     "placeholder-attributed-string": {
      "attempts": 2,
      "default": null,
-     "error": "placeholderAttributedString: Objective-C exception: -[NSTaggedPointerString _mayRequireIntentResolution]: unrecognized selector sent to instance 0xb996eb7a91e36460",
+     "error": "placeholderAttributedString: Objective-C exception: -[NSTaggedPointerString _mayRequireIntentResolution]: unrecognized selector sent to instance 0x…",
      "events": [],
      "kvo": false,
      "outcome": "error",

@@ -223,7 +223,10 @@ def probe_class(binary: Path, plan_path: Path, c: dict, timeout: float, runner=r
             elif x.get("start"):
                 in_flight = x["prop"]
             elif "result" in x:
-                rec["props"][x["prop"]] = x["result"]
+                r = x["result"]
+                if isinstance(r.get("error"), str):
+                    r["error"] = scrub(r["error"])      # exception messages carry object addresses
+                rec["props"][x["prop"]] = r
                 in_flight = None
         if why is None:
             break

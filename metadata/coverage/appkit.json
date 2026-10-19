@@ -65,11 +65,11 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   24,
+   28,
    28
   ],
   "verified_inferred": [
-   14,
+   18,
    18
   ]
  },
@@ -102,11 +102,11 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   13,
+   15,
    15
   ],
   "verified_inferred": [
-   10,
+   12,
    12
   ]
  },
@@ -213,11 +213,11 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   16,
+   20,
    20
   ],
   "verified_inferred": [
-   7,
+   11,
    11
   ]
  },
@@ -361,11 +361,11 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   57,
+   58,
    58
   ],
   "verified_inferred": [
-   44,
+   45,
    45
   ]
  }
