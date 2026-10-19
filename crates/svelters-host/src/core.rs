@@ -117,6 +117,8 @@ enum Event {
     },
     /// The native object behind `handle` died (`reason` is an `SVL_GONE_*` code).
     Gone { handle: svl_handle, reason: u32 },
+    /// ABI v2.6: an observed property may have changed (`host.prop_changed`).
+    Changed { handle: svl_handle, prop: svl_id },
 }
 
 /// A queued event ready for JS: a signal with its name resolved (`__svelters_dispatch`), or a
@@ -133,6 +135,8 @@ pub(crate) enum DispatchEvent {
         handle: svl_handle,
         reason: &'static str,
     },
+    /// An observed property may have changed (`__svelters_prop_changed`).
+    Changed { handle: svl_handle, prop: String },
 }
 
 /// Why a handle is no longer live.
@@ -272,6 +276,8 @@ struct CoreState {
     callbacks: CbTable,
     /// (kind id, signal id) → name, filled by `listen`
     signal_names: HashMap<(svl_id, svl_id), String>,
+    /// ABI v2.6 observations: (handle, prop id) → (refcount, prop name as JS asked for it).
+    observed: HashMap<(svl_handle, svl_id), (u32, String)>,
     events: VecDeque<Event>,
     timers: Timers,
     console: Vec<ConsoleLine>,
@@ -451,6 +457,18 @@ impl Core {
             .cloned()
     }
 
+    /// ABI v2.6 `host.prop_changed`: queues a notification for an observed (h, prop) and reports
+    /// whether it did. Unobserved pairs (cross-notified props, a late native emission after
+    /// `observe(off)`) are ignored. Never runs JS.
+    pub(crate) fn prop_changed(&self, h: svl_handle, prop: svl_id) -> bool {
+        let Ok(mut st) = self.st.try_borrow_mut() else { return false };
+        if !st.observed.contains_key(&(h, prop)) {
+            return false;
+        }
+        st.events.push_back(Event::Changed { handle: h, prop });
+        true
+    }
+
     pub(crate) fn has_events(&self) -> bool {
         !self.st.borrow().events.is_empty()
     }
@@ -462,6 +480,15 @@ impl Core {
         let mut out = Vec::new();
         for e in events {
             let (handle, signal, args, deferred, flags) = match e {
+                Event::Changed { handle, prop } => {
+                    // Delivered only while still observed: an observation dropped (or a handle that
+                    // died) after the backend queued the notification is silently skipped.
+                    let name = self.st.borrow().observed.get(&(handle, prop)).map(|o| o.1.clone());
+                    if let Some(prop) = name {
+                        out.push(DispatchEvent::Changed { handle, prop });
+                    }
+                    continue;
+                }
                 Event::Gone { handle, reason } => {
                     out.push(DispatchEvent::Gone {
                         handle,
@@ -517,6 +544,7 @@ impl Core {
             }
             st.toplevels.remove(&h);
             st.tree.remove(&h);
+            st.observed.retain(|k, _| k.0 != h);
             st.dead.push(h, Death::Gone(reason));
             st.events.push_back(Event::Gone { handle: h, reason });
         }
@@ -796,6 +824,7 @@ fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError
             flags,
         } => eng.dispatch(handle, &signal, &args, deferred, flags),
         DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason),
+        DispatchEvent::Changed { handle, prop } => eng.dispatch_prop_changed(handle, &prop),
     }
 }
 

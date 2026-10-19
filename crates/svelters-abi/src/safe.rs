@@ -1003,6 +1003,23 @@ impl<'a> BackendRef<'a> {
         Ok(unsafe { Value::from_raw(&out) })
     }
 
+    /// ABI v2.6: whether the backend implements `observe`.
+    pub fn has_observe(&self) -> bool {
+        self.b().observe.is_some()
+    }
+
+    /// ABI v2.6: starts (`on`) or stops watching property `prop` of `h`; the backend then calls
+    /// `host.prop_changed(h, prop)` on every native change announcement. An error with code
+    /// [`SVL_OBSERVE_UNSUPPORTED`] means the property has no change notification on this backend
+    /// (also the answer of a backend without the member).
+    pub fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> AbiResult<()> {
+        let b = self.b();
+        let Some(f) = b.observe else {
+            return Err(AbiError::plain(SVL_OBSERVE_UNSUPPORTED, "this backend does not implement observe"));
+        };
+        self.check(unsafe { f(b.self_, h, prop, on) })
+    }
+
     pub fn insert(
         &self,
         parent: svl_handle,
@@ -1236,6 +1253,14 @@ impl<'a> HostRef<'a> {
         unsafe { (host.frame)(host.self_) }
     }
 
+    /// ABI v2.6: an observed property may have changed. A no-op for a host without the member.
+    pub fn prop_changed(&self, h: svl_handle, prop: svl_id) {
+        let host = self.h();
+        if let Some(f) = host.prop_changed {
+            unsafe { f(host.self_, h, prop) }
+        }
+    }
+
     /// `reason` is one of the `SVL_GONE_*` constants.
     pub fn on_destroyed(&self, h: svl_handle, reason: u32) {
         let host = self.h();
@@ -1269,6 +1294,21 @@ impl<'a> HostRef<'a> {
 }
 
 pub type Waker = Arc<dyn Fn() + Send + Sync>;
+
+/// Why [`Backend::observe`] refused.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ObserveError {
+    /// The property has no change notification on this backend: [`SVL_OBSERVE_UNSUPPORTED`].
+    Unsupported(String),
+    /// A dead handle, an unknown, write-only or constant property: `-1`.
+    Failed(String),
+}
+
+impl From<String> for ObserveError {
+    fn from(s: String) -> ObserveError {
+        ObserveError::Failed(s)
+    }
+}
 pub type StrResult<T> = std::result::Result<T, String>;
 
 /// Implement this to provide a backend in Rust, then call [`BackendVtable::new`].
@@ -1346,6 +1386,19 @@ pub trait Backend: 'static {
     /// ABI v2.5: calls a static or constructor function of a kind.
     fn call_static(&self, _kind: svl_id, _method: svl_id, _args: &[Value]) -> StrResult<Value> {
         Err("call_static is not supported by this backend".into())
+    }
+
+    // ---- v2.6 ----
+
+    /// Whether this backend implements [`Backend::observe`]; the vtable publishes the member only
+    /// when this is true.
+    fn supports_observe(&self) -> bool {
+        false
+    }
+    /// ABI v2.6: starts or stops watching a property; while watched, call
+    /// [`HostRef::prop_changed`] on every native change announcement. Calls nest per (h, prop).
+    fn observe(&self, _h: svl_handle, _prop: svl_id, _on: bool) -> Result<(), ObserveError> {
+        Err(ObserveError::Unsupported("observe is not supported by this backend".into()))
     }
 
     // ---- v3 ----
@@ -1560,6 +1613,19 @@ unsafe extern "C" fn t_call_static(
     s.rc_value(out, |b| b.call_static(kind, method, &args))
 }
 
+unsafe extern "C" fn t_observe(s: *mut c_void, h: svl_handle, prop: svl_id, on: bool) -> c_int {
+    let s = unsafe { shim(s) };
+    match catch_unwind(AssertUnwindSafe(|| s.backend.observe(h, prop, on))) {
+        Ok(Ok(())) => 0,
+        Ok(Err(ObserveError::Unsupported(e))) => {
+            s.fail(&e);
+            SVL_OBSERVE_UNSUPPORTED
+        }
+        Ok(Err(ObserveError::Failed(e))) => s.fail(&e),
+        Err(_) => s.fail("panic in backend"),
+    }
+}
+
 unsafe extern "C" fn t_listen(s: *mut c_void, h: svl_handle, signal: svl_id, on: bool) -> c_int {
     let s = unsafe { shim(s) };
     s.rc(|b| b.listen(h, signal, on))
@@ -1702,6 +1768,7 @@ impl BackendVtable {
         let waker = backend.waker();
         let caps = backend.caps();
         let constructs = backend.supports_construct();
+        let observes = backend.supports_observe();
         let shim = Box::into_raw(Box::new(Shim {
             waker,
             backend: Box::new(backend),
@@ -1738,6 +1805,7 @@ impl BackendVtable {
             style: Some(t_style),
             construct: constructs.then_some(t_construct as _),
             call_static: constructs.then_some(t_call_static as _),
+            observe: observes.then_some(t_observe as _),
         });
         BackendVtable { raw, shim }
     }
@@ -1776,6 +1844,8 @@ pub trait HostCallbacks: 'static {
     fn release_callback(&self, _callback: u64) {}
     /// A frame requested through `request_frame` is due.
     fn frame(&self);
+    /// ABI v2.6: an observed property of `h` may have changed. The default ignores it.
+    fn prop_changed(&self, _h: svl_handle, _prop: svl_id) {}
 }
 
 /// Why [`HostCallbacks::call_sync`] produced no result.
@@ -1870,6 +1940,11 @@ unsafe extern "C" fn h_frame(s: *mut c_void) {
     let _ = catch_unwind(AssertUnwindSafe(|| s.cb.frame()));
 }
 
+unsafe extern "C" fn h_prop_changed(s: *mut c_void, h: svl_handle, prop: svl_id) {
+    let s = unsafe { hshim(s) };
+    let _ = catch_unwind(AssertUnwindSafe(|| s.cb.prop_changed(h, prop)));
+}
+
 /// An `svl_host` backed by a [`HostCallbacks`] implementation.
 pub struct HostVtable {
     raw: Box<svl_host>,
@@ -1891,6 +1966,7 @@ impl HostVtable {
             frame: h_frame,
             invoke_callback: h_invoke_callback,
             release_callback: h_release_callback,
+            prop_changed: Some(h_prop_changed),
         });
         HostVtable { raw, shim }
     }

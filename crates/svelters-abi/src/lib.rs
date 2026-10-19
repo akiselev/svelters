@@ -67,6 +67,8 @@ pub const SVL_M_BLOCKING: u32 = 8;
 pub const SVL_M_STATIC: u32 = 16;
 /// ABI v2.5: with `SVL_M_STATIC`, returns a new reference.
 pub const SVL_M_CTOR: u32 = 32;
+/// ABI v2.6: on `SVL_PROP` descriptors, `observe` can watch this property.
+pub const SVL_M_OBSERVABLE: u32 = 64;
 
 pub const SVL_CB_CALL: u16 = 1;
 pub const SVL_CB_ASYNC: u16 = 2;
@@ -254,6 +256,8 @@ pub struct svl_host {
     pub release_callback: unsafe extern "C" fn(*mut c_void, u64),
     /// ABI v2.1: a requested frame is due.
     pub frame: unsafe extern "C" fn(*mut c_void),
+    /// ABI v2.6: an observed property may have changed (no value). Optional.
+    pub prop_changed: Option<unsafe extern "C" fn(*mut c_void, svl_handle, svl_id)>,
 }
 
 pub const SVL_SYNC_OK: i32 = 0;
@@ -261,6 +265,8 @@ pub const SVL_SYNC_OK: i32 = 0;
 pub const SVL_SYNC_FAILED: i32 = -1;
 /// `call_sync` found JS running: the host queued the event for async delivery.
 pub const SVL_SYNC_BUSY: i32 = -2;
+/// ABI v2.6 `observe`: the property exists but this backend cannot watch it natively.
+pub const SVL_OBSERVE_UNSUPPORTED: i32 = -2;
 
 #[repr(C)]
 pub struct svl_backend {
@@ -315,6 +321,8 @@ pub struct svl_backend {
     /// ABI v2.5: call a static function or constructor function of a kind. Optional.
     pub call_static:
         Option<unsafe extern "C" fn(*mut c_void, svl_id, svl_id, *const svl_value, usize, *mut svl_value) -> c_int>,
+    /// ABI v2.6: start or stop watching a property natively (`host.prop_changed`). Optional.
+    pub observe: Option<unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, bool) -> c_int>,
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.

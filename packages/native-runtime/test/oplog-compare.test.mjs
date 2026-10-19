@@ -48,3 +48,12 @@ test('style lines: the widget name is state, classes and sheets are not; a null 
   assert.equal(compare(named, named.replace('name "a"', 'name "b"')).equal, false);
   assert.equal(compare(base, base.replace('set #2 label "a"\n', 'set #2 label "a"\nset #2 width null\n')).equal, true);
 });
+
+test('ABI v2.6: observed props are state and `changed` lines are boundaries', () => {
+  const o = base.concat('observe #2 label on\nchanged #2 label\nobserve #2 label off\n');
+  assert.equal(compare(o, o).equal, true);
+  // a missing observe differs at the `changed` boundary
+  assert.match(compare(o, o.replace('observe #2 label on\n', '')).problems[0], /before "changed #2 label"/);
+  // observing and then dropping the observation ends in the same state as never observing
+  assert.equal(compare(base.concat('observe #2 label on\nobserve #2 label off\n'), base).equal, true);
+});

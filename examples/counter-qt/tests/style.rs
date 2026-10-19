@@ -95,7 +95,7 @@ unsafe extern "C" fn frame(_: *mut c_void) {}
 type Step = Box<dyn FnOnce()>;
 
 fn run_steps(steps: Vec<Step>) {
-    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame }));
+    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame, prop_changed: None }));
     unsafe { counter_qt::set_host(host) };
     fn next(mut steps: Vec<Step>) {
         if steps.is_empty() {

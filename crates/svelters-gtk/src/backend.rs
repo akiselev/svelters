@@ -33,6 +33,7 @@ pub mod canvas;
 mod extras;
 mod menus;
 pub(crate) use menus::signal_name as menus_signal_name;
+mod observe;
 mod style;
 mod vlist;
 use extras::CallErr;
@@ -55,6 +56,8 @@ struct Entry {
     slot: Option<(u64, u32)>,
     /// The propagation phase an event controller had before its first capture listener.
     capture_prev: Option<gtk::PropagationPhase>,
+    /// ABI v2.6 observations by property id (see `observe.rs`).
+    observers: HashMap<u32, observe::Observer>,
 }
 
 #[derive(Default)]
@@ -122,6 +125,8 @@ pub(crate) struct Inner {
     /// Styling state (see `style.rs`).
     style: RefCell<style::StyleState>,
     style_flush_queued: Cell<bool>,
+    /// The thread that created the backend (GTK's): `observe` handlers call the host directly only there.
+    main_thread: std::thread::ThreadId,
 }
 
 /// Slot value recorded for an event controller attached to a widget (it is not in `SLOTS`).
@@ -282,7 +287,7 @@ impl Inner {
                 unsafe { (*note).h = h };
             }
             let owner = if shared { 0 } else { owner };
-            st.entries.insert(h, Entry { obj: o.downgrade(), hold, class, owner, note, kind, signals: HashMap::new(), slot: None, capture_prev: None });
+            st.entries.insert(h, Entry { obj: o.downgrade(), hold, class, owner, note, kind, signals: HashMap::new(), slot: None, capture_prev: None, observers: Default::default() });
             h
         };
         self.tag_object(&o, h);
@@ -313,6 +318,7 @@ impl Inner {
                     None => obj.disconnect(id),
                 }
             }
+            observe::disconnect_all(e, obj);
             self.untag_object(obj, h);
             if !e.note.is_null() {
                 unsafe {
@@ -475,7 +481,7 @@ impl Inner {
             let top = obj.is::<gtk::Window>();
             let hold = if top { None } else { Some(obj.clone()) };
             let class = if top { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED };
-            st.entries.insert(h, Entry { obj: obj.downgrade(), hold, class, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None, capture_prev: None });
+            st.entries.insert(h, Entry { obj: obj.downgrade(), hold, class, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None, capture_prev: None, observers: Default::default() });
             h
         };
         self.tag_object(&obj, h);
@@ -1314,7 +1320,10 @@ impl Inner {
             // A construct-only property is writable once: through `construct`. The descriptor keeps
             // its parameter so the host can encode it there; `setProp` refuses it with a clear error.
             let params = if writable || construct_only { vec![slot] } else { vec![] };
-            return Some(MemberDesc { name: ps.name().to_string(), params, ret, flags: 0 });
+            // Every readable GObject property can be watched through `notify::<name>`, except a
+            // construct-only one, which never changes.
+            let flags = if readable && !flags.contains(glib::ParamFlags::CONSTRUCT_ONLY) { SVL_M_OBSERVABLE } else { 0 };
+            return Some(MemberDesc { name: ps.name().to_string(), params, ret, flags });
         }
         let kind = if kind == vlist::KIND_VLIST && !vlist::is_own_member(member) { self.table_kind(kind) } else { kind };
         if menus::is_menu_kind(kind) {
@@ -1372,11 +1381,14 @@ impl Inner {
             None => glib::Type::from_name(p.gtype).unwrap_or(glib::Type::INVALID),
         };
         let slot = types::slot_for(&mut table, vt, ps.as_ref()).named(p.js_name);
+        // `notify::<name>` on the element, or on the object a forwarded (`via`) property lives on.
+        let constant = ps.as_ref().is_some_and(|ps| ps.flags().contains(glib::ParamFlags::CONSTRUCT_ONLY));
+        let observable = readable && !constant && (ps.is_some() || p.flags & F_VIA != 0);
         Some(MemberDesc {
             name: p.name.to_string(),
             params: if writable { vec![slot.clone()] } else { vec![] },
             ret: if readable { slot } else { SlotDesc::new(SVL_NULL) },
-            flags: 0,
+            flags: if observable { SVL_M_OBSERVABLE } else { 0 },
         })
     }
 
@@ -1509,6 +1521,7 @@ impl GtkBackend {
             menus: RefCell::new(HashMap::new()),
             style: RefCell::default(),
             style_flush_queued: Cell::new(false),
+            main_thread: std::thread::current().id(),
         });
         let mut ctl = Box::new(Ctl { host, local: inner });
         let vtable = Box::new(svl_backend {
@@ -1540,6 +1553,7 @@ impl GtkBackend {
             style: Some(b_style),
             construct: Some(b_construct),
             call_static: Some(b_call_static),
+            observe: Some(b_observe),
         });
         Ok(GtkBackend { vtable, ctl })
     }
@@ -1775,6 +1789,22 @@ unsafe extern "C" fn b_call_static(p: *mut c_void, kind: svl_id, method: svl_id,
             c.local.set_error(e.message().to_string());
             c.local.write_error(&e, out);
             -1
+        }
+        Err(_) => {
+            c.local.set_error("internal panic in svelters-gtk".into());
+            -1
+        }
+    }
+}
+
+unsafe extern "C" fn b_observe(p: *mut c_void, h: svl_handle, prop: svl_id, on: bool) -> c_int {
+    let c = unsafe { ctl(p) };
+    let _t = crate::timing::scope();
+    match catch_unwind(AssertUnwindSafe(|| c.local.observe(h, prop, on))) {
+        Ok(Ok(())) => 0,
+        Ok(Err((rc, e))) => {
+            c.local.set_error(e);
+            rc
         }
         Err(_) => {
             c.local.set_error("internal panic in svelters-gtk".into());

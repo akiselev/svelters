@@ -305,7 +305,7 @@ impl Inner {
             let h = st.next;
             st.entries.insert(
                 h,
-                Entry { obj: obj.downgrade(), hold, class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None, capture_prev: None },
+                Entry { obj: obj.downgrade(), hold, class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind, signals: HashMap::new(), slot: None, capture_prev: None, observers: Default::default() },
             );
             h
         };

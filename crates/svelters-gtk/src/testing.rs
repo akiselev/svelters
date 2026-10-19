@@ -154,6 +154,8 @@ struct Recorder {
     destroyed: RefCell<Vec<(u64, u32)>>,
     checkpoints: std::cell::Cell<u32>,
     frames: std::cell::Cell<u32>,
+    /// `prop_changed` calls (ABI v2.6): (handle, prop id).
+    changed: RefCell<Vec<(u64, u32)>>,
 }
 
 unsafe extern "C" fn h_post(p: *mut c_void, h: svl_handle, sig: svl_id, args: *const svl_value, n: usize) {
@@ -192,6 +194,10 @@ unsafe extern "C" fn h_frame(p: *mut c_void) {
     let r = unsafe { &*(p as *const Recorder) };
     r.frames.set(r.frames.get() + 1);
 }
+unsafe extern "C" fn h_prop_changed(p: *mut c_void, h: svl_handle, prop: svl_id) {
+    let r = unsafe { &*(p as *const Recorder) };
+    r.changed.borrow_mut().push((h, prop));
+}
 unsafe extern "C" fn h_destroyed(p: *mut c_void, h: svl_handle, reason: u32) {
     let r = unsafe { &*(p as *const Recorder) };
     r.destroyed.borrow_mut().push((h, reason));
@@ -228,6 +234,7 @@ impl Harness {
             invoke_callback: h_invoke,
             release_callback: h_release,
             frame: h_frame,
+            prop_changed: Some(h_prop_changed),
         });
         unsafe { backend.attach_host(&*host) };
         Harness { backend, rec, _host: host, kinds: RefCell::new(HashMap::new()), sig_names: RefCell::new(HashMap::new()) }
@@ -667,6 +674,29 @@ impl Harness {
         self.sig_names.borrow_mut().insert(id, signal.to_string());
         let vt = self.vt();
         self.check(unsafe { (vt.listen)(vt.self_, h, id, on) })
+    }
+
+    /// ABI v2.6 `observe` by property name. `Err((rc, message))`: `rc` is `SVL_OBSERVE_UNSUPPORTED`
+    /// or -1.
+    pub fn observe(&self, h: u64, prop: &str, on: bool) -> Result<(), (i32, String)> {
+        let id = self.resolve(SVL_PROP, self.kind_of(h), prop);
+        if id == 0 {
+            return Err((-1, format!("unknown property {prop}")));
+        }
+        self.observe_id(h, id, on)
+    }
+
+    /// ABI v2.6 `observe` by property id.
+    pub fn observe_id(&self, h: u64, prop: u32, on: bool) -> Result<(), (i32, String)> {
+        let vt = self.vt();
+        let f = vt.observe.expect("observe");
+        let rc = unsafe { f(vt.self_, h, prop, on) };
+        if rc == 0 { Ok(()) } else { Err((rc, self.err())) }
+    }
+
+    /// `prop_changed` calls received since the last take: (handle, prop id).
+    pub fn take_changed(&self) -> Vec<(u64, u32)> {
+        self.rec.changed.borrow_mut().drain(..).collect()
     }
 
     /// Chooses what the harness host answers to `call_sync` (default: busy).

@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE). Source of truth: plans/architecture/backend-abi.md
+/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE; 2.6 observe, prop_changed, SVL_M_OBSERVABLE). Source of truth: plans/architecture/backend-abi.md
  *
  * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
  * lifetime). */
@@ -115,7 +115,8 @@ enum { /* svl_member_desc.flags */
   SVL_M_SYNC_SAFE = 4,
   SVL_M_BLOCKING = 8,
   SVL_M_STATIC = 16, /* ABI v2.5. Reached through call_static only (no receiver handle) */
-  SVL_M_CTOR = 32    /* ABI v2.5. With STATIC: returns a new reference (OWNED/SHARED handle or VALUE) */
+  SVL_M_CTOR = 32,   /* ABI v2.5. With STATIC: returns a new reference (OWNED/SHARED handle or VALUE) */
+  SVL_M_OBSERVABLE = 64 /* ABI v2.6. On SVL_PROP descriptors: `observe` can watch this property */
 };
 
 typedef struct svl_slot_desc {
@@ -242,6 +243,10 @@ typedef struct svl_host {
   /* ABI v2.1: a frame requested with backend->request_frame is due. Main thread, from the
      toolkit's frame clock. The host runs requestAnimationFrame callbacks. */
   void (*frame)(void *self);
+  /* ABI v2.6 (may be NULL: a host that never calls `observe`). The observed property `prop` of `h` may
+     have changed: no value, and not a promise that it did (GTK re-notifies identical sets). UI thread
+     only; a backend hops there first. A backend may report props nobody observes; the host ignores them. */
+  void (*prop_changed)(void *self, svl_handle h, svl_id prop);
 } svl_host;
 
 /* call_sync return codes (ABI v2.1 semantics). `out` holds the handler result when 0:
@@ -249,6 +254,10 @@ typedef struct svl_host {
 #define SVL_SYNC_OK 0
 #define SVL_SYNC_FAILED (-1) /* nothing ran or the host failed: use the default */
 #define SVL_SYNC_BUSY (-2)   /* JS is running: the host queued the event for async delivery */
+
+/* ABI v2.6 `observe` return code: the handle and property are valid, but this backend has no native
+   mechanism for this property (Qt: no NOTIFY signal). Other failures are -1. */
+#define SVL_OBSERVE_UNSUPPORTED (-2)
 
 
 /* ---- backend ------------------------------------------------------------------------------------ */
@@ -317,6 +326,16 @@ typedef struct svl_backend {
    * possibly an SVL_ERROR in `out`). */
   int (*construct)(void *self, svl_id kind, const svl_id *props, const svl_value *values, size_t n, svl_value *out);
   int (*call_static)(void *self, svl_id kind, svl_id method, const svl_value *args, size_t n, svl_value *out);
+
+  /* ABI v2.6 (may be NULL: no property can be observed). Starts (`on`) or stops watching property
+   * `prop` of `h` natively; while watched, the backend calls host->prop_changed(h, prop) whenever the
+   * toolkit announces a change (GTK notify::<prop>, a Qt NOTIFY signal). Calls nest: a backend counts
+   * them per (h, prop) and connects on the first `on`, disconnects on the matching last `off`; `off`
+   * for a property that is not watched is 0. Destroying `h` (or its native death) drops every
+   * observation of it. The observation never keeps the object alive and never holds JS values.
+   * Returns 0; SVL_OBSERVE_UNSUPPORTED when the property has no change notification on this backend;
+   * -1 (last_error) for a dead handle or an unknown, write-only or constant property. */
+  int (*observe)(void *self, svl_handle h, svl_id prop, bool on);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

@@ -65,6 +65,12 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
   const methodIdOf = new Map();
   const widgets = new Map(); // handle -> { kind, parent, children[], props: Map }
   const dead = new Set(); // handles that died (destroyed or gone): teardown-shaped ops on them are no-ops
+  // ABI v2.6 observations: `${h}:${prop}` -> refcount. Like the QuickJS host, only the 0->1 and 1->0
+  // transitions reach the "backend" (the log).
+  const observed = new Map();
+  const forgetObserved = (h) => {
+    for (const k of [...observed.keys()]) if (k.startsWith(`${h}:`)) observed.delete(k);
+  };
   let next = 1;
 
   const w = (h) => {
@@ -180,6 +186,7 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
       }
       widgets.delete(h);
       dead.add(h);
+      forgetObserved(h);
       lines.push(`destroy #${h}`);
     },
     setProp(h, nameRef, value) {
@@ -195,6 +202,26 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
       const method = nameOf(methodNames, w(h).kid, methodRef);
       lines.push(`call #${h} ${method} ${json(args)}`);
       return null;
+    },
+    // ABI v2.6: refcounted per (h, prop); answers whether (h, prop) is observed afterwards.
+    observe(h, propRef, on) {
+      if (!on && dead.has(h)) return false;
+      const name = nameOf(propNames, w(h).kid, propRef);
+      const key = `${h}:${name}`;
+      const n = observed.get(key) ?? 0;
+      if (on) {
+        observed.set(key, n + 1);
+        if (n === 0) lines.push(`observe #${h} ${name} on`);
+        return true;
+      }
+      if (n === 0) return false;
+      if (n > 1) {
+        observed.set(key, n - 1);
+        return true;
+      }
+      observed.delete(key);
+      lines.push(`observe #${h} ${name} off`);
+      return false;
     },
     listen(h, signal, on, flags = 0) {
       if (!on && dead.has(h)) return;
@@ -269,6 +296,7 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
     for (const [x] of out) {
       widgets.delete(x);
       dead.add(x);
+      forgetObserved(x);
     }
     return out;
   }
@@ -279,6 +307,8 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
     text: () => lines.map((l) => l + '\n').join(''),
     widgets,
     killNative,
+    /** Whether JS observes `prop` of `h` (ABI v2.6): the host delivers `changed` steps only then. */
+    isObserved: (h, prop) => observed.has(`${h}:${prop}`),
     /** Hands results that are handles to `fn` (the vm context's `__svelters_node`). */
     setNodeFor: (fn) => void (nodeFor = fn),
   };
@@ -348,6 +378,9 @@ const MAX_TIMER_FIRINGS = 10_000;
  *   { deferred: [h, signal, args] } a sync signal the toolkit could not deliver synchronously (JS was
  *                                 busy) and queued instead: append `deferred #h signal args`, call
  *                                 globalThis.__svelters_dispatch(h, signal, args, true) (result ignored).
+ *   { changed: [h, prop] }        ABI v2.6: the toolkit announces that prop of h may have changed: append
+ *                                 `changed #h prop`, then, if JS observes it (host.observe), call
+ *                                 globalThis.__svelters_prop_changed(h, prop) synchronously.
  *   { gone: [h, reason] }         the native object behind h died: log `gone #h reason` for h and each
  *                                 descendant (pre-order, reason `parent`), then call
  *                                 globalThis.__svelters_gone(handle, reason) for each, synchronously.
@@ -406,6 +439,10 @@ export async function runBundle({ bundlePath, script, toolkit, styleDialect = to
         const [h, signal, args] = step.deferred;
         th.lines.push(`deferred #${h} ${signal} ${JSON.stringify(args)}`);
         ctx.__svelters_dispatch(h, signal, args, true, 0);
+      } else if (step.changed) {
+        const [h, prop] = step.changed;
+        th.lines.push(`changed #${h} ${prop}`);
+        if (th.isObserved(h, prop)) ctx.__svelters_prop_changed?.(h, prop);
       } else if (step.gone) {
         const [h, reason] = step.gone;
         for (const [x, why] of th.killNative(h, reason)) ctx.__svelters_gone?.(x, why);

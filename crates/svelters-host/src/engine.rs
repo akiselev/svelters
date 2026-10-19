@@ -98,6 +98,10 @@ pub trait JsEngine {
     /// native object behind `handle` died (`reason` is a `gone_name`).
     fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError>;
 
+    /// ABI v2.6: calls `globalThis.__svelters_prop_changed(handle, prop)` if the runtime installed
+    /// it: the observed property `prop` of `handle` may have changed (no value; read it live).
+    fn dispatch_prop_changed(&mut self, handle: u64, prop: &str) -> Result<(), JsError>;
+
     /// Runs the callback registered for a timer id.
     fn fire_timer(&mut self, id: u32) -> Result<(), JsError>;
 

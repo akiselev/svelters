@@ -106,7 +106,7 @@ type Step = Box<dyn FnOnce()>;
 /// Runs `steps` inside the Qt loop, one per loop turn (50 ms apart), then quits. A panic in a
 /// step fails the process.
 fn run_steps(steps: Vec<Step>) {
-    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame }));
+    let host = Box::leak(Box::new(svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame, prop_changed: None }));
     unsafe { counter_qt::set_host(host) };
 
     fn next(mut steps: Vec<Step>) {

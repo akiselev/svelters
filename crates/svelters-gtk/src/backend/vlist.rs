@@ -231,7 +231,7 @@ impl Inner {
             let h = st.next;
             st.entries.insert(
                 h,
-                Entry { obj: sw.upcast_ref::<glib::Object>().downgrade(), hold: Some(sw.clone().upcast()), class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind: KIND_VLIST, signals: HashMap::new(), slot: None, capture_prev: None },
+                Entry { obj: sw.upcast_ref::<glib::Object>().downgrade(), hold: Some(sw.clone().upcast()), class: SVL_LIFE_OWNED, owner: 0, note: std::ptr::null_mut(), kind: KIND_VLIST, signals: HashMap::new(), slot: None, capture_prev: None, observers: Default::default() },
             );
             h
         };
