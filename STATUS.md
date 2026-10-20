@@ -53,7 +53,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 
 ## Handoff (2026-10-19)
 
-`master` is green: CL0, NT1 and RT1 merged 2026-10-19 (2070/2070 nextest, pnpm test, docs:test on the merged tree; CI green on each branch). NT2 merged too (fde5dbef). No lanes are running. Nested `pnpm` in package scripts needs `pnpm` on PATH (only `corepack pnpm` is installed); the docs smoke test reads a cached `docs/site/.generated/ir`, so rerun `tools/docs/build_ir.py` after merges.
+R0 (observability facts) is running in a worktree, branch `ci/r0`. `master` is green: CL0, NT1 and RT1 merged 2026-10-19 (2070/2070 nextest, pnpm test, docs:test on the merged tree; CI green on each branch). NT2 merged too (fde5dbef). No lanes are running. Nested `pnpm` in package scripts needs `pnpm` on PATH (only `corepack pnpm` is installed); the docs smoke test reads a cached `docs/site/.generated/ir`, so rerun `tools/docs/build_ir.py` after merges.
 
 **Local test environment (this WSL machine):**
 - GUI tests always run on a private Xvfb via `tools/dev/headless`. nextest wraps every Linux test in it, and `ledger.py refresh` wraps the whole run. Windows never reach the WSLg desktop. `SVELTERS_SHOW_GUI=1` opts out. For speed, wrap a whole run once (`tools/dev/headless cargo nextest run ...`): a plain run starts one Xvfb per test (1690 GUI tests: 20 min instead of ~10).
