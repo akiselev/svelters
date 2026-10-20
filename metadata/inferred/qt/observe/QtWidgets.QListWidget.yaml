@@ -1,0 +1,37 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QListWidget
+observe:
+- prop: count
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QListWidget
+    check: unsupported
+  confidence: 0.9
+- prop: currentRow
+  class: exact
+  via:
+  - mechanism: notify
+    signal: currentRowChanged(int)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY currentRowChanged(int)'
+  verify:
+    'on': QtWidgets:QListWidget
+    check: connect
+  confidence: 0.9
+- prop: sortingEnabled
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: supportedDragActions
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

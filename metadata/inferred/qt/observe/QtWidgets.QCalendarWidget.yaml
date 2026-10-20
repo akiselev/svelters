@@ -1,0 +1,70 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QCalendarWidget
+observe:
+- prop: dateEditAcceptDelay
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: dateEditEnabled
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: firstDayOfWeek
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: gridVisible
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: horizontalHeaderFormat
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximumDate
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: minimumDate
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: navigationBarVisible
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: selectedDate
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: selectionMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: verticalHeaderFormat
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

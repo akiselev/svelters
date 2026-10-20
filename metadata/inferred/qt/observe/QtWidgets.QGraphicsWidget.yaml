@@ -1,0 +1,115 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGraphicsWidget
+observe:
+- prop: autoFillBackground
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: focusPolicy
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: font
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: geometry
+  class: exact
+  via:
+  - mechanism: notify
+    signal: geometryChanged()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY geometryChanged() (shared by 2 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:height, set:QtWidgets:QGraphicsObject:width,
+      set:QtWidgets:QGraphicsObject:x)'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: connect
+  confidence: 0.95
+- prop: layout
+  class: exact
+  via:
+  - mechanism: notify
+    signal: layoutChanged()
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY layoutChanged()'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: connect
+  confidence: 0.9
+- prop: layoutDirection
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximumSize
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: minimumSize
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: palette
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: preferredSize
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: geometryChanged()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY geometryChanged() (shared by 2 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:height, set:QtWidgets:QGraphicsObject:width)'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: connect
+  confidence: 0.95
+- prop: sizePolicy
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: windowFlags
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: windowTitle
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

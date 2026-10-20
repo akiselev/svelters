@@ -1,0 +1,61 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TreeListModel
+observe:
+- prop: autoexpand
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::autoexpand
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::autoexpand (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeListModel:autoexpand)'
+  verify:
+    'on': Gtk:TreeListModel
+    check: change
+  confidence: 0.95
+- prop: item-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8,
+      the element type otherwise)'
+  confidence: 0.9
+- prop: model
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:TreeListModel:model$|^Gtk:TreeListRow:depth$: the root model of a tree list model and the depth of a row are fixed
+      when they are created'
+  confidence: 0.9
+- prop: n-items
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::n-items
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::n-items'
+  - origin: manual
+    ref: 'review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore
+      and Gtk.StringList'
+  verify:
+    'on': Gtk:TreeListModel
+    check: connect
+  confidence: 0.9
+- prop: passthrough
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:TreeListModel
+    check: refused
+  confidence: 0.95

@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:UriLauncher
+observe:
+- prop: uri
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::uri
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::uri (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.UriLauncher:uri)'
+  verify:
+    'on': Gtk:UriLauncher
+    check: change
+  confidence: 0.95

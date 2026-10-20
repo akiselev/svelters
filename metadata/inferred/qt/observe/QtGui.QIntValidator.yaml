@@ -1,0 +1,34 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtGui:QIntValidator
+observe:
+- prop: bottom
+  class: exact
+  via:
+  - mechanism: notify
+    signal: bottomChanged
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY bottomChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtGui:QIntValidator:bottom)'
+  verify:
+    'on': QtGui:QIntValidator
+    check: change
+  confidence: 0.95
+- prop: top
+  class: exact
+  via:
+  - mechanism: notify
+    signal: topChanged
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY topChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtGui:QIntValidator:top)'
+  verify:
+    'on': QtGui:QIntValidator
+    check: change
+  confidence: 0.95

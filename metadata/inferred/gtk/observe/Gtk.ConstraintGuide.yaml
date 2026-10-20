@@ -1,0 +1,124 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ConstraintGuide
+observe:
+- prop: max-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:max-height)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95
+- prop: max-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:max-width)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95
+- prop: min-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:min-height)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95
+- prop: min-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:min-width)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95
+- prop: name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:name)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95
+- prop: nat-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::nat-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::nat-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:nat-height)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95
+- prop: nat-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::nat-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::nat-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:nat-width)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95
+- prop: strength
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::strength
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::strength (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ConstraintGuide:strength)'
+  verify:
+    'on': Gtk:ConstraintGuide
+    check: change
+  confidence: 0.95

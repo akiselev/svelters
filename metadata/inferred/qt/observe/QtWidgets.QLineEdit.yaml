@@ -1,0 +1,145 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QLineEdit
+observe:
+- prop: acceptableInput
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
+  confidence: 0.9
+- prop: alignment
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: clearButtonEnabled
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: cursorMoveStyle
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: cursorPosition
+  class: exact
+  via:
+  - mechanism: signal
+    signal: cursorPositionChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal cursorPositionChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QLineEdit keyClicks, scenario:QLineEdit setText, set:QtWidgets:QLineEdit:text)'
+  confidence: 0.95
+- prop: displayText
+  class: exact
+  via:
+  - mechanism: signal
+    signal: textChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal textChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QLineEdit keyClicks, scenario:QLineEdit setText, set:QtWidgets:QLineEdit:inputMask)'
+  confidence: 0.95
+- prop: dragEnabled
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: echoMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: frame
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: inputMask
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maxLength
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QLineEdit:inputMask'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
+  confidence: 0.95
+- prop: modified
+  class: partial
+  via:
+  - mechanism: signal
+    signal: textEdited
+  - mechanism: signal
+    signal: textChanged
+  missed:
+  - programmatic
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal textEdited, textChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced scenario:QLineEdit keyClicks, scenario:QLineEdit setText; missed set:QtWidgets:QLineEdit:modified'
+  confidence: 0.95
+- prop: placeholderText
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: readOnly
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - ReadOnlyChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: ReadOnlyChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QLineEdit:readOnly)'
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: textChanged(QString)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY textChanged(QString)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QLineEdit keyClicks, scenario:QLineEdit setText, set:QtWidgets:QLineEdit:text)'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: change
+  confidence: 0.95
+- prop: undoAvailable
+  class: exact
+  via:
+  - mechanism: signal
+    signal: textChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal textChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QLineEdit keyClicks, scenario:QLineEdit setText)'
+  confidence: 0.95

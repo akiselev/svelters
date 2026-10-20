@@ -1,0 +1,18 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Scrollbar
+observe:
+- prop: adjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::adjustment
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::adjustment (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollbar:adjustment)'
+  verify:
+    'on': Gtk:Scrollbar
+    check: connect
+  confidence: 0.95

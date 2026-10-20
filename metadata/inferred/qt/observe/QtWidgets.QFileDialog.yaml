@@ -1,0 +1,40 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QFileDialog
+observe:
+- prop: acceptMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: defaultSuffix
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: fileMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: options
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: supportedSchemes
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: viewMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

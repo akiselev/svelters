@@ -1,0 +1,87 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:MessageDialog
+observe:
+- prop: message-area
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal
+      object the widget creates in init and never replaces'
+  confidence: 0.9
+- prop: message-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::message-type
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::message-type (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MessageDialog:message-type)'
+  verify:
+    'on': Gtk:MessageDialog
+    check: change
+  confidence: 0.95
+- prop: secondary-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MessageDialog:secondary-text)'
+  verify:
+    'on': Gtk:MessageDialog
+    check: change
+  confidence: 0.95
+- prop: secondary-use-markup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-use-markup
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-use-markup (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:MessageDialog
+    check: connect
+  confidence: 0.9
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MessageDialog:text)'
+  verify:
+    'on': Gtk:MessageDialog
+    check: change
+  confidence: 0.95
+- prop: use-markup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-markup
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-markup (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MessageDialog:use-markup)'
+  verify:
+    'on': Gtk:MessageDialog
+    check: change
+  confidence: 0.95

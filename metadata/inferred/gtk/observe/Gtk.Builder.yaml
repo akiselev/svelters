@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Builder
+observe:
+- prop: current-object
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::current-object
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::current-object'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Builder
+    check: connect
+  confidence: 0.9
+- prop: scope
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::scope
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::scope'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Builder
+    check: connect
+  confidence: 0.9
+- prop: translation-domain
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::translation-domain
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::translation-domain'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Builder:translation-domain)'
+  verify:
+    'on': Gtk:Builder
+    check: change
+  confidence: 0.95

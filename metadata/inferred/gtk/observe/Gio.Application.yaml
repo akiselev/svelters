@@ -1,0 +1,63 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:Application
+observe:
+- prop: application-id
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::application-id
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::application-id'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: flags
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::flags
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::flags'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  confidence: 0.9
+- prop: inactivity-timeout
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inactivity-timeout
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inactivity-timeout'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: resource-base-path
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resource-base-path
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resource-base-path'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: version
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::version
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::version (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9

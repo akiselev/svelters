@@ -1,0 +1,829 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Settings
+observe:
+- prop: gtk-alternative-button-order
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-alternative-button-order
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-alternative-button-order'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-alternative-button-order)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-alternative-sort-arrows
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-alternative-sort-arrows
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-alternative-sort-arrows'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-alternative-sort-arrows)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-application-prefer-dark-theme
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-application-prefer-dark-theme
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-application-prefer-dark-theme'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-application-prefer-dark-theme)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-cursor-aspect-ratio
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-cursor-aspect-ratio
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-cursor-aspect-ratio'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-cursor-aspect-ratio)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-cursor-blink
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-cursor-blink
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-cursor-blink'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-cursor-blink)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-cursor-blink-time
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-cursor-blink-time
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-cursor-blink-time'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-cursor-blink-time)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-cursor-blink-timeout
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-cursor-blink-timeout
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-cursor-blink-timeout'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-cursor-blink-timeout)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-cursor-theme-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-cursor-theme-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-cursor-theme-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-cursor-theme-name)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-cursor-theme-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-cursor-theme-size
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-cursor-theme-size'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-cursor-theme-size)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-decoration-layout
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-decoration-layout
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-decoration-layout'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-decoration-layout)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-dialogs-use-header
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-dialogs-use-header
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-dialogs-use-header'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-dialogs-use-header)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-dnd-drag-threshold
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-dnd-drag-threshold
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-dnd-drag-threshold'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-dnd-drag-threshold)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-double-click-distance
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-double-click-distance
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-double-click-distance'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-double-click-distance)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-double-click-time
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-double-click-time
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-double-click-time'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-double-click-time)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-enable-accels
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-enable-accels
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-enable-accels'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-enable-accels)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-enable-animations
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-enable-animations
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-enable-animations'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-enable-animations)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-enable-event-sounds
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-enable-event-sounds
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-enable-event-sounds'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-enable-event-sounds)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-enable-input-feedback-sounds
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-enable-input-feedback-sounds
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-enable-input-feedback-sounds'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-enable-input-feedback-sounds)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-enable-primary-paste
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-enable-primary-paste
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-enable-primary-paste'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-enable-primary-paste)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-entry-password-hint-timeout
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-entry-password-hint-timeout
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-entry-password-hint-timeout'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-entry-password-hint-timeout)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-entry-select-on-focus
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-entry-select-on-focus
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-entry-select-on-focus'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-entry-select-on-focus)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-error-bell
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-error-bell
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-error-bell'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-error-bell)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-font-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-font-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-font-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-font-name)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-font-rendering
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-font-rendering
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-font-rendering'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-font-rendering)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-fontconfig-timestamp
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-fontconfig-timestamp
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-fontconfig-timestamp'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-fontconfig-timestamp)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-hint-font-metrics
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-hint-font-metrics
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-hint-font-metrics'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-hint-font-metrics)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-icon-theme-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-icon-theme-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-icon-theme-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-icon-theme-name)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-im-module
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-im-module
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-im-module'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-im-module)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-interface-color-scheme
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-interface-color-scheme
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-interface-color-scheme'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-interface-color-scheme)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-interface-contrast
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-interface-contrast
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-interface-contrast'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-interface-contrast)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-interface-reduced-motion
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-interface-reduced-motion
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-interface-reduced-motion'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-interface-reduced-motion)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-keynav-use-caret
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-keynav-use-caret
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-keynav-use-caret'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-keynav-use-caret)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-label-select-on-focus
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-label-select-on-focus
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-label-select-on-focus'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-label-select-on-focus)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-long-press-time
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-long-press-time
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-long-press-time'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-long-press-time)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-overlay-scrolling
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-overlay-scrolling
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-overlay-scrolling'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-overlay-scrolling)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-primary-button-warps-slider
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-primary-button-warps-slider
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-primary-button-warps-slider'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-primary-button-warps-slider)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-print-backends
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-print-backends
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-print-backends'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-print-backends)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-print-preview-command
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-print-preview-command
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-print-preview-command'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-print-preview-command)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-recent-files-enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-recent-files-enabled
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-recent-files-enabled'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-recent-files-enabled)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-recent-files-max-age
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-recent-files-max-age
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-recent-files-max-age'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-recent-files-max-age)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-shell-shows-app-menu
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-shell-shows-app-menu
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-shell-shows-app-menu'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-shell-shows-app-menu)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-shell-shows-desktop
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-shell-shows-desktop
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-shell-shows-desktop'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-shell-shows-desktop)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-shell-shows-menubar
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-shell-shows-menubar
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-shell-shows-menubar'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-shell-shows-menubar)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-show-status-shapes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-show-status-shapes
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-show-status-shapes'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-show-status-shapes)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-sound-theme-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-sound-theme-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-sound-theme-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-sound-theme-name)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-split-cursor
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-split-cursor
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-split-cursor'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-split-cursor)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-theme-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-theme-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-theme-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-theme-name)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-titlebar-double-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-titlebar-double-click
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-titlebar-double-click'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-titlebar-double-click)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-titlebar-middle-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-titlebar-middle-click
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-titlebar-middle-click'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-titlebar-middle-click)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-titlebar-right-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-titlebar-right-click
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-titlebar-right-click'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-titlebar-right-click)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-xft-antialias
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-xft-antialias
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-xft-antialias'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-xft-antialias)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-xft-dpi
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-xft-dpi
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-xft-dpi'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-xft-dpi)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-xft-hinting
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-xft-hinting
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-xft-hinting'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-xft-hinting)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-xft-hintstyle
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-xft-hintstyle
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-xft-hintstyle'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-xft-hintstyle)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95
+- prop: gtk-xft-rgba
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gtk-xft-rgba
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gtk-xft-rgba'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Settings:gtk-xft-rgba)'
+  verify:
+    'on': Gtk:Settings
+    check: change
+  confidence: 0.95

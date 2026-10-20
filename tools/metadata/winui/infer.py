@@ -365,13 +365,22 @@ def main() -> int:
     parked_stale = prune_parked(files, a.check)
     have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
     stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
+    # The observe layer (rules O5, O6, O8: tools/metadata/winui/observe_rules.py), milestone R0.
+    import observe as obs
+    import observe_rules
+    orecs, oev, orev, oskip = observe_rules.infer(svmeta.load_yaml(RULES))
+    ofiles = obs.inferred_files("winui", orecs, oev, orev, oskip, {k: v["confidence"] for k, v in oev.items()})
     if a.check:
         for n in stale:
             print(f"infer: metadata/inferred/winui/{n} is stale (run tools/metadata/winui/infer.py)", file=sys.stderr)
+        ostale = obs.sync_dir(OUT / "observe", ofiles, True, "infer (run tools/metadata/winui/infer.py)")
         if parked_stale:
             print("infer: metadata/inferred/winui/_parked.json lists facts whose inferred record changed "
                   "(run tools/metadata/winui/infer.py)", file=sys.stderr)
-        return 1 if stale or parked_stale else 0
+        return 1 if stale or parked_stale or ostale else 0
+    obs.sync_dir(OUT / "observe", ofiles, False, "infer")
+    print("infer winui: observe " + ", ".join(f"{k} {v}" for k, v in obs.counts({o: {r['prop']: r for r in rs} for o, rs in orecs.items()}).items()),
+          file=sys.stderr)
     OUT.mkdir(parents=True, exist_ok=True)
     for n in sorted(have - set(want)):
         (OUT / n).unlink()

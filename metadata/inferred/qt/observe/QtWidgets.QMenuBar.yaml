@@ -1,0 +1,16 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QMenuBar
+observe:
+- prop: defaultUp
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: nativeMenuBar
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

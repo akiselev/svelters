@@ -1,0 +1,282 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QAction
+observe:
+- prop: autoRepeat
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:autoRepeat)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: checkable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: checkableChanged(bool)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY checkableChanged(bool)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:checkable)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: checked
+  class: exact
+  via:
+  - mechanism: notify
+    signal: toggled(bool)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY toggled(bool)'
+  verify:
+    'on': QtWidgets:QAction
+    check: connect
+  confidence: 0.9
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: enabledChanged(bool)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY enabledChanged(bool)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:enabled)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: font
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  verify:
+    'on': QtWidgets:QAction
+    check: connect
+  confidence: 0.9
+- prop: icon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  verify:
+    'on': QtWidgets:QAction
+    check: connect
+  confidence: 0.9
+- prop: iconText
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:iconText, set:QtWidgets:QAction:text)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: iconVisibleInMenu
+  class: partial
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  missed:
+  - programmatic
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: the mechanisms missed set:QtWidgets:QAction:iconVisibleInMenu'
+  verify:
+    'on': QtWidgets:QAction
+    check: silent
+    trigger: iconVisibleInMenu
+  confidence: 0.95
+- prop: menuRole
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:menuRole)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: priority
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:priority)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: shortcut
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  verify:
+    'on': QtWidgets:QAction
+    check: connect
+  confidence: 0.9
+- prop: shortcutContext
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:shortcutContext)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: shortcutVisibleInContextMenu
+  class: partial
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  missed:
+  - programmatic
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: the mechanisms missed set:QtWidgets:QAction:shortcutVisibleInContextMenu'
+  verify:
+    'on': QtWidgets:QAction
+    check: silent
+    trigger: shortcutVisibleInContextMenu
+  confidence: 0.95
+- prop: statusTip
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:statusTip)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:iconText, set:QtWidgets:QAction:text)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: toolTip
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:iconText, set:QtWidgets:QAction:text, set:QtWidgets:QAction:toolTip)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95
+- prop: visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: visibleChanged()
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY visibleChanged()'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.9
+- prop: whatsThis
+  class: exact
+  via:
+  - mechanism: notify
+    signal: changed()
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY changed() (shared by 14 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAction:whatsThis)'
+  verify:
+    'on': QtWidgets:QAction
+    check: change
+  confidence: 0.95

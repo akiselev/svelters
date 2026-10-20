@@ -1,0 +1,33 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColumnViewCell
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ColumnViewCell
+    check: connect
+  confidence: 0.9
+- prop: focusable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::focusable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::focusable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnViewCell:focusable)'
+  verify:
+    'on': Gtk:ColumnViewCell
+    check: change
+  confidence: 0.95

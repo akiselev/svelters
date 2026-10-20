@@ -1,0 +1,135 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColumnViewColumn
+observe:
+- prop: expand
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expand
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expand (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnViewColumn:expand)'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: change
+  confidence: 0.95
+- prop: factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::factory (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: connect
+  confidence: 0.9
+- prop: fixed-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::fixed-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::fixed-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnViewColumn:fixed-width)'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: change
+  confidence: 0.95
+- prop: header-menu
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::header-menu
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::header-menu (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: connect
+  confidence: 0.9
+- prop: id
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::id
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::id (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnViewColumn:id)'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: change
+  confidence: 0.95
+- prop: resizable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resizable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resizable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnViewColumn:resizable)'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: change
+  confidence: 0.95
+- prop: sorter
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sorter
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sorter (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: connect
+  confidence: 0.9
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnViewColumn:title)'
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: change
+  confidence: 0.95
+- prop: visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visible
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visible (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:ColumnViewColumn
+    check: change
+  confidence: 0.9

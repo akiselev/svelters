@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtGui:QDoubleValidator
+observe:
+- prop: bottom
+  class: exact
+  via:
+  - mechanism: notify
+    signal: bottomChanged
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY bottomChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtGui:QDoubleValidator:bottom)'
+  verify:
+    'on': QtGui:QDoubleValidator
+    check: change
+  confidence: 0.95
+- prop: decimals
+  class: exact
+  via:
+  - mechanism: notify
+    signal: decimalsChanged
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY decimalsChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtGui:QDoubleValidator:decimals)'
+  verify:
+    'on': QtGui:QDoubleValidator
+    check: change
+  confidence: 0.95
+- prop: notation
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notationChanged
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY notationChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtGui:QDoubleValidator:notation)'
+  verify:
+    'on': QtGui:QDoubleValidator
+    check: change
+  confidence: 0.95
+- prop: top
+  class: exact
+  via:
+  - mechanism: notify
+    signal: topChanged
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY topChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtGui:QDoubleValidator:top)'
+  verify:
+    'on': QtGui:QDoubleValidator
+    check: change
+  confidence: 0.95

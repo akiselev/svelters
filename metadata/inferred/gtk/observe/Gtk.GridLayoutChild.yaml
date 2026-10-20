@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:GridLayoutChild
+observe:
+- prop: column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayoutChild:column)'
+  verify:
+    'on': Gtk:GridLayoutChild
+    check: change
+  confidence: 0.95
+- prop: column-span
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::column-span
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::column-span (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayoutChild:column-span)'
+  verify:
+    'on': Gtk:GridLayoutChild
+    check: change
+  confidence: 0.95
+- prop: row
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::row
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::row (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayoutChild:row)'
+  verify:
+    'on': Gtk:GridLayoutChild
+    check: change
+  confidence: 0.95
+- prop: row-span
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::row-span
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::row-span (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayoutChild:row-span)'
+  verify:
+    'on': Gtk:GridLayoutChild
+    check: change
+  confidence: 0.95

@@ -1,0 +1,93 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ListItem
+observe:
+- prop: accessible-description
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accessible-description
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accessible-description (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListItem:accessible-description)'
+  verify:
+    'on': Gtk:ListItem
+    check: change
+  confidence: 0.95
+- prop: accessible-label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accessible-label
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accessible-label (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListItem:accessible-label)'
+  verify:
+    'on': Gtk:ListItem
+    check: change
+  confidence: 0.95
+- prop: activatable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activatable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activatable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListItem:activatable)'
+  verify:
+    'on': Gtk:ListItem
+    check: change
+  confidence: 0.95
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ListItem
+    check: connect
+  confidence: 0.9
+- prop: focusable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::focusable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::focusable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListItem:focusable)'
+  verify:
+    'on': Gtk:ListItem
+    check: change
+  confidence: 0.95
+- prop: selectable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selectable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selectable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListItem:selectable)'
+  verify:
+    'on': Gtk:ListItem
+    check: change
+  confidence: 0.95

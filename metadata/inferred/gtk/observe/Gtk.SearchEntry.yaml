@@ -1,0 +1,92 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:SearchEntry
+observe:
+- prop: activates-default
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activates-default
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activates-default (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SearchEntry:activates-default)'
+  verify:
+    'on': Gtk:SearchEntry
+    check: change
+  confidence: 0.95
+- prop: input-hints
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-hints
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-hints (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:SearchEntry
+    check: connect
+  confidence: 0.9
+- prop: input-purpose
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-purpose
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-purpose (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SearchEntry:input-purpose)'
+  verify:
+    'on': Gtk:SearchEntry
+    check: change
+  confidence: 0.95
+- prop: key-capture-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::key-capture-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::key-capture-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:SearchEntry
+    check: connect
+  confidence: 0.9
+- prop: placeholder-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::placeholder-text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::placeholder-text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SearchEntry:placeholder-text)'
+  verify:
+    'on': Gtk:SearchEntry
+    check: change
+  confidence: 0.95
+- prop: search-delay
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::search-delay
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::search-delay (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SearchEntry:search-delay)'
+  verify:
+    'on': Gtk:SearchEntry
+    check: change
+  confidence: 0.95

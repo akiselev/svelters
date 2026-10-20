@@ -1,0 +1,160 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QSortFilterProxyModel
+observe:
+- prop: autoAcceptChildRows
+  class: exact
+  via:
+  - mechanism: notify
+    signal: autoAcceptChildRowsChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY autoAcceptChildRowsChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:autoAcceptChildRows)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
+  confidence: 0.95
+- prop: dynamicSortFilter
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:dynamicSortFilter)'
+  confidence: 0.95
+- prop: filterCaseSensitivity
+  class: exact
+  via:
+  - mechanism: notify
+    signal: filterCaseSensitivityChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY filterCaseSensitivityChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterCaseSensitivity)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
+  confidence: 0.95
+- prop: filterKeyColumn
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterKeyColumn)'
+  confidence: 0.95
+- prop: filterRegularExpression
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterCaseSensitivity)'
+  confidence: 0.95
+- prop: filterRole
+  class: exact
+  via:
+  - mechanism: notify
+    signal: filterRoleChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY filterRoleChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterRole)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
+  confidence: 0.95
+- prop: isSortLocaleAware
+  class: exact
+  via:
+  - mechanism: notify
+    signal: sortLocaleAwareChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY sortLocaleAwareChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:isSortLocaleAware)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
+  confidence: 0.95
+- prop: recursiveFilteringEnabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: recursiveFilteringEnabledChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY recursiveFilteringEnabledChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:recursiveFilteringEnabled)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
+  confidence: 0.95
+- prop: sortCaseSensitivity
+  class: exact
+  via:
+  - mechanism: notify
+    signal: sortCaseSensitivityChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY sortCaseSensitivityChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:sortCaseSensitivity)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
+  confidence: 0.95
+- prop: sortRole
+  class: exact
+  via:
+  - mechanism: notify
+    signal: sortRoleChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY sortRoleChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:sortRole)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
+  confidence: 0.95

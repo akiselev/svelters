@@ -1,0 +1,15 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:GLContext
+observe:
+- prop: allowed-apis
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::allowed-apis
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::allowed-apis (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  confidence: 0.9

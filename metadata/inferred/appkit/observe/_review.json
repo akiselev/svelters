@@ -1,0 +1,21 @@
+{
+ "inferred": {
+  "constant": 0,
+  "exact": 150,
+  "none": 116,
+  "partial": 8,
+  "set_only": 70
+ },
+ "rows": [],
+ "schema": "svelters-observe-review/v1",
+ "sdk": "26.1",
+ "skipped": {
+  "observe:write-only": 0
+ },
+ "toolkit": "appkit",
+ "unreviewed": {
+  "by_pattern": {},
+  "low": 0,
+  "middle": 0
+ }
+}

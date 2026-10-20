@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QAbstractProxyModel
+observe:
+- prop: sourceModel
+  class: exact
+  via:
+  - mechanism: notify
+    signal: sourceModelChanged
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY sourceModelChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: connect
+  confidence: 0.9

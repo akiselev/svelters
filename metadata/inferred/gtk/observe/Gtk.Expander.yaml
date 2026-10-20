@@ -1,0 +1,110 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Expander
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Expander
+    check: connect
+  confidence: 0.9
+- prop: expanded
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expanded
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expanded (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:expanded)'
+  verify:
+    'on': Gtk:Expander
+    check: change
+  confidence: 0.95
+- prop: label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:label)'
+  verify:
+    'on': Gtk:Expander
+    check: change
+  confidence: 0.95
+- prop: label-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label-widget
+  derived_from:
+  - label
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label-widget (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:label)'
+  verify:
+    'on': Gtk:Expander
+    check: cross
+    trigger: label
+  confidence: 0.95
+- prop: resize-toplevel
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resize-toplevel
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resize-toplevel (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:resize-toplevel)'
+  verify:
+    'on': Gtk:Expander
+    check: change
+  confidence: 0.95
+- prop: use-markup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-markup
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-markup (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:use-markup)'
+  verify:
+    'on': Gtk:Expander
+    check: change
+  confidence: 0.95
+- prop: use-underline
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-underline
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-underline (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:use-underline)'
+  verify:
+    'on': Gtk:Expander
+    check: change
+  confidence: 0.95

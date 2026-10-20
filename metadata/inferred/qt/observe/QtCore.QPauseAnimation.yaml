@@ -1,0 +1,14 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QPauseAnimation
+observe:
+- prop: duration
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QPauseAnimation:duration)'
+  confidence: 0.95

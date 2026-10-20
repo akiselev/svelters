@@ -1,0 +1,93 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FontChooser
+observe:
+- prop: font
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::font
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::font'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontChooser:font)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95
+- prop: font-desc
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::font-desc
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::font-desc'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FontButton
+    check: connect
+  confidence: 0.9
+- prop: language
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::language
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::language (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontChooser:language)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95
+- prop: level
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::level
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::level (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FontButton
+    check: connect
+  confidence: 0.9
+- prop: preview-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::preview-text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::preview-text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontChooser:preview-text)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95
+- prop: show-preview-entry
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-preview-entry
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-preview-entry (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontChooser:show-preview-entry)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95

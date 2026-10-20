@@ -16,6 +16,7 @@ Plan and decisions: `plans/research/ANNOTATION-AUTOMATION.md` (section 11). Note
 | Step | Command | Who runs it |
 |---|---|---|
 | probe | `xvfb-run -a python3 tools/metadata/gtk/probe.py` (writes `metadata/probe/gtk/<version>.json`, ~6 min) | a maintainer, when the toolkit or the rules change; CI never probes |
+| probe (observe) | `python3 tools/metadata/gtk/probe.py --section observe --libdir <dir with libgtk-4.so.1 of the metadata's GTK> --girdir <GIR dir>` (C, no PyGObject; writes `metadata/probe/gtk/observe/<version>.json`, ~20 s) | a maintainer, as above |
 | infer | `python3 tools/metadata/gtk/infer.py` (`--check` in `pnpm test:meta`) | anyone; a pure function of ingested records, probe and rules |
 | ingest | `python3 tools/metadata/gtk/ingest.py` | anyone |
 | generate | `python3 tools/metadata/gtk/gen_backend.py`, `common/gen_bindings.py`, `semantics/gen_semantics.py` | anyone |
@@ -53,3 +54,13 @@ The build links GTK 4.14 symbols only. Typed slot calls (gtk4-rs, feature `v4_6`
 the getter, the property and the kind are not newer than `typed_baseline` in the rules. Everything else is called through
 GIRepository; the GIR `version` of a method (`since` in the metadata) makes its generated test skip on an older GTK.
 The `gtk-4-14` CI job must stay green.
+
+## Observability facts (milestone R0)
+
+`infer.py` also writes `metadata/inferred/gtk/observe/` (rules O1, O2, O8-O10 in `observe_rules.py`, data in the
+`observe:` section of `metadata/rules/gtk.yaml`) from the observe probe: one record per readable property of every
+widget kind and non-GUI type. `tools/metadata/common/observe.py` merges it with `metadata/overrides/gtk/observe/` into
+`metadata/observe/gtk.json`; `gen_backend.py` turns each fact into one row of a table test per owner
+(`generated::verify::observe_<ns>_<type>`, run by `crates/svelters-gtk/src/testing_observe.rs` through the real
+`observe` path), and `ledger.py refresh` records the rows from `SVELTERS_TEST_RESULTS` and parks failing ones. On a
+GTK older than the metadata's (the 4.14 CI job) a row only installs and removes the observation.

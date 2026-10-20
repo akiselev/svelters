@@ -1,0 +1,51 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:EntryBuffer
+observe:
+- prop: length
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::length
+  derived_from:
+  - text
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::length'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Entry insert_text, set:Gtk.EntryBuffer:text)'
+  verify:
+    'on': Gtk:EntryBuffer
+    check: cross
+    rust: o.downcast_ref::<gtk::EntryBuffer>().unwrap().insert_text(0, "abc");
+  confidence: 0.95
+- prop: max-length
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-length
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-length (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryBuffer:max-length)'
+  verify:
+    'on': Gtk:EntryBuffer
+    check: change
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Entry insert_text, set:Gtk.EntryBuffer:text)'
+  verify:
+    'on': Gtk:EntryBuffer
+    check: change
+  confidence: 0.95

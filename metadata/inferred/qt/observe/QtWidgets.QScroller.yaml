@@ -1,0 +1,22 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QScroller
+observe:
+- prop: scrollerProperties
+  class: exact
+  via:
+  - mechanism: notify
+    signal: scrollerPropertiesChanged(QScrollerProperties)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY scrollerPropertiesChanged(QScrollerProperties)'
+  confidence: 0.9
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+    signal: stateChanged(QScroller::State)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY stateChanged(QScroller::State)'
+  confidence: 0.9

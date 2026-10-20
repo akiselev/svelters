@@ -1,0 +1,28 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:MountOperation
+observe:
+- prop: display
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::display
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::display'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  confidence: 0.9
+- prop: parent
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::parent
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::parent'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  confidence: 0.9

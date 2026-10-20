@@ -1,0 +1,32 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:DropTargetAsync
+observe:
+- prop: actions
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::actions
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::actions (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:DropTargetAsync
+    check: connect
+  confidence: 0.9
+- prop: formats
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::formats
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::formats (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:DropTargetAsync
+    check: connect
+  confidence: 0.9

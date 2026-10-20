@@ -1,0 +1,202 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Range
+observe:
+- prop: adjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::adjustment
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::adjustment (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Range:adjustment)'
+  verify:
+    'on': Gtk:Range
+    check: connect
+  confidence: 0.95
+- prop: fill-level
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::fill-level
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::fill-level (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Range:fill-level)'
+  verify:
+    'on': Gtk:Range
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: inverted
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inverted
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inverted (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Range:inverted)'
+  verify:
+    'on': Gtk:Range
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: lower
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: lower
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.lower (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:lower'
+  verify:
+    'on': Gtk:Range
+    check: via
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: page-increment
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: page-increment
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.page-increment (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:page-increment'
+  verify:
+    'on': Gtk:Range
+    check: via
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: page-size
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: page-size
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.page-size (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:page-size'
+  verify:
+    'on': Gtk:Range
+    check: via
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: restrict-to-fill-level
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::restrict-to-fill-level
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::restrict-to-fill-level (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Range:restrict-to-fill-level)'
+  verify:
+    'on': Gtk:Range
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: round-digits
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::round-digits
+  fires: on_change
+  derived_from:
+  - draw-value
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::round-digits (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Range:round-digits, set:Gtk.Scale:draw-value)'
+  verify:
+    'on': Gtk:Range
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: show-fill-level
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-fill-level
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-fill-level (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Range:show-fill-level)'
+  verify:
+    'on': Gtk:Range
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: step-increment
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: step-increment
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.step-increment (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:step-increment'
+  verify:
+    'on': Gtk:Range
+    check: via
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: upper
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: upper
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.upper (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:upper'
+  verify:
+    'on': Gtk:Range
+    check: via
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: value
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: value
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.value (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:value'
+  verify:
+    'on': Gtk:Range
+    check: via
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95

@@ -1,0 +1,33 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Viewport
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Viewport
+    check: connect
+  confidence: 0.9
+- prop: scroll-to-focus
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::scroll-to-focus
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::scroll-to-focus (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Viewport:scroll-to-focus)'
+  verify:
+    'on': Gtk:Viewport
+    check: change
+  confidence: 0.95

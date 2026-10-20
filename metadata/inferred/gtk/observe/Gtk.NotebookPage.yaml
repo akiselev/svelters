@@ -1,0 +1,136 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:NotebookPage
+observe:
+- prop: child
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:NotebookPage
+    check: refused
+  confidence: 0.95
+- prop: detachable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::detachable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::detachable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.NotebookPage:detachable)'
+  verify:
+    'on': Gtk:NotebookPage
+    check: change
+  confidence: 0.95
+- prop: menu
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:NotebookPage
+    check: refused
+  confidence: 0.95
+- prop: menu-label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::menu-label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::menu-label'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.NotebookPage:menu-label)'
+  verify:
+    'on': Gtk:NotebookPage
+    check: change
+  confidence: 0.95
+- prop: position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::position
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::position'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:NotebookPage
+    check: connect
+  confidence: 0.9
+- prop: reorderable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::reorderable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::reorderable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.NotebookPage:reorderable)'
+  verify:
+    'on': Gtk:NotebookPage
+    check: change
+  confidence: 0.95
+- prop: tab
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:NotebookPage
+    check: refused
+  confidence: 0.95
+- prop: tab-expand
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tab-expand
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tab-expand (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.NotebookPage:tab-expand)'
+  verify:
+    'on': Gtk:NotebookPage
+    check: change
+  confidence: 0.95
+- prop: tab-fill
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tab-fill
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tab-fill (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.NotebookPage:tab-fill)'
+  verify:
+    'on': Gtk:NotebookPage
+    check: change
+  confidence: 0.95
+- prop: tab-label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tab-label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tab-label'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.NotebookPage:tab-label)'
+  verify:
+    'on': Gtk:NotebookPage
+    check: change
+  confidence: 0.95

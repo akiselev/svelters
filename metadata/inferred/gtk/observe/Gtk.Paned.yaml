@@ -1,0 +1,139 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Paned
+observe:
+- prop: end-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::end-child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::end-child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Paned
+    check: connect
+  confidence: 0.9
+- prop: position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::position
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::position (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Paned:position)'
+  verify:
+    'on': Gtk:Paned
+    check: change
+  confidence: 0.95
+- prop: position-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::position-set
+  fires: on_change
+  derived_from:
+  - position
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::position-set (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Paned:position, set:Gtk.Paned:position-set)'
+  verify:
+    'on': Gtk:Paned
+    check: change
+  confidence: 0.95
+- prop: resize-end-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resize-end-child
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resize-end-child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Paned:resize-end-child)'
+  verify:
+    'on': Gtk:Paned
+    check: change
+  confidence: 0.95
+- prop: resize-start-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resize-start-child
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resize-start-child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Paned:resize-start-child)'
+  verify:
+    'on': Gtk:Paned
+    check: change
+  confidence: 0.95
+- prop: shrink-end-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::shrink-end-child
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::shrink-end-child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Paned:shrink-end-child)'
+  verify:
+    'on': Gtk:Paned
+    check: change
+  confidence: 0.95
+- prop: shrink-start-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::shrink-start-child
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::shrink-start-child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Paned:shrink-start-child)'
+  verify:
+    'on': Gtk:Paned
+    check: change
+  confidence: 0.95
+- prop: start-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::start-child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::start-child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Paned
+    check: connect
+  confidence: 0.9
+- prop: wide-handle
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wide-handle
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wide-handle (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Paned:wide-handle)'
+  verify:
+    'on': Gtk:Paned
+    check: change
+  confidence: 0.95

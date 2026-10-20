@@ -1,0 +1,34 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ShortcutsWindow
+observe:
+- prop: section-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::section-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::section-name'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:ShortcutsWindow
+    check: connect
+  confidence: 0.9
+- prop: view-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::view-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::view-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsWindow:view-name)'
+  verify:
+    'on': Gtk:ShortcutsWindow
+    check: change
+  confidence: 0.95

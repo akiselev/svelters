@@ -1,0 +1,253 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:IconView
+observe:
+- prop: activate-on-single-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activate-on-single-click
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activate-on-single-click (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:activate-on-single-click)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: cell-area
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:IconView
+    check: refused
+  confidence: 0.95
+- prop: column-spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::column-spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::column-spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:column-spacing)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: columns
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::columns
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::columns (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:columns)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: item-orientation
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::item-orientation
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::item-orientation (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:item-orientation)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: item-padding
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::item-padding
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::item-padding (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:item-padding)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: item-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::item-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::item-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:item-width)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: margin
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::margin
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::margin (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:margin)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: markup-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::markup-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::markup-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:markup-column)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:IconView
+    check: connect
+  confidence: 0.9
+- prop: pixbuf-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pixbuf-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pixbuf-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:pixbuf-column)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: reorderable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::reorderable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::reorderable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:reorderable)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: row-spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::row-spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::row-spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:row-spacing)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: selection-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selection-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selection-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:selection-mode)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:spacing)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: text-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:text-column)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95
+- prop: tooltip-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tooltip-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tooltip-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconView:tooltip-column)'
+  verify:
+    'on': Gtk:IconView
+    check: change
+  confidence: 0.95

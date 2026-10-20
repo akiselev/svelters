@@ -1,0 +1,18 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:EventControllerScroll
+observe:
+- prop: flags
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::flags
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::flags (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:EventControllerScroll
+    check: connect
+  confidence: 0.9

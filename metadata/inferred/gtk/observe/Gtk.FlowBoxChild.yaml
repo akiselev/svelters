@@ -1,0 +1,18 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FlowBoxChild
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FlowBoxChild
+    check: connect
+  confidence: 0.9

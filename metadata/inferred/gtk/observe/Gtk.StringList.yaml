@@ -1,0 +1,28 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:StringList
+observe:
+- prop: item-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8,
+      the element type otherwise)'
+  confidence: 0.9
+- prop: n-items
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::n-items
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::n-items'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:StringList append)'
+  verify:
+    'on': Gtk:StringList
+    check: cross
+    rust: o.downcast_ref::<gtk::StringList>().unwrap().append("a");
+  confidence: 0.95

@@ -1,0 +1,79 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QAbstractAnimation
+observe:
+- prop: currentLoop
+  class: exact
+  via:
+  - mechanism: notify
+    signal: currentLoopChanged
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY currentLoopChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  verify:
+    'on': QtCore:QPauseAnimation
+    check: connect
+  confidence: 0.9
+- prop: currentTime
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  confidence: 0.9
+- prop: direction
+  class: exact
+  via:
+  - mechanism: notify
+    signal: directionChanged
+  - mechanism: bindable
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY directionChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QAbstractAnimation:direction)'
+  verify:
+    'on': QtCore:QParallelAnimationGroup
+    check: connect
+  confidence: 0.95
+- prop: duration
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtCore:QPauseAnimation:duration, set:QtCore:QVariantAnimation:duration'
+  verify:
+    'on': QtCore:QPauseAnimation
+    check: unsupported
+  confidence: 0.95
+- prop: loopCount
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QAbstractAnimation:loopCount)'
+  confidence: 0.95
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+    signal: stateChanged
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY stateChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  verify:
+    'on': QtCore:QPauseAnimation
+    check: connect
+  confidence: 0.9

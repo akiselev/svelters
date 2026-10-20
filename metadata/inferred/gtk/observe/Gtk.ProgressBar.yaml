@@ -1,0 +1,94 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ProgressBar
+observe:
+- prop: ellipsize
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::ellipsize
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::ellipsize (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ProgressBar:ellipsize)'
+  verify:
+    'on': Gtk:ProgressBar
+    check: change
+  confidence: 0.95
+- prop: fraction
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::fraction
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::fraction (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ProgressBar:fraction)'
+  verify:
+    'on': Gtk:ProgressBar
+    check: change
+  confidence: 0.95
+- prop: inverted
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inverted
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inverted (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ProgressBar:inverted)'
+  verify:
+    'on': Gtk:ProgressBar
+    check: change
+  confidence: 0.95
+- prop: pulse-step
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pulse-step
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pulse-step (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ProgressBar:pulse-step)'
+  verify:
+    'on': Gtk:ProgressBar
+    check: change
+  confidence: 0.95
+- prop: show-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-text
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ProgressBar:show-text)'
+  verify:
+    'on': Gtk:ProgressBar
+    check: change
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ProgressBar:text)'
+  verify:
+    'on': Gtk:ProgressBar
+    check: change
+  confidence: 0.95

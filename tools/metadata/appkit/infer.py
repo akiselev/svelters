@@ -337,12 +337,21 @@ def main() -> int:
     parked_stale = prune_parked(files, a.check)
     have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
     stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
+    # The observe layer (rule O7: tools/metadata/appkit/observe_rules.py), milestone R0.
+    import observe as obs
+    import observe_rules
+    orecs, oev, orev, oskip = observe_rules.infer(svmeta.load_yaml(RULES), inp.version)
+    ofiles = obs.inferred_files("appkit", orecs, oev, orev, oskip, {k: v["confidence"] for k, v in oev.items()}, {"sdk": inp.version})
     if a.check:
         for n in stale:
             print(f"infer: metadata/inferred/appkit/{n} is stale (run tools/metadata/appkit/infer.py)", file=sys.stderr)
+        ostale = obs.sync_dir(OUT / "observe", ofiles, True, "infer (run tools/metadata/appkit/infer.py)")
         if parked_stale:
             print("infer: _parked.json lists facts whose inferred record changed (run tools/metadata/appkit/infer.py)", file=sys.stderr)
-        return 1 if stale or parked_stale else 0
+        return 1 if stale or parked_stale or ostale else 0
+    obs.sync_dir(OUT / "observe", ofiles, False, "infer")
+    print("infer appkit: observe " + ", ".join(f"{k} {v}" for k, v in obs.counts({o: {r['prop']: r for r in rs} for o, rs in orecs.items()}).items()),
+          file=sys.stderr)
     OUT.mkdir(parents=True, exist_ok=True)
     for n in sorted(have - set(want)):
         (OUT / n).unlink()

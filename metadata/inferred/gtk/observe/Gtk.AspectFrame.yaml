@@ -1,0 +1,78 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:AspectFrame
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:AspectFrame
+    check: connect
+  confidence: 0.9
+- prop: obey-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::obey-child
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::obey-child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AspectFrame:obey-child)'
+  verify:
+    'on': Gtk:AspectFrame
+    check: change
+  confidence: 0.95
+- prop: ratio
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::ratio
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::ratio (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AspectFrame:ratio)'
+  verify:
+    'on': Gtk:AspectFrame
+    check: change
+  confidence: 0.95
+- prop: xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::xalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::xalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AspectFrame:xalign)'
+  verify:
+    'on': Gtk:AspectFrame
+    check: change
+  confidence: 0.95
+- prop: yalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::yalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::yalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AspectFrame:yalign)'
+  verify:
+    'on': Gtk:AspectFrame
+    check: change
+  confidence: 0.95

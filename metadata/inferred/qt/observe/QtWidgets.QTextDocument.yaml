@@ -1,0 +1,108 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QTextDocument
+observe:
+- prop: baseUrl
+  class: exact
+  via:
+  - mechanism: notify
+    signal: baseUrlChanged(QUrl)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY baseUrlChanged(QUrl)'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: connect
+  confidence: 0.9
+- prop: defaultFont
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: defaultStyleSheet
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: defaultTextOption
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: documentMargin
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: indentWidth
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: layoutEnabled
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximumBlockCount
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: modified
+  class: exact
+  via:
+  - mechanism: signal
+    signal: modificationChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal modificationChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QTextDocument:documentMargin, set:QtWidgets:QTextDocument:modified)'
+  confidence: 0.95
+- prop: pageSize
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QTextDocument:textWidth'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
+  confidence: 0.95
+- prop: size
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on scenario:QPlainTextEdit keyClicks: its document, set:QtWidgets:QTextDocument:documentMargin'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
+  confidence: 0.95
+- prop: textWidth
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: undoRedoEnabled
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QTextDocument:maximumBlockCount'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
+  confidence: 0.95
+- prop: useDesignMetrics
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

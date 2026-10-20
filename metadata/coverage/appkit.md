@@ -42,6 +42,21 @@ Inferred candidates below the promotion threshold stay unreviewed (0 middle band
 
 AppKit exposes every ingested property whose type the tables carry through KVC (dev mode also resolves unannotated ones at run time); signals and methods only when annotated (manual or inferred). The tests run only on macOS: results are imported from the macos-appkit CI job (`ledger.py import --toolkit appkit`). Props (annotated) counts props with a test sample.
 
+## Observability (milestone R0)
+
+Observe facts per class (`metadata/observe/appkit.json`; plans/research/REACTIVITY.md section 4). Inferred only: the AppKit backend leaves `observe` NULL until R4 (KVO observer, notifications, target-action); the evidence is the KVO column of the AppKit probe from the macos-appkit job.
+
+| Class | Facts | of which manual | Verified | Verified weakly (`connect`, `refused`, `unsupported`) | Pending | Inferred, no test |
+| --- | --- | --- | --- | --- | --- | --- |
+| constant | 0 | - | - | - | - | - |
+| set_only | 70 | - | - | - | - | 70 |
+| exact | 150 | - | - | - | - | 150 |
+| partial | 8 | - | - | - | - | 8 |
+| none | 116 | - | - | - | - | 116 |
+| **all** | 344 | - | - | - | - | 344 |
+
+Parked (an inferred fact whose generated test failed): 0. Below the promotion threshold (not written, needs judgement): 0 middle band, 0 low band.
+
 ## Kinds
 
 | Kind | Element | Props | Signals | Methods | Slots | Ownership | Signal results | Bindings | Verified | Gallery | Lifetime |

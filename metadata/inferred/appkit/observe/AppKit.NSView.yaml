@@ -1,0 +1,680 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSView
+observe:
+- prop: additional-safe-area-insets
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `additionalSafeAreaInsets` fired on a programmatic set'
+  confidence: 0.9
+- prop: alignment-rect-insets
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: allowed-touch-types
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowedTouchTypes` fired on a programmatic set'
+  confidence: 0.9
+- prop: allows-vibrancy
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: alpha-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `alphaValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: autoresizes-subviews
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `autoresizesSubviews` fired on a programmatic set'
+  confidence: 0.9
+- prop: autoresizing-mask
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `autoresizingMask` fired on a programmatic set'
+  confidence: 0.9
+- prop: background-filters
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: baseline-offset-from-bottom
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: bottom-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: bounds
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: bounds-rotation
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `boundsRotation` fired on a programmatic set'
+  confidence: 0.9
+- prop: can-become-key-view
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: can-draw-concurrently
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `canDrawConcurrently` fired on a programmatic set'
+  confidence: 0.9
+- prop: can-draw-subviews-into-layer
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `canDrawSubviewsIntoLayer` fired on a programmatic set'
+  confidence: 0.9
+- prop: candidate-list-touch-bar-item
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: center-x-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: center-y-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: clips-to-bounds
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `clipsToBounds` fired on a programmatic set'
+  confidence: 0.9
+- prop: compositing-filter
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: constraints
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: content-filters
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: drawing-find-indicator
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: enclosing-menu-item
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: enclosing-scroll-view
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: first-baseline-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: first-baseline-offset-from-top
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: fitting-size
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: flipped
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: focus-ring-mask-bounds
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: focus-ring-type
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `focusRingType` fired on a programmatic set'
+  confidence: 0.9
+- prop: frame
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `frame` fired on a programmatic set'
+  confidence: 0.9
+- prop: frame-center-rotation
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `frameCenterRotation` fired on a programmatic set'
+  confidence: 0.9
+- prop: frame-rotation
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `frameRotation` fired on a programmatic set'
+  confidence: 0.9
+- prop: gesture-recognizers
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: has-ambiguous-layout
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: height-adjust-limit
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: height-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: hidden
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `hidden` fired on a programmatic set'
+  confidence: 0.9
+- prop: hidden-or-has-hidden-ancestor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: horizontal-content-size-constraint-active
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `horizontalContentSizeConstraintActive` fired on a programmatic set'
+  confidence: 0.9
+- prop: in-full-screen-mode
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: in-live-resize
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: input-context
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: intrinsic-content-size
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: last-baseline-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: last-baseline-offset-from-bottom
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: layer
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: layer-contents-placement
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `layerContentsPlacement` fired on a programmatic set'
+  confidence: 0.9
+- prop: layer-contents-redraw-policy
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `layerContentsRedrawPolicy` fired on a programmatic set'
+  confidence: 0.9
+- prop: layer-uses-core-image-filters
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `layerUsesCoreImageFilters` fired on a programmatic set'
+  confidence: 0.9
+- prop: layout-guides
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: layout-margins-guide
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: leading-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: left-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: mouse-down-can-move-window
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: needs-display
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: needs-layout
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: needs-panel-to-become-key
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: needs-update-constraints
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: next-key-view
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: next-valid-key-view
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: opaque
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: opaque-ancestor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: page-footer
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: page-header
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: posts-bounds-changed-notifications
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `postsBoundsChangedNotifications` fired on a programmatic set'
+  confidence: 0.9
+- prop: posts-frame-changed-notifications
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `postsFrameChangedNotifications` fired on a programmatic set'
+  confidence: 0.9
+- prop: prefers-compact-control-size-metrics
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `prefersCompactControlSizeMetrics` fired on a programmatic set'
+  confidence: 0.9
+- prop: prepared-content-rect
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `preparedContentRect` fired on a programmatic set'
+  confidence: 0.9
+- prop: preserves-content-during-live-resize
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: pressure-configuration
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: previous-key-view
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: previous-valid-key-view
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: print-job-title
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: rect-preserved-during-live-resize
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: registered-dragged-types
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: right-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: rotated-from-base
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: rotated-or-scaled-from-base
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: safe-area-insets
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: safe-area-layout-guide
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: safe-area-rect
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: shadow
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: subviews
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: superview
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: tag
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `tag` fired on a programmatic set'
+  confidence: 0.9
+- prop: tool-tip
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `toolTip` fired on a programmatic set'
+  confidence: 0.9
+- prop: top-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: tracking-areas
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: trailing-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: translates-autoresizing-mask-into-constraints
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `translatesAutoresizingMaskIntoConstraints` fired on a programmatic set'
+  confidence: 0.9
+- prop: user-interface-layout-direction
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `userInterfaceLayoutDirection` fired on a programmatic set'
+  confidence: 0.9
+- prop: vertical-content-size-constraint-active
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `verticalContentSizeConstraintActive` fired on a programmatic set'
+  confidence: 0.9
+- prop: visible-rect
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: wants-default-clipping
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: wants-layer
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `wantsLayer` fired on a programmatic set'
+  confidence: 0.9
+- prop: wants-resting-touches
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `wantsRestingTouches` fired on a programmatic set'
+  confidence: 0.9
+- prop: wants-update-layer
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: width-adjust-limit
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: width-anchor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: window
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: writing-tools-coordinator
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9

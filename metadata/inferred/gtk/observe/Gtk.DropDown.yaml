@@ -1,0 +1,149 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:DropDown
+observe:
+- prop: enable-search
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-search
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-search (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:enable-search)'
+  verify:
+    'on': Gtk:DropDown
+    check: change
+  confidence: 0.95
+- prop: expression
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expression
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expression (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:DropDown
+    check: connect
+  confidence: 0.9
+- prop: factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::factory (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:factory)'
+  verify:
+    'on': Gtk:DropDown
+    check: connect
+  confidence: 0.95
+- prop: header-factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::header-factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::header-factory (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:header-factory)'
+  verify:
+    'on': Gtk:DropDown
+    check: connect
+  confidence: 0.95
+- prop: list-factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::list-factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::list-factory (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:list-factory)'
+  verify:
+    'on': Gtk:DropDown
+    check: connect
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:model)'
+  verify:
+    'on': Gtk:DropDown
+    check: connect
+  confidence: 0.95
+- prop: search-match-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::search-match-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::search-match-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:search-match-mode)'
+  verify:
+    'on': Gtk:DropDown
+    check: change
+  confidence: 0.95
+- prop: selected
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selected
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selected (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:DropDown
+    check: connect
+  confidence: 0.9
+- prop: selected-item
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selected-item
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selected-item'
+  - origin: manual
+    ref: 'review pattern ^Gtk:DropDown:selected-item$: notified with selected when the model or the selection changes; the generated test sets
+      a model and a selection (trigger)'
+  verify:
+    'on': Gtk:DropDown
+    check: cross
+    rust: let d = o.downcast_ref::<gtk::DropDown>().unwrap(); d.set_model(Some(&gtk::StringList::new(&["a", "b"]))); d.set_selected(1);
+  confidence: 0.9
+- prop: show-arrow
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-arrow
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-arrow (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:show-arrow)'
+  verify:
+    'on': Gtk:DropDown
+    check: change
+  confidence: 0.95

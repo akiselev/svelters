@@ -39,6 +39,21 @@ Inferred candidates below the promotion threshold stay unreviewed (6 middle band
 
 WinUI exposes only the facts in the generated tables (manual and inferred annotations; no reflection fallback). The tests run on the windows-winui CI job only; `ledger.py import --toolkit winui` records its results. 118 props have a `notify::<prop>` event (DependencyProperty callback); a `verified: connect` event was connected and disconnected, not raised.
 
+## Observability (milestone R0)
+
+Observe facts per class (`metadata/observe/winui.json`; plans/research/REACTIVITY.md section 4). Inferred only: the WinUI backend leaves `observe` NULL until R4 (RegisterPropertyChangedCallback, events); no probe runs on Linux.
+
+| Class | Facts | of which manual | Verified | Verified weakly (`connect`, `refused`, `unsupported`) | Pending | Inferred, no test |
+| --- | --- | --- | --- | --- | --- | --- |
+| constant | 0 | - | - | - | - | - |
+| set_only | 18 | - | - | - | - | 18 |
+| exact | 207 | - | - | - | - | 207 |
+| partial | 0 | - | - | - | - | - |
+| none | 26 | - | - | - | - | 26 |
+| **all** | 251 | - | - | - | - | 251 |
+
+Parked (an inferred fact whose generated test failed): 0. Below the promotion threshold (not written, needs judgement): 0 middle band, 0 low band.
+
 ## Kinds
 
 | Kind | Element | Props | Signals | Methods | Slots | Ownership | Signal results | Bindings | Verified | Gallery | Lifetime |

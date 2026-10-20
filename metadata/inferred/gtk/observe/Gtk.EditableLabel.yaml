@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:EditableLabel
+observe:
+- prop: editing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::editing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::editing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EditableLabel:editing)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95

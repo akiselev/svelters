@@ -1,0 +1,122 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Popover
+observe:
+- prop: autohide
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::autohide
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::autohide (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Popover:autohide)'
+  verify:
+    'on': Gtk:Popover
+    check: change
+  confidence: 0.95
+- prop: cascade-popdown
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cascade-popdown
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cascade-popdown (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Popover:cascade-popdown)'
+  verify:
+    'on': Gtk:Popover
+    check: change
+  confidence: 0.95
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Popover
+    check: connect
+  confidence: 0.9
+- prop: default-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::default-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::default-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Popover
+    check: connect
+  confidence: 0.9
+- prop: has-arrow
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-arrow
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-arrow (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Popover:has-arrow)'
+  verify:
+    'on': Gtk:Popover
+    check: change
+  confidence: 0.95
+- prop: mnemonics-visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::mnemonics-visible
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::mnemonics-visible (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Popover:mnemonics-visible)'
+  verify:
+    'on': Gtk:Popover
+    check: change
+  confidence: 0.95
+- prop: pointing-to
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pointing-to
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pointing-to'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Popover
+    check: connect
+  confidence: 0.9
+- prop: position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::position
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::position (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Popover:position)'
+  verify:
+    'on': Gtk:Popover
+    check: change
+  confidence: 0.95

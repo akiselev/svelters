@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Box
+observe:
+- prop: baseline-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::baseline-child
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::baseline-child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Box:baseline-child)'
+  verify:
+    'on': Gtk:Box
+    check: change
+  confidence: 0.95
+- prop: baseline-position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::baseline-position
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::baseline-position (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Box:baseline-position)'
+  verify:
+    'on': Gtk:Box
+    check: change
+  confidence: 0.95
+- prop: homogeneous
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::homogeneous
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::homogeneous (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Box:homogeneous)'
+  verify:
+    'on': Gtk:Box
+    check: change
+  confidence: 0.95
+- prop: spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Box:spacing)'
+  verify:
+    'on': Gtk:Box
+    check: change
+  confidence: 0.95

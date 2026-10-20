@@ -1,0 +1,116 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QPlainTextEdit
+observe:
+- prop: backgroundVisible
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: centerOnScroll
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: cursorWidth
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: documentTitle
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: lineWrapMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximumBlockCount
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: overwriteMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: placeholderText
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: plainText
+  class: exact
+  via:
+  - mechanism: notify
+    signal: textChanged()
+  fires: on_set
+  value_cost: proportional
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY textChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QPlainTextEdit keyClicks, set:QtWidgets:QPlainTextEdit:plainText)'
+  verify:
+    'on': QtWidgets:QPlainTextEdit
+    check: change
+  confidence: 0.95
+- prop: readOnly
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - ReadOnlyChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: ReadOnlyChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QPlainTextEdit:readOnly)'
+  confidence: 0.95
+- prop: tabChangesFocus
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: tabStopDistance
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: textInteractionFlags
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QPlainTextEdit:readOnly'
+  verify:
+    'on': QtWidgets:QPlainTextEdit
+    check: unsupported
+  confidence: 0.95
+- prop: undoRedoEnabled
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QPlainTextEdit:maximumBlockCount'
+  verify:
+    'on': QtWidgets:QPlainTextEdit
+    check: unsupported
+  confidence: 0.95
+- prop: wordWrapMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

@@ -1,0 +1,27 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TreeListRow
+observe:
+- prop: depth
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:TreeListModel:model$|^Gtk:TreeListRow:depth$: the root model of a tree list model and the depth of a row are fixed
+      when they are created'
+  confidence: 0.9
+- prop: expanded
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expanded
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expanded (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:TreeListRow
+    check: connect
+  confidence: 0.9

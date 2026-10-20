@@ -11,8 +11,9 @@ pub mod spec;
 
 pub use backend::SpecBackend;
 pub use spec::{
-    AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
-    StylePropSpec, ValueKind, Via,
+    AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, ObsClass, ObsTiming,
+    ObserveSpec, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
+    StylePropSpec, ValueCost, ValueKind, Via,
 };
 
 use crate::diag::Diagnostics;

@@ -1,0 +1,43 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:Action
+observe:
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enabled
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enabled'
+  - origin: manual
+    ref: 'review pattern ^Gio:Action:enabled$: GSimpleAction notifies enabled in g_simple_action_set_enabled; the generated test toggles it (trigger)'
+  verify:
+    'on': Gio:SimpleAction
+    check: cross
+    rust: let a = o.downcast_ref::<gtk::gio::SimpleAction>().unwrap(); a.set_enabled(!gtk::gio::prelude::ActionExt::is_enabled(a));
+  confidence: 0.9
+- prop: name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable'
+  confidence: 0.9
+- prop: parameter-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable'
+  confidence: 0.9
+- prop: state-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable'
+  confidence: 0.9

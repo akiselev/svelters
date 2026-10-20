@@ -1,0 +1,124 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FlowBox
+observe:
+- prop: accept-unpaired-release
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accept-unpaired-release
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accept-unpaired-release (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:accept-unpaired-release)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95
+- prop: activate-on-single-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activate-on-single-click
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activate-on-single-click (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:activate-on-single-click)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95
+- prop: column-spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::column-spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::column-spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:column-spacing)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95
+- prop: homogeneous
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::homogeneous
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::homogeneous (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:homogeneous)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95
+- prop: max-children-per-line
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-children-per-line
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-children-per-line (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:max-children-per-line)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95
+- prop: min-children-per-line
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-children-per-line
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-children-per-line (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:min-children-per-line)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95
+- prop: row-spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::row-spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::row-spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:row-spacing)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95
+- prop: selection-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selection-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selection-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FlowBox:selection-mode)'
+  verify:
+    'on': Gtk:FlowBox
+    check: change
+  confidence: 0.95

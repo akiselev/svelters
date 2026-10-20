@@ -79,3 +79,22 @@ notifications:
 # Props passed as the arguments of a notification signal (read from the emitter when it is delivered).
 notification_args:
   NSControlTextDidBeginEditingNotification: [string-value]
+
+# Observability (milestone R0; tools/metadata/appkit/observe_rules.py, REACTIVITY.md 4.4 O7). KVO is what the probe
+# saw fire on a programmatic set; user edits of NSControl values bypass it while the field editor or the tracking
+# loop owns the value, so these are partial unless a fallback of the class reports the edit.
+observe:
+  value_props: [string-value, object-value, attributed-string-value, double-value, float-value, int-value, integer-value, state]
+  fallbacks:
+    "NSTextField:string-value": [{mechanism: notification, name: NSControlTextDidChangeNotification}]
+    "NSTextField:object-value": [{mechanism: notification, name: NSControlTextDidChangeNotification}]
+    "NSTextField:attributed-string-value": [{mechanism: notification, name: NSControlTextDidChangeNotification}]
+    "NSSlider:double-value": [{mechanism: target_action}]
+    "NSSlider:float-value": [{mechanism: target_action}]
+    "NSSlider:int-value": [{mechanism: target_action}]
+    "NSSlider:integer-value": [{mechanism: target_action}]
+    "NSSlider:object-value": [{mechanism: target_action}]
+    "NSButton:state": [{mechanism: target_action}]
+    "NSWindow:frame": [{mechanism: notification, name: NSWindowDidResizeNotification}, {mechanism: notification, name: NSWindowDidMoveNotification}]
+  # Fallbacks that also report programmatic changes (-[NSWindow setFrame:display:] posts DidResize/DidMove).
+  fallback_complete: ["NSWindow:frame"]

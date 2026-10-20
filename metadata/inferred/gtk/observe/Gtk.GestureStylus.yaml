@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:GestureStylus
+observe:
+- prop: stylus-only
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::stylus-only
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::stylus-only (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GestureStylus:stylus-only)'
+  verify:
+    'on': Gtk:GestureStylus
+    check: change
+  confidence: 0.95

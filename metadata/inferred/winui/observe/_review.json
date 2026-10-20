@@ -1,0 +1,18 @@
+{
+ "inferred": {
+  "constant": 0,
+  "exact": 207,
+  "none": 26,
+  "partial": 0,
+  "set_only": 18
+ },
+ "rows": [],
+ "schema": "svelters-observe-review/v1",
+ "skipped": {},
+ "toolkit": "winui",
+ "unreviewed": {
+  "by_pattern": {},
+  "low": 0,
+  "middle": 0
+ }
+}

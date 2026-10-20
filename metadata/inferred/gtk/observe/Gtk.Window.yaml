@@ -1,0 +1,358 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Window
+observe:
+- prop: application
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::application
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::application (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.9
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.9
+- prop: decorated
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::decorated
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::decorated (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:decorated)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: default-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::default-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::default-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Window present, set:Gtk.Window:default-height)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: default-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::default-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::default-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.9
+- prop: default-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::default-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::default-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Window present, set:Gtk.Window:default-width)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: deletable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::deletable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::deletable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:deletable)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: destroy-with-parent
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::destroy-with-parent
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::destroy-with-parent (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:destroy-with-parent)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: display
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::display
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::display (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.9
+- prop: focus-visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::focus-visible
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::focus-visible (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Window present, set:Gtk.Window:focus-visible)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: focus-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::focus-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::focus-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.9
+- prop: fullscreened
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::fullscreened
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::fullscreened (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:fullscreened)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: gravity
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gravity
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gravity (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:gravity)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: handle-menubar-accel
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::handle-menubar-accel
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::handle-menubar-accel (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:handle-menubar-accel)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: hide-on-close
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hide-on-close
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hide-on-close (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:hide-on-close)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-name
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:icon-name)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: is-active
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::is-active
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::is-active'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Window present)'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.95
+- prop: maximized
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::maximized
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::maximized (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:maximized)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: mnemonics-visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::mnemonics-visible
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::mnemonics-visible (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:mnemonics-visible)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: modal
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::modal
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::modal (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:modal)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: resizable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resizable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resizable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Window:resizable)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_set
+  derived_from:
+  - program-name
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:program-name, set:Gtk.Window:title)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: titlebar
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::titlebar
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::titlebar (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.9
+- prop: transient-for
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::transient-for
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::transient-for (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Window
+    check: connect
+  confidence: 0.9

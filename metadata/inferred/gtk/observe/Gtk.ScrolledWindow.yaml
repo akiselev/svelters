@@ -1,0 +1,226 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ScrolledWindow
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: connect
+  confidence: 0.9
+- prop: hadjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hadjustment
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hadjustment (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:hadjustment)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: connect
+  confidence: 0.95
+- prop: has-frame
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-frame
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-frame (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:has-frame)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: hscrollbar-policy
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hscrollbar-policy
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hscrollbar-policy (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:hscrollbar-policy)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: kinetic-scrolling
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::kinetic-scrolling
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::kinetic-scrolling (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:kinetic-scrolling)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: max-content-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-content-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-content-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:max-content-height)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: max-content-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-content-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-content-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:max-content-width)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: min-content-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-content-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-content-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:min-content-height)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: min-content-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-content-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-content-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:min-content-width)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: overlay-scrolling
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::overlay-scrolling
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::overlay-scrolling (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:overlay-scrolling)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: propagate-natural-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::propagate-natural-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::propagate-natural-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:propagate-natural-height)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: propagate-natural-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::propagate-natural-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::propagate-natural-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:propagate-natural-width)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: vadjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::vadjustment
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::vadjustment (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:vadjustment)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: connect
+  confidence: 0.95
+- prop: vscrollbar-policy
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::vscrollbar-policy
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::vscrollbar-policy (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:vscrollbar-policy)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95
+- prop: window-placement
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::window-placement
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::window-placement (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:window-placement)'
+  verify:
+    'on': Gtk:ScrolledWindow
+    check: change
+  confidence: 0.95

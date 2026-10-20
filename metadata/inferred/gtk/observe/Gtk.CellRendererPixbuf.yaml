@@ -1,0 +1,94 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRendererPixbuf
+observe:
+- prop: gicon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gicon
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gicon'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererPixbuf
+    check: connect
+  confidence: 0.9
+- prop: icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererPixbuf:icon-name)'
+  verify:
+    'on': Gtk:CellRendererPixbuf
+    check: change
+  confidence: 0.95
+- prop: icon-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-size
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-size (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererPixbuf:icon-size)'
+  verify:
+    'on': Gtk:CellRendererPixbuf
+    check: change
+  confidence: 0.95
+- prop: pixbuf-expander-closed
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pixbuf-expander-closed
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pixbuf-expander-closed'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererPixbuf
+    check: connect
+  confidence: 0.9
+- prop: pixbuf-expander-open
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pixbuf-expander-open
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pixbuf-expander-open'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererPixbuf
+    check: connect
+  confidence: 0.9
+- prop: texture
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::texture
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::texture'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererPixbuf
+    check: connect
+  confidence: 0.9

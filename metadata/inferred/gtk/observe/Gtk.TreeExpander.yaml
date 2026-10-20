@@ -1,0 +1,77 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TreeExpander
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:TreeExpander
+    check: connect
+  confidence: 0.9
+- prop: hide-expander
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hide-expander
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hide-expander (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeExpander:hide-expander)'
+  verify:
+    'on': Gtk:TreeExpander
+    check: change
+  confidence: 0.95
+- prop: indent-for-depth
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::indent-for-depth
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::indent-for-depth (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeExpander:indent-for-depth)'
+  verify:
+    'on': Gtk:TreeExpander
+    check: change
+  confidence: 0.95
+- prop: indent-for-icon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::indent-for-icon
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::indent-for-icon (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeExpander:indent-for-icon)'
+  verify:
+    'on': Gtk:TreeExpander
+    check: change
+  confidence: 0.95
+- prop: list-row
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::list-row
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::list-row (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:TreeExpander
+    check: connect
+  confidence: 0.9

@@ -1,0 +1,118 @@
+{
+ "inferred": {
+  "constant": 0,
+  "exact": 169,
+  "none": 77,
+  "partial": 10,
+  "set_only": 452
+ },
+ "probe": "6.11.3",
+ "rows": [
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QComboBox",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "currentData"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QGraphicsScene",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "sceneRect"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QInputDialog",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "doubleValue"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QInputDialog",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "intValue"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QInputDialog",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "textValue"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QLineEdit",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "hasSelectedText"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QLineEdit",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "redoAvailable"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QLineEdit",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "selectedText"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QMainWindow",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "iconSize"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QPlainTextEdit",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "blockCount"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QTextBrowser",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "source"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "QtWidgets:QTextDocument",
+   "pattern": "observe:exact-signal-pair-unprobed",
+   "prop": "blockCount"
+  }
+ ],
+ "schema": "svelters-observe-review/v1",
+ "skipped": {},
+ "toolkit": "qt",
+ "unreviewed": {
+  "by_pattern": {
+   "middle:observe:exact-signal-pair-unprobed": 12
+  },
+  "low": 0,
+  "middle": 12
+ }
+}

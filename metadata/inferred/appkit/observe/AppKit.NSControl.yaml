@@ -1,0 +1,202 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSControl
+observe:
+- prop: action
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: alignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `alignment` fired on a programmatic set'
+  confidence: 0.9
+- prop: allows-expansion-tool-tips
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsExpansionToolTips` fired on a programmatic set'
+  confidence: 0.9
+- prop: attributed-string-value
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: base-writing-direction
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `baseWritingDirection` fired on a programmatic set'
+  confidence: 0.9
+- prop: cell
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: continuous
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `continuous` fired on a programmatic set'
+  confidence: 0.9
+- prop: control-size
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `controlSize` fired on a programmatic set'
+  confidence: 0.9
+- prop: double-value
+  class: partial
+  via:
+  - mechanism: notify
+  missed:
+  - user_edit
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `doubleValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: an NSControl value: KVO misses user edits (field editor, tracking loop)'
+  confidence: 0.9
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `enabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: float-value
+  class: partial
+  via:
+  - mechanism: notify
+  missed:
+  - user_edit
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `floatValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: an NSControl value: KVO misses user edits (field editor, tracking loop)'
+  confidence: 0.9
+- prop: font
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: formatter
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: highlighted
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `highlighted` fired on a programmatic set'
+  confidence: 0.9
+- prop: ignores-multi-click
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `ignoresMultiClick` fired on a programmatic set'
+  confidence: 0.9
+- prop: int-value
+  class: partial
+  via:
+  - mechanism: notify
+  missed:
+  - user_edit
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `intValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: an NSControl value: KVO misses user edits (field editor, tracking loop)'
+  confidence: 0.9
+- prop: integer-value
+  class: partial
+  via:
+  - mechanism: notify
+  missed:
+  - user_edit
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `integerValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: an NSControl value: KVO misses user edits (field editor, tracking loop)'
+  confidence: 0.9
+- prop: line-break-mode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `lineBreakMode` fired on a programmatic set'
+  confidence: 0.9
+- prop: object-value
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: refuses-first-responder
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `refusesFirstResponder` fired on a programmatic set'
+  confidence: 0.9
+- prop: string-value
+  class: partial
+  via:
+  - mechanism: notify
+  missed:
+  - user_edit
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `stringValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: an NSControl value: KVO misses user edits (field editor, tracking loop)'
+  confidence: 0.9
+- prop: tag
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `tag` fired on a programmatic set'
+  confidence: 0.9
+- prop: target
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: uses-single-line-mode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesSingleLineMode` fired on a programmatic set'
+  confidence: 0.9

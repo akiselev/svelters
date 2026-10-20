@@ -1,0 +1,139 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:MountOperation
+observe:
+- prop: anonymous
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::anonymous
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::anonymous'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:anonymous)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95
+- prop: choice
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::choice
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::choice'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:choice)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95
+- prop: domain
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::domain
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::domain'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:domain)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95
+- prop: is-tcrypt-hidden-volume
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::is-tcrypt-hidden-volume
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::is-tcrypt-hidden-volume'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:is-tcrypt-hidden-volume)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95
+- prop: is-tcrypt-system-volume
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::is-tcrypt-system-volume
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::is-tcrypt-system-volume'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:is-tcrypt-system-volume)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95
+- prop: password
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::password
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::password'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:password)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95
+- prop: password-save
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::password-save
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::password-save'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:password-save)'
+  verify:
+    'on': Gio:MountOperation
+    check: connect
+  confidence: 0.95
+- prop: pim
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pim
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pim'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:pim)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95
+- prop: username
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::username
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::username'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:username)'
+  verify:
+    'on': Gio:MountOperation
+    check: change
+  confidence: 0.95

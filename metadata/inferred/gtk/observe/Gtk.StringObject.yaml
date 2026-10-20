@@ -1,0 +1,12 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:StringObject
+observe:
+- prop: string
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:StringObject:string$: GtkStringObject is immutable (gtk_string_object_new)'
+  confidence: 0.9

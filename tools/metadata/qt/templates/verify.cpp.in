@@ -122,7 +122,10 @@ void h_destroyed(void *, svl_handle h, uint32_t reason) {
 }
 int frames = 0;
 void h_frame(void *) { frames++; }
-const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed, nullptr, nullptr, h_frame, /* prop_changed */ nullptr};
+// ABI v2.6: prop_changed calls (observe facts, milestone R0)
+std::vector<std::pair<svl_handle, svl_id>> changed;
+void h_prop_changed(void *, svl_handle h, svl_id p) { changed.push_back({h, p}); }
+const svl_host kHost = {nullptr, h_post, h_checkpoint, h_call_sync, h_destroyed, nullptr, nullptr, h_frame, h_prop_changed};
 
 const svl_backend *B = nullptr;
 
@@ -908,6 +911,113 @@ bool tt_binding(const BindingRow &r, std::string &why) {
   return true;
 }
 
+// Observe facts (metadata/observe/qt.json, milestone R0): one row per fact. The R1a backend observes through
+// NOTIFY only, so rows exist for NOTIFY facts (change: a native QMetaProperty::write of a new value is announced;
+// silent: the probe saw this NOTIFY miss it), constants (refused: -1) and properties without a mechanism
+// (unsupported: SVL_OBSERVE_UNSUPPORTED). Bindable, event and signal mechanisms wait for the R3 backend.
+enum ObsCheck : int { OC_CHANGE, OC_SILENT, OC_REFUSED, OC_UNSUPPORTED, OC_CONNECT };
+enum ObsFires : int { OF_ANY, OF_ON_CHANGE, OF_ON_SET };
+struct ObserveRow {
+  const char *name;
+  const char *kind;  // element tag, or the class of a constructible type (`type`)
+  bool type;
+  const char *js, *native;
+  int check, fires;
+};
+// A different value of a scalar or enum property (the probe's rule, tools/metadata/qt/observe_probe.cpp).
+bool next_qvalue(const QMetaProperty &p, const QVariant &cur, QVariant &out) {
+  if (p.isEnumType()) {
+    if (p.isFlagType()) return false;
+    QMetaEnum me = p.enumerator();
+    for (int i = 0; i < me.keyCount(); i++)
+      if (me.value(i) != cur.toInt()) { out = QVariant(me.value(i)); return true; }
+    return false;
+  }
+  switch (p.metaType().id()) {
+    case QMetaType::Bool: out = !cur.toBool(); return true;
+    case QMetaType::Int: out = cur.toInt() + 1; return true;
+    case QMetaType::UInt: out = cur.toUInt() + 1; return true;
+    case QMetaType::LongLong: out = cur.toLongLong() + 1; return true;
+    case QMetaType::Double:
+    case QMetaType::Float: {
+      // c + 1 vanishes next to an infinite or huge default (QDoubleValidator::bottom is -inf): 0 and 1 follow.
+      const double c = cur.toDouble();
+      for (double v : {c + 1.0, 0.0, 1.0})
+        if (std::isfinite(v) && v != c) {
+          out = p.metaType().id() == QMetaType::Float ? QVariant(float(v)) : QVariant(v);
+          return true;
+        }
+      return false;
+    }
+    case QMetaType::QString: out = cur.toString() + "x"; return true;
+    default: return false;
+  }
+}
+int changed_count(svl_handle h, svl_id p) {
+  return static_cast<int>(std::count(changed.begin(), changed.end(), std::make_pair(h, p)));
+}
+bool tt_observe(const ObserveRow &r, std::string &why) {
+  svl_handle h = 0;
+  if (r.type) {
+    svl_value out{};
+    CHECK(K(r.kind) != 0);
+    CHECK(B->construct(B->self, K(r.kind), nullptr, nullptr, 0, &out) == 0 && out.tag == SVL_HANDLE);
+    h = out.u.h;
+  } else {
+    h = mk(r.kind);
+  }
+  CHECK(h != 0);
+  svl_id p = P(r.kind, r.js);
+  CHECK(p != 0);
+  changed.clear();
+  const int rc = B->observe(B->self, h, p, true);
+  if (r.check == OC_REFUSED || r.check == OC_UNSUPPORTED) {
+    CHECK(rc == (r.check == OC_REFUSED ? -1 : SVL_OBSERVE_UNSUPPORTED));
+    B->destroy(B->self, h);
+    return true;
+  }
+  CHECK(rc == 0);
+  if (r.check == OC_CONNECT) {
+    CHECK(B->observe(B->self, h, p, false) == 0);
+    B->destroy(B->self, h);
+    return true;
+  }
+  QObject *o = O(h);
+  const QMetaProperty mp = o->metaObject()->property(o->metaObject()->indexOfProperty(r.native));
+  CHECK(mp.isValid());
+  QVariant cur = mp.read(o), nv;
+  CHECK(next_qvalue(mp, cur, nv));
+  CHECK(mp.write(o, nv));
+  QCoreApplication::processEvents();
+  CHECK(mp.read(o) != cur);  // the native write changed it
+  const int n = changed_count(h, p);
+  if (r.check == OC_SILENT) {
+    CHECK(n == 0);  // the fact: this change is not announced
+    CHECK(B->observe(B->self, h, p, false) == 0);
+    B->destroy(B->self, h);
+    return true;
+  }
+  CHECK(n >= 1);  // announced
+  changed.clear();
+  CHECK(mp.write(o, mp.read(o)));  // an identical set
+  QCoreApplication::processEvents();
+  const int same = changed_count(h, p);
+  if (r.fires == OF_ON_CHANGE) CHECK(same == 0);
+  if (r.fires == OF_ON_SET) CHECK(same > 0);
+  CHECK(B->observe(B->self, h, p, false) == 0);
+  changed.clear();
+  QVariant v2;
+  CHECK(next_qvalue(mp, mp.read(o), v2));
+  mp.write(o, v2);
+  QCoreApplication::processEvents();
+  CHECK(changed_count(h, p) == 0);  // unobserved: silent
+  CHECK(B->observe(B->self, h, p, true) == 0);
+  B->destroy(B->self, h);  // destroyed while observed: the observation goes with it
+  flush();
+  CHECK(B->observe(B->self, h, p, true) < 0);
+  return true;
+}
+
 template <class Row>
 int run_rows(const Row *rows, bool (*fn)(const Row &, std::string &), int &count) {
   int failures = 0;
@@ -987,6 +1097,7 @@ extern "C" int svl_qt_verify_run(void) {
   failures += run_rows(kSignalRows, tt_signal, count);
   failures += run_rows(kEmitRows, tt_emit, count);
   failures += run_rows(kBindingRows, tt_binding, count);
+  failures += run_rows(kObserveRows, tt_observe, count);
   std::printf("%d tests, %d failed\n", count, failures);
   std::fflush(stdout);
   return failures;

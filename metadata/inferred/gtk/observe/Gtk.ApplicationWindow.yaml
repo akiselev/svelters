@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ApplicationWindow
+observe:
+- prop: show-menubar
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-menubar
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-menubar (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ApplicationWindow:show-menubar)'
+  verify:
+    'on': Gtk:ApplicationWindow
+    check: change
+  confidence: 0.95

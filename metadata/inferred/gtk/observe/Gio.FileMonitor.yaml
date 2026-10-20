@@ -1,0 +1,15 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:FileMonitor
+observe:
+- prop: rate-limit
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::rate-limit
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::rate-limit (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9

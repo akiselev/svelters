@@ -1,0 +1,124 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QAbstractItemView
+observe:
+- prop: alternatingRowColors
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: autoScroll
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: autoScrollMargin
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: defaultDropAction
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: dragDropMode
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QAbstractItemView:dragEnabled, set:QtWidgets:QListView:movement, set:QtWidgets:QListView:viewMode'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
+  confidence: 0.95
+- prop: dragDropOverwriteMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: dragEnabled
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QAbstractItemView:dragDropMode, set:QtWidgets:QListView:movement, set:QtWidgets:QListView:viewMode'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
+  confidence: 0.95
+- prop: editTriggers
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: horizontalScrollMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: iconSize
+  class: exact
+  via:
+  - mechanism: notify
+    signal: iconSizeChanged(QSize)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY iconSizeChanged(QSize)'
+  verify:
+    'on': QtWidgets:QListView
+    check: connect
+  confidence: 0.9
+- prop: keyboardSearchFlags
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: selectionBehavior
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: selectionMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: showDropIndicator
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: tabKeyNavigation
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: textElideMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: updateThreshold
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: verticalScrollMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

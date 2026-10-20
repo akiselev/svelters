@@ -1,0 +1,66 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ScaleButton
+observe:
+- prop: adjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::adjustment
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::adjustment (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScaleButton:adjustment)'
+  verify:
+    'on': Gtk:ScaleButton
+    check: connect
+  confidence: 0.95
+- prop: has-frame
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-frame
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-frame (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScaleButton:has-frame)'
+  verify:
+    'on': Gtk:ScaleButton
+    check: change
+  confidence: 0.95
+- prop: icons
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icons
+  fires: on_set
+  derived_from:
+  - use-symbolic
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icons'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.VolumeButton:use-symbolic)'
+  verify:
+    'on': Gtk:VolumeButton
+    check: cross
+    trigger: use-symbolic
+  confidence: 0.95
+- prop: value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::value
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::value (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScaleButton:value)'
+  verify:
+    'on': Gtk:ScaleButton
+    check: change
+  confidence: 0.95

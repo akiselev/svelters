@@ -1,0 +1,69 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:HeaderBar
+observe:
+- prop: decoration-layout
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::decoration-layout
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::decoration-layout'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.HeaderBar:decoration-layout)'
+  verify:
+    'on': Gtk:HeaderBar
+    check: change
+  confidence: 0.95
+- prop: show-title-buttons
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-title-buttons
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-title-buttons (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.HeaderBar:show-title-buttons)'
+  verify:
+    'on': Gtk:HeaderBar
+    check: change
+  confidence: 0.95
+- prop: title
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: computed by svelters (managed_title_label), not a GObject property: only our setter changes it'
+  confidence: 0.9
+- prop: title-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:HeaderBar
+    check: connect
+  confidence: 0.9
+- prop: use-native-controls
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-native-controls
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-native-controls (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.HeaderBar:use-native-controls)'
+  verify:
+    'on': Gtk:HeaderBar
+    check: change
+  confidence: 0.95

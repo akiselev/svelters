@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Printer
+observe:
+- prop: accepts-pdf
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Printer
+    check: refused
+  confidence: 0.95
+- prop: accepts-ps
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Printer
+    check: refused
+  confidence: 0.95
+- prop: backend
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Printer
+    check: refused
+  confidence: 0.95
+- prop: is-virtual
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Printer
+    check: refused
+  confidence: 0.95
+- prop: name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Printer
+    check: refused
+  confidence: 0.95

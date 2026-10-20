@@ -1,0 +1,58 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:Device
+observe:
+- prop: display
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: has-cursor
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: num-touches
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: product-id
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: seat
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::seat
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::seat'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  confidence: 0.9
+- prop: source
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: vendor-id
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95

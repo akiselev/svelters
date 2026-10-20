@@ -1,0 +1,40 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:DeviceTool
+observe:
+- prop: axes
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:DeviceTool
+    check: refused
+  confidence: 0.95
+- prop: hardware-id
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:DeviceTool
+    check: refused
+  confidence: 0.95
+- prop: serial
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:DeviceTool
+    check: refused
+  confidence: 0.95
+- prop: tool-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:DeviceTool
+    check: refused
+  confidence: 0.95

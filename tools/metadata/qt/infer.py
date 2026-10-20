@@ -446,9 +446,23 @@ def run() -> tuple[dict[str, str], dict[str, str], dict]:
 SECTION = {"props": "js", "methods": "js", "signals": "js", "bindings": "name"}
 
 
-def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str]:
-    """(class, section, name) -> the fingerprint qt_layers.py puts on the inferred record (and the ledger parks it by)."""
-    out = {}
+def observe_layer() -> tuple[dict[str, str], dict[str, int]]:
+    """The inferred observe layer (rules O2-O5, O8, O10: tools/metadata/qt/observe_rules.py): file name -> text for
+    metadata/inferred/qt/observe/, and the counts per class."""
+    import observe as obs
+    import observe_rules
+    rules = yaml.safe_load(RULES.read_text())
+    recs, evidence, review, skipped = observe_rules.infer(rules)
+    conf = {k: v["confidence"] for k, v in evidence.items()}
+    files = obs.inferred_files("qt", recs, evidence, review, skipped, conf, {"probe": rules["observe"]["probe"]})
+    return files, obs.counts({o: {r["prop"]: r for r in rs} for o, rs in recs.items()})
+
+
+def record_fingerprints(files: dict[str, str], observe_files: dict[str, str] | None = None) -> dict[tuple[str, str, str], str]:
+    """(class, section, name) -> the fingerprint qt_layers.py puts on the inferred record (and the ledger parks it by).
+    Observe facts: (owner, "observe", prop) -> the fingerprint of the stripped record (observe.Layers)."""
+    import observe as obs
+    out = obs.layer_fingerprints(observe_files or {})
     for fname, text in files.items():
         cls = fname[:-len(".yaml")]
         for el in yaml.safe_load(text).get("elements", []):
@@ -458,13 +472,13 @@ def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str
     return out
 
 
-def prune_parked(files: dict[str, str], check: bool) -> bool:
+def prune_parked(files: dict[str, str], check: bool, observe_files: dict[str, str] | None = None) -> bool:
     """Drop parked facts whose inferred record changed or went away: they are tried again. True if stale."""
     path = OUT / "_parked.json"
     if not path.exists():
         return False
     doc = json.loads(path.read_text())
-    fps = record_fingerprints(files)
+    fps = record_fingerprints(files, observe_files)
     keep = [r for r in doc["parked"] if fps.get((r["kind"], r["section"], r["name"])) == r.get("record_fp")]
     if len(keep) == len(doc["parked"]):
         return False
@@ -499,16 +513,21 @@ def main() -> int:
         print("infer: the inferred layer breaks the override schema:", *errs[:20], sep="\n  ", file=sys.stderr)
         return 1
     want = {**files, **evid, "_review.json": json.dumps(summary, indent=1, sort_keys=True) + "\n"}
-    parked_stale = prune_parked(files, a.check)
+    import observe as obs
+    ofiles, ocounts = observe_layer()
+    parked_stale = prune_parked(files, a.check, ofiles)
     have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
     stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
     if a.check:
         for n in stale:
             print(f"infer: metadata/inferred/qt/{n} is stale (run tools/metadata/qt/infer.py)", file=sys.stderr)
+        ostale = obs.sync_dir(OUT / "observe", ofiles, True, "infer (run tools/metadata/qt/infer.py)")
         if parked_stale:
             print("infer: metadata/inferred/qt/_parked.json lists facts whose inferred record changed (run tools/metadata/qt/infer.py)",
                   file=sys.stderr)
-        return 1 if stale or parked_stale else 0
+        return 1 if stale or parked_stale or ostale else 0
+    obs.sync_dir(OUT / "observe", ofiles, False, "infer")
+    print("infer qt: observe " + ", ".join(f"{k} {v}" for k, v in ocounts.items()), file=sys.stderr)
     OUT.mkdir(parents=True, exist_ok=True)
     for n in sorted(have - set(want)):
         (OUT / n).unlink()

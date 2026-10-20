@@ -1,0 +1,46 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QLCDNumber
+observe:
+- prop: digitCount
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: intValue
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QLCDNumber:value'
+  verify:
+    'on': QtWidgets:QLCDNumber
+    check: unsupported
+  confidence: 0.95
+- prop: mode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: segmentStyle
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: smallDecimalPoint
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: value
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QLCDNumber:intValue'
+  verify:
+    'on': QtWidgets:QLCDNumber
+    check: unsupported
+  confidence: 0.95

@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:Cursor
+observe:
+- prop: fallback
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:Cursor
+    check: refused
+  confidence: 0.95
+- prop: hotspot-x
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:Cursor
+    check: refused
+  confidence: 0.95
+- prop: hotspot-y
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:Cursor
+    check: refused
+  confidence: 0.95
+- prop: name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:Cursor
+    check: refused
+  confidence: 0.95
+- prop: texture
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:Cursor
+    check: refused
+  confidence: 0.95

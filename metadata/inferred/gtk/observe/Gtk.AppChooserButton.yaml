@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:AppChooserButton
+observe:
+- prop: heading
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::heading
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::heading (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserButton:heading)'
+  verify:
+    'on': Gtk:AppChooserButton
+    check: change
+  confidence: 0.95
+- prop: modal
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::modal
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::modal (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserButton:modal)'
+  verify:
+    'on': Gtk:AppChooserButton
+    check: change
+  confidence: 0.95
+- prop: show-default-item
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-default-item
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-default-item (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserButton:show-default-item)'
+  verify:
+    'on': Gtk:AppChooserButton
+    check: change
+  confidence: 0.95
+- prop: show-dialog-item
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-dialog-item
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-dialog-item (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserButton:show-dialog-item)'
+  verify:
+    'on': Gtk:AppChooserButton
+    check: change
+  confidence: 0.95

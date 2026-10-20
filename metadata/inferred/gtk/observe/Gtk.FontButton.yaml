@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FontButton
+observe:
+- prop: modal
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::modal
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::modal (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontButton:modal)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontButton:title)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95
+- prop: use-font
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-font
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-font (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontButton:use-font)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95
+- prop: use-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-size
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-size (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontButton:use-size)'
+  verify:
+    'on': Gtk:FontButton
+    check: change
+  confidence: 0.95

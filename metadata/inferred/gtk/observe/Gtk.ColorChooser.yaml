@@ -1,0 +1,34 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColorChooser
+observe:
+- prop: rgba
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::rgba
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::rgba'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ColorButton
+    check: connect
+  confidence: 0.9
+- prop: use-alpha
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-alpha
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-alpha (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorChooser:use-alpha)'
+  verify:
+    'on': Gtk:ColorButton
+    check: change
+  confidence: 0.95

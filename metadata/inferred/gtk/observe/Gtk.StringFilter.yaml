@@ -1,0 +1,63 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:StringFilter
+observe:
+- prop: expression
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expression
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expression (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:StringFilter
+    check: connect
+  confidence: 0.9
+- prop: ignore-case
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::ignore-case
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::ignore-case (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.StringFilter:ignore-case)'
+  verify:
+    'on': Gtk:StringFilter
+    check: change
+  confidence: 0.95
+- prop: match-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::match-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::match-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.StringFilter:match-mode)'
+  verify:
+    'on': Gtk:StringFilter
+    check: change
+  confidence: 0.95
+- prop: search
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::search
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::search (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.StringFilter:search)'
+  verify:
+    'on': Gtk:StringFilter
+    check: change
+  confidence: 0.95

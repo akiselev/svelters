@@ -1,0 +1,54 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QMainWindow
+observe:
+- prop: animated
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: dockNestingEnabled
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: dockOptions
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QMainWindow:animated, set:QtWidgets:QMainWindow:dockNestingEnabled'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: unsupported
+  confidence: 0.95
+- prop: documentMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: tabShape
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: toolButtonStyle
+  class: exact
+  via:
+  - mechanism: signal
+    signal: toolButtonStyleChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal toolButtonStyleChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMainWindow:toolButtonStyle)'
+  confidence: 0.95
+- prop: unifiedTitleAndToolBarOnMac
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

@@ -1,0 +1,106 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FontDialogButton
+observe:
+- prop: dialog
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::dialog
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::dialog (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontDialogButton:dialog)'
+  verify:
+    'on': Gtk:FontDialogButton
+    check: connect
+  confidence: 0.95
+- prop: font-desc
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::font-desc
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::font-desc (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FontDialogButton
+    check: connect
+  confidence: 0.9
+- prop: font-features
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::font-features
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::font-features (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontDialogButton:font-features)'
+  verify:
+    'on': Gtk:FontDialogButton
+    check: change
+  confidence: 0.95
+- prop: language
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::language
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::language (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FontDialogButton
+    check: connect
+  confidence: 0.9
+- prop: level
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::level
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::level (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontDialogButton:level)'
+  verify:
+    'on': Gtk:FontDialogButton
+    check: change
+  confidence: 0.95
+- prop: use-font
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-font
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-font (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontDialogButton:use-font)'
+  verify:
+    'on': Gtk:FontDialogButton
+    check: change
+  confidence: 0.95
+- prop: use-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-size
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-size (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontDialogButton:use-size)'
+  verify:
+    'on': Gtk:FontDialogButton
+    check: change
+  confidence: 0.95

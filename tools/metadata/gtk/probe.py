@@ -23,8 +23,14 @@ GLib criticals/warnings during an operation make it `error` (with the message as
 Each kind runs in a worker subprocess; a crash or timeout bisects the batch so one bad kind
 cannot hide the others. Output: one JSON document (kinds -> facts), deterministic ordering.
 
+Sections: the default section is the one above (PyGObject). `--section observe` is the observability probe
+(milestone R0): a C program over every GObject type of the metadata, written to
+metadata/probe/gtk/observe/<version>.json (tools/metadata/gtk/observe_probe.py has the details; it needs a C
+compiler and the gtk4 headers, not PyGObject).
+
 Usage:
   xvfb-run -a python3 tools/metadata/gtk/probe.py [--out metadata/probe/gtk/<version>.json] [--kinds Button,Entry] [-j 4]
+  python3 tools/metadata/gtk/probe.py --section observe [--libdir <dir with libgtk-4.so.1>] [--girdir DIR]
   xvfb-run -a python3 tools/metadata/gtk/probe.py --ns Adw --out adw.json     (a pack with no ingested metadata)
 """
 from __future__ import annotations
@@ -713,7 +719,15 @@ def main() -> int:
     ap.add_argument("-j", type=int, default=4)
     ap.add_argument("--batch", type=int, default=6)
     ap.add_argument("--timeout", type=int, default=120)
+    ap.add_argument("--section", default="props", choices=["props", "observe"],
+                    help="props: the PyGObject probe (default); observe: the observability probe (C, no PyGObject)")
+    ap.add_argument("--libdir", help="observe: run against the libgtk-4.so.1 in this directory")
+    ap.add_argument("--girdir", default="/usr/share/gir-1.0", help="observe: GIR files (get_type symbols)")
     a = ap.parse_args()
+    if a.section == "observe":
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import observe_probe
+        return observe_probe.main(a)
     if a.worker:
         worker(a.worker.split(","))
         return 0

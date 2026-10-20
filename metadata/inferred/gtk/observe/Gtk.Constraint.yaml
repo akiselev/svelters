@@ -1,0 +1,76 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Constraint
+observe:
+- prop: constant
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95
+- prop: multiplier
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95
+- prop: relation
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95
+- prop: source
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95
+- prop: source-attribute
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95
+- prop: strength
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95
+- prop: target
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95
+- prop: target-attribute
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Constraint
+    check: refused
+  confidence: 0.95

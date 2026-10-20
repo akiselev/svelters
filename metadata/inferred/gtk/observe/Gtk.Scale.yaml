@@ -1,0 +1,68 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Scale
+observe:
+- prop: digits
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::digits
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::digits (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scale:digits)'
+  verify:
+    'on': Gtk:Scale
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: draw-value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::draw-value
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::draw-value (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scale:draw-value)'
+  verify:
+    'on': Gtk:Scale
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: has-origin
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-origin
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-origin (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scale:has-origin)'
+  verify:
+    'on': Gtk:Scale
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: value-pos
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::value-pos
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::value-pos (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scale:value-pos)'
+  verify:
+    'on': Gtk:Scale
+    check: change
+    setup: o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95

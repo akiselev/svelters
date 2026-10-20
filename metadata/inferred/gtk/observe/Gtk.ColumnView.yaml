@@ -1,0 +1,154 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColumnView
+observe:
+- prop: columns
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal
+      object the widget creates in init and never replaces'
+  confidence: 0.9
+- prop: enable-rubberband
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-rubberband
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-rubberband (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:enable-rubberband)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95
+- prop: header-factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::header-factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::header-factory (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:header-factory)'
+  verify:
+    'on': Gtk:ColumnView
+    check: connect
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:model)'
+  verify:
+    'on': Gtk:ColumnView
+    check: connect
+  confidence: 0.95
+- prop: reorderable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::reorderable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::reorderable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:reorderable)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95
+- prop: row-factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::row-factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::row-factory (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:row-factory)'
+  verify:
+    'on': Gtk:ColumnView
+    check: connect
+  confidence: 0.95
+- prop: show-column-separators
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-column-separators
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-column-separators (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:show-column-separators)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95
+- prop: show-row-separators
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-row-separators
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-row-separators (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:show-row-separators)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95
+- prop: single-click-activate
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::single-click-activate
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::single-click-activate (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:single-click-activate)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95
+- prop: sorter
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal
+      object the widget creates in init and never replaces'
+  confidence: 0.9
+- prop: tab-behavior
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tab-behavior
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tab-behavior (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:tab-behavior)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95

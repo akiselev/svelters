@@ -1,0 +1,81 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:LevelBar
+observe:
+- prop: inverted
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inverted
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inverted (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:inverted)'
+  verify:
+    'on': Gtk:LevelBar
+    check: change
+  confidence: 0.95
+- prop: max-value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-value
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-value (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:max-value)'
+  verify:
+    'on': Gtk:LevelBar
+    check: change
+  confidence: 0.95
+- prop: min-value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-value
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-value (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:min-value)'
+  verify:
+    'on': Gtk:LevelBar
+    check: change
+  confidence: 0.95
+- prop: mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:mode)'
+  verify:
+    'on': Gtk:LevelBar
+    check: change
+  confidence: 0.95
+- prop: value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::value
+  fires: on_change
+  derived_from:
+  - min-value
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::value (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:min-value, set:Gtk.LevelBar:value)'
+  verify:
+    'on': Gtk:LevelBar
+    check: change
+  confidence: 0.95

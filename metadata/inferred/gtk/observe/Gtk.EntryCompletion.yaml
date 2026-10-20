@@ -1,0 +1,133 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:EntryCompletion
+observe:
+- prop: cell-area
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: refused
+  confidence: 0.95
+- prop: inline-completion
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inline-completion
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inline-completion (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryCompletion:inline-completion)'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: change
+  confidence: 0.95
+- prop: inline-selection
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inline-selection
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inline-selection (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryCompletion:inline-selection)'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: change
+  confidence: 0.95
+- prop: minimum-key-length
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::minimum-key-length
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::minimum-key-length (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryCompletion:minimum-key-length)'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: connect
+  confidence: 0.9
+- prop: popup-completion
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::popup-completion
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::popup-completion (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryCompletion:popup-completion)'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: change
+  confidence: 0.95
+- prop: popup-set-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::popup-set-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::popup-set-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryCompletion:popup-set-width)'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: change
+  confidence: 0.95
+- prop: popup-single-match
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::popup-single-match
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::popup-single-match (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryCompletion:popup-single-match)'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: change
+  confidence: 0.95
+- prop: text-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-column
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-column'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EntryCompletion:text-column)'
+  verify:
+    'on': Gtk:EntryCompletion
+    check: change
+  confidence: 0.95

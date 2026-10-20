@@ -1,0 +1,645 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRendererText
+observe:
+- prop: align-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::align-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::align-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: alignment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::alignment
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::alignment (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: attributes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::attributes
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::attributes'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: connect
+  confidence: 0.9
+- prop: background-rgba
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::background-rgba
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::background-rgba'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: connect
+  confidence: 0.9
+- prop: background-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::background-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::background-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::editable
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::editable'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: editable-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::editable-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::editable-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: ellipsize
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::ellipsize
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::ellipsize (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: ellipsize-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::ellipsize-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::ellipsize-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: family
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::family
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::family'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: family-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::family-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::family-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: font
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::font
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::font'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: font-desc
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::font-desc
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::font-desc'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: connect
+  confidence: 0.9
+- prop: foreground-rgba
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::foreground-rgba
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::foreground-rgba'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: connect
+  confidence: 0.9
+- prop: foreground-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::foreground-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::foreground-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: language
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::language
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::language'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: language-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::language-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::language-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: max-width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-width-chars
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-width-chars (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: placeholder-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::placeholder-text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::placeholder-text'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: rise
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::rise
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::rise'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: rise-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::rise-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::rise-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: scale
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::scale
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::scale'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: scale-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::scale-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::scale-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: single-paragraph-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::single-paragraph-mode
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::single-paragraph-mode (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::size
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::size'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: size-points
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::size-points
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::size-points'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: size-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::size-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::size-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: stretch
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::stretch
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::stretch'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: stretch-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::stretch-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::stretch-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: strikethrough
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::strikethrough
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::strikethrough'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: strikethrough-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::strikethrough-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::strikethrough-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: style
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::style
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::style'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: style-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::style-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::style-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  derived_from:
+  - accel-key
+  - keycode
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:accel-key, set:Gtk.CellRendererAccel:keycode)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: underline
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::underline
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::underline'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: underline-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::underline-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::underline-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: variant
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::variant
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::variant'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: variant-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::variant-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::variant-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: weight
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::weight
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::weight'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: weight-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::weight-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::weight-set'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::width-chars
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::width-chars (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: wrap-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap-mode
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap-mode (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: wrap-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap-width
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap-width (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9

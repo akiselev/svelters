@@ -1,0 +1,67 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QRhiWidget
+observe:
+- prop: autoRenderTarget
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: colorBufferFormat
+  class: exact
+  via:
+  - mechanism: notify
+    signal: colorBufferFormatChanged(TextureFormat)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY colorBufferFormatChanged(TextureFormat)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QRhiWidget:colorBufferFormat)'
+  verify:
+    'on': QtWidgets:QRhiWidget
+    check: change
+  confidence: 0.95
+- prop: fixedColorBufferSize
+  class: exact
+  via:
+  - mechanism: notify
+    signal: fixedColorBufferSizeChanged(QSize)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY fixedColorBufferSizeChanged(QSize)'
+  verify:
+    'on': QtWidgets:QRhiWidget
+    check: connect
+  confidence: 0.9
+- prop: mirrorVertically
+  class: exact
+  via:
+  - mechanism: notify
+    signal: mirrorVerticallyChanged(bool)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY mirrorVerticallyChanged(bool)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QRhiWidget:mirrorVertically)'
+  verify:
+    'on': QtWidgets:QRhiWidget
+    check: change
+  confidence: 0.95
+- prop: sampleCount
+  class: exact
+  via:
+  - mechanism: notify
+    signal: sampleCountChanged(int)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY sampleCountChanged(int)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QRhiWidget:sampleCount)'
+  verify:
+    'on': QtWidgets:QRhiWidget
+    check: change
+  confidence: 0.95

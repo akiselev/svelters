@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ShortcutsSection
+observe:
+- prop: max-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsSection:max-height)'
+  verify:
+    'on': Gtk:ShortcutsSection
+    check: change
+  confidence: 0.95
+- prop: section-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::section-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::section-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsSection:section-name)'
+  verify:
+    'on': Gtk:ShortcutsSection
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsSection:title)'
+  verify:
+    'on': Gtk:ShortcutsSection
+    check: change
+  confidence: 0.95
+- prop: view-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::view-name
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::view-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsSection:view-name)'
+  verify:
+    'on': Gtk:ShortcutsSection
+    check: change
+  confidence: 0.95

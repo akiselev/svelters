@@ -1,0 +1,67 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellView
+observe:
+- prop: cell-area
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:CellView
+    check: refused
+  confidence: 0.95
+- prop: cell-area-context
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:CellView
+    check: refused
+  confidence: 0.95
+- prop: draw-sensitive
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::draw-sensitive
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::draw-sensitive (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellView:draw-sensitive)'
+  verify:
+    'on': Gtk:CellView
+    check: change
+  confidence: 0.95
+- prop: fit-model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::fit-model
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::fit-model (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellView:fit-model)'
+  verify:
+    'on': Gtk:CellView
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellView
+    check: connect
+  confidence: 0.9

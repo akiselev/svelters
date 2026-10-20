@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColorDialog
+observe:
+- prop: modal
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::modal
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::modal (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorDialog:modal)'
+  verify:
+    'on': Gtk:ColorDialog
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorDialog:title)'
+  verify:
+    'on': Gtk:ColorDialog
+    check: change
+  confidence: 0.95
+- prop: with-alpha
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::with-alpha
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::with-alpha (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorDialog:with-alpha)'
+  verify:
+    'on': Gtk:ColorDialog
+    check: change
+  confidence: 0.95

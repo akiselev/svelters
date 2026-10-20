@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:GestureSingle
+observe:
+- prop: button
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::button
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::button (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GestureSingle:button)'
+  verify:
+    'on': Gtk:GestureSingle
+    check: change
+  confidence: 0.95
+- prop: exclusive
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::exclusive
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::exclusive (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GestureSingle:exclusive)'
+  verify:
+    'on': Gtk:GestureSingle
+    check: change
+  confidence: 0.95
+- prop: touch-only
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::touch-only
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::touch-only (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GestureSingle:touch-only)'
+  verify:
+    'on': Gtk:GestureSingle
+    check: change
+  confidence: 0.95

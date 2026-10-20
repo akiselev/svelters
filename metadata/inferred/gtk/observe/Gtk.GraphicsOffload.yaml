@@ -1,0 +1,48 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:GraphicsOffload
+observe:
+- prop: black-background
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::black-background
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::black-background (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GraphicsOffload:black-background)'
+  verify:
+    'on': Gtk:GraphicsOffload
+    check: change
+  confidence: 0.95
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:GraphicsOffload
+    check: connect
+  confidence: 0.9
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enabled
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enabled (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GraphicsOffload:enabled)'
+  verify:
+    'on': Gtk:GraphicsOffload
+    check: change
+  confidence: 0.95

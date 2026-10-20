@@ -474,3 +474,37 @@ fn typed_methods() {
     let p = qt.method(&el(&qt, "main-window"), "present").unwrap();
     assert_eq!(p.returns.as_ref().unwrap().ty, "void");
 }
+
+/// Milestone R0: the specs carry an observability fact per property (metadata/observe/<tk>.json),
+/// read through the same `property` lookup as everything else (inherited along the chain).
+#[test]
+fn properties_carry_observability_facts() {
+    let obs = |b: &SpecBackend, e: &ElementRef, p: &str| b.property(e, p).unwrap().observe.clone();
+    let gtk = load("gtk");
+    let entry = el(&gtk, "entry");
+    // An ordinary GObject property: notify on every change (probe + generated test).
+    let o = obs(&gtk, &entry, "placeholder-text").expect("an observe fact");
+    assert_eq!(o.class, ObsClass::Exact);
+    assert!(o.mechanism.starts_with("notify"), "{}", o.mechanism);
+    // GtkEntry:text-length never notifies (REACTIVITY.md section 11 item 2): `none`.
+    assert_eq!(obs(&gtk, &entry, "text-length").unwrap().class, ObsClass::None);
+    // Inherited from GtkWidget, through the chain.
+    assert!(obs(&gtk, &entry, "sensitive").unwrap().class.observable());
+    // GtkTextView:text is forwarded to its buffer and costs a whole-text read.
+    let tv = el(&gtk, "text-view");
+    let o = obs(&gtk, &tv, "text").unwrap();
+    assert_eq!(o.value_cost, ValueCost::Proportional);
+    assert!(o.mechanism.starts_with("via:buffer.text"), "{}", o.mechanism);
+
+    let qt = load("qt");
+    // NOTIFY textChanged.
+    assert_eq!(obs(&qt, &el(&qt, "line-edit"), "text").unwrap().class, ObsClass::Exact);
+    // QLabel:text has no NOTIFY, no event and no signal: only our setter changes it.
+    assert_eq!(obs(&qt, &el(&qt, "label"), "text").unwrap().class, ObsClass::SetOnly);
+
+    // WinUI: a DependencyProperty callback (inferred; the backend observes from R4 on).
+    let winui = load("winui");
+    let o = obs(&winui, &el(&winui, "text-box"), "text").expect("TextBox.Text is a DependencyProperty");
+    assert_eq!(o.class, ObsClass::Exact);
+    assert_eq!(o.mechanism, "notify");
+}

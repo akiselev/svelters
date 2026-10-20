@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColorButton
+observe:
+- prop: modal
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::modal
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::modal (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorButton:modal)'
+  verify:
+    'on': Gtk:ColorButton
+    check: change
+  confidence: 0.95
+- prop: show-editor
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-editor
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-editor (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorButton:show-editor)'
+  verify:
+    'on': Gtk:ColorButton
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorButton:title)'
+  verify:
+    'on': Gtk:ColorButton
+    check: change
+  confidence: 0.95

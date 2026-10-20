@@ -1,0 +1,78 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Svg
+observe:
+- prop: features
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::features
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::features (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Svg
+    check: connect
+  confidence: 0.9
+- prop: playing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::playing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::playing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Svg:playing)'
+  verify:
+    'on': Gtk:Svg
+    check: change
+  confidence: 0.95
+- prop: resource
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resource
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resource (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Svg:resource)'
+  verify:
+    'on': Gtk:Svg
+    check: change
+  confidence: 0.95
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::state
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::state (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Svg:state)'
+  verify:
+    'on': Gtk:Svg
+    check: change
+  confidence: 0.95
+- prop: weight
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::weight
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::weight (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Svg:weight)'
+  verify:
+    'on': Gtk:Svg
+    check: change
+  confidence: 0.95

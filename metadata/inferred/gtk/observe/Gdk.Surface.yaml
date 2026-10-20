@@ -1,0 +1,28 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:Surface
+observe:
+- prop: cursor
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cursor
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cursor'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  confidence: 0.9
+- prop: display
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: frame-clock
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95

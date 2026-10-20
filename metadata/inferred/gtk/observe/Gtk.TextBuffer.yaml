@@ -1,0 +1,108 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TextBuffer
+observe:
+- prop: can-redo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-redo
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-redo'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:TextBuffer undo)'
+  verify:
+    'on': Gtk:TextBuffer
+    check: connect
+  confidence: 0.95
+- prop: can-undo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-undo
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-undo'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:TextBuffer insert_at_cursor)'
+  verify:
+    'on': Gtk:TextBuffer
+    check: cross
+    rust: o.downcast_ref::<gtk::TextBuffer>().unwrap().insert_at_cursor("abc");
+  confidence: 0.95
+- prop: cursor-position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cursor-position
+  derived_from:
+  - text
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cursor-position'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:TextBuffer insert_at_cursor, scenario:TextBuffer select_range
+      all, set:Gtk.TextBuffer:text)'
+  verify:
+    'on': Gtk:TextBuffer
+    check: cross
+    rust: o.downcast_ref::<gtk::TextBuffer>().unwrap().insert_at_cursor("abc");
+  confidence: 0.95
+- prop: enable-undo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-undo
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-undo (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextBuffer:enable-undo)'
+  verify:
+    'on': Gtk:TextBuffer
+    check: change
+  confidence: 0.95
+- prop: has-selection
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-selection
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-selection'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:TextBuffer delete all, scenario:TextBuffer select_range all, scenario:TextBuffer
+      undo)'
+  verify:
+    'on': Gtk:TextBuffer
+    check: cross
+    rust: let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); b.set_text("abc"); let (s, e) = b.bounds(); b.select_range(&s, &e);
+  confidence: 0.95
+- prop: tag-table
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:TextBuffer
+    check: refused
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  value_cost: proportional
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:TextBuffer delete all, scenario:TextBuffer insert_at_cursor, scenario:TextBuffer
+      undo)'
+  verify:
+    'on': Gtk:TextBuffer
+    check: change
+  confidence: 0.95

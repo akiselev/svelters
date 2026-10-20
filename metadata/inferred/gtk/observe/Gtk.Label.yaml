@@ -1,0 +1,302 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Label
+observe:
+- prop: attributes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::attributes
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::attributes'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Label
+    check: connect
+  confidence: 0.9
+- prop: ellipsize
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::ellipsize
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::ellipsize (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:ellipsize)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: extra-menu
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::extra-menu
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::extra-menu (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:extra-menu)'
+  verify:
+    'on': Gtk:Label
+    check: connect
+  confidence: 0.95
+- prop: justify
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::justify
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::justify (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:justify)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Label set_markup, set:Gtk.Label:label)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: lines
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::lines
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::lines (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:lines)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: max-width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-width-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-width-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:max-width-chars)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: mnemonic-keyval
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::mnemonic-keyval
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::mnemonic-keyval'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Label:mnemonic-keyval$: recomputed and notified when the label text with use-underline changes; the generated test
+      sets "_abc" (trigger)'
+  verify:
+    'on': Gtk:Label
+    check: cross
+    rust: let l = o.downcast_ref::<gtk::Label>().unwrap(); l.set_use_underline(true); l.set_label("_abc");
+  confidence: 0.9
+- prop: mnemonic-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::mnemonic-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::mnemonic-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Label
+    check: connect
+  confidence: 0.9
+- prop: natural-wrap-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::natural-wrap-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::natural-wrap-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:natural-wrap-mode)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: selectable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selectable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selectable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:selectable)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: single-line-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::single-line-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::single-line-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:single-line-mode)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: tabs
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tabs
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tabs (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Label
+    check: connect
+  confidence: 0.9
+- prop: use-markup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-markup
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-markup (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Label set_markup, set:Gtk.Label:use-markup)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: use-underline
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-underline
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-underline (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:use-underline)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::width-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::width-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:width-chars)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: wrap
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:wrap)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: wrap-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:wrap-mode)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::xalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::xalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:xalign)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: yalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::yalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::yalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:yalign)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95

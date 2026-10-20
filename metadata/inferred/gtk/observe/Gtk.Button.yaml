@@ -1,0 +1,97 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Button
+observe:
+- prop: can-shrink
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-shrink
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-shrink (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:can-shrink)'
+  verify:
+    'on': Gtk:Button
+    check: change
+  confidence: 0.95
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  derived_from:
+  - icon-name
+  - label
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:icon-name, set:Gtk.Button:label)'
+  verify:
+    'on': Gtk:Button
+    check: cross
+    trigger: icon-name
+  confidence: 0.95
+- prop: has-frame
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-frame
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-frame (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:has-frame)'
+  verify:
+    'on': Gtk:Button
+    check: change
+  confidence: 0.95
+- prop: icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:icon-name)'
+  verify:
+    'on': Gtk:Button
+    check: change
+  confidence: 0.95
+- prop: label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:label)'
+  verify:
+    'on': Gtk:Button
+    check: change
+  confidence: 0.95
+- prop: use-underline
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-underline
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-underline (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:use-underline)'
+  verify:
+    'on': Gtk:Button
+    check: change
+  confidence: 0.95

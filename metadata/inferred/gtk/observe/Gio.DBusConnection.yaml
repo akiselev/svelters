@@ -1,0 +1,34 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:DBusConnection
+observe:
+- prop: exit-on-close
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::exit-on-close
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::exit-on-close'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: flags
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: guid
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: stream
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95

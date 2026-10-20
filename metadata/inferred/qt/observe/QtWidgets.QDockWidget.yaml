@@ -1,0 +1,46 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QDockWidget
+observe:
+- prop: allowedAreas
+  class: exact
+  via:
+  - mechanism: notify
+    signal: allowedAreasChanged(Qt::DockWidgetAreas)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY allowedAreasChanged(Qt::DockWidgetAreas)'
+  confidence: 0.9
+- prop: dockLocation
+  class: exact
+  via:
+  - mechanism: notify
+    signal: dockLocationChanged(Qt::DockWidgetArea)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY dockLocationChanged(Qt::DockWidgetArea)'
+  confidence: 0.9
+- prop: features
+  class: exact
+  via:
+  - mechanism: notify
+    signal: featuresChanged(QDockWidget::DockWidgetFeatures)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY featuresChanged(QDockWidget::DockWidgetFeatures)'
+  confidence: 0.9
+- prop: floating
+  class: exact
+  via:
+  - mechanism: notify
+    signal: topLevelChanged(bool)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY topLevelChanged(bool)'
+  confidence: 0.9
+- prop: windowTitle
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

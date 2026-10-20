@@ -1,0 +1,53 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QTimer
+observe:
+- prop: active
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QTimer start, scenario:QTimer stop)'
+  confidence: 0.95
+- prop: interval
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QTimer start, set:QtCore:QTimer:interval)'
+  confidence: 0.95
+- prop: remainingTime
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on scenario:QTimer start, scenario:QTimer stop'
+  verify:
+    'on': QtCore:QTimer
+    check: unsupported
+  confidence: 0.95
+- prop: singleShot
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QTimer:singleShot)'
+  confidence: 0.95
+- prop: timerType
+  class: exact
+  via:
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QTimer:timerType)'
+  confidence: 0.95

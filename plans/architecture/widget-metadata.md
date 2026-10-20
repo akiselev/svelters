@@ -133,6 +133,41 @@ string, enum<Id>, flags<Id>, object<Id>, boxed<Id>, value<Id>, list<T>, variant,
 plus `native` (raw GIR/C++ spelling) for diagnostics. Every fact carries `origin:
 gir | runtime | qdoc | metaobject | typesystem | apiextractor | manual`.
 
+### Observability facts (milestone R0)
+
+Whether a native change of a property can be observed is its own fact per platform:
+`svelters-api:v1:type:<tk>:<Ns>:<Type>:prop:<prop>:observe` (plans/research/REACTIVITY.md section 4,
+`plans/milestones/R0-observability-facts.md`). The record and its validation live in
+`tools/metadata/common/observe.py`:
+
+```yaml
+prop: text
+class: exact                     # constant | set_only | exact | partial | none
+via:                             # ordered mechanisms, primary first: notify (GTK notify::, Qt NOTIFY, KVO, DP callback),
+  - {mechanism: notify}          #   bindable, signal, event, notification, target_action, via {object, prop}
+missed: [user_edit]              # partial only: user_edit | programmatic | cross_prop | parent | layout | wm | async
+fires: on_change                 # on_change | on_set | coarse
+derived_from: [label]            # props whose set also announces this one
+value_cost: cheap                # cheap | proportional
+timing: sync                     # sync | deferred
+provenance: [{origin: probe, ref: "..."}]
+verify: {on: Gtk:Entry, check: change}   # how the generated test checks it (not semantics)
+```
+
+The facts stack like every other annotation (ingested < inferred < manual) but are merged apart from the
+kind records, so they never change a property fact's fingerprint:
+
+- **ingested**: the raw inputs of the rules, already in each toolkit's facts: GTK `runtime.flags`
+  (`EXPLICIT_NOTIFY`, `CONSTRUCT_ONLY`) and `notify`, plus the flags of every non-GUI type from the observe probe
+  (GIR has none); Qt `metaobject.notify`/`constant` and moc's BINDABLE (`metadata/qt/moc/properties.json`,
+  `tools/metadata/qt/ingest_moc.py`); WinUI `dependency_property`; AppKit the probe's KVO column.
+- **inferred**: `metadata/inferred/<tk>/observe/<Ns>.<Type>.yaml` (rules O1-O10 in each toolkit's `infer.py`).
+- **manual**: `metadata/overrides/<tk>/observe/<Ns>.<Type>.yaml`, same format; a record replaces the inferred one.
+- **merged**: `metadata/observe/<tk>.json` (`tools/metadata/common/observe.py`, `--check` in `pnpm test:meta`),
+  read by `gen_semantics.py` (`observe` on every spec property: `ObserveSpec` in
+  `crates/svelters-compiler/src/semantics/spec.rs`), the GTK and Qt verification generators, the ledger and
+  `coverage.py`.
+
 ## Outputs
 
 - Element-kind tables (`metadata/<toolkit>/*.json`, checked in and versioned).

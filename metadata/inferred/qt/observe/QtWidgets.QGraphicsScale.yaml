@@ -1,0 +1,61 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGraphicsScale
+observe:
+- prop: origin
+  class: exact
+  via:
+  - mechanism: notify
+    signal: originChanged()
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY originChanged()'
+  verify:
+    'on': QtWidgets:QGraphicsScale
+    check: connect
+  confidence: 0.9
+- prop: xScale
+  class: exact
+  via:
+  - mechanism: notify
+    signal: xScaleChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY xScaleChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsScale:xScale)'
+  verify:
+    'on': QtWidgets:QGraphicsScale
+    check: change
+  confidence: 0.95
+- prop: yScale
+  class: exact
+  via:
+  - mechanism: notify
+    signal: yScaleChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY yScaleChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsScale:yScale)'
+  verify:
+    'on': QtWidgets:QGraphicsScale
+    check: change
+  confidence: 0.95
+- prop: zScale
+  class: exact
+  via:
+  - mechanism: notify
+    signal: zScaleChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY zScaleChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsScale:zScale)'
+  verify:
+    'on': QtWidgets:QGraphicsScale
+    check: change
+  confidence: 0.95

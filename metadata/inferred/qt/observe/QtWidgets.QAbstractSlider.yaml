@@ -1,0 +1,96 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QAbstractSlider
+observe:
+- prop: invertedAppearance
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: invertedControls
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximum
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on scenario:QSlider setMaximum below value'
+  verify:
+    'on': QtWidgets:QAbstractSlider
+    check: unsupported
+  confidence: 0.95
+- prop: minimum
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: orientation
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: pageStep
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: singleStep
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: sliderDown
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: sliderPosition
+  class: partial
+  via:
+  - mechanism: notify
+    signal: sliderMoved(int)
+  missed:
+  - cross_prop
+  - programmatic
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY sliderMoved(int)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: the mechanisms missed scenario:QSlider setMaximum below value, set:QtWidgets:QAbstractSlider:minimum, set:QtWidgets:QAbstractSlider:sliderPosition'
+  verify:
+    'on': QtWidgets:QAbstractSlider
+    check: silent
+    trigger: sliderPosition
+  confidence: 0.95
+- prop: tracking
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: valueChanged(int)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY valueChanged(int)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QSlider setMaximum below value, set:QtWidgets:QAbstractSlider:minimum,
+      set:QtWidgets:QAbstractSlider:sliderPosition)'
+  verify:
+    'on': QtWidgets:QAbstractSlider
+    check: change
+  confidence: 0.95

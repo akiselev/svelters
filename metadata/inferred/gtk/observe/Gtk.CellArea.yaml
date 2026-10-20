@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellArea
+observe:
+- prop: focus-cell
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::focus-cell
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::focus-cell'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellAreaBox
+    check: connect
+  confidence: 0.9

@@ -1,0 +1,144 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ComboBox
+observe:
+- prop: active
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::active
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::active (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:ComboBox
+    check: connect
+  confidence: 0.9
+- prop: active-id
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::active-id
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::active-id (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:ComboBox
+    check: connect
+  confidence: 0.9
+- prop: button-sensitivity
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::button-sensitivity
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::button-sensitivity (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ComboBox:button-sensitivity)'
+  verify:
+    'on': Gtk:ComboBox
+    check: change
+  confidence: 0.95
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ComboBox
+    check: connect
+  confidence: 0.9
+- prop: entry-text-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::entry-text-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::entry-text-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ComboBox:entry-text-column)'
+  verify:
+    'on': Gtk:ComboBox
+    check: change
+  confidence: 0.95
+- prop: has-entry
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:ComboBox
+    check: refused
+  confidence: 0.95
+- prop: has-frame
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-frame
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-frame (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ComboBox:has-frame)'
+  verify:
+    'on': Gtk:ComboBox
+    check: change
+  confidence: 0.95
+- prop: id-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::id-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::id-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ComboBox:id-column)'
+  verify:
+    'on': Gtk:ComboBox
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ComboBox
+    check: connect
+  confidence: 0.9
+- prop: popup-fixed-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::popup-fixed-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::popup-fixed-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ComboBox:popup-fixed-width)'
+  verify:
+    'on': Gtk:ComboBox
+    check: change
+  confidence: 0.95

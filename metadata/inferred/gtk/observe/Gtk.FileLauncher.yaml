@@ -1,0 +1,48 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FileLauncher
+observe:
+- prop: always-ask
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::always-ask
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::always-ask (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileLauncher:always-ask)'
+  verify:
+    'on': Gtk:FileLauncher
+    check: change
+  confidence: 0.95
+- prop: file
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::file
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::file (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FileLauncher
+    check: connect
+  confidence: 0.9
+- prop: writable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::writable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::writable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileLauncher:writable)'
+  verify:
+    'on': Gtk:FileLauncher
+    check: change
+  confidence: 0.95

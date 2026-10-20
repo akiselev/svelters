@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Accessible
+observe:
+- prop: accessible-role
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accessible-role
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accessible-role'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Accessible:accessible-role)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95

@@ -1,0 +1,48 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:MediaStream
+observe:
+- prop: loop
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::loop
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::loop (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: muted
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::muted
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::muted (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: playing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::playing
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::playing (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: volume
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::volume
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::volume (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9

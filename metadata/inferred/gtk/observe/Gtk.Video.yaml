@@ -1,0 +1,77 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Video
+observe:
+- prop: autoplay
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::autoplay
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::autoplay (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Video:autoplay)'
+  verify:
+    'on': Gtk:Video
+    check: change
+  confidence: 0.95
+- prop: file
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::file
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::file (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Video:file)'
+  verify:
+    'on': Gtk:Video
+    check: connect
+  confidence: 0.95
+- prop: graphics-offload
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::graphics-offload
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::graphics-offload (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Video:graphics-offload)'
+  verify:
+    'on': Gtk:Video
+    check: change
+  confidence: 0.95
+- prop: loop
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::loop
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::loop (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Video:loop)'
+  verify:
+    'on': Gtk:Video
+    check: change
+  confidence: 0.95
+- prop: media-stream
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::media-stream
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::media-stream (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Video
+    check: connect
+  confidence: 0.9

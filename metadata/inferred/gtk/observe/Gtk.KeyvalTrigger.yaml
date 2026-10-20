@@ -1,0 +1,22 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:KeyvalTrigger
+observe:
+- prop: keyval
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:KeyvalTrigger
+    check: refused
+  confidence: 0.95
+- prop: modifiers
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:KeyvalTrigger
+    check: refused
+  confidence: 0.95

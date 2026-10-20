@@ -1,0 +1,28 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGraphicsColorizeEffect
+observe:
+- prop: color
+  class: exact
+  via:
+  - mechanism: notify
+    signal: colorChanged(QColor)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY colorChanged(QColor)'
+  verify:
+    'on': QtWidgets:QGraphicsColorizeEffect
+    check: connect
+  confidence: 0.9
+- prop: strength
+  class: exact
+  via:
+  - mechanism: notify
+    signal: strengthChanged(double)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY strengthChanged(double)'
+  verify:
+    'on': QtWidgets:QGraphicsColorizeEffect
+    check: connect
+  confidence: 0.9

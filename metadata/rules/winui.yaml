@@ -74,3 +74,17 @@ triggers:
   - { pattern: '^Control\.IsEnabledChanged$', trigger: "set:IsEnabled=false" }
   - { pattern: '^FrameworkElement\.(Loaded|SizeChanged|LayoutUpdated)$', trigger: mount }
   - { pattern: '^TextBox\.TextChanging$', trigger: "set:Text=abc" }
+
+# Observability (milestone R0; tools/metadata/winui/observe_rules.py, REACTIVITY.md 4.4 O5/O6/O8). The DP rule and the
+# `no_notify` deny list above decide most facts; these are the events that report plain (non-DP) properties.
+observe:
+  events:
+    "TextBox.SelectionStart": [SelectionChanged]
+    "TextBox.SelectionLength": [SelectionChanged]
+    "TextBox.SelectedText": [SelectionChanged]
+    "TextBlock.SelectedText": [SelectionChanged]
+    "FrameworkElement.IsLoaded": [Loaded, Unloaded]
+    "UIElement.ActualSize": [SizeChanged]
+    "UIElement.RenderSize": [SizeChanged]
+    "Window.Visible": [VisibilityChanged]
+    "Window.Bounds": [SizeChanged]

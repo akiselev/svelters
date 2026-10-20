@@ -1,0 +1,16 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtGui:QRegularExpressionValidator
+observe:
+- prop: regularExpression
+  class: exact
+  via:
+  - mechanism: notify
+    signal: regularExpressionChanged
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY regularExpressionChanged'
+  verify:
+    'on': QtGui:QRegularExpressionValidator
+    check: connect
+  confidence: 0.9

@@ -1,0 +1,500 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Widget
+observe:
+- prop: can-focus
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-focus
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-focus (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:can-focus)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: can-target
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-target
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-target (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:can-target)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: css-classes
+  class: partial
+  via:
+  - mechanism: notify
+    signal: notify::css-classes
+  missed:
+  - cross_prop
+  fires: on_set
+  derived_from:
+  - editing
+  - has-frame
+  - icon-name
+  - label
+  - message-type
+  - orientation
+  - show-column-separators
+  - show-separators
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::css-classes'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on 10 change(s); changed without notify on set:Gtk.Image:icon-size, set:Gtk.LevelBar:mode'
+  verify:
+    'on': Gtk:Image
+    check: silent
+    trigger: icon-size
+  confidence: 0.95
+- prop: css-name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:Label
+    check: refused
+  confidence: 0.95
+- prop: cursor
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cursor
+  derived_from:
+  - im-module
+  - selectable
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cursor (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:selectable, set:Gtk.Text:im-module, set:Gtk.TextView:im-module)'
+  verify:
+    'on': Gtk:Label
+    check: cross
+    trigger: selectable
+  confidence: 0.95
+- prop: focus-on-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::focus-on-click
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::focus-on-click (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:focus-on-click)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: focusable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::focusable
+  fires: on_change
+  derived_from:
+  - selectable
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::focusable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:selectable, set:Gtk.Widget:focusable)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: halign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::halign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::halign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:halign)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: has-tooltip
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-tooltip
+  fires: on_change
+  derived_from:
+  - primary-icon-tooltip-markup
+  - primary-icon-tooltip-text
+  - secondary-icon-tooltip-markup
+  - secondary-icon-tooltip-text
+  - show-emoji-icon
+  - tooltip-column
+  - tooltip-markup
+  - tooltip-text
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-tooltip (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-tooltip-markup, set:Gtk.Entry:primary-icon-tooltip-text,
+      set:Gtk.Entry:secondary-icon-tooltip-markup)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: height-request
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::height-request
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::height-request (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:height-request)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: hexpand
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hexpand
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hexpand (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:hexpand)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: hexpand-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hexpand-set
+  fires: on_change
+  derived_from:
+  - hexpand
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hexpand-set (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:hexpand, set:Gtk.Widget:hexpand-set)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: layout-manager
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::layout-manager
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::layout-manager (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:layout-manager)'
+  verify:
+    'on': Gtk:Label
+    check: connect
+  confidence: 0.95
+- prop: limit-events
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::limit-events
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::limit-events (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:limit-events)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: margin-bottom
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::margin-bottom
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::margin-bottom (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:margin-bottom)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: margin-end
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::margin-end
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::margin-end (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:margin-end)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: margin-start
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::margin-start
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::margin-start (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:margin-start)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: margin-top
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::margin-top
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::margin-top (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:margin-top)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:name)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: opacity
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::opacity
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::opacity (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:opacity)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: overflow
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::overflow
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::overflow (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:overflow)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: parent
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::parent
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::parent (EXPLICIT_NOTIFY)'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Widget:parent$: gtk_widget_set_parent and gtk_widget_unparent notify parent; the generated test appends the widget
+      to a box (trigger)'
+  verify:
+    'on': Gtk:Label
+    check: cross
+    rust: let w = o.downcast_ref::<gtk::Widget>().unwrap(); if w.parent().is_some() { w.unparent(); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal,
+      0); b.append(w); std::mem::forget(b); }
+  confidence: 0.9
+- prop: receives-default
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::receives-default
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::receives-default (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:receives-default)'
+  verify:
+    'on': Gtk:Label
+    check: change
+  confidence: 0.95
+- prop: sensitive
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sensitive
+  fires: on_change
+  derived_from:
+  - action-name
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sensitive (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Actionable:action-name, set:Gtk.Widget:sensitive)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: tooltip-markup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tooltip-markup
+  fires: on_change
+  derived_from:
+  - tooltip-lock
+  - tooltip-text
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tooltip-markup (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LockButton:tooltip-lock, set:Gtk.Widget:tooltip-markup, set:Gtk.Widget:tooltip-text)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: tooltip-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tooltip-text
+  fires: on_change
+  derived_from:
+  - tooltip-lock
+  - tooltip-markup
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tooltip-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LockButton:tooltip-lock, set:Gtk.Widget:tooltip-markup, set:Gtk.Widget:tooltip-text)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: valign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::valign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::valign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:valign)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: vexpand
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::vexpand
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::vexpand (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:vexpand)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: vexpand-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::vexpand-set
+  fires: on_change
+  derived_from:
+  - vexpand
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::vexpand-set (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:vexpand, set:Gtk.Widget:vexpand-set)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visible
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visible (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Window present, set:Gtk.Widget:visible)'
+  verify:
+    'on': Gtk:Window
+    check: change
+  confidence: 0.95
+- prop: width-request
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::width-request
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::width-request (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:width-request)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95

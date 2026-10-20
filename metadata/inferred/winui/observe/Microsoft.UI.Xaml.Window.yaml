@@ -1,0 +1,78 @@
+schema: svelters-observe-layer/v1
+toolkit: winui
+owner: Microsoft.UI.Xaml:Window
+observe:
+- prop: AppWindow
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only plain property with no change event
+  confidence: 0.9
+- prop: Bounds
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - SizeChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: event SizeChanged'
+  confidence: 0.9
+- prop: Compositor
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only plain property with no change event
+  confidence: 0.9
+- prop: Content
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: a plain (non-DependencyProperty) property with no change event'
+  confidence: 0.9
+- prop: CoreWindow
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only plain property with no change event
+  confidence: 0.9
+- prop: Dispatcher
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only plain property with no change event
+  confidence: 0.9
+- prop: DispatcherQueue
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only plain property with no change event
+  confidence: 0.9
+- prop: ExtendsContentIntoTitleBar
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: a plain (non-DependencyProperty) property with no change event'
+  confidence: 0.9
+- prop: SystemBackdrop
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: a plain (non-DependencyProperty) property with no change event'
+  confidence: 0.9
+- prop: Title
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: a plain (non-DependencyProperty) property with no change event'
+  confidence: 0.9
+- prop: Visible
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - VisibilityChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: event VisibilityChanged'
+  confidence: 0.9

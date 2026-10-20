@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:VolumeButton
+observe:
+- prop: use-symbolic
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-symbolic
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-symbolic (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.VolumeButton:use-symbolic)'
+  verify:
+    'on': Gtk:VolumeButton
+    check: change
+  confidence: 0.95

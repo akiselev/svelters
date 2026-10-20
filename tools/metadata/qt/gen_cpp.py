@@ -236,6 +236,9 @@ class Model:
             self.read_files += sorted(self.inferred_dir.glob("*.yaml"))
             if (self.inferred_dir / "_parked.json").exists():
                 self.read_files.append(self.inferred_dir / "_parked.json")
+        observe_facts = meta_dir.parent / "observe" / "qt.json"   # the generated observe tests read it (milestone R0)
+        if observe_facts.exists():
+            self.read_files.append(observe_facts)
         merged = layers.merge(manual, layers.load_inferred(self.inferred_dir), layers.load_parked(self.inferred_dir), meta_dir)
         for p in sorted(ov_dir.glob("*.yaml")):
             cls = p.stem
@@ -1651,8 +1654,12 @@ def gen_backend(m: Model, digest: str, tmpl: str) -> str:
 PREFIX = "svelters-api:v1:type:qt:QtWidgets"
 # section -> (row struct, table) of the table-driven tests of inferred facts (verify.cpp.in).
 TABLES = {"props": ("PropRow", "kPropRows"), "methods": ("MethodRow", "kMethodRows"),
-          "signals": ("SignalRow", "kSignalRows"), "emits": ("EmitRow", "kEmitRows"), "bindings": ("BindingRow", "kBindingRows")}
-TABLE_FN = {"props": "tt_prop", "methods": "tt_method", "signals": "tt_signal", "emits": "tt_emit", "bindings": "tt_binding"}
+          "signals": ("SignalRow", "kSignalRows"), "emits": ("EmitRow", "kEmitRows"), "bindings": ("BindingRow", "kBindingRows"),
+          "observe": ("ObserveRow", "kObserveRows")}
+TABLE_FN = {"props": "tt_prop", "methods": "tt_method", "signals": "tt_signal", "emits": "tt_emit", "bindings": "tt_binding",
+            "observe": "tt_observe"}
+OBS_CHECK = {"change": "OC_CHANGE", "silent": "OC_SILENT", "refused": "OC_REFUSED", "unsupported": "OC_UNSUPPORTED", "connect": "OC_CONNECT"}
+OBS_FIRES = {"on_change": "OF_ON_CHANGE", "on_set": "OF_ON_SET"}
 
 
 def table_sources(tmpl: str) -> dict[str, str]:
@@ -1911,6 +1918,45 @@ size_t ty_count() {
                            "name": name, "origin": "inferred", "record_fp": rec.get("_fp"), "kind": e["cls"]}
         if table == "emits":
             self.facts[fid]["strength"] = "delivery"
+
+    def observe_rows(self) -> None:
+        """One kObserveRows row per observe fact of metadata/observe/qt.json (milestone R0) the R1a backend can check:
+        NOTIFY facts (change, silent), constants (refused) and props with no mechanism (unsupported). The instance is
+        an element exposing the property (its class, else a subclass, by tag) or a constructible non-GUI type. Facts
+        without such a subject, set_only facts and bindable/event/signal-only facts get no row (unverified)."""
+        path = self.m.meta_dir.parent / "observe" / "qt.json"
+        facts = json.loads(path.read_text())["facts"] if path.exists() else {}
+        types = {}
+        for p in sorted((self.m.meta_dir / "types").glob("Qt*.json")):
+            for cls, t in json.loads(p.read_text())["types"].items():
+                if t.get("qobject") and t.get("constructible") and not t.get("abstract"):
+                    types[cls] = t
+        for owner, props in sorted(facts.items()):
+            for prop, rec in props.items():
+                v = rec.get("verify") or {}
+                if v.get("check") not in OBS_CHECK:
+                    continue
+                on = v["on"].split(":", 1)[1]
+                els = sorted((e for e in self.m.elements if self.m.derives(e["cls"], on)), key=lambda e: (e["cls"] != on, e["tag"]))
+                hit = next(((e, p) for e in els for p in e.get("props", []) if p.get("native") == prop and not p.get("target")), None)
+                if hit:
+                    kind, is_type, js = hit[0]["tag"], "false", hit[1]["js"]
+                elif on in types and self.m.kind(on) is None:
+                    kind, is_type, js = on, "true", prop
+                else:
+                    continue
+                # no `:` in a test name: the runner's `FAIL <name>: <message>` lines are split at the first one
+                test = f"observe/{owner.replace(':', '.')}.{prop}"
+                line = (f'    {{"{test}", "{kind}", {is_type}, "{js}", "{prop}", {OBS_CHECK[v["check"]]}, '
+                        f'{OBS_FIRES.get(rec.get("fires"), "OF_ANY")}}},')
+                self.rows["observe"].append(line)
+                raw = {k: x for k, x in rec.items() if k not in ("layer", "record_fp")}
+                f = {"fact": rec["fact"], "record": raw, "tests": [test], "srcs": [line, self.table_src.get("observe", "")],
+                     "elements": [kind], "section": "observe", "name": prop, "kind": owner,
+                     "strength": {"connect": "connect", "refused": "refused", "silent": "silent", "unsupported": "unsupported"}.get(v["check"], "change")}
+                if rec["layer"] == "inferred":
+                    f.update({"origin": "inferred", "record_fp": rec["record_fp"]})
+                self.facts[rec["fact"]] = f
 
     def cval(self, ref: str, v) -> str:
         """A `Val` initializer (verify.cpp.in) for a sample of a property of type `ref`."""
@@ -2549,6 +2595,7 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
         T.types(tg)
         tests += "\n" + "\n".join(T.src[n0:])
         table += "\n" + "\n".join(f'    {{"{n}", {i}}},' for n, i in T.fns if n.startswith("types/"))
+    T.observe_rows()
     if T.errors:
         raise GenError("manual facts without a working generated test (fix or drop them):\n  " + "\n  ".join(T.errors))
     version = (m.kind("QWidget") or {}).get("source", {}).get("qdoc", {}).get("version", "?")

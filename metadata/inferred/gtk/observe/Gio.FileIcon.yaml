@@ -1,0 +1,10 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:FileIcon
+observe:
+- prop: file
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95

@@ -1,0 +1,46 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Shortcut
+observe:
+- prop: action
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::action
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::action (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Shortcut
+    check: connect
+  confidence: 0.9
+- prop: arguments
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::arguments
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::arguments (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Shortcut
+    check: connect
+  confidence: 0.9
+- prop: trigger
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::trigger
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::trigger (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Shortcut
+    check: connect
+  confidence: 0.9

@@ -1,0 +1,128 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Editable
+observe:
+- prop: cursor-position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cursor-position
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cursor-position'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Editable:(cursor-position|selection-bound)$: GtkText notifies both on cursor moves and selection changes and editable
+      delegates (GtkEntry) forward the notify; the generated test selects a region (trigger)'
+  verify:
+    'on': Gtk:Entry
+    check: cross
+    rust: let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text("abcd"); e.select_region(1, 3);
+  confidence: 0.9
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::editable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::editable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:editable)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: enable-undo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-undo
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-undo (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:enable-undo)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: max-width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-width-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-width-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:max-width-chars)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: selection-bound
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selection-bound
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selection-bound'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Editable:(cursor-position|selection-bound)$: GtkText notifies both on cursor moves and selection changes and editable
+      delegates (GtkEntry) forward the notify; the generated test selects a region (trigger)'
+  verify:
+    'on': Gtk:Entry
+    check: cross
+    rust: let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text("abcd"); e.select_region(1, 3);
+  confidence: 0.9
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  derived_from:
+  - digits
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Entry insert_text, set:Gtk.Editable:text, set:Gtk.SpinButton:digits)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::width-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::width-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:width-chars)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::xalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::xalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:xalign)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95

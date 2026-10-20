@@ -1,0 +1,33 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:NumericSorter
+observe:
+- prop: expression
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expression
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expression (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:NumericSorter
+    check: connect
+  confidence: 0.9
+- prop: sort-order
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sort-order
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sort-order (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.NumericSorter:sort-order)'
+  verify:
+    'on': Gtk:NumericSorter
+    check: change
+  confidence: 0.95

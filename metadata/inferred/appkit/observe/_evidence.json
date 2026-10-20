@@ -1,0 +1,2410 @@
+{
+ "AppKit:NSBox:border-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSBox:border-rect": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSBox:border-width": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSBox:box-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSBox:content-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSBox:content-view-margins": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSBox:corner-radius": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSBox:fill-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSBox:title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSBox:title-cell": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSBox:title-font": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSBox:title-position": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSBox:title-rect": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSBox:transparent": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:active-compression-options": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSButton:allows-mixed-state": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:alternate-image": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSButton:alternate-title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:attributed-alternate-title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:attributed-title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:bezel-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSButton:bezel-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:border-shape": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:bordered": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:content-tint-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSButton:has-destructive-action": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:image": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSButton:image-hugs-title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:image-position": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:image-scaling": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:key-equivalent": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:key-equivalent-modifier-mask": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:max-accelerator-level": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSButton:shows-border-only-while-mouse-inside": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:sound": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSButton:spring-loaded": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:state": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:symbol-configuration": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSButton:tint-prominence": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSButton:transparent": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:action": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSControl:alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:allows-expansion-tool-tips": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:attributed-string-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSControl:base-writing-direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:cell": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSControl:continuous": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:control-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:double-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:float-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:font": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSControl:formatter": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSControl:highlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:ignores-multi-click": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:int-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:integer-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:line-break-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:object-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSControl:refuses-first-responder": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:string-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:tag": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSControl:target": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSControl:uses-single-line-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:control-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:displayed-when-stopped": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:double-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:indeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:max-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:min-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:observed-progress": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSProgressIndicator:style": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSProgressIndicator:uses-threaded-animation": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:allows-tick-mark-values-only": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:alt-increment-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:double-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:float-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:int-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:integer-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:knob-thickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSSlider:max-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:min-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:neutral-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:number-of-tick-marks": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:object-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:fallback-only"
+ },
+ "AppKit:NSSlider:slider-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:tick-mark-position": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:tint-prominence": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSSlider:track-fill-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSSlider:vertical": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSStackView:alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSStackView:arranged-subviews": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSStackView:delegate": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSStackView:detached-views": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSStackView:detaches-hidden-views": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSStackView:distribution": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSStackView:edge-insets": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSStackView:orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSStackView:spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSStackView:views": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSTextField:accepts-first-responder": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSTextField:allows-character-picker-touch-bar-item": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:allows-default-tightening-for-truncation": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:allows-editing-text-attributes": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:allows-writing-tools": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:allows-writing-tools-affordance": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:attributed-string-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:fallback-only"
+ },
+ "AppKit:NSTextField:automatic-text-completion-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:background-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSTextField:bezel-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:bezeled": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:bordered": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:delegate": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSTextField:draws-background": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:editable": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:imports-graphics": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:line-break-strategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:maximum-number-of-lines": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:object-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:fallback-only"
+ },
+ "AppKit:NSTextField:placeholder-attributed-string": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSTextField:placeholder-attributed-strings": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSTextField:placeholder-string": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:placeholder-strings": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSTextField:preferred-max-layout-width": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:resolves-natural-alignment-with-base-writing-direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:selectable": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:string-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSTextField:text-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:additional-safe-area-insets": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:alignment-rect-insets": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:allowed-touch-types": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:allows-vibrancy": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:alpha-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:autoresizes-subviews": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:autoresizing-mask": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:background-filters": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:baseline-offset-from-bottom": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:bottom-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:bounds-rotation": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:can-become-key-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:can-draw-concurrently": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:can-draw-subviews-into-layer": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:candidate-list-touch-bar-item": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:center-x-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:center-y-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:clips-to-bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:compositing-filter": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:constraints": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:content-filters": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:drawing-find-indicator": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:enclosing-menu-item": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:enclosing-scroll-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:first-baseline-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:first-baseline-offset-from-top": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:fitting-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:flipped": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:focus-ring-mask-bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:focus-ring-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:frame": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:frame-center-rotation": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:frame-rotation": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:gesture-recognizers": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:has-ambiguous-layout": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:height-adjust-limit": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:height-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:hidden": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:hidden-or-has-hidden-ancestor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:horizontal-content-size-constraint-active": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:in-full-screen-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:in-live-resize": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:input-context": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:intrinsic-content-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:last-baseline-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:last-baseline-offset-from-bottom": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:layer": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:layer-contents-placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:layer-contents-redraw-policy": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:layer-uses-core-image-filters": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:layout-guides": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:layout-margins-guide": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:leading-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:left-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:mouse-down-can-move-window": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:needs-display": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:needs-layout": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:needs-panel-to-become-key": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:needs-update-constraints": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:next-key-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:next-valid-key-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:opaque": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:opaque-ancestor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:page-footer": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:page-header": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:posts-bounds-changed-notifications": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:posts-frame-changed-notifications": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:prefers-compact-control-size-metrics": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:prepared-content-rect": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:preserves-content-during-live-resize": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:pressure-configuration": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:previous-key-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:previous-valid-key-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:print-job-title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:rect-preserved-during-live-resize": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:registered-dragged-types": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:right-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:rotated-from-base": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:rotated-or-scaled-from-base": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:safe-area-insets": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:safe-area-layout-guide": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:safe-area-rect": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:shadow": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:subviews": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSView:superview": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:tag": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:tool-tip": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:top-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:tracking-areas": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:trailing-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:translates-autoresizing-mask-into-constraints": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:user-interface-layout-direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:vertical-content-size-constraint-active": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:visible-rect": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:wants-default-clipping": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:wants-layer": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:wants-resting-touches": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSView:wants-update-layer": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:width-adjust-limit": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:width-anchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:window": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSView:writing-tools-coordinator": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:accepts-mouse-moved-events": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:allows-concurrent-view-drawing": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:allows-tool-tips-when-application-is-inactive": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:alpha-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:animation-behavior": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:appearance-source": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:are-cursor-rects-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:aspect-ratio": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:attached-sheet": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:autorecalculates-key-view-loop": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:background-color": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:backing-scale-factor": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:backing-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:can-become-key-window": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:can-become-main-window": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:can-become-visible-without-login": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:can-hide": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:cascading-reference-frame": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:child-windows": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:collection-behavior": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:color-space": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:content-aspect-ratio": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:content-layout-guide": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:content-layout-rect": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:content-max-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:content-min-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:content-resize-increments": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:content-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:content-view-controller": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:current-event": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:deepest-screen": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:default-button-cell": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:delegate": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:depth-limit": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:device-description": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:displays-when-screen-profile-changes": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:dock-tile": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:document-edited": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:drawers": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:excluded-from-windows-menu": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:first-responder": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:floating-panel": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:frame": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:fallback-complete"
+ },
+ "AppKit:NSWindow:frame-autosave-name": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:has-active-window-sharing-session": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:has-close-box": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:has-dynamic-depth-limit": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:has-shadow": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:has-title-bar": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:hides-on-deactivate": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:ignores-mouse-events": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:in-live-resize": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:initial-first-responder": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:key-view-selection-direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:key-window": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:level": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:main-window": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:max-full-screen-content-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:max-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:min-full-screen-content-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:min-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:miniaturizable": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:miniaturized": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:miniwindow-image": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:miniwindow-title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:modal-panel": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:mouse-location-outside-of-event-stream": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:movable": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:movable-by-window-background": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:occlusion-state": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:on-active-space": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:opaque": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:ordered-index": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:parent-window": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:preserves-content-during-live-resize": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:prevents-application-termination-when-modal": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:released-when-closed": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:represented-filename": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:represented-url": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:resizable": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:resize-flags": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:resize-increments": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:restorable": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:restoration-class": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:screen": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:sharing-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:sheet": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:sheet-parent": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:sheets": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:string-with-saved-frame": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:style-mask": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:subtitle": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:tab": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:tab-group": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:tabbed-windows": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:tabbing-identifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:tabbing-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:title": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:title-visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:titlebar-accessory-view-controllers": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:titlebar-appears-transparent": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:titlebar-separator-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:toolbar": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:toolbar-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:views-need-display": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": true
+  },
+  "pattern": "observe:kvo-probe"
+ },
+ "AppKit:NSWindow:visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:window-controller": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:set-only"
+ },
+ "AppKit:NSWindow:window-number": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:window-titlebar-layout-direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:works-when-modal": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:zoomable": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ },
+ "AppKit:NSWindow:zoomed": {
+  "confidence": 0.9,
+  "evidence": {
+   "kvo": null
+  },
+  "pattern": "observe:none-rule"
+ }
+}

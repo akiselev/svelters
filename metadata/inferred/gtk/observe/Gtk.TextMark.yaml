@@ -1,0 +1,22 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TextMark
+observe:
+- prop: left-gravity
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:TextMark
+    check: refused
+  confidence: 0.95
+- prop: name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:TextMark
+    check: refused
+  confidence: 0.95

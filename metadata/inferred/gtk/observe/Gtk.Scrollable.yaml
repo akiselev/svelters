@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Scrollable
+observe:
+- prop: hadjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hadjustment
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hadjustment'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:hadjustment)'
+  verify:
+    'on': Gtk:TextView
+    check: connect
+  confidence: 0.95
+- prop: hscroll-policy
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hscroll-policy
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hscroll-policy (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:hscroll-policy)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95
+- prop: vadjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::vadjustment
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::vadjustment'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:vadjustment)'
+  verify:
+    'on': Gtk:TextView
+    check: connect
+  confidence: 0.95
+- prop: vscroll-policy
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::vscroll-policy
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::vscroll-policy (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:vscroll-policy)'
+  verify:
+    'on': Gtk:ColumnView
+    check: change
+  confidence: 0.95

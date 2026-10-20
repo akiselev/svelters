@@ -1,0 +1,617 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Entry
+observe:
+- prop: activates-default
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activates-default
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activates-default (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:activates-default)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: attributes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::attributes
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::attributes (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: buffer
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::buffer
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::buffer (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:buffer)'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.95
+- prop: completion
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::completion
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::completion (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: enable-emoji-completion
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-emoji-completion
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-emoji-completion (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:enable-emoji-completion)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: extra-menu
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::extra-menu
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::extra-menu (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:extra-menu)'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.95
+- prop: has-frame
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-frame
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-frame (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:has-frame)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: im-module
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::im-module
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::im-module (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:im-module)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: input-hints
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-hints
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-hints (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: input-purpose
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-purpose
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-purpose (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:input-purpose)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: invisible-char
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::invisible-char
+  fires: on_change
+  derived_from:
+  - visibility
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::invisible-char (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:invisible-char, set:Gtk.Entry:visibility)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: invisible-char-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::invisible-char-set
+  fires: on_set
+  derived_from:
+  - invisible-char
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::invisible-char-set'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:invisible-char, set:Gtk.Entry:invisible-char-set)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: max-length
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-length
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-length (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:max-length)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: menu-entry-icon-primary-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::menu-entry-icon-primary-text
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::menu-entry-icon-primary-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:menu-entry-icon-primary-text)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: menu-entry-icon-secondary-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::menu-entry-icon-secondary-text
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::menu-entry-icon-secondary-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:menu-entry-icon-secondary-text)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: overwrite-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::overwrite-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::overwrite-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:overwrite-mode)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: placeholder-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::placeholder-text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::placeholder-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:placeholder-text)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: primary-icon-activatable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-activatable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-activatable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-activatable)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: primary-icon-gicon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-gicon
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-gicon (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: primary-icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-name)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: primary-icon-paintable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-paintable
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-paintable (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: primary-icon-sensitive
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-sensitive
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-sensitive (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-sensitive)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: primary-icon-storage-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-storage-type
+  derived_from:
+  - primary-icon-name
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-storage-type'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-name)'
+  verify:
+    'on': Gtk:Entry
+    check: cross
+    trigger: primary-icon-name
+  confidence: 0.95
+- prop: primary-icon-tooltip-markup
+  class: partial
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-tooltip-markup
+  missed:
+  - cross_prop
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-tooltip-markup'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.Entry:primary-icon-tooltip-text'
+  verify:
+    'on': Gtk:Entry
+    check: silent
+    trigger: primary-icon-tooltip-text
+  confidence: 0.95
+- prop: primary-icon-tooltip-text
+  class: partial
+  via:
+  - mechanism: notify
+    signal: notify::primary-icon-tooltip-text
+  missed:
+  - cross_prop
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary-icon-tooltip-text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.Entry:primary-icon-tooltip-markup'
+  verify:
+    'on': Gtk:Entry
+    check: silent
+    trigger: primary-icon-tooltip-markup
+  confidence: 0.95
+- prop: progress-fraction
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::progress-fraction
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::progress-fraction (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:progress-fraction)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: progress-pulse-step
+  class: partial
+  via:
+  - mechanism: notify
+    signal: notify::progress-pulse-step
+  missed:
+  - cross_prop
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::progress-pulse-step'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.Entry:progress-fraction'
+  verify:
+    'on': Gtk:Entry
+    check: silent
+    trigger: progress-fraction
+  confidence: 0.95
+- prop: secondary-icon-activatable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-activatable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-activatable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-activatable)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: secondary-icon-gicon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-gicon
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-gicon (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: secondary-icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-name
+  fires: on_set
+  derived_from:
+  - show-emoji-icon
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-name, set:Gtk.Entry:show-emoji-icon)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: secondary-icon-paintable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-paintable
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-paintable (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: secondary-icon-sensitive
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-sensitive
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-sensitive (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-sensitive)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: secondary-icon-storage-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-storage-type
+  derived_from:
+  - secondary-icon-name
+  - show-emoji-icon
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-storage-type'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-name, set:Gtk.Entry:show-emoji-icon)'
+  verify:
+    'on': Gtk:Entry
+    check: cross
+    trigger: secondary-icon-name
+  confidence: 0.95
+- prop: secondary-icon-tooltip-markup
+  class: partial
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-tooltip-markup
+  missed:
+  - cross_prop
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-tooltip-markup'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.Entry:secondary-icon-tooltip-text, set:Gtk.Entry:show-emoji-icon'
+  verify:
+    'on': Gtk:Entry
+    check: silent
+    trigger: secondary-icon-tooltip-text
+  confidence: 0.95
+- prop: secondary-icon-tooltip-text
+  class: partial
+  via:
+  - mechanism: notify
+    signal: notify::secondary-icon-tooltip-text
+  missed:
+  - cross_prop
+  fires: on_set
+  derived_from:
+  - show-emoji-icon
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::secondary-icon-tooltip-text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.Entry:secondary-icon-tooltip-markup'
+  verify:
+    'on': Gtk:Entry
+    check: silent
+    trigger: secondary-icon-tooltip-markup
+  confidence: 0.95
+- prop: show-emoji-icon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-emoji-icon
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-emoji-icon (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:show-emoji-icon)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: tabs
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tabs
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tabs (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Entry
+    check: connect
+  confidence: 0.9
+- prop: text-length
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: changed without notify on scenario:Entry insert_text'
+  verify:
+    'on': Gtk:Entry
+    check: silent
+    rust: o.downcast_ref::<gtk::Editable>().unwrap().insert_text("abc", &mut 0);
+  confidence: 0.95
+- prop: truncate-multiline
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::truncate-multiline
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::truncate-multiline (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:truncate-multiline)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95
+- prop: visibility
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visibility
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visibility (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:visibility)'
+  verify:
+    'on': Gtk:Entry
+    check: change
+  confidence: 0.95

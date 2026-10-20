@@ -1,0 +1,36 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:Drop
+observe:
+- prop: actions
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: device
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: display
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gdk:(Drag|Drop):display$: the display of the construct-only device'
+  confidence: 0.9
+- prop: drag
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: surface
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95

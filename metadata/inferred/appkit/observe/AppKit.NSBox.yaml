@@ -1,0 +1,102 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSBox
+observe:
+- prop: border-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: border-rect
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: border-width
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `borderWidth` fired on a programmatic set'
+  confidence: 0.9
+- prop: box-type
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `boxType` fired on a programmatic set'
+  confidence: 0.9
+- prop: content-view
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: content-view-margins
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `contentViewMargins` fired on a programmatic set'
+  confidence: 0.9
+- prop: corner-radius
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `cornerRadius` fired on a programmatic set'
+  confidence: 0.9
+- prop: fill-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `title` fired on a programmatic set'
+  confidence: 0.9
+- prop: title-cell
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: title-font
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: title-position
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `titlePosition` fired on a programmatic set'
+  confidence: 0.9
+- prop: title-rect
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: transparent
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `transparent` fired on a programmatic set'
+  confidence: 0.9
