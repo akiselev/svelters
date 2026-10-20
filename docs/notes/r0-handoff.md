@@ -60,7 +60,7 @@ inferred only (backend `observe` NULL until R4).
 
 | Gate | Result | Commit |
 |---|---|---|
-| `ledger.py refresh --toolkit gtk` | 2669 facts, 2694 tests, 0 manual / 0 inferred not passing, 5 parked (4 observe) | 9db7452c tree (committed as e8xx "GTK ledger refresh" commit before e60871c4) |
+| `ledger.py refresh --toolkit gtk` | 2669 facts, 2694 tests, 0 manual / 0 inferred not passing, 5 parked (4 observe) | ledgers committed in 4955a7ad |
 | `ledger.py refresh --toolkit qt` | 845 facts, 1922 tests, 0 not passing, 0 parked | e60871c4 |
 | `ledger.py check` (all) | pass: gtk 550 manual + 2119 inferred verified, qt 634 + 211, appkit 79 + 147, winui 60 + 335 | e60871c4 |
 | `python3 -m pytest -q tools/metadata` | 135 passed, 1 skipped (+5 test_observe) | before e60871c4 |
