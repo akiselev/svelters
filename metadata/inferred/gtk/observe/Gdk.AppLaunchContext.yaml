@@ -1,0 +1,13 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:AppLaunchContext
+observe:
+- prop: display
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gdk:AppLaunchContext
+    check: refused
+  confidence: 0.95

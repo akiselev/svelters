@@ -1,0 +1,108 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Notebook
+observe:
+- prop: enable-popup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-popup
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-popup (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Notebook:enable-popup)'
+  verify:
+    'on': Gtk:Notebook
+    check: change
+  confidence: 0.95
+- prop: group-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::group-name
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::group-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Notebook:group-name)'
+  verify:
+    'on': Gtk:Notebook
+    check: change
+  confidence: 0.95
+- prop: page
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::page
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::page (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Notebook remove the current page, set:Gtk.Notebook:page)'
+  verify:
+    'on': Gtk:Notebook
+    check: connect
+  confidence: 0.95
+- prop: scrollable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::scrollable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::scrollable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Notebook:scrollable)'
+  verify:
+    'on': Gtk:Notebook
+    check: change
+  confidence: 0.95
+- prop: show-border
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-border
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-border (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Notebook:show-border)'
+  verify:
+    'on': Gtk:Notebook
+    check: change
+  confidence: 0.95
+- prop: show-tabs
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-tabs
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-tabs (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Notebook:show-tabs)'
+  verify:
+    'on': Gtk:Notebook
+    check: change
+  confidence: 0.95
+- prop: tab-pos
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tab-pos
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tab-pos (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Notebook:tab-pos)'
+  verify:
+    'on': Gtk:Notebook
+    check: change
+  confidence: 0.95

@@ -1,0 +1,32 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:DragSource
+observe:
+- prop: actions
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::actions
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::actions (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:DragSource
+    check: connect
+  confidence: 0.9
+- prop: content
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::content
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::content (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:DragSource
+    check: connect
+  confidence: 0.9

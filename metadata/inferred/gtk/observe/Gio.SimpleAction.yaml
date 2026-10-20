@@ -1,0 +1,52 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:SimpleAction
+observe:
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enabled
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enabled'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.SimpleAction:enabled)'
+  verify:
+    'on': Gio:SimpleAction
+    check: change
+  confidence: 0.95
+- prop: name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gio:SimpleAction
+    check: refused
+  confidence: 0.95
+- prop: parameter-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gio:SimpleAction
+    check: refused
+  confidence: 0.95
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::state
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::state'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gio:SimpleAction
+    check: connect
+  confidence: 0.9

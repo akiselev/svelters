@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FileChooser
+observe:
+- prop: action
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::action
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::action'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileChooser:action)'
+  verify:
+    'on': Gtk:FileChooserDialog
+    check: change
+  confidence: 0.95
+- prop: create-folders
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::create-folders
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::create-folders'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileChooser:create-folders)'
+  verify:
+    'on': Gtk:FileChooserDialog
+    check: change
+  confidence: 0.95
+- prop: filter
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::filter
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::filter'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FileChooserDialog
+    check: connect
+  confidence: 0.9
+- prop: select-multiple
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::select-multiple
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::select-multiple'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:FileChooserDialog
+    check: connect
+  confidence: 0.9

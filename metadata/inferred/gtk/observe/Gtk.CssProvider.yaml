@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CssProvider
+observe:
+- prop: prefers-color-scheme
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::prefers-color-scheme
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::prefers-color-scheme (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CssProvider:prefers-color-scheme)'
+  verify:
+    'on': Gtk:CssProvider
+    check: change
+  confidence: 0.95
+- prop: prefers-contrast
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::prefers-contrast
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::prefers-contrast (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CssProvider:prefers-contrast)'
+  verify:
+    'on': Gtk:CssProvider
+    check: change
+  confidence: 0.95
+- prop: prefers-reduced-motion
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::prefers-reduced-motion
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::prefers-reduced-motion (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CssProvider:prefers-reduced-motion)'
+  verify:
+    'on': Gtk:CssProvider
+    check: change
+  confidence: 0.95

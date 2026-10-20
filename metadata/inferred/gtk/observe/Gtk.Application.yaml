@@ -1,0 +1,34 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Application
+observe:
+- prop: menubar
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::menubar
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::menubar'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Application
+    check: connect
+  confidence: 0.9
+- prop: register-session
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::register-session
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::register-session'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:Application
+    check: change
+  confidence: 0.9

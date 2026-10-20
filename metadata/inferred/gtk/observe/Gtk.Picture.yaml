@@ -1,0 +1,108 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Picture
+observe:
+- prop: alternative-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::alternative-text
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::alternative-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Picture:alternative-text)'
+  verify:
+    'on': Gtk:Picture
+    check: change
+  confidence: 0.95
+- prop: can-shrink
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-shrink
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-shrink (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Picture:can-shrink)'
+  verify:
+    'on': Gtk:Picture
+    check: change
+  confidence: 0.95
+- prop: content-fit
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::content-fit
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::content-fit (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Picture:content-fit)'
+  verify:
+    'on': Gtk:Picture
+    check: change
+  confidence: 0.95
+- prop: file
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::file
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::file (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Picture:file)'
+  verify:
+    'on': Gtk:Picture
+    check: connect
+  confidence: 0.95
+- prop: isolate-contents
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::isolate-contents
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::isolate-contents (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Picture:isolate-contents)'
+  verify:
+    'on': Gtk:Picture
+    check: change
+  confidence: 0.95
+- prop: keep-aspect-ratio
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::keep-aspect-ratio
+  derived_from:
+  - content-fit
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::keep-aspect-ratio (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Picture:content-fit)'
+  verify:
+    'on': Gtk:Picture
+    check: change
+  confidence: 0.95
+- prop: paintable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::paintable
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::paintable (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Picture
+    check: connect
+  confidence: 0.9

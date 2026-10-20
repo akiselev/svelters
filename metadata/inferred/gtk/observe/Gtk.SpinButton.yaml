@@ -1,0 +1,213 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:SpinButton
+observe:
+- prop: activates-default
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activates-default
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activates-default (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:activates-default)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: adjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::adjustment
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::adjustment (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:adjustment)'
+  verify:
+    'on': Gtk:SpinButton
+    check: connect
+  confidence: 0.95
+- prop: climb-rate
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::climb-rate
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::climb-rate (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:climb-rate)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: digits
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::digits
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::digits (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:digits)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: lower
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: lower
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.lower (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:lower'
+  verify:
+    'on': Gtk:SpinButton
+    check: via
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: numeric
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::numeric
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::numeric (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:numeric)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: page-increment
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: page-increment
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.page-increment (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:page-increment'
+  verify:
+    'on': Gtk:SpinButton
+    check: via
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: snap-to-ticks
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::snap-to-ticks
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::snap-to-ticks (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:snap-to-ticks)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: step-increment
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: step-increment
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.step-increment (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:step-increment'
+  verify:
+    'on': Gtk:SpinButton
+    check: via
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: update-policy
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::update-policy
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::update-policy (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:update-policy)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: upper
+  class: exact
+  via:
+  - mechanism: via
+    object: adjustment
+    prop: upper
+  fires: on_set
+  provenance:
+  - origin: manual
+    ref: forwarded to adjustment.upper (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:Adjustment behind `adjustment`, class of Gtk:Adjustment:upper'
+  verify:
+    'on': Gtk:SpinButton
+    check: via
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::value
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::value (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:value)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95
+- prop: wrap
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:wrap)'
+  verify:
+    'on': Gtk:SpinButton
+    check: change
+    setup: o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);
+  confidence: 0.95

@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColorChooserDialog
+observe:
+- prop: show-editor
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-editor
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-editor'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorChooserDialog:show-editor)'
+  verify:
+    'on': Gtk:ColorChooserDialog
+    check: change
+  confidence: 0.95

@@ -1,0 +1,94 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:AppChooserWidget
+observe:
+- prop: default-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::default-text
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::default-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserWidget:default-text)'
+  verify:
+    'on': Gtk:AppChooserWidget
+    check: change
+  confidence: 0.95
+- prop: show-all
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-all
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-all (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserWidget:show-all)'
+  verify:
+    'on': Gtk:AppChooserWidget
+    check: change
+  confidence: 0.95
+- prop: show-default
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-default
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-default (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserWidget:show-default)'
+  verify:
+    'on': Gtk:AppChooserWidget
+    check: change
+  confidence: 0.95
+- prop: show-fallback
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-fallback
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-fallback (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserWidget:show-fallback)'
+  verify:
+    'on': Gtk:AppChooserWidget
+    check: change
+  confidence: 0.95
+- prop: show-other
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-other
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-other (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserWidget:show-other)'
+  verify:
+    'on': Gtk:AppChooserWidget
+    check: change
+  confidence: 0.95
+- prop: show-recommended
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-recommended
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-recommended (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AppChooserWidget:show-recommended)'
+  verify:
+    'on': Gtk:AppChooserWidget
+    check: change
+  confidence: 0.95

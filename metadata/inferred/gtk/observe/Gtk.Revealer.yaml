@@ -1,0 +1,80 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Revealer
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Revealer
+    check: connect
+  confidence: 0.9
+- prop: child-revealed
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child-revealed
+  derived_from:
+  - reveal-child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child-revealed'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Revealer:reveal-child)'
+  verify:
+    'on': Gtk:Revealer
+    check: cross
+    trigger: reveal-child
+  confidence: 0.95
+- prop: reveal-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::reveal-child
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::reveal-child (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Revealer:reveal-child)'
+  verify:
+    'on': Gtk:Revealer
+    check: change
+  confidence: 0.95
+- prop: transition-duration
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::transition-duration
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::transition-duration (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Revealer:transition-duration)'
+  verify:
+    'on': Gtk:Revealer
+    check: change
+  confidence: 0.95
+- prop: transition-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::transition-type
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::transition-type (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Revealer:transition-type)'
+  verify:
+    'on': Gtk:Revealer
+    check: change
+  confidence: 0.95

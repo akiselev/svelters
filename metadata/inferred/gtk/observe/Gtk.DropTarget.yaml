@@ -1,0 +1,42 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:DropTarget
+observe:
+- prop: actions
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::actions
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::actions (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:DropTarget
+    check: connect
+  confidence: 0.9
+- prop: formats
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:DropTarget
+    check: refused
+  confidence: 0.95
+- prop: preload
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::preload
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::preload (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropTarget:preload)'
+  verify:
+    'on': Gtk:DropTarget
+    check: change
+  confidence: 0.95

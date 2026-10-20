@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRendererToggle
+observe:
+- prop: activatable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activatable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activatable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererToggle:activatable)'
+  verify:
+    'on': Gtk:CellRendererToggle
+    check: change
+  confidence: 0.95
+- prop: active
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::active
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::active (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererToggle:active)'
+  verify:
+    'on': Gtk:CellRendererToggle
+    check: change
+  confidence: 0.95
+- prop: inconsistent
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inconsistent
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inconsistent (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererToggle:inconsistent)'
+  verify:
+    'on': Gtk:CellRendererToggle
+    check: change
+  confidence: 0.95
+- prop: radio
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::radio
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::radio (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererToggle:radio)'
+  verify:
+    'on': Gtk:CellRendererToggle
+    check: change
+  confidence: 0.95

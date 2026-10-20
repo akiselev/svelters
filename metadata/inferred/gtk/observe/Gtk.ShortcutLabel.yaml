@@ -1,0 +1,34 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ShortcutLabel
+observe:
+- prop: accelerator
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accelerator
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accelerator'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutLabel:accelerator)'
+  verify:
+    'on': Gtk:ShortcutLabel
+    check: change
+  confidence: 0.95
+- prop: disabled-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::disabled-text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::disabled-text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutLabel:disabled-text)'
+  verify:
+    'on': Gtk:ShortcutLabel
+    check: change
+  confidence: 0.95

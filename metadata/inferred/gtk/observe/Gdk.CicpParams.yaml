@@ -1,0 +1,64 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gdk:CicpParams
+observe:
+- prop: color-primaries
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::color-primaries
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::color-primaries (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gdk.CicpParams:color-primaries)'
+  verify:
+    'on': Gdk:CicpParams
+    check: change
+  confidence: 0.95
+- prop: matrix-coefficients
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::matrix-coefficients
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::matrix-coefficients (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gdk.CicpParams:matrix-coefficients)'
+  verify:
+    'on': Gdk:CicpParams
+    check: change
+  confidence: 0.95
+- prop: range
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::range
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::range (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gdk.CicpParams:range)'
+  verify:
+    'on': Gdk:CicpParams
+    check: connect
+  confidence: 0.95
+- prop: transfer-function
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::transfer-function
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::transfer-function (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gdk.CicpParams:transfer-function)'
+  verify:
+    'on': Gdk:CicpParams
+    check: change
+  confidence: 0.95

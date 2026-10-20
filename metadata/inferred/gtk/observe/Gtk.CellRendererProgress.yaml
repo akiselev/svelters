@@ -1,0 +1,94 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRendererProgress
+observe:
+- prop: inverted
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::inverted
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::inverted (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererProgress:inverted)'
+  verify:
+    'on': Gtk:CellRendererProgress
+    check: change
+  confidence: 0.95
+- prop: pulse
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pulse
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pulse (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererProgress:pulse)'
+  verify:
+    'on': Gtk:CellRendererProgress
+    check: change
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererProgress:text)'
+  verify:
+    'on': Gtk:CellRendererProgress
+    check: change
+  confidence: 0.95
+- prop: text-xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-xalign
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-xalign'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererProgress:text-xalign)'
+  verify:
+    'on': Gtk:CellRendererProgress
+    check: change
+  confidence: 0.95
+- prop: text-yalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-yalign
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-yalign'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererProgress:text-yalign)'
+  verify:
+    'on': Gtk:CellRendererProgress
+    check: change
+  confidence: 0.95
+- prop: value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::value
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::value (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererProgress:value)'
+  verify:
+    'on': Gtk:CellRendererProgress
+    check: change
+  confidence: 0.95

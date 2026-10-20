@@ -1,0 +1,259 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Text
+observe:
+- prop: activates-default
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activates-default
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activates-default (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:activates-default)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: attributes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::attributes
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::attributes (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Text
+    check: connect
+  confidence: 0.9
+- prop: buffer
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::buffer
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::buffer (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:buffer)'
+  verify:
+    'on': Gtk:Text
+    check: connect
+  confidence: 0.95
+- prop: enable-emoji-completion
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-emoji-completion
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-emoji-completion (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:enable-emoji-completion)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: extra-menu
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::extra-menu
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::extra-menu (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:extra-menu)'
+  verify:
+    'on': Gtk:Text
+    check: connect
+  confidence: 0.95
+- prop: im-module
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::im-module
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::im-module (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:im-module)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: input-hints
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-hints
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-hints (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Text
+    check: connect
+  confidence: 0.9
+- prop: input-purpose
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-purpose
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-purpose (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:input-purpose)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: invisible-char
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::invisible-char
+  fires: on_change
+  derived_from:
+  - invisible-char-set
+  - visibility
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::invisible-char (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:invisible-char, set:Gtk.Text:invisible-char-set, set:Gtk.Text:visibility)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: invisible-char-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::invisible-char-set
+  fires: on_set
+  derived_from:
+  - invisible-char
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::invisible-char-set'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:invisible-char, set:Gtk.Text:invisible-char-set)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: max-length
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-length
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-length (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:max-length)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: overwrite-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::overwrite-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::overwrite-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:overwrite-mode)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: placeholder-text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::placeholder-text
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::placeholder-text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:placeholder-text)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: propagate-text-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::propagate-text-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::propagate-text-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:propagate-text-width)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: tabs
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tabs
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tabs (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Text
+    check: connect
+  confidence: 0.9
+- prop: truncate-multiline
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::truncate-multiline
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::truncate-multiline (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:truncate-multiline)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95
+- prop: visibility
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visibility
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visibility (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:visibility)'
+  verify:
+    'on': Gtk:Text
+    check: change
+  confidence: 0.95

@@ -1,0 +1,79 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ListBox
+observe:
+- prop: accept-unpaired-release
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accept-unpaired-release
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accept-unpaired-release (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListBox:accept-unpaired-release)'
+  verify:
+    'on': Gtk:ListBox
+    check: change
+  confidence: 0.95
+- prop: activate-on-single-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activate-on-single-click
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activate-on-single-click (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListBox:activate-on-single-click)'
+  verify:
+    'on': Gtk:ListBox
+    check: change
+  confidence: 0.95
+- prop: selection-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selection-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selection-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListBox:selection-mode)'
+  verify:
+    'on': Gtk:ListBox
+    check: change
+  confidence: 0.95
+- prop: show-separators
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-separators
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-separators (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListBox:show-separators)'
+  verify:
+    'on': Gtk:ListBox
+    check: change
+  confidence: 0.95
+- prop: tab-behavior
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tab-behavior
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tab-behavior (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListBox:tab-behavior)'
+  verify:
+    'on': Gtk:ListBox
+    check: change
+  confidence: 0.95

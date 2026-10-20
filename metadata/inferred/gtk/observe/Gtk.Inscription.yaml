@@ -1,0 +1,153 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Inscription
+observe:
+- prop: attributes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::attributes
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::attributes (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Inscription
+    check: connect
+  confidence: 0.9
+- prop: min-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:min-chars)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: min-lines
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-lines
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-lines (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:min-lines)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: nat-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::nat-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::nat-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:nat-chars)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: nat-lines
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::nat-lines
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::nat-lines (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:nat-lines)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:text)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: text-overflow
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-overflow
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-overflow (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:text-overflow)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: wrap-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:wrap-mode)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::xalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::xalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:xalign)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95
+- prop: yalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::yalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::yalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Inscription:yalign)'
+  verify:
+    'on': Gtk:Inscription
+    check: change
+  confidence: 0.95

@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FileFilter
+observe:
+- prop: name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::name
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileFilter:name)'
+  verify:
+    'on': Gtk:FileFilter
+    check: change
+  confidence: 0.95

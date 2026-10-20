@@ -1,0 +1,1696 @@
+{
+ "inferred": {
+  "constant": 109,
+  "exact": 1102,
+  "none": 1,
+  "partial": 17,
+  "set_only": 2
+ },
+ "rows": [
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Clipboard",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "content"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Clipboard",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "local"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "active-layout-index"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "caps-lock-state"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "direction"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "has-bidi-layouts"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "layout-names"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "modifier-state"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-axes"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "num-lock-state"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scroll-lock-state"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Device",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "tool"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Display",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "composited"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Display",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "input-shapes"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Display",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "rgba"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Display",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "shadow-width"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Drag",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "display"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Drop",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "display"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:GLContext",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "api"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "connector"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "description"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "height-mm"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "manufacturer"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "model"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "refresh-rate"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scale"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scale-factor"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "subpixel-layout"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "valid"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Monitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "width-mm"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Surface",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "height"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Surface",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "mapped"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Surface",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scale"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Surface",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scale-factor"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gdk:Surface",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "width"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Action",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "enabled"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Action",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "name"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Action",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "parameter-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Action",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "state"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Action",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "state-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Application",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-busy"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Application",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-registered"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Application",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-remote"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:ApplicationCommandLine",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-remote"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:DBusConnection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "capabilities"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:DBusConnection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "closed"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:DBusConnection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "unique-name"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:DBusMessage",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "locked"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:FileMonitor",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "cancelled"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:IOStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "closed"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:IOStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "input-stream"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:IOStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "output-stream"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Permission",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "allowed"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Permission",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "can-acquire"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Permission",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "can-release"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Settings",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "delay-apply"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:Settings",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "has-unapplied"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gio:SimpleAction",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "state-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gsk:Renderer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "realized"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gsk:Renderer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "surface"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ATContext",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "realized"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Application",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "active-window"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Application",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "screensaver-active"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Assistant",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "pages"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:BookmarkList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:BookmarkList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "loading"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:BookmarkList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:CellArea",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "edit-widget"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:CellArea",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "edited-cell"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:CellAreaContext",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "minimum-height"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:CellAreaContext",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "minimum-width"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:CellAreaContext",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "natural-height"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:CellAreaContext",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "natural-width"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:CellRenderer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "editing"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnView",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "columns"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnView",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "sorter"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewCell",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewCell",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "position"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewCell",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "selected"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewColumn",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "column-view"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewRow",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewRow",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "position"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewRow",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "selected"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewSorter",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "primary-sort-column"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ColumnViewSorter",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "primary-sort-order"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ComboBox",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "popup-shown"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DirectoryList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "error"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DirectoryList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DirectoryList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "loading"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DirectoryList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DropControllerMotion",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "contains-pointer"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DropControllerMotion",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "drop"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DropControllerMotion",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-pointer"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DropDown",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "selected-item"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DropTarget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "current-drop"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DropTarget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "drop"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:DropTarget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "value"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Editable",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "cursor-position"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Editable",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "selection-bound"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Entry",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scroll-offset"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EnumList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EnumList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EnumListItem",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "name"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EnumListItem",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "nick"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EnumListItem",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "value"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EventController",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "widget"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EventControllerFocus",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "contains-focus"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EventControllerFocus",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-focus"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EventControllerMotion",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "contains-pointer"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:EventControllerMotion",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-pointer"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FileChooser",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "filters"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FileChooser",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "shortcut-folders"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FileChooserWidget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "show-time"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FilterListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FilterListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FilterListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "pending"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FlattenListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FlattenListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FontChooser",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "font-features"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:FontChooserWidget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "tweak-action"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:GLArea",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "api"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:GLArea",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "context"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:IconTheme",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "icon-names"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Label",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "mnemonic-keyval"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ListHeader",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "end"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ListHeader",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ListHeader",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ListHeader",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "start"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ListItem",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ListItem",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "position"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ListItem",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "selected"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MapListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "has-map"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MapListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MapListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "duration"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "ended"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "error"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "has-audio"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "has-video"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "prepared"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "seekable"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "seeking"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MediaStream",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "timestamp"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MessageDialog",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "message-area"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MountOperation",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-showing"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MultiFilter",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MultiFilter",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MultiSelection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MultiSelection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MultiSorter",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:MultiSorter",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:NoSelection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:NoSelection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Notebook",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "pages"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Paned",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "max-position"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Paned",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "min-position"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:PrintOperation",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-pages-to-print"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:PrintOperation",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "status"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:PrintOperation",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "status-string"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:PrintUnixDialog",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "selected-printer"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Printer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "accepting-jobs"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Printer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "icon-name"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Printer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "job-count"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Printer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "location"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Printer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "paused"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Printer",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "state-message"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:RecentManager",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "size"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ScaleButton",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "active"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SelectionFilterModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SelectionFilterModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ShortcutController",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ShortcutController",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:ShortcutsGroup",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "height"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SingleSelection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SingleSelection",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SliceListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SliceListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SortListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SortListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:SortListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "pending"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Stack",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "pages"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Stack",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "transition-running"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:StringList",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:StringObject",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "string"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Text",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scroll-offset"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeExpander",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "model"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeListModel",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeListRow",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "children"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeListRow",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "depth"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeListRow",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "expandable"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeListRow",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeViewColumn",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "width"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:TreeViewColumn",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "x-offset"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Widget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "has-default"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Widget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "has-focus"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Widget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "parent"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Widget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "root"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Widget",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "scale-factor"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:Window",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "suspended"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Gtk:WindowControls",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "empty"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Pango:FontFamily",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-monospace"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Pango:FontFamily",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "is-variable"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Pango:FontFamily",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Pango:FontFamily",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Pango:FontFamily",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "name"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Pango:FontMap",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "item-type"
+  },
+  {
+   "band": "middle",
+   "class": "exact",
+   "confidence": 0.8,
+   "owner": "Pango:FontMap",
+   "pattern": "observe:exact-read-only-unprobed",
+   "prop": "n-items"
+  }
+ ],
+ "schema": "svelters-observe-review/v1",
+ "skipped": {
+  "observe:write-only": 29
+ },
+ "toolkit": "gtk",
+ "unreviewed": {
+  "by_pattern": {
+   "middle:observe:exact-read-only-unprobed": 209
+  },
+  "low": 0,
+  "middle": 209
+ },
+ "version": "4.22.4"
+}

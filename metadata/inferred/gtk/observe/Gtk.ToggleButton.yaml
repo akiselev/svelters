@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ToggleButton
+observe:
+- prop: active
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::active
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::active (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ToggleButton:active)'
+  verify:
+    'on': Gtk:ToggleButton
+    check: change
+  confidence: 0.95

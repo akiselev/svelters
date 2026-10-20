@@ -1,0 +1,55 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:PrintJob
+observe:
+- prop: page-setup
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:PrintJob
+    check: refused
+  confidence: 0.95
+- prop: printer
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:PrintJob
+    check: refused
+  confidence: 0.95
+- prop: settings
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:PrintJob
+    check: refused
+  confidence: 0.95
+- prop: title
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:PrintJob
+    check: refused
+  confidence: 0.95
+- prop: track-print-status
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::track-print-status
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::track-print-status'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintJob
+    check: change
+  confidence: 0.9

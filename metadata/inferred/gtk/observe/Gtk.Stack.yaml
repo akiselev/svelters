@@ -1,0 +1,107 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Stack
+observe:
+- prop: hhomogeneous
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hhomogeneous
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hhomogeneous (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Stack:hhomogeneous)'
+  verify:
+    'on': Gtk:Stack
+    check: change
+  confidence: 0.95
+- prop: interpolate-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::interpolate-size
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::interpolate-size (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Stack:interpolate-size)'
+  verify:
+    'on': Gtk:Stack
+    check: change
+  confidence: 0.95
+- prop: transition-duration
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::transition-duration
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::transition-duration (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Stack:transition-duration)'
+  verify:
+    'on': Gtk:Stack
+    check: change
+  confidence: 0.95
+- prop: transition-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::transition-type
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::transition-type (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Stack:transition-type)'
+  verify:
+    'on': Gtk:Stack
+    check: change
+  confidence: 0.95
+- prop: vhomogeneous
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::vhomogeneous
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::vhomogeneous (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Stack:vhomogeneous)'
+  verify:
+    'on': Gtk:Stack
+    check: change
+  confidence: 0.95
+- prop: visible-child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visible-child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visible-child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Stack
+    check: connect
+  confidence: 0.9
+- prop: visible-child-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visible-child-name
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visible-child-name (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:Stack
+    check: connect
+  confidence: 0.9

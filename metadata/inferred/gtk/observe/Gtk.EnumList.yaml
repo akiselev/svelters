@@ -1,0 +1,10 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:EnumList
+observe:
+- prop: enum-type
+  class: constant
+  provenance:
+  - origin: gir
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95

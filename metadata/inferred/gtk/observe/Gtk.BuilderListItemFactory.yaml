@@ -1,0 +1,31 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:BuilderListItemFactory
+observe:
+- prop: bytes
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:BuilderListItemFactory
+    check: refused
+  confidence: 0.95
+- prop: resource
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:BuilderListItemFactory
+    check: refused
+  confidence: 0.95
+- prop: scope
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:BuilderListItemFactory
+    check: refused
+  confidence: 0.95

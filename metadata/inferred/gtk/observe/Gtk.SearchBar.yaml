@@ -1,0 +1,62 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:SearchBar
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:SearchBar
+    check: connect
+  confidence: 0.9
+- prop: key-capture-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::key-capture-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::key-capture-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:SearchBar
+    check: connect
+  confidence: 0.9
+- prop: search-mode-enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::search-mode-enabled
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::search-mode-enabled (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SearchBar:search-mode-enabled)'
+  verify:
+    'on': Gtk:SearchBar
+    check: change
+  confidence: 0.95
+- prop: show-close-button
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-close-button
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-close-button (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SearchBar:show-close-button)'
+  verify:
+    'on': Gtk:SearchBar
+    check: change
+  confidence: 0.95

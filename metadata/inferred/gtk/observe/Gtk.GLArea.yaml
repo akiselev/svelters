@@ -1,0 +1,81 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:GLArea
+observe:
+- prop: allowed-apis
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::allowed-apis
+  derived_from:
+  - use-es
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::allowed-apis (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GLArea:use-es)'
+  verify:
+    'on': Gtk:GLArea
+    check: cross
+    trigger: use-es
+  confidence: 0.95
+- prop: auto-render
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::auto-render
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::auto-render (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GLArea:auto-render)'
+  verify:
+    'on': Gtk:GLArea
+    check: change
+  confidence: 0.95
+- prop: has-depth-buffer
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-depth-buffer
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-depth-buffer (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GLArea:has-depth-buffer)'
+  verify:
+    'on': Gtk:GLArea
+    check: change
+  confidence: 0.95
+- prop: has-stencil-buffer
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-stencil-buffer
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-stencil-buffer (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GLArea:has-stencil-buffer)'
+  verify:
+    'on': Gtk:GLArea
+    check: change
+  confidence: 0.95
+- prop: use-es
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-es
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-es (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GLArea:use-es)'
+  verify:
+    'on': Gtk:GLArea
+    check: change
+  confidence: 0.95

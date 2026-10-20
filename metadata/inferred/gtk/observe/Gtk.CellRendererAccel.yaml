@@ -1,0 +1,63 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRendererAccel
+observe:
+- prop: accel-key
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accel-key
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accel-key (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:accel-key)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: accel-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accel-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accel-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:accel-mode)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: accel-mods
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accel-mods
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accel-mods (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: connect
+  confidence: 0.9
+- prop: keycode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::keycode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::keycode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:keycode)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95

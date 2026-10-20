@@ -1,0 +1,61 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:IconTheme
+observe:
+- prop: display
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::display
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::display (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:IconTheme
+    check: connect
+  confidence: 0.9
+- prop: resource-path
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resource-path
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resource-path (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:IconTheme
+    check: connect
+  confidence: 0.9
+- prop: search-path
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::search-path
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::search-path (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:IconTheme
+    check: connect
+  confidence: 0.9
+- prop: theme-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::theme-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::theme-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconTheme:theme-name)'
+  verify:
+    'on': Gtk:IconTheme
+    check: change
+  confidence: 0.95

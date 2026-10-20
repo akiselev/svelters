@@ -1,0 +1,77 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:PrintDialog
+observe:
+- prop: accept-label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accept-label
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accept-label (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintDialog:accept-label)'
+  verify:
+    'on': Gtk:PrintDialog
+    check: change
+  confidence: 0.95
+- prop: modal
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::modal
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::modal (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintDialog:modal)'
+  verify:
+    'on': Gtk:PrintDialog
+    check: change
+  confidence: 0.95
+- prop: page-setup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::page-setup
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::page-setup (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PrintDialog
+    check: connect
+  confidence: 0.9
+- prop: print-settings
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::print-settings
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::print-settings (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PrintDialog
+    check: connect
+  confidence: 0.9
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintDialog:title)'
+  verify:
+    'on': Gtk:PrintDialog
+    check: change
+  confidence: 0.95

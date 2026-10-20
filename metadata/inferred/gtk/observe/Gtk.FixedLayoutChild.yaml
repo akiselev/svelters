@@ -1,0 +1,18 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FixedLayoutChild
+observe:
+- prop: transform
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::transform
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::transform (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FixedLayoutChild
+    check: connect
+  confidence: 0.9

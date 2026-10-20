@@ -1,0 +1,33 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:IMContext
+observe:
+- prop: input-hints
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-hints
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-hints (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:IMContextSimple
+    check: connect
+  confidence: 0.9
+- prop: input-purpose
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-purpose
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-purpose (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IMContext:input-purpose)'
+  verify:
+    'on': Gtk:IMContextSimple
+    check: change
+  confidence: 0.95

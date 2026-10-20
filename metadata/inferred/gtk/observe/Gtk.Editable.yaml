@@ -1,0 +1,96 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Editable
+observe:
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::editable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::editable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:editable)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: enable-undo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-undo
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-undo (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:enable-undo)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: max-width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-width-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-width-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:max-width-chars)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: text
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text
+  fires: on_set
+  derived_from:
+  - digits
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Entry insert_text, set:Gtk.Editable:text, set:Gtk.SpinButton:digits)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: width-chars
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::width-chars
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::width-chars (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:width-chars)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95
+- prop: xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::xalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::xalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Editable:xalign)'
+  verify:
+    'on': Gtk:EditableLabel
+    check: change
+  confidence: 0.95

@@ -1,0 +1,18 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:StackSidebar
+observe:
+- prop: stack
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::stack
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::stack (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:StackSidebar
+    check: connect
+  confidence: 0.9

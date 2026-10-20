@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellEditable
+observe:
+- prop: editing-canceled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::editing-canceled
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::editing-canceled (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellEditable:editing-canceled)'
+  verify:
+    'on': Gtk:ComboBox
+    check: change
+  confidence: 0.95

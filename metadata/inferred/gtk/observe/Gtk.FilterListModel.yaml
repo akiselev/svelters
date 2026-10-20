@@ -1,0 +1,62 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FilterListModel
+observe:
+- prop: filter
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::filter
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::filter (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FilterListModel
+    check: connect
+  confidence: 0.9
+- prop: incremental
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::incremental
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::incremental (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FilterListModel:incremental)'
+  verify:
+    'on': Gtk:FilterListModel
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:FilterListModel
+    check: connect
+  confidence: 0.9
+- prop: watch-items
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::watch-items
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::watch-items (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FilterListModel:watch-items)'
+  verify:
+    'on': Gtk:FilterListModel
+    check: change
+  confidence: 0.95

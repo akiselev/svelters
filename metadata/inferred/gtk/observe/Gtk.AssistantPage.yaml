@@ -1,0 +1,58 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:AssistantPage
+observe:
+- prop: child
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:AssistantPage
+    check: refused
+  confidence: 0.95
+- prop: complete
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::complete
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::complete (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AssistantPage:complete)'
+  verify:
+    'on': Gtk:AssistantPage
+    check: change
+  confidence: 0.95
+- prop: page-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::page-type
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::page-type (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AssistantPage:page-type)'
+  verify:
+    'on': Gtk:AssistantPage
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AssistantPage:title)'
+  verify:
+    'on': Gtk:AssistantPage
+    check: change
+  confidence: 0.95

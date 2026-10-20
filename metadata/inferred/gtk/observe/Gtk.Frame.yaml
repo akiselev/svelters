@@ -1,0 +1,65 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Frame
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Frame
+    check: connect
+  confidence: 0.9
+- prop: label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Frame:label)'
+  verify:
+    'on': Gtk:Frame
+    check: change
+  confidence: 0.95
+- prop: label-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label-widget
+  derived_from:
+  - label
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label-widget (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Frame:label)'
+  verify:
+    'on': Gtk:Frame
+    check: cross
+    trigger: label
+  confidence: 0.95
+- prop: label-xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label-xalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label-xalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Frame:label-xalign)'
+  verify:
+    'on': Gtk:Frame
+    check: change
+  confidence: 0.95

@@ -1,0 +1,36 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Switch
+observe:
+- prop: active
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::active
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::active (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Switch:active)'
+  verify:
+    'on': Gtk:Switch
+    check: change
+  confidence: 0.95
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::state
+  fires: on_change
+  derived_from:
+  - active
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::state (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Switch:active, set:Gtk.Switch:state)'
+  verify:
+    'on': Gtk:Switch
+    check: change
+  confidence: 0.95

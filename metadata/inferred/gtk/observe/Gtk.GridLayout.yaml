@@ -1,0 +1,79 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:GridLayout
+observe:
+- prop: baseline-row
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::baseline-row
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::baseline-row (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayout:baseline-row)'
+  verify:
+    'on': Gtk:GridLayout
+    check: change
+  confidence: 0.95
+- prop: column-homogeneous
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::column-homogeneous
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::column-homogeneous (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayout:column-homogeneous)'
+  verify:
+    'on': Gtk:GridLayout
+    check: change
+  confidence: 0.95
+- prop: column-spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::column-spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::column-spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayout:column-spacing)'
+  verify:
+    'on': Gtk:GridLayout
+    check: change
+  confidence: 0.95
+- prop: row-homogeneous
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::row-homogeneous
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::row-homogeneous (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayout:row-homogeneous)'
+  verify:
+    'on': Gtk:GridLayout
+    check: change
+  confidence: 0.95
+- prop: row-spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::row-spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::row-spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridLayout:row-spacing)'
+  verify:
+    'on': Gtk:GridLayout
+    check: change
+  confidence: 0.95

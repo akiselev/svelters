@@ -61,3 +61,34 @@ subjects:
   Orientable: Box
   Scrollable: TextView
   Widget: Label
+
+# Observability rules O1-O10 (milestone R0, plans/research/REACTIVITY.md section 4.4; tools/metadata/gtk/observe_rules.py).
+# The evidence is the observe probe, metadata/probe/gtk/observe/<version>.json (tools/metadata/gtk/probe.py --section
+# observe), for the GTK version of the ingested metadata.
+observe:
+  # O10: whole-text properties. The host does not read and compare them on every change (invalidation only).
+  proportional: ["Gtk:TextBuffer:text", "Gtk:TextView:text"]
+  # What a probe scenario that changed a property without notify stands for (`missed` of a partial fact);
+  # any other cause is `cross_prop` (a side effect of another property set).
+  scenario_missed:
+    "Entry insert_text": user_edit
+    "Window present": wm
+    "Window maximize": wm
+  # Preconditions on a new instance of these types before a native change (statement on `o: &glib::Object`): an
+  # adjustment of a fresh range is 0..0, so every value write would be clamped away.
+  setup:
+    "Gtk:Range": 'o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);'
+    "Gtk:Scale": 'o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);'
+    "Gtk:Scrollbar": 'o.downcast_ref::<gtk::Scrollbar>().unwrap().adjustment().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);'
+    "Gtk:SpinButton": 'o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);'
+    "Gtk:Adjustment": 'o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);'
+  # Native changes no property set makes, as a statement on `o: &glib::Object` (the generated verification test):
+  # `silent` checks for none/partial facts, `cross` for exact read-only ones.
+  triggers:
+    "Gtk:Entry:text-length": 'o.downcast_ref::<gtk::Editable>().unwrap().insert_text("abc", &mut 0);'
+    "Gtk:EntryBuffer:length": 'o.downcast_ref::<gtk::EntryBuffer>().unwrap().insert_text(0, "abc");'
+    "Gtk:TextBuffer:cursor-position": 'o.downcast_ref::<gtk::TextBuffer>().unwrap().insert_at_cursor("abc");'
+    "Gtk:TextBuffer:can-undo": 'o.downcast_ref::<gtk::TextBuffer>().unwrap().insert_at_cursor("abc");'
+    "Gtk:TextBuffer:has-selection": 'let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); b.set_text("abc"); let (s, e) = b.bounds(); b.select_range(&s, &e);'
+    "Gio:ListStore:n-items": 'o.downcast_ref::<gtk::gio::ListStore>().unwrap().append(&gtk::glib::Object::new::<gtk::glib::Object>());'
+    "Gtk:StringList:n-items": 'o.downcast_ref::<gtk::StringList>().unwrap().append("a");'

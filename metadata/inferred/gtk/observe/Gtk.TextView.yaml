@@ -1,0 +1,334 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TextView
+observe:
+- prop: accepts-tab
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accepts-tab
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accepts-tab (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:accepts-tab)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: bottom-margin
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::bottom-margin
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::bottom-margin (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:bottom-margin)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: buffer
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::buffer
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::buffer'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:buffer)'
+  verify:
+    'on': Gtk:TextView
+    check: connect
+  confidence: 0.95
+- prop: cursor-visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cursor-visible
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cursor-visible (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:cursor-visible)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::editable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::editable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:editable)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: extra-menu
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::extra-menu
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::extra-menu (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:extra-menu)'
+  verify:
+    'on': Gtk:TextView
+    check: connect
+  confidence: 0.95
+- prop: im-module
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::im-module
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::im-module'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:im-module)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: indent
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::indent
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::indent (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:indent)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: input-hints
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-hints
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-hints (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:TextView
+    check: connect
+  confidence: 0.9
+- prop: input-purpose
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::input-purpose
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::input-purpose (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:input-purpose)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: justification
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::justification
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::justification (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:justification)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: left-margin
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::left-margin
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::left-margin (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:left-margin)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: monospace
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::monospace
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::monospace (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:monospace)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: overwrite
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::overwrite
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::overwrite (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:overwrite)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: pixels-above-lines
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pixels-above-lines
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pixels-above-lines (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:pixels-above-lines)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: pixels-below-lines
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pixels-below-lines
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pixels-below-lines (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:pixels-below-lines)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: pixels-inside-wrap
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pixels-inside-wrap
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pixels-inside-wrap (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:pixels-inside-wrap)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: right-margin
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::right-margin
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::right-margin (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:right-margin)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: tabs
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tabs
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tabs'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:TextView
+    check: connect
+  confidence: 0.9
+- prop: text
+  class: exact
+  via:
+  - mechanism: via
+    object: buffer
+    prop: text
+  fires: on_set
+  value_cost: proportional
+  provenance:
+  - origin: manual
+    ref: forwarded to buffer.text (metadata virtual.via)
+  - origin: rule
+    ref: 'O9: observed on the Gtk:TextBuffer behind `buffer`, class of Gtk:TextBuffer:text'
+  verify:
+    'on': Gtk:TextView
+    check: via
+  confidence: 0.95
+- prop: top-margin
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::top-margin
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::top-margin (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:top-margin)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95
+- prop: wrap-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:wrap-mode)'
+  verify:
+    'on': Gtk:TextView
+    check: change
+  confidence: 0.95

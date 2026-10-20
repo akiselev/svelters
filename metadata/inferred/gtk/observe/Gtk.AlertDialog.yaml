@@ -1,0 +1,93 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:AlertDialog
+observe:
+- prop: buttons
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::buttons
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::buttons (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:AlertDialog
+    check: connect
+  confidence: 0.9
+- prop: cancel-button
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cancel-button
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cancel-button (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AlertDialog:cancel-button)'
+  verify:
+    'on': Gtk:AlertDialog
+    check: change
+  confidence: 0.95
+- prop: default-button
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::default-button
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::default-button (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AlertDialog:default-button)'
+  verify:
+    'on': Gtk:AlertDialog
+    check: change
+  confidence: 0.95
+- prop: detail
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::detail
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::detail (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AlertDialog:detail)'
+  verify:
+    'on': Gtk:AlertDialog
+    check: change
+  confidence: 0.95
+- prop: message
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::message
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::message (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AlertDialog:message)'
+  verify:
+    'on': Gtk:AlertDialog
+    check: change
+  confidence: 0.95
+- prop: modal
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::modal
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::modal (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AlertDialog:modal)'
+  verify:
+    'on': Gtk:AlertDialog
+    check: change
+  confidence: 0.95

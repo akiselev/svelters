@@ -1,0 +1,34 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Actionable
+observe:
+- prop: action-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::action-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::action-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Actionable:action-name)'
+  verify:
+    'on': Gtk:Button
+    check: change
+  confidence: 0.95
+- prop: action-target
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::action-target
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::action-target'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Button
+    check: connect
+  confidence: 0.9

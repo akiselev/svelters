@@ -1,0 +1,76 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CenterBox
+observe:
+- prop: baseline-position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::baseline-position
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::baseline-position (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CenterBox:baseline-position)'
+  verify:
+    'on': Gtk:CenterBox
+    check: change
+  confidence: 0.95
+- prop: center-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::center-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::center-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CenterBox
+    check: connect
+  confidence: 0.9
+- prop: end-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::end-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::end-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CenterBox
+    check: connect
+  confidence: 0.9
+- prop: shrink-center-last
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::shrink-center-last
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::shrink-center-last (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CenterBox:shrink-center-last)'
+  verify:
+    'on': Gtk:CenterBox
+    check: change
+  confidence: 0.95
+- prop: start-widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::start-widget
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::start-widget (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CenterBox
+    check: connect
+  confidence: 0.9

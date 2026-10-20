@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRendererCombo
+observe:
+- prop: has-entry
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-entry
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-entry (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererCombo:has-entry)'
+  verify:
+    'on': Gtk:CellRendererCombo
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererCombo
+    check: connect
+  confidence: 0.9
+- prop: text-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererCombo:text-column)'
+  verify:
+    'on': Gtk:CellRendererCombo
+    check: change
+  confidence: 0.95

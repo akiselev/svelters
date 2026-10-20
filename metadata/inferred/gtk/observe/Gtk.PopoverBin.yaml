@@ -1,0 +1,61 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:PopoverBin
+observe:
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PopoverBin
+    check: connect
+  confidence: 0.9
+- prop: handle-input
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::handle-input
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::handle-input (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PopoverBin:handle-input)'
+  verify:
+    'on': Gtk:PopoverBin
+    check: change
+  confidence: 0.95
+- prop: menu-model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::menu-model
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::menu-model (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PopoverBin:menu-model)'
+  verify:
+    'on': Gtk:PopoverBin
+    check: connect
+  confidence: 0.95
+- prop: popover
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::popover
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::popover (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PopoverBin
+    check: connect
+  confidence: 0.9

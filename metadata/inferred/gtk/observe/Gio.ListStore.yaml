@@ -1,0 +1,28 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:ListStore
+observe:
+- prop: item-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gio:ListStore
+    check: refused
+  confidence: 0.95
+- prop: n-items
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::n-items
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::n-items'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:ListStore append)'
+  verify:
+    'on': Gio:ListStore
+    check: cross
+    rust: o.downcast_ref::<gtk::gio::ListStore>().unwrap().append(&gtk::glib::Object::new::<gtk::glib::Object>());
+  confidence: 0.95

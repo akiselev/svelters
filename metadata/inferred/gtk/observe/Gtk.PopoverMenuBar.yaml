@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:PopoverMenuBar
+observe:
+- prop: menu-model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::menu-model
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::menu-model'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PopoverMenuBar:menu-model)'
+  verify:
+    'on': Gtk:PopoverMenuBar
+    check: connect
+  confidence: 0.95

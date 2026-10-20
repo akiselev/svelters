@@ -1,0 +1,94 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:LockButton
+observe:
+- prop: permission
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::permission
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::permission'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:LockButton
+    check: connect
+  confidence: 0.9
+- prop: text-lock
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-lock
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-lock'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LockButton:text-lock)'
+  verify:
+    'on': Gtk:LockButton
+    check: change
+  confidence: 0.95
+- prop: text-unlock
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::text-unlock
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::text-unlock'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LockButton:text-unlock)'
+  verify:
+    'on': Gtk:LockButton
+    check: change
+  confidence: 0.95
+- prop: tooltip-lock
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tooltip-lock
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tooltip-lock'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LockButton:tooltip-lock)'
+  verify:
+    'on': Gtk:LockButton
+    check: change
+  confidence: 0.95
+- prop: tooltip-not-authorized
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tooltip-not-authorized
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tooltip-not-authorized'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LockButton:tooltip-not-authorized)'
+  verify:
+    'on': Gtk:LockButton
+    check: change
+  confidence: 0.95
+- prop: tooltip-unlock
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tooltip-unlock
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tooltip-unlock'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LockButton:tooltip-unlock)'
+  verify:
+    'on': Gtk:LockButton
+    check: change
+  confidence: 0.95

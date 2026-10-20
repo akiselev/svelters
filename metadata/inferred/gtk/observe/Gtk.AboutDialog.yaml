@@ -1,0 +1,244 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:AboutDialog
+observe:
+- prop: artists
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::artists
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::artists (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:AboutDialog
+    check: connect
+  confidence: 0.9
+- prop: authors
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::authors
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::authors (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:AboutDialog
+    check: connect
+  confidence: 0.9
+- prop: comments
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::comments
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::comments (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:comments)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: copyright
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::copyright
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::copyright (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:copyright)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: documenters
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::documenters
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::documenters (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:AboutDialog
+    check: connect
+  confidence: 0.9
+- prop: license
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::license
+  fires: on_set
+  derived_from:
+  - license-type
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::license (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:license, set:Gtk.AboutDialog:license-type)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: license-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::license-type
+  fires: on_change
+  derived_from:
+  - license
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::license-type (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:license, set:Gtk.AboutDialog:license-type)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: logo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::logo
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::logo (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:AboutDialog
+    check: connect
+  confidence: 0.9
+- prop: logo-icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::logo-icon-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::logo-icon-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:logo-icon-name)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: program-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::program-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::program-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:program-name)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: system-information
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::system-information
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::system-information (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:system-information)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: translator-credits
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::translator-credits
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::translator-credits (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:translator-credits)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: version
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::version
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::version (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:version)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: website
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::website
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::website (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:website)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: website-label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::website-label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::website-label (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:website-label)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95
+- prop: wrap-license
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::wrap-license
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::wrap-license (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:wrap-license)'
+  verify:
+    'on': Gtk:AboutDialog
+    check: change
+  confidence: 0.95

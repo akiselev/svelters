@@ -1,0 +1,145 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ShortcutsShortcut
+observe:
+- prop: accelerator
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accelerator
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accelerator'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:accelerator)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95
+- prop: action-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::action-name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::action-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:action-name)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95
+- prop: direction
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::direction
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::direction (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:direction)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95
+- prop: icon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: connect
+  confidence: 0.9
+- prop: icon-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-set
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-set'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:icon-set)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95
+- prop: shortcut-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::shortcut-type
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::shortcut-type (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:shortcut-type)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95
+- prop: subtitle
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::subtitle
+  fires: on_set
+  derived_from:
+  - shortcut-type
+  - subtitle-set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::subtitle'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:shortcut-type, set:Gtk.ShortcutsShortcut:subtitle,
+      set:Gtk.ShortcutsShortcut:subtitle-set)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95
+- prop: subtitle-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::subtitle-set
+  fires: on_set
+  derived_from:
+  - subtitle
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::subtitle-set'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:subtitle, set:Gtk.ShortcutsShortcut:subtitle-set)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:title)'
+  verify:
+    'on': Gtk:ShortcutsShortcut
+    check: change
+  confidence: 0.95

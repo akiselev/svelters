@@ -1,0 +1,258 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TreeView
+observe:
+- prop: activate-on-single-click
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::activate-on-single-click
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::activate-on-single-click (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:activate-on-single-click)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: enable-grid-lines
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-grid-lines
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-grid-lines (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:enable-grid-lines)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: enable-search
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-search
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-search (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:enable-search)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: enable-tree-lines
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-tree-lines
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-tree-lines (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:enable-tree-lines)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: expander-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expander-column
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expander-column'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:TreeView
+    check: connect
+  confidence: 0.9
+- prop: fixed-height-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::fixed-height-mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::fixed-height-mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:fixed-height-mode)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: headers-clickable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::headers-clickable
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::headers-clickable (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:TreeView
+    check: connect
+  confidence: 0.9
+- prop: headers-visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::headers-visible
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::headers-visible (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:headers-visible)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: hover-expand
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hover-expand
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hover-expand (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:hover-expand)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: hover-selection
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::hover-selection
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::hover-selection (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:hover-selection)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: level-indentation
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::level-indentation
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::level-indentation (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:level-indentation)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:TreeView
+    check: connect
+  confidence: 0.9
+- prop: reorderable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::reorderable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::reorderable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:reorderable)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: rubber-banding
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::rubber-banding
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::rubber-banding (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:rubber-banding)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: search-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::search-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::search-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:search-column)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: show-expanders
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-expanders
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-expanders (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:show-expanders)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95
+- prop: tooltip-column
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tooltip-column
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tooltip-column (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeView:tooltip-column)'
+  verify:
+    'on': Gtk:TreeView
+    check: change
+  confidence: 0.95

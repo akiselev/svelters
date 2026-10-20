@@ -1,0 +1,102 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Adjustment
+observe:
+- prop: lower
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::lower
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::lower'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Adjustment:lower)'
+  verify:
+    'on': Gtk:Adjustment
+    check: change
+    setup: o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);
+  confidence: 0.95
+- prop: page-increment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::page-increment
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::page-increment'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Adjustment:page-increment)'
+  verify:
+    'on': Gtk:Adjustment
+    check: change
+    setup: o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);
+  confidence: 0.95
+- prop: page-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::page-size
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::page-size'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Adjustment:page-size)'
+  verify:
+    'on': Gtk:Adjustment
+    check: change
+    setup: o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);
+  confidence: 0.95
+- prop: step-increment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::step-increment
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::step-increment'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Adjustment:step-increment)'
+  verify:
+    'on': Gtk:Adjustment
+    check: change
+    setup: o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);
+  confidence: 0.95
+- prop: upper
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::upper
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::upper'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Adjustment configure, scenario:Adjustment set_upper below value,
+      set:Gtk.Adjustment:upper)'
+  verify:
+    'on': Gtk:Adjustment
+    check: change
+    setup: o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);
+  confidence: 0.95
+- prop: value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::value
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::value'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Adjustment configure, scenario:Adjustment set_value 500 with upper
+      100, scenario:Scale set_value)'
+  verify:
+    'on': Gtk:Adjustment
+    check: change
+    setup: o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);
+  confidence: 0.95

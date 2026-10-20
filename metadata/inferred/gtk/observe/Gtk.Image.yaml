@@ -1,0 +1,145 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Image
+observe:
+- prop: file
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::file
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::file'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file)'
+  verify:
+    'on': Gtk:Image
+    check: connect
+  confidence: 0.95
+- prop: gicon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::gicon
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::gicon'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Image
+    check: connect
+  confidence: 0.9
+- prop: icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-name
+  fires: on_set
+  derived_from:
+  - file
+  - resource
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file, set:Gtk.Image:icon-name, set:Gtk.Image:resource)'
+  verify:
+    'on': Gtk:Image
+    check: change
+  confidence: 0.95
+- prop: icon-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-size
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-size (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:icon-size)'
+  verify:
+    'on': Gtk:Image
+    check: change
+  confidence: 0.95
+- prop: paintable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::paintable
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::paintable'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Image
+    check: connect
+  confidence: 0.9
+- prop: pixel-size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::pixel-size
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::pixel-size (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:pixel-size)'
+  verify:
+    'on': Gtk:Image
+    check: change
+  confidence: 0.95
+- prop: resource
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resource
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resource'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:Image
+    check: connect
+  confidence: 0.9
+- prop: storage-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::storage-type
+  derived_from:
+  - file
+  - icon-name
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::storage-type'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file, set:Gtk.Image:icon-name)'
+  verify:
+    'on': Gtk:Image
+    check: cross
+    trigger: file
+  confidence: 0.95
+- prop: use-fallback
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-fallback
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-fallback (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:use-fallback)'
+  verify:
+    'on': Gtk:Image
+    check: change
+  confidence: 0.95

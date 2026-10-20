@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:InfoBar
+observe:
+- prop: message-type
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::message-type
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::message-type (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.InfoBar:message-type)'
+  verify:
+    'on': Gtk:InfoBar
+    check: change
+  confidence: 0.95
+- prop: revealed
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::revealed
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::revealed (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.InfoBar:revealed)'
+  verify:
+    'on': Gtk:InfoBar
+    check: change
+  confidence: 0.95
+- prop: show-close-button
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-close-button
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-close-button (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.InfoBar:show-close-button)'
+  verify:
+    'on': Gtk:InfoBar
+    check: change
+  confidence: 0.95

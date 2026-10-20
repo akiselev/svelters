@@ -1,0 +1,22 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:ThemedIcon
+observe:
+- prop: names
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gio:ThemedIcon
+    check: refused
+  confidence: 0.95
+- prop: use-default-fallbacks
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gio:ThemedIcon
+    check: refused
+  confidence: 0.95

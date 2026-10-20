@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:EventController
+observe:
+- prop: name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::name
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::name'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EventController:name)'
+  verify:
+    'on': Gtk:DragSource
+    check: change
+  confidence: 0.95
+- prop: propagation-limit
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::propagation-limit
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::propagation-limit (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EventController:propagation-limit)'
+  verify:
+    'on': Gtk:DragSource
+    check: change
+  confidence: 0.95
+- prop: propagation-phase
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::propagation-phase
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::propagation-phase (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.EventController:propagation-phase)'
+  verify:
+    'on': Gtk:DragSource
+    check: change
+  confidence: 0.95

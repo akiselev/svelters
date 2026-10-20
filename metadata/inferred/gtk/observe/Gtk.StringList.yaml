@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:StringList
+observe:
+- prop: n-items
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::n-items
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::n-items'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:StringList append)'
+  verify:
+    'on': Gtk:StringList
+    check: cross
+    rust: o.downcast_ref::<gtk::StringList>().unwrap().append("a");
+  confidence: 0.95

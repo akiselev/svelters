@@ -1,0 +1,32 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ColorDialogButton
+observe:
+- prop: dialog
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::dialog
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::dialog (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorDialogButton:dialog)'
+  verify:
+    'on': Gtk:ColorDialogButton
+    check: connect
+  confidence: 0.95
+- prop: rgba
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::rgba
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::rgba (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:ColorDialogButton
+    check: connect
+  confidence: 0.9

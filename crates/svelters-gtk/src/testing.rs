@@ -16,6 +16,10 @@ use std::sync::mpsc::{channel, Sender};
 use std::sync::{Mutex, OnceLock};
 use svelters_abi::*;
 
+/// Table-driven verification of observe facts (milestone R0).
+#[path = "testing_observe.rs"]
+pub mod observe;
+
 type Job = Box<dyn FnOnce() + Send>;
 
 fn gtk_thread() -> &'static Mutex<Sender<Job>> {
@@ -274,6 +278,11 @@ impl Harness {
     fn resolve(&self, what: u32, kind: u32, name: &str) -> u32 {
         let vt = self.vt();
         unsafe { (vt.resolve)(vt.self_, what, kind, name.as_ptr() as *const _, name.len()) }
+    }
+
+    /// The kind id of a tag or native kind name, None when the running GTK has no such kind.
+    pub fn try_kind_id(&self, name: &str) -> Option<u32> {
+        Some(self.resolve(SVL_KIND, 0, name)).filter(|k| *k != 0)
     }
 
     pub fn kind_id(&self, name: &str) -> u32 {

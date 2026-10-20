@@ -1,0 +1,254 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TreeViewColumn
+observe:
+- prop: alignment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::alignment
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::alignment (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:alignment)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: cell-area
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: refused
+  confidence: 0.95
+- prop: clickable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::clickable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::clickable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:clickable)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: expand
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expand
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expand (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:expand)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: fixed-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::fixed-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::fixed-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:fixed-width)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: max-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::max-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::max-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:max-width)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: min-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::min-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::min-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:min-width)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: reorderable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::reorderable
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::reorderable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:reorderable)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: resizable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::resizable
+  fires: on_change
+  derived_from:
+  - sizing
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::resizable (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:resizable, set:Gtk.TreeViewColumn:sizing)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: sizing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sizing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sizing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:sizing)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: sort-column-id
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sort-column-id
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sort-column-id (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:sort-column-id)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: sort-indicator
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sort-indicator
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sort-indicator (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:sort-indicator)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: sort-order
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sort-order
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sort-order (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:sort-order)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: spacing
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::spacing
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::spacing (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:spacing)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::title
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::title'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:title)'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.95
+- prop: visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visible
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visible (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: change
+  confidence: 0.9
+- prop: widget
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::widget
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::widget'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:TreeViewColumn
+    check: connect
+  confidence: 0.9

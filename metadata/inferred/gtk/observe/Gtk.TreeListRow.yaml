@@ -1,0 +1,18 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:TreeListRow
+observe:
+- prop: expanded
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::expanded
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::expanded (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:TreeListRow
+    check: connect
+  confidence: 0.9

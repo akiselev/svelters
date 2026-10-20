@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:WindowControls
+observe:
+- prop: decoration-layout
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::decoration-layout
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::decoration-layout (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.WindowControls:decoration-layout)'
+  verify:
+    'on': Gtk:WindowControls
+    check: change
+  confidence: 0.95
+- prop: side
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::side
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::side (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.WindowControls:side)'
+  verify:
+    'on': Gtk:WindowControls
+    check: change
+  confidence: 0.95
+- prop: use-native-controls
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-native-controls
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-native-controls (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.WindowControls:use-native-controls)'
+  verify:
+    'on': Gtk:WindowControls
+    check: change
+  confidence: 0.95

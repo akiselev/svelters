@@ -1,0 +1,40 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:DrawingArea
+observe:
+- prop: content-height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::content-height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::content-height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DrawingArea:content-height)'
+  verify:
+    'on': Gtk:DrawingArea
+    check: change
+  confidence: 0.95
+- prop: content-width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::content-width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::content-width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DrawingArea:content-width)'
+  verify:
+    'on': Gtk:DrawingArea
+    check: change
+  confidence: 0.95
+- prop: ops
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: computed by svelters (canvas_ops), not a GObject property: only our setter changes it'
+  confidence: 0.9

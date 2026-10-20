@@ -1,0 +1,185 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:MenuButton
+observe:
+- prop: active
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::active
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::active (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:active)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: always-show-arrow
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::always-show-arrow
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::always-show-arrow (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:always-show-arrow)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: can-shrink
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-shrink
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-shrink (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:can-shrink)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: child
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::child
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::child (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:MenuButton
+    check: connect
+  confidence: 0.9
+- prop: direction
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::direction
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::direction (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:direction)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: has-frame
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-frame
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-frame (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:has-frame)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: icon-name
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::icon-name
+  fires: on_set
+  derived_from:
+  - label
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::icon-name (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:icon-name, set:Gtk.MenuButton:label)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: label
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::label
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::label (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:label)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: menu-model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::menu-model
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::menu-model'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:menu-model)'
+  verify:
+    'on': Gtk:MenuButton
+    check: connect
+  confidence: 0.95
+- prop: popover
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::popover
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::popover'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:MenuButton
+    check: connect
+  confidence: 0.9
+- prop: primary
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::primary
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::primary (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:primary)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95
+- prop: use-underline
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::use-underline
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::use-underline (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:use-underline)'
+  verify:
+    'on': Gtk:MenuButton
+    check: change
+  confidence: 0.95

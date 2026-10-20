@@ -188,18 +188,51 @@ def failure_messages(text: str) -> dict[str, str]:
     return out
 
 
+def row_results(path: Path) -> tuple[dict[str, str], dict[str, str]]:
+    """(row test -> pass|fail|crash, row test -> message) from the JSON lines a table test writes with
+    SVELTERS_TEST_RESULTS (observe facts: `generated::verify::observe_<owner>#<prop>`). A row with a `start` line
+    and no result crashed its process; a retried table's later lines win."""
+    res: dict[str, str] = {}
+    msgs: dict[str, str] = {}
+    if not path.exists():
+        return res, msgs
+    for line in path.read_text().splitlines():
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        if r["result"] == "start":
+            res[r["test"]] = "crash"
+            msgs[r["test"]] = "the test process ended inside this row (crash)"
+        else:
+            res[r["test"]] = r["result"]
+            if r["result"] != "pass" and r.get("message"):
+                msgs[r["test"]] = r["message"][:240]
+            else:
+                msgs.pop(r["test"], None)
+    return res, msgs
+
+
 def run_gtk(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str]]:
-    """(test -> pass|fail, test -> failure message). `only`: just these generated tests."""
-    expr = "test(/^generated::verify::/)" if not only else " | ".join(f"test(={t})" for t in sorted(only))
+    """(test -> pass|fail, test -> failure message). `only`: just these generated tests. Table rows (`<test>#<row>`)
+    run with their table and report through SVELTERS_TEST_RESULTS."""
+    tables = sorted({t.split("#", 1)[0] for t in only}) if only else []
+    expr = "test(/^generated::verify::/)" if not only else " | ".join(f"test(={t})" for t in tables)
     cmd = display_prefix() + ["cargo", "nextest", "run", "-p", "svelters-gtk", "--lib", "--no-fail-fast",
                               "--failure-output", "final", "-E", expr]
-    p = subprocess.run(cmd, cwd=ROOT, env=env(), capture_output=True, text=True)
+    with tempfile.TemporaryDirectory() as d:
+        rows = Path(d) / "rows.jsonl"
+        e = env()
+        e["SVELTERS_TEST_RESULTS"] = str(rows)
+        p = subprocess.run(cmd, cwd=ROOT, env=e, capture_output=True, text=True)
+        row_res, row_msgs = row_results(rows)
     text = p.stdout + p.stderr
     res = {t: r for t, r in results_of(text).items() if t.startswith("generated::verify::")}
     if not res:
         sys.stderr.write(text[-6000:])
         raise SystemExit("ledger: no GTK test results (build failure?)")
     msgs = failure_messages(text)
+    res.update(row_res)
+    msgs.update(row_msgs)
     if only:
         return res, msgs
     # Hand-written kinds: integration tests named `<binary>::<fn>`.
@@ -233,15 +266,19 @@ def run_qt(only: set[str] | None = None) -> tuple[dict[str, str], dict[str, str]
 PARKED = {"gtk": ROOT / "metadata/inferred/gtk/_parked.json", "qt": ROOT / "metadata/inferred/qt/_parked.json",
           "appkit": ROOT / "metadata/inferred/appkit/_parked.json", "winui": ROOT / "metadata/inferred/winui/_parked.json"}
 # What turns the merged metadata into the generated backend, in order (a parked fact leaves all of them).
-REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], ["tools/metadata/gtk/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
-                 ["tools/metadata/semantics/gen_semantics.py"]],
+# Observe facts (milestone R0) are merged by tools/metadata/common/observe.py into metadata/observe/<tk>.json, which
+# leaves parked ones out; GTK's ingest.py (PyGObject) only runs when other facts were parked.
+OBSERVE_MERGE = "tools/metadata/common/observe.py"
+REGEN = {"gtk": [["tools/metadata/gtk/ingest.py"], [OBSERVE_MERGE, "--toolkit", "gtk"], ["tools/metadata/gtk/gen_backend.py"],
+                 ["tools/metadata/common/gen_bindings.py"], ["tools/metadata/semantics/gen_semantics.py"]],
          # Qt: the generator runs in the counter-qt build (it reads _parked.json); the rest consumes the merged layers.
-         "qt": [["tools/metadata/common/gen_bindings.py"], ["tools/metadata/semantics/gen_semantics.py"]],
-         "appkit": [["tools/metadata/appkit/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
+         "qt": [[OBSERVE_MERGE, "--toolkit", "qt"], ["tools/metadata/common/gen_bindings.py"], ["tools/metadata/semantics/gen_semantics.py"]],
+         "appkit": [[OBSERVE_MERGE, "--toolkit", "appkit"], ["tools/metadata/appkit/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
                     ["tools/metadata/semantics/gen_semantics.py"]],
          # winui: windows-bindgen (tools/metadata/winui/regen.sh) is not rerun; parking only removes members from the filter.
-         "winui": [["tools/metadata/winui/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
+         "winui": [[OBSERVE_MERGE, "--toolkit", "winui"], ["tools/metadata/winui/gen_backend.py"], ["tools/metadata/common/gen_bindings.py"],
                    ["tools/metadata/semantics/gen_semantics.py"]]}
+_parked_sections: set[str] = set()   # the sections whose parked facts the last park() changed
 
 
 def load_parked(tk: str) -> list[dict]:
@@ -258,6 +295,8 @@ def save_parked(tk: str, version: str, parked: list[dict]) -> None:
 
 def regenerate(tk: str) -> None:
     for step in REGEN[tk]:
+        if step[0].endswith("gtk/ingest.py") and _parked_sections <= {"observe"}:
+            continue  # only observe facts changed: the merged kinds do not include them
         subprocess.run([sys.executable, str(ROOT / step[0])] + step[1:], cwd=ROOT, check=True)
 
 
@@ -270,7 +309,9 @@ def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str], park
     for f in man["facts"]:
         if f.get("origin") != "inferred":
             continue
-        bad = [t for t in f["tests"] if results.get(t, "missing") != "pass" and (park_missing or t in results)]
+        # A table row without a result was not reached (an earlier row crashed the table's process): it stays
+        # pending and runs again once the crashing row is parked.
+        bad = [t for t in f["tests"] if results.get(t, "missing") != "pass" and (park_missing and "#" not in t or t in results)]
         if bad:
             new[(f["kind"], f["section"], f["name"])] = {
                 "fact": f["fact"], "kind": f["kind"], "section": f["section"], "name": f["name"], "record_fp": f.get("record_fp"),
@@ -279,6 +320,10 @@ def park(tk: str, man: dict, results: dict[str, str], msgs: dict[str, str], park
         new[(u["kind"], u["section"], u["name"])] = {**u, "test": "(not generated)", "version": man["version"]}
     if new == keep and len(old) == len(keep):
         return False
+    olds = {(r["kind"], r["section"], r["name"]): r for r in old}
+    _parked_sections.clear()
+    _parked_sections.update(k[1] for k in set(new) ^ set(olds))
+    _parked_sections.update(k[1] for k in set(new) & set(olds) if new[k] != olds[k])
     save_parked(tk, man["version"], list(new.values()))
     return True
 

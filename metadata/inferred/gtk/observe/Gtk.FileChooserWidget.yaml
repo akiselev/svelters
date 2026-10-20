@@ -1,0 +1,36 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:FileChooserWidget
+observe:
+- prop: search-mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::search-mode
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::search-mode'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileChooserWidget:search-mode)'
+  verify:
+    'on': Gtk:FileChooserWidget
+    check: change
+  confidence: 0.95
+- prop: subtitle
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::subtitle
+  derived_from:
+  - search-mode
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::subtitle'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileChooserWidget:search-mode)'
+  verify:
+    'on': Gtk:FileChooserWidget
+    check: cross
+    trigger: search-mode
+  confidence: 0.95

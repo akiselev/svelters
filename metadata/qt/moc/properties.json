@@ -1,0 +1,9049 @@
+{
+ "classes": {
+  "AtSpiAdaptor": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QDBusVirtualObject"
+   ]
+  },
+  "CloseButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QAbstractAnimation": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "currentLoop": {
+     "bindable": "bindableCurrentLoop",
+     "notify": "currentLoopChanged",
+     "read": "currentLoop",
+     "stored": true,
+     "type": "int"
+    },
+    "currentTime": {
+     "bindable": "bindableCurrentTime",
+     "read": "currentTime",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentTime"
+    },
+    "direction": {
+     "bindable": "bindableDirection",
+     "notify": "directionChanged",
+     "read": "direction",
+     "stored": true,
+     "type": "Direction",
+     "write": "setDirection"
+    },
+    "duration": {
+     "read": "duration",
+     "stored": true,
+     "type": "int"
+    },
+    "loopCount": {
+     "bindable": "bindableLoopCount",
+     "read": "loopCount",
+     "stored": true,
+     "type": "int",
+     "write": "setLoopCount"
+    },
+    "state": {
+     "bindable": "bindableState",
+     "notify": "stateChanged",
+     "read": "state",
+     "stored": true,
+     "type": "State"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAbstractAnimationTimer": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAbstractButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "autoExclusive": {
+     "read": "autoExclusive",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoExclusive"
+    },
+    "autoRepeat": {
+     "read": "autoRepeat",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoRepeat"
+    },
+    "autoRepeatDelay": {
+     "read": "autoRepeatDelay",
+     "stored": true,
+     "type": "int",
+     "write": "setAutoRepeatDelay"
+    },
+    "autoRepeatInterval": {
+     "read": "autoRepeatInterval",
+     "stored": true,
+     "type": "int",
+     "write": "setAutoRepeatInterval"
+    },
+    "checkable": {
+     "read": "isCheckable",
+     "stored": true,
+     "type": "bool",
+     "write": "setCheckable"
+    },
+    "checked": {
+     "notify": "toggled",
+     "read": "isChecked",
+     "stored": true,
+     "type": "bool",
+     "user": true,
+     "write": "setChecked"
+    },
+    "down": {
+     "read": "isDown",
+     "stored": true,
+     "type": "bool",
+     "write": "setDown"
+    },
+    "icon": {
+     "read": "icon",
+     "stored": true,
+     "type": "QIcon",
+     "write": "setIcon"
+    },
+    "iconSize": {
+     "read": "iconSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setIconSize"
+    },
+    "shortcut": {
+     "read": "shortcut",
+     "stored": true,
+     "type": "QKeySequence",
+     "write": "setShortcut"
+    },
+    "text": {
+     "read": "text",
+     "stored": true,
+     "type": "QString",
+     "write": "setText"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QAbstractEventDispatcher": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAbstractEventDispatcherV2": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractEventDispatcher"
+   ]
+  },
+  "QAbstractFileIconProvider": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QAbstractItemDelegate": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAbstractItemModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAbstractItemView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "alternatingRowColors": {
+     "read": "alternatingRowColors",
+     "stored": true,
+     "type": "bool",
+     "write": "setAlternatingRowColors"
+    },
+    "autoScroll": {
+     "read": "hasAutoScroll",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoScroll"
+    },
+    "autoScrollMargin": {
+     "read": "autoScrollMargin",
+     "stored": true,
+     "type": "int",
+     "write": "setAutoScrollMargin"
+    },
+    "defaultDropAction": {
+     "read": "defaultDropAction",
+     "stored": true,
+     "type": "Qt::DropAction",
+     "write": "setDefaultDropAction"
+    },
+    "dragDropMode": {
+     "read": "dragDropMode",
+     "stored": true,
+     "type": "DragDropMode",
+     "write": "setDragDropMode"
+    },
+    "dragDropOverwriteMode": {
+     "read": "dragDropOverwriteMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setDragDropOverwriteMode"
+    },
+    "dragEnabled": {
+     "read": "dragEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setDragEnabled"
+    },
+    "editTriggers": {
+     "read": "editTriggers",
+     "stored": true,
+     "type": "EditTriggers",
+     "write": "setEditTriggers"
+    },
+    "horizontalScrollMode": {
+     "read": "horizontalScrollMode",
+     "reset": "resetHorizontalScrollMode",
+     "stored": true,
+     "type": "ScrollMode",
+     "write": "setHorizontalScrollMode"
+    },
+    "iconSize": {
+     "notify": "iconSizeChanged",
+     "read": "iconSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setIconSize"
+    },
+    "keyboardSearchFlags": {
+     "read": "keyboardSearchFlags",
+     "stored": true,
+     "type": "Qt::MatchFlags",
+     "write": "setKeyboardSearchFlags"
+    },
+    "selectionBehavior": {
+     "read": "selectionBehavior",
+     "stored": true,
+     "type": "SelectionBehavior",
+     "write": "setSelectionBehavior"
+    },
+    "selectionMode": {
+     "read": "selectionMode",
+     "stored": true,
+     "type": "SelectionMode",
+     "write": "setSelectionMode"
+    },
+    "showDropIndicator": {
+     "read": "showDropIndicator",
+     "stored": true,
+     "type": "bool",
+     "write": "setDropIndicatorShown"
+    },
+    "tabKeyNavigation": {
+     "read": "tabKeyNavigation",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabKeyNavigation"
+    },
+    "textElideMode": {
+     "read": "textElideMode",
+     "stored": true,
+     "type": "Qt::TextElideMode",
+     "write": "setTextElideMode"
+    },
+    "updateThreshold": {
+     "read": "updateThreshold",
+     "stored": true,
+     "type": "int",
+     "write": "setUpdateThreshold"
+    },
+    "verticalScrollMode": {
+     "read": "verticalScrollMode",
+     "reset": "resetVerticalScrollMode",
+     "stored": true,
+     "type": "ScrollMode",
+     "write": "setVerticalScrollMode"
+    }
+   },
+   "super": [
+    "QAbstractScrollArea"
+   ]
+  },
+  "QAbstractListModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QAbstractProxyModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "sourceModel": {
+     "bindable": "bindableSourceModel",
+     "notify": "sourceModelChanged",
+     "read": "sourceModel",
+     "stored": true,
+     "type": "QAbstractItemModel*",
+     "write": "setSourceModel"
+    }
+   },
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QAbstractScrollArea": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "horizontalScrollBarPolicy": {
+     "read": "horizontalScrollBarPolicy",
+     "stored": true,
+     "type": "Qt::ScrollBarPolicy",
+     "write": "setHorizontalScrollBarPolicy"
+    },
+    "sizeAdjustPolicy": {
+     "read": "sizeAdjustPolicy",
+     "stored": true,
+     "type": "SizeAdjustPolicy",
+     "write": "setSizeAdjustPolicy"
+    },
+    "verticalScrollBarPolicy": {
+     "read": "verticalScrollBarPolicy",
+     "stored": true,
+     "type": "Qt::ScrollBarPolicy",
+     "write": "setVerticalScrollBarPolicy"
+    }
+   },
+   "super": [
+    "QFrame"
+   ]
+  },
+  "QAbstractScrollAreaFilter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAbstractSlider": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "invertedAppearance": {
+     "read": "invertedAppearance",
+     "stored": true,
+     "type": "bool",
+     "write": "setInvertedAppearance"
+    },
+    "invertedControls": {
+     "read": "invertedControls",
+     "stored": true,
+     "type": "bool",
+     "write": "setInvertedControls"
+    },
+    "maximum": {
+     "read": "maximum",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximum"
+    },
+    "minimum": {
+     "read": "minimum",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimum"
+    },
+    "orientation": {
+     "read": "orientation",
+     "stored": true,
+     "type": "Qt::Orientation",
+     "write": "setOrientation"
+    },
+    "pageStep": {
+     "read": "pageStep",
+     "stored": true,
+     "type": "int",
+     "write": "setPageStep"
+    },
+    "singleStep": {
+     "read": "singleStep",
+     "stored": true,
+     "type": "int",
+     "write": "setSingleStep"
+    },
+    "sliderDown": {
+     "read": "isSliderDown",
+     "stored": true,
+     "type": "bool",
+     "write": "setSliderDown"
+    },
+    "sliderPosition": {
+     "notify": "sliderMoved",
+     "read": "sliderPosition",
+     "stored": true,
+     "type": "int",
+     "write": "setSliderPosition"
+    },
+    "tracking": {
+     "read": "hasTracking",
+     "stored": true,
+     "type": "bool",
+     "write": "setTracking"
+    },
+    "value": {
+     "notify": "valueChanged",
+     "read": "value",
+     "stored": true,
+     "type": "int",
+     "user": true,
+     "write": "setValue"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QAbstractSpinBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "accelerated": {
+     "read": "isAccelerated",
+     "stored": true,
+     "type": "bool",
+     "write": "setAccelerated"
+    },
+    "acceptableInput": {
+     "read": "hasAcceptableInput",
+     "stored": true,
+     "type": "bool"
+    },
+    "alignment": {
+     "read": "alignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setAlignment"
+    },
+    "buttonSymbols": {
+     "read": "buttonSymbols",
+     "stored": true,
+     "type": "ButtonSymbols",
+     "write": "setButtonSymbols"
+    },
+    "correctionMode": {
+     "read": "correctionMode",
+     "stored": true,
+     "type": "CorrectionMode",
+     "write": "setCorrectionMode"
+    },
+    "frame": {
+     "read": "hasFrame",
+     "stored": true,
+     "type": "bool",
+     "write": "setFrame"
+    },
+    "keyboardTracking": {
+     "read": "keyboardTracking",
+     "stored": true,
+     "type": "bool",
+     "write": "setKeyboardTracking"
+    },
+    "readOnly": {
+     "read": "isReadOnly",
+     "stored": true,
+     "type": "bool",
+     "write": "setReadOnly"
+    },
+    "showGroupSeparator": {
+     "read": "isGroupSeparatorShown",
+     "stored": true,
+     "type": "bool",
+     "write": "setGroupSeparatorShown"
+    },
+    "specialValueText": {
+     "read": "specialValueText",
+     "stored": true,
+     "type": "QString",
+     "write": "setSpecialValueText"
+    },
+    "text": {
+     "read": "text",
+     "stored": true,
+     "type": "QString"
+    },
+    "wrapping": {
+     "read": "wrapping",
+     "stored": true,
+     "type": "bool",
+     "write": "setWrapping"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QAbstractTableModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QAbstractTextDocumentLayout": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAccessibilityHints": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "contrastPreference": {
+     "final": true,
+     "notify": "contrastPreferenceChanged",
+     "read": "contrastPreference",
+     "stored": true,
+     "type": "Qt::ContrastPreference"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAccessible": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QAccessibleBridgePlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAccessibleCache": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAccessiblePlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAction": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "autoRepeat": {
+     "notify": "changed",
+     "read": "autoRepeat",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoRepeat"
+    },
+    "checkable": {
+     "final": true,
+     "notify": "checkableChanged",
+     "read": "isCheckable",
+     "stored": true,
+     "type": "bool",
+     "write": "setCheckable"
+    },
+    "checked": {
+     "notify": "toggled",
+     "read": "isChecked",
+     "stored": true,
+     "type": "bool",
+     "write": "setChecked"
+    },
+    "enabled": {
+     "final": true,
+     "notify": "enabledChanged",
+     "read": "isEnabled",
+     "reset": "resetEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setEnabled"
+    },
+    "font": {
+     "notify": "changed",
+     "read": "font",
+     "stored": true,
+     "type": "QFont",
+     "write": "setFont"
+    },
+    "icon": {
+     "notify": "changed",
+     "read": "icon",
+     "stored": true,
+     "type": "QIcon",
+     "write": "setIcon"
+    },
+    "iconText": {
+     "notify": "changed",
+     "read": "iconText",
+     "stored": true,
+     "type": "QString",
+     "write": "setIconText"
+    },
+    "iconVisibleInMenu": {
+     "notify": "changed",
+     "read": "isIconVisibleInMenu",
+     "stored": true,
+     "type": "bool",
+     "write": "setIconVisibleInMenu"
+    },
+    "menuRole": {
+     "notify": "changed",
+     "read": "menuRole",
+     "stored": true,
+     "type": "MenuRole",
+     "write": "setMenuRole"
+    },
+    "priority": {
+     "notify": "changed",
+     "read": "priority",
+     "stored": true,
+     "type": "Priority",
+     "write": "setPriority"
+    },
+    "shortcut": {
+     "notify": "changed",
+     "read": "shortcut",
+     "stored": true,
+     "type": "QKeySequence",
+     "write": "setShortcut"
+    },
+    "shortcutContext": {
+     "notify": "changed",
+     "read": "shortcutContext",
+     "stored": true,
+     "type": "Qt::ShortcutContext",
+     "write": "setShortcutContext"
+    },
+    "shortcutVisibleInContextMenu": {
+     "notify": "changed",
+     "read": "isShortcutVisibleInContextMenu",
+     "stored": true,
+     "type": "bool",
+     "write": "setShortcutVisibleInContextMenu"
+    },
+    "statusTip": {
+     "notify": "changed",
+     "read": "statusTip",
+     "stored": true,
+     "type": "QString",
+     "write": "setStatusTip"
+    },
+    "text": {
+     "notify": "changed",
+     "read": "text",
+     "stored": true,
+     "type": "QString",
+     "write": "setText"
+    },
+    "toolTip": {
+     "notify": "changed",
+     "read": "toolTip",
+     "stored": true,
+     "type": "QString",
+     "write": "setToolTip"
+    },
+    "visible": {
+     "final": true,
+     "notify": "visibleChanged",
+     "read": "isVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setVisible"
+    },
+    "whatsThis": {
+     "notify": "changed",
+     "read": "whatsThis",
+     "stored": true,
+     "type": "QString",
+     "write": "setWhatsThis"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QActionGroup": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "enabled": {
+     "read": "isEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setEnabled"
+    },
+    "exclusionPolicy": {
+     "read": "exclusionPolicy",
+     "stored": true,
+     "type": "QActionGroup::ExclusionPolicy",
+     "write": "setExclusionPolicy"
+    },
+    "visible": {
+     "read": "isVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setVisible"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAlphaWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QAnimationDriver": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QAnimationGroup": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractAnimation"
+   ]
+  },
+  "QAnimationTimer": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractAnimationTimer"
+   ]
+  },
+  "QApplication": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "autoSipEnabled": {
+     "read": "autoSipEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoSipEnabled"
+    },
+    "cursorFlashTime": {
+     "read": "cursorFlashTime",
+     "stored": true,
+     "type": "int",
+     "write": "setCursorFlashTime"
+    },
+    "doubleClickInterval": {
+     "read": "doubleClickInterval",
+     "stored": true,
+     "type": "int",
+     "write": "setDoubleClickInterval"
+    },
+    "keyboardInputInterval": {
+     "read": "keyboardInputInterval",
+     "stored": true,
+     "type": "int",
+     "write": "setKeyboardInputInterval"
+    },
+    "startDragDistance": {
+     "read": "startDragDistance",
+     "stored": true,
+     "type": "int",
+     "write": "setStartDragDistance"
+    },
+    "startDragTime": {
+     "read": "startDragTime",
+     "stored": true,
+     "type": "int",
+     "write": "setStartDragTime"
+    },
+    "styleSheet": {
+     "read": "styleSheet",
+     "stored": true,
+     "type": "QString",
+     "write": "setStyleSheet"
+    },
+    "wheelScrollLines": {
+     "read": "wheelScrollLines",
+     "stored": true,
+     "type": "int",
+     "write": "setWheelScrollLines"
+    }
+   },
+   "super": [
+    "QGuiApplication"
+   ]
+  },
+  "QAtSpiDBusConnection": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QBalloonTip": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QBlendStyleAnimation": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QStyleAnimation"
+   ]
+  },
+  "QBluetoothPermission": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QBooleanComboBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "value": {
+     "read": "value",
+     "stored": true,
+     "type": "bool",
+     "user": true,
+     "write": "setValue"
+    }
+   },
+   "super": [
+    "QComboBox"
+   ]
+  },
+  "QBoxLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QLayout"
+   ]
+  },
+  "QBuffer": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QIODevice"
+   ]
+  },
+  "QButtonGroup": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "exclusive": {
+     "read": "exclusive",
+     "stored": true,
+     "type": "bool",
+     "write": "setExclusive"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QByteDeviceWrappingIoDevice": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QIODevice"
+   ]
+  },
+  "QCalendar": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QCalendarPermission": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QCalendarPopup": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QCalendarWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "dateEditAcceptDelay": {
+     "read": "dateEditAcceptDelay",
+     "stored": true,
+     "type": "int",
+     "write": "setDateEditAcceptDelay"
+    },
+    "dateEditEnabled": {
+     "read": "isDateEditEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setDateEditEnabled"
+    },
+    "firstDayOfWeek": {
+     "read": "firstDayOfWeek",
+     "stored": true,
+     "type": "Qt::DayOfWeek",
+     "write": "setFirstDayOfWeek"
+    },
+    "gridVisible": {
+     "read": "isGridVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setGridVisible"
+    },
+    "horizontalHeaderFormat": {
+     "read": "horizontalHeaderFormat",
+     "stored": true,
+     "type": "HorizontalHeaderFormat",
+     "write": "setHorizontalHeaderFormat"
+    },
+    "maximumDate": {
+     "read": "maximumDate",
+     "reset": "clearMaximumDate",
+     "stored": true,
+     "type": "QDate",
+     "write": "setMaximumDate"
+    },
+    "minimumDate": {
+     "read": "minimumDate",
+     "reset": "clearMinimumDate",
+     "stored": true,
+     "type": "QDate",
+     "write": "setMinimumDate"
+    },
+    "navigationBarVisible": {
+     "read": "isNavigationBarVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setNavigationBarVisible"
+    },
+    "selectedDate": {
+     "read": "selectedDate",
+     "stored": true,
+     "type": "QDate",
+     "write": "setSelectedDate"
+    },
+    "selectionMode": {
+     "read": "selectionMode",
+     "stored": true,
+     "type": "SelectionMode",
+     "write": "setSelectionMode"
+    },
+    "verticalHeaderFormat": {
+     "read": "verticalHeaderFormat",
+     "stored": true,
+     "type": "VerticalHeaderFormat",
+     "write": "setVerticalHeaderFormat"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QCborError": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QCborStreamReader": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QCborValue": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QCheckBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "tristate": {
+     "read": "isTristate",
+     "stored": true,
+     "type": "bool",
+     "write": "setTristate"
+    }
+   },
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QChronoTimer": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "active": {
+     "bindable": "bindableActive",
+     "final": true,
+     "read": "isActive",
+     "type": "bool"
+    },
+    "interval": {
+     "bindable": "bindableInterval",
+     "final": true,
+     "read": "interval",
+     "stored": true,
+     "type": "std::chrono::nanoseconds",
+     "write": "setInterval"
+    },
+    "remainingTime": {
+     "final": true,
+     "read": "remainingTime",
+     "stored": true,
+     "type": "std::chrono::nanoseconds"
+    },
+    "singleShot": {
+     "bindable": "bindableSingleShot",
+     "final": true,
+     "read": "isSingleShot",
+     "stored": true,
+     "type": "bool",
+     "write": "setSingleShot"
+    },
+    "timerType": {
+     "bindable": "bindableTimerType",
+     "final": true,
+     "read": "timerType",
+     "stored": true,
+     "type": "Qt::TimerType",
+     "write": "setTimerType"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QClipboard": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QColorDialog": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "currentColor": {
+     "notify": "currentColorChanged",
+     "read": "currentColor",
+     "stored": true,
+     "type": "QColor",
+     "write": "setCurrentColor"
+    },
+    "options": {
+     "read": "options",
+     "stored": true,
+     "type": "ColorDialogOptions",
+     "write": "setOptions"
+    }
+   },
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QColorDialogOptions": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QColorSpace": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QColorWell": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWellArray"
+   ]
+  },
+  "QColumnView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "previewColumnVisible": {
+     "read": "isPreviewColumnVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setPreviewColumnVisible"
+    },
+    "resizeGripsVisible": {
+     "read": "resizeGripsVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setResizeGripsVisible"
+    }
+   },
+   "super": [
+    "QAbstractItemView"
+   ]
+  },
+  "QColumnViewGrip": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QComboBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "count": {
+     "read": "count",
+     "stored": true,
+     "type": "int"
+    },
+    "currentData": {
+     "read": "currentData",
+     "stored": true,
+     "type": "QVariant"
+    },
+    "currentIndex": {
+     "notify": "currentIndexChanged",
+     "read": "currentIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentIndex"
+    },
+    "currentText": {
+     "notify": "currentTextChanged",
+     "read": "currentText",
+     "stored": true,
+     "type": "QString",
+     "user": true,
+     "write": "setCurrentText"
+    },
+    "duplicatesEnabled": {
+     "read": "duplicatesEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setDuplicatesEnabled"
+    },
+    "editable": {
+     "read": "isEditable",
+     "stored": true,
+     "type": "bool",
+     "write": "setEditable"
+    },
+    "frame": {
+     "read": "hasFrame",
+     "stored": true,
+     "type": "bool",
+     "write": "setFrame"
+    },
+    "iconSize": {
+     "read": "iconSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setIconSize"
+    },
+    "insertPolicy": {
+     "read": "insertPolicy",
+     "stored": true,
+     "type": "InsertPolicy",
+     "write": "setInsertPolicy"
+    },
+    "labelDrawingMode": {
+     "read": "labelDrawingMode",
+     "stored": true,
+     "type": "LabelDrawingMode",
+     "write": "setLabelDrawingMode"
+    },
+    "maxCount": {
+     "read": "maxCount",
+     "stored": true,
+     "type": "int",
+     "write": "setMaxCount"
+    },
+    "maxVisibleItems": {
+     "read": "maxVisibleItems",
+     "stored": true,
+     "type": "int",
+     "write": "setMaxVisibleItems"
+    },
+    "minimumContentsLength": {
+     "read": "minimumContentsLength",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimumContentsLength"
+    },
+    "modelColumn": {
+     "read": "modelColumn",
+     "stored": true,
+     "type": "int",
+     "write": "setModelColumn"
+    },
+    "placeholderText": {
+     "read": "placeholderText",
+     "stored": true,
+     "type": "QString",
+     "write": "setPlaceholderText"
+    },
+    "sizeAdjustPolicy": {
+     "read": "sizeAdjustPolicy",
+     "stored": true,
+     "type": "SizeAdjustPolicy",
+     "write": "setSizeAdjustPolicy"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QComboBoxDelegate": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QStyledItemDelegate"
+   ]
+  },
+  "QComboBoxListView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QListView"
+   ]
+  },
+  "QComboBoxPrivateContainer": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QFrame"
+   ]
+  },
+  "QComboBoxPrivateScroller": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QComboMenuDelegate": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemDelegate"
+   ]
+  },
+  "QCommandLinkButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "description": {
+     "read": "description",
+     "stored": true,
+     "type": "QString",
+     "write": "setDescription"
+    },
+    "flat": {
+     "read": "isFlat",
+     "stored": true,
+     "type": "bool",
+     "write": "setFlat"
+    }
+   },
+   "super": [
+    "QPushButton"
+   ]
+  },
+  "QCommonStyle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QStyle"
+   ]
+  },
+  "QCompleter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "caseSensitivity": {
+     "read": "caseSensitivity",
+     "stored": true,
+     "type": "Qt::CaseSensitivity",
+     "write": "setCaseSensitivity"
+    },
+    "completionColumn": {
+     "read": "completionColumn",
+     "stored": true,
+     "type": "int",
+     "write": "setCompletionColumn"
+    },
+    "completionMode": {
+     "read": "completionMode",
+     "stored": true,
+     "type": "CompletionMode",
+     "write": "setCompletionMode"
+    },
+    "completionPrefix": {
+     "read": "completionPrefix",
+     "stored": true,
+     "type": "QString",
+     "write": "setCompletionPrefix"
+    },
+    "completionRole": {
+     "read": "completionRole",
+     "stored": true,
+     "type": "int",
+     "write": "setCompletionRole"
+    },
+    "filterMode": {
+     "read": "filterMode",
+     "stored": true,
+     "type": "Qt::MatchFlags",
+     "write": "setFilterMode"
+    },
+    "maxVisibleItems": {
+     "read": "maxVisibleItems",
+     "stored": true,
+     "type": "int",
+     "write": "setMaxVisibleItems"
+    },
+    "modelSorting": {
+     "read": "modelSorting",
+     "stored": true,
+     "type": "ModelSorting",
+     "write": "setModelSorting"
+    },
+    "wrapAround": {
+     "read": "wrapAround",
+     "stored": true,
+     "type": "bool",
+     "write": "setWrapAround"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QCompletionModel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractProxyModel"
+   ]
+  },
+  "QConcatenateTablesProxyModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QContactsPermission": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QCoreApplication": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "applicationName": {
+     "notify": "applicationNameChanged",
+     "read": "applicationName",
+     "stored": true,
+     "type": "QString",
+     "write": "setApplicationName"
+    },
+    "applicationVersion": {
+     "notify": "applicationVersionChanged",
+     "read": "applicationVersion",
+     "stored": true,
+     "type": "QString",
+     "write": "setApplicationVersion"
+    },
+    "organizationDomain": {
+     "notify": "organizationDomainChanged",
+     "read": "organizationDomain",
+     "stored": true,
+     "type": "QString",
+     "write": "setOrganizationDomain"
+    },
+    "organizationName": {
+     "notify": "organizationNameChanged",
+     "read": "organizationName",
+     "stored": true,
+     "type": "QString",
+     "write": "setOrganizationName"
+    },
+    "quitLockEnabled": {
+     "read": "isQuitLockEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setQuitLockEnabled"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QCryptographicHash": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QDBusListener": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QDBusMenuAdaptor": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "Status": {
+     "read": "status",
+     "stored": true,
+     "type": "QString"
+    },
+    "TextDirection": {
+     "read": "textDirection",
+     "stored": true,
+     "type": "QString"
+    },
+    "Version": {
+     "read": "version",
+     "stored": true,
+     "type": "uint"
+    }
+   },
+   "super": [
+    "QDBusAbstractAdaptor"
+   ]
+  },
+  "QDBusMenuBar": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformMenuBar"
+   ]
+  },
+  "QDBusMenuConnection": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QDBusMenuRegistrarInterface": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QDBusAbstractInterface"
+   ]
+  },
+  "QDBusPlatformMenu": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformMenu"
+   ]
+  },
+  "QDBusPlatformMenuItem": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformMenuItem"
+   ]
+  },
+  "QDBusTrayIcon": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "attentionIcon": {
+     "notify": "attention",
+     "read": "attentionIcon",
+     "stored": true,
+     "type": "QIcon"
+    },
+    "attentionIconName": {
+     "notify": "attention",
+     "read": "attentionIconName",
+     "stored": true,
+     "type": "QString"
+    },
+    "attentionMessage": {
+     "notify": "attention",
+     "read": "attentionMessage",
+     "stored": true,
+     "type": "QString"
+    },
+    "attentionTitle": {
+     "notify": "attention",
+     "read": "attentionTitle",
+     "stored": true,
+     "type": "QString"
+    },
+    "category": {
+     "notify": "categoryChanged",
+     "read": "category",
+     "stored": true,
+     "type": "QString"
+    },
+    "icon": {
+     "notify": "iconChanged",
+     "read": "icon",
+     "stored": true,
+     "type": "QIcon"
+    },
+    "iconName": {
+     "notify": "iconChanged",
+     "read": "iconName",
+     "stored": true,
+     "type": "QString"
+    },
+    "isRequestingAttention": {
+     "notify": "attention",
+     "read": "isRequestingAttention",
+     "stored": true,
+     "type": "bool"
+    },
+    "menu": {
+     "notify": "menuChanged",
+     "read": "menu",
+     "stored": true,
+     "type": "QDBusPlatformMenu*"
+    },
+    "status": {
+     "notify": "statusChanged",
+     "read": "status",
+     "stored": true,
+     "type": "QString"
+    },
+    "tooltip": {
+     "notify": "tooltipChanged",
+     "read": "tooltip",
+     "stored": true,
+     "type": "QString"
+    }
+   },
+   "super": [
+    "QPlatformSystemTrayIcon"
+   ]
+  },
+  "QDataStream": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": [
+    "QIODeviceBase"
+   ]
+  },
+  "QDataWidgetMapper": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "currentIndex": {
+     "notify": "currentIndexChanged",
+     "read": "currentIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentIndex"
+    },
+    "orientation": {
+     "read": "orientation",
+     "stored": true,
+     "type": "Qt::Orientation",
+     "write": "setOrientation"
+    },
+    "submitPolicy": {
+     "read": "submitPolicy",
+     "stored": true,
+     "type": "SubmitPolicy",
+     "write": "setSubmitPolicy"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QDateEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "date": {
+     "notify": "userDateChanged",
+     "read": "date",
+     "stored": true,
+     "type": "QDate",
+     "user": true,
+     "write": "setDate"
+    }
+   },
+   "super": [
+    "QDateTimeEdit"
+   ]
+  },
+  "QDateTimeEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "calendarPopup": {
+     "read": "calendarPopup",
+     "stored": true,
+     "type": "bool",
+     "write": "setCalendarPopup"
+    },
+    "currentSection": {
+     "read": "currentSection",
+     "stored": true,
+     "type": "Section",
+     "write": "setCurrentSection"
+    },
+    "currentSectionIndex": {
+     "read": "currentSectionIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentSectionIndex"
+    },
+    "date": {
+     "notify": "dateChanged",
+     "read": "date",
+     "stored": true,
+     "type": "QDate",
+     "write": "setDate"
+    },
+    "dateTime": {
+     "notify": "dateTimeChanged",
+     "read": "dateTime",
+     "stored": true,
+     "type": "QDateTime",
+     "user": true,
+     "write": "setDateTime"
+    },
+    "displayFormat": {
+     "read": "displayFormat",
+     "stored": true,
+     "type": "QString",
+     "write": "setDisplayFormat"
+    },
+    "displayedSections": {
+     "read": "displayedSections",
+     "stored": true,
+     "type": "Sections"
+    },
+    "maximumDate": {
+     "read": "maximumDate",
+     "reset": "clearMaximumDate",
+     "stored": true,
+     "type": "QDate",
+     "write": "setMaximumDate"
+    },
+    "maximumDateTime": {
+     "read": "maximumDateTime",
+     "reset": "clearMaximumDateTime",
+     "stored": true,
+     "type": "QDateTime",
+     "write": "setMaximumDateTime"
+    },
+    "maximumTime": {
+     "read": "maximumTime",
+     "reset": "clearMaximumTime",
+     "stored": true,
+     "type": "QTime",
+     "write": "setMaximumTime"
+    },
+    "minimumDate": {
+     "read": "minimumDate",
+     "reset": "clearMinimumDate",
+     "stored": true,
+     "type": "QDate",
+     "write": "setMinimumDate"
+    },
+    "minimumDateTime": {
+     "read": "minimumDateTime",
+     "reset": "clearMinimumDateTime",
+     "stored": true,
+     "type": "QDateTime",
+     "write": "setMinimumDateTime"
+    },
+    "minimumTime": {
+     "read": "minimumTime",
+     "reset": "clearMinimumTime",
+     "stored": true,
+     "type": "QTime",
+     "write": "setMinimumTime"
+    },
+    "sectionCount": {
+     "read": "sectionCount",
+     "stored": true,
+     "type": "int"
+    },
+    "time": {
+     "notify": "timeChanged",
+     "read": "time",
+     "stored": true,
+     "type": "QTime",
+     "write": "setTime"
+    },
+    "timeSpec": {
+     "read": "timeSpec",
+     "stored": true,
+     "type": "Qt::TimeSpec",
+     "write": "setTimeSpec"
+    },
+    "timeZone": {
+     "read": "timeZone",
+     "stored": true,
+     "type": "QTimeZone",
+     "write": "setTimeZone"
+    }
+   },
+   "super": [
+    "QAbstractSpinBox"
+   ]
+  },
+  "QDefaultAnimationDriver": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAnimationDriver"
+   ]
+  },
+  "QDial": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "notchSize": {
+     "read": "notchSize",
+     "stored": true,
+     "type": "int"
+    },
+    "notchTarget": {
+     "read": "notchTarget",
+     "stored": true,
+     "type": "qreal",
+     "write": "setNotchTarget"
+    },
+    "notchesVisible": {
+     "read": "notchesVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setNotchesVisible"
+    },
+    "wrapping": {
+     "read": "wrapping",
+     "stored": true,
+     "type": "bool",
+     "write": "setWrapping"
+    }
+   },
+   "super": [
+    "QAbstractSlider"
+   ]
+  },
+  "QDialog": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "modal": {
+     "read": "isModal",
+     "stored": true,
+     "type": "bool",
+     "write": "setModal"
+    },
+    "sizeGripEnabled": {
+     "read": "isSizeGripEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setSizeGripEnabled"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QDialogButtonBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "centerButtons": {
+     "read": "centerButtons",
+     "stored": true,
+     "type": "bool",
+     "write": "setCenterButtons"
+    },
+    "orientation": {
+     "read": "orientation",
+     "stored": true,
+     "type": "Qt::Orientation",
+     "write": "setOrientation"
+    },
+    "standardButtons": {
+     "read": "standardButtons",
+     "stored": true,
+     "type": "StandardButtons",
+     "write": "setStandardButtons"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QDirListing": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QDockWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "allowedAreas": {
+     "notify": "allowedAreasChanged",
+     "read": "allowedAreas",
+     "stored": true,
+     "type": "Qt::DockWidgetAreas",
+     "write": "setAllowedAreas"
+    },
+    "dockLocation": {
+     "notify": "dockLocationChanged",
+     "read": "dockLocation",
+     "stored": true,
+     "type": "Qt::DockWidgetArea",
+     "write": "setDockLocation"
+    },
+    "features": {
+     "notify": "featuresChanged",
+     "read": "features",
+     "stored": true,
+     "type": "DockWidgetFeatures",
+     "write": "setFeatures"
+    },
+    "floating": {
+     "notify": "topLevelChanged",
+     "read": "isFloating",
+     "stored": true,
+     "type": "bool",
+     "write": "setFloating"
+    },
+    "windowTitle": {
+     "read": "windowTitle",
+     "stored": true,
+     "type": "QString",
+     "write": "setWindowTitle"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QDockWidgetGroupWindow": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QDockWidgetLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QLayout"
+   ]
+  },
+  "QDockWidgetTitleButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QDoubleSpinBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "cleanText": {
+     "read": "cleanText",
+     "stored": true,
+     "type": "QString"
+    },
+    "decimals": {
+     "read": "decimals",
+     "stored": true,
+     "type": "int",
+     "write": "setDecimals"
+    },
+    "maximum": {
+     "read": "maximum",
+     "stored": true,
+     "type": "double",
+     "write": "setMaximum"
+    },
+    "minimum": {
+     "read": "minimum",
+     "stored": true,
+     "type": "double",
+     "write": "setMinimum"
+    },
+    "prefix": {
+     "read": "prefix",
+     "stored": true,
+     "type": "QString",
+     "write": "setPrefix"
+    },
+    "singleStep": {
+     "read": "singleStep",
+     "stored": true,
+     "type": "double",
+     "write": "setSingleStep"
+    },
+    "stepType": {
+     "read": "stepType",
+     "stored": true,
+     "type": "StepType",
+     "write": "setStepType"
+    },
+    "suffix": {
+     "read": "suffix",
+     "stored": true,
+     "type": "QString",
+     "write": "setSuffix"
+    },
+    "value": {
+     "notify": "valueChanged",
+     "read": "value",
+     "stored": true,
+     "type": "double",
+     "user": true,
+     "write": "setValue"
+    }
+   },
+   "super": [
+    "QAbstractSpinBox"
+   ]
+  },
+  "QDoubleValidator": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "bottom": {
+     "notify": "bottomChanged",
+     "read": "bottom",
+     "stored": true,
+     "type": "double",
+     "write": "setBottom"
+    },
+    "decimals": {
+     "notify": "decimalsChanged",
+     "read": "decimals",
+     "stored": true,
+     "type": "int",
+     "write": "setDecimals"
+    },
+    "notation": {
+     "notify": "notationChanged",
+     "read": "notation",
+     "stored": true,
+     "type": "Notation",
+     "write": "setNotation"
+    },
+    "top": {
+     "notify": "topChanged",
+     "read": "top",
+     "stored": true,
+     "type": "double",
+     "write": "setTop"
+    }
+   },
+   "super": [
+    "QValidator"
+   ]
+  },
+  "QDrag": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QDragManager": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QEasingCurve": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QEmptyItemModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QErrorMessage": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QEvent": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QEventDispatcherGlib": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractEventDispatcherV2"
+   ]
+  },
+  "QEventDispatcherUNIX": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractEventDispatcherV2"
+   ]
+  },
+  "QEventLoop": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QEventPoint": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {
+    "accepted": {
+     "read": "isAccepted",
+     "stored": true,
+     "type": "bool",
+     "write": "setAccepted"
+    },
+    "device": {
+     "constant": true,
+     "read": "device",
+     "stored": true,
+     "type": "const QPointingDevice*"
+    },
+    "ellipseDiameters": {
+     "constant": true,
+     "read": "ellipseDiameters",
+     "stored": true,
+     "type": "QSizeF"
+    },
+    "globalGrabPosition": {
+     "constant": true,
+     "read": "globalGrabPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "globalLastPosition": {
+     "constant": true,
+     "read": "globalLastPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "globalPosition": {
+     "constant": true,
+     "read": "globalPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "globalPressPosition": {
+     "constant": true,
+     "read": "globalPressPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "grabPosition": {
+     "constant": true,
+     "read": "grabPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "id": {
+     "constant": true,
+     "read": "id",
+     "stored": true,
+     "type": "int"
+    },
+    "lastPosition": {
+     "constant": true,
+     "read": "lastPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "lastTimestamp": {
+     "constant": true,
+     "read": "lastTimestamp",
+     "stored": true,
+     "type": "ulong"
+    },
+    "position": {
+     "constant": true,
+     "read": "position",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "pressPosition": {
+     "constant": true,
+     "read": "pressPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "pressTimestamp": {
+     "constant": true,
+     "read": "pressTimestamp",
+     "stored": true,
+     "type": "ulong"
+    },
+    "pressure": {
+     "constant": true,
+     "read": "pressure",
+     "stored": true,
+     "type": "qreal"
+    },
+    "rotation": {
+     "constant": true,
+     "read": "rotation",
+     "stored": true,
+     "type": "qreal"
+    },
+    "sceneGrabPosition": {
+     "constant": true,
+     "read": "sceneGrabPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "sceneLastPosition": {
+     "constant": true,
+     "read": "sceneLastPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "scenePosition": {
+     "constant": true,
+     "read": "scenePosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "scenePressPosition": {
+     "constant": true,
+     "read": "scenePressPosition",
+     "stored": true,
+     "type": "QPointF"
+    },
+    "state": {
+     "constant": true,
+     "read": "state",
+     "stored": true,
+     "type": "State"
+    },
+    "timeHeld": {
+     "constant": true,
+     "read": "timeHeld",
+     "stored": true,
+     "type": "qreal"
+    },
+    "timestamp": {
+     "constant": true,
+     "read": "timestamp",
+     "stored": true,
+     "type": "ulong"
+    },
+    "uniqueId": {
+     "constant": true,
+     "read": "uniqueId",
+     "stored": true,
+     "type": "QPointingDeviceUniqueId"
+    },
+    "velocity": {
+     "constant": true,
+     "read": "velocity",
+     "stored": true,
+     "type": "QVector2D"
+    }
+   },
+   "super": []
+  },
+  "QExpandingLineEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QLineEdit"
+   ]
+  },
+  "QFile": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QFileDevice"
+   ]
+  },
+  "QFileDevice": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QIODevice"
+   ]
+  },
+  "QFileDialog": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "acceptMode": {
+     "read": "acceptMode",
+     "stored": true,
+     "type": "AcceptMode",
+     "write": "setAcceptMode"
+    },
+    "defaultSuffix": {
+     "read": "defaultSuffix",
+     "stored": true,
+     "type": "QString",
+     "write": "setDefaultSuffix"
+    },
+    "fileMode": {
+     "read": "fileMode",
+     "stored": true,
+     "type": "FileMode",
+     "write": "setFileMode"
+    },
+    "options": {
+     "read": "options",
+     "stored": true,
+     "type": "Options",
+     "write": "setOptions"
+    },
+    "supportedSchemes": {
+     "read": "supportedSchemes",
+     "stored": true,
+     "type": "QStringList",
+     "write": "setSupportedSchemes"
+    },
+    "viewMode": {
+     "read": "viewMode",
+     "stored": true,
+     "type": "ViewMode",
+     "write": "setViewMode"
+    }
+   },
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QFileDialogOptions": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QFileInfoGatherer": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QThread"
+   ]
+  },
+  "QFileSelector": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QFileSystemModel": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "nameFilterDisables": {
+     "read": "nameFilterDisables",
+     "stored": true,
+     "type": "bool",
+     "write": "setNameFilterDisables"
+    },
+    "options": {
+     "read": "options",
+     "stored": true,
+     "type": "Options",
+     "write": "setOptions"
+    },
+    "readOnly": {
+     "read": "isReadOnly",
+     "stored": true,
+     "type": "bool",
+     "write": "setReadOnly"
+    },
+    "resolveSymlinks": {
+     "read": "resolveSymlinks",
+     "stored": true,
+     "type": "bool",
+     "write": "setResolveSymlinks"
+    }
+   },
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QFileSystemWatcher": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QFileSystemWatcherEngine": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QFlickGesture": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QGesture"
+   ]
+  },
+  "QFocusFrame": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QFont": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QFontComboBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "currentFont": {
+     "notify": "currentFontChanged",
+     "read": "currentFont",
+     "stored": true,
+     "type": "QFont",
+     "write": "setCurrentFont"
+    },
+    "fontFilters": {
+     "read": "fontFilters",
+     "stored": true,
+     "type": "FontFilters",
+     "write": "setFontFilters"
+    },
+    "writingSystem": {
+     "read": "writingSystem",
+     "stored": true,
+     "type": "QFontDatabase::WritingSystem",
+     "write": "setWritingSystem"
+    }
+   },
+   "super": [
+    "QComboBox"
+   ]
+  },
+  "QFontDatabase": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QFontDialog": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "currentFont": {
+     "notify": "currentFontChanged",
+     "read": "currentFont",
+     "stored": true,
+     "type": "QFont",
+     "write": "setCurrentFont"
+    },
+    "options": {
+     "read": "options",
+     "stored": true,
+     "type": "FontDialogOptions",
+     "write": "setOptions"
+    }
+   },
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QFontDialogOptions": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QFontFamilyDelegate": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemDelegate"
+   ]
+  },
+  "QFontListView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QListView"
+   ]
+  },
+  "QFontVariableAxis": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {
+    "defaultValue": {
+     "constant": true,
+     "read": "defaultValue",
+     "stored": true,
+     "type": "qreal"
+    },
+    "maximumValue": {
+     "constant": true,
+     "read": "maximumValue",
+     "stored": true,
+     "type": "qreal"
+    },
+    "minimumValue": {
+     "constant": true,
+     "read": "minimumValue",
+     "stored": true,
+     "type": "qreal"
+    },
+    "name": {
+     "constant": true,
+     "read": "name",
+     "stored": true,
+     "type": "QString"
+    },
+    "tag": {
+     "constant": true,
+     "read": "tagString",
+     "stored": true,
+     "type": "QByteArray"
+    }
+   },
+   "super": []
+  },
+  "QFormLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "fieldGrowthPolicy": {
+     "read": "fieldGrowthPolicy",
+     "reset": "resetFieldGrowthPolicy",
+     "stored": true,
+     "type": "FieldGrowthPolicy",
+     "write": "setFieldGrowthPolicy"
+    },
+    "formAlignment": {
+     "read": "formAlignment",
+     "reset": "resetFormAlignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setFormAlignment"
+    },
+    "horizontalSpacing": {
+     "read": "horizontalSpacing",
+     "stored": true,
+     "type": "int",
+     "write": "setHorizontalSpacing"
+    },
+    "labelAlignment": {
+     "read": "labelAlignment",
+     "reset": "resetLabelAlignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setLabelAlignment"
+    },
+    "rowWrapPolicy": {
+     "read": "rowWrapPolicy",
+     "reset": "resetRowWrapPolicy",
+     "stored": true,
+     "type": "RowWrapPolicy",
+     "write": "setRowWrapPolicy"
+    },
+    "verticalSpacing": {
+     "read": "verticalSpacing",
+     "stored": true,
+     "type": "int",
+     "write": "setVerticalSpacing"
+    }
+   },
+   "super": [
+    "QLayout"
+   ]
+  },
+  "QFrame": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "frameRect": {
+     "read": "frameRect",
+     "stored": true,
+     "type": "QRect",
+     "write": "setFrameRect"
+    },
+    "frameShadow": {
+     "read": "frameShadow",
+     "stored": true,
+     "type": "Shadow",
+     "write": "setFrameShadow"
+    },
+    "frameShape": {
+     "read": "frameShape",
+     "stored": true,
+     "type": "Shape",
+     "write": "setFrameShape"
+    },
+    "frameWidth": {
+     "read": "frameWidth",
+     "stored": true,
+     "type": "int"
+    },
+    "lineWidth": {
+     "read": "lineWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setLineWidth"
+    },
+    "midLineWidth": {
+     "read": "midLineWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setMidLineWidth"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QFusionStyle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QCommonStyle"
+   ]
+  },
+  "QFutureWatcherBase": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGenericPlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGesture": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "gestureCancelPolicy": {
+     "read": "gestureCancelPolicy",
+     "stored": true,
+     "type": "QGesture::GestureCancelPolicy",
+     "write": "setGestureCancelPolicy"
+    },
+    "gestureType": {
+     "read": "gestureType",
+     "stored": true,
+     "type": "Qt::GestureType"
+    },
+    "hasHotSpot": {
+     "read": "hasHotSpot",
+     "stored": true,
+     "type": "bool"
+    },
+    "hotSpot": {
+     "read": "hotSpot",
+     "reset": "unsetHotSpot",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setHotSpot"
+    },
+    "state": {
+     "read": "state",
+     "stored": true,
+     "type": "Qt::GestureState"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGestureManager": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGnomePortalInterface": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGradient": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QGraphicsAnchor": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "sizePolicy": {
+     "read": "sizePolicy",
+     "stored": true,
+     "type": "QSizePolicy::Policy",
+     "write": "setSizePolicy"
+    },
+    "spacing": {
+     "read": "spacing",
+     "reset": "unsetSpacing",
+     "stored": true,
+     "type": "qreal",
+     "write": "setSpacing"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGraphicsBlurEffect": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "blurHints": {
+     "notify": "blurHintsChanged",
+     "read": "blurHints",
+     "stored": true,
+     "type": "BlurHints",
+     "write": "setBlurHints"
+    },
+    "blurRadius": {
+     "notify": "blurRadiusChanged",
+     "read": "blurRadius",
+     "stored": true,
+     "type": "qreal",
+     "write": "setBlurRadius"
+    }
+   },
+   "super": [
+    "QGraphicsEffect"
+   ]
+  },
+  "QGraphicsColorizeEffect": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "color": {
+     "notify": "colorChanged",
+     "read": "color",
+     "stored": true,
+     "type": "QColor",
+     "write": "setColor"
+    },
+    "strength": {
+     "notify": "strengthChanged",
+     "read": "strength",
+     "stored": true,
+     "type": "qreal",
+     "write": "setStrength"
+    }
+   },
+   "super": [
+    "QGraphicsEffect"
+   ]
+  },
+  "QGraphicsDropShadowEffect": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "blurRadius": {
+     "notify": "blurRadiusChanged",
+     "read": "blurRadius",
+     "stored": true,
+     "type": "qreal",
+     "write": "setBlurRadius"
+    },
+    "color": {
+     "notify": "colorChanged",
+     "read": "color",
+     "stored": true,
+     "type": "QColor",
+     "write": "setColor"
+    },
+    "offset": {
+     "notify": "offsetChanged",
+     "read": "offset",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setOffset"
+    },
+    "xOffset": {
+     "notify": "offsetChanged",
+     "read": "xOffset",
+     "stored": true,
+     "type": "qreal",
+     "write": "setXOffset"
+    },
+    "yOffset": {
+     "notify": "offsetChanged",
+     "read": "yOffset",
+     "stored": true,
+     "type": "qreal",
+     "write": "setYOffset"
+    }
+   },
+   "super": [
+    "QGraphicsEffect"
+   ]
+  },
+  "QGraphicsEffect": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "enabled": {
+     "notify": "enabledChanged",
+     "read": "isEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setEnabled"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGraphicsEffectSource": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGraphicsItemAnimation": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGraphicsObject": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "effect": {
+     "read": "graphicsEffect",
+     "stored": true,
+     "type": "QGraphicsEffect*",
+     "write": "setGraphicsEffect"
+    },
+    "enabled": {
+     "notify": "enabledChanged",
+     "read": "isEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setEnabled"
+    },
+    "height": {
+     "final": true,
+     "notify": "heightChanged",
+     "read": "height",
+     "reset": "resetHeight",
+     "stored": true,
+     "type": "qreal",
+     "write": "setHeight"
+    },
+    "opacity": {
+     "final": true,
+     "notify": "opacityChanged",
+     "read": "opacity",
+     "stored": true,
+     "type": "qreal",
+     "write": "setOpacity"
+    },
+    "parent": {
+     "notify": "parentChanged",
+     "read": "parentObject",
+     "stored": true,
+     "type": "QGraphicsObject*",
+     "write": "setParentItem"
+    },
+    "pos": {
+     "final": true,
+     "read": "pos",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setPos"
+    },
+    "rotation": {
+     "notify": "rotationChanged",
+     "read": "rotation",
+     "stored": true,
+     "type": "qreal",
+     "write": "setRotation"
+    },
+    "scale": {
+     "notify": "scaleChanged",
+     "read": "scale",
+     "stored": true,
+     "type": "qreal",
+     "write": "setScale"
+    },
+    "transformOriginPoint": {
+     "read": "transformOriginPoint",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setTransformOriginPoint"
+    },
+    "visible": {
+     "final": true,
+     "notify": "visibleChanged",
+     "read": "isVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setVisible"
+    },
+    "width": {
+     "final": true,
+     "notify": "widthChanged",
+     "read": "width",
+     "reset": "resetWidth",
+     "stored": true,
+     "type": "qreal",
+     "write": "setWidth"
+    },
+    "x": {
+     "final": true,
+     "notify": "xChanged",
+     "read": "x",
+     "stored": true,
+     "type": "qreal",
+     "write": "setX"
+    },
+    "y": {
+     "final": true,
+     "notify": "yChanged",
+     "read": "y",
+     "stored": true,
+     "type": "qreal",
+     "write": "setY"
+    },
+    "z": {
+     "final": true,
+     "notify": "zChanged",
+     "read": "zValue",
+     "stored": true,
+     "type": "qreal",
+     "write": "setZValue"
+    }
+   },
+   "super": [
+    "QObject",
+    "QGraphicsItem"
+   ]
+  },
+  "QGraphicsOpacityEffect": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "opacity": {
+     "notify": "opacityChanged",
+     "read": "opacity",
+     "stored": true,
+     "type": "qreal",
+     "write": "setOpacity"
+    },
+    "opacityMask": {
+     "notify": "opacityMaskChanged",
+     "read": "opacityMask",
+     "stored": true,
+     "type": "QBrush",
+     "write": "setOpacityMask"
+    }
+   },
+   "super": [
+    "QGraphicsEffect"
+   ]
+  },
+  "QGraphicsProxyWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QGraphicsWidget"
+   ]
+  },
+  "QGraphicsRotation": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "angle": {
+     "notify": "angleChanged",
+     "read": "angle",
+     "stored": true,
+     "type": "qreal",
+     "write": "setAngle"
+    },
+    "axis": {
+     "notify": "axisChanged",
+     "read": "axis",
+     "stored": true,
+     "type": "QVector3D",
+     "write": "setAxis"
+    },
+    "origin": {
+     "notify": "originChanged",
+     "read": "origin",
+     "stored": true,
+     "type": "QVector3D",
+     "write": "setOrigin"
+    }
+   },
+   "super": [
+    "QGraphicsTransform"
+   ]
+  },
+  "QGraphicsScale": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "origin": {
+     "notify": "originChanged",
+     "read": "origin",
+     "stored": true,
+     "type": "QVector3D",
+     "write": "setOrigin"
+    },
+    "xScale": {
+     "notify": "xScaleChanged",
+     "read": "xScale",
+     "stored": true,
+     "type": "qreal",
+     "write": "setXScale"
+    },
+    "yScale": {
+     "notify": "yScaleChanged",
+     "read": "yScale",
+     "stored": true,
+     "type": "qreal",
+     "write": "setYScale"
+    },
+    "zScale": {
+     "notify": "zScaleChanged",
+     "read": "zScale",
+     "stored": true,
+     "type": "qreal",
+     "write": "setZScale"
+    }
+   },
+   "super": [
+    "QGraphicsTransform"
+   ]
+  },
+  "QGraphicsScene": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "backgroundBrush": {
+     "read": "backgroundBrush",
+     "stored": true,
+     "type": "QBrush",
+     "write": "setBackgroundBrush"
+    },
+    "bspTreeDepth": {
+     "read": "bspTreeDepth",
+     "stored": true,
+     "type": "int",
+     "write": "setBspTreeDepth"
+    },
+    "focusOnTouch": {
+     "read": "focusOnTouch",
+     "stored": true,
+     "type": "bool",
+     "write": "setFocusOnTouch"
+    },
+    "font": {
+     "read": "font",
+     "stored": true,
+     "type": "QFont",
+     "write": "setFont"
+    },
+    "foregroundBrush": {
+     "read": "foregroundBrush",
+     "stored": true,
+     "type": "QBrush",
+     "write": "setForegroundBrush"
+    },
+    "itemIndexMethod": {
+     "read": "itemIndexMethod",
+     "stored": true,
+     "type": "ItemIndexMethod",
+     "write": "setItemIndexMethod"
+    },
+    "minimumRenderSize": {
+     "read": "minimumRenderSize",
+     "stored": true,
+     "type": "qreal",
+     "write": "setMinimumRenderSize"
+    },
+    "palette": {
+     "read": "palette",
+     "stored": true,
+     "type": "QPalette",
+     "write": "setPalette"
+    },
+    "sceneRect": {
+     "read": "sceneRect",
+     "stored": true,
+     "type": "QRectF",
+     "write": "setSceneRect"
+    },
+    "stickyFocus": {
+     "read": "stickyFocus",
+     "stored": true,
+     "type": "bool",
+     "write": "setStickyFocus"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGraphicsSceneBspTreeIndex": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "bspTreeDepth": {
+     "read": "bspTreeDepth",
+     "stored": true,
+     "type": "int",
+     "write": "setBspTreeDepth"
+    }
+   },
+   "super": [
+    "QGraphicsSceneIndex"
+   ]
+  },
+  "QGraphicsSceneIndex": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGraphicsSceneLinearIndex": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QGraphicsSceneIndex"
+   ]
+  },
+  "QGraphicsTextItem": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QGraphicsObject"
+   ]
+  },
+  "QGraphicsTransform": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QGraphicsView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "alignment": {
+     "read": "alignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setAlignment"
+    },
+    "backgroundBrush": {
+     "read": "backgroundBrush",
+     "stored": true,
+     "type": "QBrush",
+     "write": "setBackgroundBrush"
+    },
+    "cacheMode": {
+     "read": "cacheMode",
+     "stored": true,
+     "type": "CacheMode",
+     "write": "setCacheMode"
+    },
+    "dragMode": {
+     "read": "dragMode",
+     "stored": true,
+     "type": "DragMode",
+     "write": "setDragMode"
+    },
+    "foregroundBrush": {
+     "read": "foregroundBrush",
+     "stored": true,
+     "type": "QBrush",
+     "write": "setForegroundBrush"
+    },
+    "interactive": {
+     "read": "isInteractive",
+     "stored": true,
+     "type": "bool",
+     "write": "setInteractive"
+    },
+    "optimizationFlags": {
+     "read": "optimizationFlags",
+     "stored": true,
+     "type": "OptimizationFlags",
+     "write": "setOptimizationFlags"
+    },
+    "renderHints": {
+     "read": "renderHints",
+     "stored": true,
+     "type": "QPainter::RenderHints",
+     "write": "setRenderHints"
+    },
+    "resizeAnchor": {
+     "read": "resizeAnchor",
+     "stored": true,
+     "type": "ViewportAnchor",
+     "write": "setResizeAnchor"
+    },
+    "rubberBandSelectionMode": {
+     "read": "rubberBandSelectionMode",
+     "stored": true,
+     "type": "Qt::ItemSelectionMode",
+     "write": "setRubberBandSelectionMode"
+    },
+    "sceneRect": {
+     "read": "sceneRect",
+     "stored": true,
+     "type": "QRectF",
+     "write": "setSceneRect"
+    },
+    "transformationAnchor": {
+     "read": "transformationAnchor",
+     "stored": true,
+     "type": "ViewportAnchor",
+     "write": "setTransformationAnchor"
+    },
+    "viewportUpdateMode": {
+     "read": "viewportUpdateMode",
+     "stored": true,
+     "type": "ViewportUpdateMode",
+     "write": "setViewportUpdateMode"
+    }
+   },
+   "super": [
+    "QAbstractScrollArea"
+   ]
+  },
+  "QGraphicsWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "autoFillBackground": {
+     "read": "autoFillBackground",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoFillBackground"
+    },
+    "focusPolicy": {
+     "read": "focusPolicy",
+     "stored": true,
+     "type": "Qt::FocusPolicy",
+     "write": "setFocusPolicy"
+    },
+    "font": {
+     "read": "font",
+     "stored": true,
+     "type": "QFont",
+     "write": "setFont"
+    },
+    "geometry": {
+     "notify": "geometryChanged",
+     "read": "geometry",
+     "stored": true,
+     "type": "QRectF",
+     "write": "setGeometry"
+    },
+    "layout": {
+     "notify": "layoutChanged",
+     "read": "layout",
+     "stored": true,
+     "type": "QGraphicsLayout*",
+     "write": "setLayout"
+    },
+    "layoutDirection": {
+     "read": "layoutDirection",
+     "reset": "unsetLayoutDirection",
+     "stored": true,
+     "type": "Qt::LayoutDirection",
+     "write": "setLayoutDirection"
+    },
+    "maximumSize": {
+     "read": "maximumSize",
+     "stored": true,
+     "type": "QSizeF",
+     "write": "setMaximumSize"
+    },
+    "minimumSize": {
+     "read": "minimumSize",
+     "stored": true,
+     "type": "QSizeF",
+     "write": "setMinimumSize"
+    },
+    "palette": {
+     "read": "palette",
+     "stored": true,
+     "type": "QPalette",
+     "write": "setPalette"
+    },
+    "preferredSize": {
+     "read": "preferredSize",
+     "stored": true,
+     "type": "QSizeF",
+     "write": "setPreferredSize"
+    },
+    "size": {
+     "notify": "geometryChanged",
+     "read": "size",
+     "stored": true,
+     "type": "QSizeF",
+     "write": "resize"
+    },
+    "sizePolicy": {
+     "read": "sizePolicy",
+     "stored": true,
+     "type": "QSizePolicy",
+     "write": "setSizePolicy"
+    },
+    "windowFlags": {
+     "read": "windowFlags",
+     "stored": true,
+     "type": "Qt::WindowFlags",
+     "write": "setWindowFlags"
+    },
+    "windowTitle": {
+     "read": "windowTitle",
+     "stored": true,
+     "type": "QString",
+     "write": "setWindowTitle"
+    }
+   },
+   "super": [
+    "QGraphicsObject",
+    "QGraphicsLayoutItem"
+   ]
+  },
+  "QGridLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QLayout"
+   ]
+  },
+  "QGroupBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "alignment": {
+     "read": "alignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setAlignment"
+    },
+    "checkable": {
+     "read": "isCheckable",
+     "stored": true,
+     "type": "bool",
+     "write": "setCheckable"
+    },
+    "checked": {
+     "notify": "toggled",
+     "read": "isChecked",
+     "stored": true,
+     "type": "bool",
+     "user": true,
+     "write": "setChecked"
+    },
+    "flat": {
+     "read": "isFlat",
+     "stored": true,
+     "type": "bool",
+     "write": "setFlat"
+    },
+    "title": {
+     "read": "title",
+     "stored": true,
+     "type": "QString",
+     "write": "setTitle"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QGuiApplication": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "applicationDisplayName": {
+     "notify": "applicationDisplayNameChanged",
+     "read": "applicationDisplayName",
+     "stored": true,
+     "type": "QString",
+     "write": "setApplicationDisplayName"
+    },
+    "desktopFileName": {
+     "read": "desktopFileName",
+     "stored": true,
+     "type": "QString",
+     "write": "setDesktopFileName"
+    },
+    "layoutDirection": {
+     "notify": "layoutDirectionChanged",
+     "read": "layoutDirection",
+     "stored": true,
+     "type": "Qt::LayoutDirection",
+     "write": "setLayoutDirection"
+    },
+    "platformName": {
+     "constant": true,
+     "read": "platformName",
+     "type": "QString"
+    },
+    "primaryScreen": {
+     "notify": "primaryScreenChanged",
+     "read": "primaryScreen",
+     "type": "QScreen*"
+    },
+    "quitOnLastWindowClosed": {
+     "read": "quitOnLastWindowClosed",
+     "stored": true,
+     "type": "bool",
+     "write": "setQuitOnLastWindowClosed"
+    },
+    "windowIcon": {
+     "read": "windowIcon",
+     "stored": true,
+     "type": "QIcon",
+     "write": "setWindowIcon"
+    }
+   },
+   "super": [
+    "QCoreApplication"
+   ]
+  },
+  "QHBoxLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QBoxLayout"
+   ]
+  },
+  "QHeaderView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "cascadingSectionResizes": {
+     "read": "cascadingSectionResizes",
+     "stored": true,
+     "type": "bool",
+     "write": "setCascadingSectionResizes"
+    },
+    "defaultAlignment": {
+     "read": "defaultAlignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setDefaultAlignment"
+    },
+    "defaultSectionSize": {
+     "read": "defaultSectionSize",
+     "reset": "resetDefaultSectionSize",
+     "stored": true,
+     "type": "int",
+     "write": "setDefaultSectionSize"
+    },
+    "firstSectionMovable": {
+     "read": "isFirstSectionMovable",
+     "stored": true,
+     "type": "bool",
+     "write": "setFirstSectionMovable"
+    },
+    "highlightSections": {
+     "read": "highlightSections",
+     "stored": true,
+     "type": "bool",
+     "write": "setHighlightSections"
+    },
+    "maximumSectionSize": {
+     "read": "maximumSectionSize",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximumSectionSize"
+    },
+    "minimumSectionSize": {
+     "read": "minimumSectionSize",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimumSectionSize"
+    },
+    "sectionsClickable": {
+     "read": "sectionsClickable",
+     "stored": true,
+     "type": "bool",
+     "write": "setSectionsClickable"
+    },
+    "sectionsMovable": {
+     "read": "sectionsMovable",
+     "stored": true,
+     "type": "bool",
+     "write": "setSectionsMovable"
+    },
+    "showSortIndicator": {
+     "read": "isSortIndicatorShown",
+     "stored": true,
+     "type": "bool",
+     "write": "setSortIndicatorShown"
+    },
+    "sortIndicatorClearable": {
+     "notify": "sortIndicatorClearableChanged",
+     "read": "isSortIndicatorClearable",
+     "stored": true,
+     "type": "bool",
+     "write": "setSortIndicatorClearable"
+    },
+    "stretchLastSection": {
+     "read": "stretchLastSection",
+     "stored": true,
+     "type": "bool",
+     "write": "setStretchLastSection"
+    }
+   },
+   "super": [
+    "QAbstractItemView"
+   ]
+  },
+  "QHighDpiScaling": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QIODevice": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject",
+    "QIODeviceBase"
+   ]
+  },
+  "QIOOperation": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QIcon": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QIconEnginePlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QIdentityProxyModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractProxyModel"
+   ]
+  },
+  "QImage": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": [
+    "QPaintDevice"
+   ]
+  },
+  "QImageIOPlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QInotifyFileSystemWatcherEngine": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QFileSystemWatcherEngine"
+   ]
+  },
+  "QInputControl": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QInputDevice": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "availableVirtualGeometry": {
+     "notify": "availableVirtualGeometryChanged",
+     "read": "availableVirtualGeometry",
+     "stored": true,
+     "type": "QRect"
+    },
+    "capabilities": {
+     "notify": "capabilitiesChanged",
+     "read": "capabilities",
+     "stored": true,
+     "type": "Capabilities"
+    },
+    "name": {
+     "constant": true,
+     "read": "name",
+     "stored": true,
+     "type": "QString"
+    },
+    "seatName": {
+     "constant": true,
+     "read": "seatName",
+     "stored": true,
+     "type": "QString"
+    },
+    "systemId": {
+     "constant": true,
+     "read": "systemId",
+     "stored": true,
+     "type": "qint64"
+    },
+    "type": {
+     "constant": true,
+     "read": "type",
+     "stored": true,
+     "type": "DeviceType"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QInputDeviceManager": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QInputDialog": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QInputDialogDoubleSpinBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QDoubleSpinBox"
+   ]
+  },
+  "QInputDialogSpinBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QSpinBox"
+   ]
+  },
+  "QInputMethod": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "anchorRectangle": {
+     "notify": "anchorRectangleChanged",
+     "read": "anchorRectangle",
+     "stored": true,
+     "type": "QRectF"
+    },
+    "animating": {
+     "notify": "animatingChanged",
+     "read": "isAnimating",
+     "stored": true,
+     "type": "bool"
+    },
+    "cursorRectangle": {
+     "notify": "cursorRectangleChanged",
+     "read": "cursorRectangle",
+     "stored": true,
+     "type": "QRectF"
+    },
+    "inputDirection": {
+     "notify": "inputDirectionChanged",
+     "read": "inputDirection",
+     "stored": true,
+     "type": "Qt::LayoutDirection"
+    },
+    "inputItemClipRectangle": {
+     "notify": "inputItemClipRectangleChanged",
+     "read": "inputItemClipRectangle",
+     "stored": true,
+     "type": "QRectF"
+    },
+    "keyboardRectangle": {
+     "notify": "keyboardRectangleChanged",
+     "read": "keyboardRectangle",
+     "stored": true,
+     "type": "QRectF"
+    },
+    "locale": {
+     "notify": "localeChanged",
+     "read": "locale",
+     "stored": true,
+     "type": "QLocale"
+    },
+    "visible": {
+     "notify": "visibleChanged",
+     "read": "isVisible",
+     "stored": true,
+     "type": "bool"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QIntValidator": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "bottom": {
+     "notify": "bottomChanged",
+     "read": "bottom",
+     "stored": true,
+     "type": "int",
+     "write": "setBottom"
+    },
+    "top": {
+     "notify": "topChanged",
+     "read": "top",
+     "stored": true,
+     "type": "int",
+     "write": "setTop"
+    }
+   },
+   "super": [
+    "QValidator"
+   ]
+  },
+  "QInternalMimeData": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QMimeData"
+   ]
+  },
+  "QItemDelegate": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "clipping": {
+     "read": "hasClipping",
+     "stored": true,
+     "type": "bool",
+     "write": "setClipping"
+    }
+   },
+   "super": [
+    "QAbstractItemDelegate"
+   ]
+  },
+  "QItemEditorDateTimeEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "dateTime": {
+     "notify": "dateTimeChanged",
+     "read": "dateTime",
+     "stored": true,
+     "type": "QDateTime",
+     "user": true,
+     "write": "setDateTimeItemEditor"
+    }
+   },
+   "super": [
+    "QDateTimeEdit"
+   ]
+  },
+  "QItemSelectionModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "currentIndex": {
+     "notify": "currentChanged",
+     "read": "currentIndex",
+     "type": "QModelIndex"
+    },
+    "hasSelection": {
+     "notify": "selectionChanged",
+     "read": "hasSelection",
+     "type": "bool"
+    },
+    "model": {
+     "bindable": "bindableModel",
+     "notify": "modelChanged",
+     "read": "model",
+     "stored": true,
+     "type": "QAbstractItemModel*",
+     "write": "setModel"
+    },
+    "selectedIndexes": {
+     "notify": "selectionChanged",
+     "read": "selectedIndexes",
+     "type": "QModelIndexList"
+    },
+    "selection": {
+     "notify": "selectionChanged",
+     "read": "selection",
+     "type": "QItemSelection"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QKeyMapper": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QKeySequence": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QKeySequenceEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "clearButtonEnabled": {
+     "read": "isClearButtonEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setClearButtonEnabled"
+    },
+    "finishingKeyCombinations": {
+     "read": "finishingKeyCombinations",
+     "stored": true,
+     "type": "QList<QKeyCombination>",
+     "write": "setFinishingKeyCombinations"
+    },
+    "keySequence": {
+     "notify": "keySequenceChanged",
+     "read": "keySequence",
+     "stored": true,
+     "type": "QKeySequence",
+     "user": true,
+     "write": "setKeySequence"
+    },
+    "maximumSequenceLength": {
+     "read": "maximumSequenceLength",
+     "stored": true,
+     "type": "qsizetype",
+     "write": "setMaximumSequenceLength"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QLCDNumber": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "digitCount": {
+     "read": "digitCount",
+     "stored": true,
+     "type": "int",
+     "write": "setDigitCount"
+    },
+    "intValue": {
+     "read": "intValue",
+     "stored": true,
+     "type": "int",
+     "write": "display"
+    },
+    "mode": {
+     "read": "mode",
+     "stored": true,
+     "type": "Mode",
+     "write": "setMode"
+    },
+    "segmentStyle": {
+     "read": "segmentStyle",
+     "stored": true,
+     "type": "SegmentStyle",
+     "write": "setSegmentStyle"
+    },
+    "smallDecimalPoint": {
+     "read": "smallDecimalPoint",
+     "stored": true,
+     "type": "bool",
+     "write": "setSmallDecimalPoint"
+    },
+    "value": {
+     "read": "value",
+     "stored": true,
+     "type": "double",
+     "write": "display"
+    }
+   },
+   "super": [
+    "QFrame"
+   ]
+  },
+  "QLabel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "alignment": {
+     "read": "alignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setAlignment"
+    },
+    "hasSelectedText": {
+     "read": "hasSelectedText",
+     "stored": true,
+     "type": "bool"
+    },
+    "indent": {
+     "read": "indent",
+     "stored": true,
+     "type": "int",
+     "write": "setIndent"
+    },
+    "margin": {
+     "read": "margin",
+     "stored": true,
+     "type": "int",
+     "write": "setMargin"
+    },
+    "openExternalLinks": {
+     "read": "openExternalLinks",
+     "stored": true,
+     "type": "bool",
+     "write": "setOpenExternalLinks"
+    },
+    "pixmap": {
+     "read": "pixmap",
+     "stored": true,
+     "type": "QPixmap",
+     "write": "setPixmap"
+    },
+    "scaledContents": {
+     "read": "hasScaledContents",
+     "stored": true,
+     "type": "bool",
+     "write": "setScaledContents"
+    },
+    "selectedText": {
+     "read": "selectedText",
+     "stored": true,
+     "type": "QString"
+    },
+    "text": {
+     "read": "text",
+     "stored": true,
+     "type": "QString",
+     "write": "setText"
+    },
+    "textFormat": {
+     "read": "textFormat",
+     "stored": true,
+     "type": "Qt::TextFormat",
+     "write": "setTextFormat"
+    },
+    "textInteractionFlags": {
+     "read": "textInteractionFlags",
+     "stored": true,
+     "type": "Qt::TextInteractionFlags",
+     "write": "setTextInteractionFlags"
+    },
+    "wordWrap": {
+     "read": "wordWrap",
+     "stored": true,
+     "type": "bool",
+     "write": "setWordWrap"
+    }
+   },
+   "super": [
+    "QFrame"
+   ]
+  },
+  "QLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "contentsMargins": {
+     "read": "contentsMargins",
+     "reset": "unsetContentsMargins",
+     "stored": true,
+     "type": "QMargins",
+     "write": "setContentsMargins"
+    },
+    "horizontalSizeConstraint": {
+     "read": "horizontalSizeConstraint",
+     "stored": true,
+     "type": "SizeConstraint",
+     "write": "setHorizontalSizeConstraint"
+    },
+    "sizeConstraint": {
+     "read": "sizeConstraint",
+     "stored": true,
+     "type": "SizeConstraint",
+     "write": "setSizeConstraint"
+    },
+    "spacing": {
+     "read": "spacing",
+     "stored": true,
+     "type": "int",
+     "write": "setSpacing"
+    },
+    "verticalSizeConstraint": {
+     "read": "verticalSizeConstraint",
+     "stored": true,
+     "type": "SizeConstraint",
+     "write": "setVerticalSizeConstraint"
+    }
+   },
+   "super": [
+    "QObject",
+    "QLayoutItem"
+   ]
+  },
+  "QLayoutPolicy": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QLibrary": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "fileName": {
+     "read": "fileName",
+     "stored": true,
+     "type": "QString",
+     "write": "setFileName"
+    },
+    "loadHints": {
+     "read": "loadHints",
+     "stored": true,
+     "type": "LoadHints",
+     "write": "setLoadHints"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QLineEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "acceptableInput": {
+     "read": "hasAcceptableInput",
+     "stored": true,
+     "type": "bool"
+    },
+    "alignment": {
+     "read": "alignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setAlignment"
+    },
+    "clearButtonEnabled": {
+     "read": "isClearButtonEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setClearButtonEnabled"
+    },
+    "cursorMoveStyle": {
+     "read": "cursorMoveStyle",
+     "stored": true,
+     "type": "Qt::CursorMoveStyle",
+     "write": "setCursorMoveStyle"
+    },
+    "cursorPosition": {
+     "read": "cursorPosition",
+     "stored": true,
+     "type": "int",
+     "write": "setCursorPosition"
+    },
+    "displayText": {
+     "read": "displayText",
+     "stored": true,
+     "type": "QString"
+    },
+    "dragEnabled": {
+     "read": "dragEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setDragEnabled"
+    },
+    "echoMode": {
+     "read": "echoMode",
+     "stored": true,
+     "type": "EchoMode",
+     "write": "setEchoMode"
+    },
+    "frame": {
+     "read": "hasFrame",
+     "stored": true,
+     "type": "bool",
+     "write": "setFrame"
+    },
+    "hasSelectedText": {
+     "read": "hasSelectedText",
+     "stored": true,
+     "type": "bool"
+    },
+    "inputMask": {
+     "read": "inputMask",
+     "stored": true,
+     "type": "QString",
+     "write": "setInputMask"
+    },
+    "maxLength": {
+     "read": "maxLength",
+     "stored": true,
+     "type": "int",
+     "write": "setMaxLength"
+    },
+    "modified": {
+     "read": "isModified",
+     "stored": true,
+     "type": "bool",
+     "write": "setModified"
+    },
+    "placeholderText": {
+     "read": "placeholderText",
+     "stored": true,
+     "type": "QString",
+     "write": "setPlaceholderText"
+    },
+    "readOnly": {
+     "read": "isReadOnly",
+     "stored": true,
+     "type": "bool",
+     "write": "setReadOnly"
+    },
+    "redoAvailable": {
+     "read": "isRedoAvailable",
+     "stored": true,
+     "type": "bool"
+    },
+    "selectedText": {
+     "read": "selectedText",
+     "stored": true,
+     "type": "QString"
+    },
+    "text": {
+     "notify": "textChanged",
+     "read": "text",
+     "stored": true,
+     "type": "QString",
+     "user": true,
+     "write": "setText"
+    },
+    "undoAvailable": {
+     "read": "isUndoAvailable",
+     "stored": true,
+     "type": "bool"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QLineEditIconButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "opacity": {
+     "read": "opacity",
+     "stored": true,
+     "type": "qreal",
+     "write": "setOpacity"
+    }
+   },
+   "super": [
+    "QToolButton"
+   ]
+  },
+  "QListModel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractListModel"
+   ]
+  },
+  "QListView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "batchSize": {
+     "read": "batchSize",
+     "stored": true,
+     "type": "int",
+     "write": "setBatchSize"
+    },
+    "flow": {
+     "read": "flow",
+     "stored": true,
+     "type": "Flow",
+     "write": "setFlow"
+    },
+    "gridSize": {
+     "read": "gridSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setGridSize"
+    },
+    "isWrapping": {
+     "read": "isWrapping",
+     "stored": true,
+     "type": "bool",
+     "write": "setWrapping"
+    },
+    "itemAlignment": {
+     "read": "itemAlignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setItemAlignment"
+    },
+    "layoutMode": {
+     "read": "layoutMode",
+     "stored": true,
+     "type": "LayoutMode",
+     "write": "setLayoutMode"
+    },
+    "modelColumn": {
+     "read": "modelColumn",
+     "stored": true,
+     "type": "int",
+     "write": "setModelColumn"
+    },
+    "movement": {
+     "read": "movement",
+     "stored": true,
+     "type": "Movement",
+     "write": "setMovement"
+    },
+    "resizeMode": {
+     "read": "resizeMode",
+     "stored": true,
+     "type": "ResizeMode",
+     "write": "setResizeMode"
+    },
+    "selectionRectVisible": {
+     "read": "isSelectionRectVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setSelectionRectVisible"
+    },
+    "spacing": {
+     "read": "spacing",
+     "stored": true,
+     "type": "int",
+     "write": "setSpacing"
+    },
+    "uniformItemSizes": {
+     "read": "uniformItemSizes",
+     "stored": true,
+     "type": "bool",
+     "write": "setUniformItemSizes"
+    },
+    "viewMode": {
+     "read": "viewMode",
+     "stored": true,
+     "type": "ViewMode",
+     "write": "setViewMode"
+    },
+    "wordWrap": {
+     "read": "wordWrap",
+     "stored": true,
+     "type": "bool",
+     "write": "setWordWrap"
+    }
+   },
+   "super": [
+    "QAbstractItemView"
+   ]
+  },
+  "QListWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "count": {
+     "read": "count",
+     "stored": true,
+     "type": "int"
+    },
+    "currentRow": {
+     "notify": "currentRowChanged",
+     "read": "currentRow",
+     "stored": true,
+     "type": "int",
+     "user": true,
+     "write": "setCurrentRow"
+    },
+    "sortingEnabled": {
+     "read": "isSortingEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setSortingEnabled"
+    },
+    "supportedDragActions": {
+     "read": "supportedDragActions",
+     "stored": true,
+     "type": "Qt::DropActions",
+     "write": "setSupportedDragActions"
+    }
+   },
+   "super": [
+    "QListView"
+   ]
+  },
+  "QListWidgetMimeData": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QMimeData"
+   ]
+  },
+  "QLocale": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QLocationPermission": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QMainWindow": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "animated": {
+     "read": "isAnimated",
+     "stored": true,
+     "type": "bool",
+     "write": "setAnimated"
+    },
+    "dockNestingEnabled": {
+     "read": "isDockNestingEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setDockNestingEnabled"
+    },
+    "dockOptions": {
+     "read": "dockOptions",
+     "stored": true,
+     "type": "DockOptions",
+     "write": "setDockOptions"
+    },
+    "documentMode": {
+     "read": "documentMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setDocumentMode"
+    },
+    "iconSize": {
+     "read": "iconSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setIconSize"
+    },
+    "tabShape": {
+     "read": "tabShape",
+     "stored": true,
+     "type": "QTabWidget::TabShape",
+     "write": "setTabShape"
+    },
+    "toolButtonStyle": {
+     "read": "toolButtonStyle",
+     "stored": true,
+     "type": "Qt::ToolButtonStyle",
+     "write": "setToolButtonStyle"
+    },
+    "unifiedTitleAndToolBarOnMac": {
+     "read": "unifiedTitleAndToolBarOnMac",
+     "stored": true,
+     "type": "bool",
+     "write": "setUnifiedTitleAndToolBarOnMac"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QMainWindowLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QLayout",
+    "QMainWindowLayoutSeparatorHelper<QMainWindowLayout>"
+   ]
+  },
+  "QMainWindowTabBar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QTabBar"
+   ]
+  },
+  "QMdiArea": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "activationOrder": {
+     "read": "activationOrder",
+     "stored": true,
+     "type": "WindowOrder",
+     "write": "setActivationOrder"
+    },
+    "background": {
+     "read": "background",
+     "stored": true,
+     "type": "QBrush",
+     "write": "setBackground"
+    },
+    "documentMode": {
+     "read": "documentMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setDocumentMode"
+    },
+    "tabPosition": {
+     "read": "tabPosition",
+     "stored": true,
+     "type": "QTabWidget::TabPosition",
+     "write": "setTabPosition"
+    },
+    "tabShape": {
+     "read": "tabShape",
+     "stored": true,
+     "type": "QTabWidget::TabShape",
+     "write": "setTabShape"
+    },
+    "tabsClosable": {
+     "read": "tabsClosable",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabsClosable"
+    },
+    "tabsMovable": {
+     "read": "tabsMovable",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabsMovable"
+    },
+    "viewMode": {
+     "read": "viewMode",
+     "stored": true,
+     "type": "ViewMode",
+     "write": "setViewMode"
+    }
+   },
+   "super": [
+    "QAbstractScrollArea"
+   ]
+  },
+  "QMdiSubWindow": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "keyboardPageStep": {
+     "read": "keyboardPageStep",
+     "stored": true,
+     "type": "int",
+     "write": "setKeyboardPageStep"
+    },
+    "keyboardSingleStep": {
+     "read": "keyboardSingleStep",
+     "stored": true,
+     "type": "int",
+     "write": "setKeyboardSingleStep"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QMenu": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "icon": {
+     "read": "icon",
+     "stored": true,
+     "type": "QIcon",
+     "write": "setIcon"
+    },
+    "separatorsCollapsible": {
+     "read": "separatorsCollapsible",
+     "stored": true,
+     "type": "bool",
+     "write": "setSeparatorsCollapsible"
+    },
+    "tearOffEnabled": {
+     "read": "isTearOffEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setTearOffEnabled"
+    },
+    "title": {
+     "read": "title",
+     "stored": true,
+     "type": "QString",
+     "write": "setTitle"
+    },
+    "toolTipsVisible": {
+     "read": "toolTipsVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setToolTipsVisible"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QMenuBar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "defaultUp": {
+     "read": "isDefaultUp",
+     "stored": true,
+     "type": "bool",
+     "write": "setDefaultUp"
+    },
+    "nativeMenuBar": {
+     "read": "isNativeMenuBar",
+     "stored": true,
+     "type": "bool",
+     "write": "setNativeMenuBar"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QMessageBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "detailedText": {
+     "read": "detailedText",
+     "stored": true,
+     "type": "QString",
+     "write": "setDetailedText"
+    },
+    "icon": {
+     "read": "icon",
+     "stored": true,
+     "type": "Icon",
+     "write": "setIcon"
+    },
+    "iconPixmap": {
+     "read": "iconPixmap",
+     "stored": true,
+     "type": "QPixmap",
+     "write": "setIconPixmap"
+    },
+    "informativeText": {
+     "read": "informativeText",
+     "stored": true,
+     "type": "QString",
+     "write": "setInformativeText"
+    },
+    "options": {
+     "read": "options",
+     "stored": true,
+     "type": "Options",
+     "write": "setOptions"
+    },
+    "standardButtons": {
+     "read": "standardButtons",
+     "stored": true,
+     "type": "StandardButtons",
+     "write": "setStandardButtons"
+    },
+    "text": {
+     "read": "text",
+     "stored": true,
+     "type": "QString",
+     "write": "setText"
+    },
+    "textFormat": {
+     "read": "textFormat",
+     "stored": true,
+     "type": "Qt::TextFormat",
+     "write": "setTextFormat"
+    },
+    "textInteractionFlags": {
+     "read": "textInteractionFlags",
+     "stored": true,
+     "type": "Qt::TextInteractionFlags",
+     "write": "setTextInteractionFlags"
+    }
+   },
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QMessageBoxDetailsText": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QMessageDialogOptions": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QMimeData": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QMimeType": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {
+    "aliases": {
+     "constant": true,
+     "read": "aliases",
+     "stored": true,
+     "type": "QStringList"
+    },
+    "allAncestors": {
+     "constant": true,
+     "read": "allAncestors",
+     "stored": true,
+     "type": "QStringList"
+    },
+    "comment": {
+     "constant": true,
+     "read": "comment",
+     "stored": true,
+     "type": "QString"
+    },
+    "filterString": {
+     "constant": true,
+     "read": "filterString",
+     "stored": true,
+     "type": "QString"
+    },
+    "genericIconName": {
+     "constant": true,
+     "read": "genericIconName",
+     "stored": true,
+     "type": "QString"
+    },
+    "globPatterns": {
+     "constant": true,
+     "read": "globPatterns",
+     "stored": true,
+     "type": "QStringList"
+    },
+    "iconName": {
+     "constant": true,
+     "read": "iconName",
+     "stored": true,
+     "type": "QString"
+    },
+    "isDefault": {
+     "constant": true,
+     "read": "isDefault",
+     "stored": true,
+     "type": "bool"
+    },
+    "name": {
+     "constant": true,
+     "read": "name",
+     "stored": true,
+     "type": "QString"
+    },
+    "parentMimeTypes": {
+     "constant": true,
+     "read": "parentMimeTypes",
+     "stored": true,
+     "type": "QStringList"
+    },
+    "preferredSuffix": {
+     "constant": true,
+     "read": "preferredSuffix",
+     "stored": true,
+     "type": "QString"
+    },
+    "suffixes": {
+     "constant": true,
+     "read": "suffixes",
+     "stored": true,
+     "type": "QStringList"
+    },
+    "valid": {
+     "constant": true,
+     "read": "isValid",
+     "stored": true,
+     "type": "bool"
+    }
+   },
+   "super": []
+  },
+  "QMovie": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "cacheMode": {
+     "bindable": "bindableCacheMode",
+     "read": "cacheMode",
+     "stored": true,
+     "type": "CacheMode",
+     "write": "setCacheMode"
+    },
+    "speed": {
+     "bindable": "bindableSpeed",
+     "read": "speed",
+     "stored": true,
+     "type": "int",
+     "write": "setSpeed"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QNativeIpcKey": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QNonContiguousByteDevice": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QNonContiguousByteDeviceByteArrayImpl": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QNonContiguousByteDevice"
+   ]
+  },
+  "QNonContiguousByteDeviceIoDeviceImpl": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QNonContiguousByteDevice"
+   ]
+  },
+  "QNonContiguousByteDeviceRingBufferImpl": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QNonContiguousByteDevice"
+   ]
+  },
+  "QNumberStyleAnimation": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QStyleAnimation"
+   ]
+  },
+  "QObject": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "objectName": {
+     "bindable": "bindableObjectName",
+     "notify": "objectNameChanged",
+     "read": "objectName",
+     "stored": true,
+     "type": "QString",
+     "write": "setObjectName"
+    }
+   },
+   "super": []
+  },
+  "QObjectCleanupHandler": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QObjectContinuationWrapper": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QOffscreenSurface": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject",
+    "QSurface"
+   ]
+  },
+  "QOpenGLContext": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QOpenGLContextGroup": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPAEventDispatcherGlib": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QEventDispatcherGlib"
+   ]
+  },
+  "QPMCache": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject",
+    "QCache<QPixmapCache::Key,QPixmapCacheEntry>"
+   ]
+  },
+  "QPaintDeviceWindow": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWindow",
+    "QPaintDevice"
+   ]
+  },
+  "QPainter": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QPalette": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QPanGesture": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "acceleration": {
+     "read": "acceleration",
+     "stored": true,
+     "type": "qreal",
+     "write": "setAcceleration"
+    },
+    "delta": {
+     "read": "delta",
+     "type": "QPointF"
+    },
+    "horizontalVelocity": {
+     "read": "horizontalVelocity",
+     "stored": true,
+     "type": "qreal",
+     "write": "setHorizontalVelocity"
+    },
+    "lastOffset": {
+     "read": "lastOffset",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setLastOffset"
+    },
+    "offset": {
+     "read": "offset",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setOffset"
+    },
+    "verticalVelocity": {
+     "read": "verticalVelocity",
+     "stored": true,
+     "type": "qreal",
+     "write": "setVerticalVelocity"
+    }
+   },
+   "super": [
+    "QGesture"
+   ]
+  },
+  "QParallelAnimationGroup": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAnimationGroup"
+   ]
+  },
+  "QPauseAnimation": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "duration": {
+     "bindable": "bindableDuration",
+     "read": "duration",
+     "stored": true,
+     "type": "int",
+     "write": "setDuration"
+    }
+   },
+   "super": [
+    "QAbstractAnimation"
+   ]
+  },
+  "QPdfWriter": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject",
+    "QPagedPaintDevice"
+   ]
+  },
+  "QPinchGesture": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "centerPoint": {
+     "read": "centerPoint",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setCenterPoint"
+    },
+    "changeFlags": {
+     "read": "changeFlags",
+     "stored": true,
+     "type": "ChangeFlags",
+     "write": "setChangeFlags"
+    },
+    "lastCenterPoint": {
+     "read": "lastCenterPoint",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setLastCenterPoint"
+    },
+    "lastRotationAngle": {
+     "read": "lastRotationAngle",
+     "stored": true,
+     "type": "qreal",
+     "write": "setLastRotationAngle"
+    },
+    "lastScaleFactor": {
+     "read": "lastScaleFactor",
+     "stored": true,
+     "type": "qreal",
+     "write": "setLastScaleFactor"
+    },
+    "rotationAngle": {
+     "read": "rotationAngle",
+     "stored": true,
+     "type": "qreal",
+     "write": "setRotationAngle"
+    },
+    "scaleFactor": {
+     "read": "scaleFactor",
+     "stored": true,
+     "type": "qreal",
+     "write": "setScaleFactor"
+    },
+    "startCenterPoint": {
+     "read": "startCenterPoint",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setStartCenterPoint"
+    },
+    "totalChangeFlags": {
+     "read": "totalChangeFlags",
+     "stored": true,
+     "type": "ChangeFlags",
+     "write": "setTotalChangeFlags"
+    },
+    "totalRotationAngle": {
+     "read": "totalRotationAngle",
+     "stored": true,
+     "type": "qreal",
+     "write": "setTotalRotationAngle"
+    },
+    "totalScaleFactor": {
+     "read": "totalScaleFactor",
+     "stored": true,
+     "type": "qreal",
+     "write": "setTotalScaleFactor"
+    }
+   },
+   "super": [
+    "QGesture"
+   ]
+  },
+  "QPixelFormat": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QPixmapBlurFilter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPixmapFilter"
+   ]
+  },
+  "QPixmapColorizeFilter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPixmapFilter"
+   ]
+  },
+  "QPixmapConvolutionFilter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPixmapFilter"
+   ]
+  },
+  "QPixmapDropShadowFilter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPixmapFilter"
+   ]
+  },
+  "QPixmapFilter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPixmapStyle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QCommonStyle"
+   ]
+  },
+  "QPlainTextDocumentLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "cursorWidth": {
+     "read": "cursorWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setCursorWidth"
+    }
+   },
+   "super": [
+    "QAbstractTextDocumentLayout"
+   ]
+  },
+  "QPlainTextEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "backgroundVisible": {
+     "read": "backgroundVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setBackgroundVisible"
+    },
+    "blockCount": {
+     "read": "blockCount",
+     "stored": true,
+     "type": "int"
+    },
+    "centerOnScroll": {
+     "read": "centerOnScroll",
+     "stored": true,
+     "type": "bool",
+     "write": "setCenterOnScroll"
+    },
+    "cursorWidth": {
+     "read": "cursorWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setCursorWidth"
+    },
+    "documentTitle": {
+     "read": "documentTitle",
+     "stored": true,
+     "type": "QString",
+     "write": "setDocumentTitle"
+    },
+    "lineWrapMode": {
+     "read": "lineWrapMode",
+     "stored": true,
+     "type": "LineWrapMode",
+     "write": "setLineWrapMode"
+    },
+    "maximumBlockCount": {
+     "read": "maximumBlockCount",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximumBlockCount"
+    },
+    "overwriteMode": {
+     "read": "overwriteMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setOverwriteMode"
+    },
+    "placeholderText": {
+     "read": "placeholderText",
+     "stored": true,
+     "type": "QString",
+     "write": "setPlaceholderText"
+    },
+    "plainText": {
+     "notify": "textChanged",
+     "read": "toPlainText",
+     "stored": true,
+     "type": "QString",
+     "user": true,
+     "write": "setPlainText"
+    },
+    "readOnly": {
+     "read": "isReadOnly",
+     "stored": true,
+     "type": "bool",
+     "write": "setReadOnly"
+    },
+    "tabChangesFocus": {
+     "read": "tabChangesFocus",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabChangesFocus"
+    },
+    "tabStopDistance": {
+     "read": "tabStopDistance",
+     "stored": true,
+     "type": "qreal",
+     "write": "setTabStopDistance"
+    },
+    "textInteractionFlags": {
+     "read": "textInteractionFlags",
+     "stored": true,
+     "type": "Qt::TextInteractionFlags",
+     "write": "setTextInteractionFlags"
+    },
+    "undoRedoEnabled": {
+     "read": "isUndoRedoEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setUndoRedoEnabled"
+    }
+   },
+   "super": [
+    "QAbstractScrollArea"
+   ]
+  },
+  "QPlainTextEditControl": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidgetTextControl"
+   ]
+  },
+  "QPlatformBackingStoreRhiConfig": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QPlatformColorDialogHelper": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformDialogHelper"
+   ]
+  },
+  "QPlatformDialogHelper": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformFileDialogHelper": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformDialogHelper"
+   ]
+  },
+  "QPlatformFontDialogHelper": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformDialogHelper"
+   ]
+  },
+  "QPlatformGraphicsBuffer": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformInputContext": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformInputContextPlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformIntegrationPlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformMenu": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformMenuBar": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformMenuItem": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformMessageDialogHelper": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformDialogHelper"
+   ]
+  },
+  "QPlatformNativeInterface": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformScreen": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QPlatformServiceColorPicker": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformSharedGraphicsCache": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformSystemTrayIcon": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformTextureList": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformTextureListWatcher": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPlatformTheme": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QPlatformThemePlugin": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPluginLoader": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "fileName": {
+     "read": "fileName",
+     "stored": true,
+     "type": "QString",
+     "write": "setFileName"
+    },
+    "loadHints": {
+     "read": "loadHints",
+     "stored": true,
+     "type": "QLibrary::LoadHints",
+     "write": "setLoadHints"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QPointerEvent": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": [
+    "QInputEvent"
+   ]
+  },
+  "QPointingDevice": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "buttonCount": {
+     "constant": true,
+     "read": "buttonCount",
+     "stored": true,
+     "type": "int"
+    },
+    "maximumPoints": {
+     "constant": true,
+     "read": "maximumPoints",
+     "stored": true,
+     "type": "int"
+    },
+    "pointerType": {
+     "constant": true,
+     "read": "pointerType",
+     "stored": true,
+     "type": "PointerType"
+    },
+    "uniqueId": {
+     "constant": true,
+     "read": "uniqueId",
+     "stored": true,
+     "type": "QPointingDeviceUniqueId"
+    }
+   },
+   "super": [
+    "QInputDevice"
+   ]
+  },
+  "QPointingDeviceUniqueId": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {
+    "numericId": {
+     "constant": true,
+     "read": "numericId",
+     "stored": true,
+     "type": "qint64"
+    }
+   },
+   "super": []
+  },
+  "QPollingFileSystemWatcherEngine": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QFileSystemWatcherEngine"
+   ]
+  },
+  "QProcess": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QIODevice"
+   ]
+  },
+  "QProgressBar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "alignment": {
+     "read": "alignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setAlignment"
+    },
+    "format": {
+     "read": "format",
+     "reset": "resetFormat",
+     "stored": true,
+     "type": "QString",
+     "write": "setFormat"
+    },
+    "invertedAppearance": {
+     "read": "invertedAppearance",
+     "stored": true,
+     "type": "bool",
+     "write": "setInvertedAppearance"
+    },
+    "maximum": {
+     "read": "maximum",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximum"
+    },
+    "minimum": {
+     "read": "minimum",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimum"
+    },
+    "orientation": {
+     "read": "orientation",
+     "stored": true,
+     "type": "Qt::Orientation",
+     "write": "setOrientation"
+    },
+    "text": {
+     "read": "text",
+     "stored": true,
+     "type": "QString"
+    },
+    "textDirection": {
+     "read": "textDirection",
+     "stored": true,
+     "type": "Direction",
+     "write": "setTextDirection"
+    },
+    "textVisible": {
+     "read": "isTextVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setTextVisible"
+    },
+    "value": {
+     "notify": "valueChanged",
+     "read": "value",
+     "stored": true,
+     "type": "int",
+     "write": "setValue"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QProgressDialog": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "autoClose": {
+     "read": "autoClose",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoClose"
+    },
+    "autoReset": {
+     "read": "autoReset",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoReset"
+    },
+    "labelText": {
+     "read": "labelText",
+     "stored": true,
+     "type": "QString",
+     "write": "setLabelText"
+    },
+    "maximum": {
+     "read": "maximum",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximum"
+    },
+    "minimum": {
+     "read": "minimum",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimum"
+    },
+    "minimumDuration": {
+     "read": "minimumDuration",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimumDuration"
+    },
+    "value": {
+     "read": "value",
+     "stored": true,
+     "type": "int",
+     "write": "setValue"
+    },
+    "wasCanceled": {
+     "read": "wasCanceled",
+     "stored": true,
+     "type": "bool"
+    }
+   },
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QProgressStyleAnimation": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QStyleAnimation"
+   ]
+  },
+  "QPropertyAnimation": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "propertyName": {
+     "bindable": "bindablePropertyName",
+     "read": "propertyName",
+     "stored": true,
+     "type": "QByteArray",
+     "write": "setPropertyName"
+    },
+    "targetObject": {
+     "bindable": "bindableTargetObject",
+     "read": "targetObject",
+     "stored": true,
+     "type": "QObject*",
+     "write": "setTargetObject"
+    }
+   },
+   "super": [
+    "QVariantAnimation"
+   ]
+  },
+  "QProxyStyle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QCommonStyle"
+   ]
+  },
+  "QPushButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "autoDefault": {
+     "read": "autoDefault",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoDefault"
+    },
+    "default": {
+     "read": "isDefault",
+     "stored": true,
+     "type": "bool",
+     "write": "setDefault"
+    },
+    "flat": {
+     "read": "isFlat",
+     "stored": true,
+     "type": "bool",
+     "write": "setFlat"
+    }
+   },
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QRadioButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QRandomAccessAsyncFile": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QRangeModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "autoConnectPolicy": {
+     "notify": "autoConnectPolicyChanged",
+     "read": "autoConnectPolicy",
+     "stored": true,
+     "type": "AutoConnectPolicy",
+     "write": "setAutoConnectPolicy"
+    },
+    "roleNames": {
+     "final": true,
+     "notify": "roleNamesChanged",
+     "read": "roleNames",
+     "reset": "resetRoleNames",
+     "stored": true,
+     "type": "QHash<int,QByteArray>",
+     "write": "setRoleNames"
+    }
+   },
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QRasterWindow": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPaintDeviceWindow"
+   ]
+  },
+  "QRegularExpressionValidator": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "regularExpression": {
+     "notify": "regularExpressionChanged",
+     "read": "regularExpression",
+     "stored": true,
+     "type": "QRegularExpression",
+     "write": "setRegularExpression"
+    }
+   },
+   "super": [
+    "QValidator"
+   ]
+  },
+  "QRhiWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "colorBufferFormat": {
+     "notify": "colorBufferFormatChanged",
+     "read": "colorBufferFormat",
+     "stored": true,
+     "type": "TextureFormat",
+     "write": "setColorBufferFormat"
+    },
+    "fixedColorBufferSize": {
+     "notify": "fixedColorBufferSizeChanged",
+     "read": "fixedColorBufferSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setFixedColorBufferSize"
+    },
+    "mirrorVertically": {
+     "notify": "mirrorVerticallyChanged",
+     "read": "isMirrorVerticallyEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setMirrorVertically"
+    },
+    "sampleCount": {
+     "notify": "sampleCountChanged",
+     "read": "sampleCount",
+     "stored": true,
+     "type": "int",
+     "write": "setSampleCount"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QRollEffect": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QRubberBand": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QSaveFile": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QFileDevice"
+   ]
+  },
+  "QScreen": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "availableGeometry": {
+     "notify": "availableGeometryChanged",
+     "read": "availableGeometry",
+     "stored": true,
+     "type": "QRect"
+    },
+    "availableSize": {
+     "notify": "availableGeometryChanged",
+     "read": "availableSize",
+     "stored": true,
+     "type": "QSize"
+    },
+    "availableVirtualGeometry": {
+     "notify": "virtualGeometryChanged",
+     "read": "availableVirtualGeometry",
+     "stored": true,
+     "type": "QRect"
+    },
+    "availableVirtualSize": {
+     "notify": "virtualGeometryChanged",
+     "read": "availableVirtualSize",
+     "stored": true,
+     "type": "QSize"
+    },
+    "depth": {
+     "constant": true,
+     "read": "depth",
+     "stored": true,
+     "type": "int"
+    },
+    "devicePixelRatio": {
+     "notify": "physicalDotsPerInchChanged",
+     "read": "devicePixelRatio",
+     "stored": true,
+     "type": "qreal"
+    },
+    "geometry": {
+     "notify": "geometryChanged",
+     "read": "geometry",
+     "stored": true,
+     "type": "QRect"
+    },
+    "logicalDotsPerInch": {
+     "notify": "logicalDotsPerInchChanged",
+     "read": "logicalDotsPerInch",
+     "stored": true,
+     "type": "qreal"
+    },
+    "logicalDotsPerInchX": {
+     "notify": "logicalDotsPerInchChanged",
+     "read": "logicalDotsPerInchX",
+     "stored": true,
+     "type": "qreal"
+    },
+    "logicalDotsPerInchY": {
+     "notify": "logicalDotsPerInchChanged",
+     "read": "logicalDotsPerInchY",
+     "stored": true,
+     "type": "qreal"
+    },
+    "manufacturer": {
+     "constant": true,
+     "read": "manufacturer",
+     "stored": true,
+     "type": "QString"
+    },
+    "model": {
+     "constant": true,
+     "read": "model",
+     "stored": true,
+     "type": "QString"
+    },
+    "name": {
+     "constant": true,
+     "read": "name",
+     "stored": true,
+     "type": "QString"
+    },
+    "nativeOrientation": {
+     "read": "nativeOrientation",
+     "stored": true,
+     "type": "Qt::ScreenOrientation"
+    },
+    "orientation": {
+     "notify": "orientationChanged",
+     "read": "orientation",
+     "stored": true,
+     "type": "Qt::ScreenOrientation"
+    },
+    "physicalDotsPerInch": {
+     "notify": "physicalDotsPerInchChanged",
+     "read": "physicalDotsPerInch",
+     "stored": true,
+     "type": "qreal"
+    },
+    "physicalDotsPerInchX": {
+     "notify": "physicalDotsPerInchChanged",
+     "read": "physicalDotsPerInchX",
+     "stored": true,
+     "type": "qreal"
+    },
+    "physicalDotsPerInchY": {
+     "notify": "physicalDotsPerInchChanged",
+     "read": "physicalDotsPerInchY",
+     "stored": true,
+     "type": "qreal"
+    },
+    "physicalSize": {
+     "notify": "physicalSizeChanged",
+     "read": "physicalSize",
+     "stored": true,
+     "type": "QSizeF"
+    },
+    "primaryOrientation": {
+     "notify": "primaryOrientationChanged",
+     "read": "primaryOrientation",
+     "stored": true,
+     "type": "Qt::ScreenOrientation"
+    },
+    "refreshRate": {
+     "notify": "refreshRateChanged",
+     "read": "refreshRate",
+     "stored": true,
+     "type": "qreal"
+    },
+    "serialNumber": {
+     "constant": true,
+     "read": "serialNumber",
+     "stored": true,
+     "type": "QString"
+    },
+    "size": {
+     "notify": "geometryChanged",
+     "read": "size",
+     "stored": true,
+     "type": "QSize"
+    },
+    "virtualGeometry": {
+     "notify": "virtualGeometryChanged",
+     "read": "virtualGeometry",
+     "stored": true,
+     "type": "QRect"
+    },
+    "virtualSize": {
+     "notify": "virtualGeometryChanged",
+     "read": "virtualSize",
+     "stored": true,
+     "type": "QSize"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QScrollArea": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "alignment": {
+     "read": "alignment",
+     "stored": true,
+     "type": "Qt::Alignment",
+     "write": "setAlignment"
+    },
+    "widgetResizable": {
+     "read": "widgetResizable",
+     "stored": true,
+     "type": "bool",
+     "write": "setWidgetResizable"
+    }
+   },
+   "super": [
+    "QAbstractScrollArea"
+   ]
+  },
+  "QScrollBar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractSlider"
+   ]
+  },
+  "QScrollbarStyleAnimation": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QNumberStyleAnimation"
+   ]
+  },
+  "QScroller": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "scrollerProperties": {
+     "notify": "scrollerPropertiesChanged",
+     "read": "scrollerProperties",
+     "stored": true,
+     "type": "QScrollerProperties",
+     "write": "setScrollerProperties"
+    },
+    "state": {
+     "notify": "stateChanged",
+     "read": "state",
+     "stored": true,
+     "type": "State"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QScrollerPrivate": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSequentialAnimationGroup": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "currentAnimation": {
+     "bindable": "bindableCurrentAnimation",
+     "notify": "currentAnimationChanged",
+     "read": "currentAnimation",
+     "stored": true,
+     "type": "QAbstractAnimation*"
+    }
+   },
+   "super": [
+    "QAnimationGroup"
+   ]
+  },
+  "QSessionManager": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSettings": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QShapedPixmapWindow": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QRasterWindow"
+   ]
+  },
+  "QSharedMemory": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QShortcut": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "autoRepeat": {
+     "read": "autoRepeat",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoRepeat"
+    },
+    "context": {
+     "read": "context",
+     "stored": true,
+     "type": "Qt::ShortcutContext",
+     "write": "setContext"
+    },
+    "enabled": {
+     "read": "isEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setEnabled"
+    },
+    "key": {
+     "read": "key",
+     "stored": true,
+     "type": "QKeySequence",
+     "write": "setKey"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSidebar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QListView"
+   ]
+  },
+  "QSignalMapper": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSinglePointEvent": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {
+    "exclusivePointGrabber": {
+     "read": "exclusivePointGrabber",
+     "stored": true,
+     "type": "QObject*",
+     "write": "setExclusivePointGrabber"
+    }
+   },
+   "super": [
+    "QPointerEvent"
+   ]
+  },
+  "QSingleShotTimer": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSizeGrip": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QSizePolicy": {
+   "module": "QtWidgets",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QSlider": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "tickInterval": {
+     "read": "tickInterval",
+     "stored": true,
+     "type": "int",
+     "write": "setTickInterval"
+    },
+    "tickPosition": {
+     "read": "tickPosition",
+     "stored": true,
+     "type": "TickPosition",
+     "write": "setTickPosition"
+    }
+   },
+   "super": [
+    "QAbstractSlider"
+   ]
+  },
+  "QSocketNotifier": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSortFilterProxyModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "autoAcceptChildRows": {
+     "bindable": "bindableAutoAcceptChildRows",
+     "notify": "autoAcceptChildRowsChanged",
+     "read": "autoAcceptChildRows",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoAcceptChildRows"
+    },
+    "dynamicSortFilter": {
+     "bindable": "bindableDynamicSortFilter",
+     "read": "dynamicSortFilter",
+     "stored": true,
+     "type": "bool",
+     "write": "setDynamicSortFilter"
+    },
+    "filterCaseSensitivity": {
+     "bindable": "bindableFilterCaseSensitivity",
+     "notify": "filterCaseSensitivityChanged",
+     "read": "filterCaseSensitivity",
+     "stored": true,
+     "type": "Qt::CaseSensitivity",
+     "write": "setFilterCaseSensitivity"
+    },
+    "filterKeyColumn": {
+     "bindable": "bindableFilterKeyColumn",
+     "read": "filterKeyColumn",
+     "stored": true,
+     "type": "int",
+     "write": "setFilterKeyColumn"
+    },
+    "filterRegularExpression": {
+     "bindable": "bindableFilterRegularExpression",
+     "read": "filterRegularExpression",
+     "stored": true,
+     "type": "QRegularExpression",
+     "write": "setFilterRegularExpression"
+    },
+    "filterRole": {
+     "bindable": "bindableFilterRole",
+     "notify": "filterRoleChanged",
+     "read": "filterRole",
+     "stored": true,
+     "type": "int",
+     "write": "setFilterRole"
+    },
+    "isSortLocaleAware": {
+     "bindable": "bindableIsSortLocaleAware",
+     "notify": "sortLocaleAwareChanged",
+     "read": "isSortLocaleAware",
+     "stored": true,
+     "type": "bool",
+     "write": "setSortLocaleAware"
+    },
+    "recursiveFilteringEnabled": {
+     "bindable": "bindableRecursiveFilteringEnabled",
+     "notify": "recursiveFilteringEnabledChanged",
+     "read": "isRecursiveFilteringEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setRecursiveFilteringEnabled"
+    },
+    "sortCaseSensitivity": {
+     "bindable": "bindableSortCaseSensitivity",
+     "notify": "sortCaseSensitivityChanged",
+     "read": "sortCaseSensitivity",
+     "stored": true,
+     "type": "Qt::CaseSensitivity",
+     "write": "setSortCaseSensitivity"
+    },
+    "sortRole": {
+     "bindable": "bindableSortRole",
+     "notify": "sortRoleChanged",
+     "read": "sortRole",
+     "stored": true,
+     "type": "int",
+     "write": "setSortRole"
+    }
+   },
+   "super": [
+    "QAbstractProxyModel"
+   ]
+  },
+  "QSpiAccessibleBridge": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject",
+    "QPlatformAccessibility"
+   ]
+  },
+  "QSpiApplicationAdaptor": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSpiDBusCache": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSpinBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "cleanText": {
+     "read": "cleanText",
+     "stored": true,
+     "type": "QString"
+    },
+    "displayIntegerBase": {
+     "read": "displayIntegerBase",
+     "stored": true,
+     "type": "int",
+     "write": "setDisplayIntegerBase"
+    },
+    "maximum": {
+     "read": "maximum",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximum"
+    },
+    "minimum": {
+     "read": "minimum",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimum"
+    },
+    "prefix": {
+     "read": "prefix",
+     "stored": true,
+     "type": "QString",
+     "write": "setPrefix"
+    },
+    "singleStep": {
+     "read": "singleStep",
+     "stored": true,
+     "type": "int",
+     "write": "setSingleStep"
+    },
+    "stepType": {
+     "read": "stepType",
+     "stored": true,
+     "type": "StepType",
+     "write": "setStepType"
+    },
+    "suffix": {
+     "read": "suffix",
+     "stored": true,
+     "type": "QString",
+     "write": "setSuffix"
+    },
+    "value": {
+     "notify": "valueChanged",
+     "read": "value",
+     "stored": true,
+     "type": "int",
+     "user": true,
+     "write": "setValue"
+    }
+   },
+   "super": [
+    "QAbstractSpinBox"
+   ]
+  },
+  "QSplashScreen": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QSplitter": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "childrenCollapsible": {
+     "read": "childrenCollapsible",
+     "stored": true,
+     "type": "bool",
+     "write": "setChildrenCollapsible"
+    },
+    "handleWidth": {
+     "read": "handleWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setHandleWidth"
+    },
+    "opaqueResize": {
+     "read": "opaqueResize",
+     "stored": true,
+     "type": "bool",
+     "write": "setOpaqueResize"
+    },
+    "orientation": {
+     "read": "orientation",
+     "stored": true,
+     "type": "Qt::Orientation",
+     "write": "setOrientation"
+    }
+   },
+   "super": [
+    "QFrame"
+   ]
+  },
+  "QSplitterHandle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QStackedLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "currentIndex": {
+     "notify": "currentChanged",
+     "read": "currentIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentIndex"
+    },
+    "stackingMode": {
+     "read": "stackingMode",
+     "stored": true,
+     "type": "StackingMode",
+     "write": "setStackingMode"
+    }
+   },
+   "super": [
+    "QLayout"
+   ]
+  },
+  "QStackedWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "count": {
+     "read": "count",
+     "stored": true,
+     "type": "int"
+    },
+    "currentIndex": {
+     "notify": "currentChanged",
+     "read": "currentIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentIndex"
+    }
+   },
+   "super": [
+    "QFrame"
+   ]
+  },
+  "QStandardItemModel": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "sortRole": {
+     "bindable": "bindableSortRole",
+     "read": "sortRole",
+     "stored": true,
+     "type": "int",
+     "write": "setSortRole"
+    }
+   },
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QStandardPaths": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QStatusBar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "sizeGripEnabled": {
+     "read": "isSizeGripEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setSizeGripEnabled"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QStatusNotifierItemAdaptor": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "AttentionIconName": {
+     "read": "attentionIconName",
+     "stored": true,
+     "type": "QString"
+    },
+    "AttentionIconPixmap": {
+     "read": "attentionIconPixmap",
+     "stored": true,
+     "type": "QXdgDBusImageVector"
+    },
+    "AttentionMovieName": {
+     "read": "attentionMovieName",
+     "stored": true,
+     "type": "QString"
+    },
+    "Category": {
+     "read": "category",
+     "stored": true,
+     "type": "QString"
+    },
+    "IconName": {
+     "read": "iconName",
+     "stored": true,
+     "type": "QString"
+    },
+    "IconPixmap": {
+     "read": "iconPixmap",
+     "stored": true,
+     "type": "QXdgDBusImageVector"
+    },
+    "Id": {
+     "read": "id",
+     "stored": true,
+     "type": "QString"
+    },
+    "ItemIsMenu": {
+     "read": "itemIsMenu",
+     "stored": true,
+     "type": "bool"
+    },
+    "Menu": {
+     "read": "menu",
+     "stored": true,
+     "type": "QDBusObjectPath"
+    },
+    "OverlayIconName": {
+     "read": "overlayIconName",
+     "stored": true,
+     "type": "QString"
+    },
+    "OverlayIconPixmap": {
+     "read": "overlayIconPixmap",
+     "stored": true,
+     "type": "QXdgDBusImageVector"
+    },
+    "Status": {
+     "read": "status",
+     "stored": true,
+     "type": "QString"
+    },
+    "Title": {
+     "read": "title",
+     "stored": true,
+     "type": "QString"
+    },
+    "ToolTip": {
+     "read": "toolTip",
+     "stored": true,
+     "type": "QXdgDBusToolTipStruct"
+    }
+   },
+   "super": [
+    "QDBusAbstractAdaptor"
+   ]
+  },
+  "QStringListModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractListModel"
+   ]
+  },
+  "QStyle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QStyleAnimation": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractAnimation"
+   ]
+  },
+  "QStyleHints": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "accessibility": {
+     "constant": true,
+     "final": true,
+     "read": "accessibility",
+     "stored": true,
+     "type": "const QAccessibilityHints*"
+    },
+    "colorScheme": {
+     "final": true,
+     "notify": "colorSchemeChanged",
+     "read": "colorScheme",
+     "reset": "unsetColorScheme",
+     "stored": true,
+     "type": "Qt::ColorScheme",
+     "write": "setColorScheme"
+    },
+    "contextMenuTrigger": {
+     "final": true,
+     "notify": "contextMenuTriggerChanged",
+     "read": "contextMenuTrigger",
+     "stored": true,
+     "type": "Qt::ContextMenuTrigger",
+     "write": "setContextMenuTrigger"
+    },
+    "cursorFlashTime": {
+     "final": true,
+     "notify": "cursorFlashTimeChanged",
+     "read": "cursorFlashTime",
+     "stored": true,
+     "type": "int"
+    },
+    "fontSmoothingGamma": {
+     "constant": true,
+     "final": true,
+     "read": "fontSmoothingGamma",
+     "type": "qreal"
+    },
+    "keyboardAutoRepeatRate": {
+     "constant": true,
+     "final": true,
+     "read": "keyboardAutoRepeatRate",
+     "type": "int"
+    },
+    "keyboardAutoRepeatRateF": {
+     "constant": true,
+     "final": true,
+     "read": "keyboardAutoRepeatRateF",
+     "type": "qreal"
+    },
+    "keyboardInputInterval": {
+     "final": true,
+     "notify": "keyboardInputIntervalChanged",
+     "read": "keyboardInputInterval",
+     "stored": true,
+     "type": "int"
+    },
+    "menuSelectionWraps": {
+     "constant": true,
+     "final": true,
+     "read": "menuSelectionWraps",
+     "type": "bool"
+    },
+    "mouseDoubleClickDistance": {
+     "constant": true,
+     "final": true,
+     "read": "mouseDoubleClickDistance",
+     "type": "int"
+    },
+    "mouseDoubleClickInterval": {
+     "final": true,
+     "notify": "mouseDoubleClickIntervalChanged",
+     "read": "mouseDoubleClickInterval",
+     "stored": true,
+     "type": "int"
+    },
+    "mousePressAndHoldInterval": {
+     "final": true,
+     "notify": "mousePressAndHoldIntervalChanged",
+     "read": "mousePressAndHoldInterval",
+     "stored": true,
+     "type": "int"
+    },
+    "mouseQuickSelectionThreshold": {
+     "final": true,
+     "notify": "mouseQuickSelectionThresholdChanged",
+     "read": "mouseQuickSelectionThreshold",
+     "stored": true,
+     "type": "int",
+     "write": "setMouseQuickSelectionThreshold"
+    },
+    "passwordMaskCharacter": {
+     "constant": true,
+     "final": true,
+     "read": "passwordMaskCharacter",
+     "type": "QChar"
+    },
+    "passwordMaskDelay": {
+     "constant": true,
+     "final": true,
+     "read": "passwordMaskDelay",
+     "type": "int"
+    },
+    "setFocusOnTouchRelease": {
+     "constant": true,
+     "final": true,
+     "read": "setFocusOnTouchRelease",
+     "type": "bool"
+    },
+    "showIsFullScreen": {
+     "constant": true,
+     "final": true,
+     "read": "showIsFullScreen",
+     "type": "bool"
+    },
+    "showIsMaximized": {
+     "constant": true,
+     "final": true,
+     "read": "showIsMaximized",
+     "type": "bool"
+    },
+    "showShortcutsInContextMenus": {
+     "final": true,
+     "notify": "showShortcutsInContextMenusChanged",
+     "read": "showShortcutsInContextMenus",
+     "stored": true,
+     "type": "bool",
+     "write": "setShowShortcutsInContextMenus"
+    },
+    "singleClickActivation": {
+     "constant": true,
+     "final": true,
+     "read": "singleClickActivation",
+     "type": "bool"
+    },
+    "startDragDistance": {
+     "final": true,
+     "notify": "startDragDistanceChanged",
+     "read": "startDragDistance",
+     "stored": true,
+     "type": "int"
+    },
+    "startDragTime": {
+     "final": true,
+     "notify": "startDragTimeChanged",
+     "read": "startDragTime",
+     "stored": true,
+     "type": "int"
+    },
+    "startDragVelocity": {
+     "constant": true,
+     "final": true,
+     "read": "startDragVelocity",
+     "type": "int"
+    },
+    "tabFocusBehavior": {
+     "final": true,
+     "notify": "tabFocusBehaviorChanged",
+     "read": "tabFocusBehavior",
+     "stored": true,
+     "type": "Qt::TabFocusBehavior"
+    },
+    "touchDoubleTapDistance": {
+     "constant": true,
+     "final": true,
+     "read": "touchDoubleTapDistance",
+     "type": "int"
+    },
+    "useHoverEffects": {
+     "final": true,
+     "notify": "useHoverEffectsChanged",
+     "read": "useHoverEffects",
+     "stored": true,
+     "type": "bool",
+     "write": "setUseHoverEffects"
+    },
+    "useRtlExtensions": {
+     "constant": true,
+     "final": true,
+     "read": "useRtlExtensions",
+     "type": "bool"
+    },
+    "wheelScrollLines": {
+     "final": true,
+     "notify": "wheelScrollLinesChanged",
+     "read": "wheelScrollLines",
+     "stored": true,
+     "type": "int"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QStylePlugin": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QStyleSheetStyle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWindowsStyle"
+   ]
+  },
+  "QStyleSheetStyleCaches": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QStyledItemDelegate": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemDelegate"
+   ]
+  },
+  "QSurface": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QSurfaceFormat": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QSwipeGesture": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "horizontalDirection": {
+     "read": "horizontalDirection",
+     "type": "SwipeDirection"
+    },
+    "swipeAngle": {
+     "read": "swipeAngle",
+     "stored": true,
+     "type": "qreal",
+     "write": "setSwipeAngle"
+    },
+    "velocity": {
+     "read": "velocity",
+     "stored": true,
+     "type": "qreal",
+     "write": "setVelocity"
+    },
+    "verticalDirection": {
+     "read": "verticalDirection",
+     "type": "SwipeDirection"
+    }
+   },
+   "super": [
+    "QGesture"
+   ]
+  },
+  "QSyntaxHighlighter": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSystemSemaphore": {
+   "module": "QtCore",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QSystemTrayIcon": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "icon": {
+     "read": "icon",
+     "stored": true,
+     "type": "QIcon",
+     "write": "setIcon"
+    },
+    "toolTip": {
+     "read": "toolTip",
+     "stored": true,
+     "type": "QString",
+     "write": "setToolTip"
+    },
+    "visible": {
+     "read": "isVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setVisible"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QSystemTrayIconSys": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QSystemTrayWatcher": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QTabBar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "autoHide": {
+     "read": "autoHide",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoHide"
+    },
+    "changeCurrentOnDrag": {
+     "read": "changeCurrentOnDrag",
+     "stored": true,
+     "type": "bool",
+     "write": "setChangeCurrentOnDrag"
+    },
+    "count": {
+     "read": "count",
+     "stored": true,
+     "type": "int"
+    },
+    "currentIndex": {
+     "notify": "currentChanged",
+     "read": "currentIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentIndex"
+    },
+    "documentMode": {
+     "read": "documentMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setDocumentMode"
+    },
+    "drawBase": {
+     "read": "drawBase",
+     "stored": true,
+     "type": "bool",
+     "write": "setDrawBase"
+    },
+    "elideMode": {
+     "read": "elideMode",
+     "stored": true,
+     "type": "Qt::TextElideMode",
+     "write": "setElideMode"
+    },
+    "expanding": {
+     "read": "expanding",
+     "stored": true,
+     "type": "bool",
+     "write": "setExpanding"
+    },
+    "iconSize": {
+     "read": "iconSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setIconSize"
+    },
+    "movable": {
+     "read": "isMovable",
+     "stored": true,
+     "type": "bool",
+     "write": "setMovable"
+    },
+    "selectionBehaviorOnRemove": {
+     "read": "selectionBehaviorOnRemove",
+     "stored": true,
+     "type": "SelectionBehavior",
+     "write": "setSelectionBehaviorOnRemove"
+    },
+    "shape": {
+     "read": "shape",
+     "stored": true,
+     "type": "Shape",
+     "write": "setShape"
+    },
+    "tabsClosable": {
+     "read": "tabsClosable",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabsClosable"
+    },
+    "usesScrollButtons": {
+     "read": "usesScrollButtons",
+     "stored": true,
+     "type": "bool",
+     "write": "setUsesScrollButtons"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QTabWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "count": {
+     "read": "count",
+     "stored": true,
+     "type": "int"
+    },
+    "currentIndex": {
+     "notify": "currentChanged",
+     "read": "currentIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentIndex"
+    },
+    "documentMode": {
+     "read": "documentMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setDocumentMode"
+    },
+    "elideMode": {
+     "read": "elideMode",
+     "stored": true,
+     "type": "Qt::TextElideMode",
+     "write": "setElideMode"
+    },
+    "iconSize": {
+     "read": "iconSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setIconSize"
+    },
+    "movable": {
+     "read": "isMovable",
+     "stored": true,
+     "type": "bool",
+     "write": "setMovable"
+    },
+    "tabBarAutoHide": {
+     "read": "tabBarAutoHide",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabBarAutoHide"
+    },
+    "tabPosition": {
+     "read": "tabPosition",
+     "stored": true,
+     "type": "TabPosition",
+     "write": "setTabPosition"
+    },
+    "tabShape": {
+     "read": "tabShape",
+     "stored": true,
+     "type": "TabShape",
+     "write": "setTabShape"
+    },
+    "tabsClosable": {
+     "read": "tabsClosable",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabsClosable"
+    },
+    "usesScrollButtons": {
+     "read": "usesScrollButtons",
+     "stored": true,
+     "type": "bool",
+     "write": "setUsesScrollButtons"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QTableCornerButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QTableModel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractTableModel"
+   ]
+  },
+  "QTableView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "cornerButtonEnabled": {
+     "read": "isCornerButtonEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setCornerButtonEnabled"
+    },
+    "gridStyle": {
+     "read": "gridStyle",
+     "stored": true,
+     "type": "Qt::PenStyle",
+     "write": "setGridStyle"
+    },
+    "showGrid": {
+     "read": "showGrid",
+     "stored": true,
+     "type": "bool",
+     "write": "setShowGrid"
+    },
+    "sortingEnabled": {
+     "read": "isSortingEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setSortingEnabled"
+    },
+    "wordWrap": {
+     "read": "wordWrap",
+     "stored": true,
+     "type": "bool",
+     "write": "setWordWrap"
+    }
+   },
+   "super": [
+    "QAbstractItemView"
+   ]
+  },
+  "QTableWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "columnCount": {
+     "read": "columnCount",
+     "stored": true,
+     "type": "int",
+     "write": "setColumnCount"
+    },
+    "rowCount": {
+     "read": "rowCount",
+     "stored": true,
+     "type": "int",
+     "write": "setRowCount"
+    },
+    "supportedDragActions": {
+     "read": "supportedDragActions",
+     "stored": true,
+     "type": "Qt::DropActions",
+     "write": "setSupportedDragActions"
+    }
+   },
+   "super": [
+    "QTableView"
+   ]
+  },
+  "QTableWidgetMimeData": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QMimeData"
+   ]
+  },
+  "QTapAndHoldGesture": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "position": {
+     "read": "position",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setPosition"
+    }
+   },
+   "super": [
+    "QGesture"
+   ]
+  },
+  "QTapGesture": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "position": {
+     "read": "position",
+     "stored": true,
+     "type": "QPointF",
+     "write": "setPosition"
+    }
+   },
+   "super": [
+    "QGesture"
+   ]
+  },
+  "QTemporaryFile": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QFile"
+   ]
+  },
+  "QTextBlockGroup": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QTextObject"
+   ]
+  },
+  "QTextBrowser": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "openExternalLinks": {
+     "read": "openExternalLinks",
+     "stored": true,
+     "type": "bool",
+     "write": "setOpenExternalLinks"
+    },
+    "openLinks": {
+     "read": "openLinks",
+     "stored": true,
+     "type": "bool",
+     "write": "setOpenLinks"
+    },
+    "searchPaths": {
+     "read": "searchPaths",
+     "stored": true,
+     "type": "QStringList",
+     "write": "setSearchPaths"
+    },
+    "source": {
+     "read": "source",
+     "stored": true,
+     "type": "QUrl",
+     "write": "setSource"
+    },
+    "sourceType": {
+     "read": "sourceType",
+     "stored": true,
+     "type": "QTextDocument::ResourceType"
+    }
+   },
+   "super": [
+    "QTextEdit"
+   ]
+  },
+  "QTextDocument": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "baseUrl": {
+     "notify": "baseUrlChanged",
+     "read": "baseUrl",
+     "stored": true,
+     "type": "QUrl",
+     "write": "setBaseUrl"
+    },
+    "blockCount": {
+     "read": "blockCount",
+     "stored": true,
+     "type": "int"
+    },
+    "defaultFont": {
+     "read": "defaultFont",
+     "stored": true,
+     "type": "QFont",
+     "write": "setDefaultFont"
+    },
+    "defaultStyleSheet": {
+     "read": "defaultStyleSheet",
+     "stored": true,
+     "type": "QString",
+     "write": "setDefaultStyleSheet"
+    },
+    "documentMargin": {
+     "read": "documentMargin",
+     "stored": true,
+     "type": "qreal",
+     "write": "setDocumentMargin"
+    },
+    "indentWidth": {
+     "read": "indentWidth",
+     "stored": true,
+     "type": "qreal",
+     "write": "setIndentWidth"
+    },
+    "layoutEnabled": {
+     "read": "isLayoutEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setLayoutEnabled"
+    },
+    "maximumBlockCount": {
+     "read": "maximumBlockCount",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximumBlockCount"
+    },
+    "modified": {
+     "read": "isModified",
+     "stored": true,
+     "type": "bool",
+     "write": "setModified"
+    },
+    "pageSize": {
+     "read": "pageSize",
+     "stored": true,
+     "type": "QSizeF",
+     "write": "setPageSize"
+    },
+    "size": {
+     "read": "size",
+     "stored": true,
+     "type": "QSizeF"
+    },
+    "textWidth": {
+     "read": "textWidth",
+     "stored": true,
+     "type": "qreal",
+     "write": "setTextWidth"
+    },
+    "undoRedoEnabled": {
+     "read": "isUndoRedoEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setUndoRedoEnabled"
+    },
+    "useDesignMetrics": {
+     "read": "useDesignMetrics",
+     "stored": true,
+     "type": "bool",
+     "write": "setUseDesignMetrics"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QTextDocumentLayout": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "contentHasAlignment": {
+     "read": "contentHasAlignment",
+     "stored": true,
+     "type": "bool"
+    },
+    "cursorWidth": {
+     "read": "cursorWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setCursorWidth"
+    },
+    "idealWidth": {
+     "read": "idealWidth",
+     "stored": true,
+     "type": "qreal"
+    }
+   },
+   "super": [
+    "QAbstractTextDocumentLayout"
+   ]
+  },
+  "QTextEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "acceptRichText": {
+     "read": "acceptRichText",
+     "stored": true,
+     "type": "bool",
+     "write": "setAcceptRichText"
+    },
+    "autoFormatting": {
+     "read": "autoFormatting",
+     "stored": true,
+     "type": "AutoFormatting",
+     "write": "setAutoFormatting"
+    },
+    "cursorWidth": {
+     "read": "cursorWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setCursorWidth"
+    },
+    "document": {
+     "read": "document",
+     "stored": true,
+     "type": "QTextDocument*",
+     "write": "setDocument"
+    },
+    "documentTitle": {
+     "read": "documentTitle",
+     "stored": true,
+     "type": "QString",
+     "write": "setDocumentTitle"
+    },
+    "html": {
+     "notify": "textChanged",
+     "read": "toHtml",
+     "stored": true,
+     "type": "QString",
+     "user": true,
+     "write": "setHtml"
+    },
+    "lineWrapColumnOrWidth": {
+     "read": "lineWrapColumnOrWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setLineWrapColumnOrWidth"
+    },
+    "lineWrapMode": {
+     "read": "lineWrapMode",
+     "stored": true,
+     "type": "LineWrapMode",
+     "write": "setLineWrapMode"
+    },
+    "markdown": {
+     "notify": "textChanged",
+     "read": "toMarkdown",
+     "stored": true,
+     "type": "QString",
+     "write": "setMarkdown"
+    },
+    "overwriteMode": {
+     "read": "overwriteMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setOverwriteMode"
+    },
+    "placeholderText": {
+     "read": "placeholderText",
+     "stored": true,
+     "type": "QString",
+     "write": "setPlaceholderText"
+    },
+    "plainText": {
+     "read": "toPlainText",
+     "stored": true,
+     "type": "QString",
+     "write": "setPlainText"
+    },
+    "readOnly": {
+     "read": "isReadOnly",
+     "stored": true,
+     "type": "bool",
+     "write": "setReadOnly"
+    },
+    "tabChangesFocus": {
+     "read": "tabChangesFocus",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabChangesFocus"
+    },
+    "tabStopDistance": {
+     "read": "tabStopDistance",
+     "stored": true,
+     "type": "qreal",
+     "write": "setTabStopDistance"
+    },
+    "textInteractionFlags": {
+     "read": "textInteractionFlags",
+     "stored": true,
+     "type": "Qt::TextInteractionFlags",
+     "write": "setTextInteractionFlags"
+    },
+    "undoRedoEnabled": {
+     "read": "isUndoRedoEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setUndoRedoEnabled"
+    }
+   },
+   "super": [
+    "QAbstractScrollArea"
+   ]
+  },
+  "QTextFormat": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QTextFrame": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QTextObject"
+   ]
+  },
+  "QTextImageHandler": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject",
+    "QTextObjectInterface"
+   ]
+  },
+  "QTextList": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QTextBlockGroup"
+   ]
+  },
+  "QTextObject": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QTextTable": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QTextFrame"
+   ]
+  },
+  "QThread": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QThreadPool": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "activeThreadCount": {
+     "read": "activeThreadCount",
+     "stored": true,
+     "type": "int"
+    },
+    "expiryTimeout": {
+     "read": "expiryTimeout",
+     "stored": true,
+     "type": "int",
+     "write": "setExpiryTimeout"
+    },
+    "maxThreadCount": {
+     "read": "maxThreadCount",
+     "stored": true,
+     "type": "int",
+     "write": "setMaxThreadCount"
+    },
+    "stackSize": {
+     "read": "stackSize",
+     "stored": true,
+     "type": "uint",
+     "write": "setStackSize"
+    },
+    "threadPriority": {
+     "read": "threadPriority",
+     "stored": true,
+     "type": "QThread::Priority",
+     "write": "setThreadPriority"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QThreadPoolThread": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QThread"
+   ]
+  },
+  "QTimeEdit": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "time": {
+     "notify": "userTimeChanged",
+     "read": "time",
+     "stored": true,
+     "type": "QTime",
+     "user": true,
+     "write": "setTime"
+    }
+   },
+   "super": [
+    "QDateTimeEdit"
+   ]
+  },
+  "QTimeLine": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "currentTime": {
+     "bindable": "bindableCurrentTime",
+     "read": "currentTime",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentTime"
+    },
+    "direction": {
+     "bindable": "bindableDirection",
+     "read": "direction",
+     "stored": true,
+     "type": "Direction",
+     "write": "setDirection"
+    },
+    "duration": {
+     "bindable": "bindableDuration",
+     "read": "duration",
+     "stored": true,
+     "type": "int",
+     "write": "setDuration"
+    },
+    "easingCurve": {
+     "bindable": "bindableEasingCurve",
+     "read": "easingCurve",
+     "stored": true,
+     "type": "QEasingCurve",
+     "write": "setEasingCurve"
+    },
+    "loopCount": {
+     "bindable": "bindableLoopCount",
+     "read": "loopCount",
+     "stored": true,
+     "type": "int",
+     "write": "setLoopCount"
+    },
+    "updateInterval": {
+     "bindable": "bindableUpdateInterval",
+     "read": "updateInterval",
+     "stored": true,
+     "type": "int",
+     "write": "setUpdateInterval"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QTimer": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "active": {
+     "bindable": "bindableActive",
+     "read": "isActive",
+     "type": "bool"
+    },
+    "interval": {
+     "bindable": "bindableInterval",
+     "read": "interval",
+     "stored": true,
+     "type": "int",
+     "write": "setInterval"
+    },
+    "remainingTime": {
+     "read": "remainingTime",
+     "stored": true,
+     "type": "int"
+    },
+    "singleShot": {
+     "bindable": "bindableSingleShot",
+     "read": "isSingleShot",
+     "stored": true,
+     "type": "bool",
+     "write": "setSingleShot"
+    },
+    "timerType": {
+     "bindable": "bindableTimerType",
+     "read": "timerType",
+     "stored": true,
+     "type": "Qt::TimerType",
+     "write": "setTimerType"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QTipLabel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QLabel"
+   ]
+  },
+  "QToolBar": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "allowedAreas": {
+     "notify": "allowedAreasChanged",
+     "read": "allowedAreas",
+     "stored": true,
+     "type": "Qt::ToolBarAreas",
+     "write": "setAllowedAreas"
+    },
+    "floatable": {
+     "read": "isFloatable",
+     "stored": true,
+     "type": "bool",
+     "write": "setFloatable"
+    },
+    "floating": {
+     "read": "isFloating",
+     "stored": true,
+     "type": "bool"
+    },
+    "iconSize": {
+     "notify": "iconSizeChanged",
+     "read": "iconSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setIconSize"
+    },
+    "movable": {
+     "notify": "movableChanged",
+     "read": "isMovable",
+     "stored": true,
+     "type": "bool",
+     "write": "setMovable"
+    },
+    "orientation": {
+     "notify": "orientationChanged",
+     "read": "orientation",
+     "stored": true,
+     "type": "Qt::Orientation",
+     "write": "setOrientation"
+    },
+    "toolButtonStyle": {
+     "notify": "toolButtonStyleChanged",
+     "read": "toolButtonStyle",
+     "stored": true,
+     "type": "Qt::ToolButtonStyle",
+     "write": "setToolButtonStyle"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QToolBarExtension": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QToolButton"
+   ]
+  },
+  "QToolBarLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QLayout"
+   ]
+  },
+  "QToolBarSeparator": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QToolBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "count": {
+     "read": "count",
+     "stored": true,
+     "type": "int"
+    },
+    "currentIndex": {
+     "notify": "currentChanged",
+     "read": "currentIndex",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentIndex"
+    }
+   },
+   "super": [
+    "QFrame"
+   ]
+  },
+  "QToolBoxButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QToolButton": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "arrowType": {
+     "read": "arrowType",
+     "stored": true,
+     "type": "Qt::ArrowType",
+     "write": "setArrowType"
+    },
+    "autoRaise": {
+     "read": "autoRaise",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoRaise"
+    },
+    "popupMode": {
+     "read": "popupMode",
+     "stored": true,
+     "type": "ToolButtonPopupMode",
+     "write": "setPopupMode"
+    },
+    "toolButtonStyle": {
+     "read": "toolButtonStyle",
+     "stored": true,
+     "type": "Qt::ToolButtonStyle",
+     "write": "setToolButtonStyle"
+    }
+   },
+   "super": [
+    "QAbstractButton"
+   ]
+  },
+  "QTornOffMenu": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QMenu"
+   ]
+  },
+  "QTranslator": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QTransposeProxyModel": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractProxyModel"
+   ]
+  },
+  "QTreeModel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QTreeView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "allColumnsShowFocus": {
+     "read": "allColumnsShowFocus",
+     "stored": true,
+     "type": "bool",
+     "write": "setAllColumnsShowFocus"
+    },
+    "animated": {
+     "read": "isAnimated",
+     "stored": true,
+     "type": "bool",
+     "write": "setAnimated"
+    },
+    "autoExpandDelay": {
+     "read": "autoExpandDelay",
+     "stored": true,
+     "type": "int",
+     "write": "setAutoExpandDelay"
+    },
+    "expandsOnDoubleClick": {
+     "read": "expandsOnDoubleClick",
+     "stored": true,
+     "type": "bool",
+     "write": "setExpandsOnDoubleClick"
+    },
+    "headerHidden": {
+     "read": "isHeaderHidden",
+     "stored": true,
+     "type": "bool",
+     "write": "setHeaderHidden"
+    },
+    "indentation": {
+     "read": "indentation",
+     "reset": "resetIndentation",
+     "stored": true,
+     "type": "int",
+     "write": "setIndentation"
+    },
+    "itemsExpandable": {
+     "read": "itemsExpandable",
+     "stored": true,
+     "type": "bool",
+     "write": "setItemsExpandable"
+    },
+    "rootIsDecorated": {
+     "read": "rootIsDecorated",
+     "stored": true,
+     "type": "bool",
+     "write": "setRootIsDecorated"
+    },
+    "sortingEnabled": {
+     "read": "isSortingEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setSortingEnabled"
+    },
+    "uniformRowHeights": {
+     "read": "uniformRowHeights",
+     "stored": true,
+     "type": "bool",
+     "write": "setUniformRowHeights"
+    },
+    "wordWrap": {
+     "read": "wordWrap",
+     "stored": true,
+     "type": "bool",
+     "write": "setWordWrap"
+    }
+   },
+   "super": [
+    "QAbstractItemView"
+   ]
+  },
+  "QTreeWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "columnCount": {
+     "read": "columnCount",
+     "stored": true,
+     "type": "int",
+     "write": "setColumnCount"
+    },
+    "supportedDragActions": {
+     "read": "supportedDragActions",
+     "stored": true,
+     "type": "Qt::DropActions",
+     "write": "setSupportedDragActions"
+    },
+    "topLevelItemCount": {
+     "read": "topLevelItemCount",
+     "stored": true,
+     "type": "int"
+    }
+   },
+   "super": [
+    "QTreeView"
+   ]
+  },
+  "QUIntSpinBox": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "value": {
+     "notify": "uintValueChanged",
+     "read": "uintValue",
+     "stored": true,
+     "type": "uint",
+     "user": true,
+     "write": "setUIntValue"
+    }
+   },
+   "super": [
+    "QSpinBox"
+   ]
+  },
+  "QUndoGroup": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QUndoModel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAbstractItemModel"
+   ]
+  },
+  "QUndoStack": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "active": {
+     "read": "isActive",
+     "stored": true,
+     "type": "bool",
+     "write": "setActive"
+    },
+    "canRedo": {
+     "notify": "canRedoChanged",
+     "read": "canRedo",
+     "stored": true,
+     "type": "bool"
+    },
+    "canUndo": {
+     "notify": "canUndoChanged",
+     "read": "canUndo",
+     "stored": true,
+     "type": "bool"
+    },
+    "clean": {
+     "notify": "cleanChanged",
+     "read": "isClean",
+     "stored": true,
+     "type": "bool"
+    },
+    "redoText": {
+     "notify": "redoTextChanged",
+     "read": "redoText",
+     "stored": true,
+     "type": "QString"
+    },
+    "undoLimit": {
+     "read": "undoLimit",
+     "stored": true,
+     "type": "int",
+     "write": "setUndoLimit"
+    },
+    "undoText": {
+     "notify": "undoTextChanged",
+     "read": "undoText",
+     "stored": true,
+     "type": "QString"
+    }
+   },
+   "super": [
+    "QObject"
+   ]
+  },
+  "QUndoView": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "cleanIcon": {
+     "read": "cleanIcon",
+     "stored": true,
+     "type": "QIcon",
+     "write": "setCleanIcon"
+    },
+    "emptyLabel": {
+     "read": "emptyLabel",
+     "stored": true,
+     "type": "QString",
+     "write": "setEmptyLabel"
+    }
+   },
+   "super": [
+    "QListView"
+   ]
+  },
+  "QUnicodeControlCharacterMenu": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QMenu"
+   ]
+  },
+  "QUnifiedTimer": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QUnixEventDispatcherQPA": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QEventDispatcherUNIX"
+   ]
+  },
+  "QUrlModel": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QStandardItemModel"
+   ]
+  },
+  "QVBoxLayout": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QBoxLayout"
+   ]
+  },
+  "QValidator": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QVariantAnimation": {
+   "module": "QtCore",
+   "object": true,
+   "properties": {
+    "currentValue": {
+     "notify": "valueChanged",
+     "read": "currentValue",
+     "stored": true,
+     "type": "QVariant"
+    },
+    "duration": {
+     "bindable": "bindableDuration",
+     "read": "duration",
+     "stored": true,
+     "type": "int",
+     "write": "setDuration"
+    },
+    "easingCurve": {
+     "bindable": "bindableEasingCurve",
+     "read": "easingCurve",
+     "stored": true,
+     "type": "QEasingCurve",
+     "write": "setEasingCurve"
+    },
+    "endValue": {
+     "read": "endValue",
+     "stored": true,
+     "type": "QVariant",
+     "write": "setEndValue"
+    },
+    "startValue": {
+     "read": "startValue",
+     "stored": true,
+     "type": "QVariant",
+     "write": "setStartValue"
+    }
+   },
+   "super": [
+    "QAbstractAnimation"
+   ]
+  },
+  "QVulkanWindow": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWindow"
+   ]
+  },
+  "QWellArray": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "selectedColumn": {
+     "read": "selectedColumn",
+     "stored": true,
+     "type": "int"
+    },
+    "selectedRow": {
+     "read": "selectedRow",
+     "stored": true,
+     "type": "int"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QWhatsThat": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QWhatsThisAction": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAction"
+   ]
+  },
+  "QWheelEvent": {
+   "module": "QtGui",
+   "object": false,
+   "properties": {
+    "angleDelta": {
+     "read": "angleDelta",
+     "stored": true,
+     "type": "QPoint"
+    },
+    "device": {
+     "read": "pointingDevice",
+     "stored": true,
+     "type": "const QPointingDevice*"
+    },
+    "inverted": {
+     "read": "inverted",
+     "stored": true,
+     "type": "bool"
+    },
+    "phase": {
+     "read": "phase",
+     "stored": true,
+     "type": "Qt::ScrollPhase"
+    },
+    "pixelDelta": {
+     "read": "pixelDelta",
+     "stored": true,
+     "type": "QPoint"
+    }
+   },
+   "super": [
+    "QSinglePointEvent"
+   ]
+  },
+  "QWidget": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "acceptDrops": {
+     "read": "acceptDrops",
+     "stored": true,
+     "type": "bool",
+     "write": "setAcceptDrops"
+    },
+    "accessibleDescription": {
+     "read": "accessibleDescription",
+     "stored": true,
+     "type": "QString",
+     "write": "setAccessibleDescription"
+    },
+    "accessibleIdentifier": {
+     "read": "accessibleIdentifier",
+     "stored": true,
+     "type": "QString",
+     "write": "setAccessibleIdentifier"
+    },
+    "accessibleName": {
+     "read": "accessibleName",
+     "stored": true,
+     "type": "QString",
+     "write": "setAccessibleName"
+    },
+    "autoFillBackground": {
+     "read": "autoFillBackground",
+     "stored": true,
+     "type": "bool",
+     "write": "setAutoFillBackground"
+    },
+    "baseSize": {
+     "read": "baseSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setBaseSize"
+    },
+    "childrenRect": {
+     "read": "childrenRect",
+     "stored": true,
+     "type": "QRect"
+    },
+    "childrenRegion": {
+     "read": "childrenRegion",
+     "stored": true,
+     "type": "QRegion"
+    },
+    "contextMenuPolicy": {
+     "read": "contextMenuPolicy",
+     "stored": true,
+     "type": "Qt::ContextMenuPolicy",
+     "write": "setContextMenuPolicy"
+    },
+    "cursor": {
+     "read": "cursor",
+     "reset": "unsetCursor",
+     "stored": true,
+     "type": "QCursor",
+     "write": "setCursor"
+    },
+    "enabled": {
+     "read": "isEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setEnabled"
+    },
+    "focus": {
+     "read": "hasFocus",
+     "stored": true,
+     "type": "bool"
+    },
+    "focusPolicy": {
+     "read": "focusPolicy",
+     "stored": true,
+     "type": "Qt::FocusPolicy",
+     "write": "setFocusPolicy"
+    },
+    "font": {
+     "read": "font",
+     "stored": true,
+     "type": "QFont",
+     "write": "setFont"
+    },
+    "frameGeometry": {
+     "read": "frameGeometry",
+     "stored": true,
+     "type": "QRect"
+    },
+    "frameSize": {
+     "read": "frameSize",
+     "stored": true,
+     "type": "QSize"
+    },
+    "fullScreen": {
+     "read": "isFullScreen",
+     "stored": true,
+     "type": "bool"
+    },
+    "geometry": {
+     "read": "geometry",
+     "stored": true,
+     "type": "QRect",
+     "write": "setGeometry"
+    },
+    "height": {
+     "read": "height",
+     "stored": true,
+     "type": "int"
+    },
+    "inputMethodHints": {
+     "read": "inputMethodHints",
+     "stored": true,
+     "type": "Qt::InputMethodHints",
+     "write": "setInputMethodHints"
+    },
+    "isActiveWindow": {
+     "read": "isActiveWindow",
+     "stored": true,
+     "type": "bool"
+    },
+    "layoutDirection": {
+     "read": "layoutDirection",
+     "reset": "unsetLayoutDirection",
+     "stored": true,
+     "type": "Qt::LayoutDirection",
+     "write": "setLayoutDirection"
+    },
+    "locale": {
+     "read": "locale",
+     "reset": "unsetLocale",
+     "stored": true,
+     "type": "QLocale",
+     "write": "setLocale"
+    },
+    "maximized": {
+     "read": "isMaximized",
+     "stored": true,
+     "type": "bool"
+    },
+    "maximumHeight": {
+     "read": "maximumHeight",
+     "type": "int",
+     "write": "setMaximumHeight"
+    },
+    "maximumSize": {
+     "read": "maximumSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setMaximumSize"
+    },
+    "maximumWidth": {
+     "read": "maximumWidth",
+     "type": "int",
+     "write": "setMaximumWidth"
+    },
+    "minimized": {
+     "read": "isMinimized",
+     "stored": true,
+     "type": "bool"
+    },
+    "minimumHeight": {
+     "read": "minimumHeight",
+     "type": "int",
+     "write": "setMinimumHeight"
+    },
+    "minimumSize": {
+     "read": "minimumSize",
+     "stored": true,
+     "type": "QSize",
+     "write": "setMinimumSize"
+    },
+    "minimumSizeHint": {
+     "read": "minimumSizeHint",
+     "stored": true,
+     "type": "QSize"
+    },
+    "minimumWidth": {
+     "read": "minimumWidth",
+     "type": "int",
+     "write": "setMinimumWidth"
+    },
+    "modal": {
+     "read": "isModal",
+     "stored": true,
+     "type": "bool"
+    },
+    "mouseTracking": {
+     "read": "hasMouseTracking",
+     "stored": true,
+     "type": "bool",
+     "write": "setMouseTracking"
+    },
+    "normalGeometry": {
+     "read": "normalGeometry",
+     "stored": true,
+     "type": "QRect"
+    },
+    "palette": {
+     "read": "palette",
+     "stored": true,
+     "type": "QPalette",
+     "write": "setPalette"
+    },
+    "pos": {
+     "read": "pos",
+     "type": "QPoint",
+     "write": "move"
+    },
+    "rect": {
+     "read": "rect",
+     "stored": true,
+     "type": "QRect"
+    },
+    "size": {
+     "read": "size",
+     "type": "QSize",
+     "write": "resize"
+    },
+    "sizeHint": {
+     "read": "sizeHint",
+     "stored": true,
+     "type": "QSize"
+    },
+    "sizeIncrement": {
+     "read": "sizeIncrement",
+     "stored": true,
+     "type": "QSize",
+     "write": "setSizeIncrement"
+    },
+    "sizePolicy": {
+     "read": "sizePolicy",
+     "stored": true,
+     "type": "QSizePolicy",
+     "write": "setSizePolicy"
+    },
+    "statusTip": {
+     "read": "statusTip",
+     "stored": true,
+     "type": "QString",
+     "write": "setStatusTip"
+    },
+    "styleSheet": {
+     "read": "styleSheet",
+     "stored": true,
+     "type": "QString",
+     "write": "setStyleSheet"
+    },
+    "tabletTracking": {
+     "read": "hasTabletTracking",
+     "stored": true,
+     "type": "bool",
+     "write": "setTabletTracking"
+    },
+    "toolTip": {
+     "read": "toolTip",
+     "stored": true,
+     "type": "QString",
+     "write": "setToolTip"
+    },
+    "toolTipDuration": {
+     "read": "toolTipDuration",
+     "stored": true,
+     "type": "int",
+     "write": "setToolTipDuration"
+    },
+    "updatesEnabled": {
+     "read": "updatesEnabled",
+     "stored": true,
+     "type": "bool",
+     "write": "setUpdatesEnabled"
+    },
+    "visible": {
+     "read": "isVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setVisible"
+    },
+    "whatsThis": {
+     "read": "whatsThis",
+     "stored": true,
+     "type": "QString",
+     "write": "setWhatsThis"
+    },
+    "width": {
+     "read": "width",
+     "stored": true,
+     "type": "int"
+    },
+    "windowFilePath": {
+     "read": "windowFilePath",
+     "stored": true,
+     "type": "QString",
+     "write": "setWindowFilePath"
+    },
+    "windowIcon": {
+     "notify": "windowIconChanged",
+     "read": "windowIcon",
+     "stored": true,
+     "type": "QIcon",
+     "write": "setWindowIcon"
+    },
+    "windowIconText": {
+     "notify": "windowIconTextChanged",
+     "read": "windowIconText",
+     "stored": true,
+     "type": "QString",
+     "write": "setWindowIconText"
+    },
+    "windowModality": {
+     "read": "windowModality",
+     "stored": true,
+     "type": "Qt::WindowModality",
+     "write": "setWindowModality"
+    },
+    "windowModified": {
+     "read": "isWindowModified",
+     "stored": true,
+     "type": "bool",
+     "write": "setWindowModified"
+    },
+    "windowOpacity": {
+     "read": "windowOpacity",
+     "stored": true,
+     "type": "double",
+     "write": "setWindowOpacity"
+    },
+    "windowTitle": {
+     "notify": "windowTitleChanged",
+     "read": "windowTitle",
+     "stored": true,
+     "type": "QString",
+     "write": "setWindowTitle"
+    },
+    "x": {
+     "read": "x",
+     "stored": true,
+     "type": "int"
+    },
+    "y": {
+     "read": "y",
+     "stored": true,
+     "type": "int"
+    }
+   },
+   "super": [
+    "QObject",
+    "QPaintDevice"
+   ]
+  },
+  "QWidgetAction": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QAction"
+   ]
+  },
+  "QWidgetAnimator": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QWidgetLineControl": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QInputControl"
+   ]
+  },
+  "QWidgetPrivate": {
+   "module": "QtWidgets",
+   "object": false,
+   "properties": {},
+   "super": [
+    "QObjectPrivate"
+   ]
+  },
+  "QWidgetRepaintManager": {
+   "module": "QtWidgets",
+   "object": false,
+   "properties": {},
+   "super": []
+  },
+  "QWidgetResizeHandler": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QObject"
+   ]
+  },
+  "QWidgetTextControl": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "acceptRichText": {
+     "read": "acceptRichText",
+     "stored": true,
+     "type": "bool",
+     "write": "setAcceptRichText"
+    },
+    "cursorWidth": {
+     "read": "cursorWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setCursorWidth"
+    },
+    "html": {
+     "notify": "textChanged",
+     "read": "toHtml",
+     "stored": true,
+     "type": "QString",
+     "user": true,
+     "write": "setHtml"
+    },
+    "ignoreUnusedNavigationEvents": {
+     "read": "ignoreUnusedNavigationEvents",
+     "stored": true,
+     "type": "bool",
+     "write": "setIgnoreUnusedNavigationEvents"
+    },
+    "openExternalLinks": {
+     "read": "openExternalLinks",
+     "stored": true,
+     "type": "bool",
+     "write": "setOpenExternalLinks"
+    },
+    "overwriteMode": {
+     "read": "overwriteMode",
+     "stored": true,
+     "type": "bool",
+     "write": "setOverwriteMode"
+    },
+    "textInteractionFlags": {
+     "read": "textInteractionFlags",
+     "stored": true,
+     "type": "Qt::TextInteractionFlags",
+     "write": "setTextInteractionFlags"
+    }
+   },
+   "super": [
+    "QInputControl"
+   ]
+  },
+  "QWidgetWindow": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWindow"
+   ]
+  },
+  "QWindow": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {
+    "active": {
+     "notify": "activeChanged",
+     "read": "isActive",
+     "stored": true,
+     "type": "bool"
+    },
+    "contentOrientation": {
+     "notify": "contentOrientationChanged",
+     "read": "contentOrientation",
+     "stored": true,
+     "type": "Qt::ScreenOrientation",
+     "write": "reportContentOrientationChange"
+    },
+    "flags": {
+     "notify": "flagsChanged",
+     "read": "flags",
+     "stored": true,
+     "type": "Qt::WindowFlags",
+     "write": "setFlags"
+    },
+    "height": {
+     "notify": "heightChanged",
+     "read": "height",
+     "stored": true,
+     "type": "int",
+     "write": "setHeight"
+    },
+    "maximumHeight": {
+     "notify": "maximumHeightChanged",
+     "read": "maximumHeight",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximumHeight"
+    },
+    "maximumWidth": {
+     "notify": "maximumWidthChanged",
+     "read": "maximumWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setMaximumWidth"
+    },
+    "minimumHeight": {
+     "notify": "minimumHeightChanged",
+     "read": "minimumHeight",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimumHeight"
+    },
+    "minimumWidth": {
+     "notify": "minimumWidthChanged",
+     "read": "minimumWidth",
+     "stored": true,
+     "type": "int",
+     "write": "setMinimumWidth"
+    },
+    "modality": {
+     "notify": "modalityChanged",
+     "read": "modality",
+     "stored": true,
+     "type": "Qt::WindowModality",
+     "write": "setModality"
+    },
+    "opacity": {
+     "notify": "opacityChanged",
+     "read": "opacity",
+     "stored": true,
+     "type": "qreal",
+     "write": "setOpacity"
+    },
+    "title": {
+     "notify": "windowTitleChanged",
+     "read": "title",
+     "stored": true,
+     "type": "QString",
+     "write": "setTitle"
+    },
+    "transientParent": {
+     "member": "transientParent",
+     "notify": "transientParentChanged",
+     "stored": true,
+     "type": "QWindow*",
+     "write": "setTransientParent"
+    },
+    "visibility": {
+     "notify": "visibilityChanged",
+     "read": "visibility",
+     "stored": true,
+     "type": "Visibility",
+     "write": "setVisibility"
+    },
+    "visible": {
+     "notify": "visibleChanged",
+     "read": "isVisible",
+     "stored": true,
+     "type": "bool",
+     "write": "setVisible"
+    },
+    "width": {
+     "notify": "widthChanged",
+     "read": "width",
+     "stored": true,
+     "type": "int",
+     "write": "setWidth"
+    },
+    "x": {
+     "notify": "xChanged",
+     "read": "x",
+     "stored": true,
+     "type": "int",
+     "write": "setX"
+    },
+    "y": {
+     "notify": "yChanged",
+     "read": "y",
+     "stored": true,
+     "type": "int",
+     "write": "setY"
+    }
+   },
+   "super": [
+    "QObject",
+    "QSurface"
+   ]
+  },
+  "QWindowContainer": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QWindowsStyle": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QCommonStyle"
+   ]
+  },
+  "QWizard": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "currentId": {
+     "notify": "currentIdChanged",
+     "read": "currentId",
+     "stored": true,
+     "type": "int",
+     "write": "setCurrentId"
+    },
+    "options": {
+     "read": "options",
+     "stored": true,
+     "type": "WizardOptions",
+     "write": "setOptions"
+    },
+    "startId": {
+     "read": "startId",
+     "stored": true,
+     "type": "int",
+     "write": "setStartId"
+    },
+    "subTitleFormat": {
+     "read": "subTitleFormat",
+     "stored": true,
+     "type": "Qt::TextFormat",
+     "write": "setSubTitleFormat"
+    },
+    "titleFormat": {
+     "read": "titleFormat",
+     "stored": true,
+     "type": "Qt::TextFormat",
+     "write": "setTitleFormat"
+    },
+    "wizardStyle": {
+     "read": "wizardStyle",
+     "stored": true,
+     "type": "WizardStyle",
+     "write": "setWizardStyle"
+    }
+   },
+   "super": [
+    "QDialog"
+   ]
+  },
+  "QWizardPage": {
+   "module": "QtWidgets",
+   "object": true,
+   "properties": {
+    "subTitle": {
+     "read": "subTitle",
+     "stored": true,
+     "type": "QString",
+     "write": "setSubTitle"
+    },
+    "title": {
+     "read": "title",
+     "stored": true,
+     "type": "QString",
+     "write": "setTitle"
+    }
+   },
+   "super": [
+    "QWidget"
+   ]
+  },
+  "QXdgNotificationInterface": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QDBusAbstractInterface"
+   ]
+  },
+  "XdgDesktopPortalColorPicker": {
+   "module": "QtGui",
+   "object": true,
+   "properties": {},
+   "super": [
+    "QPlatformServiceColorPicker"
+   ]
+  }
+ },
+ "schema": "svelters-qt-moc-properties/v1",
+ "sources": {
+  "metatypes": {
+   "qt6core_metatypes.json": "64fb6759108637d801f1aa12cd7657b08d923b39abc1ee7892ba2c893992a1ad",
+   "qt6gui_metatypes.json": "d93b807f5cba20fff709fc3ec79cbac245c43ec678375dc159590da9e2c3be25",
+   "qt6widgets_metatypes.json": "aefe0a9dbe7b008d6a04a29a08eb0a77791e21b875812550a90ebad3e79c833c"
+  }
+ },
+ "toolkit": "qt"
+}

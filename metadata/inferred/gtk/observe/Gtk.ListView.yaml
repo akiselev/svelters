@@ -1,0 +1,106 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ListView
+observe:
+- prop: enable-rubberband
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::enable-rubberband
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::enable-rubberband (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:enable-rubberband)'
+  verify:
+    'on': Gtk:ListView
+    check: change
+  confidence: 0.95
+- prop: factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::factory (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:factory)'
+  verify:
+    'on': Gtk:ListView
+    check: connect
+  confidence: 0.95
+- prop: header-factory
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::header-factory
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::header-factory (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:header-factory)'
+  verify:
+    'on': Gtk:ListView
+    check: connect
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:model)'
+  verify:
+    'on': Gtk:ListView
+    check: connect
+  confidence: 0.95
+- prop: show-separators
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-separators
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-separators (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:show-separators)'
+  verify:
+    'on': Gtk:ListView
+    check: change
+  confidence: 0.95
+- prop: single-click-activate
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::single-click-activate
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::single-click-activate (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:single-click-activate)'
+  verify:
+    'on': Gtk:ListView
+    check: change
+  confidence: 0.95
+- prop: tab-behavior
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::tab-behavior
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::tab-behavior (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:tab-behavior)'
+  verify:
+    'on': Gtk:ListView
+    check: change
+  confidence: 0.95

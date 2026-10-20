@@ -1224,8 +1224,80 @@ def gen_verify(m: Model) -> tuple[str, list[dict], list[str], list[dict]]:
         assert_eq!(h.handle_info(o).unwrap().lifetime, svelters_abi::{LIFE[life['class']]});
 """)]
             attempt(life["id"], "lifetime", d, "lifetime", life, mkl)
+    gen_observe(m, f)
     src = HEADER + "\n#![allow(unused_mut, unused_variables, unused_imports, clippy::all)]\nuse crate::testing::{on_gtk, Harness, SyncReply, V};\nuse gtk::prelude::*;\nuse svelters_abi::Value;\n" + "".join(f.tests)
     return src, f.facts, f.errors, f.untestable
+
+
+# ---- observe facts (milestone R0) ------------------------------------------------------------
+# One table test per owner type over metadata/observe/gtk.json (tools/metadata/common/observe.py); each row is
+# one fact, run by crate::testing::observe::table, which reports rows through SVELTERS_TEST_RESULTS. The
+# fact's test id is `generated::verify::observe_<ns>_<type>#<prop>`; its fingerprint covers the record and the
+# row's source. Facts without `verify.on` (no instance a test can make) and set_only facts (nothing to run,
+# REACTIVITY.md 4.5 item 7) get no row: they stay unverified.
+
+def observe_row(m: Model, owner: str, rec: dict) -> tuple[str, tuple[int, int] | None] | None:
+    v = rec.get("verify") or {}
+    if not v.get("on") or rec["class"] == "set_only":
+        return None
+    ns, typ = v["on"].split(":", 1)
+    doc = m.docs.get(typ) if ns == "Gtk" else None
+    if doc is not None and "element" in doc and not doc.get("abstract"):
+        on = f"On::Create({rs(doc['element']['tag'])})"
+    else:
+        on = f"On::Construct({rs(f'{ns}.{typ}')})"
+    def trig(x: dict) -> str:
+        if x.get("rust"):
+            return f"Trig::Rust(|o: &gtk::glib::Object| {{ {x['rust']} }})"
+        return f"Trig::Set({rs(x['trigger'])})"
+    c = v["check"]
+    if c == "change":
+        check = "Check::Change"
+    elif c == "cross":
+        check = f"Check::Cross({trig(v)})"
+    elif c == "silent":
+        check = f"Check::Silent({trig(v)})"
+    elif c == "via":
+        mech = next(x for x in rec["via"] if x["mechanism"] == "via")
+        check = f"Check::Via({rs(mech['object'])}, {rs(mech['prop'])})"
+    elif c == "connect":
+        check = "Check::Connect"
+    else:
+        check = "Check::Refused"
+    fires = {"on_change": "Fires::OnChange", "on_set": "Fires::OnSet"}.get(rec.get("fires"), "Fires::Any")
+    owner_doc = m.docs.get(owner.split(":", 1)[1]) if owner.startswith("Gtk:") else None
+    prop_doc = next((p for p in (owner_doc or {}).get("properties", []) if p["name"] == rec["prop"]), None)
+    since = needs(owner_doc, prop_doc, doc) if ns == "Gtk" else None
+    setup = f"Some(|o: &gtk::glib::Object| {{ {v['setup']} }})" if v.get("setup") else "None"
+    return (f"        Row {{ prop: {rs(rec['prop'])}, on: {on}, check: {check}, fires: {fires}, since: {since_lit(since)}, "
+            f"setup: {setup} }},\n"), since
+
+
+def gen_observe(m: Model, f: Facts) -> None:
+    sys.path.insert(0, str(ROOT / "tools/metadata/common"))
+    import observe as obs
+    for owner, props in sorted(obs.load("gtk").items()):
+        name = fn_ident("observe", *owner.split(":", 1))
+        rows = []
+        for prop, rec in props.items():
+            r = observe_row(m, owner, rec)
+            if r is None:
+                continue
+            rows.append((prop, rec, r[0]))
+        if not rows:
+            continue
+        body = "".join(src for _, _, src in rows)
+        f.tests.append(f"\n/// observe facts of {owner} (metadata/observe/gtk.json): one row per fact\n#[test]\nfn {name}() {{\n"
+                       f"    use crate::testing::observe::*;\n    table({rs('generated::verify::' + name)}, vec![\n{body}    ]);\n}}\n")
+        for prop, rec, src in rows:
+            fact = {"fact": rec["fact"], "section": "observe", "kind": owner, "name": prop, "origin": rec["layer"],
+                    "tests": [f"generated::verify::{name}#{prop}"],
+                    "fingerprint": svmeta.fingerprint({"record": {k: v for k, v in rec.items() if k not in ("layer", "record_fp")},
+                                                       "tests": [src]}),
+                    "strength": {"connect": "connect", "refused": "refused", "silent": "silent"}.get(rec["verify"]["check"], "change")}
+            if rec["layer"] == "inferred":
+                fact["record_fp"] = rec["record_fp"]
+            f.facts.append(fact)
 
 
 # ---- .d.ts -----------------------------------------------------------------------------------

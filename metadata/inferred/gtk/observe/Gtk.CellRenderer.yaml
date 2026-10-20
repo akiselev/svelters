@@ -1,0 +1,198 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRenderer
+observe:
+- prop: cell-background-rgba
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cell-background-rgba
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cell-background-rgba'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: connect
+  confidence: 0.9
+- prop: cell-background-set
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cell-background-set
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cell-background-set (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:cell-background-set)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: height
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::height
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::height (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:height)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: is-expanded
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::is-expanded
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::is-expanded (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:is-expanded)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: is-expander
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::is-expander
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::is-expander (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:is-expander)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: mode
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::mode
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::mode (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:mode)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: sensitive
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::sensitive
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::sensitive (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:sensitive)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::visible
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::visible (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.9
+- prop: width
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::width
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::width (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:width)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: xalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::xalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::xalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:xalign)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: xpad
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::xpad
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::xpad (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:xpad)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: yalign
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::yalign
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::yalign (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:yalign)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95
+- prop: ypad
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::ypad
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::ypad (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRenderer:ypad)'
+  verify:
+    'on': Gtk:CellRendererAccel
+    check: change
+  confidence: 0.95

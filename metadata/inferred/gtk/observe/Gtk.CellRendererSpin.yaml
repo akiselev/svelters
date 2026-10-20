@@ -1,0 +1,49 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:CellRendererSpin
+observe:
+- prop: adjustment
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::adjustment
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::adjustment'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:CellRendererSpin
+    check: connect
+  confidence: 0.9
+- prop: climb-rate
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::climb-rate
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::climb-rate'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererSpin:climb-rate)'
+  verify:
+    'on': Gtk:CellRendererSpin
+    check: change
+  confidence: 0.95
+- prop: digits
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::digits
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::digits (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererSpin:digits)'
+  verify:
+    'on': Gtk:CellRendererSpin
+    check: change
+  confidence: 0.95

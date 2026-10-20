@@ -1,0 +1,66 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:IconPaintable
+observe:
+- prop: file
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:IconPaintable
+    check: refused
+  confidence: 0.95
+- prop: icon-name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  verify:
+    'on': Gtk:IconPaintable
+    check: refused
+  confidence: 0.95
+- prop: is-symbolic
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::is-symbolic
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::is-symbolic (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:IconPaintable
+    check: change
+  confidence: 0.9
+- prop: scale
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::scale
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::scale (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconPaintable:scale)'
+  verify:
+    'on': Gtk:IconPaintable
+    check: change
+  confidence: 0.95
+- prop: size
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::size
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::size (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.IconPaintable:size)'
+  verify:
+    'on': Gtk:IconPaintable
+    check: change
+  confidence: 0.95

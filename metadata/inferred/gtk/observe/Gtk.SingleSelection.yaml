@@ -1,0 +1,76 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:SingleSelection
+observe:
+- prop: autoselect
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::autoselect
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::autoselect (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SingleSelection:autoselect)'
+  verify:
+    'on': Gtk:SingleSelection
+    check: change
+  confidence: 0.95
+- prop: can-unselect
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::can-unselect
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::can-unselect (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SingleSelection:can-unselect)'
+  verify:
+    'on': Gtk:SingleSelection
+    check: change
+  confidence: 0.95
+- prop: model
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::model
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::model (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:SingleSelection
+    check: connect
+  confidence: 0.9
+- prop: selected
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selected
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selected (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:SingleSelection set_selected)'
+  verify:
+    'on': Gtk:SingleSelection
+    check: connect
+  confidence: 0.95
+- prop: selected-item
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selected-item
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selected-item'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:SingleSelection set_selected)'
+  verify:
+    'on': Gtk:SingleSelection
+    check: connect
+  confidence: 0.95

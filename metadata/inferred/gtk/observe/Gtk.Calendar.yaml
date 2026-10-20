@@ -1,0 +1,108 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:Calendar
+observe:
+- prop: date
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::date
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::date (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:Calendar
+    check: connect
+  confidence: 0.9
+- prop: day
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::day
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::day (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Calendar:day)'
+  verify:
+    'on': Gtk:Calendar
+    check: change
+  confidence: 0.95
+- prop: month
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::month
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::month (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Calendar:month)'
+  verify:
+    'on': Gtk:Calendar
+    check: change
+  confidence: 0.95
+- prop: show-day-names
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-day-names
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-day-names (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Calendar:show-day-names)'
+  verify:
+    'on': Gtk:Calendar
+    check: change
+  confidence: 0.95
+- prop: show-heading
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-heading
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-heading (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Calendar:show-heading)'
+  verify:
+    'on': Gtk:Calendar
+    check: change
+  confidence: 0.95
+- prop: show-week-numbers
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::show-week-numbers
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::show-week-numbers (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Calendar:show-week-numbers)'
+  verify:
+    'on': Gtk:Calendar
+    check: change
+  confidence: 0.95
+- prop: year
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::year
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::year (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Calendar:year)'
+  verify:
+    'on': Gtk:Calendar
+    check: change
+  confidence: 0.95

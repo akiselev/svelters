@@ -1,0 +1,109 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:PrintUnixDialog
+observe:
+- prop: current-page
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::current-page
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::current-page'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:current-page)'
+  verify:
+    'on': Gtk:PrintUnixDialog
+    check: change
+  confidence: 0.95
+- prop: embed-page-setup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::embed-page-setup
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::embed-page-setup'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:embed-page-setup)'
+  verify:
+    'on': Gtk:PrintUnixDialog
+    check: change
+  confidence: 0.95
+- prop: has-selection
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-selection
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-selection'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:has-selection)'
+  verify:
+    'on': Gtk:PrintUnixDialog
+    check: change
+  confidence: 0.95
+- prop: manual-capabilities
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::manual-capabilities
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::manual-capabilities'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PrintUnixDialog
+    check: connect
+  confidence: 0.9
+- prop: page-setup
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::page-setup
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::page-setup'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PrintUnixDialog
+    check: connect
+  confidence: 0.9
+- prop: print-settings
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::print-settings
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::print-settings'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PrintUnixDialog
+    check: connect
+  confidence: 0.9
+- prop: support-selection
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::support-selection
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::support-selection'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:support-selection)'
+  verify:
+    'on': Gtk:PrintUnixDialog
+    check: change
+  confidence: 0.95

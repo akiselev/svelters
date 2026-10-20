@@ -1,0 +1,63 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:DirectoryList
+observe:
+- prop: attributes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::attributes
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::attributes (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DirectoryList:attributes)'
+  verify:
+    'on': Gtk:DirectoryList
+    check: change
+  confidence: 0.95
+- prop: file
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::file
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::file (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:DirectoryList
+    check: connect
+  confidence: 0.9
+- prop: io-priority
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::io-priority
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::io-priority (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DirectoryList:io-priority)'
+  verify:
+    'on': Gtk:DirectoryList
+    check: change
+  confidence: 0.95
+- prop: monitored
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::monitored
+  fires: on_change
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::monitored (EXPLICIT_NOTIFY)'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DirectoryList:monitored)'
+  verify:
+    'on': Gtk:DirectoryList
+    check: change
+  confidence: 0.95

@@ -1,0 +1,33 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gtk:ATContext
+observe:
+- prop: accessible
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: 'O2: CONSTRUCT_ONLY: set once at construction'
+  confidence: 0.95
+- prop: accessible-role
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::accessible-role
+  fires: on_set
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::accessible-role'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
+  confidence: 0.9
+- prop: display
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::display
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::display (EXPLICIT_NOTIFY)'
+  - origin: rule
+    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  confidence: 0.9
