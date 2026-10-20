@@ -154,13 +154,12 @@ observe:
     signal: notify::invisible-char
   fires: on_change
   derived_from:
-  - invisible-char-set
   - visibility
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::invisible-char (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:invisible-char, set:Gtk.Entry:invisible-char-set, set:Gtk.Entry:visibility)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:invisible-char, set:Gtk.Entry:visibility)'
   verify:
     'on': Gtk:Entry
     check: change
@@ -422,13 +421,11 @@ observe:
   - mechanism: notify
     signal: notify::secondary-icon-activatable
   fires: on_change
-  derived_from:
-  - show-emoji-icon
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::secondary-icon-activatable (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-activatable, set:Gtk.Entry:show-emoji-icon)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-activatable)'
   verify:
     'on': Gtk:Entry
     check: change
@@ -484,13 +481,11 @@ observe:
   - mechanism: notify
     signal: notify::secondary-icon-sensitive
   fires: on_change
-  derived_from:
-  - show-emoji-icon
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::secondary-icon-sensitive (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-sensitive, set:Gtk.Entry:show-emoji-icon)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-sensitive)'
   verify:
     'on': Gtk:Entry
     check: change
@@ -502,11 +497,12 @@ observe:
     signal: notify::secondary-icon-storage-type
   derived_from:
   - secondary-icon-name
+  - show-emoji-icon
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::secondary-icon-storage-type'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-name)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-name, set:Gtk.Entry:show-emoji-icon)'
   verify:
     'on': Gtk:Entry
     check: cross

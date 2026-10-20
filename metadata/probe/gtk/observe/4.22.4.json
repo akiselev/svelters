@@ -1289,14 +1289,6 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
-   "seen": [
-    {
-     "cause": "set:Gtk.AboutDialog:license-type",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.AboutDialog"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 1,
@@ -1438,14 +1430,6 @@
     "READABLE",
     "WRITABLE",
     "EXPLICIT_NOTIFY"
-   ],
-   "seen": [
-    {
-     "cause": "set:Gtk.AboutDialog:license-type",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.AboutDialog"
-    }
    ],
    "sweep": {
     "notify_change": 1,
@@ -2379,7 +2363,7 @@
    "seen": [
     {
      "cause": "set:Gtk.Button:icon-name",
-     "changed": true,
+     "changed": false,
      "notify": 1,
      "on": "Gtk.Button"
     }
@@ -3348,7 +3332,7 @@
     },
     {
      "cause": "set:Gtk.CellRendererAccel:keycode",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.CellRendererAccel"
     }
@@ -5053,14 +5037,6 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
-   "seen": [
-    {
-     "cause": "set:Gtk.Entry:menu-entry-icon-secondary-text",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    }
-   ],
    "value_type": "GMenuModel"
   },
   "Gtk.Entry:has-frame": {
@@ -5120,12 +5096,6 @@
     "EXPLICIT_NOTIFY"
    ],
    "seen": [
-    {
-     "cause": "set:Gtk.Entry:invisible-char-set",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    },
     {
      "cause": "set:Gtk.Entry:visibility",
      "changed": true,
@@ -5397,14 +5367,6 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
-   "seen": [
-    {
-     "cause": "set:Gtk.Entry:show-emoji-icon",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -5457,14 +5419,6 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
-   "seen": [
-    {
-     "cause": "set:Gtk.Entry:show-emoji-icon",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -5486,7 +5440,7 @@
     },
     {
      "cause": "set:Gtk.Entry:show-emoji-icon",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.Entry"
     }
@@ -6004,7 +5958,7 @@
     "notify_change": 1,
     "notify_same": 1,
     "on": "Gtk.FileChooserDialog",
-    "readback": "ignored"
+    "readback": "exact"
    },
    "value_type": "gboolean"
   },
@@ -7795,7 +7749,7 @@
     },
     {
      "cause": "set:Gtk.Image:resource",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.Image"
     }
@@ -8356,6 +8310,14 @@
     "READABLE",
     "WRITABLE",
     "EXPLICIT_NOTIFY"
+   ],
+   "seen": [
+    {
+     "cause": "set:Gtk.LevelBar:min-value",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.LevelBar"
+    }
    ],
    "sweep": {
     "notify_change": 1,
@@ -9034,14 +8996,6 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
-   "seen": [
-    {
-     "cause": "set:Gtk.MenuButton:label",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.MenuButton"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 1,
@@ -9155,9 +9109,9 @@
    ],
    "sweep": {
     "notify_change": 1,
-    "notify_same": 0,
+    "notify_same": 1,
     "on": "Gtk.MessageDialog",
-    "readback": "exact"
+    "readback": "ignored"
    },
    "value_type": "gboolean"
   },
@@ -12177,6 +12131,14 @@
     "READABLE",
     "WRITABLE"
    ],
+   "seen": [
+    {
+     "cause": "set:Gtk.ShortcutsShortcut:shortcut-type",
+     "changed": true,
+     "notify": 0,
+     "on": "Gtk.ShortcutsShortcut"
+    }
+   ],
    "value_type": "GIcon"
   },
   "Gtk.ShortcutsShortcut:icon-set": {
@@ -12214,12 +12176,6 @@
    "seen": [
     {
      "cause": "set:Gtk.ShortcutsShortcut:shortcut-type",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.ShortcutsShortcut"
-    },
-    {
-     "cause": "set:Gtk.ShortcutsShortcut:subtitle-set",
      "changed": true,
      "notify": 1,
      "on": "Gtk.ShortcutsShortcut"
@@ -13154,12 +13110,6 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.Text:invisible-char-set",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Text"
-    },
-    {
      "cause": "set:Gtk.Text:visibility",
      "changed": true,
      "notify": 1,
@@ -13654,7 +13604,7 @@
     {
      "cause": "set:Gtk.TextTag:family-set",
      "changed": true,
-     "notify": 0,
+     "notify": 1,
      "on": "Gtk.TextTag"
     },
     {
@@ -13680,49 +13630,13 @@
    "seen": [
     {
      "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
+     "changed": true,
+     "notify": 0,
      "on": "Gtk.TextTag"
     },
     {
      "cause": "set:Gtk.TextTag:font",
      "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
-     "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
     }
@@ -13754,30 +13668,6 @@
      "on": "Gtk.TextTag"
     },
     {
-     "cause": "set:Gtk.TextTag:stretch-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:family",
      "changed": true,
      "notify": 1,
@@ -13809,6 +13699,12 @@
     },
     {
      "cause": "set:Gtk.TextTag:variant",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TextTag"
+    },
+    {
+     "cause": "set:Gtk.TextTag:weight",
      "changed": true,
      "notify": 1,
      "on": "Gtk.TextTag"
@@ -14576,13 +14472,13 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:size-set",
+     "cause": "set:Gtk.TextTag:size-points",
      "changed": true,
-     "notify": 0,
+     "notify": 1,
      "on": "Gtk.TextTag"
     },
     {
-     "cause": "set:Gtk.TextTag:size-points",
+     "cause": "set:Gtk.TextTag:size-set",
      "changed": true,
      "notify": 1,
      "on": "Gtk.TextTag"
@@ -14637,8 +14533,8 @@
     },
     {
      "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
+     "changed": true,
+     "notify": 0,
      "on": "Gtk.TextTag"
     }
    ],
@@ -14656,12 +14552,6 @@
     "WRITABLE"
    ],
    "seen": [
-    {
-     "cause": "set:Gtk.TextTag:stretch-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
     {
      "cause": "set:Gtk.TextTag:font",
      "changed": false,
@@ -14684,50 +14574,14 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
+     "cause": "set:Gtk.TextTag:stretch",
+     "changed": true,
+     "notify": 0,
      "on": "Gtk.TextTag"
     },
     {
      "cause": "set:Gtk.TextTag:font",
      "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
-     "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
     }
@@ -14801,12 +14655,6 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:style-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:font",
      "changed": false,
      "notify": 1,
@@ -14828,50 +14676,14 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
+     "cause": "set:Gtk.TextTag:style",
+     "changed": true,
+     "notify": 0,
      "on": "Gtk.TextTag"
     },
     {
      "cause": "set:Gtk.TextTag:font",
      "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
-     "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
     }
@@ -14999,12 +14811,6 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:variant-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:font",
      "changed": false,
      "notify": 1,
@@ -15026,50 +14832,14 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
+     "cause": "set:Gtk.TextTag:variant",
+     "changed": true,
+     "notify": 0,
      "on": "Gtk.TextTag"
     },
     {
      "cause": "set:Gtk.TextTag:font",
      "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
-     "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
     }
@@ -15088,12 +14858,6 @@
     "WRITABLE"
    ],
    "seen": [
-    {
-     "cause": "set:Gtk.TextTag:weight-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
     {
      "cause": "set:Gtk.TextTag:font",
      "changed": false,
@@ -15116,50 +14880,14 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
+     "cause": "set:Gtk.TextTag:weight",
+     "changed": true,
+     "notify": 0,
      "on": "Gtk.TextTag"
     },
     {
      "cause": "set:Gtk.TextTag:font",
      "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
-     "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
     }
@@ -15970,6 +15698,14 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
+   "seen": [
+    {
+     "cause": "set:Gtk.TreeViewColumn:sort-column-id",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TreeViewColumn"
+    }
+   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -16053,14 +15789,6 @@
     "READABLE",
     "WRITABLE",
     "EXPLICIT_NOTIFY"
-   ],
-   "seen": [
-    {
-     "cause": "set:Gtk.TreeViewColumn:sizing",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.TreeViewColumn"
-    }
    ],
    "sweep": {
     "notify_change": 1,
@@ -16506,7 +16234,31 @@
    ],
    "seen": [
     {
+     "cause": "set:Gtk.Entry:primary-icon-tooltip-markup",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
      "cause": "set:Gtk.Entry:primary-icon-tooltip-text",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
+     "cause": "set:Gtk.Entry:secondary-icon-tooltip-markup",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
+     "cause": "set:Gtk.Entry:secondary-icon-tooltip-text",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
+     "cause": "set:Gtk.Entry:show-emoji-icon",
      "changed": true,
      "notify": 1,
      "on": "Gtk.Entry"
@@ -16531,13 +16283,13 @@
     },
     {
      "cause": "set:Gtk.Widget:tooltip-markup",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.AboutDialog"
     },
     {
      "cause": "set:Gtk.Widget:tooltip-text",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.AboutDialog"
     }
@@ -17065,6 +16817,12 @@
      "changed": false,
      "notify": 1,
      "on": "Gtk.ColorChooserDialog"
+    },
+    {
+     "cause": "set:Gtk.FileChooser:create-folders",
+     "changed": false,
+     "notify": 1,
+     "on": "Gtk.FileChooserDialog"
     }
    ],
    "value_type": "GtkWidget"
@@ -17371,15 +17129,18 @@
  "types": {
   "GObject.InitiallyUnowned": {
    "class": "object",
-   "gtype": "GInitiallyUnowned"
+   "gtype": "GInitiallyUnowned",
+   "instantiated": true
   },
   "GObject.Object": {
    "class": "object",
-   "gtype": "GObject"
+   "gtype": "GObject",
+   "instantiated": true
   },
   "Gdk.AppLaunchContext": {
    "class": "object",
-   "gtype": "GdkAppLaunchContext"
+   "gtype": "GdkAppLaunchContext",
+   "instantiated": true
   },
   "Gdk.CairoContext": {
    "class": "abstract",
@@ -17387,7 +17148,8 @@
   },
   "Gdk.CicpParams": {
    "class": "object",
-   "gtype": "GdkCicpParams"
+   "gtype": "GdkCicpParams",
+   "instantiated": true
   },
   "Gdk.Clipboard": {
    "class": "object",
@@ -17395,11 +17157,13 @@
   },
   "Gdk.ContentProvider": {
    "class": "object",
-   "gtype": "GdkContentProvider"
+   "gtype": "GdkContentProvider",
+   "instantiated": true
   },
   "Gdk.Cursor": {
    "class": "object",
-   "gtype": "GdkCursor"
+   "gtype": "GdkCursor",
+   "instantiated": true
   },
   "Gdk.Device": {
    "class": "abstract",
@@ -17407,11 +17171,13 @@
   },
   "Gdk.DeviceTool": {
    "class": "object",
-   "gtype": "GdkDeviceTool"
+   "gtype": "GdkDeviceTool",
+   "instantiated": true
   },
   "Gdk.Display": {
    "class": "object",
-   "gtype": "GdkDisplay"
+   "gtype": "GdkDisplay",
+   "instantiated": true
   },
   "Gdk.Drag": {
    "class": "abstract",
@@ -17435,7 +17201,8 @@
   },
   "Gdk.Monitor": {
    "class": "object",
-   "gtype": "GdkMonitor"
+   "gtype": "GdkMonitor",
+   "instantiated": true
   },
   "Gdk.Paintable": {
    "class": "interface",
@@ -17475,7 +17242,8 @@
   },
   "Gio.AppLaunchContext": {
    "class": "object",
-   "gtype": "GAppLaunchContext"
+   "gtype": "GAppLaunchContext",
+   "instantiated": true
   },
   "Gio.Application": {
    "class": "object",
@@ -17483,7 +17251,8 @@
   },
   "Gio.ApplicationCommandLine": {
    "class": "object",
-   "gtype": "GApplicationCommandLine"
+   "gtype": "GApplicationCommandLine",
+   "instantiated": true
   },
   "Gio.AsyncInitable": {
    "class": "interface",
@@ -17491,15 +17260,18 @@
   },
   "Gio.Cancellable": {
    "class": "object",
-   "gtype": "GCancellable"
+   "gtype": "GCancellable",
+   "instantiated": true
   },
   "Gio.Credentials": {
    "class": "object",
-   "gtype": "GCredentials"
+   "gtype": "GCredentials",
+   "instantiated": true
   },
   "Gio.DBusAuthObserver": {
    "class": "object",
-   "gtype": "GDBusAuthObserver"
+   "gtype": "GDBusAuthObserver",
+   "instantiated": true
   },
   "Gio.DBusConnection": {
    "class": "object",
@@ -17507,7 +17279,8 @@
   },
   "Gio.DBusMessage": {
    "class": "object",
-   "gtype": "GDBusMessage"
+   "gtype": "GDBusMessage",
+   "instantiated": true
   },
   "Gio.Drive": {
    "class": "interface",
@@ -17531,11 +17304,13 @@
   },
   "Gio.FileInfo": {
    "class": "object",
-   "gtype": "GFileInfo"
+   "gtype": "GFileInfo",
+   "instantiated": true
   },
   "Gio.FileInputStream": {
    "class": "object",
-   "gtype": "GFileInputStream"
+   "gtype": "GFileInputStream",
+   "instantiated": true
   },
   "Gio.FileMonitor": {
    "class": "abstract",
@@ -17543,7 +17318,8 @@
   },
   "Gio.FileOutputStream": {
    "class": "object",
-   "gtype": "GFileOutputStream"
+   "gtype": "GFileOutputStream",
+   "instantiated": true
   },
   "Gio.IOStream": {
    "class": "abstract",
@@ -17567,7 +17343,8 @@
   },
   "Gio.ListStore": {
    "class": "object",
-   "gtype": "GListStore"
+   "gtype": "GListStore",
+   "instantiated": true
   },
   "Gio.LoadableIcon": {
    "class": "interface",
@@ -17575,7 +17352,8 @@
   },
   "Gio.Menu": {
    "class": "object",
-   "gtype": "GMenu"
+   "gtype": "GMenu",
+   "instantiated": true
   },
   "Gio.MenuAttributeIter": {
    "class": "abstract",
@@ -17583,7 +17361,8 @@
   },
   "Gio.MenuItem": {
    "class": "object",
-   "gtype": "GMenuItem"
+   "gtype": "GMenuItem",
+   "instantiated": true
   },
   "Gio.MenuLinkIter": {
    "class": "abstract",
@@ -17599,7 +17378,8 @@
   },
   "Gio.MountOperation": {
    "class": "object",
-   "gtype": "GMountOperation"
+   "gtype": "GMountOperation",
+   "instantiated": true
   },
   "Gio.Notification": {
    "class": "object",
@@ -17627,19 +17407,23 @@
   },
   "Gio.SimpleAction": {
    "class": "object",
-   "gtype": "GSimpleAction"
+   "gtype": "GSimpleAction",
+   "instantiated": true
   },
   "Gio.SimpleActionGroup": {
    "class": "object",
-   "gtype": "GSimpleActionGroup"
+   "gtype": "GSimpleActionGroup",
+   "instantiated": true
   },
   "Gio.ThemedIcon": {
    "class": "object",
-   "gtype": "GThemedIcon"
+   "gtype": "GThemedIcon",
+   "instantiated": true
   },
   "Gio.UnixFDList": {
    "class": "object",
-   "gtype": "GUnixFDList"
+   "gtype": "GUnixFDList",
+   "instantiated": true
   },
   "Gio.Volume": {
    "class": "interface",
@@ -17655,7 +17439,8 @@
   },
   "Gtk.AboutDialog": {
    "class": "object",
-   "gtype": "GtkAboutDialog"
+   "gtype": "GtkAboutDialog",
+   "instantiated": true
   },
   "Gtk.Accessible": {
    "class": "interface",
@@ -17663,7 +17448,8 @@
   },
   "Gtk.AccessibleHyperlink": {
    "class": "object",
-   "gtype": "GtkAccessibleHyperlink"
+   "gtype": "GtkAccessibleHyperlink",
+   "instantiated": true
   },
   "Gtk.AccessibleHypertext": {
    "class": "interface",
@@ -17679,7 +17465,8 @@
   },
   "Gtk.ActionBar": {
    "class": "object",
-   "gtype": "GtkActionBar"
+   "gtype": "GtkActionBar",
+   "instantiated": true
   },
   "Gtk.Actionable": {
    "class": "interface",
@@ -17691,19 +17478,23 @@
   },
   "Gtk.Adjustment": {
    "class": "object",
-   "gtype": "GtkAdjustment"
+   "gtype": "GtkAdjustment",
+   "instantiated": true
   },
   "Gtk.AlertDialog": {
    "class": "object",
-   "gtype": "GtkAlertDialog"
+   "gtype": "GtkAlertDialog",
+   "instantiated": true
   },
   "Gtk.AlternativeTrigger": {
    "class": "object",
-   "gtype": "GtkAlternativeTrigger"
+   "gtype": "GtkAlternativeTrigger",
+   "instantiated": true
   },
   "Gtk.AnyFilter": {
    "class": "object",
-   "gtype": "GtkAnyFilter"
+   "gtype": "GtkAnyFilter",
+   "instantiated": true
   },
   "Gtk.AppChooser": {
    "class": "interface",
@@ -17711,15 +17502,18 @@
   },
   "Gtk.AppChooserButton": {
    "class": "object",
-   "gtype": "GtkAppChooserButton"
+   "gtype": "GtkAppChooserButton",
+   "instantiated": true
   },
   "Gtk.AppChooserDialog": {
    "class": "object",
-   "gtype": "GtkAppChooserDialog"
+   "gtype": "GtkAppChooserDialog",
+   "instantiated": true
   },
   "Gtk.AppChooserWidget": {
    "class": "object",
-   "gtype": "GtkAppChooserWidget"
+   "gtype": "GtkAppChooserWidget",
+   "instantiated": true
   },
   "Gtk.Application": {
    "class": "object",
@@ -17727,39 +17521,48 @@
   },
   "Gtk.ApplicationWindow": {
    "class": "object",
-   "gtype": "GtkApplicationWindow"
+   "gtype": "GtkApplicationWindow",
+   "instantiated": true
   },
   "Gtk.AspectFrame": {
    "class": "object",
-   "gtype": "GtkAspectFrame"
+   "gtype": "GtkAspectFrame",
+   "instantiated": true
   },
   "Gtk.Assistant": {
    "class": "object",
-   "gtype": "GtkAssistant"
+   "gtype": "GtkAssistant",
+   "instantiated": true
   },
   "Gtk.AssistantPage": {
    "class": "object",
-   "gtype": "GtkAssistantPage"
+   "gtype": "GtkAssistantPage",
+   "instantiated": true
   },
   "Gtk.BinLayout": {
    "class": "object",
-   "gtype": "GtkBinLayout"
+   "gtype": "GtkBinLayout",
+   "instantiated": true
   },
   "Gtk.BookmarkList": {
    "class": "object",
-   "gtype": "GtkBookmarkList"
+   "gtype": "GtkBookmarkList",
+   "instantiated": true
   },
   "Gtk.BoolFilter": {
    "class": "object",
-   "gtype": "GtkBoolFilter"
+   "gtype": "GtkBoolFilter",
+   "instantiated": true
   },
   "Gtk.Box": {
    "class": "object",
-   "gtype": "GtkBox"
+   "gtype": "GtkBox",
+   "instantiated": true
   },
   "Gtk.BoxLayout": {
    "class": "object",
-   "gtype": "GtkBoxLayout"
+   "gtype": "GtkBoxLayout",
+   "instantiated": true
   },
   "Gtk.Buildable": {
    "class": "interface",
@@ -17767,15 +17570,18 @@
   },
   "Gtk.Builder": {
    "class": "object",
-   "gtype": "GtkBuilder"
+   "gtype": "GtkBuilder",
+   "instantiated": true
   },
   "Gtk.BuilderCScope": {
    "class": "object",
-   "gtype": "GtkBuilderCScope"
+   "gtype": "GtkBuilderCScope",
+   "instantiated": true
   },
   "Gtk.BuilderListItemFactory": {
    "class": "object",
-   "gtype": "GtkBuilderListItemFactory"
+   "gtype": "GtkBuilderListItemFactory",
+   "instantiated": true
   },
   "Gtk.BuilderScope": {
    "class": "interface",
@@ -17783,7 +17589,8 @@
   },
   "Gtk.Button": {
    "class": "object",
-   "gtype": "GtkButton"
+   "gtype": "GtkButton",
+   "instantiated": true
   },
   "Gtk.CClosureExpression": {
    "class": "not-an-object",
@@ -17791,11 +17598,13 @@
   },
   "Gtk.Calendar": {
    "class": "object",
-   "gtype": "GtkCalendar"
+   "gtype": "GtkCalendar",
+   "instantiated": true
   },
   "Gtk.CallbackAction": {
    "class": "object",
-   "gtype": "GtkCallbackAction"
+   "gtype": "GtkCallbackAction",
+   "instantiated": true
   },
   "Gtk.CellArea": {
    "class": "abstract",
@@ -17803,11 +17612,13 @@
   },
   "Gtk.CellAreaBox": {
    "class": "object",
-   "gtype": "GtkCellAreaBox"
+   "gtype": "GtkCellAreaBox",
+   "instantiated": true
   },
   "Gtk.CellAreaContext": {
    "class": "object",
-   "gtype": "GtkCellAreaContext"
+   "gtype": "GtkCellAreaContext",
+   "instantiated": true
   },
   "Gtk.CellEditable": {
    "class": "interface",
@@ -17823,27 +17634,33 @@
   },
   "Gtk.CellRendererAccel": {
    "class": "object",
-   "gtype": "GtkCellRendererAccel"
+   "gtype": "GtkCellRendererAccel",
+   "instantiated": true
   },
   "Gtk.CellRendererCombo": {
    "class": "object",
-   "gtype": "GtkCellRendererCombo"
+   "gtype": "GtkCellRendererCombo",
+   "instantiated": true
   },
   "Gtk.CellRendererPixbuf": {
    "class": "object",
-   "gtype": "GtkCellRendererPixbuf"
+   "gtype": "GtkCellRendererPixbuf",
+   "instantiated": true
   },
   "Gtk.CellRendererProgress": {
    "class": "object",
-   "gtype": "GtkCellRendererProgress"
+   "gtype": "GtkCellRendererProgress",
+   "instantiated": true
   },
   "Gtk.CellRendererSpin": {
    "class": "object",
-   "gtype": "GtkCellRendererSpin"
+   "gtype": "GtkCellRendererSpin",
+   "instantiated": true
   },
   "Gtk.CellRendererSpinner": {
    "class": "object",
-   "gtype": "GtkCellRendererSpinner"
+   "gtype": "GtkCellRendererSpinner",
+   "instantiated": true
   },
   "Gtk.CellRendererText": {
    "class": "object",
@@ -17851,23 +17668,28 @@
   },
   "Gtk.CellRendererToggle": {
    "class": "object",
-   "gtype": "GtkCellRendererToggle"
+   "gtype": "GtkCellRendererToggle",
+   "instantiated": true
   },
   "Gtk.CellView": {
    "class": "object",
-   "gtype": "GtkCellView"
+   "gtype": "GtkCellView",
+   "instantiated": true
   },
   "Gtk.CenterBox": {
    "class": "object",
-   "gtype": "GtkCenterBox"
+   "gtype": "GtkCenterBox",
+   "instantiated": true
   },
   "Gtk.CenterLayout": {
    "class": "object",
-   "gtype": "GtkCenterLayout"
+   "gtype": "GtkCenterLayout",
+   "instantiated": true
   },
   "Gtk.CheckButton": {
    "class": "object",
-   "gtype": "GtkCheckButton"
+   "gtype": "GtkCheckButton",
+   "instantiated": true
   },
   "Gtk.ClosureExpression": {
    "class": "not-an-object",
@@ -17875,7 +17697,8 @@
   },
   "Gtk.ColorButton": {
    "class": "object",
-   "gtype": "GtkColorButton"
+   "gtype": "GtkColorButton",
+   "instantiated": true
   },
   "Gtk.ColorChooser": {
    "class": "interface",
@@ -17883,47 +17706,58 @@
   },
   "Gtk.ColorChooserDialog": {
    "class": "object",
-   "gtype": "GtkColorChooserDialog"
+   "gtype": "GtkColorChooserDialog",
+   "instantiated": true
   },
   "Gtk.ColorChooserWidget": {
    "class": "object",
-   "gtype": "GtkColorChooserWidget"
+   "gtype": "GtkColorChooserWidget",
+   "instantiated": true
   },
   "Gtk.ColorDialog": {
    "class": "object",
-   "gtype": "GtkColorDialog"
+   "gtype": "GtkColorDialog",
+   "instantiated": true
   },
   "Gtk.ColorDialogButton": {
    "class": "object",
-   "gtype": "GtkColorDialogButton"
+   "gtype": "GtkColorDialogButton",
+   "instantiated": true
   },
   "Gtk.ColumnView": {
    "class": "object",
-   "gtype": "GtkColumnView"
+   "gtype": "GtkColumnView",
+   "instantiated": true
   },
   "Gtk.ColumnViewCell": {
    "class": "object",
-   "gtype": "GtkColumnViewCell"
+   "gtype": "GtkColumnViewCell",
+   "instantiated": true
   },
   "Gtk.ColumnViewColumn": {
    "class": "object",
-   "gtype": "GtkColumnViewColumn"
+   "gtype": "GtkColumnViewColumn",
+   "instantiated": true
   },
   "Gtk.ColumnViewRow": {
    "class": "object",
-   "gtype": "GtkColumnViewRow"
+   "gtype": "GtkColumnViewRow",
+   "instantiated": true
   },
   "Gtk.ColumnViewSorter": {
    "class": "object",
-   "gtype": "GtkColumnViewSorter"
+   "gtype": "GtkColumnViewSorter",
+   "instantiated": true
   },
   "Gtk.ComboBox": {
    "class": "object",
-   "gtype": "GtkComboBox"
+   "gtype": "GtkComboBox",
+   "instantiated": true
   },
   "Gtk.ComboBoxText": {
    "class": "object",
-   "gtype": "GtkComboBoxText"
+   "gtype": "GtkComboBoxText",
+   "instantiated": true
   },
   "Gtk.ConstantExpression": {
    "class": "not-an-object",
@@ -17931,19 +17765,23 @@
   },
   "Gtk.Constraint": {
    "class": "object",
-   "gtype": "GtkConstraint"
+   "gtype": "GtkConstraint",
+   "instantiated": true
   },
   "Gtk.ConstraintGuide": {
    "class": "object",
-   "gtype": "GtkConstraintGuide"
+   "gtype": "GtkConstraintGuide",
+   "instantiated": true
   },
   "Gtk.ConstraintLayout": {
    "class": "object",
-   "gtype": "GtkConstraintLayout"
+   "gtype": "GtkConstraintLayout",
+   "instantiated": true
   },
   "Gtk.ConstraintLayoutChild": {
    "class": "object",
-   "gtype": "GtkConstraintLayoutChild"
+   "gtype": "GtkConstraintLayoutChild",
+   "instantiated": true
   },
   "Gtk.ConstraintTarget": {
    "class": "interface",
@@ -17951,27 +17789,33 @@
   },
   "Gtk.CssProvider": {
    "class": "object",
-   "gtype": "GtkCssProvider"
+   "gtype": "GtkCssProvider",
+   "instantiated": true
   },
   "Gtk.CustomFilter": {
    "class": "object",
-   "gtype": "GtkCustomFilter"
+   "gtype": "GtkCustomFilter",
+   "instantiated": true
   },
   "Gtk.CustomLayout": {
    "class": "object",
-   "gtype": "GtkCustomLayout"
+   "gtype": "GtkCustomLayout",
+   "instantiated": true
   },
   "Gtk.CustomSorter": {
    "class": "object",
-   "gtype": "GtkCustomSorter"
+   "gtype": "GtkCustomSorter",
+   "instantiated": true
   },
   "Gtk.Dialog": {
    "class": "object",
-   "gtype": "GtkDialog"
+   "gtype": "GtkDialog",
+   "instantiated": true
   },
   "Gtk.DirectoryList": {
    "class": "object",
-   "gtype": "GtkDirectoryList"
+   "gtype": "GtkDirectoryList",
+   "instantiated": true
   },
   "Gtk.DragIcon": {
    "class": "object",
@@ -17979,27 +17823,33 @@
   },
   "Gtk.DragSource": {
    "class": "object",
-   "gtype": "GtkDragSource"
+   "gtype": "GtkDragSource",
+   "instantiated": true
   },
   "Gtk.DrawingArea": {
    "class": "object",
-   "gtype": "GtkDrawingArea"
+   "gtype": "GtkDrawingArea",
+   "instantiated": true
   },
   "Gtk.DropControllerMotion": {
    "class": "object",
-   "gtype": "GtkDropControllerMotion"
+   "gtype": "GtkDropControllerMotion",
+   "instantiated": true
   },
   "Gtk.DropDown": {
    "class": "object",
-   "gtype": "GtkDropDown"
+   "gtype": "GtkDropDown",
+   "instantiated": true
   },
   "Gtk.DropTarget": {
    "class": "object",
-   "gtype": "GtkDropTarget"
+   "gtype": "GtkDropTarget",
+   "instantiated": true
   },
   "Gtk.DropTargetAsync": {
    "class": "object",
-   "gtype": "GtkDropTargetAsync"
+   "gtype": "GtkDropTargetAsync",
+   "instantiated": true
   },
   "Gtk.Editable": {
    "class": "interface",
@@ -18007,23 +17857,28 @@
   },
   "Gtk.EditableLabel": {
    "class": "object",
-   "gtype": "GtkEditableLabel"
+   "gtype": "GtkEditableLabel",
+   "instantiated": true
   },
   "Gtk.EmojiChooser": {
    "class": "object",
-   "gtype": "GtkEmojiChooser"
+   "gtype": "GtkEmojiChooser",
+   "instantiated": true
   },
   "Gtk.Entry": {
    "class": "object",
-   "gtype": "GtkEntry"
+   "gtype": "GtkEntry",
+   "instantiated": true
   },
   "Gtk.EntryBuffer": {
    "class": "object",
-   "gtype": "GtkEntryBuffer"
+   "gtype": "GtkEntryBuffer",
+   "instantiated": true
   },
   "Gtk.EntryCompletion": {
    "class": "object",
-   "gtype": "GtkEntryCompletion"
+   "gtype": "GtkEntryCompletion",
+   "instantiated": true
   },
   "Gtk.EnumList": {
    "class": "missing",
@@ -18039,31 +17894,38 @@
   },
   "Gtk.EventControllerFocus": {
    "class": "object",
-   "gtype": "GtkEventControllerFocus"
+   "gtype": "GtkEventControllerFocus",
+   "instantiated": true
   },
   "Gtk.EventControllerKey": {
    "class": "object",
-   "gtype": "GtkEventControllerKey"
+   "gtype": "GtkEventControllerKey",
+   "instantiated": true
   },
   "Gtk.EventControllerLegacy": {
    "class": "object",
-   "gtype": "GtkEventControllerLegacy"
+   "gtype": "GtkEventControllerLegacy",
+   "instantiated": true
   },
   "Gtk.EventControllerMotion": {
    "class": "object",
-   "gtype": "GtkEventControllerMotion"
+   "gtype": "GtkEventControllerMotion",
+   "instantiated": true
   },
   "Gtk.EventControllerScroll": {
    "class": "object",
-   "gtype": "GtkEventControllerScroll"
+   "gtype": "GtkEventControllerScroll",
+   "instantiated": true
   },
   "Gtk.EveryFilter": {
    "class": "object",
-   "gtype": "GtkEveryFilter"
+   "gtype": "GtkEveryFilter",
+   "instantiated": true
   },
   "Gtk.Expander": {
    "class": "object",
-   "gtype": "GtkExpander"
+   "gtype": "GtkExpander",
+   "instantiated": true
   },
   "Gtk.Expression": {
    "class": "not-an-object",
@@ -18075,63 +17937,78 @@
   },
   "Gtk.FileChooserDialog": {
    "class": "object",
-   "gtype": "GtkFileChooserDialog"
+   "gtype": "GtkFileChooserDialog",
+   "instantiated": true
   },
   "Gtk.FileChooserNative": {
    "class": "object",
-   "gtype": "GtkFileChooserNative"
+   "gtype": "GtkFileChooserNative",
+   "instantiated": true
   },
   "Gtk.FileChooserWidget": {
    "class": "object",
-   "gtype": "GtkFileChooserWidget"
+   "gtype": "GtkFileChooserWidget",
+   "instantiated": true
   },
   "Gtk.FileDialog": {
    "class": "object",
-   "gtype": "GtkFileDialog"
+   "gtype": "GtkFileDialog",
+   "instantiated": true
   },
   "Gtk.FileFilter": {
    "class": "object",
-   "gtype": "GtkFileFilter"
+   "gtype": "GtkFileFilter",
+   "instantiated": true
   },
   "Gtk.FileLauncher": {
    "class": "object",
-   "gtype": "GtkFileLauncher"
+   "gtype": "GtkFileLauncher",
+   "instantiated": true
   },
   "Gtk.Filter": {
    "class": "object",
-   "gtype": "GtkFilter"
+   "gtype": "GtkFilter",
+   "instantiated": true
   },
   "Gtk.FilterListModel": {
    "class": "object",
-   "gtype": "GtkFilterListModel"
+   "gtype": "GtkFilterListModel",
+   "instantiated": true
   },
   "Gtk.Fixed": {
    "class": "object",
-   "gtype": "GtkFixed"
+   "gtype": "GtkFixed",
+   "instantiated": true
   },
   "Gtk.FixedLayout": {
    "class": "object",
-   "gtype": "GtkFixedLayout"
+   "gtype": "GtkFixedLayout",
+   "instantiated": true
   },
   "Gtk.FixedLayoutChild": {
    "class": "object",
-   "gtype": "GtkFixedLayoutChild"
+   "gtype": "GtkFixedLayoutChild",
+   "instantiated": true
   },
   "Gtk.FlattenListModel": {
    "class": "object",
-   "gtype": "GtkFlattenListModel"
+   "gtype": "GtkFlattenListModel",
+   "instantiated": true
   },
   "Gtk.FlowBox": {
    "class": "object",
-   "gtype": "GtkFlowBox"
+   "gtype": "GtkFlowBox",
+   "instantiated": true
   },
   "Gtk.FlowBoxChild": {
    "class": "object",
-   "gtype": "GtkFlowBoxChild"
+   "gtype": "GtkFlowBoxChild",
+   "instantiated": true
   },
   "Gtk.FontButton": {
    "class": "object",
-   "gtype": "GtkFontButton"
+   "gtype": "GtkFontButton",
+   "instantiated": true
   },
   "Gtk.FontChooser": {
    "class": "interface",
@@ -18139,27 +18016,33 @@
   },
   "Gtk.FontChooserDialog": {
    "class": "object",
-   "gtype": "GtkFontChooserDialog"
+   "gtype": "GtkFontChooserDialog",
+   "instantiated": true
   },
   "Gtk.FontChooserWidget": {
    "class": "object",
-   "gtype": "GtkFontChooserWidget"
+   "gtype": "GtkFontChooserWidget",
+   "instantiated": true
   },
   "Gtk.FontDialog": {
    "class": "object",
-   "gtype": "GtkFontDialog"
+   "gtype": "GtkFontDialog",
+   "instantiated": true
   },
   "Gtk.FontDialogButton": {
    "class": "object",
-   "gtype": "GtkFontDialogButton"
+   "gtype": "GtkFontDialogButton",
+   "instantiated": true
   },
   "Gtk.Frame": {
    "class": "object",
-   "gtype": "GtkFrame"
+   "gtype": "GtkFrame",
+   "instantiated": true
   },
   "Gtk.GLArea": {
    "class": "object",
-   "gtype": "GtkGLArea"
+   "gtype": "GtkGLArea",
+   "instantiated": true
   },
   "Gtk.Gesture": {
    "class": "abstract",
@@ -18167,63 +18050,78 @@
   },
   "Gtk.GestureClick": {
    "class": "object",
-   "gtype": "GtkGestureClick"
+   "gtype": "GtkGestureClick",
+   "instantiated": true
   },
   "Gtk.GestureDrag": {
    "class": "object",
-   "gtype": "GtkGestureDrag"
+   "gtype": "GtkGestureDrag",
+   "instantiated": true
   },
   "Gtk.GestureLongPress": {
    "class": "object",
-   "gtype": "GtkGestureLongPress"
+   "gtype": "GtkGestureLongPress",
+   "instantiated": true
   },
   "Gtk.GesturePan": {
    "class": "object",
-   "gtype": "GtkGesturePan"
+   "gtype": "GtkGesturePan",
+   "instantiated": true
   },
   "Gtk.GestureRotate": {
    "class": "object",
-   "gtype": "GtkGestureRotate"
+   "gtype": "GtkGestureRotate",
+   "instantiated": true
   },
   "Gtk.GestureSingle": {
    "class": "object",
-   "gtype": "GtkGestureSingle"
+   "gtype": "GtkGestureSingle",
+   "instantiated": true
   },
   "Gtk.GestureStylus": {
    "class": "object",
-   "gtype": "GtkGestureStylus"
+   "gtype": "GtkGestureStylus",
+   "instantiated": true
   },
   "Gtk.GestureSwipe": {
    "class": "object",
-   "gtype": "GtkGestureSwipe"
+   "gtype": "GtkGestureSwipe",
+   "instantiated": true
   },
   "Gtk.GestureZoom": {
    "class": "object",
-   "gtype": "GtkGestureZoom"
+   "gtype": "GtkGestureZoom",
+   "instantiated": true
   },
   "Gtk.GraphicsOffload": {
    "class": "object",
-   "gtype": "GtkGraphicsOffload"
+   "gtype": "GtkGraphicsOffload",
+   "instantiated": true
   },
   "Gtk.Grid": {
    "class": "object",
-   "gtype": "GtkGrid"
+   "gtype": "GtkGrid",
+   "instantiated": true
   },
   "Gtk.GridLayout": {
    "class": "object",
-   "gtype": "GtkGridLayout"
+   "gtype": "GtkGridLayout",
+   "instantiated": true
   },
   "Gtk.GridLayoutChild": {
    "class": "object",
-   "gtype": "GtkGridLayoutChild"
+   "gtype": "GtkGridLayoutChild",
+   "instantiated": true
   },
   "Gtk.GridView": {
    "class": "object",
-   "gtype": "GtkGridView"
+   "gtype": "GtkGridView",
+   "instantiated": true
   },
   "Gtk.HeaderBar": {
    "class": "object",
-   "gtype": "GtkHeaderBar"
+   "gtype": "GtkHeaderBar",
+   "instantiated": true
   },
   "Gtk.IMContext": {
    "class": "abstract",
@@ -18231,43 +18129,53 @@
   },
   "Gtk.IMContextSimple": {
    "class": "object",
-   "gtype": "GtkIMContextSimple"
+   "gtype": "GtkIMContextSimple",
+   "instantiated": true
   },
   "Gtk.IMMulticontext": {
    "class": "object",
-   "gtype": "GtkIMMulticontext"
+   "gtype": "GtkIMMulticontext",
+   "instantiated": true
   },
   "Gtk.IconPaintable": {
    "class": "object",
-   "gtype": "GtkIconPaintable"
+   "gtype": "GtkIconPaintable",
+   "instantiated": true
   },
   "Gtk.IconTheme": {
    "class": "object",
-   "gtype": "GtkIconTheme"
+   "gtype": "GtkIconTheme",
+   "instantiated": true
   },
   "Gtk.IconView": {
    "class": "object",
-   "gtype": "GtkIconView"
+   "gtype": "GtkIconView",
+   "instantiated": true
   },
   "Gtk.Image": {
    "class": "object",
-   "gtype": "GtkImage"
+   "gtype": "GtkImage",
+   "instantiated": true
   },
   "Gtk.InfoBar": {
    "class": "object",
-   "gtype": "GtkInfoBar"
+   "gtype": "GtkInfoBar",
+   "instantiated": true
   },
   "Gtk.Inscription": {
    "class": "object",
-   "gtype": "GtkInscription"
+   "gtype": "GtkInscription",
+   "instantiated": true
   },
   "Gtk.KeyvalTrigger": {
    "class": "object",
-   "gtype": "GtkKeyvalTrigger"
+   "gtype": "GtkKeyvalTrigger",
+   "instantiated": true
   },
   "Gtk.Label": {
    "class": "object",
-   "gtype": "GtkLabel"
+   "gtype": "GtkLabel",
+   "instantiated": true
   },
   "Gtk.LayoutChild": {
    "class": "abstract",
@@ -18279,11 +18187,13 @@
   },
   "Gtk.LevelBar": {
    "class": "object",
-   "gtype": "GtkLevelBar"
+   "gtype": "GtkLevelBar",
+   "instantiated": true
   },
   "Gtk.LinkButton": {
    "class": "object",
-   "gtype": "GtkLinkButton"
+   "gtype": "GtkLinkButton",
+   "instantiated": true
   },
   "Gtk.ListBase": {
    "class": "abstract",
@@ -18291,43 +18201,53 @@
   },
   "Gtk.ListBox": {
    "class": "object",
-   "gtype": "GtkListBox"
+   "gtype": "GtkListBox",
+   "instantiated": true
   },
   "Gtk.ListBoxRow": {
    "class": "object",
-   "gtype": "GtkListBoxRow"
+   "gtype": "GtkListBoxRow",
+   "instantiated": true
   },
   "Gtk.ListHeader": {
    "class": "object",
-   "gtype": "GtkListHeader"
+   "gtype": "GtkListHeader",
+   "instantiated": true
   },
   "Gtk.ListItem": {
    "class": "object",
-   "gtype": "GtkListItem"
+   "gtype": "GtkListItem",
+   "instantiated": true
   },
   "Gtk.ListItemFactory": {
    "class": "object",
-   "gtype": "GtkListItemFactory"
+   "gtype": "GtkListItemFactory",
+   "instantiated": true
   },
   "Gtk.ListStore": {
    "class": "object",
-   "gtype": "GtkListStore"
+   "gtype": "GtkListStore",
+   "instantiated": true
   },
   "Gtk.ListView": {
    "class": "object",
-   "gtype": "GtkListView"
+   "gtype": "GtkListView",
+   "instantiated": true
   },
   "Gtk.LockButton": {
    "class": "object",
-   "gtype": "GtkLockButton"
+   "gtype": "GtkLockButton",
+   "instantiated": true
   },
   "Gtk.MapListModel": {
    "class": "object",
-   "gtype": "GtkMapListModel"
+   "gtype": "GtkMapListModel",
+   "instantiated": true
   },
   "Gtk.MediaControls": {
    "class": "object",
-   "gtype": "GtkMediaControls"
+   "gtype": "GtkMediaControls",
+   "instantiated": true
   },
   "Gtk.MediaFile": {
    "class": "abstract",
@@ -18339,11 +18259,13 @@
   },
   "Gtk.MenuButton": {
    "class": "object",
-   "gtype": "GtkMenuButton"
+   "gtype": "GtkMenuButton",
+   "instantiated": true
   },
   "Gtk.MessageDialog": {
    "class": "object",
-   "gtype": "GtkMessageDialog"
+   "gtype": "GtkMessageDialog",
+   "instantiated": true
   },
   "Gtk.MnemonicAction": {
    "class": "object",
@@ -18351,7 +18273,8 @@
   },
   "Gtk.MnemonicTrigger": {
    "class": "object",
-   "gtype": "GtkMnemonicTrigger"
+   "gtype": "GtkMnemonicTrigger",
+   "instantiated": true
   },
   "Gtk.MountOperation": {
    "class": "object",
@@ -18363,11 +18286,13 @@
   },
   "Gtk.MultiSelection": {
    "class": "object",
-   "gtype": "GtkMultiSelection"
+   "gtype": "GtkMultiSelection",
+   "instantiated": true
   },
   "Gtk.MultiSorter": {
    "class": "object",
-   "gtype": "GtkMultiSorter"
+   "gtype": "GtkMultiSorter",
+   "instantiated": true
   },
   "Gtk.NamedAction": {
    "class": "object",
@@ -18383,19 +18308,23 @@
   },
   "Gtk.NeverTrigger": {
    "class": "object",
-   "gtype": "GtkNeverTrigger"
+   "gtype": "GtkNeverTrigger",
+   "instantiated": true
   },
   "Gtk.NoSelection": {
    "class": "object",
-   "gtype": "GtkNoSelection"
+   "gtype": "GtkNoSelection",
+   "instantiated": true
   },
   "Gtk.Notebook": {
    "class": "object",
-   "gtype": "GtkNotebook"
+   "gtype": "GtkNotebook",
+   "instantiated": true
   },
   "Gtk.NotebookPage": {
    "class": "object",
-   "gtype": "GtkNotebookPage"
+   "gtype": "GtkNotebookPage",
+   "instantiated": true
   },
   "Gtk.NothingAction": {
    "class": "object",
@@ -18403,7 +18332,8 @@
   },
   "Gtk.NumericSorter": {
    "class": "object",
-   "gtype": "GtkNumericSorter"
+   "gtype": "GtkNumericSorter",
+   "instantiated": true
   },
   "Gtk.ObjectExpression": {
    "class": "not-an-object",
@@ -18415,23 +18345,28 @@
   },
   "Gtk.Overlay": {
    "class": "object",
-   "gtype": "GtkOverlay"
+   "gtype": "GtkOverlay",
+   "instantiated": true
   },
   "Gtk.OverlayLayout": {
    "class": "object",
-   "gtype": "GtkOverlayLayout"
+   "gtype": "GtkOverlayLayout",
+   "instantiated": true
   },
   "Gtk.OverlayLayoutChild": {
    "class": "object",
-   "gtype": "GtkOverlayLayoutChild"
+   "gtype": "GtkOverlayLayoutChild",
+   "instantiated": true
   },
   "Gtk.PadController": {
    "class": "object",
-   "gtype": "GtkPadController"
+   "gtype": "GtkPadController",
+   "instantiated": true
   },
   "Gtk.PageSetup": {
    "class": "object",
-   "gtype": "GtkPageSetup"
+   "gtype": "GtkPageSetup",
+   "instantiated": true
   },
   "Gtk.PageSetupUnixDialog": {
    "class": "object",
@@ -18439,7 +18374,8 @@
   },
   "Gtk.Paned": {
    "class": "object",
-   "gtype": "GtkPaned"
+   "gtype": "GtkPaned",
+   "instantiated": true
   },
   "Gtk.ParamSpecExpression": {
    "class": "not-an-object",
@@ -18447,39 +18383,48 @@
   },
   "Gtk.PasswordEntry": {
    "class": "object",
-   "gtype": "GtkPasswordEntry"
+   "gtype": "GtkPasswordEntry",
+   "instantiated": true
   },
   "Gtk.PasswordEntryBuffer": {
    "class": "object",
-   "gtype": "GtkPasswordEntryBuffer"
+   "gtype": "GtkPasswordEntryBuffer",
+   "instantiated": true
   },
   "Gtk.Picture": {
    "class": "object",
-   "gtype": "GtkPicture"
+   "gtype": "GtkPicture",
+   "instantiated": true
   },
   "Gtk.Popover": {
    "class": "object",
-   "gtype": "GtkPopover"
+   "gtype": "GtkPopover",
+   "instantiated": true
   },
   "Gtk.PopoverBin": {
    "class": "object",
-   "gtype": "GtkPopoverBin"
+   "gtype": "GtkPopoverBin",
+   "instantiated": true
   },
   "Gtk.PopoverMenu": {
    "class": "object",
-   "gtype": "GtkPopoverMenu"
+   "gtype": "GtkPopoverMenu",
+   "instantiated": true
   },
   "Gtk.PopoverMenuBar": {
    "class": "object",
-   "gtype": "GtkPopoverMenuBar"
+   "gtype": "GtkPopoverMenuBar",
+   "instantiated": true
   },
   "Gtk.PrintContext": {
    "class": "object",
-   "gtype": "GtkPrintContext"
+   "gtype": "GtkPrintContext",
+   "instantiated": true
   },
   "Gtk.PrintDialog": {
    "class": "object",
-   "gtype": "GtkPrintDialog"
+   "gtype": "GtkPrintDialog",
+   "instantiated": true
   },
   "Gtk.PrintJob": {
    "class": "object",
@@ -18495,7 +18440,8 @@
   },
   "Gtk.PrintSettings": {
    "class": "object",
-   "gtype": "GtkPrintSettings"
+   "gtype": "GtkPrintSettings",
+   "instantiated": true
   },
   "Gtk.PrintUnixDialog": {
    "class": "object",
@@ -18503,11 +18449,13 @@
   },
   "Gtk.Printer": {
    "class": "object",
-   "gtype": "GtkPrinter"
+   "gtype": "GtkPrinter",
+   "instantiated": true
   },
   "Gtk.ProgressBar": {
    "class": "object",
-   "gtype": "GtkProgressBar"
+   "gtype": "GtkProgressBar",
+   "instantiated": true
   },
   "Gtk.PropertyExpression": {
    "class": "not-an-object",
@@ -18515,15 +18463,18 @@
   },
   "Gtk.Range": {
    "class": "object",
-   "gtype": "GtkRange"
+   "gtype": "GtkRange",
+   "instantiated": true
   },
   "Gtk.RecentManager": {
    "class": "object",
-   "gtype": "GtkRecentManager"
+   "gtype": "GtkRecentManager",
+   "instantiated": true
   },
   "Gtk.Revealer": {
    "class": "object",
-   "gtype": "GtkRevealer"
+   "gtype": "GtkRevealer",
+   "instantiated": true
   },
   "Gtk.Root": {
    "class": "interface",
@@ -18531,11 +18482,13 @@
   },
   "Gtk.Scale": {
    "class": "object",
-   "gtype": "GtkScale"
+   "gtype": "GtkScale",
+   "instantiated": true
   },
   "Gtk.ScaleButton": {
    "class": "object",
-   "gtype": "GtkScaleButton"
+   "gtype": "GtkScaleButton",
+   "instantiated": true
   },
   "Gtk.Scrollable": {
    "class": "interface",
@@ -18543,19 +18496,23 @@
   },
   "Gtk.Scrollbar": {
    "class": "object",
-   "gtype": "GtkScrollbar"
+   "gtype": "GtkScrollbar",
+   "instantiated": true
   },
   "Gtk.ScrolledWindow": {
    "class": "object",
-   "gtype": "GtkScrolledWindow"
+   "gtype": "GtkScrolledWindow",
+   "instantiated": true
   },
   "Gtk.SearchBar": {
    "class": "object",
-   "gtype": "GtkSearchBar"
+   "gtype": "GtkSearchBar",
+   "instantiated": true
   },
   "Gtk.SearchEntry": {
    "class": "object",
-   "gtype": "GtkSearchEntry"
+   "gtype": "GtkSearchEntry",
+   "instantiated": true
   },
   "Gtk.SectionModel": {
    "class": "interface",
@@ -18563,7 +18520,8 @@
   },
   "Gtk.SelectionFilterModel": {
    "class": "object",
-   "gtype": "GtkSelectionFilterModel"
+   "gtype": "GtkSelectionFilterModel",
+   "instantiated": true
   },
   "Gtk.SelectionModel": {
    "class": "interface",
@@ -18571,15 +18529,18 @@
   },
   "Gtk.Separator": {
    "class": "object",
-   "gtype": "GtkSeparator"
+   "gtype": "GtkSeparator",
+   "instantiated": true
   },
   "Gtk.Settings": {
    "class": "object",
-   "gtype": "GtkSettings"
+   "gtype": "GtkSettings",
+   "instantiated": true
   },
   "Gtk.Shortcut": {
    "class": "object",
-   "gtype": "GtkShortcut"
+   "gtype": "GtkShortcut",
+   "instantiated": true
   },
   "Gtk.ShortcutAction": {
    "class": "abstract",
@@ -18587,11 +18548,13 @@
   },
   "Gtk.ShortcutController": {
    "class": "object",
-   "gtype": "GtkShortcutController"
+   "gtype": "GtkShortcutController",
+   "instantiated": true
   },
   "Gtk.ShortcutLabel": {
    "class": "object",
-   "gtype": "GtkShortcutLabel"
+   "gtype": "GtkShortcutLabel",
+   "instantiated": true
   },
   "Gtk.ShortcutManager": {
    "class": "interface",
@@ -18603,19 +18566,23 @@
   },
   "Gtk.ShortcutsGroup": {
    "class": "object",
-   "gtype": "GtkShortcutsGroup"
+   "gtype": "GtkShortcutsGroup",
+   "instantiated": true
   },
   "Gtk.ShortcutsSection": {
    "class": "object",
-   "gtype": "GtkShortcutsSection"
+   "gtype": "GtkShortcutsSection",
+   "instantiated": true
   },
   "Gtk.ShortcutsShortcut": {
    "class": "object",
-   "gtype": "GtkShortcutsShortcut"
+   "gtype": "GtkShortcutsShortcut",
+   "instantiated": true
   },
   "Gtk.ShortcutsWindow": {
    "class": "object",
-   "gtype": "GtkShortcutsWindow"
+   "gtype": "GtkShortcutsWindow",
+   "instantiated": true
   },
   "Gtk.SignalAction": {
    "class": "object",
@@ -18623,43 +18590,53 @@
   },
   "Gtk.SignalListItemFactory": {
    "class": "object",
-   "gtype": "GtkSignalListItemFactory"
+   "gtype": "GtkSignalListItemFactory",
+   "instantiated": true
   },
   "Gtk.SingleSelection": {
    "class": "object",
-   "gtype": "GtkSingleSelection"
+   "gtype": "GtkSingleSelection",
+   "instantiated": true
   },
   "Gtk.SizeGroup": {
    "class": "object",
-   "gtype": "GtkSizeGroup"
+   "gtype": "GtkSizeGroup",
+   "instantiated": true
   },
   "Gtk.SliceListModel": {
    "class": "object",
-   "gtype": "GtkSliceListModel"
+   "gtype": "GtkSliceListModel",
+   "instantiated": true
   },
   "Gtk.Snapshot": {
    "class": "object",
-   "gtype": "GtkSnapshot"
+   "gtype": "GtkSnapshot",
+   "instantiated": true
   },
   "Gtk.SortListModel": {
    "class": "object",
-   "gtype": "GtkSortListModel"
+   "gtype": "GtkSortListModel",
+   "instantiated": true
   },
   "Gtk.Sorter": {
    "class": "object",
-   "gtype": "GtkSorter"
+   "gtype": "GtkSorter",
+   "instantiated": true
   },
   "Gtk.SpinButton": {
    "class": "object",
-   "gtype": "GtkSpinButton"
+   "gtype": "GtkSpinButton",
+   "instantiated": true
   },
   "Gtk.Spinner": {
    "class": "object",
-   "gtype": "GtkSpinner"
+   "gtype": "GtkSpinner",
+   "instantiated": true
   },
   "Gtk.Stack": {
    "class": "object",
-   "gtype": "GtkStack"
+   "gtype": "GtkStack",
+   "instantiated": true
   },
   "Gtk.StackPage": {
    "class": "object",
@@ -18667,35 +18644,43 @@
   },
   "Gtk.StackSidebar": {
    "class": "object",
-   "gtype": "GtkStackSidebar"
+   "gtype": "GtkStackSidebar",
+   "instantiated": true
   },
   "Gtk.StackSwitcher": {
    "class": "object",
-   "gtype": "GtkStackSwitcher"
+   "gtype": "GtkStackSwitcher",
+   "instantiated": true
   },
   "Gtk.Statusbar": {
    "class": "object",
-   "gtype": "GtkStatusbar"
+   "gtype": "GtkStatusbar",
+   "instantiated": true
   },
   "Gtk.StringFilter": {
    "class": "object",
-   "gtype": "GtkStringFilter"
+   "gtype": "GtkStringFilter",
+   "instantiated": true
   },
   "Gtk.StringList": {
    "class": "object",
-   "gtype": "GtkStringList"
+   "gtype": "GtkStringList",
+   "instantiated": true
   },
   "Gtk.StringObject": {
    "class": "object",
-   "gtype": "GtkStringObject"
+   "gtype": "GtkStringObject",
+   "instantiated": true
   },
   "Gtk.StringSorter": {
    "class": "object",
-   "gtype": "GtkStringSorter"
+   "gtype": "GtkStringSorter",
+   "instantiated": true
   },
   "Gtk.StyleContext": {
    "class": "object",
-   "gtype": "GtkStyleContext"
+   "gtype": "GtkStyleContext",
+   "instantiated": true
   },
   "Gtk.StyleProvider": {
    "class": "interface",
@@ -18703,11 +18688,13 @@
   },
   "Gtk.Svg": {
    "class": "object",
-   "gtype": "GtkSvg"
+   "gtype": "GtkSvg",
+   "instantiated": true
   },
   "Gtk.Switch": {
    "class": "object",
-   "gtype": "GtkSwitch"
+   "gtype": "GtkSwitch",
+   "instantiated": true
   },
   "Gtk.SymbolicPaintable": {
    "class": "interface",
@@ -18715,35 +18702,43 @@
   },
   "Gtk.Text": {
    "class": "object",
-   "gtype": "GtkText"
+   "gtype": "GtkText",
+   "instantiated": true
   },
   "Gtk.TextBuffer": {
    "class": "object",
-   "gtype": "GtkTextBuffer"
+   "gtype": "GtkTextBuffer",
+   "instantiated": true
   },
   "Gtk.TextChildAnchor": {
    "class": "object",
-   "gtype": "GtkTextChildAnchor"
+   "gtype": "GtkTextChildAnchor",
+   "instantiated": true
   },
   "Gtk.TextMark": {
    "class": "object",
-   "gtype": "GtkTextMark"
+   "gtype": "GtkTextMark",
+   "instantiated": true
   },
   "Gtk.TextTag": {
    "class": "object",
-   "gtype": "GtkTextTag"
+   "gtype": "GtkTextTag",
+   "instantiated": true
   },
   "Gtk.TextTagTable": {
    "class": "object",
-   "gtype": "GtkTextTagTable"
+   "gtype": "GtkTextTagTable",
+   "instantiated": true
   },
   "Gtk.TextView": {
    "class": "object",
-   "gtype": "GtkTextView"
+   "gtype": "GtkTextView",
+   "instantiated": true
   },
   "Gtk.ToggleButton": {
    "class": "object",
-   "gtype": "GtkToggleButton"
+   "gtype": "GtkToggleButton",
+   "instantiated": true
   },
   "Gtk.Tooltip": {
    "class": "object",
@@ -18759,19 +18754,23 @@
   },
   "Gtk.TreeExpander": {
    "class": "object",
-   "gtype": "GtkTreeExpander"
+   "gtype": "GtkTreeExpander",
+   "instantiated": true
   },
   "Gtk.TreeListModel": {
    "class": "object",
-   "gtype": "GtkTreeListModel"
+   "gtype": "GtkTreeListModel",
+   "instantiated": true
   },
   "Gtk.TreeListRow": {
    "class": "object",
-   "gtype": "GtkTreeListRow"
+   "gtype": "GtkTreeListRow",
+   "instantiated": true
   },
   "Gtk.TreeListRowSorter": {
    "class": "object",
-   "gtype": "GtkTreeListRowSorter"
+   "gtype": "GtkTreeListRowSorter",
+   "instantiated": true
   },
   "Gtk.TreeModel": {
    "class": "interface",
@@ -18779,11 +18778,13 @@
   },
   "Gtk.TreeModelFilter": {
    "class": "object",
-   "gtype": "GtkTreeModelFilter"
+   "gtype": "GtkTreeModelFilter",
+   "instantiated": true
   },
   "Gtk.TreeModelSort": {
    "class": "object",
-   "gtype": "GtkTreeModelSort"
+   "gtype": "GtkTreeModelSort",
+   "instantiated": true
   },
   "Gtk.TreeSelection": {
    "class": "object",
@@ -18795,15 +18796,18 @@
   },
   "Gtk.TreeStore": {
    "class": "object",
-   "gtype": "GtkTreeStore"
+   "gtype": "GtkTreeStore",
+   "instantiated": true
   },
   "Gtk.TreeView": {
    "class": "object",
-   "gtype": "GtkTreeView"
+   "gtype": "GtkTreeView",
+   "instantiated": true
   },
   "Gtk.TreeViewColumn": {
    "class": "object",
-   "gtype": "GtkTreeViewColumn"
+   "gtype": "GtkTreeViewColumn",
+   "instantiated": true
   },
   "Gtk.TryExpression": {
    "class": "not-an-object",
@@ -18811,19 +18815,23 @@
   },
   "Gtk.UriLauncher": {
    "class": "object",
-   "gtype": "GtkUriLauncher"
+   "gtype": "GtkUriLauncher",
+   "instantiated": true
   },
   "Gtk.Video": {
    "class": "object",
-   "gtype": "GtkVideo"
+   "gtype": "GtkVideo",
+   "instantiated": true
   },
   "Gtk.Viewport": {
    "class": "object",
-   "gtype": "GtkViewport"
+   "gtype": "GtkViewport",
+   "instantiated": true
   },
   "Gtk.VolumeButton": {
    "class": "object",
-   "gtype": "GtkVolumeButton"
+   "gtype": "GtkVolumeButton",
+   "instantiated": true
   },
   "Gtk.Widget": {
    "class": "abstract",
@@ -18831,31 +18839,38 @@
   },
   "Gtk.WidgetPaintable": {
    "class": "object",
-   "gtype": "GtkWidgetPaintable"
+   "gtype": "GtkWidgetPaintable",
+   "instantiated": true
   },
   "Gtk.Window": {
    "class": "object",
-   "gtype": "GtkWindow"
+   "gtype": "GtkWindow",
+   "instantiated": true
   },
   "Gtk.WindowControls": {
    "class": "object",
-   "gtype": "GtkWindowControls"
+   "gtype": "GtkWindowControls",
+   "instantiated": true
   },
   "Gtk.WindowGroup": {
    "class": "object",
-   "gtype": "GtkWindowGroup"
+   "gtype": "GtkWindowGroup",
+   "instantiated": true
   },
   "Gtk.WindowHandle": {
    "class": "object",
-   "gtype": "GtkWindowHandle"
+   "gtype": "GtkWindowHandle",
+   "instantiated": true
   },
   "Pango.Context": {
    "class": "object",
-   "gtype": "PangoContext"
+   "gtype": "PangoContext",
+   "instantiated": true
   },
   "Pango.Coverage": {
    "class": "object",
-   "gtype": "PangoCoverage"
+   "gtype": "PangoCoverage",
+   "instantiated": true
   },
   "Pango.Font": {
    "class": "abstract",
@@ -18879,7 +18894,8 @@
   },
   "Pango.Layout": {
    "class": "object",
-   "gtype": "PangoLayout"
+   "gtype": "PangoLayout",
+   "instantiated": true
   }
  },
  "version": "4.22.4"

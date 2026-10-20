@@ -1555,14 +1555,6 @@
     "EXPLICIT_NOTIFY"
    ],
    "round_trip_notify": true,
-   "seen": [
-    {
-     "cause": "set:Gtk.AboutDialog:license-type",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.AboutDialog"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 1,
@@ -1744,14 +1736,6 @@
     "EXPLICIT_NOTIFY"
    ],
    "round_trip_notify": true,
-   "seen": [
-    {
-     "cause": "set:Gtk.AboutDialog:license-type",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.AboutDialog"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -2574,13 +2558,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:BookmarkList:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:BoolFilter:expression": {
   "confidence": 0.9,
@@ -2919,7 +2903,7 @@
    "seen": [
     {
      "cause": "set:Gtk.Button:icon-name",
-     "changed": true,
+     "changed": false,
      "notify": 1,
      "on": "Gtk.Button"
     }
@@ -4138,7 +4122,7 @@
     },
     {
      "cause": "set:Gtk.CellRendererAccel:keycode",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.CellRendererAccel"
     }
@@ -5765,13 +5749,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:DirectoryList:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:DragIcon:child": {
   "confidence": 0.9,
@@ -6348,15 +6332,7 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
-   "round_trip_notify": true,
-   "seen": [
-    {
-     "cause": "set:Gtk.Entry:menu-entry-icon-secondary-text",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    }
-   ]
+   "round_trip_notify": true
   },
   "pattern": "observe:exact-probe"
  },
@@ -6434,12 +6410,6 @@
     "EXPLICIT_NOTIFY"
    ],
    "seen": [
-    {
-     "cause": "set:Gtk.Entry:invisible-char-set",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    },
     {
      "cause": "set:Gtk.Entry:visibility",
      "changed": true,
@@ -6779,14 +6749,6 @@
     "EXPLICIT_NOTIFY"
    ],
    "round_trip_notify": true,
-   "seen": [
-    {
-     "cause": "set:Gtk.Entry:show-emoji-icon",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -6853,14 +6815,6 @@
     "EXPLICIT_NOTIFY"
    ],
    "round_trip_notify": true,
-   "seen": [
-    {
-     "cause": "set:Gtk.Entry:show-emoji-icon",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Entry"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -6885,7 +6839,7 @@
     },
     {
      "cause": "set:Gtk.Entry:show-emoji-icon",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.Entry"
     }
@@ -7253,9 +7207,9 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:EnumList:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {},
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:EnumListItem:name": {
   "confidence": 0.8,
@@ -7553,7 +7507,7 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:FileChooser:select-multiple": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": [
     "READABLE",
@@ -7563,10 +7517,10 @@
     "notify_change": 1,
     "notify_same": 1,
     "on": "Gtk.FileChooserDialog",
-    "readback": "ignored"
+    "readback": "exact"
    }
   },
-  "pattern": "observe:exact-writable-rule"
+  "pattern": "observe:exact-probe"
  },
  "Gtk:FileChooser:shortcut-folders": {
   "confidence": 0.8,
@@ -7874,13 +7828,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:FilterListModel:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:FilterListModel:pending": {
   "confidence": 0.8,
@@ -7941,13 +7895,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:FlattenListModel:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:FlowBox:accept-unpaired-release": {
   "confidence": 0.95,
@@ -9813,7 +9767,7 @@
     },
     {
      "cause": "set:Gtk.Image:resource",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.Image"
     }
@@ -10525,6 +10479,14 @@
     "EXPLICIT_NOTIFY"
    ],
    "round_trip_notify": true,
+   "seen": [
+    {
+     "cause": "set:Gtk.LevelBar:min-value",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.LevelBar"
+    }
+   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -10755,14 +10717,14 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:ListHeader:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:ListHeader:start": {
   "confidence": 0.8,
@@ -11134,13 +11096,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:MapListModel:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:MediaControls:media-stream": {
   "confidence": 0.9,
@@ -11419,14 +11381,6 @@
     "EXPLICIT_NOTIFY"
    ],
    "round_trip_notify": true,
-   "seen": [
-    {
-     "cause": "set:Gtk.MenuButton:label",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.MenuButton"
-    }
-   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 1,
@@ -11555,7 +11509,7 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:MessageDialog:secondary-use-markup": {
-  "confidence": 0.95,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
@@ -11564,12 +11518,12 @@
    ],
    "sweep": {
     "notify_change": 1,
-    "notify_same": 0,
+    "notify_same": 1,
     "on": "Gtk.MessageDialog",
-    "readback": "exact"
+    "readback": "ignored"
    }
   },
-  "pattern": "observe:exact-probe"
+  "pattern": "observe:exact-writable-rule"
  },
  "Gtk:MessageDialog:text": {
   "confidence": 0.95,
@@ -11654,13 +11608,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:MultiFilter:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:MultiSelection:item-type": {
   "confidence": 0.8,
@@ -11683,13 +11637,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:MultiSelection:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:MultiSorter:item-type": {
   "confidence": 0.8,
@@ -11701,13 +11655,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:MultiSorter:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:NamedAction:action-name": {
   "confidence": 0.95,
@@ -11797,13 +11751,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:NoSelection:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:Notebook:enable-popup": {
   "confidence": 0.95,
@@ -14326,13 +14280,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:SelectionFilterModel:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:Settings:gtk-alternative-button-order": {
   "confidence": 0.95,
@@ -15268,13 +15222,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:ShortcutController:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:ShortcutController:scope": {
   "confidence": 0.95,
@@ -15483,14 +15437,22 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:ShortcutsShortcut:icon": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": [
     "READABLE",
     "WRITABLE"
+   ],
+   "seen": [
+    {
+     "cause": "set:Gtk.ShortcutsShortcut:shortcut-type",
+     "changed": true,
+     "notify": 0,
+     "on": "Gtk.ShortcutsShortcut"
+    }
    ]
   },
-  "pattern": "observe:exact-writable-rule"
+  "pattern": "observe:none-probe"
  },
  "Gtk:ShortcutsShortcut:icon-set": {
   "confidence": 0.95,
@@ -15535,12 +15497,6 @@
    "seen": [
     {
      "cause": "set:Gtk.ShortcutsShortcut:shortcut-type",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.ShortcutsShortcut"
-    },
-    {
-     "cause": "set:Gtk.ShortcutsShortcut:subtitle-set",
      "changed": true,
      "notify": 1,
      "on": "Gtk.ShortcutsShortcut"
@@ -15693,13 +15649,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:SingleSelection:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:SingleSelection:selected": {
   "confidence": 0.95,
@@ -15781,13 +15737,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:SliceListModel:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:SliceListModel:offset": {
   "confidence": 0.95,
@@ -15861,13 +15817,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:SortListModel:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:SortListModel:pending": {
   "confidence": 0.8,
@@ -16753,12 +16709,6 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.Text:invisible-char-set",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.Text"
-    },
-    {
      "cause": "set:Gtk.Text:visibility",
      "changed": true,
      "notify": 1,
@@ -17347,6 +17297,36 @@
     {
      "cause": "set:Gtk.TextTag:family-set",
      "changed": true,
+     "notify": 1,
+     "on": "Gtk.TextTag"
+    },
+    {
+     "cause": "set:Gtk.TextTag:font",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TextTag"
+    }
+   ],
+   "sweep": {
+    "notify_change": 1,
+    "notify_same": 1,
+    "on": "Gtk.TextTag",
+    "readback": "exact"
+   }
+  },
+  "pattern": "observe:exact-probe"
+ },
+ "Gtk:TextTag:family-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "flags": [
+    "READABLE",
+    "WRITABLE"
+   ],
+   "seen": [
+    {
+     "cause": "set:Gtk.TextTag:family",
+     "changed": true,
      "notify": 0,
      "on": "Gtk.TextTag"
     },
@@ -17365,72 +17345,6 @@
    }
   },
   "pattern": "observe:partial-probe"
- },
- "Gtk:TextTag:family-set": {
-  "confidence": 0.95,
-  "evidence": {
-   "flags": [
-    "READABLE",
-    "WRITABLE"
-   ],
-   "seen": [
-    {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:font",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    }
-   ],
-   "sweep": {
-    "notify_change": 1,
-    "notify_same": 1,
-    "on": "Gtk.TextTag",
-    "readback": "exact"
-   }
-  },
-  "pattern": "observe:exact-probe"
  },
  "Gtk:TextTag:font": {
   "confidence": 0.95,
@@ -17453,30 +17367,6 @@
      "on": "Gtk.TextTag"
     },
     {
-     "cause": "set:Gtk.TextTag:stretch-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:family",
      "changed": true,
      "notify": 1,
@@ -17508,6 +17398,12 @@
     },
     {
      "cause": "set:Gtk.TextTag:variant",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TextTag"
+    },
+    {
+     "cause": "set:Gtk.TextTag:weight",
      "changed": true,
      "notify": 1,
      "on": "Gtk.TextTag"
@@ -18398,13 +18294,13 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:size-set",
+     "cause": "set:Gtk.TextTag:size-points",
      "changed": true,
-     "notify": 0,
+     "notify": 1,
      "on": "Gtk.TextTag"
     },
     {
-     "cause": "set:Gtk.TextTag:size-points",
+     "cause": "set:Gtk.TextTag:size-set",
      "changed": true,
      "notify": 1,
      "on": "Gtk.TextTag"
@@ -18417,7 +18313,7 @@
     "readback": "exact"
    }
   },
-  "pattern": "observe:partial-probe"
+  "pattern": "observe:exact-probe"
  },
  "Gtk:TextTag:size-points": {
   "confidence": 0.95,
@@ -18465,8 +18361,8 @@
     },
     {
      "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
+     "changed": true,
+     "notify": 0,
      "on": "Gtk.TextTag"
     }
    ],
@@ -18488,79 +18384,7 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:stretch-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:font",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    }
-   ],
-   "sweep": {
-    "notify_change": 1,
-    "notify_same": 1,
-    "on": "Gtk.TextTag",
-    "readback": "exact"
-   }
-  },
-  "pattern": "observe:partial-probe"
- },
- "Gtk:TextTag:stretch-set": {
-  "confidence": 0.95,
-  "evidence": {
-   "flags": [
-    "READABLE",
-    "WRITABLE"
-   ],
-   "seen": [
-    {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:font",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
      "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
@@ -18574,6 +18398,36 @@
    }
   },
   "pattern": "observe:exact-probe"
+ },
+ "Gtk:TextTag:stretch-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "flags": [
+    "READABLE",
+    "WRITABLE"
+   ],
+   "seen": [
+    {
+     "cause": "set:Gtk.TextTag:stretch",
+     "changed": true,
+     "notify": 0,
+     "on": "Gtk.TextTag"
+    },
+    {
+     "cause": "set:Gtk.TextTag:font",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TextTag"
+    }
+   ],
+   "sweep": {
+    "notify_change": 1,
+    "notify_same": 1,
+    "on": "Gtk.TextTag",
+    "readback": "exact"
+   }
+  },
+  "pattern": "observe:partial-probe"
  },
  "Gtk:TextTag:strikethrough": {
   "confidence": 0.95,
@@ -18650,79 +18504,7 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:style-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:font",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    }
-   ],
-   "sweep": {
-    "notify_change": 1,
-    "notify_same": 1,
-    "on": "Gtk.TextTag",
-    "readback": "exact"
-   }
-  },
-  "pattern": "observe:partial-probe"
- },
- "Gtk:TextTag:style-set": {
-  "confidence": 0.95,
-  "evidence": {
-   "flags": [
-    "READABLE",
-    "WRITABLE"
-   ],
-   "seen": [
-    {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:font",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
      "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
@@ -18736,6 +18518,36 @@
    }
   },
   "pattern": "observe:exact-probe"
+ },
+ "Gtk:TextTag:style-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "flags": [
+    "READABLE",
+    "WRITABLE"
+   ],
+   "seen": [
+    {
+     "cause": "set:Gtk.TextTag:style",
+     "changed": true,
+     "notify": 0,
+     "on": "Gtk.TextTag"
+    },
+    {
+     "cause": "set:Gtk.TextTag:font",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TextTag"
+    }
+   ],
+   "sweep": {
+    "notify_change": 1,
+    "notify_same": 1,
+    "on": "Gtk.TextTag",
+    "readback": "exact"
+   }
+  },
+  "pattern": "observe:partial-probe"
  },
  "Gtk:TextTag:tabs": {
   "confidence": 0.9,
@@ -18878,12 +18690,6 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:variant-set",
-     "changed": true,
-     "notify": 0,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:font",
      "changed": false,
      "notify": 1,
@@ -18897,7 +18703,7 @@
     "readback": "exact"
    }
   },
-  "pattern": "observe:partial-probe"
+  "pattern": "observe:exact-probe"
  },
  "Gtk:TextTag:variant-set": {
   "confidence": 0.95,
@@ -18908,80 +18714,14 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:font",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    }
-   ],
-   "sweep": {
-    "notify_change": 1,
-    "notify_same": 1,
-    "on": "Gtk.TextTag",
-    "readback": "exact"
-   }
-  },
-  "pattern": "observe:exact-probe"
- },
- "Gtk:TextTag:weight": {
-  "confidence": 0.95,
-  "evidence": {
-   "flags": [
-    "READABLE",
-    "WRITABLE"
-   ],
-   "seen": [
-    {
-     "cause": "set:Gtk.TextTag:weight-set",
      "changed": true,
      "notify": 0,
      "on": "Gtk.TextTag"
     },
     {
      "cause": "set:Gtk.TextTag:font",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.TextTag"
     }
@@ -18995,7 +18735,7 @@
   },
   "pattern": "observe:partial-probe"
  },
- "Gtk:TextTag:weight-set": {
+ "Gtk:TextTag:weight": {
   "confidence": 0.95,
   "evidence": {
    "flags": [
@@ -19004,49 +18744,7 @@
    ],
    "seen": [
     {
-     "cause": "set:Gtk.TextTag:family",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
      "cause": "set:Gtk.TextTag:font",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:size-points",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:stretch",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:style",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:variant",
-     "changed": false,
-     "notify": 1,
-     "on": "Gtk.TextTag"
-    },
-    {
-     "cause": "set:Gtk.TextTag:weight",
      "changed": false,
      "notify": 1,
      "on": "Gtk.TextTag"
@@ -19060,6 +18758,36 @@
    }
   },
   "pattern": "observe:exact-probe"
+ },
+ "Gtk:TextTag:weight-set": {
+  "confidence": 0.95,
+  "evidence": {
+   "flags": [
+    "READABLE",
+    "WRITABLE"
+   ],
+   "seen": [
+    {
+     "cause": "set:Gtk.TextTag:weight",
+     "changed": true,
+     "notify": 0,
+     "on": "Gtk.TextTag"
+    },
+    {
+     "cause": "set:Gtk.TextTag:font",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TextTag"
+    }
+   ],
+   "sweep": {
+    "notify_change": 1,
+    "notify_same": 1,
+    "on": "Gtk.TextTag",
+    "readback": "exact"
+   }
+  },
+  "pattern": "observe:partial-probe"
  },
  "Gtk:TextTag:word": {
   "confidence": 0.95,
@@ -19644,13 +19372,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:TreeListModel:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:TreeListModel:passthrough": {
   "confidence": 0.95,
@@ -20083,6 +19811,14 @@
     "WRITABLE",
     "EXPLICIT_NOTIFY"
    ],
+   "seen": [
+    {
+     "cause": "set:Gtk.TreeViewColumn:sort-column-id",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.TreeViewColumn"
+    }
+   ],
    "sweep": {
     "notify_change": 1,
     "notify_same": 0,
@@ -20184,14 +19920,6 @@
     "READABLE",
     "WRITABLE",
     "EXPLICIT_NOTIFY"
-   ],
-   "seen": [
-    {
-     "cause": "set:Gtk.TreeViewColumn:sizing",
-     "changed": true,
-     "notify": 1,
-     "on": "Gtk.TreeViewColumn"
-    }
    ],
    "sweep": {
     "notify_change": 1,
@@ -20738,7 +20466,31 @@
    "round_trip_notify": true,
    "seen": [
     {
+     "cause": "set:Gtk.Entry:primary-icon-tooltip-markup",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
      "cause": "set:Gtk.Entry:primary-icon-tooltip-text",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
+     "cause": "set:Gtk.Entry:secondary-icon-tooltip-markup",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
+     "cause": "set:Gtk.Entry:secondary-icon-tooltip-text",
+     "changed": true,
+     "notify": 1,
+     "on": "Gtk.Entry"
+    },
+    {
+     "cause": "set:Gtk.Entry:show-emoji-icon",
      "changed": true,
      "notify": 1,
      "on": "Gtk.Entry"
@@ -20763,13 +20515,13 @@
     },
     {
      "cause": "set:Gtk.Widget:tooltip-markup",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.AboutDialog"
     },
     {
      "cause": "set:Gtk.Widget:tooltip-text",
-     "changed": false,
+     "changed": true,
      "notify": 1,
      "on": "Gtk.AboutDialog"
     }
@@ -21432,6 +21184,12 @@
      "changed": false,
      "notify": 1,
      "on": "Gtk.ColorChooserDialog"
+    },
+    {
+     "cause": "set:Gtk.FileChooser:create-folders",
+     "changed": false,
+     "notify": 1,
+     "on": "Gtk.FileChooserDialog"
     }
    ]
   },
@@ -21783,13 +21541,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Pango:FontFamily:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Pango:FontFamily:name": {
   "confidence": 0.8,
@@ -21810,12 +21568,12 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Pango:FontMap:n-items": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  }
 }

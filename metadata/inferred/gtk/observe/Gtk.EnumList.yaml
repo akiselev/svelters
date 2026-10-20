@@ -8,3 +8,15 @@ observe:
   - origin: gir
     ref: 'O2: CONSTRUCT_ONLY: set once at construction'
   confidence: 0.95
+- prop: n-items
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::n-items
+  provenance:
+  - origin: gir
+    ref: 'O1: GObject property, notify::n-items'
+  - origin: manual
+    ref: 'review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore
+      and Gtk.StringList'
+  confidence: 0.9

@@ -1,0 +1,76 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtGui:QUndoStack
+observe:
+- prop: active
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: canRedo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: canRedoChanged
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY canRedoChanged'
+  verify:
+    'on': QtGui:QUndoStack
+    check: connect
+  confidence: 0.9
+- prop: canUndo
+  class: exact
+  via:
+  - mechanism: notify
+    signal: canUndoChanged
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY canUndoChanged'
+  verify:
+    'on': QtGui:QUndoStack
+    check: connect
+  confidence: 0.9
+- prop: clean
+  class: exact
+  via:
+  - mechanism: notify
+    signal: cleanChanged
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY cleanChanged'
+  verify:
+    'on': QtGui:QUndoStack
+    check: connect
+  confidence: 0.9
+- prop: redoText
+  class: exact
+  via:
+  - mechanism: notify
+    signal: redoTextChanged
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY redoTextChanged'
+  verify:
+    'on': QtGui:QUndoStack
+    check: connect
+  confidence: 0.9
+- prop: undoLimit
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: undoText
+  class: exact
+  via:
+  - mechanism: notify
+    signal: undoTextChanged
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY undoTextChanged'
+  verify:
+    'on': QtGui:QUndoStack
+    check: connect
+  confidence: 0.9

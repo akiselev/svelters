@@ -1,0 +1,151 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGraphicsObject
+observe:
+- prop: effect
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: enabledChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY enabledChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:enabled)'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: change
+  confidence: 0.95
+- prop: opacity
+  class: exact
+  via:
+  - mechanism: notify
+    signal: opacityChanged()
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY opacityChanged()'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: connect
+  confidence: 0.9
+- prop: parent
+  class: exact
+  via:
+  - mechanism: notify
+    signal: parentChanged()
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY parentChanged()'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: connect
+  confidence: 0.9
+- prop: pos
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QGraphicsObject:x, set:QtWidgets:QGraphicsObject:y'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: unsupported
+  confidence: 0.95
+- prop: rotation
+  class: exact
+  via:
+  - mechanism: notify
+    signal: rotationChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY rotationChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:rotation)'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: change
+  confidence: 0.95
+- prop: scale
+  class: exact
+  via:
+  - mechanism: notify
+    signal: scaleChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY scaleChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:scale)'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: change
+  confidence: 0.95
+- prop: transformOriginPoint
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: visible
+  class: exact
+  via:
+  - mechanism: notify
+    signal: visibleChanged()
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY visibleChanged()'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: change
+  confidence: 0.9
+- prop: x
+  class: exact
+  via:
+  - mechanism: notify
+    signal: xChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY xChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:x)'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: change
+  confidence: 0.95
+- prop: y
+  class: exact
+  via:
+  - mechanism: notify
+    signal: yChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY yChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:y)'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: change
+  confidence: 0.95
+- prop: z
+  class: exact
+  via:
+  - mechanism: notify
+    signal: zChanged()
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY zChanged()'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsObject:z)'
+  verify:
+    'on': QtWidgets:QGraphicsProxyWidget
+    check: change
+  confidence: 0.95

@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QSequentialAnimationGroup
+observe:
+- prop: currentAnimation
+  class: exact
+  via:
+  - mechanism: notify
+    signal: currentAnimationChanged
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY currentAnimationChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  verify:
+    'on': QtCore:QSequentialAnimationGroup
+    check: connect
+  confidence: 0.9

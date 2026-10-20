@@ -118,11 +118,12 @@ observe:
   derived_from:
   - file
   - icon-name
+  - resource
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::storage-type'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file, set:Gtk.Image:icon-name)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file, set:Gtk.Image:icon-name, set:Gtk.Image:resource)'
   verify:
     'on': Gtk:Image
     check: cross

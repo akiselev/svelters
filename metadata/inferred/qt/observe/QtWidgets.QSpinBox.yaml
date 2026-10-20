@@ -1,0 +1,70 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QSpinBox
+observe:
+- prop: cleanText
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on scenario:QSpinBox keyClicks, set:QtWidgets:QSpinBox:minimum, set:QtWidgets:QSpinBox:value'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
+  confidence: 0.95
+- prop: displayIntegerBase
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximum
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: minimum
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: prefix
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: singleStep
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: stepType
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: suffix
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: value
+  class: exact
+  via:
+  - mechanism: notify
+    signal: valueChanged(int)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY valueChanged(int)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QSpinBox keyClicks, set:QtWidgets:QSpinBox:minimum, set:QtWidgets:QSpinBox:value)'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: change
+  confidence: 0.95

@@ -1,0 +1,16 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QItemSelectionModel
+observe:
+- prop: selectedIndexes
+  class: exact
+  via:
+  - mechanism: notify
+    signal: selectionChanged
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY selectionChanged'
+  verify:
+    'on': QtCore:QItemSelectionModel
+    check: connect
+  confidence: 0.9

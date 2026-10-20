@@ -48,20 +48,15 @@ observe:
     check: change
   confidence: 0.95
 - prop: icon
-  class: exact
-  via:
-  - mechanism: notify
-    signal: notify::icon
-  fires: on_set
+  class: none
   provenance:
-  - origin: runtime
-    ref: 'O1: GObject property, notify::icon'
-  - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: changed without notify on set:Gtk.ShortcutsShortcut:shortcut-type'
   verify:
     'on': Gtk:ShortcutsShortcut
-    check: connect
-  confidence: 0.9
+    check: silent
+    trigger: shortcut-type
+  confidence: 0.95
 - prop: icon-set
   class: exact
   via:
@@ -100,13 +95,11 @@ observe:
   fires: on_set
   derived_from:
   - shortcut-type
-  - subtitle-set
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::subtitle'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:shortcut-type, set:Gtk.ShortcutsShortcut:subtitle,
-      set:Gtk.ShortcutsShortcut:subtitle-set)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:shortcut-type, set:Gtk.ShortcutsShortcut:subtitle)'
   verify:
     'on': Gtk:ShortcutsShortcut
     check: change

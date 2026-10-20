@@ -1,0 +1,206 @@
+{
+ "appkit": {
+  "classes": {
+   "constant": {
+    "manual": 0,
+    "no_test": 0,
+    "pending": 0,
+    "total": 0,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "exact": {
+    "manual": 0,
+    "no_test": 150,
+    "pending": 0,
+    "total": 150,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "none": {
+    "manual": 0,
+    "no_test": 116,
+    "pending": 0,
+    "total": 116,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "partial": {
+    "manual": 0,
+    "no_test": 8,
+    "pending": 0,
+    "total": 8,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "set_only": {
+    "manual": 0,
+    "no_test": 70,
+    "pending": 0,
+    "total": 70,
+    "verified": 0,
+    "verified_weak": 0
+   }
+  },
+  "parked": 0,
+  "unreviewed": {
+   "by_pattern": {},
+   "low": 0,
+   "middle": 0
+  }
+ },
+ "gtk": {
+  "classes": {
+   "constant": {
+    "manual": 0,
+    "no_test": 38,
+    "pending": 71,
+    "total": 109,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "exact": {
+    "manual": 0,
+    "no_test": 55,
+    "pending": 1047,
+    "total": 1102,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "none": {
+    "manual": 0,
+    "no_test": 0,
+    "pending": 2,
+    "total": 2,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "partial": {
+    "manual": 0,
+    "no_test": 0,
+    "pending": 16,
+    "total": 16,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "set_only": {
+    "manual": 0,
+    "no_test": 2,
+    "pending": 0,
+    "total": 2,
+    "verified": 0,
+    "verified_weak": 0
+   }
+  },
+  "parked": 0,
+  "unreviewed": {
+   "by_pattern": {
+    "middle:observe:exact-read-only-unprobed": 209
+   },
+   "low": 0,
+   "middle": 209
+  }
+ },
+ "qt": {
+  "classes": {
+   "constant": {
+    "manual": 0,
+    "no_test": 0,
+    "pending": 0,
+    "total": 0,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "exact": {
+    "manual": 0,
+    "no_test": 105,
+    "pending": 64,
+    "total": 169,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "none": {
+    "manual": 0,
+    "no_test": 51,
+    "pending": 26,
+    "total": 77,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "partial": {
+    "manual": 0,
+    "no_test": 4,
+    "pending": 6,
+    "total": 10,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "set_only": {
+    "manual": 0,
+    "no_test": 452,
+    "pending": 0,
+    "total": 452,
+    "verified": 0,
+    "verified_weak": 0
+   }
+  },
+  "parked": 0,
+  "unreviewed": {
+   "by_pattern": {
+    "middle:observe:exact-signal-pair-unprobed": 12
+   },
+   "low": 0,
+   "middle": 12
+  }
+ },
+ "winui": {
+  "classes": {
+   "constant": {
+    "manual": 0,
+    "no_test": 0,
+    "pending": 0,
+    "total": 0,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "exact": {
+    "manual": 0,
+    "no_test": 207,
+    "pending": 0,
+    "total": 207,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "none": {
+    "manual": 0,
+    "no_test": 26,
+    "pending": 0,
+    "total": 26,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "partial": {
+    "manual": 0,
+    "no_test": 0,
+    "pending": 0,
+    "total": 0,
+    "verified": 0,
+    "verified_weak": 0
+   },
+   "set_only": {
+    "manual": 0,
+    "no_test": 18,
+    "pending": 0,
+    "total": 18,
+    "verified": 0,
+    "verified_weak": 0
+   }
+  },
+  "parked": 0,
+  "unreviewed": {
+   "by_pattern": {},
+   "low": 0,
+   "middle": 0
+  }
+ }
+}

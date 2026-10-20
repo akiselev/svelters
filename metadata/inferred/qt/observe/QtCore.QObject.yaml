@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtCore:QObject
+observe:
+- prop: objectName
+  class: exact
+  via:
+  - mechanism: notify
+    signal: objectNameChanged
+  - mechanism: bindable
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY objectNameChanged'
+  - origin: moc
+    ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  verify:
+    'on': QtCore:QObject
+    check: change
+  confidence: 0.9

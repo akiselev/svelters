@@ -558,7 +558,14 @@ def main() -> int:
     ap.add_argument("--out", help="default: metadata/probe/qt/<qt version>.json")
     ap.add_argument("-j", type=int, default=4)
     ap.add_argument("--timeout", type=int, default=120)
+    ap.add_argument("--section", default="props", choices=["props", "observe"],
+                    help="props: the PySide6 probe (default); observe: the observability probe (C++ against a Qt SDK)")
+    ap.add_argument("--qtdir", help="observe: the Qt SDK to build and run against (<qt>/gcc_64)")
     a = ap.parse_args()
+    if a.section == "observe":
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import observe_probe
+        return observe_probe.main(a)
     if a.worker:
         worker(a.worker)
         return 0

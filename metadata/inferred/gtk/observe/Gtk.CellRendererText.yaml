@@ -501,11 +501,12 @@ observe:
   fires: on_set
   derived_from:
   - accel-key
+  - keycode
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::text'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:accel-key)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:accel-key, set:Gtk.CellRendererAccel:keycode)'
   verify:
     'on': Gtk:CellRendererAccel
     check: change

@@ -1,0 +1,78 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QProgressBar
+observe:
+- prop: alignment
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: format
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: invertedAppearance
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximum
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: minimum
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: orientation
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: text
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QProgressBar:value'
+  verify:
+    'on': QtWidgets:QProgressBar
+    check: unsupported
+  confidence: 0.95
+- prop: textDirection
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: textVisible
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: value
+  class: partial
+  via:
+  - mechanism: notify
+    signal: valueChanged(int)
+  missed:
+  - cross_prop
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY valueChanged(int)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced set:QtWidgets:QProgressBar:value; missed set:QtWidgets:QProgressBar:minimum'
+  verify:
+    'on': QtWidgets:QProgressBar
+    check: change
+  confidence: 0.95

@@ -1,0 +1,207 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSButton
+observe:
+- prop: active-compression-options
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: allows-mixed-state
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsMixedState` fired on a programmatic set'
+  confidence: 0.9
+- prop: alternate-image
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: alternate-title
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `alternateTitle` fired on a programmatic set'
+  confidence: 0.9
+- prop: attributed-alternate-title
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `attributedAlternateTitle` fired on a programmatic set'
+  confidence: 0.9
+- prop: attributed-title
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `attributedTitle` fired on a programmatic set'
+  confidence: 0.9
+- prop: bezel-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: bezel-style
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `bezelStyle` fired on a programmatic set'
+  confidence: 0.9
+- prop: border-shape
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `borderShape` fired on a programmatic set'
+  confidence: 0.9
+- prop: bordered
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `bordered` fired on a programmatic set'
+  confidence: 0.9
+- prop: content-tint-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: has-destructive-action
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `hasDestructiveAction` fired on a programmatic set'
+  confidence: 0.9
+- prop: image
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: image-hugs-title
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `imageHugsTitle` fired on a programmatic set'
+  confidence: 0.9
+- prop: image-position
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `imagePosition` fired on a programmatic set'
+  confidence: 0.9
+- prop: image-scaling
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `imageScaling` fired on a programmatic set'
+  confidence: 0.9
+- prop: key-equivalent
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `keyEquivalent` fired on a programmatic set'
+  confidence: 0.9
+- prop: key-equivalent-modifier-mask
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `keyEquivalentModifierMask` fired on a programmatic set'
+  confidence: 0.9
+- prop: max-accelerator-level
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: shows-border-only-while-mouse-inside
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `showsBorderOnlyWhileMouseInside` fired on a programmatic set'
+  confidence: 0.9
+- prop: sound
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: spring-loaded
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `springLoaded` fired on a programmatic set'
+  confidence: 0.9
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: symbol-configuration
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: tint-prominence
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `tintProminence` fired on a programmatic set'
+  confidence: 0.9
+- prop: title
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `title` fired on a programmatic set'
+  confidence: 0.9
+- prop: transparent
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `transparent` fired on a programmatic set'
+  confidence: 0.9

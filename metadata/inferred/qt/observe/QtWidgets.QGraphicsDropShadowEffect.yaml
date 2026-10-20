@@ -1,0 +1,79 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGraphicsDropShadowEffect
+observe:
+- prop: blurRadius
+  class: exact
+  via:
+  - mechanism: notify
+    signal: blurRadiusChanged(double)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY blurRadiusChanged(double)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsDropShadowEffect:blurRadius)'
+  verify:
+    'on': QtWidgets:QGraphicsDropShadowEffect
+    check: change
+  confidence: 0.95
+- prop: color
+  class: exact
+  via:
+  - mechanism: notify
+    signal: colorChanged(QColor)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY colorChanged(QColor)'
+  verify:
+    'on': QtWidgets:QGraphicsDropShadowEffect
+    check: connect
+  confidence: 0.9
+- prop: offset
+  class: exact
+  via:
+  - mechanism: notify
+    signal: offsetChanged(QPointF)
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY offsetChanged(QPointF) (shared by 3 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsDropShadowEffect:xOffset, set:QtWidgets:QGraphicsDropShadowEffect:yOffset)'
+  verify:
+    'on': QtWidgets:QGraphicsDropShadowEffect
+    check: connect
+  confidence: 0.95
+- prop: xOffset
+  class: exact
+  via:
+  - mechanism: notify
+    signal: offsetChanged(QPointF)
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY offsetChanged(QPointF) (shared by 3 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsDropShadowEffect:xOffset)'
+  verify:
+    'on': QtWidgets:QGraphicsDropShadowEffect
+    check: change
+  confidence: 0.95
+- prop: yOffset
+  class: exact
+  via:
+  - mechanism: notify
+    signal: offsetChanged(QPointF)
+    coarse: true
+  fires: coarse
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY offsetChanged(QPointF) (shared by 3 properties)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsDropShadowEffect:yOffset)'
+  verify:
+    'on': QtWidgets:QGraphicsDropShadowEffect
+    check: change
+  confidence: 0.95

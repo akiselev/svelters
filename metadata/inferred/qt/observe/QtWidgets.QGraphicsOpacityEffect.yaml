@@ -1,0 +1,31 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGraphicsOpacityEffect
+observe:
+- prop: opacity
+  class: exact
+  via:
+  - mechanism: notify
+    signal: opacityChanged(double)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY opacityChanged(double)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsOpacityEffect:opacity)'
+  verify:
+    'on': QtWidgets:QGraphicsOpacityEffect
+    check: change
+  confidence: 0.95
+- prop: opacityMask
+  class: exact
+  via:
+  - mechanism: notify
+    signal: opacityMaskChanged(QBrush)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY opacityMaskChanged(QBrush)'
+  verify:
+    'on': QtWidgets:QGraphicsOpacityEffect
+    check: connect
+  confidence: 0.9

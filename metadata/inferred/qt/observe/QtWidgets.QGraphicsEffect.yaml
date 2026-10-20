@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGraphicsEffect
+observe:
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: notify
+    signal: enabledChanged(bool)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY enabledChanged(bool)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsEffect:enabled)'
+  verify:
+    'on': QtWidgets:QGraphicsBlurEffect
+    check: change
+  confidence: 0.95

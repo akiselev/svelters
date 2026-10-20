@@ -13,9 +13,6 @@ observe:
     ref: 'O1: GObject property, notify::current-page'
   - origin: probe
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:current-page)'
-  verify:
-    'on': Gtk:PrintUnixDialog
-    check: change
   confidence: 0.95
 - prop: embed-page-setup
   class: exact
@@ -28,9 +25,6 @@ observe:
     ref: 'O1: GObject property, notify::embed-page-setup'
   - origin: probe
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:embed-page-setup)'
-  verify:
-    'on': Gtk:PrintUnixDialog
-    check: change
   confidence: 0.95
 - prop: has-selection
   class: exact
@@ -43,9 +37,6 @@ observe:
     ref: 'O1: GObject property, notify::has-selection'
   - origin: probe
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:has-selection)'
-  verify:
-    'on': Gtk:PrintUnixDialog
-    check: change
   confidence: 0.95
 - prop: manual-capabilities
   class: exact
@@ -58,9 +49,6 @@ observe:
     ref: 'O1: GObject property, notify::manual-capabilities'
   - origin: rule
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
-  verify:
-    'on': Gtk:PrintUnixDialog
-    check: connect
   confidence: 0.9
 - prop: page-setup
   class: exact
@@ -73,9 +61,6 @@ observe:
     ref: 'O1: GObject property, notify::page-setup'
   - origin: rule
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
-  verify:
-    'on': Gtk:PrintUnixDialog
-    check: connect
   confidence: 0.9
 - prop: print-settings
   class: exact
@@ -88,9 +73,6 @@ observe:
     ref: 'O1: GObject property, notify::print-settings'
   - origin: rule
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
-  verify:
-    'on': Gtk:PrintUnixDialog
-    check: connect
   confidence: 0.9
 - prop: support-selection
   class: exact
@@ -103,7 +85,4 @@ observe:
     ref: 'O1: GObject property, notify::support-selection'
   - origin: probe
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:support-selection)'
-  verify:
-    'on': Gtk:PrintUnixDialog
-    check: change
   confidence: 0.95

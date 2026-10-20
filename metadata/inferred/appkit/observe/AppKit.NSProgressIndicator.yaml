@@ -1,0 +1,74 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSProgressIndicator
+observe:
+- prop: control-size
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `controlSize` fired on a programmatic set'
+  confidence: 0.9
+- prop: displayed-when-stopped
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `displayedWhenStopped` fired on a programmatic set'
+  confidence: 0.9
+- prop: double-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `doubleValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: indeterminate
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `indeterminate` fired on a programmatic set'
+  confidence: 0.9
+- prop: max-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maxValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: min-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `minValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: observed-progress
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: style
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `style` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-threaded-animation
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesThreadedAnimation` fired on a programmatic set'
+  confidence: 0.9

@@ -1,0 +1,43 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGesture
+observe:
+- prop: gestureCancelPolicy
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: gestureType
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QGesture
+    check: unsupported
+  confidence: 0.9
+- prop: hasHotSpot
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QGesture
+    check: unsupported
+  confidence: 0.9
+- prop: hotSpot
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: state
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QGesture
+    check: unsupported
+  confidence: 0.9

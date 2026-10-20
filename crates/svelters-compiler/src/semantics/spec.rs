@@ -215,9 +215,76 @@ pub struct PropertySpec {
     /// QKeySequence, an icon name, `"#ff0000"`): static attributes pass the text through.
     #[serde(default)]
     pub string_form: bool,
+    /// Whether and how a native change of the property can be observed on this platform (milestone
+    /// R0, `metadata/observe/<tk>.json`). `None`: no fact (unknown), as in specs from before R0.
+    #[serde(default)]
+    pub observe: Option<ObserveSpec>,
     /// Kind id that declares the property (filled in at load).
     #[serde(skip)]
     pub owner: String,
+}
+
+/// Observability of a property on one platform (plans/research/REACTIVITY.md 4.1-4.3, decisions 13).
+/// The compiler reads the class, the missed causes and the cost; the mechanism string is for
+/// messages only (the mechanisms themselves go to the backend tables).
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct ObserveSpec {
+    pub class: ObsClass,
+    /// `partial` only: what the mechanisms miss (`user_edit`, `programmatic`, `cross_prop`, `parent`,
+    /// `layout`, `wm`, `async`).
+    #[serde(default)]
+    pub missed: Vec<String>,
+    /// One notifier shared by several properties (Qt `QAction::changed()`).
+    #[serde(default)]
+    pub coarse: bool,
+    #[serde(default)]
+    pub value_cost: ValueCost,
+    #[serde(default)]
+    pub timing: ObsTiming,
+    /// `notify`, `notify+notification:NSControlTextDidChangeNotification`, `via:buffer.text`, ...
+    #[serde(default)]
+    pub mechanism: String,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ObsClass {
+    /// Never changes after construction (construct-only, Qt `CONSTANT`): a plain read.
+    Constant,
+    /// Only our setters change it: no native observation, setters invalidate locally; two-way
+    /// `bind:` is an error (decision 6).
+    SetOnly,
+    /// Every native change is announced by the mechanisms: `bind:` lowers onto observation (decision 8).
+    Exact,
+    /// Some causes (`missed`) are not announced: allowed with a warning (decision 5).
+    Partial,
+    /// Native changes are not announced: a snapshot read; `bind:` is an error. No polling (decision 9).
+    None,
+}
+
+impl ObsClass {
+    /// A subscription is worth installing (the reactive getter observes).
+    pub fn observable(self) -> bool {
+        matches!(self, ObsClass::Exact | ObsClass::Partial)
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ValueCost {
+    #[default]
+    Cheap,
+    /// Whole-text properties: the host delivers an invalidation without reading and comparing.
+    Proportional,
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ObsTiming {
+    #[default]
+    Sync,
+    /// Announced later than the change (Qt Resize/Move of a hidden widget at `show()`).
+    Deferred,
 }
 
 #[derive(Debug, Clone, Deserialize)]

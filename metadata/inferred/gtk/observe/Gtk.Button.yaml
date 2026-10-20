@@ -71,13 +71,11 @@ observe:
   - mechanism: notify
     signal: notify::label
   fires: on_set
-  derived_from:
-  - icon-name
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::label (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:icon-name, set:Gtk.Button:label)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:label)'
   verify:
     'on': Gtk:Button
     check: change

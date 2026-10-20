@@ -1,0 +1,625 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QWidget
+observe:
+- prop: acceptDrops
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - AcceptDropsChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: AcceptDropsChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QListView:viewMode, set:QtWidgets:QWidget:acceptDrops)'
+  confidence: 0.95
+- prop: accessibleDescription
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: accessibleIdentifier
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: accessibleName
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: autoFillBackground
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: baseSize
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: childrenRect
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QAbstractSpinBox:frame, set:QtWidgets:QDateTimeEdit:calendarPopup, set:QtWidgets:QDialog:sizeGripEnabled'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: childrenRegion
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QAbstractSpinBox:frame, set:QtWidgets:QDateTimeEdit:calendarPopup, set:QtWidgets:QDialog:sizeGripEnabled'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: contextMenuPolicy
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: cursor
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - CursorChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: CursorChange'
+  confidence: 0.9
+- prop: enabled
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - EnabledChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: EnabledChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:parent setEnabled(false), set:QtWidgets:QWidget:enabled)'
+  confidence: 0.95
+- prop: focus
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - FocusIn
+    - FocusOut
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: FocusIn, FocusOut'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QTabBar:autoHide)'
+  confidence: 0.95
+- prop: focusPolicy
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QGroupBox:checkable'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: font
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - FontChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: FontChange'
+  confidence: 0.9
+- prop: frameGeometry
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+    - Move
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize, Move'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QMessageBox:icon)'
+  confidence: 0.95
+- prop: frameSize
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QMessageBox:icon)'
+  confidence: 0.95
+- prop: fullScreen
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - WindowStateChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: WindowStateChange'
+  confidence: 0.9
+- prop: geometry
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+    - Move
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize, Move'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QMessageBox:icon)'
+  confidence: 0.95
+- prop: height
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:icon, set:QtWidgets:QMessageBox:informativeText)'
+  confidence: 0.95
+- prop: inputMethodHints
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QLineEdit:echoMode'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: isActiveWindow
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - ActivationChange
+    - WindowActivate
+    - WindowDeactivate
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: ActivationChange, WindowActivate, WindowDeactivate'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:parent hide(), set:QtWidgets:QTabBar:autoHide)'
+  confidence: 0.95
+- prop: layoutDirection
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - LayoutDirectionChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: LayoutDirectionChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QWidget:layoutDirection)'
+  confidence: 0.95
+- prop: locale
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - LocaleChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: LocaleChange'
+  confidence: 0.9
+- prop: maximized
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - WindowStateChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: WindowStateChange'
+  confidence: 0.9
+- prop: maximumHeight
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QMessageBox:icon, set:QtWidgets:QMessageBox:informativeText'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: maximumSize
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QMessageBox:detailedText, set:QtWidgets:QMessageBox:icon, set:QtWidgets:QMessageBox:informativeText'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: maximumWidth
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QMessageBox:detailedText'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: minimized
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - WindowStateChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: WindowStateChange'
+  confidence: 0.9
+- prop: minimumHeight
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QCalendarWidget:navigationBarVisible, set:QtWidgets:QMessageBox:icon,
+      set:QtWidgets:QMessageBox:informativeText'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: minimumSize
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QCalendarWidget:navigationBarVisible, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QMessageBox:icon'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: minimumSizeHint
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QAbstractButton:text, set:QtWidgets:QCalendarWidget:horizontalHeaderFormat,
+      set:QtWidgets:QCalendarWidget:navigationBarVisible'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: minimumWidth
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QCalendarWidget:navigationBarVisible, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QStatusBar:sizeGripEnabled'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: modal
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDialog:modal'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: mouseTracking
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - MouseTrackingChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: MouseTrackingChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QWidget:mouseTracking)'
+  confidence: 0.95
+- prop: normalGeometry
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+    - Move
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize, Move'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QMessageBox:icon)'
+  confidence: 0.95
+- prop: palette
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - PaletteChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: PaletteChange'
+  confidence: 0.9
+- prop: pos
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Move
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Move'
+  confidence: 0.9
+- prop: rect
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QMessageBox:icon)'
+  confidence: 0.95
+- prop: size
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:detailedText,
+      set:QtWidgets:QMessageBox:icon)'
+  confidence: 0.95
+- prop: sizeHint
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on scenario:QTabWidget remove the current tab, set:QtWidgets:QAbstractButton:text, set:QtWidgets:QAbstractScrollArea:sizeAdjustPolicy'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: sizeIncrement
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: sizePolicy
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDialogButtonBox:orientation, set:QtWidgets:QFrame:frameShadow, set:QtWidgets:QFrame:frameShape'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: statusTip
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: styleSheet
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - StyleChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: StyleChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QWidget:styleSheet)'
+  confidence: 0.95
+- prop: tabletTracking
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - TabletTrackingChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: TabletTrackingChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QWidget:tabletTracking)'
+  confidence: 0.95
+- prop: toolTip
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - ToolTipChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: ToolTipChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QWidget:toolTip)'
+  confidence: 0.95
+- prop: toolTipDuration
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: updatesEnabled
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: visible
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Show
+    - Hide
+    - ShowToParent
+    - HideToParent
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Show, Hide, ShowToParent, HideToParent'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:parent hide(), set:QtWidgets:QTabBar:autoHide)'
+  confidence: 0.95
+- prop: whatsThis
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: width
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Resize
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Resize'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMenu:tearOffEnabled, set:QtWidgets:QMessageBox:detailedText)'
+  confidence: 0.95
+- prop: windowFilePath
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: windowFlags
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: windowIcon
+  class: exact
+  via:
+  - mechanism: notify
+    signal: windowIconChanged(QIcon)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY windowIconChanged(QIcon)'
+  verify:
+    'on': QtWidgets:QWidget
+    check: connect
+  confidence: 0.9
+- prop: windowIconText
+  class: exact
+  via:
+  - mechanism: notify
+    signal: windowIconTextChanged(QString)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY windowIconTextChanged(QString)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QWidget:windowIconText)'
+  verify:
+    'on': QtWidgets:QWidget
+    check: change
+  confidence: 0.95
+- prop: windowModality
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDialog:modal'
+  verify:
+    'on': QtWidgets:QWidget
+    check: unsupported
+  confidence: 0.95
+- prop: windowModified
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - ModifiedChange
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: ModifiedChange'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QWidget:windowModified)'
+  confidence: 0.95
+- prop: windowOpacity
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: windowTitle
+  class: partial
+  via:
+  - mechanism: notify
+    signal: windowTitleChanged(QString)
+  missed:
+  - cross_prop
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY windowTitleChanged(QString)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced set:QtWidgets:QFileDialog:acceptMode, set:QtWidgets:QWidget:windowTitle; missed set:QtWidgets:QWidget:windowFilePath'
+  verify:
+    'on': QtWidgets:QWidget
+    check: change
+  confidence: 0.95
+- prop: x
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Move
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Move'
+  confidence: 0.9
+- prop: y
+  class: exact
+  via:
+  - mechanism: event
+    events:
+    - Move
+  timing: deferred
+  provenance:
+  - origin: rule
+    ref: 'O4: QEvent table: Move'
+  confidence: 0.9

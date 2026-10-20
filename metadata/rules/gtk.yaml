@@ -82,6 +82,11 @@ observe:
     "Gtk:Scrollbar": 'o.downcast_ref::<gtk::Scrollbar>().unwrap().adjustment().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);'
     "Gtk:SpinButton": 'o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);'
     "Gtk:Adjustment": 'o.downcast_ref::<gtk::Adjustment>().unwrap().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);'
+  # Review decisions by pattern for read-only properties the probe never saw change (otherwise 0.8, unwritten):
+  # `pattern` is a regex over `<Ns>:<Type>:<prop>`.
+  accept:
+    - pattern: ':n-items$'
+      reason: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList
   # Native changes no property set makes, as a statement on `o: &glib::Object` (the generated verification test):
   # `silent` checks for none/partial facts, `cross` for exact read-only ones.
   triggers:

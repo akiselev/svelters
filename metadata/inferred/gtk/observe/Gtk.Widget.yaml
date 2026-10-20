@@ -139,14 +139,20 @@ observe:
     signal: notify::has-tooltip
   fires: on_change
   derived_from:
+  - primary-icon-tooltip-markup
   - primary-icon-tooltip-text
+  - secondary-icon-tooltip-markup
+  - secondary-icon-tooltip-text
+  - show-emoji-icon
   - tooltip-column
+  - tooltip-markup
+  - tooltip-text
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::has-tooltip (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-tooltip-text, set:Gtk.IconView:tooltip-column,
-      set:Gtk.TreeView:tooltip-column)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-tooltip-markup, set:Gtk.Entry:primary-icon-tooltip-text,
+      set:Gtk.Entry:secondary-icon-tooltip-markup)'
   verify:
     'on': Gtk:AboutDialog
     check: change

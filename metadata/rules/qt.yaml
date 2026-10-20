@@ -40,3 +40,77 @@ deny_methods:
   - { pattern: "(winId|effectiveWinId|internalWinId|devicePixelRatio\\w*|logicalDpi\\w*|physicalDpi\\w*|width\\w*|height\\w*|depth|colorCount|paintingActive)", reason: "display-dependent value" }
 deny_signals:
   - { pattern: "(windowTitleChanged|windowIconChanged|windowIconTextChanged|customContextMenuRequested|objectNameChanged|destroyed)", reason: "QWidget/QObject signal, annotated on the QWidget inherit block" }
+
+# Observability rules O2-O5, O8, O10 (milestone R0, plans/research/REACTIVITY.md section 4.4;
+# tools/metadata/qt/observe_rules.py). Evidence: the observe probe of this Qt version
+# (tools/metadata/qt/probe.py --section observe) and moc's BINDABLE/NOTIFY/CONSTANT (tools/metadata/qt/ingest_moc.py).
+observe:
+  probe: "6.11.3"
+  # O4: QWidget properties without NOTIFY whose changes arrive as QEvents (QWidget docs, QEvent::Type). Keys are
+  # `<class>:<prop>`; `QWidget:<prop>` applies to every QWidget subclass.
+  events:
+    "QWidget:enabled": [EnabledChange]
+    "QWidget:visible": [Show, Hide, ShowToParent, HideToParent]
+    "QWidget:geometry": [Resize, Move]
+    "QWidget:frameGeometry": [Resize, Move]
+    "QWidget:normalGeometry": [Resize, Move]
+    "QWidget:pos": [Move]
+    "QWidget:x": [Move]
+    "QWidget:y": [Move]
+    "QWidget:size": [Resize]
+    "QWidget:frameSize": [Resize]
+    "QWidget:width": [Resize]
+    "QWidget:height": [Resize]
+    "QWidget:rect": [Resize]
+    "QWidget:font": [FontChange]
+    "QWidget:palette": [PaletteChange]
+    "QWidget:toolTip": [ToolTipChange]
+    "QWidget:windowState": [WindowStateChange]
+    "QWidget:minimized": [WindowStateChange]
+    "QWidget:maximized": [WindowStateChange]
+    "QWidget:fullScreen": [WindowStateChange]
+    "QWidget:windowModified": [ModifiedChange]
+    "QWidget:cursor": [CursorChange]
+    "QWidget:layoutDirection": [LayoutDirectionChange]
+    "QWidget:styleSheet": [StyleChange]
+    "QWidget:locale": [LocaleChange]
+    "QWidget:acceptDrops": [AcceptDropsChange]
+    "QWidget:mouseTracking": [MouseTrackingChange]
+    "QWidget:tabletTracking": [TabletTrackingChange]
+    "QWidget:isActiveWindow": [ActivationChange, WindowActivate, WindowDeactivate]
+    "QWidget:focus": [FocusIn, FocusOut]
+    "QLineEdit:readOnly": [ReadOnlyChange]
+    "QTextEdit:readOnly": [ReadOnlyChange]
+    "QPlainTextEdit:readOnly": [ReadOnlyChange]
+    "QAbstractSpinBox:readOnly": [ReadOnlyChange]
+  # Geometry of a hidden widget changes at once, but Qt sends Resize/Move only when it is shown (probe scenario).
+  deferred: ["QWidget:geometry", "QWidget:frameGeometry", "QWidget:normalGeometry", "QWidget:pos", "QWidget:x", "QWidget:y",
+             "QWidget:size", "QWidget:frameSize", "QWidget:width", "QWidget:height", "QWidget:rect"]
+  # O5: signals that report a property without NOTIFY, beyond the name pairs `<prop>Changed`/`<prop>Edited`.
+  signals:
+    "QLineEdit:modified": [textEdited, textChanged]
+    "QLineEdit:selectedText": [selectionChanged]
+    "QLineEdit:hasSelectedText": [selectionChanged]
+    "QLineEdit:displayText": [textChanged]
+    "QLineEdit:undoAvailable": [textChanged]
+    "QLineEdit:redoAvailable": [textChanged]
+    "QTextEdit:plainText": [textChanged]
+    "QTextDocument:modified": [modificationChanged]
+    "QTextDocument:blockCount": [blockCountChanged]
+    "QComboBox:currentData": [currentIndexChanged]
+    "QAbstractButton:down": [pressed, released]
+  # O10: whole-text properties: the host does not read and compare them on every change.
+  proportional: ["QTextEdit:html", "QTextEdit:markdown", "QTextEdit:plainText", "QPlainTextEdit:plainText"]
+  # What a probe scenario that changed a property unannounced stands for (`missed`); anything else: cross_prop.
+  scenario_missed:
+    "QLineEdit keyClicks": user_edit
+    "QPlainTextEdit keyClicks": user_edit
+    "QPlainTextEdit keyClicks: its document": user_edit
+    "QTextEdit keyClicks": user_edit
+    "QSpinBox keyClicks": user_edit
+    "QCheckBox mouseClick": user_edit
+    "parent setEnabled(false)": parent
+    "parent hide()": parent
+    "hidden QWidget resize": layout
+  # Scenarios whose changes Qt announces later rather than never (a hidden widget gets Resize/Move at show()).
+  deferred_scenarios: ["hidden QWidget resize"]

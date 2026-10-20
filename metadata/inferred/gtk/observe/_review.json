@@ -1,9 +1,9 @@
 {
  "inferred": {
   "constant": 109,
-  "exact": 1102,
-  "none": 1,
-  "partial": 17,
+  "exact": 1121,
+  "none": 2,
+  "partial": 16,
   "set_only": 2
  },
  "rows": [
@@ -539,14 +539,6 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:BookmarkList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
    "owner": "Gtk:CellArea",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "edit-widget"
@@ -723,14 +715,6 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:DirectoryList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
    "owner": "Gtk:DropControllerMotion",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "contains-pointer"
@@ -814,14 +798,6 @@
    "owner": "Gtk:EnumList",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:EnumList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   },
   {
    "band": "middle",
@@ -925,14 +901,6 @@
    "confidence": 0.8,
    "owner": "Gtk:FilterListModel",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:FilterListModel",
-   "pattern": "observe:exact-read-only-unprobed",
    "prop": "pending"
   },
   {
@@ -942,14 +910,6 @@
    "owner": "Gtk:FlattenListModel",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:FlattenListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   },
   {
    "band": "middle",
@@ -1021,14 +981,6 @@
    "confidence": 0.8,
    "owner": "Gtk:ListHeader",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:ListHeader",
-   "pattern": "observe:exact-read-only-unprobed",
    "prop": "start"
   },
   {
@@ -1070,14 +1022,6 @@
    "owner": "Gtk:MapListModel",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:MapListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   },
   {
    "band": "middle",
@@ -1179,25 +1123,9 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:MultiFilter",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
    "owner": "Gtk:MultiSelection",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:MultiSelection",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   },
   {
    "band": "middle",
@@ -1211,25 +1139,9 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:MultiSorter",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
    "owner": "Gtk:NoSelection",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:NoSelection",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   },
   {
    "band": "middle",
@@ -1363,25 +1275,9 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:SelectionFilterModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
    "owner": "Gtk:ShortcutController",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:ShortcutController",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   },
   {
    "band": "middle",
@@ -1403,31 +1299,7 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:SingleSelection",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
    "owner": "Gtk:SliceListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:SliceListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:SortListModel",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
   },
@@ -1437,7 +1309,7 @@
    "confidence": 0.8,
    "owner": "Gtk:SortListModel",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
+   "prop": "item-type"
   },
   {
    "band": "middle",
@@ -1510,14 +1382,6 @@
    "owner": "Gtk:TreeListModel",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "model"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:TreeListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   },
   {
    "band": "middle",
@@ -1653,14 +1517,6 @@
    "confidence": 0.8,
    "owner": "Pango:FontFamily",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Pango:FontFamily",
-   "pattern": "observe:exact-read-only-unprobed",
    "prop": "name"
   },
   {
@@ -1670,14 +1526,6 @@
    "owner": "Pango:FontMap",
    "pattern": "observe:exact-read-only-unprobed",
    "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Pango:FontMap",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-items"
   }
  ],
  "schema": "svelters-observe-review/v1",
@@ -1687,10 +1535,10 @@
  "toolkit": "gtk",
  "unreviewed": {
   "by_pattern": {
-   "middle:observe:exact-read-only-unprobed": 209
+   "middle:observe:exact-read-only-unprobed": 190
   },
   "low": 0,
-  "middle": 209
+  "middle": 190
  },
  "version": "4.22.4"
 }

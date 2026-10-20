@@ -1,0 +1,150 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSSlider
+observe:
+- prop: allows-tick-mark-values-only
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsTickMarkValuesOnly` fired on a programmatic set'
+  confidence: 0.9
+- prop: alt-increment-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `altIncrementValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: double-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `doubleValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: float-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `floatValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: int-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `intValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: integer-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `integerValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: knob-thickness
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: max-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maxValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: min-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `minValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: neutral-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `neutralValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: number-of-tick-marks
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `numberOfTickMarks` fired on a programmatic set'
+  confidence: 0.9
+- prop: object-value
+  class: partial
+  via:
+  - mechanism: target_action
+  missed:
+  - programmatic
+  provenance:
+  - origin: rule
+    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+  confidence: 0.9
+- prop: slider-type
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `sliderType` fired on a programmatic set'
+  confidence: 0.9
+- prop: tick-mark-position
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `tickMarkPosition` fired on a programmatic set'
+  confidence: 0.9
+- prop: tint-prominence
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `tintProminence` fired on a programmatic set'
+  confidence: 0.9
+- prop: track-fill-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: vertical
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `vertical` fired on a programmatic set'
+  confidence: 0.9

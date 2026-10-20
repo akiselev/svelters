@@ -191,10 +191,28 @@ observe:
     check: change
   confidence: 0.95
 - prop: family
-  class: partial
+  class: exact
   via:
   - mechanism: notify
     signal: notify::family
+  fires: on_set
+  derived_from:
+  - family-set
+  - font
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::family'
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:family, set:Gtk.TextTag:family-set, set:Gtk.TextTag:font)'
+  verify:
+    'on': Gtk:TextTag
+    check: change
+  confidence: 0.95
+- prop: family-set
+  class: partial
+  via:
+  - mechanism: notify
+    signal: notify::family-set
   missed:
   - cross_prop
   fires: on_set
@@ -202,30 +220,13 @@ observe:
   - font
   provenance:
   - origin: runtime
-    ref: 'O1: GObject property, notify::family'
+    ref: 'O1: GObject property, notify::family-set'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:family-set'
+    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:family'
   verify:
     'on': Gtk:TextTag
     check: silent
-    trigger: family-set
-  confidence: 0.95
-- prop: family-set
-  class: exact
-  via:
-  - mechanism: notify
-    signal: notify::family-set
-  fires: on_set
-  derived_from:
-  - font
-  provenance:
-  - origin: runtime
-    ref: 'O1: GObject property, notify::family-set'
-  - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:family-set, set:Gtk.TextTag:font)'
-  verify:
-    'on': Gtk:TextTag
-    check: change
+    trigger: family
   confidence: 0.95
 - prop: font
   class: partial
@@ -242,12 +243,12 @@ observe:
   - stretch
   - style
   - variant
+  - weight
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::font'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 7 change(s); changed without notify on set:Gtk.TextTag:family-set, set:Gtk.TextTag:size-set, set:Gtk.TextTag:stretch-set,
-      set:Gtk.TextTag:style-set'
+    ref: 'observe probe GTK 4.22.4: notified on 8 change(s); changed without notify on set:Gtk.TextTag:family-set, set:Gtk.TextTag:size-set'
   verify:
     'on': Gtk:TextTag
     check: silent
@@ -944,24 +945,22 @@ observe:
     check: change
   confidence: 0.95
 - prop: size
-  class: partial
+  class: exact
   via:
   - mechanism: notify
     signal: notify::size
-  missed:
-  - cross_prop
   fires: on_set
   derived_from:
   - size-points
+  - size-set
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::size'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:size-set'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:size, set:Gtk.TextTag:size-points, set:Gtk.TextTag:size-set)'
   verify:
     'on': Gtk:TextTag
-    check: silent
-    trigger: size-set
+    check: change
   confidence: 0.95
 - prop: size-points
   class: partial
@@ -995,35 +994,34 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::size-set'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:size'
+    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:size, set:Gtk.TextTag:size-points'
   verify:
     'on': Gtk:TextTag
     check: silent
     trigger: size
   confidence: 0.95
 - prop: stretch
-  class: partial
+  class: exact
   via:
   - mechanism: notify
     signal: notify::stretch
-  missed:
-  - cross_prop
   fires: on_set
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::stretch'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:stretch-set'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:stretch)'
   verify:
     'on': Gtk:TextTag
-    check: silent
-    trigger: stretch-set
+    check: change
   confidence: 0.95
 - prop: stretch-set
-  class: exact
+  class: partial
   via:
   - mechanism: notify
     signal: notify::stretch-set
+  missed:
+  - cross_prop
   fires: on_set
   derived_from:
   - font
@@ -1031,10 +1029,11 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::stretch-set'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:stretch-set)'
+    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:stretch'
   verify:
     'on': Gtk:TextTag
-    check: change
+    check: silent
+    trigger: stretch
   confidence: 0.95
 - prop: strikethrough
   class: exact
@@ -1099,28 +1098,27 @@ observe:
     check: change
   confidence: 0.95
 - prop: style
-  class: partial
+  class: exact
   via:
   - mechanism: notify
     signal: notify::style
-  missed:
-  - cross_prop
   fires: on_set
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::style'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:style-set'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:style)'
   verify:
     'on': Gtk:TextTag
-    check: silent
-    trigger: style-set
+    check: change
   confidence: 0.95
 - prop: style-set
-  class: exact
+  class: partial
   via:
   - mechanism: notify
     signal: notify::style-set
+  missed:
+  - cross_prop
   fires: on_set
   derived_from:
   - font
@@ -1128,10 +1126,11 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::style-set'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:style-set)'
+    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:style'
   verify:
     'on': Gtk:TextTag
-    check: change
+    check: silent
+    trigger: style
   confidence: 0.95
 - prop: tabs
   class: exact
@@ -1258,28 +1257,27 @@ observe:
     check: change
   confidence: 0.95
 - prop: variant
-  class: partial
+  class: exact
   via:
   - mechanism: notify
     signal: notify::variant
-  missed:
-  - cross_prop
   fires: on_set
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::variant'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:variant-set'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:variant)'
   verify:
     'on': Gtk:TextTag
-    check: silent
-    trigger: variant-set
+    check: change
   confidence: 0.95
 - prop: variant-set
-  class: exact
+  class: partial
   via:
   - mechanism: notify
     signal: notify::variant-set
+  missed:
+  - cross_prop
   fires: on_set
   derived_from:
   - font
@@ -1287,34 +1285,34 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::variant-set'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:variant-set)'
+    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:variant'
   verify:
     'on': Gtk:TextTag
-    check: change
+    check: silent
+    trigger: variant
   confidence: 0.95
 - prop: weight
-  class: partial
+  class: exact
   via:
   - mechanism: notify
     signal: notify::weight
-  missed:
-  - cross_prop
   fires: on_set
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::weight'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:weight-set'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:weight)'
   verify:
     'on': Gtk:TextTag
-    check: silent
-    trigger: weight-set
+    check: change
   confidence: 0.95
 - prop: weight-set
-  class: exact
+  class: partial
   via:
   - mechanism: notify
     signal: notify::weight-set
+  missed:
+  - cross_prop
   fires: on_set
   derived_from:
   - font
@@ -1322,10 +1320,11 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::weight-set'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:weight-set)'
+    ref: 'observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:weight'
   verify:
     'on': Gtk:TextTag
-    check: change
+    check: silent
+    trigger: weight
   confidence: 0.95
 - prop: word
   class: exact

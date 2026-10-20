@@ -1,0 +1,46 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QWizard
+observe:
+- prop: currentId
+  class: exact
+  via:
+  - mechanism: notify
+    signal: currentIdChanged(int)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY currentIdChanged(int)'
+  verify:
+    'on': QtWidgets:QWizard
+    check: connect
+  confidence: 0.9
+- prop: options
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: startId
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: subTitleFormat
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: titleFormat
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: wizardStyle
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

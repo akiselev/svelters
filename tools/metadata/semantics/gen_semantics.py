@@ -36,7 +36,16 @@ GTK_TABLES = ROOT / "crates/svelters-gtk/src/generated/tables.rs"
 SCHEMA = "svelters-semantics/v0"
 
 sys.path.insert(0, str(TOOLS / "common"))
+import observe as observe_facts  # noqa: E402
 import svmeta  # noqa: E402
+
+
+def observe_index(tk: str) -> tuple[dict[tuple[str, str], dict], dict[str, str]]:
+    """((owner key, prop) -> ObserveSpec, type name -> owner key) from metadata/observe/<tk>.json (milestone R0;
+    tools/metadata/common/observe.py). A property without a fact gets no `observe` field (unknown, as before R0)."""
+    facts = observe_facts.load(tk)
+    specs = {(o, p): observe_facts.spec(r) for o, props in facts.items() for p, r in props.items()}
+    return specs, {o.rsplit(":", 1)[1]: o for o in facts}
 
 
 def _load(name: str, path: Path):
@@ -277,6 +286,7 @@ def parse_gtk_tables() -> dict:
 
 def gtk_spec() -> dict:
     m = gen_backend.Model()
+    obs_specs, _ = observe_index("gtk")
     rules = svmeta.load_yaml(RULES / "gtk.yaml")
     check_keys("gtk rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "kinds", "defaults",
                                     "row_outlet", "row_outlet_provenance"})
@@ -343,6 +353,9 @@ def gtk_spec() -> dict:
             r["virtual"] = True
         if p.get("notify", {}).get("signal"):
             r["notify"] = p["notify"]["signal"]
+        o = obs_specs.get((owner.replace(".", ":", 1), p["name"]))
+        if o:
+            r["observe"] = o
         return r
 
     def sig_rec(k: str, s: dict) -> dict:
@@ -548,6 +561,7 @@ def qt_meth(me: dict) -> dict:
 
 def qt_spec() -> dict:
     m = gen_cpp.Model(ROOT / "metadata/qt", ROOT / "metadata/overrides/qt", [])
+    obs_specs, obs_owner = observe_index("qt")
     rules = svmeta.load_yaml(RULES / "qt.yaml")
     check_keys("qt rules", rules, {"framework", "event_aliases", "event_aliases_provenance", "signal_defaults", "kinds",
                                    "defaults", "element_hints", "row_outlet", "row_outlet_provenance"})
@@ -583,6 +597,12 @@ def qt_spec() -> dict:
                 r["of"] = ptype(pay)
             if rec.get("notify"):
                 r["notify"] = rec["notify"]["signal"]
+            native = p.get("native")
+            if native:
+                decl, _ = m.find(cls, "properties", lambda x: x["name"] == native)
+                owner = obs_owner.get(decl) if decl else None
+                if owner and (owner, native) in obs_specs:
+                    r["observe"] = obs_specs[(owner, native)]
             if p["js"] in props:
                 fail(f"{tag}: duplicate property {p['js']}")
             props[p["js"]] = r
@@ -799,6 +819,7 @@ def appkit_spec() -> dict:
     carry (gen_backend.build's type filter) plus the override `setters`; signals, slots and methods
     are the override annotations (the backend's dynamic dev mode is not a compile-time fact)."""
     m = appkit_gen.Model()
+    obs_specs, _ = observe_index("appkit")
     enums = {n: [js for js, _ in e["members"]] for n, e in m.enums.items()}
     flags = {n for n, e in m.enums.items() if e["flags"]}
     prop_enums = {}
@@ -847,12 +868,26 @@ def appkit_spec() -> dict:
             if r is None:
                 fail(f"appkit {cls}: setter {s['name']} has no spec type ({s['type']})")
             props[r["js"]] = r
+        for js, r in props.items():
+            if (f"AppKit:{cls}", js) in obs_specs:
+                r["observe"] = obs_specs[(f"AppKit:{cls}", js)]
         kinds[cls] = {"native": cls, "abstract": not el, "interface": False, "chain": m.chain(cls),
                       "lifetime": el.get("lifetime", "owned"), "present": None, "text_content": None,
                       "props": dict(sorted(props.items())), "signals": {}, "bindings": {}, "children": None,
                       "methods": {}, "provenance": {}}
         if el:
             tags[el["tag"]] = cls
+    # An observe fact a subclass holds for an inherited property (NSTextField:string-value is exact through
+    # NSControlTextDidChangeNotification, NSControl's is partial): the subclass gets its own copy of the record,
+    # so the chain finds that class's observability first.
+    for (owner, js), o in sorted(obs_specs.items()):
+        cls = owner.split(":", 1)[1]
+        if cls not in kinds or js in kinds[cls]["props"]:
+            continue
+        inh = next((kinds[c]["props"][js] for c in kinds[cls]["chain"][1:] if c in kinds and js in kinds[c]["props"]), None)
+        if inh is not None:
+            kinds[cls]["props"][js] = {**inh, "observe": o}
+            kinds[cls]["props"] = dict(sorted(kinds[cls]["props"].items()))
 
     def find_prop(cls: str, name: str) -> dict | None:
         for c in kinds[cls]["chain"]:
@@ -928,6 +963,7 @@ def winui_spec() -> dict:
     ContentControl, Control, FrameworkElement, UIElement, ...); members are the override
     annotations, which are all the backend exposes (crates/svelters-winui/src/generated/names.rs)."""
     m = winui_gen.Model()
+    obs_specs, _ = observe_index("winui")
     short = winui_gen.short
     kebab = winui_gen.kebab
 
@@ -973,6 +1009,9 @@ def winui_spec() -> dict:
              "readable": bool(p["read"]), "writable": bool(p["write"]), "construct_only": False, "default": None}
         if (p["class"], p["native"]) in notify:
             r["notify"] = notify[(p["class"], p["native"])]
+        ns, _, cname = p["class"].rpartition(".")
+        if (f"{ns}:{cname}", p["native"]) in obs_specs:
+            r["observe"] = obs_specs[(f"{ns}:{cname}", p["native"])]
         kinds[short(p["class"])]["props"][p["name"]] = {k: r[k] for k in sorted(r)}
     for e in m.events:
         o = e["o"]

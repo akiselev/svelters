@@ -661,12 +661,7 @@ def record_fingerprints(files: dict[str, str], observe_files: dict[str, str] | N
     """(kind, section, name) -> the fingerprint ingest.py puts on the inferred record (and the ledger parks it by).
     Observe facts: (owner, "observe", prop) -> the fingerprint of the stripped record (observe.Layers)."""
     import observe as obs
-    out = {}
-    for fname, text in (observe_files or {}).items():
-        if fname.endswith(".yaml"):
-            doc = yaml.safe_load(text)
-            for r in doc["observe"]:
-                out[(doc["owner"], "observe", r["prop"])] = svmeta.fingerprint(obs.strip(r))
+    out = obs.layer_fingerprints(observe_files or {})
     for fname, text in files.items():
         doc = yaml.safe_load(text)
         kind = fname[:-len(".yaml")]

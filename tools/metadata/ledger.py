@@ -197,9 +197,10 @@ def row_results(path: Path) -> tuple[dict[str, str], dict[str, str]]:
     if not path.exists():
         return res, msgs
     for line in path.read_text().splitlines():
-        if not line.strip():
-            continue
-        r = json.loads(line)
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue  # a torn line of a killed process: its row has no result and stays pending
         if r["result"] == "start":
             res[r["test"]] = "crash"
             msgs[r["test"]] = "the test process ended inside this row (crash)"

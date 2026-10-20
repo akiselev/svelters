@@ -1,0 +1,16 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Pango:FontFamily
+observe:
+- prop: n-items
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::n-items
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::n-items'
+  - origin: manual
+    ref: 'review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore
+      and Gtk.StringList'
+  confidence: 0.9

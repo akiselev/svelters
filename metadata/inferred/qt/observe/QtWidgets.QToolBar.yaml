@@ -1,0 +1,88 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QToolBar
+observe:
+- prop: allowedAreas
+  class: exact
+  via:
+  - mechanism: notify
+    signal: allowedAreasChanged(Qt::ToolBarAreas)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY allowedAreasChanged(Qt::ToolBarAreas)'
+  verify:
+    'on': QtWidgets:QToolBar
+    check: change
+  confidence: 0.9
+- prop: floatable
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: floating
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QToolBar
+    check: unsupported
+  confidence: 0.9
+- prop: iconSize
+  class: exact
+  via:
+  - mechanism: notify
+    signal: iconSizeChanged(QSize)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY iconSizeChanged(QSize)'
+  verify:
+    'on': QtWidgets:QToolBar
+    check: connect
+  confidence: 0.9
+- prop: movable
+  class: exact
+  via:
+  - mechanism: notify
+    signal: movableChanged(bool)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY movableChanged(bool)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QToolBar:movable)'
+  verify:
+    'on': QtWidgets:QToolBar
+    check: change
+  confidence: 0.95
+- prop: orientation
+  class: exact
+  via:
+  - mechanism: notify
+    signal: orientationChanged(Qt::Orientation)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY orientationChanged(Qt::Orientation)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QToolBar:orientation)'
+  verify:
+    'on': QtWidgets:QToolBar
+    check: change
+  confidence: 0.95
+- prop: toolButtonStyle
+  class: exact
+  via:
+  - mechanism: notify
+    signal: toolButtonStyleChanged(Qt::ToolButtonStyle)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY toolButtonStyleChanged(Qt::ToolButtonStyle)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QToolBar:toolButtonStyle)'
+  verify:
+    'on': QtWidgets:QToolBar
+    check: change
+  confidence: 0.95

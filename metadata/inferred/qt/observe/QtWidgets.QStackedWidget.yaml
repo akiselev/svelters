@@ -1,0 +1,25 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QStackedWidget
+observe:
+- prop: count
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QStackedWidget
+    check: unsupported
+  confidence: 0.9
+- prop: currentIndex
+  class: exact
+  via:
+  - mechanism: notify
+    signal: currentChanged(int)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY currentChanged(int)'
+  verify:
+    'on': QtWidgets:QStackedWidget
+    check: connect
+  confidence: 0.9

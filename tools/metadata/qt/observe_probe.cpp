@@ -20,7 +20,9 @@
 #include <QtWidgets>
 #include <QtTest/QSignalSpy>
 #include <QtTest/QTest>
+#include <cmath>
 #include <cstdio>
+#include <functional>
 #include <map>
 #include <memory>
 #include <set>
@@ -114,12 +116,12 @@ struct Watch {
     auto it = spy_of.find(p.notifySignalIndex());
     return it == spy_of.end() ? -1 : int(spies[it->second]->count());
   }
-  // Public signals that fired, minus the NOTIFY signal of `self` (or of every property when self < 0).
+  // Public signals that fired, minus the NOTIFY signal of property `self` (none when self < 0): another property's
+  // NOTIFY can be the signal that reports this one (QTextEdit::textChanged for plainText).
   QString signals_fired(int self) const {
     QStringList out;
     std::set<int> notifies;
-    for (int i = 0; i < mo->propertyCount(); i++)
-      if (mo->property(i).hasNotifySignal() && (self < 0 || i == self)) notifies.insert(mo->property(i).notifySignalIndex());
+    if (self >= 0 && mo->property(self).hasNotifySignal()) notifies.insert(mo->property(self).notifySignalIndex());
     for (auto &[idx, k] : spy_of)
       if (spies[k]->count() && !notifies.count(idx)) out << QString::fromLatin1(mo->method(idx).name());
     out.removeDuplicates();
@@ -154,8 +156,17 @@ static bool next_value(const QMetaProperty &p, const QVariant &cur, QVariant &ou
   case QMetaType::Int: out = cur.toInt() + 1; return true;
   case QMetaType::UInt: out = cur.toUInt() + 1; return true;
   case QMetaType::LongLong: out = cur.toLongLong() + 1; return true;
-  case QMetaType::Double: out = cur.toDouble() + 1.0; return true;
-  case QMetaType::Float: out = cur.toFloat() + 1.0f; return true;
+  case QMetaType::Double:
+  case QMetaType::Float: {
+    // c + 1 vanishes next to an infinite or huge default (QDoubleValidator::bottom is -inf): 0 and 1 follow.
+    const double c = cur.toDouble();
+    for (double v : {c + 1.0, 0.0, 1.0})
+      if (std::isfinite(v) && v != c) {
+        out = p.metaType().id() == QMetaType::Float ? QVariant(float(v)) : QVariant(v);
+        return true;
+      }
+    return false;
+  }
   case QMetaType::QString: out = cur.toString() + "x"; return true;
   default: return false;
   }
@@ -177,9 +188,13 @@ static bool is_concrete(const QMetaObject *mo, const std::set<QByteArray> &concr
 
 static std::set<QByteArray> concrete_classes;
 
-static void sweep(QObject *o, const char *inst) {
-  const QMetaObject *mo = o->metaObject();
-  Watch w(o);
+// Every property is set on a fresh instance, as the generated verification test does: a change that depends on an
+// earlier set (QGroupBox `checked` after `checkable`) shows that dependency as a side effect only.
+static void sweep(const std::function<QObject *()> &make, const char *inst) {
+  QObject *proto = make();
+  const QMetaObject *mo = proto->metaObject();
+  delete proto;
+  QCoreApplication::processEvents();
   for (int i = 0; i < mo->propertyCount(); i++) {
     QMetaProperty p = mo->property(i);
     const QMetaObject *own = owner_of(mo, i);
@@ -190,8 +205,11 @@ static void sweep(QObject *o, const char *inst) {
     if (!qstrcmp(p.name(), "visible") || !qstrcmp(p.name(), "objectName") || !qstrcmp(p.name(), "windowState") ||
         !qstrcmp(p.name(), "windowModality") || !qstrcmp(p.name(), "nativeMenuBar"))
       continue;
+    std::unique_ptr<QObject> holder(make());
+    QObject *o = holder.get();
+    Watch w(o);
     QVariant cur = p.read(o), nv;
-    if (!next_value(p, cur, nv)) continue;
+    if (!next_value(p, cur, nv) || nv == cur) continue;
     if (!mine) swept.insert(key);
     w.reset();
     p.write(o, nv);
@@ -210,6 +228,11 @@ static void sweep(QObject *o, const char *inst) {
   }
 }
 
+template <class T> static void mark_concrete(const char *name) {
+  if constexpr (std::is_base_of_v<QObject, T> && std::is_default_constructible_v<T> && !std::is_abstract_v<T>)
+    concrete_classes.insert(QByteArray(name));
+}
+
 template <class T> static void probe_class(const char *name) {
   if constexpr (std::is_base_of_v<QObject, T>) {
     flags_of(&T::staticMetaObject);
@@ -217,14 +240,15 @@ template <class T> static void probe_class(const char *name) {
       printf("T\t%s\tobject\n", name);
       if (env_skip(name)) return;
       printf("#begin\t%s\n", name);
-      T *o = new T;
-      if constexpr (std::is_base_of_v<QWidget, T>) {
-        static_cast<QWidget *>(o)->resize(200, 100);
-        static_cast<QWidget *>(o)->show();
-      }
-      QCoreApplication::processEvents();
-      sweep(o, name);
-      delete o;
+      sweep([] {
+        T *o = new T;
+        if constexpr (std::is_base_of_v<QWidget, T>) {
+          static_cast<QWidget *>(o)->resize(200, 100);
+          static_cast<QWidget *>(o)->show();
+        }
+        QCoreApplication::processEvents();
+        return static_cast<QObject *>(o);
+      }, name);
       QCoreApplication::processEvents();
     } else {
       printf("T\t%s\tabstract\n", name);
@@ -321,11 +345,10 @@ int main(int argc, char **argv) {
   setvbuf(stdout, nullptr, _IOLBF, 0);
   QApplication app(argc, argv);
   printf("#qt\t%s\n", qVersion());
-#define PROBE(T) concrete_classes.insert(#T);
-#define CONCRETE_ONLY
+  // First the classes that get an instance (their own props are swept on it), then the probe in file order.
+#define PROBE(T) mark_concrete<T>(#T);
 #include "classes.inc"
 #undef PROBE
-#undef CONCRETE_ONLY
 #define PROBE(T) probe_class<T>(#T);
 #include "classes.inc"
   if (!env_skip("@scenarios")) {

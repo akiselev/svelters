@@ -325,6 +325,7 @@ def render(tk: str, rows: list[dict]) -> str:
     else:
         o.append("Qt exposes only annotated facts (the generated C++ backend has no reflection fallback); "
                  f"{sum(r.get('defaults', 0) for r in rows)} properties carry a typed default read from a default-constructed instance.\n")
+    o += render_observe(tk)
     o += ["## Kinds\n",
           "| Kind | Element | Props | Signals | Methods | Slots | Ownership | Signal results | Bindings | Verified | Gallery | Lifetime |",
           "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
@@ -337,6 +338,78 @@ def render(tk: str, rows: list[dict]) -> str:
                  f"{'yes' if r['ownership'] else '-'} | {r['signal_results'] or '-'} | {r['bindings'] or '-'} | {ratio(*r['verified'])} | "
                  f"{r['gallery'] or '-'} | {r['lifetime'] or '-'} |")
     return "\n".join(o) + "\n"
+
+
+# ---- observability (milestone R0, tools/metadata/common/observe.py) ----------------------------
+
+OBS_NOTE = {
+    "gtk": "Verified through the backend's `observe` (ABI v2.6, `notify::<prop>`): one generated table row per fact "
+           "(`generated::verify::observe_<owner>#<prop>`, crates/svelters-gtk/src/testing_observe.rs).",
+    "qt": "Verified through the backend's `observe` (ABI v2.6), which watches NOTIFY only until R3: facts whose "
+          "mechanism is a QBindable notifier, a QEvent or another signal, and properties the backend does not expose "
+          "(no element annotates them, not a non-GUI type), stay inferred. Rows: `observe/<owner>.<prop>` in the "
+          "generated verify binary.",
+    "appkit": "Inferred only: the AppKit backend leaves `observe` NULL until R4 (KVO observer, notifications, "
+              "target-action); the evidence is the KVO column of the AppKit probe from the macos-appkit job.",
+    "winui": "Inferred only: the WinUI backend leaves `observe` NULL until R4 (RegisterPropertyChangedCallback, "
+             "events); no probe runs on Linux.",
+}
+
+
+def observe_summary(tk: str) -> dict:
+    """Observe facts per class and state: verified (a native change was announced, or a missed one was not),
+    verified weakly (`connect`: the mechanism installs; `refused`/`unsupported`: the backend's answer), pending (a row
+    without a passing result), parked, and inferred without a row (no test can run yet)."""
+    import observe as obs
+    facts = obs.load(tk)
+    man = (json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.manifest(tk) if tk == "qt"
+           else {"facts": []})
+    rows = {f["fact"]: f for f in man["facts"] if f.get("section") == "observe"}
+    verified = ledger.verified_facts(tk) if rows else set()
+    parked = [r for r in ledger.load_parked(tk) if r["section"] == "observe"]
+    states = ("verified", "verified_weak", "pending", "no_test")
+    by = {c: {s: 0 for s in states} | {"manual": 0, "total": 0} for c in obs.CLASSES}
+    for owner, props in facts.items():
+        for p, r in props.items():
+            b = by[r["class"]]
+            b["total"] += 1
+            b["manual"] += r["layer"] == "manual"
+            f = rows.get(r["fact"])
+            if f is None:
+                b["no_test"] += 1
+            elif f["fact"] not in verified:
+                b["pending"] += 1
+            elif f.get("strength") in ("connect", "refused", "unsupported"):
+                b["verified_weak"] += 1
+            else:
+                b["verified"] += 1
+    review = {}
+    rp = ROOT / f"metadata/inferred/{tk}/observe/_review.json"
+    if rp.exists():
+        review = json.loads(rp.read_text())["unreviewed"]
+    return {"classes": by, "parked": len(parked), "unreviewed": review}
+
+
+def render_observe(tk: str) -> list[str]:
+    s = observe_summary(tk)
+    o = ["## Observability (milestone R0)\n",
+         "Observe facts per class (`metadata/observe/" + tk + ".json`; plans/research/REACTIVITY.md section 4). " + OBS_NOTE[tk] + "\n",
+         "| Class | Facts | of which manual | Verified | Verified weakly (`connect`, `refused`, `unsupported`) | Pending | Inferred, no test |",
+         "| --- | --- | --- | --- | --- | --- | --- |"]
+    tot = {k: 0 for k in ("total", "manual", "verified", "verified_weak", "pending", "no_test")}
+    for c, r in s["classes"].items():
+        o.append(f"| {c} | {r['total']} | {r['manual'] or '-'} | {r['verified'] or '-'} | {r['verified_weak'] or '-'} | "
+                 f"{r['pending'] or '-'} | {r['no_test'] or '-'} |")
+        for k in tot:
+            tot[k] += r[k]
+    o.append(f"| **all** | {tot['total']} | {tot['manual'] or '-'} | {tot['verified'] or '-'} | {tot['verified_weak'] or '-'} | "
+             f"{tot['pending'] or '-'} | {tot['no_test'] or '-'} |\n")
+    un = s["unreviewed"]
+    o.append(f"Parked (an inferred fact whose generated test failed): {s['parked']}. Below the promotion threshold "
+             f"(not written, needs judgement): {un.get('middle', 0)} middle band, {un.get('low', 0)} low band"
+             + ("; by pattern: " + ", ".join(f"`{k}` {v}" for k, v in un.get("by_pattern", {}).items()) if un.get("by_pattern") else "")
+             + ".\n")
+    return o
 
 
 # ---- dangerous members (tools/metadata/common/dangerous.py) ------------------------------------
@@ -386,7 +459,9 @@ def main() -> int:
     ap.add_argument("--check", action="store_true", help="fail if the checked-in reports are stale")
     a = ap.parse_args()
     stale = []
-    outs = [(OUT / "dangerous.md", render_dangerous())]
+    outs = [(OUT / "dangerous.md", render_dangerous()),
+            (OUT / "observe.json", json.dumps({tk: observe_summary(tk) for tk in ("gtk", "qt", "appkit", "winui")},
+                                              indent=1, sort_keys=True) + "\n")]
     for tk, rows in (("gtk", gtk_rows()), ("qt", qt_rows()), ("appkit", appkit_rows()), ("winui", winui_rows())):
         marked = {}
         for kind, *_ in dangerous_members(tk):

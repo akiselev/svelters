@@ -1,0 +1,149 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QDateTimeEdit
+observe:
+- prop: calendarPopup
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: currentSection
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDateTimeEdit:currentSectionIndex'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
+  confidence: 0.95
+- prop: currentSectionIndex
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: date
+  class: exact
+  via:
+  - mechanism: notify
+    signal: dateChanged(QDate)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY dateChanged(QDate)'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: connect
+  confidence: 0.9
+- prop: dateTime
+  class: exact
+  via:
+  - mechanism: notify
+    signal: dateTimeChanged(QDateTime)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY dateTimeChanged(QDateTime)'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: connect
+  confidence: 0.9
+- prop: displayFormat
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: displayedSections
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
+  confidence: 0.9
+- prop: maximumDate
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDateTimeEdit:timeSpec'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
+  confidence: 0.95
+- prop: maximumDateTime
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: maximumTime
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDateTimeEdit:timeSpec'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
+  confidence: 0.95
+- prop: minimumDate
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: minimumDateTime
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: minimumTime
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDateTimeEdit:timeSpec'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
+  confidence: 0.95
+- prop: sectionCount
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
+  confidence: 0.9
+- prop: time
+  class: partial
+  via:
+  - mechanism: notify
+    signal: timeChanged(QTime)
+  missed:
+  - cross_prop
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY timeChanged(QTime)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: the mechanisms missed set:QtWidgets:QDateTimeEdit:timeSpec'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: connect
+  confidence: 0.95
+- prop: timeSpec
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: timeZone
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QDateTimeEdit:timeSpec'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
+  confidence: 0.95

@@ -1,0 +1,88 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QAbstractButton
+observe:
+- prop: autoExclusive
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: autoRepeat
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: autoRepeatDelay
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: autoRepeatInterval
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: checkable
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: checked
+  class: exact
+  via:
+  - mechanism: notify
+    signal: toggled(bool)
+  fires: on_change
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY toggled(bool)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QCheckBox mouseClick, set:QtWidgets:QAbstractButton:checked)'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: change
+  confidence: 0.95
+- prop: down
+  class: partial
+  via:
+  - mechanism: signal
+    signal: pressed
+  - mechanism: signal
+    signal: released
+  missed:
+  - programmatic
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal pressed, released'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: the mechanisms missed set:QtWidgets:QAbstractButton:down'
+  confidence: 0.95
+- prop: icon
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: iconSize
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: shortcut
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: text
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

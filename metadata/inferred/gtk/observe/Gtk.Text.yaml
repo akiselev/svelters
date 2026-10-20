@@ -125,13 +125,12 @@ observe:
     signal: notify::invisible-char
   fires: on_change
   derived_from:
-  - invisible-char-set
   - visibility
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::invisible-char (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:invisible-char, set:Gtk.Text:invisible-char-set, set:Gtk.Text:visibility)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:invisible-char, set:Gtk.Text:visibility)'
   verify:
     'on': Gtk:Text
     check: change

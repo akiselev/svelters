@@ -80,13 +80,11 @@ observe:
   - mechanism: notify
     signal: notify::license
   fires: on_set
-  derived_from:
-  - license-type
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::license (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:license, set:Gtk.AboutDialog:license-type)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:license)'
   verify:
     'on': Gtk:AboutDialog
     check: change

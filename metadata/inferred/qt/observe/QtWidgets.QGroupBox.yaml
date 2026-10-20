@@ -1,0 +1,44 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QGroupBox
+observe:
+- prop: alignment
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: checkable
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: checked
+  class: partial
+  via:
+  - mechanism: notify
+    signal: toggled(bool)
+  missed:
+  - cross_prop
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY toggled(bool)'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: the mechanisms missed set:QtWidgets:QGroupBox:checkable'
+  verify:
+    'on': QtWidgets:QGroupBox
+    check: connect
+  confidence: 0.95
+- prop: flat
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: title
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

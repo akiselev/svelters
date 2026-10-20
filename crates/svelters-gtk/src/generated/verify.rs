@@ -27646,31 +27646,6 @@ fn observe_gdk_monitor() {
     ]);
 }
 
-/// observe facts of Gio:Application (metadata/observe/gtk.json): one row per fact
-#[test]
-fn observe_gio_application() {
-    use crate::testing::observe::*;
-    table("generated::verify::observe_gio_application", vec![
-        Row { prop: "application-id", on: On::Construct("Gio.Application"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "flags", on: On::Construct("Gio.Application"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "inactivity-timeout", on: On::Construct("Gio.Application"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "resource-base-path", on: On::Construct("Gio.Application"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "version", on: On::Construct("Gio.Application"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-    ]);
-}
-
-/// observe facts of Gio:DBusConnection (metadata/observe/gtk.json): one row per fact
-#[test]
-fn observe_gio_dbusconnection() {
-    use crate::testing::observe::*;
-    table("generated::verify::observe_gio_dbusconnection", vec![
-        Row { prop: "exit-on-close", on: On::Construct("Gio.DBusConnection"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "flags", on: On::Construct("Gio.DBusConnection"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "guid", on: On::Construct("Gio.DBusConnection"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "stream", on: On::Construct("Gio.DBusConnection"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
-    ]);
-}
-
 /// observe facts of Gio:ListStore (metadata/observe/gtk.json): one row per fact
 #[test]
 fn observe_gio_liststore() {
@@ -27855,16 +27830,6 @@ fn observe_gtk_appchooserwidget() {
     ]);
 }
 
-/// observe facts of Gtk:Application (metadata/observe/gtk.json): one row per fact
-#[test]
-fn observe_gtk_application() {
-    use crate::testing::observe::*;
-    table("generated::verify::observe_gtk_application", vec![
-        Row { prop: "menubar", on: On::Construct("Gtk.Application"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "register-session", on: On::Construct("Gtk.Application"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-    ]);
-}
-
 /// observe facts of Gtk:ApplicationWindow (metadata/observe/gtk.json): one row per fact
 #[test]
 fn observe_gtk_applicationwindow() {
@@ -27916,6 +27881,7 @@ fn observe_gtk_bookmarklist() {
         Row { prop: "attributes", on: On::Construct("Gtk.BookmarkList"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "filename", on: On::Construct("Gtk.BookmarkList"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "io-priority", on: On::Construct("Gtk.BookmarkList"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.BookmarkList"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -28441,15 +28407,7 @@ fn observe_gtk_directorylist() {
         Row { prop: "file", on: On::Construct("Gtk.DirectoryList"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "io-priority", on: On::Construct("Gtk.DirectoryList"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "monitored", on: On::Construct("Gtk.DirectoryList"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
-    ]);
-}
-
-/// observe facts of Gtk:DragIcon (metadata/observe/gtk.json): one row per fact
-#[test]
-fn observe_gtk_dragicon() {
-    use crate::testing::observe::*;
-    table("generated::verify::observe_gtk_dragicon", vec![
-        Row { prop: "child", on: On::Construct("Gtk.DragIcon"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.DirectoryList"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -28653,7 +28611,7 @@ fn observe_gtk_filechooser() {
         Row { prop: "action", on: On::Construct("Gtk.FileChooserDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "create-folders", on: On::Construct("Gtk.FileChooserDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "filter", on: On::Construct("Gtk.FileChooserDialog"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "select-multiple", on: On::Construct("Gtk.FileChooserDialog"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "select-multiple", on: On::Construct("Gtk.FileChooserDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
     ]);
 }
 
@@ -28721,6 +28679,7 @@ fn observe_gtk_filterlistmodel() {
         Row { prop: "filter", on: On::Construct("Gtk.FilterListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "incremental", on: On::Construct("Gtk.FilterListModel"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "model", on: On::Construct("Gtk.FilterListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.FilterListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "watch-items", on: On::Construct("Gtk.FilterListModel"), check: Check::Change, fires: Fires::OnChange, since: (4, 20), setup: None },
     ]);
 }
@@ -28740,6 +28699,7 @@ fn observe_gtk_flattenlistmodel() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_flattenlistmodel", vec![
         Row { prop: "model", on: On::Construct("Gtk.FlattenListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.FlattenListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29185,6 +29145,7 @@ fn observe_gtk_listheader() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_listheader", vec![
         Row { prop: "child", on: On::Construct("Gtk.ListHeader"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.ListHeader"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29237,6 +29198,7 @@ fn observe_gtk_maplistmodel() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_maplistmodel", vec![
         Row { prop: "model", on: On::Construct("Gtk.MapListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.MapListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29276,7 +29238,7 @@ fn observe_gtk_messagedialog() {
     table("generated::verify::observe_gtk_messagedialog", vec![
         Row { prop: "message-type", on: On::Construct("Gtk.MessageDialog"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "secondary-text", on: On::Construct("Gtk.MessageDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "secondary-use-markup", on: On::Construct("Gtk.MessageDialog"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "secondary-use-markup", on: On::Construct("Gtk.MessageDialog"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "text", on: On::Construct("Gtk.MessageDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "use-markup", on: On::Construct("Gtk.MessageDialog"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
     ]);
@@ -29291,13 +29253,12 @@ fn observe_gtk_mnemonictrigger() {
     ]);
 }
 
-/// observe facts of Gtk:MountOperation (metadata/observe/gtk.json): one row per fact
+/// observe facts of Gtk:MultiFilter (metadata/observe/gtk.json): one row per fact
 #[test]
-fn observe_gtk_mountoperation() {
+fn observe_gtk_multifilter() {
     use crate::testing::observe::*;
-    table("generated::verify::observe_gtk_mountoperation", vec![
-        Row { prop: "display", on: On::Construct("Gtk.MountOperation"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "parent", on: On::Construct("Gtk.MountOperation"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
+    table("generated::verify::observe_gtk_multifilter", vec![
+        Row { prop: "n-items", on: On::Construct("Gtk.AnyFilter"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29307,6 +29268,16 @@ fn observe_gtk_multiselection() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_multiselection", vec![
         Row { prop: "model", on: On::Construct("Gtk.MultiSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.MultiSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+    ]);
+}
+
+/// observe facts of Gtk:MultiSorter (metadata/observe/gtk.json): one row per fact
+#[test]
+fn observe_gtk_multisorter() {
+    use crate::testing::observe::*;
+    table("generated::verify::observe_gtk_multisorter", vec![
+        Row { prop: "n-items", on: On::Construct("Gtk.MultiSorter"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29328,6 +29299,7 @@ fn observe_gtk_noselection() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_noselection", vec![
         Row { prop: "model", on: On::Construct("Gtk.NoSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.NoSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29517,57 +29489,6 @@ fn observe_gtk_printdialog() {
     ]);
 }
 
-/// observe facts of Gtk:PrintJob (metadata/observe/gtk.json): one row per fact
-#[test]
-fn observe_gtk_printjob() {
-    use crate::testing::observe::*;
-    table("generated::verify::observe_gtk_printjob", vec![
-        Row { prop: "page-setup", on: On::Construct("Gtk.PrintJob"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "printer", on: On::Construct("Gtk.PrintJob"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "settings", on: On::Construct("Gtk.PrintJob"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "title", on: On::Construct("Gtk.PrintJob"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "track-print-status", on: On::Construct("Gtk.PrintJob"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-    ]);
-}
-
-/// observe facts of Gtk:PrintOperation (metadata/observe/gtk.json): one row per fact
-#[test]
-fn observe_gtk_printoperation() {
-    use crate::testing::observe::*;
-    table("generated::verify::observe_gtk_printoperation", vec![
-        Row { prop: "allow-async", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "current-page", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "custom-tab-label", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "default-page-setup", on: On::Construct("Gtk.PrintOperation"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "embed-page-setup", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "export-filename", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "has-selection", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "job-name", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "n-pages", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "print-settings", on: On::Construct("Gtk.PrintOperation"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "show-progress", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "support-selection", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "track-print-status", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "unit", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-        Row { prop: "use-full-page", on: On::Construct("Gtk.PrintOperation"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
-    ]);
-}
-
-/// observe facts of Gtk:PrintUnixDialog (metadata/observe/gtk.json): one row per fact
-#[test]
-fn observe_gtk_printunixdialog() {
-    use crate::testing::observe::*;
-    table("generated::verify::observe_gtk_printunixdialog", vec![
-        Row { prop: "current-page", on: On::Construct("Gtk.PrintUnixDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "embed-page-setup", on: On::Construct("Gtk.PrintUnixDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "has-selection", on: On::Construct("Gtk.PrintUnixDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "manual-capabilities", on: On::Construct("Gtk.PrintUnixDialog"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "page-setup", on: On::Construct("Gtk.PrintUnixDialog"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "print-settings", on: On::Construct("Gtk.PrintUnixDialog"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "support-selection", on: On::Construct("Gtk.PrintUnixDialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-    ]);
-}
-
 /// observe facts of Gtk:Printer (metadata/observe/gtk.json): one row per fact
 #[test]
 fn observe_gtk_printer() {
@@ -29737,6 +29658,7 @@ fn observe_gtk_selectionfiltermodel() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_selectionfiltermodel", vec![
         Row { prop: "model", on: On::Construct("Gtk.SelectionFilterModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.SelectionFilterModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29820,6 +29742,7 @@ fn observe_gtk_shortcutcontroller() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_shortcutcontroller", vec![
         Row { prop: "mnemonic-modifiers", on: On::Construct("Gtk.ShortcutController"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.ShortcutController"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "scope", on: On::Construct("Gtk.ShortcutController"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
     ]);
 }
@@ -29864,7 +29787,7 @@ fn observe_gtk_shortcutsshortcut() {
         Row { prop: "accelerator", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "action-name", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "direction", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
-        Row { prop: "icon", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "icon", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Silent(Trig::Set("shortcut-type")), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "icon-set", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "shortcut-type", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "subtitle", on: On::Construct("Gtk.ShortcutsShortcut"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
@@ -29891,6 +29814,7 @@ fn observe_gtk_singleselection() {
         Row { prop: "autoselect", on: On::Construct("Gtk.SingleSelection"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "can-unselect", on: On::Construct("Gtk.SingleSelection"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "model", on: On::Construct("Gtk.SingleSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.SingleSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "selected", on: On::Construct("Gtk.SingleSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "selected-item", on: On::Construct("Gtk.SingleSelection"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
@@ -29911,6 +29835,7 @@ fn observe_gtk_slicelistmodel() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_slicelistmodel", vec![
         Row { prop: "model", on: On::Construct("Gtk.SliceListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.SliceListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "offset", on: On::Construct("Gtk.SliceListModel"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "size", on: On::Construct("Gtk.SliceListModel"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
     ]);
@@ -29923,6 +29848,7 @@ fn observe_gtk_sortlistmodel() {
     table("generated::verify::observe_gtk_sortlistmodel", vec![
         Row { prop: "incremental", on: On::Construct("Gtk.SortListModel"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "model", on: On::Construct("Gtk.SortListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.SortListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "section-sorter", on: On::Construct("Gtk.SortListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "sorter", on: On::Construct("Gtk.SortListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
@@ -30122,8 +30048,8 @@ fn observe_gtk_texttag() {
         Row { prop: "editable-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "fallback", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "fallback-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "family", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("family-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "family-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "family", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "family-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("family")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "font", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("family-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "font-desc", on: On::Construct("Gtk.TextTag"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "font-features", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
@@ -30169,17 +30095,17 @@ fn observe_gtk_texttag() {
         Row { prop: "sentence-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("word")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "show-spaces", on: On::Construct("Gtk.TextTag"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "show-spaces-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "size", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("size-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "size", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "size-points", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("size-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "size-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("size")), fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "stretch", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("stretch-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "stretch-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "stretch", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "stretch-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("stretch")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "strikethrough", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "strikethrough-rgba", on: On::Construct("Gtk.TextTag"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "strikethrough-rgba-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "strikethrough-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "style", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("style-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "style-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "style", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "style-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("style")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "tabs", on: On::Construct("Gtk.TextTag"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "tabs-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "text-transform", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
@@ -30188,10 +30114,10 @@ fn observe_gtk_texttag() {
         Row { prop: "underline-rgba", on: On::Construct("Gtk.TextTag"), check: Check::Connect, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "underline-rgba-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "underline-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "variant", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("variant-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "variant-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "weight", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("weight-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
-        Row { prop: "weight-set", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "variant", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "variant-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("variant")), fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "weight", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
+        Row { prop: "weight-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("weight")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "word", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "word-set", on: On::Construct("Gtk.TextTag"), check: Check::Silent(Trig::Set("sentence-set")), fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "wrap-mode", on: On::Construct("Gtk.TextTag"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
@@ -30257,6 +30183,7 @@ fn observe_gtk_treelistmodel() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_treelistmodel", vec![
         Row { prop: "autoexpand", on: On::Construct("Gtk.TreeListModel"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "n-items", on: On::Construct("Gtk.TreeListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "passthrough", on: On::Construct("Gtk.TreeListModel"), check: Check::Refused, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }

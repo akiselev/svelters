@@ -7,36 +7,24 @@ observe:
   provenance:
   - origin: runtime
     ref: 'O2: CONSTRUCT_ONLY: set once at construction'
-  verify:
-    'on': Gtk:PrintJob
-    check: refused
   confidence: 0.95
 - prop: printer
   class: constant
   provenance:
   - origin: runtime
     ref: 'O2: CONSTRUCT_ONLY: set once at construction'
-  verify:
-    'on': Gtk:PrintJob
-    check: refused
   confidence: 0.95
 - prop: settings
   class: constant
   provenance:
   - origin: runtime
     ref: 'O2: CONSTRUCT_ONLY: set once at construction'
-  verify:
-    'on': Gtk:PrintJob
-    check: refused
   confidence: 0.95
 - prop: title
   class: constant
   provenance:
   - origin: runtime
     ref: 'O2: CONSTRUCT_ONLY: set once at construction'
-  verify:
-    'on': Gtk:PrintJob
-    check: refused
   confidence: 0.95
 - prop: track-print-status
   class: exact
@@ -49,7 +37,4 @@ observe:
     ref: 'O1: GObject property, notify::track-print-status'
   - origin: rule
     ref: no probe row; the generated test sets it natively
-  verify:
-    'on': Gtk:PrintJob
-    check: change
   confidence: 0.9

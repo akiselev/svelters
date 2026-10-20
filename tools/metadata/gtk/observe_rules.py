@@ -29,6 +29,7 @@ announcement: none/partial), `connect` (only install and remove the mechanism), 
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -113,6 +114,7 @@ class Rules:
         self.scenario_missed = dict(o.get("scenario_missed") or {})
         self.triggers = dict(o.get("triggers") or {})
         self.setup = dict(o.get("setup") or {})
+        self.accept = list(o.get("accept") or [])
         self.subjects = dict(doc.get("subjects") or {})
 
 
@@ -131,7 +133,7 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
     def instantiable(key: str) -> bool:
         """The probe built a bare instance of the type (g_object_new without properties) and it did not crash."""
         t = probed_types.get(gir_dot(key))
-        return bool(t) and t["class"] == "object" and gir_dot(key) not in crashed
+        return bool(t) and t["class"] == "object" and bool(t.get("instantiated")) and gir_dot(key) not in crashed
 
     # Concrete types by ancestor/interface, for subjects of abstract owners.
     subclasses: dict[str, list[str]] = {}
@@ -285,6 +287,9 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
                    else "not a scalar: the generated test only installs the mechanism")
             rec.update({"class": "exact", "provenance": prov + [{"origin": "rule", "ref": f"no probe row; {how}"}]})
             conf, pattern = 0.9, "observe:exact-writable-rule"
+        elif (acc := next((a for a in rules.accept if re.search(a["pattern"], fid)), None)):
+            rec.update({"class": "exact", "provenance": prov + [{"origin": "manual", "ref": f"review pattern {acc['pattern']}: {acc['reason']}"}]})
+            conf, pattern = 0.9, "observe:exact-read-only-accepted"
         else:
             rec.update({"class": "exact", "provenance": prov + [{"origin": "rule", "ref": "read-only and never seen changing in the probe"}]})
             conf, pattern = 0.8, "observe:exact-read-only-unprobed"

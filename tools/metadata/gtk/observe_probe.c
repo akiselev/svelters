@@ -12,6 +12,8 @@
  *   #gtk     <major.minor.micro>
  *   #begin   <GType>                                    (the driver's crash bookkeeping)
  *   T  <GType> abstract|interface|object|missing
+ *   I  <GType>                                          a bare instance (g_object_new, no properties) was made and
+ *                                                       dropped without a crash
  *   F  <owner GType> <prop> <flags> <value GType>       every pspec a type declares itself
  *   S  <inst GType> <owner> <prop> <readback> <notify on change> <notify on same>
  *                                                       a scalar property set natively to a new value, then to the
@@ -221,13 +223,24 @@ static void flags_of(GType t) {
   if (G_TYPE_IS_INTERFACE(t)) g_type_default_interface_unref(klass); else g_type_class_unref(klass);
 }
 
-static void sweep(GType t) {
+static GObject *fresh(GType t) {
   GObject *o = g_object_new(t, NULL);
-  if (!o) return;
-  if (g_object_is_floating(o)) g_object_ref_sink(o);
-  gulong id = g_signal_connect(o, "notify", G_CALLBACK(on_notify), NULL);
+  if (o && g_object_is_floating(o)) g_object_ref_sink(o);
+  return o;
+}
+
+static void dispose_obj(GObject *o) {
+  if (GTK_IS_WINDOW(o)) gtk_window_destroy(GTK_WINDOW(o));
+  g_object_unref(o);
+  drain();
+}
+
+/* Every property is set on a fresh instance, as the generated verification test does: a property whose change
+ * depends on an earlier set (GtkTextTag `font` after `family-set`) shows that dependency only as a side effect. */
+static void sweep(GType t) {
+  GObjectClass *klass = g_type_class_ref(t);
   guint n;
-  GParamSpec **ps = g_object_class_list_properties(G_OBJECT_GET_CLASS(o), &n);
+  GParamSpec **ps = g_object_class_list_properties(klass, &n);
   for (guint i = 0; i < n; i++) {
     GParamSpec *p = ps[i], *c = canon(p);
     GType owner = c->owner_type;
@@ -241,14 +254,22 @@ static void sweep(GType t) {
       g_free(key);
       continue;
     }
-    if (!own) g_hash_table_add(swept, g_strdup(key));
+    GObject *o = fresh(t);
+    if (!o) {
+      g_free(key);
+      break;
+    }
+    gulong id = g_signal_connect(o, "notify", G_CALLBACK(on_notify), NULL);
     GValue cur = G_VALUE_INIT, nv = G_VALUE_INIT, after = G_VALUE_INIT;
     g_value_init(&cur, p->value_type);
     g_object_get_property(o, p->name, &cur);
     if (!next_value(p, &cur, &nv)) {
       g_value_unset(&cur); g_value_unset(&nv); g_free(key);
+      g_signal_handler_disconnect(o, id);
+      dispose_obj(o);
       continue;
     }
+    if (!own) g_hash_table_add(swept, g_strdup(key));
     Snap before = snapshot(o);
     g_ptr_array_set_size(notified, 0);
     g_object_set_property(o, p->name, &nv);
@@ -268,12 +289,11 @@ static void sweep(GType t) {
     printf("S\t%s\t%s\t%s\t%s\t%d\t%d\n", g_type_name(t), g_type_name(owner), c->name, rb, on_change, on_same);
     g_free(cause); g_free(key);
     g_value_unset(&cur); g_value_unset(&nv); g_value_unset(&after);
+    g_signal_handler_disconnect(o, id);
+    dispose_obj(o);
   }
   g_free(ps);
-  g_signal_handler_disconnect(o, id);
-  if (GTK_IS_WINDOW(o)) gtk_window_destroy(GTK_WINDOW(o));
-  g_object_unref(o);
-  drain();
+  g_type_class_unref(klass);
 }
 
 static void probe_type(const char *gtype, const char *sym) {
@@ -299,7 +319,15 @@ static void probe_type(const char *gtype, const char *sym) {
   }
   printf("T\t%s\t%s\n", gtype, G_TYPE_IS_ABSTRACT(t) ? "abstract" : "object");
   flags_of(t);
-  if (!G_TYPE_IS_ABSTRACT(t) && !in_list(gtype, SKIP_TYPES) && !crashed) sweep(t);
+  if (!G_TYPE_IS_ABSTRACT(t) && !in_list(gtype, SKIP_TYPES) && !crashed) {
+    /* a bare instance, made and dropped once: `I` says the generated tests can construct this type the same way */
+    GObject *o = fresh(t);
+    if (o) {
+      dispose_obj(o);
+      printf("I\t%s\n", gtype);
+    }
+    sweep(t);
+  }
 }
 
 /* ---- part B: scenarios (changes that are not property sets) ---- */

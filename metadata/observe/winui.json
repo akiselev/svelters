@@ -1,0 +1,5154 @@
+{
+ "facts": {
+  "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase": {
+   "ClickMode": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:ClickMode:observe",
+    "layer": "inferred",
+    "prop": "ClickMode",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ClickModeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6f211cb4ee04617d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Command": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:Command:observe",
+    "layer": "inferred",
+    "prop": "Command",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CommandProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ee6c75b6ddcc867e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CommandParameter": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:CommandParameter:observe",
+    "layer": "inferred",
+    "prop": "CommandParameter",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CommandParameterProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "48c0700c43a0691f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsPointerOver": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:IsPointerOver:observe",
+    "layer": "inferred",
+    "prop": "IsPointerOver",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsPointerOverProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "33239f6b3f883f1e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsPressed": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:IsPressed:observe",
+    "layer": "inferred",
+    "prop": "IsPressed",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsPressedProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "398277a79168a7e6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls.Primitives:RangeBase": {
+   "LargeChange": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:LargeChange:observe",
+    "layer": "inferred",
+    "prop": "LargeChange",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: LargeChangeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6428615ef94840e1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Maximum": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Maximum:observe",
+    "layer": "inferred",
+    "prop": "Maximum",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MaximumProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ddec89b77f0aa7ef",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Minimum": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Minimum:observe",
+    "layer": "inferred",
+    "prop": "Minimum",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MinimumProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "d7fe87c6fb3a5977",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SmallChange": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:SmallChange:observe",
+    "layer": "inferred",
+    "prop": "SmallChange",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SmallChangeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "8e9623bcc4c2c1ff",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Value": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Value:observe",
+    "layer": "inferred",
+    "prop": "Value",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ValueProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b9f587ae3670a29a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls.Primitives:ToggleButton": {
+   "IsChecked": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:prop:IsChecked:observe",
+    "layer": "inferred",
+    "prop": "IsChecked",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsCheckedProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "bac950a124f71100",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsThreeState": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:prop:IsThreeState:observe",
+    "layer": "inferred",
+    "prop": "IsThreeState",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsThreeStateProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c6a43c581c8ca53e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:Button": {
+   "Flyout": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Button:prop:Flyout:observe",
+    "layer": "inferred",
+    "prop": "Flyout",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FlyoutProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "e400c404108312bc",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:ContentControl": {
+   "Content": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:prop:Content:observe",
+    "layer": "inferred",
+    "prop": "Content",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ContentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "bb0303c1ca0991e3",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ContentTemplate": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:prop:ContentTemplate:observe",
+    "layer": "inferred",
+    "prop": "ContentTemplate",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ContentTemplateProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "db781562a4759056",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ContentTemplateRoot": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:prop:ContentTemplateRoot:observe",
+    "layer": "inferred",
+    "prop": "ContentTemplateRoot",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "402df2b4bdadb579"
+   },
+   "ContentTemplateSelector": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:prop:ContentTemplateSelector:observe",
+    "layer": "inferred",
+    "prop": "ContentTemplateSelector",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ContentTemplateSelectorProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "28a2b046b85dd36d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ContentTransitions": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:prop:ContentTransitions:observe",
+    "layer": "inferred",
+    "prop": "ContentTransitions",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ContentTransitionsProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "46ec2aef6a349b5c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:Control": {
+   "Background": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Background:observe",
+    "layer": "inferred",
+    "prop": "Background",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ef7d786ce94ae2f6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BackgroundSizing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BackgroundSizing:observe",
+    "layer": "inferred",
+    "prop": "BackgroundSizing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BackgroundSizingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "db6f932955be5f94",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BorderBrush": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BorderBrush:observe",
+    "layer": "inferred",
+    "prop": "BorderBrush",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "24ca36322d478040",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BorderThickness": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BorderThickness:observe",
+    "layer": "inferred",
+    "prop": "BorderThickness",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BorderThicknessProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4b1e8dbd58cf6039",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CharacterSpacing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:CharacterSpacing:observe",
+    "layer": "inferred",
+    "prop": "CharacterSpacing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CharacterSpacingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5e733de0d31b63d9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CornerRadius": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:CornerRadius:observe",
+    "layer": "inferred",
+    "prop": "CornerRadius",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CornerRadiusProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9d3a70b3c78a1444",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "DefaultStyleResourceUri": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:DefaultStyleResourceUri:observe",
+    "layer": "inferred",
+    "prop": "DefaultStyleResourceUri",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: DefaultStyleResourceUriProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "15e355ec9b6ca7b6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ElementSoundMode": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:ElementSoundMode:observe",
+    "layer": "inferred",
+    "prop": "ElementSoundMode",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ElementSoundModeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "0ddfff1f3776339c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontFamily": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontFamily:observe",
+    "layer": "inferred",
+    "prop": "FontFamily",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontFamilyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4a44718041241a52",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontSize": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontSize:observe",
+    "layer": "inferred",
+    "prop": "FontSize",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontSizeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1caa48ea843af821",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontStretch": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStretch:observe",
+    "layer": "inferred",
+    "prop": "FontStretch",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontStretchProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "2700ad839758a68c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontStyle": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStyle:observe",
+    "layer": "inferred",
+    "prop": "FontStyle",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontStyleProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1da637082f4a63dd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontWeight": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontWeight:observe",
+    "layer": "inferred",
+    "prop": "FontWeight",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontWeightProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ff97ee0760b1686d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Foreground": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Foreground:observe",
+    "layer": "inferred",
+    "prop": "Foreground",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "14431e0b37274d75",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "HorizontalContentAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:HorizontalContentAlignment:observe",
+    "layer": "inferred",
+    "prop": "HorizontalContentAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HorizontalContentAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "bf8462cd7741a5c0",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "23790e7b3831d040",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsFocusEngaged": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsFocusEngaged:observe",
+    "layer": "inferred",
+    "prop": "IsFocusEngaged",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsFocusEngagedProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "56ccdc0946bea8e2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsFocusEngagementEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsFocusEngagementEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsFocusEngagementEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsFocusEngagementEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "dab290ab160c2610",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsTextScaleFactorEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsTextScaleFactorEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsTextScaleFactorEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsTextScaleFactorEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "edd5212ed5eed1b7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Padding": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Padding:observe",
+    "layer": "inferred",
+    "prop": "Padding",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PaddingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1861b26d322a8947",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "RequiresPointer": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:RequiresPointer:observe",
+    "layer": "inferred",
+    "prop": "RequiresPointer",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: RequiresPointerProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "2159665c0ce9e05a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TabNavigation": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:TabNavigation:observe",
+    "layer": "inferred",
+    "prop": "TabNavigation",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TabNavigationProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "a5a661d8afc05332",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Template": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Template:observe",
+    "layer": "inferred",
+    "prop": "Template",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TemplateProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b9a771f549cc56c9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "VerticalContentAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:VerticalContentAlignment:observe",
+    "layer": "inferred",
+    "prop": "VerticalContentAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: VerticalContentAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c69f7592e9d4e9e4",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:Grid": {
+   "BackgroundSizing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BackgroundSizing:observe",
+    "layer": "inferred",
+    "prop": "BackgroundSizing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BackgroundSizingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "db6f932955be5f94",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BorderBrush": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BorderBrush:observe",
+    "layer": "inferred",
+    "prop": "BorderBrush",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "24ca36322d478040",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BorderThickness": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BorderThickness:observe",
+    "layer": "inferred",
+    "prop": "BorderThickness",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BorderThicknessProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4b1e8dbd58cf6039",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ColumnDefinitions": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:ColumnDefinitions:observe",
+    "layer": "inferred",
+    "prop": "ColumnDefinitions",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "8c16b0f64f7b0bcf"
+   },
+   "ColumnSpacing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:ColumnSpacing:observe",
+    "layer": "inferred",
+    "prop": "ColumnSpacing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ColumnSpacingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "76e65239e41f1507",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CornerRadius": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:CornerRadius:observe",
+    "layer": "inferred",
+    "prop": "CornerRadius",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CornerRadiusProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9d3a70b3c78a1444",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Padding": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:Padding:observe",
+    "layer": "inferred",
+    "prop": "Padding",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PaddingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1861b26d322a8947",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "RowDefinitions": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:RowDefinitions:observe",
+    "layer": "inferred",
+    "prop": "RowDefinitions",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "86a0a2a43bfd6d84"
+   },
+   "RowSpacing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:RowSpacing:observe",
+    "layer": "inferred",
+    "prop": "RowSpacing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: RowSpacingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6d090fcda87b9b4d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:Panel": {
+   "Background": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:Background:observe",
+    "layer": "inferred",
+    "prop": "Background",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ef7d786ce94ae2f6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BackgroundTransition": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:BackgroundTransition:observe",
+    "layer": "inferred",
+    "prop": "BackgroundTransition",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "e2b617c4be0853b9"
+   },
+   "Children": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:Children:observe",
+    "layer": "inferred",
+    "prop": "Children",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "37a09eed14e7c607"
+   },
+   "ChildrenTransitions": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:ChildrenTransitions:observe",
+    "layer": "inferred",
+    "prop": "ChildrenTransitions",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ChildrenTransitionsProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "09b2b3d1153963a7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsItemsHost": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:IsItemsHost:observe",
+    "layer": "inferred",
+    "prop": "IsItemsHost",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsItemsHostProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "a7e2a03ae558d4f9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:Slider": {
+   "Header": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:Header:observe",
+    "layer": "inferred",
+    "prop": "Header",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HeaderProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f1fa9fee750933ef",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "HeaderTemplate": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:HeaderTemplate:observe",
+    "layer": "inferred",
+    "prop": "HeaderTemplate",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HeaderTemplateProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c319aea10e64a9cd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IntermediateValue": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IntermediateValue:observe",
+    "layer": "inferred",
+    "prop": "IntermediateValue",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IntermediateValueProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4f8ad5f584810f6a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsDirectionReversed": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IsDirectionReversed:observe",
+    "layer": "inferred",
+    "prop": "IsDirectionReversed",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsDirectionReversedProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6fd1cbc572962439",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsThumbToolTipEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IsThumbToolTipEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsThumbToolTipEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsThumbToolTipEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b823bafc1a3f0c0a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Orientation": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:Orientation:observe",
+    "layer": "inferred",
+    "prop": "Orientation",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: OrientationProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "04c83c116c22383c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SnapsTo": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:SnapsTo:observe",
+    "layer": "inferred",
+    "prop": "SnapsTo",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SnapsToProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "69f6364e46f8af56",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "StepFrequency": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:StepFrequency:observe",
+    "layer": "inferred",
+    "prop": "StepFrequency",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: StepFrequencyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "0c4199de36baf57e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ThumbToolTipValueConverter": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:ThumbToolTipValueConverter:observe",
+    "layer": "inferred",
+    "prop": "ThumbToolTipValueConverter",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ThumbToolTipValueConverterProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "cb13462095a2a009",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TickFrequency": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:TickFrequency:observe",
+    "layer": "inferred",
+    "prop": "TickFrequency",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TickFrequencyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "fcc5049ad6811469",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TickPlacement": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:TickPlacement:observe",
+    "layer": "inferred",
+    "prop": "TickPlacement",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TickPlacementProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1feed2b415777295",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:StackPanel": {
+   "AreHorizontalSnapPointsRegular": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreHorizontalSnapPointsRegular:observe",
+    "layer": "inferred",
+    "prop": "AreHorizontalSnapPointsRegular",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "af9072392b23b9dc"
+   },
+   "AreScrollSnapPointsRegular": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreScrollSnapPointsRegular:observe",
+    "layer": "inferred",
+    "prop": "AreScrollSnapPointsRegular",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: AreScrollSnapPointsRegularProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5c65ef89dcd57da1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "AreVerticalSnapPointsRegular": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreVerticalSnapPointsRegular:observe",
+    "layer": "inferred",
+    "prop": "AreVerticalSnapPointsRegular",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "72962237bd2658c6"
+   },
+   "BackgroundSizing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BackgroundSizing:observe",
+    "layer": "inferred",
+    "prop": "BackgroundSizing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BackgroundSizingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "db6f932955be5f94",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BorderBrush": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BorderBrush:observe",
+    "layer": "inferred",
+    "prop": "BorderBrush",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "24ca36322d478040",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BorderThickness": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BorderThickness:observe",
+    "layer": "inferred",
+    "prop": "BorderThickness",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: BorderThicknessProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4b1e8dbd58cf6039",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CornerRadius": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:CornerRadius:observe",
+    "layer": "inferred",
+    "prop": "CornerRadius",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CornerRadiusProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9d3a70b3c78a1444",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Orientation": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Orientation:observe",
+    "layer": "inferred",
+    "prop": "Orientation",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: OrientationProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "04c83c116c22383c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Padding": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Padding:observe",
+    "layer": "inferred",
+    "prop": "Padding",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PaddingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1861b26d322a8947",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Spacing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Spacing:observe",
+    "layer": "inferred",
+    "prop": "Spacing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SpacingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4d1ef82a692ec87f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:TextBlock": {
+   "BaselineOffset": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:BaselineOffset:observe",
+    "layer": "inferred",
+    "prop": "BaselineOffset",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "f455948ed0be1f42"
+   },
+   "CharacterSpacing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:CharacterSpacing:observe",
+    "layer": "inferred",
+    "prop": "CharacterSpacing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CharacterSpacingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5e733de0d31b63d9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ContentEnd": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:ContentEnd:observe",
+    "layer": "inferred",
+    "prop": "ContentEnd",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "ebcc75cf90869aab"
+   },
+   "ContentStart": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:ContentStart:observe",
+    "layer": "inferred",
+    "prop": "ContentStart",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "3c503a98810e275b"
+   },
+   "FontFamily": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontFamily:observe",
+    "layer": "inferred",
+    "prop": "FontFamily",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontFamilyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4a44718041241a52",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontSize": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontSize:observe",
+    "layer": "inferred",
+    "prop": "FontSize",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontSizeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1caa48ea843af821",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontStretch": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStretch:observe",
+    "layer": "inferred",
+    "prop": "FontStretch",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontStretchProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "2700ad839758a68c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontStyle": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStyle:observe",
+    "layer": "inferred",
+    "prop": "FontStyle",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontStyleProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1da637082f4a63dd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FontWeight": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontWeight:observe",
+    "layer": "inferred",
+    "prop": "FontWeight",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FontWeightProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ff97ee0760b1686d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Foreground": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Foreground:observe",
+    "layer": "inferred",
+    "prop": "Foreground",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "14431e0b37274d75",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "HorizontalTextAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:HorizontalTextAlignment:observe",
+    "layer": "inferred",
+    "prop": "HorizontalTextAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HorizontalTextAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "66ad122f22a260a8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Inlines": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Inlines:observe",
+    "layer": "inferred",
+    "prop": "Inlines",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "3b3ff5427b4fca9c"
+   },
+   "IsColorFontEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsColorFontEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsColorFontEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsColorFontEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "768f202f6caf913a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsTextScaleFactorEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextScaleFactorEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsTextScaleFactorEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsTextScaleFactorEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "edd5212ed5eed1b7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsTextSelectionEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextSelectionEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsTextSelectionEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsTextSelectionEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5aaf2ab0e2fda610",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsTextTrimmed": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextTrimmed:observe",
+    "layer": "inferred",
+    "prop": "IsTextTrimmed",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsTextTrimmedProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "533bbb02c22e6a12",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "LineHeight": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:LineHeight:observe",
+    "layer": "inferred",
+    "prop": "LineHeight",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: LineHeightProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "d2bfaec38737f39e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "LineStackingStrategy": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:LineStackingStrategy:observe",
+    "layer": "inferred",
+    "prop": "LineStackingStrategy",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: LineStackingStrategyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ca07d008b7364782",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "MaxLines": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:MaxLines:observe",
+    "layer": "inferred",
+    "prop": "MaxLines",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MaxLinesProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9f40d710057d4dc7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "OpticalMarginAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:OpticalMarginAlignment:observe",
+    "layer": "inferred",
+    "prop": "OpticalMarginAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: OpticalMarginAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "105196351bd734a0",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Padding": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Padding:observe",
+    "layer": "inferred",
+    "prop": "Padding",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PaddingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1861b26d322a8947",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectedText": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectedText:observe",
+    "layer": "inferred",
+    "prop": "SelectedText",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SelectedTextProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b3cae58579e38677",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectionEnd": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectionEnd:observe",
+    "layer": "inferred",
+    "prop": "SelectionEnd",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "55236e232cd16e43"
+   },
+   "SelectionFlyout": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectionFlyout:observe",
+    "layer": "inferred",
+    "prop": "SelectionFlyout",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SelectionFlyoutProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "cdbe68f1eb9d2c9d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectionHighlightColor": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectionHighlightColor:observe",
+    "layer": "inferred",
+    "prop": "SelectionHighlightColor",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SelectionHighlightColorProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c9b911d6b01ac25e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectionStart": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectionStart:observe",
+    "layer": "inferred",
+    "prop": "SelectionStart",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "0a030869a37ed9ae"
+   },
+   "Text": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Text:observe",
+    "layer": "inferred",
+    "prop": "Text",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b62b4444c4fe3a07",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextAlignment:observe",
+    "layer": "inferred",
+    "prop": "TextAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5c32b196d2886ad2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextDecorations": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextDecorations:observe",
+    "layer": "inferred",
+    "prop": "TextDecorations",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextDecorationsProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "d18b63bc296d7bad",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextHighlighters": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextHighlighters:observe",
+    "layer": "inferred",
+    "prop": "TextHighlighters",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "f00dda7d47bf24b6"
+   },
+   "TextLineBounds": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextLineBounds:observe",
+    "layer": "inferred",
+    "prop": "TextLineBounds",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextLineBoundsProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ad2fcc2985c5770c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextReadingOrder": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextReadingOrder:observe",
+    "layer": "inferred",
+    "prop": "TextReadingOrder",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextReadingOrderProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5dc7ee3a1fcd521c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextTrimming": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextTrimming:observe",
+    "layer": "inferred",
+    "prop": "TextTrimming",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextTrimmingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "810fc9c2a27a39d4",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextWrapping": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextWrapping:observe",
+    "layer": "inferred",
+    "prop": "TextWrapping",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextWrappingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "597627e851630ed8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml.Controls:TextBox": {
+   "AcceptsReturn": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:AcceptsReturn:observe",
+    "layer": "inferred",
+    "prop": "AcceptsReturn",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: AcceptsReturnProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "76510f63422f57ea",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CanPasteClipboardContent": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanPasteClipboardContent:observe",
+    "layer": "inferred",
+    "prop": "CanPasteClipboardContent",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CanPasteClipboardContentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "8ec381676948fba4",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CanRedo": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanRedo:observe",
+    "layer": "inferred",
+    "prop": "CanRedo",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CanRedoProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "58625864c944c95c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CanUndo": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanUndo:observe",
+    "layer": "inferred",
+    "prop": "CanUndo",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CanUndoProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1610d0311d6b9631",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CharacterCasing": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CharacterCasing:observe",
+    "layer": "inferred",
+    "prop": "CharacterCasing",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CharacterCasingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b4f5964546db99d1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Description": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Description:observe",
+    "layer": "inferred",
+    "prop": "Description",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: DescriptionProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6608289dd05fbfd7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "DesiredCandidateWindowAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:DesiredCandidateWindowAlignment:observe",
+    "layer": "inferred",
+    "prop": "DesiredCandidateWindowAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: DesiredCandidateWindowAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "8d34615f38b88e65",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Header": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Header:observe",
+    "layer": "inferred",
+    "prop": "Header",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HeaderProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f1fa9fee750933ef",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "HeaderTemplate": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:HeaderTemplate:observe",
+    "layer": "inferred",
+    "prop": "HeaderTemplate",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HeaderTemplateProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c319aea10e64a9cd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "HorizontalTextAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:HorizontalTextAlignment:observe",
+    "layer": "inferred",
+    "prop": "HorizontalTextAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HorizontalTextAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "66ad122f22a260a8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "InputScope": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:InputScope:observe",
+    "layer": "inferred",
+    "prop": "InputScope",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: InputScopeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "3a5dc175e4828433",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsColorFontEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsColorFontEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsColorFontEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsColorFontEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "768f202f6caf913a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsReadOnly": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsReadOnly:observe",
+    "layer": "inferred",
+    "prop": "IsReadOnly",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsReadOnlyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ee226d7606d17a69",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsSpellCheckEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsSpellCheckEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsSpellCheckEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsSpellCheckEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "d1bafaebc316c698",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsTextPredictionEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsTextPredictionEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsTextPredictionEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsTextPredictionEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "d20da168f764783f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "MaxLength": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:MaxLength:observe",
+    "layer": "inferred",
+    "prop": "MaxLength",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MaxLengthProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ef49ac6ccc57dcb5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "PlaceholderForeground": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PlaceholderForeground:observe",
+    "layer": "inferred",
+    "prop": "PlaceholderForeground",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PlaceholderForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "459f1cc16b5f1e53",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "PlaceholderText": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PlaceholderText:observe",
+    "layer": "inferred",
+    "prop": "PlaceholderText",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PlaceholderTextProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b0a81b461c61104e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "PreventKeyboardDisplayOnProgrammaticFocus": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PreventKeyboardDisplayOnProgrammaticFocus:observe",
+    "layer": "inferred",
+    "prop": "PreventKeyboardDisplayOnProgrammaticFocus",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PreventKeyboardDisplayOnProgrammaticFocusProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "723d2833b78f1d1b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ProofingMenuFlyout": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:ProofingMenuFlyout:observe",
+    "layer": "inferred",
+    "prop": "ProofingMenuFlyout",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ProofingMenuFlyoutProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "2397382b88f984dd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectedText": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectedText:observe",
+    "layer": "inferred",
+    "prop": "SelectedText",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event SelectionChanged"
+     }
+    ],
+    "record_fp": "6fabf6905f3ca65f",
+    "via": [
+     {
+      "events": [
+       "SelectionChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "SelectionFlyout": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionFlyout:observe",
+    "layer": "inferred",
+    "prop": "SelectionFlyout",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SelectionFlyoutProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "cdbe68f1eb9d2c9d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectionHighlightColor": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionHighlightColor:observe",
+    "layer": "inferred",
+    "prop": "SelectionHighlightColor",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SelectionHighlightColorProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c9b911d6b01ac25e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectionHighlightColorWhenNotFocused": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionHighlightColorWhenNotFocused:observe",
+    "layer": "inferred",
+    "prop": "SelectionHighlightColorWhenNotFocused",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: SelectionHighlightColorWhenNotFocusedProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f8f3dfb459b11850",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "SelectionLength": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionLength:observe",
+    "layer": "inferred",
+    "prop": "SelectionLength",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event SelectionChanged"
+     }
+    ],
+    "record_fp": "2c165379dff0de83",
+    "via": [
+     {
+      "events": [
+       "SelectionChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "SelectionStart": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionStart:observe",
+    "layer": "inferred",
+    "prop": "SelectionStart",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event SelectionChanged"
+     }
+    ],
+    "record_fp": "65b4fa49a0178d0a",
+    "via": [
+     {
+      "events": [
+       "SelectionChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "Text": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Text:observe",
+    "layer": "inferred",
+    "prop": "Text",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b62b4444c4fe3a07",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextAlignment:observe",
+    "layer": "inferred",
+    "prop": "TextAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5c32b196d2886ad2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextReadingOrder": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextReadingOrder:observe",
+    "layer": "inferred",
+    "prop": "TextReadingOrder",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextReadingOrderProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5dc7ee3a1fcd521c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TextWrapping": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextWrapping:observe",
+    "layer": "inferred",
+    "prop": "TextWrapping",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TextWrappingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "597627e851630ed8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml:DependencyObject": {
+   "Dispatcher": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:DependencyObject:prop:Dispatcher:observe",
+    "layer": "inferred",
+    "prop": "Dispatcher",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "dc6b1df5a4cd3f8b"
+   },
+   "DispatcherQueue": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:DependencyObject:prop:DispatcherQueue:observe",
+    "layer": "inferred",
+    "prop": "DispatcherQueue",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "f11e24cb60a7fc3e"
+   }
+  },
+  "Microsoft.UI.Xaml:FrameworkElement": {
+   "ActualHeight": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualHeight:observe",
+    "layer": "inferred",
+    "prop": "ActualHeight",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O6 deny list: \"do not raise property change notifications\" (FrameworkElement.ActualHeight docs); use SizeChanged"
+     }
+    ],
+    "record_fp": "b953fb3d3eb16191",
+    "via": [
+     {
+      "events": [
+       "SizeChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "ActualTheme": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualTheme:observe",
+    "layer": "inferred",
+    "prop": "ActualTheme",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O6 deny list: computed from RequestedTheme up the tree; ActualThemeChanged reports it"
+     }
+    ],
+    "record_fp": "cc11bf7d4395c6a7",
+    "via": [
+     {
+      "events": [
+       "ActualThemeChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "ActualWidth": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualWidth:observe",
+    "layer": "inferred",
+    "prop": "ActualWidth",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O6 deny list: \"do not raise property change notifications\" (FrameworkElement.ActualWidth docs); use SizeChanged"
+     }
+    ],
+    "record_fp": "49c388098cd693c9",
+    "via": [
+     {
+      "events": [
+       "SizeChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "AllowFocusOnInteraction": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:AllowFocusOnInteraction:observe",
+    "layer": "inferred",
+    "prop": "AllowFocusOnInteraction",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: AllowFocusOnInteractionProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "91985ea51dc71f78",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "AllowFocusWhenDisabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:AllowFocusWhenDisabled:observe",
+    "layer": "inferred",
+    "prop": "AllowFocusWhenDisabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: AllowFocusWhenDisabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "95529e3237b7875d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "BaseUri": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:BaseUri:observe",
+    "layer": "inferred",
+    "prop": "BaseUri",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "a722bcc333397318"
+   },
+   "DataContext": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:DataContext:observe",
+    "layer": "inferred",
+    "prop": "DataContext",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: DataContextProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "45d64e43b5afbf6c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FlowDirection": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FlowDirection:observe",
+    "layer": "inferred",
+    "prop": "FlowDirection",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FlowDirectionProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f775576809666d2c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FocusVisualMargin": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualMargin:observe",
+    "layer": "inferred",
+    "prop": "FocusVisualMargin",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FocusVisualMarginProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "03a737d78108f08c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FocusVisualPrimaryBrush": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualPrimaryBrush:observe",
+    "layer": "inferred",
+    "prop": "FocusVisualPrimaryBrush",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FocusVisualPrimaryBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "75249dcd867a36af",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FocusVisualPrimaryThickness": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualPrimaryThickness:observe",
+    "layer": "inferred",
+    "prop": "FocusVisualPrimaryThickness",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FocusVisualPrimaryThicknessProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "bcc1a3eebf890814",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FocusVisualSecondaryBrush": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualSecondaryBrush:observe",
+    "layer": "inferred",
+    "prop": "FocusVisualSecondaryBrush",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FocusVisualSecondaryBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "3b305562ea793ec5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FocusVisualSecondaryThickness": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualSecondaryThickness:observe",
+    "layer": "inferred",
+    "prop": "FocusVisualSecondaryThickness",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FocusVisualSecondaryThicknessProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "42079e9f10fedb45",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Height": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Height:observe",
+    "layer": "inferred",
+    "prop": "Height",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HeightProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "d1001df80b72d8be",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "HorizontalAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:HorizontalAlignment:observe",
+    "layer": "inferred",
+    "prop": "HorizontalAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HorizontalAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "748a8c41f3829a44",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsLoaded": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:IsLoaded:observe",
+    "layer": "inferred",
+    "prop": "IsLoaded",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event Loaded, Unloaded"
+     }
+    ],
+    "record_fp": "7b5d5df1502714cf",
+    "via": [
+     {
+      "events": [
+       "Loaded",
+       "Unloaded"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "Language": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Language:observe",
+    "layer": "inferred",
+    "prop": "Language",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: LanguageProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9996e9ea2da6f820",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Margin": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Margin:observe",
+    "layer": "inferred",
+    "prop": "Margin",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MarginProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b86ace2075b771ad",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "MaxHeight": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MaxHeight:observe",
+    "layer": "inferred",
+    "prop": "MaxHeight",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MaxHeightProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f2cef7660bc122f1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "MaxWidth": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MaxWidth:observe",
+    "layer": "inferred",
+    "prop": "MaxWidth",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MaxWidthProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c6e154673da93534",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "MinHeight": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MinHeight:observe",
+    "layer": "inferred",
+    "prop": "MinHeight",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MinHeightProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "eac72d0158d7b300",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "MinWidth": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MinWidth:observe",
+    "layer": "inferred",
+    "prop": "MinWidth",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: MinWidthProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9f1d378e8017d4e9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Name": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Name:observe",
+    "layer": "inferred",
+    "prop": "Name",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: NameProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f598fd9cb55d76c8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Parent": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Parent:observe",
+    "layer": "inferred",
+    "prop": "Parent",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "972ca801fee5ff84"
+   },
+   "RequestedTheme": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:RequestedTheme:observe",
+    "layer": "inferred",
+    "prop": "RequestedTheme",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: RequestedThemeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "2161a09eb81c5f51",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Resources": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Resources:observe",
+    "layer": "inferred",
+    "prop": "Resources",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "84db27399f52a941"
+   },
+   "Style": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Style:observe",
+    "layer": "inferred",
+    "prop": "Style",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: StyleProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "0f92e873d1585e59",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Tag": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Tag:observe",
+    "layer": "inferred",
+    "prop": "Tag",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TagProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4b1e09c17e6c4cb2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Triggers": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Triggers:observe",
+    "layer": "inferred",
+    "prop": "Triggers",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "132ac6a12dc98946"
+   },
+   "VerticalAlignment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:VerticalAlignment:observe",
+    "layer": "inferred",
+    "prop": "VerticalAlignment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: VerticalAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6548e872d6cc96a6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Width": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Width:observe",
+    "layer": "inferred",
+    "prop": "Width",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: WidthProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "cbd35ab7e4e6a56d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   }
+  },
+  "Microsoft.UI.Xaml:UIElement": {
+   "AccessKey": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:AccessKey:observe",
+    "layer": "inferred",
+    "prop": "AccessKey",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: AccessKeyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ad58adad730341bb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "AccessKeyScopeOwner": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:AccessKeyScopeOwner:observe",
+    "layer": "inferred",
+    "prop": "AccessKeyScopeOwner",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: AccessKeyScopeOwnerProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "043f174fb8937fd6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ActualOffset": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ActualOffset:observe",
+    "layer": "inferred",
+    "prop": "ActualOffset",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "93439d160128b2ef"
+   },
+   "ActualSize": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ActualSize:observe",
+    "layer": "inferred",
+    "prop": "ActualSize",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event SizeChanged"
+     }
+    ],
+    "record_fp": "ac89774deae76748",
+    "via": [
+     {
+      "events": [
+       "SizeChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "AllowDrop": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:AllowDrop:observe",
+    "layer": "inferred",
+    "prop": "AllowDrop",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: AllowDropProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "53b1e05cba79f82f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CacheMode": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CacheMode:observe",
+    "layer": "inferred",
+    "prop": "CacheMode",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CacheModeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "845f8f29967d333a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CanBeScrollAnchor": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CanBeScrollAnchor:observe",
+    "layer": "inferred",
+    "prop": "CanBeScrollAnchor",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CanBeScrollAnchorProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6b2de5ff4a314141",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CanDrag": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CanDrag:observe",
+    "layer": "inferred",
+    "prop": "CanDrag",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CanDragProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "072c0bbd921a9472",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CenterPoint": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CenterPoint:observe",
+    "layer": "inferred",
+    "prop": "CenterPoint",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "e5057579f22fa140"
+   },
+   "Clip": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Clip:observe",
+    "layer": "inferred",
+    "prop": "Clip",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ClipProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "0149b5401002a1b8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "CompositeMode": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CompositeMode:observe",
+    "layer": "inferred",
+    "prop": "CompositeMode",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: CompositeModeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "8a1d6906e4806e6f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ContextFlyout": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ContextFlyout:observe",
+    "layer": "inferred",
+    "prop": "ContextFlyout",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ContextFlyoutProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "267707b12ff5dd07",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "DesiredSize": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:DesiredSize:observe",
+    "layer": "inferred",
+    "prop": "DesiredSize",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "f0e7575c3eb709c6"
+   },
+   "ExitDisplayModeOnAccessKeyInvoked": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ExitDisplayModeOnAccessKeyInvoked:observe",
+    "layer": "inferred",
+    "prop": "ExitDisplayModeOnAccessKeyInvoked",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ExitDisplayModeOnAccessKeyInvokedProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "12289b7cafe489de",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "FocusState": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:FocusState:observe",
+    "layer": "inferred",
+    "prop": "FocusState",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: FocusStateProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "82e9784b5b150b03",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "HighContrastAdjustment": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:HighContrastAdjustment:observe",
+    "layer": "inferred",
+    "prop": "HighContrastAdjustment",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: HighContrastAdjustmentProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "d5b763c1bcd457f9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsAccessKeyScope": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsAccessKeyScope:observe",
+    "layer": "inferred",
+    "prop": "IsAccessKeyScope",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsAccessKeyScopeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9f8e74ab5f8f7feb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsDoubleTapEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsDoubleTapEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsDoubleTapEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsDoubleTapEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1976458d8d309a4e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsHitTestVisible": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsHitTestVisible:observe",
+    "layer": "inferred",
+    "prop": "IsHitTestVisible",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsHitTestVisibleProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b064fe6ee89d14eb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsHoldingEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsHoldingEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsHoldingEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsHoldingEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "72459e4c6abfe08c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsRightTapEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsRightTapEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsRightTapEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsRightTapEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "98a5e83638ce3375",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsTabStop": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsTabStop:observe",
+    "layer": "inferred",
+    "prop": "IsTabStop",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsTabStopProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "931b25c97999b3c1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "IsTapEnabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsTapEnabled:observe",
+    "layer": "inferred",
+    "prop": "IsTapEnabled",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: IsTapEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9561d280ebe84ef5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "KeyTipHorizontalOffset": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipHorizontalOffset:observe",
+    "layer": "inferred",
+    "prop": "KeyTipHorizontalOffset",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: KeyTipHorizontalOffsetProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "1108ef420aacacbb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "KeyTipPlacementMode": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipPlacementMode:observe",
+    "layer": "inferred",
+    "prop": "KeyTipPlacementMode",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: KeyTipPlacementModeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "a213ea8e87577a9b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "KeyTipTarget": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipTarget:observe",
+    "layer": "inferred",
+    "prop": "KeyTipTarget",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: KeyTipTargetProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "23bfa04c0569f78f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "KeyTipVerticalOffset": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipVerticalOffset:observe",
+    "layer": "inferred",
+    "prop": "KeyTipVerticalOffset",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: KeyTipVerticalOffsetProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "0a51dcc244d3069b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "KeyboardAcceleratorPlacementMode": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyboardAcceleratorPlacementMode:observe",
+    "layer": "inferred",
+    "prop": "KeyboardAcceleratorPlacementMode",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: KeyboardAcceleratorPlacementModeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "fd4164d7a5f86356",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "KeyboardAcceleratorPlacementTarget": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyboardAcceleratorPlacementTarget:observe",
+    "layer": "inferred",
+    "prop": "KeyboardAcceleratorPlacementTarget",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: KeyboardAcceleratorPlacementTargetProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "5c7846d7ce000352",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "KeyboardAccelerators": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyboardAccelerators:observe",
+    "layer": "inferred",
+    "prop": "KeyboardAccelerators",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "b69713fec05d5857"
+   },
+   "Lights": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Lights:observe",
+    "layer": "inferred",
+    "prop": "Lights",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: LightsProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "33f3f85d3d1c06da",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "ManipulationMode": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ManipulationMode:observe",
+    "layer": "inferred",
+    "prop": "ManipulationMode",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ManipulationModeProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "8392289f10d17495",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Opacity": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Opacity:observe",
+    "layer": "inferred",
+    "prop": "Opacity",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: OpacityProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "368c73c39f12acfe",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "OpacityTransition": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:OpacityTransition:observe",
+    "layer": "inferred",
+    "prop": "OpacityTransition",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "661484d3df774268"
+   },
+   "PointerCaptures": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:PointerCaptures:observe",
+    "layer": "inferred",
+    "prop": "PointerCaptures",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: PointerCapturesProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f44cc33217479ac2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Projection": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Projection:observe",
+    "layer": "inferred",
+    "prop": "Projection",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ProjectionProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "72e9c9f0b4ca762c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "RasterizationScale": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RasterizationScale:observe",
+    "layer": "inferred",
+    "prop": "RasterizationScale",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "f897ceef1a0a742b"
+   },
+   "RenderSize": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RenderSize:observe",
+    "layer": "inferred",
+    "prop": "RenderSize",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event SizeChanged"
+     }
+    ],
+    "record_fp": "8dd5ffbd67db2cc2",
+    "via": [
+     {
+      "events": [
+       "SizeChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "RenderTransform": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RenderTransform:observe",
+    "layer": "inferred",
+    "prop": "RenderTransform",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: RenderTransformProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "50cda8e89738ef22",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "RenderTransformOrigin": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RenderTransformOrigin:observe",
+    "layer": "inferred",
+    "prop": "RenderTransformOrigin",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: RenderTransformOriginProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "0fc677fe0f3a036b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Rotation": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Rotation:observe",
+    "layer": "inferred",
+    "prop": "Rotation",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "ae52a109f2422170"
+   },
+   "RotationAxis": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RotationAxis:observe",
+    "layer": "inferred",
+    "prop": "RotationAxis",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "0671305ce3fbc1c3"
+   },
+   "RotationTransition": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RotationTransition:observe",
+    "layer": "inferred",
+    "prop": "RotationTransition",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "680a140d6151363b"
+   },
+   "Scale": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Scale:observe",
+    "layer": "inferred",
+    "prop": "Scale",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "86e0b46e1b0b3912"
+   },
+   "ScaleTransition": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ScaleTransition:observe",
+    "layer": "inferred",
+    "prop": "ScaleTransition",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "e3e52adc7ff631f8"
+   },
+   "Shadow": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Shadow:observe",
+    "layer": "inferred",
+    "prop": "Shadow",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: ShadowProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "4b2bdff069912dec",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TabFocusNavigation": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TabFocusNavigation:observe",
+    "layer": "inferred",
+    "prop": "TabFocusNavigation",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TabFocusNavigationProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "54f2567afc95148c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TabIndex": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TabIndex:observe",
+    "layer": "inferred",
+    "prop": "TabIndex",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TabIndexProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "069e9e2da54eb72f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Transform3D": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Transform3D:observe",
+    "layer": "inferred",
+    "prop": "Transform3D",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: Transform3DProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "b7bd5ed04fc6a14b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "TransformMatrix": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TransformMatrix:observe",
+    "layer": "inferred",
+    "prop": "TransformMatrix",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "b6281b07c225a7a1"
+   },
+   "Transitions": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Transitions:observe",
+    "layer": "inferred",
+    "prop": "Transitions",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: TransitionsProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "6bcdf92b071910a2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Translation": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Translation:observe",
+    "layer": "inferred",
+    "prop": "Translation",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "ecbe8bdf93fa6331"
+   },
+   "TranslationTransition": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TranslationTransition:observe",
+    "layer": "inferred",
+    "prop": "TranslationTransition",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "fdebd3080efd2004"
+   },
+   "UseLayoutRounding": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:UseLayoutRounding:observe",
+    "layer": "inferred",
+    "prop": "UseLayoutRounding",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: UseLayoutRoundingProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "9c4feaf3381910bb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "UseSystemFocusVisuals": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:UseSystemFocusVisuals:observe",
+    "layer": "inferred",
+    "prop": "UseSystemFocusVisuals",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: UseSystemFocusVisualsProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "2aac4e85a2c39468",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "Visibility": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Visibility:observe",
+    "layer": "inferred",
+    "prop": "Visibility",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: VisibilityProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "e037935cca311d9f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusDown": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusDown:observe",
+    "layer": "inferred",
+    "prop": "XYFocusDown",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusDownProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "753222e355126d9e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusDownNavigationStrategy": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusDownNavigationStrategy:observe",
+    "layer": "inferred",
+    "prop": "XYFocusDownNavigationStrategy",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusDownNavigationStrategyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f69f0c3bea138791",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusKeyboardNavigation": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusKeyboardNavigation:observe",
+    "layer": "inferred",
+    "prop": "XYFocusKeyboardNavigation",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusKeyboardNavigationProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "53a4ab898f9292fd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusLeft": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusLeft:observe",
+    "layer": "inferred",
+    "prop": "XYFocusLeft",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusLeftProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "706c5a45922979d6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusLeftNavigationStrategy": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusLeftNavigationStrategy:observe",
+    "layer": "inferred",
+    "prop": "XYFocusLeftNavigationStrategy",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusLeftNavigationStrategyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "c1c7f5f24cd51d76",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusRight": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusRight:observe",
+    "layer": "inferred",
+    "prop": "XYFocusRight",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusRightProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "29144d34b1c51def",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusRightNavigationStrategy": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusRightNavigationStrategy:observe",
+    "layer": "inferred",
+    "prop": "XYFocusRightNavigationStrategy",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusRightNavigationStrategyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "2d1ea34afb6729c8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusUp": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusUp:observe",
+    "layer": "inferred",
+    "prop": "XYFocusUp",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusUpProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "ac8f61132eba3d34",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XYFocusUpNavigationStrategy": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusUpNavigationStrategy:observe",
+    "layer": "inferred",
+    "prop": "XYFocusUpNavigationStrategy",
+    "provenance": [
+     {
+      "origin": "winmd",
+      "ref": "O6: XYFocusUpNavigationStrategyProperty is a DependencyProperty: RegisterPropertyChangedCallback"
+     },
+     {
+      "origin": "rule",
+      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+     }
+    ],
+    "record_fp": "f8d66a6980f23222",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
+   },
+   "XamlRoot": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XamlRoot:observe",
+    "layer": "inferred",
+    "prop": "XamlRoot",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "651aa5e46e4cc6a0"
+   }
+  },
+  "Microsoft.UI.Xaml:Window": {
+   "AppWindow": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:AppWindow:observe",
+    "layer": "inferred",
+    "prop": "AppWindow",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "7d9e8b0fb54f6a6c"
+   },
+   "Bounds": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Bounds:observe",
+    "layer": "inferred",
+    "prop": "Bounds",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event SizeChanged"
+     }
+    ],
+    "record_fp": "5191758e24561058",
+    "via": [
+     {
+      "events": [
+       "SizeChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   },
+   "Compositor": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Compositor:observe",
+    "layer": "inferred",
+    "prop": "Compositor",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "bc29b176990b1065"
+   },
+   "Content": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Content:observe",
+    "layer": "inferred",
+    "prop": "Content",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "57d45a3e75ec3034"
+   },
+   "CoreWindow": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:CoreWindow:observe",
+    "layer": "inferred",
+    "prop": "CoreWindow",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "9bcf5f6809a02021"
+   },
+   "Dispatcher": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Dispatcher:observe",
+    "layer": "inferred",
+    "prop": "Dispatcher",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "dc6b1df5a4cd3f8b"
+   },
+   "DispatcherQueue": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:DispatcherQueue:observe",
+    "layer": "inferred",
+    "prop": "DispatcherQueue",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "a read-only plain property with no change event"
+     }
+    ],
+    "record_fp": "f11e24cb60a7fc3e"
+   },
+   "ExtendsContentIntoTitleBar": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:ExtendsContentIntoTitleBar:observe",
+    "layer": "inferred",
+    "prop": "ExtendsContentIntoTitleBar",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "0db9938ff765555a"
+   },
+   "SystemBackdrop": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:SystemBackdrop:observe",
+    "layer": "inferred",
+    "prop": "SystemBackdrop",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "5be196a15dfd3397"
+   },
+   "Title": {
+    "class": "set_only",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Title:observe",
+    "layer": "inferred",
+    "prop": "Title",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O8: a plain (non-DependencyProperty) property with no change event"
+     }
+    ],
+    "record_fp": "f09f0eea35a8a34a"
+   },
+   "Visible": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Visible:observe",
+    "layer": "inferred",
+    "prop": "Visible",
+    "provenance": [
+     {
+      "origin": "rule",
+      "ref": "O5: event VisibilityChanged"
+     }
+    ],
+    "record_fp": "da110df9b523417d",
+    "via": [
+     {
+      "events": [
+       "VisibilityChanged"
+      ],
+      "mechanism": "event"
+     }
+    ]
+   }
+  }
+ },
+ "schema": "svelters-observe/v1",
+ "toolkit": "winui"
+}

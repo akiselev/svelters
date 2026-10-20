@@ -17229,123 +17229,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:application-id:observe",
-   "fingerprint": "7bfffb2f9f1bb8e2",
-   "kind": "Gio:Application",
-   "name": "application-id",
-   "origin": "inferred",
-   "record_fp": "cbcd677c7b50fa68",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gio_application#application-id"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:flags:observe",
-   "fingerprint": "91fbf92b4f0cfbfd",
-   "kind": "Gio:Application",
-   "name": "flags",
-   "origin": "inferred",
-   "record_fp": "68b94f60c4df2468",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gio_application#flags"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:inactivity-timeout:observe",
-   "fingerprint": "ad77d5c74eefe3aa",
-   "kind": "Gio:Application",
-   "name": "inactivity-timeout",
-   "origin": "inferred",
-   "record_fp": "05345bc6ff7c4837",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gio_application#inactivity-timeout"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:resource-base-path:observe",
-   "fingerprint": "7dd6dbd11ecc2ff3",
-   "kind": "Gio:Application",
-   "name": "resource-base-path",
-   "origin": "inferred",
-   "record_fp": "9f04e6a52560958d",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gio_application#resource-base-path"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:version:observe",
-   "fingerprint": "72566aac7173a72c",
-   "kind": "Gio:Application",
-   "name": "version",
-   "origin": "inferred",
-   "record_fp": "b4af44761da85f56",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gio_application#version"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:DBusConnection:prop:exit-on-close:observe",
-   "fingerprint": "909fe7531992d323",
-   "kind": "Gio:DBusConnection",
-   "name": "exit-on-close",
-   "origin": "inferred",
-   "record_fp": "e6bfdc5b2c279c23",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gio_dbusconnection#exit-on-close"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:DBusConnection:prop:flags:observe",
-   "fingerprint": "6b5ab02e4207c00c",
-   "kind": "Gio:DBusConnection",
-   "name": "flags",
-   "origin": "inferred",
-   "record_fp": "89035829aca05efe",
-   "section": "observe",
-   "strength": "refused",
-   "tests": [
-    "generated::verify::observe_gio_dbusconnection#flags"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:DBusConnection:prop:guid:observe",
-   "fingerprint": "7c3c5a3662d5ee34",
-   "kind": "Gio:DBusConnection",
-   "name": "guid",
-   "origin": "inferred",
-   "record_fp": "aef9edb59795f196",
-   "section": "observe",
-   "strength": "refused",
-   "tests": [
-    "generated::verify::observe_gio_dbusconnection#guid"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gio:DBusConnection:prop:stream:observe",
-   "fingerprint": "d455b1d7734d8ae8",
-   "kind": "Gio:DBusConnection",
-   "name": "stream",
-   "origin": "inferred",
-   "record_fp": "4ddd11275677861c",
-   "section": "observe",
-   "strength": "refused",
-   "tests": [
-    "generated::verify::observe_gio_dbusconnection#stream"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:gtk:Gio:ListStore:prop:item-type:observe",
    "fingerprint": "97bc7bfe2e48c86f",
    "kind": "Gio:ListStore",
@@ -17633,11 +17516,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:license:observe",
-   "fingerprint": "7c672ac4e0df64c5",
+   "fingerprint": "e987c03c10e85c5a",
    "kind": "Gtk:AboutDialog",
    "name": "license",
    "origin": "inferred",
-   "record_fp": "74aae64b95e5ea3f",
+   "record_fp": "ff0e33bc63a66449",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -18178,32 +18061,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:Application:prop:menubar:observe",
-   "fingerprint": "0dbc6d3657a177d7",
-   "kind": "Gtk:Application",
-   "name": "menubar",
-   "origin": "inferred",
-   "record_fp": "957b8adc8cd2e14c",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gtk_application#menubar"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:Application:prop:register-session:observe",
-   "fingerprint": "8b37f241189823d7",
-   "kind": "Gtk:Application",
-   "name": "register-session",
-   "origin": "inferred",
-   "record_fp": "9f01579b50426e5e",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_application#register-session"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:prop:show-menubar:observe",
    "fingerprint": "de1ae4145d470377",
    "kind": "Gtk:ApplicationWindow",
@@ -18383,6 +18240,19 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_bookmarklist#io-priority"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:BookmarkList:prop:n-items:observe",
+   "fingerprint": "d4dfc9d20062ac6a",
+   "kind": "Gtk:BookmarkList",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "b3f5cfe57ed951cb",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_bookmarklist#n-items"
    ]
   },
   {
@@ -18647,11 +18517,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:label:observe",
-   "fingerprint": "22efb51219fb9792",
+   "fingerprint": "68372190cd3bb33a",
    "kind": "Gtk:Button",
    "name": "label",
    "origin": "inferred",
-   "record_fp": "d6f1e3f6e4ab2b6d",
+   "record_fp": "43d9b727ccc6203d",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -19739,11 +19609,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:text:observe",
-   "fingerprint": "ac0f44fe86401e4a",
+   "fingerprint": "78a392710625d525",
    "kind": "Gtk:CellRendererText",
    "name": "text",
    "origin": "inferred",
-   "record_fp": "b763f37fb3379d72",
+   "record_fp": "3a7984083a992645",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -21051,16 +20921,16 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:DragIcon:prop:child:observe",
-   "fingerprint": "9c4deeacf973cf6c",
-   "kind": "Gtk:DragIcon",
-   "name": "child",
+   "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:n-items:observe",
+   "fingerprint": "83932501ad8eb880",
+   "kind": "Gtk:DirectoryList",
+   "name": "n-items",
    "origin": "inferred",
-   "record_fp": "25d7a95b98e6daab",
+   "record_fp": "55d3bdc9220179a1",
    "section": "observe",
    "strength": "connect",
    "tests": [
-    "generated::verify::observe_gtk_dragicon#child"
+    "generated::verify::observe_gtk_directorylist#n-items"
    ]
   },
   {
@@ -21520,11 +21390,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:invisible-char:observe",
-   "fingerprint": "5d518d227b23439a",
+   "fingerprint": "2a155623fee65b53",
    "kind": "Gtk:Entry",
    "name": "invisible-char",
    "origin": "inferred",
-   "record_fp": "f2b37c33fcf65bb8",
+   "record_fp": "4cc0ac09d5f16cff",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -21741,11 +21611,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-activatable:observe",
-   "fingerprint": "efe8bd5e2f797eed",
+   "fingerprint": "f0915304feb7e654",
    "kind": "Gtk:Entry",
    "name": "secondary-icon-activatable",
    "origin": "inferred",
-   "record_fp": "6127779f499b014d",
+   "record_fp": "c22bd7d4b17cba7e",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -21793,11 +21663,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-sensitive:observe",
-   "fingerprint": "133b8c1fe5acb9c5",
+   "fingerprint": "471a1266080fb5db",
    "kind": "Gtk:Entry",
    "name": "secondary-icon-sensitive",
    "origin": "inferred",
-   "record_fp": "f32e403e6a647b5e",
+   "record_fp": "88752960475fc161",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -21806,11 +21676,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-storage-type:observe",
-   "fingerprint": "0b70bcb22e8ce0a4",
+   "fingerprint": "9434d99305ab95e5",
    "kind": "Gtk:Entry",
    "name": "secondary-icon-storage-type",
    "origin": "inferred",
-   "record_fp": "10c993a5e8bc9b7a",
+   "record_fp": "81372b5e3af3a4c1",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -22248,13 +22118,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:select-multiple:observe",
-   "fingerprint": "0f205a13482a4dbb",
+   "fingerprint": "fb3e6b8dfe979d4d",
    "kind": "Gtk:FileChooser",
    "name": "select-multiple",
    "origin": "inferred",
-   "record_fp": "cd56ebeeef95f43e",
+   "record_fp": "7037dc9d625b31e2",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filechooser#select-multiple"
    ]
@@ -22507,6 +22377,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:n-items:observe",
+   "fingerprint": "06e9532891cc7aae",
+   "kind": "Gtk:FilterListModel",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "1fc7d88c4ec90c97",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_filterlistmodel#n-items"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:watch-items:observe",
    "fingerprint": "39e166e3e9ba48c1",
    "kind": "Gtk:FilterListModel",
@@ -22543,6 +22426,19 @@
    "strength": "connect",
    "tests": [
     "generated::verify::observe_gtk_flattenlistmodel#model"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:FlattenListModel:prop:n-items:observe",
+   "fingerprint": "3fae37680a7daddd",
+   "kind": "Gtk:FlattenListModel",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "4c363d06e0fb93b8",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_flattenlistmodel#n-items"
    ]
   },
   {
@@ -23977,11 +23873,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:storage-type:observe",
-   "fingerprint": "a07364ab35dd6095",
+   "fingerprint": "4f13d996b8cee83c",
    "kind": "Gtk:Image",
    "name": "storage-type",
    "origin": "inferred",
-   "record_fp": "02dcbdda1aed8f59",
+   "record_fp": "bf3dd98e58fab996",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -24523,11 +24419,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:value:observe",
-   "fingerprint": "2063bb0a4412d5ad",
+   "fingerprint": "c0ee1de1f0fe5116",
    "kind": "Gtk:LevelBar",
    "name": "value",
    "origin": "inferred",
-   "record_fp": "57f0e8fc30e5626c",
+   "record_fp": "b04662a3cccc896e",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -24688,6 +24584,19 @@
    "strength": "connect",
    "tests": [
     "generated::verify::observe_gtk_listheader#child"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ListHeader:prop:n-items:observe",
+   "fingerprint": "a03b0616b61f4d8a",
+   "kind": "Gtk:ListHeader",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "fdefc249512f3447",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_listheader#n-items"
    ]
   },
   {
@@ -24951,6 +24860,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:n-items:observe",
+   "fingerprint": "cfd7b7e145cec712",
+   "kind": "Gtk:MapListModel",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "64f778d37affbe96",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_maplistmodel#n-items"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:MediaControls:prop:media-stream:observe",
    "fingerprint": "9ba9445be1ec3862",
    "kind": "Gtk:MediaControls",
@@ -25043,11 +24965,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:icon-name:observe",
-   "fingerprint": "d6e9aedea7b24dee",
+   "fingerprint": "a2d804952343cc39",
    "kind": "Gtk:MenuButton",
    "name": "icon-name",
    "origin": "inferred",
-   "record_fp": "faf4f6131e4346ca",
+   "record_fp": "2fd41b2e901a34b0",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -25147,13 +25069,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:secondary-use-markup:observe",
-   "fingerprint": "9755c2f89cfb6a07",
+   "fingerprint": "236977cbf2d891c8",
    "kind": "Gtk:MessageDialog",
    "name": "secondary-use-markup",
    "origin": "inferred",
-   "record_fp": "46cc63f29b5f0172",
+   "record_fp": "38e324f4f0f177f7",
    "section": "observe",
-   "strength": "change",
+   "strength": "connect",
    "tests": [
     "generated::verify::observe_gtk_messagedialog#secondary-use-markup"
    ]
@@ -25198,29 +25120,16 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:MountOperation:prop:display:observe",
-   "fingerprint": "27d08510347ccb6d",
-   "kind": "Gtk:MountOperation",
-   "name": "display",
+   "fact": "svelters-api:v1:type:gtk:Gtk:MultiFilter:prop:n-items:observe",
+   "fingerprint": "e554c15eba377bc5",
+   "kind": "Gtk:MultiFilter",
+   "name": "n-items",
    "origin": "inferred",
-   "record_fp": "9757ddf77a5e01ca",
+   "record_fp": "49e246e4a2edf273",
    "section": "observe",
    "strength": "connect",
    "tests": [
-    "generated::verify::observe_gtk_mountoperation#display"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:MountOperation:prop:parent:observe",
-   "fingerprint": "12759117d5158605",
-   "kind": "Gtk:MountOperation",
-   "name": "parent",
-   "origin": "inferred",
-   "record_fp": "98b506eddbaaf689",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gtk_mountoperation#parent"
+    "generated::verify::observe_gtk_multifilter#n-items"
    ]
   },
   {
@@ -25234,6 +25143,32 @@
    "strength": "connect",
    "tests": [
     "generated::verify::observe_gtk_multiselection#model"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MultiSelection:prop:n-items:observe",
+   "fingerprint": "7cf9f55f0f520d21",
+   "kind": "Gtk:MultiSelection",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "6bb9816a568efb76",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_multiselection#n-items"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MultiSorter:prop:n-items:observe",
+   "fingerprint": "2a175a8d739ed8d9",
+   "kind": "Gtk:MultiSorter",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "876177e56965e5c5",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_multisorter#n-items"
    ]
   },
   {
@@ -25299,6 +25234,19 @@
    "strength": "connect",
    "tests": [
     "generated::verify::observe_gtk_noselection#model"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:NoSelection:prop:n-items:observe",
+   "fingerprint": "1533648961c65ff2",
+   "kind": "Gtk:NoSelection",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "de65db2fde060623",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_noselection#n-items"
    ]
   },
   {
@@ -26157,357 +26105,6 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_printdialog#title"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintJob:prop:page-setup:observe",
-   "fingerprint": "1d419f2f2d7e69ad",
-   "kind": "Gtk:PrintJob",
-   "name": "page-setup",
-   "origin": "inferred",
-   "record_fp": "b90a0b591dc9d4e5",
-   "section": "observe",
-   "strength": "refused",
-   "tests": [
-    "generated::verify::observe_gtk_printjob#page-setup"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintJob:prop:printer:observe",
-   "fingerprint": "e38c9d249ca399ec",
-   "kind": "Gtk:PrintJob",
-   "name": "printer",
-   "origin": "inferred",
-   "record_fp": "a8ec345ef0f49091",
-   "section": "observe",
-   "strength": "refused",
-   "tests": [
-    "generated::verify::observe_gtk_printjob#printer"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintJob:prop:settings:observe",
-   "fingerprint": "0e5c8ea4512dca80",
-   "kind": "Gtk:PrintJob",
-   "name": "settings",
-   "origin": "inferred",
-   "record_fp": "12f3767a219a55ad",
-   "section": "observe",
-   "strength": "refused",
-   "tests": [
-    "generated::verify::observe_gtk_printjob#settings"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintJob:prop:title:observe",
-   "fingerprint": "767428d3ae43e54a",
-   "kind": "Gtk:PrintJob",
-   "name": "title",
-   "origin": "inferred",
-   "record_fp": "cc2ad5bb76072b2e",
-   "section": "observe",
-   "strength": "refused",
-   "tests": [
-    "generated::verify::observe_gtk_printjob#title"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintJob:prop:track-print-status:observe",
-   "fingerprint": "5d86c12bacb833eb",
-   "kind": "Gtk:PrintJob",
-   "name": "track-print-status",
-   "origin": "inferred",
-   "record_fp": "0edb3a65277a33b0",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printjob#track-print-status"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:allow-async:observe",
-   "fingerprint": "1ebf8a6a7de1ee7c",
-   "kind": "Gtk:PrintOperation",
-   "name": "allow-async",
-   "origin": "inferred",
-   "record_fp": "eab02dafcebf87dc",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#allow-async"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:current-page:observe",
-   "fingerprint": "648ae30377df4502",
-   "kind": "Gtk:PrintOperation",
-   "name": "current-page",
-   "origin": "inferred",
-   "record_fp": "65c24edd51b408a9",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#current-page"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:custom-tab-label:observe",
-   "fingerprint": "6f93029cfa410ada",
-   "kind": "Gtk:PrintOperation",
-   "name": "custom-tab-label",
-   "origin": "inferred",
-   "record_fp": "daed87724adb8033",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#custom-tab-label"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:default-page-setup:observe",
-   "fingerprint": "cfccc18b188a1da3",
-   "kind": "Gtk:PrintOperation",
-   "name": "default-page-setup",
-   "origin": "inferred",
-   "record_fp": "692928a4efbe9520",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#default-page-setup"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:embed-page-setup:observe",
-   "fingerprint": "087bdb61bd594de8",
-   "kind": "Gtk:PrintOperation",
-   "name": "embed-page-setup",
-   "origin": "inferred",
-   "record_fp": "ca5f31315e018e6e",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#embed-page-setup"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:export-filename:observe",
-   "fingerprint": "2606d46d874d5371",
-   "kind": "Gtk:PrintOperation",
-   "name": "export-filename",
-   "origin": "inferred",
-   "record_fp": "2f5b0d13ba08677a",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#export-filename"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:has-selection:observe",
-   "fingerprint": "e2454d8457fb20e4",
-   "kind": "Gtk:PrintOperation",
-   "name": "has-selection",
-   "origin": "inferred",
-   "record_fp": "87af3ad20287921a",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#has-selection"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:job-name:observe",
-   "fingerprint": "6cfab5426063f94b",
-   "kind": "Gtk:PrintOperation",
-   "name": "job-name",
-   "origin": "inferred",
-   "record_fp": "411bbc1a677045c0",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#job-name"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:n-pages:observe",
-   "fingerprint": "b1d47fbb958ee098",
-   "kind": "Gtk:PrintOperation",
-   "name": "n-pages",
-   "origin": "inferred",
-   "record_fp": "9a110c38207f3817",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#n-pages"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:print-settings:observe",
-   "fingerprint": "4707f38bf2fe2359",
-   "kind": "Gtk:PrintOperation",
-   "name": "print-settings",
-   "origin": "inferred",
-   "record_fp": "6fa794baa1deb1d0",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#print-settings"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:show-progress:observe",
-   "fingerprint": "af1c3e15a2d6b6ea",
-   "kind": "Gtk:PrintOperation",
-   "name": "show-progress",
-   "origin": "inferred",
-   "record_fp": "e61fdf523cc70db0",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#show-progress"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:support-selection:observe",
-   "fingerprint": "efb74e4ab97e8e25",
-   "kind": "Gtk:PrintOperation",
-   "name": "support-selection",
-   "origin": "inferred",
-   "record_fp": "93fc9fccb8d1c3fe",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#support-selection"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:track-print-status:observe",
-   "fingerprint": "ecb43ada2b977a29",
-   "kind": "Gtk:PrintOperation",
-   "name": "track-print-status",
-   "origin": "inferred",
-   "record_fp": "f0836b27685f4cbf",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#track-print-status"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:unit:observe",
-   "fingerprint": "7f2ab01c1dd66b60",
-   "kind": "Gtk:PrintOperation",
-   "name": "unit",
-   "origin": "inferred",
-   "record_fp": "9d43a41461a28da1",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#unit"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:use-full-page:observe",
-   "fingerprint": "a53d86425ba49e09",
-   "kind": "Gtk:PrintOperation",
-   "name": "use-full-page",
-   "origin": "inferred",
-   "record_fp": "b150b53ee285140f",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printoperation#use-full-page"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:current-page:observe",
-   "fingerprint": "de2256c02ec66d62",
-   "kind": "Gtk:PrintUnixDialog",
-   "name": "current-page",
-   "origin": "inferred",
-   "record_fp": "259220c2ee27bdbc",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printunixdialog#current-page"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:embed-page-setup:observe",
-   "fingerprint": "3bb12d3698e3dcdb",
-   "kind": "Gtk:PrintUnixDialog",
-   "name": "embed-page-setup",
-   "origin": "inferred",
-   "record_fp": "9d51ce6e66c20f6a",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printunixdialog#embed-page-setup"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:has-selection:observe",
-   "fingerprint": "7421c59b7a6fc2ff",
-   "kind": "Gtk:PrintUnixDialog",
-   "name": "has-selection",
-   "origin": "inferred",
-   "record_fp": "b3445ec88ffc2342",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printunixdialog#has-selection"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:manual-capabilities:observe",
-   "fingerprint": "c0aba19cd0e759d7",
-   "kind": "Gtk:PrintUnixDialog",
-   "name": "manual-capabilities",
-   "origin": "inferred",
-   "record_fp": "391bfd5046f81242",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gtk_printunixdialog#manual-capabilities"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:page-setup:observe",
-   "fingerprint": "b94289e700e16881",
-   "kind": "Gtk:PrintUnixDialog",
-   "name": "page-setup",
-   "origin": "inferred",
-   "record_fp": "bc06bf49fac6efd3",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gtk_printunixdialog#page-setup"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:print-settings:observe",
-   "fingerprint": "a7b96ee2e1b7c39c",
-   "kind": "Gtk:PrintUnixDialog",
-   "name": "print-settings",
-   "origin": "inferred",
-   "record_fp": "2f68aaba5f1ea04d",
-   "section": "observe",
-   "strength": "connect",
-   "tests": [
-    "generated::verify::observe_gtk_printunixdialog#print-settings"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:PrintUnixDialog:prop:support-selection:observe",
-   "fingerprint": "5d2737f28d3499aa",
-   "kind": "Gtk:PrintUnixDialog",
-   "name": "support-selection",
-   "origin": "inferred",
-   "record_fp": "7148d45160b9d0f3",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_printunixdialog#support-selection"
    ]
   },
   {
@@ -27395,6 +26992,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SelectionFilterModel:prop:n-items:observe",
+   "fingerprint": "47e580821dd7d535",
+   "kind": "Gtk:SelectionFilterModel",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "b237bd0c4cc17c40",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_selectionfiltermodel#n-items"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Settings:prop:gtk-alternative-button-order:observe",
    "fingerprint": "807298d93c611585",
    "kind": "Gtk:Settings",
@@ -28162,6 +27772,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:n-items:observe",
+   "fingerprint": "63b7e137502d1bff",
+   "kind": "Gtk:ShortcutController",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "ccfe13c60941dac2",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_shortcutcontroller#n-items"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:scope:observe",
    "fingerprint": "701689f723d7287a",
    "kind": "Gtk:ShortcutController",
@@ -28319,13 +27942,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:icon:observe",
-   "fingerprint": "27d20b311fe098b4",
+   "fingerprint": "0bba73a719fd5ca6",
    "kind": "Gtk:ShortcutsShortcut",
    "name": "icon",
    "origin": "inferred",
-   "record_fp": "4c5a61c2301ca410",
+   "record_fp": "9cbf1d3a592acf29",
    "section": "observe",
-   "strength": "connect",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_shortcutsshortcut#icon"
    ]
@@ -28358,11 +27981,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:subtitle:observe",
-   "fingerprint": "cb8d4de369314da0",
+   "fingerprint": "1c9fb20360acc991",
    "kind": "Gtk:ShortcutsShortcut",
    "name": "subtitle",
    "origin": "inferred",
-   "record_fp": "5018444445f03af7",
+   "record_fp": "9a06668d9883c140",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -28461,6 +28084,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:n-items:observe",
+   "fingerprint": "0b714a04982776fb",
+   "kind": "Gtk:SingleSelection",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "3a9b42bf6e4e754d",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_singleselection#n-items"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:selected:observe",
    "fingerprint": "a117096fc88fe216",
    "kind": "Gtk:SingleSelection",
@@ -28513,6 +28149,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:n-items:observe",
+   "fingerprint": "f1107dc920d40bc2",
+   "kind": "Gtk:SliceListModel",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "9b013a6ecd35ee89",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_slicelistmodel#n-items"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:offset:observe",
    "fingerprint": "96042480531fbfc1",
    "kind": "Gtk:SliceListModel",
@@ -28562,6 +28211,19 @@
    "strength": "connect",
    "tests": [
     "generated::verify::observe_gtk_sortlistmodel#model"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:n-items:observe",
+   "fingerprint": "0d72cc1a7d988551",
+   "kind": "Gtk:SortListModel",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "c6f7c90327013a2b",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_sortlistmodel#n-items"
    ]
   },
   {
@@ -29203,11 +28865,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:invisible-char:observe",
-   "fingerprint": "cb4e680eb81c5c5e",
+   "fingerprint": "e0a65a65386f2f9f",
    "kind": "Gtk:Text",
    "name": "invisible-char",
    "origin": "inferred",
-   "record_fp": "7ebeeced4977d6d2",
+   "record_fp": "fc04f1d5f92b507b",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -29593,37 +29255,37 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:family:observe",
-   "fingerprint": "8de81175915c8fe0",
+   "fingerprint": "bcc65297434d4535",
    "kind": "Gtk:TextTag",
    "name": "family",
    "origin": "inferred",
-   "record_fp": "90d2e0f5cdbbbb44",
+   "record_fp": "21db9fa86926d574",
    "section": "observe",
-   "strength": "silent",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#family"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:family-set:observe",
-   "fingerprint": "2bb5b1cb72ed0de1",
+   "fingerprint": "09979e465b26a0cb",
    "kind": "Gtk:TextTag",
    "name": "family-set",
    "origin": "inferred",
-   "record_fp": "9ac47bb4d05119f2",
+   "record_fp": "0eebcf67d942e78a",
    "section": "observe",
-   "strength": "change",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_texttag#family-set"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font:observe",
-   "fingerprint": "6402d1896fd44b93",
+   "fingerprint": "3f5774b1210e40e4",
    "kind": "Gtk:TextTag",
    "name": "font",
    "origin": "inferred",
-   "record_fp": "6f14f64d35553952",
+   "record_fp": "f147ba569e1b5800",
    "section": "observe",
    "strength": "silent",
    "tests": [
@@ -30204,13 +29866,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size:observe",
-   "fingerprint": "510d652758377718",
+   "fingerprint": "517d7175ce401faf",
    "kind": "Gtk:TextTag",
    "name": "size",
    "origin": "inferred",
-   "record_fp": "757c085504b6aa8b",
+   "record_fp": "da240b5c7680ac48",
    "section": "observe",
-   "strength": "silent",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#size"
    ]
@@ -30230,11 +29892,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size-set:observe",
-   "fingerprint": "a17a73bbec5436f0",
+   "fingerprint": "89f2216f90e1454e",
    "kind": "Gtk:TextTag",
    "name": "size-set",
    "origin": "inferred",
-   "record_fp": "431bff3c6f642f41",
+   "record_fp": "bde88bb8c4c70c31",
    "section": "observe",
    "strength": "silent",
    "tests": [
@@ -30243,26 +29905,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:stretch:observe",
-   "fingerprint": "bb964ea4d64d6379",
+   "fingerprint": "b7ac17360a3bb4b9",
    "kind": "Gtk:TextTag",
    "name": "stretch",
    "origin": "inferred",
-   "record_fp": "cd3acb4f95792b99",
+   "record_fp": "724b86b0036851af",
    "section": "observe",
-   "strength": "silent",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#stretch"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:stretch-set:observe",
-   "fingerprint": "c6a39f3de9a4243c",
+   "fingerprint": "1a8d07041ee8d795",
    "kind": "Gtk:TextTag",
    "name": "stretch-set",
    "origin": "inferred",
-   "record_fp": "8e18618bd5af1e64",
+   "record_fp": "d3fdd1287b892547",
    "section": "observe",
-   "strength": "change",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_texttag#stretch-set"
    ]
@@ -30321,26 +29983,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:style:observe",
-   "fingerprint": "94affdf8c65657e4",
+   "fingerprint": "a06d3a883178ddaa",
    "kind": "Gtk:TextTag",
    "name": "style",
    "origin": "inferred",
-   "record_fp": "9b8756c06e5d0286",
+   "record_fp": "d42b84efdfdef1d3",
    "section": "observe",
-   "strength": "silent",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#style"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:style-set:observe",
-   "fingerprint": "7434d8ba42302cc2",
+   "fingerprint": "3439aacb7f30a306",
    "kind": "Gtk:TextTag",
    "name": "style-set",
    "origin": "inferred",
-   "record_fp": "c1e2fd661b3756b0",
+   "record_fp": "e3aa40bb63f7aead",
    "section": "observe",
-   "strength": "change",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_texttag#style-set"
    ]
@@ -30451,52 +30113,52 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:variant:observe",
-   "fingerprint": "e136b75fbd557d31",
+   "fingerprint": "82f9143180267070",
    "kind": "Gtk:TextTag",
    "name": "variant",
    "origin": "inferred",
-   "record_fp": "08649683d56fedd8",
+   "record_fp": "96c0a29d0855afd6",
    "section": "observe",
-   "strength": "silent",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#variant"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:variant-set:observe",
-   "fingerprint": "0d3c9217701e16f7",
+   "fingerprint": "66bc5d6c50d29a8f",
    "kind": "Gtk:TextTag",
    "name": "variant-set",
    "origin": "inferred",
-   "record_fp": "625a4e88bed26637",
+   "record_fp": "569ddd05d505776a",
    "section": "observe",
-   "strength": "change",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_texttag#variant-set"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:weight:observe",
-   "fingerprint": "359c08299ed8e9fd",
+   "fingerprint": "ef710d958538d5c8",
    "kind": "Gtk:TextTag",
    "name": "weight",
    "origin": "inferred",
-   "record_fp": "11158e9850a66928",
+   "record_fp": "f9152d3493ac552e",
    "section": "observe",
-   "strength": "silent",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#weight"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:weight-set:observe",
-   "fingerprint": "23f388a5b24fa927",
+   "fingerprint": "965b8c8c51d26bba",
    "kind": "Gtk:TextTag",
    "name": "weight-set",
    "origin": "inferred",
-   "record_fp": "1820b5743159eac3",
+   "record_fp": "dab735787294a614",
    "section": "observe",
-   "strength": "change",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_texttag#weight-set"
    ]
@@ -30931,6 +30593,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:n-items:observe",
+   "fingerprint": "115e8f0820c24420",
+   "kind": "Gtk:TreeListModel",
+   "name": "n-items",
+   "origin": "inferred",
+   "record_fp": "e1423d4f29b198a7",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_treelistmodel#n-items"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:passthrough:observe",
    "fingerprint": "174f4cdc5728cac1",
    "kind": "Gtk:TreeListModel",
@@ -31257,11 +30932,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:clickable:observe",
-   "fingerprint": "31023e38d4a46269",
+   "fingerprint": "a5b36395eb89cf91",
    "kind": "Gtk:TreeViewColumn",
    "name": "clickable",
    "origin": "inferred",
-   "record_fp": "ec67c5a723f002fe",
+   "record_fp": "0ff27421f9f78a69",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -31335,11 +31010,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:resizable:observe",
-   "fingerprint": "5ded082d3aba0917",
+   "fingerprint": "f630106d200cc903",
    "kind": "Gtk:TreeViewColumn",
    "name": "resizable",
    "origin": "inferred",
-   "record_fp": "5cf8c06c703e9758",
+   "record_fp": "a8058b1bd8bca74c",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -31673,11 +31348,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip:observe",
-   "fingerprint": "d83907067beb89f5",
+   "fingerprint": "7d463c7b89e4c57f",
    "kind": "Gtk:Widget",
    "name": "has-tooltip",
    "origin": "inferred",
-   "record_fp": "fba0ce813efd94ea",
+   "record_fp": "37dfdd7c4c9951ff",
    "section": "observe",
    "strength": "change",
    "tests": [

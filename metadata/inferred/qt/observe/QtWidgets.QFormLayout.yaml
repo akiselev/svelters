@@ -1,0 +1,46 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QFormLayout
+observe:
+- prop: fieldGrowthPolicy
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: formAlignment
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: horizontalSpacing
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QLayout:spacing'
+  verify:
+    'on': QtWidgets:QFormLayout
+    check: unsupported
+  confidence: 0.95
+- prop: labelAlignment
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: rowWrapPolicy
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9
+- prop: verticalSpacing
+  class: none
+  provenance:
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QLayout:spacing'
+  verify:
+    'on': QtWidgets:QFormLayout
+    check: unsupported
+  confidence: 0.95

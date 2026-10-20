@@ -265,8 +265,9 @@ fn run(r: &Row) -> Result<Outcome, String> {
 
 fn report(line: &serde_json::Value) {
     if let Some(path) = std::env::var_os("SVELTERS_TEST_RESULTS") {
+        // One write per line on an O_APPEND file: tables running in parallel processes do not interleave.
         if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(path) {
-            let _ = writeln!(f, "{line}");
+            let _ = f.write_all(format!("{line}\n").as_bytes());
         }
     }
 }

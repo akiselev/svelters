@@ -107,6 +107,8 @@ def parse(text: str, gir_of: dict[str, str]) -> dict:
             version = f[1]
         elif f[0] == "T" and gir(f[1]):
             types[gir(f[1])] = {"gtype": f[1], "class": f[2]}
+        elif f[0] == "I" and gir(f[1]):
+            types[gir(f[1])]["instantiated"] = True
         elif f[0] == "F" and gir(f[1]):
             r = prop(gir(f[1]), f[2])
             r["flags"] = flag_names(int(f[3]))

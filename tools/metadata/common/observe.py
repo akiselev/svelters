@@ -80,7 +80,8 @@ KEYS = {"prop", "class", "via", "missed", "fires", "derived_from", "value_cost",
 #            silent   set `trigger` or run `rust`: this property changes and is NOT announced (none, partial)
 #            connect  the mechanism installs and uninstalls (no native trigger known: `verified: connect`)
 #            refused  observe is refused (constant)
-VERIFY_CHECKS = ("change", "cross", "via", "silent", "connect", "refused")
+#            unsupported  observe answers SVL_OBSERVE_UNSUPPORTED: the backend has no mechanism (none)
+VERIFY_CHECKS = ("change", "cross", "via", "silent", "connect", "refused", "unsupported")
 # Key order of a written record.
 ORDER = ("prop", "class", "via", "missed", "fires", "derived_from", "value_cost", "timing", "provenance", "verify", "confidence")
 VERIFY_KEYS = {"on", "check", "trigger", "rust", "native", "setup"}
@@ -310,6 +311,19 @@ def inferred_files(tk: str, recs: dict[str, list[dict]], evidence: dict, review:
         "skipped": dict(sorted(skipped.items())),
         "rows": sorted(review, key=lambda r: (r["owner"], r["prop"]))}, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
     return files
+
+
+def layer_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str]:
+    """(owner, "observe", prop) -> the fingerprint Layers gives an inferred record (what the ledger parks it by), for
+    the layer files `inferred_files` returns. infer.py prunes parked facts whose record changed with it."""
+    import yaml
+    out = {}
+    for name, text in files.items():
+        if name.endswith(".yaml"):
+            doc = yaml.safe_load(text)
+            for r in doc["observe"]:
+                out[(doc["owner"], "observe", r["prop"])] = svmeta.fingerprint(strip(r))
+    return out
 
 
 def sync_dir(d: Path, files: dict[str, str], check: bool, label: str) -> list[str]:

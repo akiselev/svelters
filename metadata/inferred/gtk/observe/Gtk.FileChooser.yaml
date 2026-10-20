@@ -56,9 +56,9 @@ observe:
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::select-multiple'
-  - origin: rule
-    ref: no probe row; the generated test sets it natively
+  - origin: probe
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileChooser:select-multiple)'
   verify:
     'on': Gtk:FileChooserDialog
-    check: connect
-  confidence: 0.9
+    check: change
+  confidence: 0.95

@@ -1,0 +1,76 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSStackView
+observe:
+- prop: alignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `alignment` fired on a programmatic set'
+  confidence: 0.9
+- prop: arranged-subviews
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: delegate
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: detached-views
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: detaches-hidden-views
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `detachesHiddenViews` fired on a programmatic set'
+  confidence: 0.9
+- prop: distribution
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `distribution` fired on a programmatic set'
+  confidence: 0.9
+- prop: edge-insets
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `edgeInsets` fired on a programmatic set'
+  confidence: 0.9
+- prop: orientation
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `orientation` fired on a programmatic set'
+  confidence: 0.9
+- prop: spacing
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `spacing` fired on a programmatic set'
+  confidence: 0.9
+- prop: views
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9

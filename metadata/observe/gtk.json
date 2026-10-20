@@ -747,11 +747,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "cbcd677c7b50fa68",
-    "verify": {
-     "check": "change",
-     "on": "Gio:Application"
-    },
+    "record_fp": "0007dbe91dd36467",
     "via": [
      {
       "mechanism": "notify",
@@ -775,11 +771,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "68b94f60c4df2468",
-    "verify": {
-     "check": "connect",
-     "on": "Gio:Application"
-    },
+    "record_fp": "b0723fea02b3fac5",
     "via": [
      {
       "mechanism": "notify",
@@ -803,11 +795,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "05345bc6ff7c4837",
-    "verify": {
-     "check": "change",
-     "on": "Gio:Application"
-    },
+    "record_fp": "9926e4a547c4868a",
     "via": [
      {
       "mechanism": "notify",
@@ -831,11 +819,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9f04e6a52560958d",
-    "verify": {
-     "check": "change",
-     "on": "Gio:Application"
-    },
+    "record_fp": "46ec523bb3694654",
     "via": [
      {
       "mechanism": "notify",
@@ -858,11 +842,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "b4af44761da85f56",
-    "verify": {
-     "check": "change",
-     "on": "Gio:Application"
-    },
+    "record_fp": "ff683e3c6bec5c8e",
     "via": [
      {
       "mechanism": "notify",
@@ -888,11 +868,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "e6bfdc5b2c279c23",
-    "verify": {
-     "check": "change",
-     "on": "Gio:DBusConnection"
-    },
+    "record_fp": "0c640dc03daf5d0a",
     "via": [
      {
       "mechanism": "notify",
@@ -911,11 +887,7 @@
       "ref": "O2: CONSTRUCT_ONLY: set once at construction"
      }
     ],
-    "record_fp": "89035829aca05efe",
-    "verify": {
-     "check": "refused",
-     "on": "Gio:DBusConnection"
-    }
+    "record_fp": "79961029848f0319"
    },
    "guid": {
     "class": "constant",
@@ -928,11 +900,7 @@
       "ref": "O2: CONSTRUCT_ONLY: set once at construction"
      }
     ],
-    "record_fp": "aef9edb59795f196",
-    "verify": {
-     "check": "refused",
-     "on": "Gio:DBusConnection"
-    }
+    "record_fp": "90019e8eaf678e8d"
    },
    "stream": {
     "class": "constant",
@@ -945,11 +913,7 @@
       "ref": "O2: CONSTRUCT_ONLY: set once at construction"
      }
     ],
-    "record_fp": "4ddd11275677861c",
-    "verify": {
-     "check": "refused",
-     "on": "Gio:DBusConnection"
-    }
+    "record_fp": "e7373f85f6c3a52f"
    }
   },
   "Gio:FileIcon": {
@@ -1664,9 +1628,6 @@
    },
    "license": {
     "class": "exact",
-    "derived_from": [
-     "license-type"
-    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:license:observe",
     "fires": "on_set",
     "layer": "inferred",
@@ -1678,10 +1639,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:license, set:Gtk.AboutDialog:license-type)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.AboutDialog:license)"
      }
     ],
-    "record_fp": "74aae64b95e5ea3f",
+    "record_fp": "ff0e33bc63a66449",
     "verify": {
      "check": "change",
      "on": "Gtk:AboutDialog"
@@ -2842,11 +2803,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "957b8adc8cd2e14c",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:Application"
-    },
+    "record_fp": "82ea7b2468351158",
     "via": [
      {
       "mechanism": "notify",
@@ -2870,11 +2827,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9f01579b50426e5e",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:Application"
-    },
+    "record_fp": "8f278e8d0d374af0",
     "via": [
      {
       "mechanism": "notify",
@@ -3247,6 +3200,33 @@
      {
       "mechanism": "notify",
       "signal": "notify::io-priority"
+     }
+    ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:BookmarkList:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "b3f5cfe57ed951cb",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:BookmarkList"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    }
@@ -3794,9 +3774,6 @@
    },
    "label": {
     "class": "exact",
-    "derived_from": [
-     "icon-name"
-    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:label:observe",
     "fires": "on_set",
     "layer": "inferred",
@@ -3808,10 +3785,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:icon-name, set:Gtk.Button:label)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:label)"
      }
     ],
-    "record_fp": "d6f1e3f6e4ab2b6d",
+    "record_fp": "43d9b727ccc6203d",
     "verify": {
      "check": "change",
      "on": "Gtk:Button"
@@ -6158,7 +6135,8 @@
    "text": {
     "class": "exact",
     "derived_from": [
-     "accel-key"
+     "accel-key",
+     "keycode"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:text:observe",
     "fires": "on_set",
@@ -6171,10 +6149,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:accel-key)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.CellRendererAccel:accel-key, set:Gtk.CellRendererAccel:keycode)"
      }
     ],
-    "record_fp": "b763f37fb3379d72",
+    "record_fp": "3a7984083a992645",
     "verify": {
      "check": "change",
      "on": "Gtk:CellRendererAccel"
@@ -8873,6 +8851,33 @@
       "signal": "notify::monitored"
      }
     ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "55d3bdc9220179a1",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:DirectoryList"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
    }
   },
   "Gtk:DragIcon": {
@@ -8891,11 +8896,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "25d7a95b98e6daab",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:DragIcon"
-    },
+    "record_fp": "18c60466e7fe4535",
     "via": [
      {
       "mechanism": "notify",
@@ -9891,7 +9892,6 @@
    "invisible-char": {
     "class": "exact",
     "derived_from": [
-     "invisible-char-set",
      "visibility"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:invisible-char:observe",
@@ -9905,10 +9905,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:invisible-char, set:Gtk.Entry:invisible-char-set, set:Gtk.Entry:visibility)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:invisible-char, set:Gtk.Entry:visibility)"
      }
     ],
-    "record_fp": "f2b37c33fcf65bb8",
+    "record_fp": "4cc0ac09d5f16cff",
     "verify": {
      "check": "change",
      "on": "Gtk:Entry"
@@ -10386,9 +10386,6 @@
    },
    "secondary-icon-activatable": {
     "class": "exact",
-    "derived_from": [
-     "show-emoji-icon"
-    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-activatable:observe",
     "fires": "on_change",
     "layer": "inferred",
@@ -10400,10 +10397,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-activatable, set:Gtk.Entry:show-emoji-icon)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-activatable)"
      }
     ],
-    "record_fp": "6127779f499b014d",
+    "record_fp": "c22bd7d4b17cba7e",
     "verify": {
      "check": "change",
      "on": "Gtk:Entry"
@@ -10502,9 +10499,6 @@
    },
    "secondary-icon-sensitive": {
     "class": "exact",
-    "derived_from": [
-     "show-emoji-icon"
-    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-sensitive:observe",
     "fires": "on_change",
     "layer": "inferred",
@@ -10516,10 +10510,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-sensitive, set:Gtk.Entry:show-emoji-icon)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-sensitive)"
      }
     ],
-    "record_fp": "f32e403e6a647b5e",
+    "record_fp": "88752960475fc161",
     "verify": {
      "check": "change",
      "on": "Gtk:Entry"
@@ -10534,7 +10528,8 @@
    "secondary-icon-storage-type": {
     "class": "exact",
     "derived_from": [
-     "secondary-icon-name"
+     "secondary-icon-name",
+     "show-emoji-icon"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-storage-type:observe",
     "layer": "inferred",
@@ -10546,10 +10541,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-name)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:secondary-icon-name, set:Gtk.Entry:show-emoji-icon)"
      }
     ],
-    "record_fp": "10c993a5e8bc9b7a",
+    "record_fp": "81372b5e3af3a4c1",
     "verify": {
      "check": "cross",
      "on": "Gtk:Entry",
@@ -11104,6 +11099,29 @@
      }
     ],
     "record_fp": "80b3b025fb028dd8"
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:EnumList:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "gir",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "32e610809b62fc57",
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
    }
   },
   "Gtk:EventController": {
@@ -11518,13 +11536,13 @@
       "ref": "O1: GObject property, notify::select-multiple"
      },
      {
-      "origin": "rule",
-      "ref": "no probe row; the generated test sets it natively"
+      "origin": "probe",
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FileChooser:select-multiple)"
      }
     ],
-    "record_fp": "cd56ebeeef95f43e",
+    "record_fp": "7037dc9d625b31e2",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:FileChooserDialog"
     },
     "via": [
@@ -12074,6 +12092,33 @@
      }
     ]
    },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "1fc7d88c4ec90c97",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:FilterListModel"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
+   },
    "watch-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:watch-items:observe",
@@ -12157,6 +12202,33 @@
      {
       "mechanism": "notify",
       "signal": "notify::model"
+     }
+    ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:FlattenListModel:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "4c363d06e0fb93b8",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:FlattenListModel"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    }
@@ -15253,7 +15325,8 @@
     "class": "exact",
     "derived_from": [
      "file",
-     "icon-name"
+     "icon-name",
+     "resource"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:storage-type:observe",
     "layer": "inferred",
@@ -15265,10 +15338,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file, set:Gtk.Image:icon-name)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file, set:Gtk.Image:icon-name, set:Gtk.Image:resource)"
      }
     ],
-    "record_fp": "02dcbdda1aed8f59",
+    "record_fp": "bf3dd98e58fab996",
     "verify": {
      "check": "cross",
      "on": "Gtk:Image",
@@ -16395,6 +16468,9 @@
    },
    "value": {
     "class": "exact",
+    "derived_from": [
+     "min-value"
+    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:LevelBar:prop:value:observe",
     "fires": "on_change",
     "layer": "inferred",
@@ -16406,10 +16482,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:value)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:min-value, set:Gtk.LevelBar:value)"
      }
     ],
-    "record_fp": "57f0e8fc30e5626c",
+    "record_fp": "b04662a3cccc896e",
     "verify": {
      "check": "change",
      "on": "Gtk:LevelBar"
@@ -16762,6 +16838,33 @@
      {
       "mechanism": "notify",
       "signal": "notify::child"
+     }
+    ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:ListHeader:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items (EXPLICIT_NOTIFY)"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "fdefc249512f3447",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:ListHeader"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    }
@@ -17327,6 +17430,33 @@
       "signal": "notify::model"
      }
     ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "64f778d37affbe96",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:MapListModel"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
    }
   },
   "Gtk:MediaControls": {
@@ -17670,9 +17800,6 @@
    },
    "icon-name": {
     "class": "exact",
-    "derived_from": [
-     "label"
-    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:icon-name:observe",
     "fires": "on_set",
     "layer": "inferred",
@@ -17684,10 +17811,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:icon-name, set:Gtk.MenuButton:label)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:icon-name)"
      }
     ],
-    "record_fp": "faf4f6131e4346ca",
+    "record_fp": "2fd41b2e901a34b0",
     "verify": {
      "check": "change",
      "on": "Gtk:MenuButton"
@@ -17900,7 +18027,6 @@
    "secondary-use-markup": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:secondary-use-markup:observe",
-    "fires": "on_change",
     "layer": "inferred",
     "prop": "secondary-use-markup",
     "provenance": [
@@ -17909,13 +18035,13 @@
       "ref": "O1: GObject property, notify::secondary-use-markup (EXPLICIT_NOTIFY)"
      },
      {
-      "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MessageDialog:secondary-use-markup)"
+      "origin": "rule",
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "46cc63f29b5f0172",
+    "record_fp": "38e324f4f0f177f7",
     "verify": {
-     "check": "change",
+     "check": "connect",
      "on": "Gtk:MessageDialog"
     },
     "via": [
@@ -18018,11 +18144,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9757ddf77a5e01ca",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:MountOperation"
-    },
+    "record_fp": "15f8e54794afa8b0",
     "via": [
      {
       "mechanism": "notify",
@@ -18046,15 +18168,40 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "98b506eddbaaf689",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:MountOperation"
-    },
+    "record_fp": "18f9bbd918f03c0f",
     "via": [
      {
       "mechanism": "notify",
       "signal": "notify::parent"
+     }
+    ]
+   }
+  },
+  "Gtk:MultiFilter": {
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MultiFilter:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "49e246e4a2edf273",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:AnyFilter"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    }
@@ -18084,6 +18231,62 @@
      {
       "mechanism": "notify",
       "signal": "notify::model"
+     }
+    ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MultiSelection:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "6bb9816a568efb76",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:MultiSelection"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
+   }
+  },
+  "Gtk:MultiSorter": {
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MultiSorter:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "876177e56965e5c5",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:MultiSorter"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    }
@@ -18240,6 +18443,33 @@
      {
       "mechanism": "notify",
       "signal": "notify::model"
+     }
+    ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:NoSelection:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "de65db2fde060623",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:NoSelection"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    }
@@ -20068,11 +20298,7 @@
       "ref": "O2: CONSTRUCT_ONLY: set once at construction"
      }
     ],
-    "record_fp": "b90a0b591dc9d4e5",
-    "verify": {
-     "check": "refused",
-     "on": "Gtk:PrintJob"
-    }
+    "record_fp": "4ebf311277e18b82"
    },
    "printer": {
     "class": "constant",
@@ -20085,11 +20311,7 @@
       "ref": "O2: CONSTRUCT_ONLY: set once at construction"
      }
     ],
-    "record_fp": "a8ec345ef0f49091",
-    "verify": {
-     "check": "refused",
-     "on": "Gtk:PrintJob"
-    }
+    "record_fp": "b9d2de3f9828671b"
    },
    "settings": {
     "class": "constant",
@@ -20102,11 +20324,7 @@
       "ref": "O2: CONSTRUCT_ONLY: set once at construction"
      }
     ],
-    "record_fp": "12f3767a219a55ad",
-    "verify": {
-     "check": "refused",
-     "on": "Gtk:PrintJob"
-    }
+    "record_fp": "a91749337737ad5e"
    },
    "title": {
     "class": "constant",
@@ -20119,11 +20337,7 @@
       "ref": "O2: CONSTRUCT_ONLY: set once at construction"
      }
     ],
-    "record_fp": "cc2ad5bb76072b2e",
-    "verify": {
-     "check": "refused",
-     "on": "Gtk:PrintJob"
-    }
+    "record_fp": "52927fba84d93c94"
    },
    "track-print-status": {
     "class": "exact",
@@ -20141,11 +20355,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "0edb3a65277a33b0",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintJob"
-    },
+    "record_fp": "552856fb14736b9e",
     "via": [
      {
       "mechanism": "notify",
@@ -20170,11 +20380,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "eab02dafcebf87dc",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "4b073075f173cff7",
     "via": [
      {
       "mechanism": "notify",
@@ -20197,11 +20403,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "65c24edd51b408a9",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "e077085f18268867",
     "via": [
      {
       "mechanism": "notify",
@@ -20225,11 +20427,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "daed87724adb8033",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "10cb24848b8ff1de",
     "via": [
      {
       "mechanism": "notify",
@@ -20253,11 +20451,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "692928a4efbe9520",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "2e1eee074c3e2cdf",
     "via": [
      {
       "mechanism": "notify",
@@ -20280,11 +20474,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "ca5f31315e018e6e",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "85f90adeb8a85d4a",
     "via": [
      {
       "mechanism": "notify",
@@ -20308,11 +20498,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "2f5b0d13ba08677a",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "4462a5d9d69720cf",
     "via": [
      {
       "mechanism": "notify",
@@ -20335,11 +20521,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "87af3ad20287921a",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "d14b79c72e605e48",
     "via": [
      {
       "mechanism": "notify",
@@ -20363,11 +20545,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "411bbc1a677045c0",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "ea5c3b231dda4f78",
     "via": [
      {
       "mechanism": "notify",
@@ -20390,11 +20568,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9a110c38207f3817",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "c773e5f519575f61",
     "via": [
      {
       "mechanism": "notify",
@@ -20418,11 +20592,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6fa794baa1deb1d0",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "6f784ad2b2171221",
     "via": [
      {
       "mechanism": "notify",
@@ -20445,11 +20615,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "e61fdf523cc70db0",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "3066495611c122da",
     "via": [
      {
       "mechanism": "notify",
@@ -20472,11 +20638,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "93fc9fccb8d1c3fe",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "9a4ccce8e3c1b74f",
     "via": [
      {
       "mechanism": "notify",
@@ -20499,11 +20661,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "f0836b27685f4cbf",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "a9a832837d84d6e0",
     "via": [
      {
       "mechanism": "notify",
@@ -20526,11 +20684,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9d43a41461a28da1",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "73be5ee4f872fe15",
     "via": [
      {
       "mechanism": "notify",
@@ -20553,11 +20707,7 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "b150b53ee285140f",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintOperation"
-    },
+    "record_fp": "09443a13da73ec94",
     "via": [
      {
       "mechanism": "notify",
@@ -20583,11 +20733,7 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:current-page)"
      }
     ],
-    "record_fp": "259220c2ee27bdbc",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintUnixDialog"
-    },
+    "record_fp": "ca1aa11243781195",
     "via": [
      {
       "mechanism": "notify",
@@ -20611,11 +20757,7 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:embed-page-setup)"
      }
     ],
-    "record_fp": "9d51ce6e66c20f6a",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintUnixDialog"
-    },
+    "record_fp": "2fe306fcad74e2b7",
     "via": [
      {
       "mechanism": "notify",
@@ -20639,11 +20781,7 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:has-selection)"
      }
     ],
-    "record_fp": "b3445ec88ffc2342",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintUnixDialog"
-    },
+    "record_fp": "696cf6acf40eec9f",
     "via": [
      {
       "mechanism": "notify",
@@ -20667,11 +20805,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "391bfd5046f81242",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:PrintUnixDialog"
-    },
+    "record_fp": "223ff329b0faae42",
     "via": [
      {
       "mechanism": "notify",
@@ -20695,11 +20829,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "bc06bf49fac6efd3",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:PrintUnixDialog"
-    },
+    "record_fp": "f63a9e91cf94c469",
     "via": [
      {
       "mechanism": "notify",
@@ -20723,11 +20853,7 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2f68aaba5f1ea04d",
-    "verify": {
-     "check": "connect",
-     "on": "Gtk:PrintUnixDialog"
-    },
+    "record_fp": "6f784ad2b2171221",
     "via": [
      {
       "mechanism": "notify",
@@ -20751,11 +20877,7 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PrintUnixDialog:support-selection)"
      }
     ],
-    "record_fp": "7148d45160b9d0f3",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:PrintUnixDialog"
-    },
+    "record_fp": "3dbdf77db98a7a81",
     "via": [
      {
       "mechanism": "notify",
@@ -22645,6 +22767,33 @@
       "signal": "notify::model"
      }
     ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SelectionFilterModel:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "b237bd0c4cc17c40",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:SelectionFilterModel"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
    }
   },
   "Gtk:Settings": {
@@ -24300,6 +24449,33 @@
      }
     ]
    },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "ccfe13c60941dac2",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:ShortcutController"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
+   },
    "scope": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:scope:observe",
@@ -24645,32 +24821,22 @@
     ]
    },
    "icon": {
-    "class": "exact",
+    "class": "none",
     "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:icon:observe",
-    "fires": "on_set",
     "layer": "inferred",
     "prop": "icon",
     "provenance": [
      {
-      "origin": "runtime",
-      "ref": "O1: GObject property, notify::icon"
-     },
-     {
-      "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "origin": "probe",
+      "ref": "observe probe GTK 4.22.4: changed without notify on set:Gtk.ShortcutsShortcut:shortcut-type"
      }
     ],
-    "record_fp": "4c5a61c2301ca410",
+    "record_fp": "9cbf1d3a592acf29",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ShortcutsShortcut"
-    },
-    "via": [
-     {
-      "mechanism": "notify",
-      "signal": "notify::icon"
-     }
-    ]
+     "check": "silent",
+     "on": "Gtk:ShortcutsShortcut",
+     "trigger": "shortcut-type"
+    }
    },
    "icon-set": {
     "class": "exact",
@@ -24731,8 +24897,7 @@
    "subtitle": {
     "class": "exact",
     "derived_from": [
-     "shortcut-type",
-     "subtitle-set"
+     "shortcut-type"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutsShortcut:prop:subtitle:observe",
     "fires": "on_set",
@@ -24745,10 +24910,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:shortcut-type, set:Gtk.ShortcutsShortcut:subtitle, set:Gtk.ShortcutsShortcut:subtitle-set)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ShortcutsShortcut:shortcut-type, set:Gtk.ShortcutsShortcut:subtitle)"
      }
     ],
-    "record_fp": "5018444445f03af7",
+    "record_fp": "9a06668d9883c140",
     "verify": {
      "check": "change",
      "on": "Gtk:ShortcutsShortcut"
@@ -24977,6 +25142,33 @@
      }
     ]
    },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "3a9b42bf6e4e754d",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:SingleSelection"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
+   },
    "selected": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:selected:observe",
@@ -25090,6 +25282,33 @@
      }
     ]
    },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "9b013a6ecd35ee89",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:SliceListModel"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
+   },
    "offset": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:offset:observe",
@@ -25200,6 +25419,33 @@
      {
       "mechanism": "notify",
       "signal": "notify::model"
+     }
+    ]
+   },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "c6f7c90327013a2b",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:SortListModel"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    },
@@ -26763,7 +27009,6 @@
    "invisible-char": {
     "class": "exact",
     "derived_from": [
-     "invisible-char-set",
      "visibility"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:invisible-char:observe",
@@ -26777,10 +27022,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:invisible-char, set:Gtk.Text:invisible-char-set, set:Gtk.Text:visibility)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:invisible-char, set:Gtk.Text:visibility)"
      }
     ],
-    "record_fp": "7ebeeced4977d6d2",
+    "record_fp": "fc04f1d5f92b507b",
     "verify": {
      "check": "change",
      "on": "Gtk:Text"
@@ -27595,16 +27840,14 @@
     ]
    },
    "family": {
-    "class": "partial",
+    "class": "exact",
     "derived_from": [
+     "family-set",
      "font"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:family:observe",
     "fires": "on_set",
     "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
     "prop": "family",
     "provenance": [
      {
@@ -27613,14 +27856,13 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:family-set"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:family, set:Gtk.TextTag:family-set, set:Gtk.TextTag:font)"
      }
     ],
-    "record_fp": "90d2e0f5cdbbbb44",
+    "record_fp": "21db9fa86926d574",
     "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "family-set"
+     "check": "change",
+     "on": "Gtk:TextTag"
     },
     "via": [
      {
@@ -27630,13 +27872,16 @@
     ]
    },
    "family-set": {
-    "class": "exact",
+    "class": "partial",
     "derived_from": [
      "font"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:family-set:observe",
     "fires": "on_set",
     "layer": "inferred",
+    "missed": [
+     "cross_prop"
+    ],
     "prop": "family-set",
     "provenance": [
      {
@@ -27645,13 +27890,14 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:family-set, set:Gtk.TextTag:font)"
+      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:family"
      }
     ],
-    "record_fp": "9ac47bb4d05119f2",
+    "record_fp": "0eebcf67d942e78a",
     "verify": {
-     "check": "change",
-     "on": "Gtk:TextTag"
+     "check": "silent",
+     "on": "Gtk:TextTag",
+     "trigger": "family"
     },
     "via": [
      {
@@ -27668,7 +27914,8 @@
      "size-points",
      "stretch",
      "style",
-     "variant"
+     "variant",
+     "weight"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font:observe",
     "fires": "on_set",
@@ -27684,10 +27931,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 7 change(s); changed without notify on set:Gtk.TextTag:family-set, set:Gtk.TextTag:size-set, set:Gtk.TextTag:stretch-set, set:Gtk.TextTag:style-set"
+      "ref": "observe probe GTK 4.22.4: notified on 8 change(s); changed without notify on set:Gtk.TextTag:family-set, set:Gtk.TextTag:size-set"
      }
     ],
-    "record_fp": "6f14f64d35553952",
+    "record_fp": "f147ba569e1b5800",
     "verify": {
      "check": "silent",
      "on": "Gtk:TextTag",
@@ -28975,16 +29222,14 @@
     ]
    },
    "size": {
-    "class": "partial",
+    "class": "exact",
     "derived_from": [
-     "size-points"
+     "size-points",
+     "size-set"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:size:observe",
     "fires": "on_set",
     "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
     "prop": "size",
     "provenance": [
      {
@@ -28993,14 +29238,13 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:size-set"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:size, set:Gtk.TextTag:size-points, set:Gtk.TextTag:size-set)"
      }
     ],
-    "record_fp": "757c085504b6aa8b",
+    "record_fp": "da240b5c7680ac48",
     "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "size-set"
+     "check": "change",
+     "on": "Gtk:TextTag"
     },
     "via": [
      {
@@ -29060,10 +29304,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:size"
+      "ref": "observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:size, set:Gtk.TextTag:size-points"
      }
     ],
-    "record_fp": "431bff3c6f642f41",
+    "record_fp": "bde88bb8c4c70c31",
     "verify": {
      "check": "silent",
      "on": "Gtk:TextTag",
@@ -29077,13 +29321,10 @@
     ]
    },
    "stretch": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:stretch:observe",
     "fires": "on_set",
     "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
     "prop": "stretch",
     "provenance": [
      {
@@ -29092,14 +29333,13 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:stretch-set"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:stretch)"
      }
     ],
-    "record_fp": "cd3acb4f95792b99",
+    "record_fp": "724b86b0036851af",
     "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "stretch-set"
+     "check": "change",
+     "on": "Gtk:TextTag"
     },
     "via": [
      {
@@ -29109,13 +29349,16 @@
     ]
    },
    "stretch-set": {
-    "class": "exact",
+    "class": "partial",
     "derived_from": [
      "font"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:stretch-set:observe",
     "fires": "on_set",
     "layer": "inferred",
+    "missed": [
+     "cross_prop"
+    ],
     "prop": "stretch-set",
     "provenance": [
      {
@@ -29124,13 +29367,14 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:stretch-set)"
+      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:stretch"
      }
     ],
-    "record_fp": "8e18618bd5af1e64",
+    "record_fp": "d3fdd1287b892547",
     "verify": {
-     "check": "change",
-     "on": "Gtk:TextTag"
+     "check": "silent",
+     "on": "Gtk:TextTag",
+     "trigger": "stretch"
     },
     "via": [
      {
@@ -29255,13 +29499,10 @@
     ]
    },
    "style": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:style:observe",
     "fires": "on_set",
     "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
     "prop": "style",
     "provenance": [
      {
@@ -29270,14 +29511,13 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:style-set"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:style)"
      }
     ],
-    "record_fp": "9b8756c06e5d0286",
+    "record_fp": "d42b84efdfdef1d3",
     "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "style-set"
+     "check": "change",
+     "on": "Gtk:TextTag"
     },
     "via": [
      {
@@ -29287,13 +29527,16 @@
     ]
    },
    "style-set": {
-    "class": "exact",
+    "class": "partial",
     "derived_from": [
      "font"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:style-set:observe",
     "fires": "on_set",
     "layer": "inferred",
+    "missed": [
+     "cross_prop"
+    ],
     "prop": "style-set",
     "provenance": [
      {
@@ -29302,13 +29545,14 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:style-set)"
+      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:style"
      }
     ],
-    "record_fp": "c1e2fd661b3756b0",
+    "record_fp": "e3aa40bb63f7aead",
     "verify": {
-     "check": "change",
-     "on": "Gtk:TextTag"
+     "check": "silent",
+     "on": "Gtk:TextTag",
+     "trigger": "style"
     },
     "via": [
      {
@@ -29548,13 +29792,10 @@
     ]
    },
    "variant": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:variant:observe",
     "fires": "on_set",
     "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
     "prop": "variant",
     "provenance": [
      {
@@ -29563,14 +29804,13 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:variant-set"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:variant)"
      }
     ],
-    "record_fp": "08649683d56fedd8",
+    "record_fp": "96c0a29d0855afd6",
     "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "variant-set"
+     "check": "change",
+     "on": "Gtk:TextTag"
     },
     "via": [
      {
@@ -29580,13 +29820,16 @@
     ]
    },
    "variant-set": {
-    "class": "exact",
+    "class": "partial",
     "derived_from": [
      "font"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:variant-set:observe",
     "fires": "on_set",
     "layer": "inferred",
+    "missed": [
+     "cross_prop"
+    ],
     "prop": "variant-set",
     "provenance": [
      {
@@ -29595,13 +29838,14 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:variant-set)"
+      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:variant"
      }
     ],
-    "record_fp": "625a4e88bed26637",
+    "record_fp": "569ddd05d505776a",
     "verify": {
-     "check": "change",
-     "on": "Gtk:TextTag"
+     "check": "silent",
+     "on": "Gtk:TextTag",
+     "trigger": "variant"
     },
     "via": [
      {
@@ -29611,13 +29855,10 @@
     ]
    },
    "weight": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:weight:observe",
     "fires": "on_set",
     "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
     "prop": "weight",
     "provenance": [
      {
@@ -29626,14 +29867,13 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:weight-set"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:weight)"
      }
     ],
-    "record_fp": "11158e9850a66928",
+    "record_fp": "f9152d3493ac552e",
     "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "weight-set"
+     "check": "change",
+     "on": "Gtk:TextTag"
     },
     "via": [
      {
@@ -29643,13 +29883,16 @@
     ]
    },
    "weight-set": {
-    "class": "exact",
+    "class": "partial",
     "derived_from": [
      "font"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:weight-set:observe",
     "fires": "on_set",
     "layer": "inferred",
+    "missed": [
+     "cross_prop"
+    ],
     "prop": "weight-set",
     "provenance": [
      {
@@ -29658,13 +29901,14 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextTag:font, set:Gtk.TextTag:weight-set)"
+      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:weight"
      }
     ],
-    "record_fp": "1820b5743159eac3",
+    "record_fp": "dab735787294a614",
     "verify": {
-     "check": "change",
-     "on": "Gtk:TextTag"
+     "check": "silent",
+     "on": "Gtk:TextTag",
+     "trigger": "weight"
     },
     "via": [
      {
@@ -30613,6 +30857,33 @@
      }
     ]
    },
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "e1423d4f29b198a7",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:TreeListModel"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
+   },
    "passthrough": {
     "class": "constant",
     "fact": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:passthrough:observe",
@@ -31294,6 +31565,9 @@
    },
    "clickable": {
     "class": "exact",
+    "derived_from": [
+     "sort-column-id"
+    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:clickable:observe",
     "fires": "on_change",
     "layer": "inferred",
@@ -31305,10 +31579,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:clickable)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:clickable, set:Gtk.TreeViewColumn:sort-column-id)"
      }
     ],
-    "record_fp": "ec67c5a723f002fe",
+    "record_fp": "0ff27421f9f78a69",
     "verify": {
      "check": "change",
      "on": "Gtk:TreeViewColumn"
@@ -31462,9 +31736,6 @@
    },
    "resizable": {
     "class": "exact",
-    "derived_from": [
-     "sizing"
-    ],
     "fact": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:resizable:observe",
     "fires": "on_change",
     "layer": "inferred",
@@ -31476,10 +31747,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:resizable, set:Gtk.TreeViewColumn:sizing)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:resizable)"
      }
     ],
-    "record_fp": "5cf8c06c703e9758",
+    "record_fp": "a8058b1bd8bca74c",
     "verify": {
      "check": "change",
      "on": "Gtk:TreeViewColumn"
@@ -32209,8 +32480,14 @@
    "has-tooltip": {
     "class": "exact",
     "derived_from": [
+     "primary-icon-tooltip-markup",
      "primary-icon-tooltip-text",
-     "tooltip-column"
+     "secondary-icon-tooltip-markup",
+     "secondary-icon-tooltip-text",
+     "show-emoji-icon",
+     "tooltip-column",
+     "tooltip-markup",
+     "tooltip-text"
     ],
     "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:has-tooltip:observe",
     "fires": "on_change",
@@ -32223,10 +32500,10 @@
      },
      {
       "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-tooltip-text, set:Gtk.IconView:tooltip-column, set:Gtk.TreeView:tooltip-column)"
+      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:primary-icon-tooltip-markup, set:Gtk.Entry:primary-icon-tooltip-text, set:Gtk.Entry:secondary-icon-tooltip-markup)"
      }
     ],
-    "record_fp": "fba0ce813efd94ea",
+    "record_fp": "37dfdd7c4c9951ff",
     "verify": {
      "check": "change",
      "on": "Gtk:AboutDialog"
@@ -33650,6 +33927,56 @@
      {
       "mechanism": "notify",
       "signal": "notify::child"
+     }
+    ]
+   }
+  },
+  "Pango:FontFamily": {
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Pango:FontFamily:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "33929b04b7b9c3c8",
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
+     }
+    ]
+   }
+  },
+  "Pango:FontMap": {
+   "n-items": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Pango:FontMap:prop:n-items:observe",
+    "layer": "inferred",
+    "prop": "n-items",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::n-items"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
+     }
+    ],
+    "record_fp": "33929b04b7b9c3c8",
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::n-items"
      }
     ]
    }

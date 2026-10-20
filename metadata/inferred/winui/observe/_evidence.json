@@ -1,0 +1,1759 @@
+{
+ "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:ClickMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:Command": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:CommandParameter": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:IsPointerOver": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:IsPressed": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:RangeBase:LargeChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:RangeBase:Maximum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:RangeBase:Minimum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:RangeBase:SmallChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:RangeBase:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:IsChecked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:IsThreeState": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Button:Flyout": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:ContentControl:Content": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:ContentControl:ContentTemplate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:ContentControl:ContentTemplateRoot": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:ContentControl:ContentTemplateSelector": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:ContentControl:ContentTransitions": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:Background": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:BorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:CharacterSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:CornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:DefaultStyleResourceUri": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:ElementSoundMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:FontStretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:HorizontalContentAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:IsEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:IsFocusEngaged": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:IsFocusEngagementEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:RequiresPointer": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:TabNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:Template": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Control:VerticalContentAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:BorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:ColumnDefinitions": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:ColumnSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:CornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:RowDefinitions": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:Grid:RowSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Panel:Background": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Panel:BackgroundTransition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml.Controls:Panel:Children": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:Panel:ChildrenTransitions": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Panel:IsItemsHost": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:HeaderTemplate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:IntermediateValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:IsDirectionReversed": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:IsThumbToolTipEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:SnapsTo": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:StepFrequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:ThumbToolTipValueConverter": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:TickFrequency": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:Slider:TickPlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:AreHorizontalSnapPointsRegular": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:AreScrollSnapPointsRegular": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:AreVerticalSnapPointsRegular": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:BackgroundSizing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:BorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:BorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:CornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:StackPanel:Spacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:BaselineOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:CharacterSpacing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:ContentEnd": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:ContentStart": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:FontStretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:HorizontalTextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:Inlines": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:IsColorFontEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:IsTextSelectionEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:IsTextTrimmed": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:LineHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:LineStackingStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:MaxLines": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:OpticalMarginAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:Padding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:SelectedText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:SelectionEnd": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:SelectionFlyout": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:SelectionHighlightColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:SelectionStart": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:TextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:TextDecorations": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:TextHighlighters": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:TextLineBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:TextReadingOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:TextTrimming": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBlock:TextWrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:AcceptsReturn": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:CanPasteClipboardContent": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:CanRedo": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:CanUndo": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:CharacterCasing": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:Description": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:DesiredCandidateWindowAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:HeaderTemplate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:HorizontalTextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:InputScope": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:IsColorFontEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:IsReadOnly": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:IsSpellCheckEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:IsTextPredictionEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:MaxLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:PlaceholderForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:PreventKeyboardDisplayOnProgrammaticFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:ProofingMenuFlyout": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:SelectedText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:SelectionFlyout": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:SelectionHighlightColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:SelectionHighlightColorWhenNotFocused": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:SelectionLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:SelectionStart": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:TextAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:TextReadingOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml.Controls:TextBox:TextWrapping": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:DependencyObject:Dispatcher": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:DependencyObject:DispatcherQueue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:ActualHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:ActualTheme": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:ActualWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:AllowFocusOnInteraction": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:AllowFocusWhenDisabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:BaseUri": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:DataContext": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:FlowDirection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:FocusVisualMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:FocusVisualPrimaryBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:FocusVisualPrimaryThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:FocusVisualSecondaryBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:FocusVisualSecondaryThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Height": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:HorizontalAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:IsLoaded": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Language": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Margin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:MaxHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:MaxWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:MinHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:MinWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Name": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Parent": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:RequestedTheme": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Resources": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Style": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Tag": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Triggers": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:VerticalAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:FrameworkElement:Width": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:AccessKey": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:AccessKeyScopeOwner": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:ActualOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:UIElement:ActualSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml:UIElement:AllowDrop": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:CacheMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:CanBeScrollAnchor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:CanDrag": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:CenterPoint": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:Clip": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:CompositeMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:ContextFlyout": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:DesiredSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:UIElement:ExitDisplayModeOnAccessKeyInvoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:FocusState": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:HighContrastAdjustment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:IsAccessKeyScope": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:IsDoubleTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:IsHitTestVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:IsHoldingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:IsRightTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:IsTabStop": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:IsTapEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:KeyTipHorizontalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:KeyTipPlacementMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:KeyTipTarget": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:KeyTipVerticalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:KeyboardAcceleratorPlacementMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:KeyboardAcceleratorPlacementTarget": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:KeyboardAccelerators": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:UIElement:Lights": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:ManipulationMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:Opacity": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:OpacityTransition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:PointerCaptures": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:Projection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:RasterizationScale": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:RenderSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml:UIElement:RenderTransform": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:RenderTransformOrigin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:Rotation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:RotationAxis": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:RotationTransition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:Scale": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:ScaleTransition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:Shadow": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:TabFocusNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:TabIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:Transform3D": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:TransformMatrix": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:Transitions": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:Translation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:TranslationTransition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:UIElement:UseLayoutRounding": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:UseSystemFocusVisuals": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:Visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusDown": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusDownNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusKeyboardNavigation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusLeft": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusLeftNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusRight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusRightNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusUp": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XYFocusUpNavigationStrategy": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true
+  },
+  "pattern": "observe:dp-callback"
+ },
+ "Microsoft.UI.Xaml:UIElement:XamlRoot": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:Window:AppWindow": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:Window:Bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ },
+ "Microsoft.UI.Xaml:Window:Compositor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:Window:Content": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:Window:CoreWindow": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:Window:Dispatcher": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:Window:DispatcherQueue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:none-rule"
+ },
+ "Microsoft.UI.Xaml:Window:ExtendsContentIntoTitleBar": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:Window:SystemBackdrop": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:Window:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:set-only"
+ },
+ "Microsoft.UI.Xaml:Window:Visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false
+  },
+  "pattern": "observe:event"
+ }
+}

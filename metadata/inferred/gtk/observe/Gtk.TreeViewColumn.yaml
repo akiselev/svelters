@@ -32,11 +32,13 @@ observe:
   - mechanism: notify
     signal: notify::clickable
   fires: on_change
+  derived_from:
+  - sort-column-id
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::clickable (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:clickable)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:clickable, set:Gtk.TreeViewColumn:sort-column-id)'
   verify:
     'on': Gtk:TreeViewColumn
     check: change
@@ -122,13 +124,11 @@ observe:
   - mechanism: notify
     signal: notify::resizable
   fires: on_change
-  derived_from:
-  - sizing
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::resizable (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:resizable, set:Gtk.TreeViewColumn:sizing)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TreeViewColumn:resizable)'
   verify:
     'on': Gtk:TreeViewColumn
     check: change

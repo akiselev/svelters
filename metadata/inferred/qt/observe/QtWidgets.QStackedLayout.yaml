@@ -1,0 +1,28 @@
+schema: svelters-observe-layer/v1
+toolkit: qt
+owner: QtWidgets:QStackedLayout
+observe:
+- prop: count
+  class: none
+  provenance:
+  - origin: rule
+    ref: no NOTIFY, BINDABLE, event or paired signal (read-only)
+  confidence: 0.9
+- prop: currentIndex
+  class: exact
+  via:
+  - mechanism: notify
+    signal: currentChanged(int)
+  provenance:
+  - origin: moc
+    ref: 'O3: NOTIFY currentChanged(int)'
+  verify:
+    'on': QtWidgets:QStackedLayout
+    check: connect
+  confidence: 0.9
+- prop: stackingMode
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  confidence: 0.9

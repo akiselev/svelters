@@ -68,11 +68,13 @@ observe:
   - mechanism: notify
     signal: notify::value
   fires: on_change
+  derived_from:
+  - min-value
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::value (EXPLICIT_NOTIFY)'
   - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:value)'
+    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.LevelBar:min-value, set:Gtk.LevelBar:value)'
   verify:
     'on': Gtk:LevelBar
     check: change

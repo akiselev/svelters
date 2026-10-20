@@ -37,16 +37,15 @@ observe:
   via:
   - mechanism: notify
     signal: notify::secondary-use-markup
-  fires: on_change
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::secondary-use-markup (EXPLICIT_NOTIFY)'
-  - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MessageDialog:secondary-use-markup)'
+  - origin: rule
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:MessageDialog
-    check: change
-  confidence: 0.95
+    check: connect
+  confidence: 0.9
 - prop: text
   class: exact
   via:
