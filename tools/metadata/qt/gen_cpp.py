@@ -1945,7 +1945,8 @@ size_t ty_count() {
                     kind, is_type, js = on, "true", prop
                 else:
                     continue
-                test = f"observe/{owner}.{prop}"
+                # no `:` in a test name: the runner's `FAIL <name>: <message>` lines are split at the first one
+                test = f"observe/{owner.replace(':', '.')}.{prop}"
                 line = (f'    {{"{test}", "{kind}", {is_type}, "{js}", "{prop}", {OBS_CHECK[v["check"]]}, '
                         f'{OBS_FIRES.get(rec.get("fires"), "OF_ANY")}}},')
                 self.rows["observe"].append(line)

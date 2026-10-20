@@ -114,26 +114,26 @@
    "exact": {
     "manual": 0,
     "no_test": 105,
-    "pending": 64,
+    "pending": 0,
     "total": 169,
-    "verified": 0,
-    "verified_weak": 0
+    "verified": 36,
+    "verified_weak": 28
    },
    "none": {
     "manual": 0,
     "no_test": 51,
-    "pending": 26,
+    "pending": 0,
     "total": 77,
     "verified": 0,
-    "verified_weak": 0
+    "verified_weak": 26
    },
    "partial": {
     "manual": 0,
     "no_test": 4,
-    "pending": 6,
+    "pending": 0,
     "total": 10,
-    "verified": 0,
-    "verified_weak": 0
+    "verified": 4,
+    "verified_weak": 2
    },
    "set_only": {
     "manual": 0,
