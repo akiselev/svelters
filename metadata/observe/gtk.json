@@ -5407,33 +5407,6 @@
      }
     ]
    },
-   "ellipsize": {
-    "class": "exact",
-    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:ellipsize:observe",
-    "layer": "inferred",
-    "prop": "ellipsize",
-    "provenance": [
-     {
-      "origin": "runtime",
-      "ref": "O1: GObject property, notify::ellipsize (EXPLICIT_NOTIFY)"
-     },
-     {
-      "origin": "rule",
-      "ref": "no probe row; the generated test sets it natively"
-     }
-    ],
-    "record_fp": "b2fb0346d3229523",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:CellRendererAccel"
-    },
-    "via": [
-     {
-      "mechanism": "notify",
-      "signal": "notify::ellipsize"
-     }
-    ]
-   },
    "ellipsize-set": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:ellipsize-set:observe",
@@ -5627,34 +5600,6 @@
      {
       "mechanism": "notify",
       "signal": "notify::foreground-set"
-     }
-    ]
-   },
-   "language": {
-    "class": "exact",
-    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:language:observe",
-    "fires": "on_set",
-    "layer": "inferred",
-    "prop": "language",
-    "provenance": [
-     {
-      "origin": "runtime",
-      "ref": "O1: GObject property, notify::language"
-     },
-     {
-      "origin": "rule",
-      "ref": "no probe row; the generated test sets it natively"
-     }
-    ],
-    "record_fp": "e0905bf9a12facf8",
-    "verify": {
-     "check": "change",
-     "on": "Gtk:CellRendererAccel"
-    },
-    "via": [
-     {
-      "mechanism": "notify",
-      "signal": "notify::language"
      }
     ]
    },
@@ -29133,38 +29078,6 @@
      }
     ]
    },
-   "sentence-set": {
-    "class": "partial",
-    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:sentence-set:observe",
-    "fires": "on_set",
-    "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
-    "prop": "sentence-set",
-    "provenance": [
-     {
-      "origin": "runtime",
-      "ref": "O1: GObject property, notify::sentence-set"
-     },
-     {
-      "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 1 change(s); changed without notify on set:Gtk.TextTag:word, set:Gtk.TextTag:word-set"
-     }
-    ],
-    "record_fp": "42a4055399d9dbe4",
-    "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "word"
-    },
-    "via": [
-     {
-      "mechanism": "notify",
-      "signal": "notify::sentence-set"
-     }
-    ]
-   },
    "show-spaces": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:show-spaces:observe",
@@ -29942,41 +29855,6 @@
      {
       "mechanism": "notify",
       "signal": "notify::word"
-     }
-    ]
-   },
-   "word-set": {
-    "class": "partial",
-    "derived_from": [
-     "word"
-    ],
-    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:word-set:observe",
-    "fires": "on_set",
-    "layer": "inferred",
-    "missed": [
-     "cross_prop"
-    ],
-    "prop": "word-set",
-    "provenance": [
-     {
-      "origin": "runtime",
-      "ref": "O1: GObject property, notify::word-set"
-     },
-     {
-      "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on 2 change(s); changed without notify on set:Gtk.TextTag:sentence-set"
-     }
-    ],
-    "record_fp": "7f05c10baa316371",
-    "verify": {
-     "check": "silent",
-     "on": "Gtk:TextTag",
-     "trigger": "sentence-set"
-    },
-    "via": [
-     {
-      "mechanism": "notify",
-      "signal": "notify::word-set"
      }
     ]
    },

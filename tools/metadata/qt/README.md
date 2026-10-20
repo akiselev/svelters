@@ -31,3 +31,16 @@ metadata/overrides/qt/*.yaml (manual: elements, tags, facts) ──────�
   section (`tt_prop`, `tt_method`, `tt_signal`, `tt_emit`, `tt_binding`) and one row per fact. An inferred fact the
   generator cannot resolve or tabulate is `untestable` in the fact manifest and parked by the ledger, not an error.
 - Scoped enums (`enum class`) are not inferred: the ingested enum table names their members unscoped.
+
+## Observability facts (milestone R0)
+
+| Step | Command |
+|---|---|
+| moc extract | `python3 tools/metadata/qt/ingest_moc.py --metatypes <qt>/gcc_64/metatypes` -> `metadata/qt/moc/properties.json` (BINDABLE, NOTIFY, CONSTANT, USER per Q_PROPERTY; the PySide6 dump has no BINDABLE) |
+| observe probe | `python3 tools/metadata/qt/probe.py --section observe [--qtdir <qt>/gcc_64]` (C++ against a Qt SDK, offscreen, ~30 s; no PySide6) -> `metadata/probe/qt/observe/<qt>.json` |
+| infer | `infer.py` writes `metadata/inferred/qt/observe/` (rules O2-O5, O8, O10 in `observe_rules.py`; data in `metadata/rules/qt.yaml` `observe:`) |
+
+`tools/metadata/common/observe.py` merges the inferred and manual (`metadata/overrides/qt/observe/`) layers into
+`metadata/observe/qt.json`. `gen_cpp.py` adds one `kObserveRows` row per fact the R1a backend can check (NOTIFY:
+`change`/`silent`, CONSTANT: `refused`, no mechanism: `unsupported`) on an element that exposes the property or a
+constructible non-GUI type; bindable, event and signal mechanisms wait for the R3 backend.

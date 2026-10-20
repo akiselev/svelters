@@ -39,6 +39,11 @@ windows-winui job) have no `refresh`: the job writes one JSON line per test (SVE
 of facts.json, and `import` records that artifact (`import_ci`). Only facts whose fingerprint in the artifact equals
 the current one are recorded; failing inferred facts are parked as in `refresh` (tests that never ran stay pending).
 
+Observe facts (milestone R0, tools/metadata/common/observe.py) are table rows: one GTK test per owner type
+(`generated::verify::observe_<owner>`) reports each row as `<test>#<prop>` through SVELTERS_TEST_RESULTS, the Qt
+verify binary prints `observe/<owner>.<prop>` lines. Parking one removes it from metadata/observe/<tk>.json; a row
+its table never reached (an earlier row crashed the process) stays pending and runs again.
+
 Cargo runs go through the machine-wide build queue `tools/dev/cargo-slot` (it sets
 CARGO_BUILD_JOBS, NEXTEST_TEST_THREADS and CARGO_BUILD_BUILD_DIR); without it, the environment's
 settings apply.

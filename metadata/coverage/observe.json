@@ -54,33 +54,33 @@
    "constant": {
     "manual": 0,
     "no_test": 38,
-    "pending": 71,
+    "pending": 0,
     "total": 109,
     "verified": 0,
-    "verified_weak": 0
+    "verified_weak": 71
    },
    "exact": {
     "manual": 0,
-    "no_test": 55,
-    "pending": 1047,
-    "total": 1102,
-    "verified": 0,
-    "verified_weak": 0
+    "no_test": 58,
+    "pending": 0,
+    "total": 1119,
+    "verified": 823,
+    "verified_weak": 238
    },
    "none": {
     "manual": 0,
     "no_test": 0,
-    "pending": 2,
+    "pending": 0,
     "total": 2,
-    "verified": 0,
+    "verified": 2,
     "verified_weak": 0
    },
    "partial": {
     "manual": 0,
     "no_test": 0,
-    "pending": 16,
-    "total": 16,
-    "verified": 0,
+    "pending": 0,
+    "total": 14,
+    "verified": 14,
     "verified_weak": 0
    },
    "set_only": {
@@ -92,13 +92,13 @@
     "verified_weak": 0
    }
   },
-  "parked": 0,
+  "parked": 4,
   "unreviewed": {
    "by_pattern": {
-    "middle:observe:exact-read-only-unprobed": 209
+    "middle:observe:exact-read-only-unprobed": 190
    },
    "low": 0,
-   "middle": 209
+   "middle": 190
   }
  },
  "qt": {

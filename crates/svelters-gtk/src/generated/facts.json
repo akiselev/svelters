@@ -19270,19 +19270,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:ellipsize:observe",
-   "fingerprint": "fea3851e90afae60",
-   "kind": "Gtk:CellRendererText",
-   "name": "ellipsize",
-   "origin": "inferred",
-   "record_fp": "b2fb0346d3229523",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_cellrenderertext#ellipsize"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:ellipsize-set:observe",
    "fingerprint": "42b8eb895e2a1148",
    "kind": "Gtk:CellRendererText",
@@ -19371,19 +19358,6 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrenderertext#foreground-set"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:language:observe",
-   "fingerprint": "e50f25af9e8e2dcd",
-   "kind": "Gtk:CellRendererText",
-   "name": "language",
-   "origin": "inferred",
-   "record_fp": "e0905bf9a12facf8",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "generated::verify::observe_gtk_cellrenderertext#language"
    ]
   },
   {
@@ -29826,19 +29800,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:sentence-set:observe",
-   "fingerprint": "3be644e11ccb1524",
-   "kind": "Gtk:TextTag",
-   "name": "sentence-set",
-   "origin": "inferred",
-   "record_fp": "42a4055399d9dbe4",
-   "section": "observe",
-   "strength": "silent",
-   "tests": [
-    "generated::verify::observe_gtk_texttag#sentence-set"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:show-spaces:observe",
    "fingerprint": "d84dd5340fd16137",
    "kind": "Gtk:TextTag",
@@ -30174,19 +30135,6 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#word"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:word-set:observe",
-   "fingerprint": "85e6e6d2bf321d74",
-   "kind": "Gtk:TextTag",
-   "name": "word-set",
-   "origin": "inferred",
-   "record_fp": "7f05c10baa316371",
-   "section": "observe",
-   "strength": "silent",
-   "tests": [
-    "generated::verify::observe_gtk_texttag#word-set"
    ]
   },
   {

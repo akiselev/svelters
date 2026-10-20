@@ -15,7 +15,18 @@ read-back or compare, no batch, no `__svelters_changed`, no set-path read-back, 
 in `@svelters/types` or the runtime subscribes yet. All §12 decisions were made on 2026-10-19 (§13). Details:
 `plans/architecture/backend-abi.md` "ABI v2.6 additive".
 
-- **Prototypes and probes** (`docs/notes/scripts/reactivity/`):
+**Status 2026-10-19 (R0, observability facts): done on branch `ci/r0`**, see
+`plans/milestones/R0-observability-facts.md`. Every readable property of the GTK, Qt, AppKit and WinUI metadata
+(GTK and Qt non-GUI types included) has an `observe` fact per §4.2, inferred by rules O1-O10 from the ingested
+facts and two probes that are now `probe.py --section observe` (GTK 4.22.4, Qt 6.11.3: the metadata's versions),
+merged into `metadata/observe/<tk>.json`, carried as `ObserveSpec` in the semantic specs, and verified on GTK and
+Qt by one generated row per fact through the real `observe` path (AppKit and WinUI stay inferred until R4).
+Deviations from §4 are listed in the milestone file; the main one in the measurements: **`GtkRange:fill-level`
+does notify** (§3.1, §11 item 2 were a probe artifact: the research sweep's `c + 1` next to a `G_MAXDOUBLE` default
+did not change the value). `GtkEntry:text-length` stays a real miss.
+
+- **Prototypes and probes** (`docs/notes/scripts/reactivity/`; the pipeline versions are
+  `tools/metadata/gtk/observe_probe.{c,py}` and `tools/metadata/qt/observe_probe.{cpp,py}`):
 
   | File | Covers |
   |---|---|
@@ -170,7 +181,7 @@ reading `$state`: the effect re-runs when the value changes. Three layers:
 | Measure | Result |
 |---|---|
 | props whose value changed | 696 (15 ignored the write: `GtkAdjustment:value` with the default upper 0, `GtkNotebook:page` with no pages, ...) |
-| notified on change | **695/696**; the miss is `GtkRange:fill-level` |
+| notified on change | **695/696**; the miss is `GtkRange:fill-level` (R0 correction: an artifact. Its default is `G_MAXDOUBLE`, so the sweep's `c + 1` did not change the value and nothing was due; set to a value that differs, it notifies. The R0 probe, on fresh instances: 775/793 props announced every observed change; the 18 misses are side effects, below) |
 | notified more than once per set | 0 |
 | non-`EXPLICIT_NOTIFY` props that re-notify an identical set | 201/201 |
 | `EXPLICIT_NOTIFY` props that still re-notify an identical set | **36/510** (e.g. `GtkButton:label`, `GtkProgressBar:fraction`, `GtkEntry:placeholder-text`) |
@@ -400,6 +411,14 @@ observe:
 
 Fact id: `svelters-api:v1:type:<tk>:<Ns>:<Type>:prop:<name>:observe`. The ledger keys results by
 this id and fingerprint, as it does for props.
+
+*As built (R0):* the record is validated by `tools/metadata/common/observe.py` and kept out of the kind records:
+inferred `metadata/inferred/<tk>/observe/<Ns>.<Type>.yaml` < manual `metadata/overrides/<tk>/observe/...` merged
+into `metadata/observe/<tk>.json` (the ingested layer is the raw input of the rules, never an `observe` record), so an
+observe fact never changes a verified property fact's fingerprint. `origin` is the per-entry `provenance` of the
+other facts; `missed` gains `programmatic` and `cross_prop` (a side effect of another set the mechanisms miss); a
+`verify` block (instance type and check) tells the generators how to test the fact; `notify` entries name their
+signal (`notify::text`, `textChanged(QString)`) and a shared Qt NOTIFY is `coarse: true`.
 
 ### 4.3 What the semantics spec carries
 
@@ -859,7 +878,7 @@ specifiers and dev hooks only; capabilities are added when the first one changes
 
 | Phase | Work | Acceptance |
 |---|---|---|
-| **R0 facts** | `observe` schema in `svmeta`; ingest Qt `BINDABLE`/`CONSTANT` from moc JSON and GTK notify for `metadata/gtk/types`; rules O1-O10; the two probes become `probe.py` sections; `ObserveSpec` in `gen_semantics.py` + `spec.rs`; coverage report rows; fix the GTK detailed-signal lookup (§11) | coverage report shows classes per toolkit; `gen_semantics.py --check` stable |
+| **R0 facts** (done, `plans/milestones/R0-observability-facts.md`) | `observe` schema in `svmeta`; ingest Qt `BINDABLE`/`CONSTANT` from moc JSON and GTK notify for `metadata/gtk/types`; rules O1-O10; the two probes become `probe.py` sections; `ObserveSpec` in `gen_semantics.py` + `spec.rs`; coverage report rows; fix the GTK detailed-signal lookup (§11) | coverage report shows classes per toolkit; `gen_semantics.py --check` stable |
 | **R1 ABI + GTK** | ABI v2.6 (`observe`, `prop_changed`, `SVL_M_OBSERVABLE`); host dirty set, read, compare, batch-before-drain, set-path read-back, sync flush, op-log lines; log backend + TestHost; GTK backend (`notify::<p>`, `via` re-targeting, cleanup in `release_entry`); `observed()` in `@svelters/types` + tracker in native-runtime; `gen_types.py` emits reactive getters | the NON-GUI-TYPES §7 TextBuffer example works without a `$state` mirror; `host_bench` "coalesced" numbers hold with real batches; generated observe tests in the GTK ledger |
 | **R2 compiler** | `observability()`, `bind_prop`/`bind_readonly`/`bind_once` lowering, `\|nonreactive`, §8.4 diagnostics, portability mode, `.d.ts` remarks; `RuntimeTarget` with specifiers + dev hooks | fixtures for each lowering on GTK and Qt; svelte-check passes with the modifier |
 | **R3 Qt** | NOTIFY relay, `QPropertyNotifier` map, event-filter table, non-NOTIFY signal fallbacks; Qt types (N2) get reactive getters | Qt observe facts in the ledger; `QTimer.interval` and `enabled` (event) observed |
@@ -877,12 +896,20 @@ specifiers and dev hooks only; capabilities are added when the first one changes
    - Widget kinds are unaffected for the 231 `notify::*` signals the tables declare.
 2. **GTK: `GtkEntry:text-length` never notifies** (GTK 4.24.1, probe scenario), and
    **`GtkRange:fill-level` doesn't notify on set**.
+   - *R0:* `text-length` is the fact `class: none` (verified: an insert changes it, nothing is announced).
+     `fill-level` was wrong: a probe artifact (see §3.1); it is `exact`. The R0 probe found other unannounced side
+     effects instead: `GtkWidget:css-classes` (internal class changes of GtkImage/GtkLevelBar), the GtkEntry icon
+     tooltip text/markup pair, GtkTextTag's `*-set` and font props (`partial, missed: [cross_prop]`).
 3. **GTK `EXPLICIT_NOTIFY` is not a reliable "no notify on identical set" flag:** 36/510 props
    re-notify anyway. The echo design in fork-bindings §6 already assumes compare-before-set; this
    confirms it is needed for observation too.
+   - *R0:* recorded per fact as `fires: on_set | on_change` from the probe (GTK 4.22.4: 39/557 EXPLICIT_NOTIFY
+     props re-notify an identical set, 206/206 others), and checked by the generated row.
 4. **WinUI metadata marks `ActualWidth`/`ActualHeight` as DPs,** but they never notify. Rule B1
    ("WinUI: 774/784 rw props are DP-backed" → bindable) needs the O6 deny list before any read-only
    binding is generated from it.
+   - *R0:* the deny list (`no_notify` in `metadata/rules/winui.yaml`, already used by AI1's B1) makes them
+     `exact` through `event: [SizeChanged]` (and `ActualTheme` through `ActualThemeChanged`), never `notify`.
 
 ## 12. Decisions needed
 
