@@ -504,6 +504,12 @@ binary on the CI runners (ANNOTATION-AUTOMATION §3.3).
 | AppKit | the props behind the O7 list, plus `set_only` configuration | everything else, until the CI probe runs | 3 annotated bindings today |
 | WinUI | 199 DPs minus the deny list; `set_only` for configuration non-DPs | non-DP read-only props (`DesiredSize`, `ActualSize`) | metadata counts |
 
+*R0 actual* (`metadata/coverage/observe.json`): GTK 1246 facts (exact 1119, partial 14, none 2, constant 109,
+set_only 2), 839 verified by a native change, 309 by `connect`/`refused` only, 190 read-only props never seen
+changing left for review; Qt 708 (exact 169, partial 10, none 77, set_only 452), 40 + 56 verified, the rest wait
+for the R3 mechanisms or are not exposed by the backend; AppKit 344 and WinUI 251, inferred only (R4). Details in
+`plans/milestones/R0-observability-facts.md`.
+
 ## 5. ABI v2.6 (proposal; additive on v3, after NT0's v2.5)
 
 ### 5.1 Members
