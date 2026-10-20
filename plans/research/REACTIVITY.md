@@ -504,9 +504,11 @@ binary on the CI runners (ANNOTATION-AUTOMATION §3.3).
 | AppKit | the props behind the O7 list, plus `set_only` configuration | everything else, until the CI probe runs | 3 annotated bindings today |
 | WinUI | 199 DPs minus the deny list; `set_only` for configuration non-DPs | non-DP read-only props (`DesiredSize`, `ActualSize`) | metadata counts |
 
-*R0 actual* (`metadata/coverage/observe.json`): GTK 1246 facts (exact 1119, partial 14, none 2, constant 109,
-set_only 2), 839 verified by a native change, 309 by `connect`/`refused` only, 190 read-only props never seen
-changing left for review; Qt 708 (exact 169, partial 10, none 77, set_only 452), 40 + 56 verified, the rest wait
+*R0 actual* (`metadata/coverage/observe.json`): GTK 1295 facts (exact 1127, partial 14, none 3, constant 149,
+set_only 2), 848 verified by a native change, 309 by `connect`/`refused` only, 138 without a test; of the 190 read-only
+props the probe never saw change, 40 are `constant` by review pattern, 9 decided with a trigger the generated test
+runs (8 exact, `GtkEventController:widget` none), 141 deliberately left without a fact in 9 named groups (display
+server, list views, window/input, ...: no headless trigger); Qt 708 (exact 169, partial 10, none 77, set_only 452), 40 + 56 verified, the rest wait
 for the R3 mechanisms or are not exposed by the backend; AppKit 344 and WinUI 251, inferred only (R4). Details in
 `plans/milestones/R0-observability-facts.md`.
 
@@ -906,6 +908,8 @@ specifiers and dev hooks only; capabilities are added when the first one changes
      `fill-level` was wrong: a probe artifact (see §3.1); it is `exact`. The R0 probe found other unannounced side
      effects instead: `GtkWidget:css-classes` (internal class changes of GtkImage/GtkLevelBar), the GtkEntry icon
      tooltip text/markup pair, GtkTextTag's `*-set` and font props (`partial, missed: [cross_prop]`).
+     The read-only review added one: **`GtkEventController:widget` is not notified** when the controller is added
+     to or removed from a widget (GTK 4.22.4; `class: none`, verified by a silent row).
 3. **GTK `EXPLICIT_NOTIFY` is not a reliable "no notify on identical set" flag:** 36/510 props
    re-notify anyway. The echo design in fork-bindings §6 already assumes compare-before-set; this
    confirms it is needed for observation too.

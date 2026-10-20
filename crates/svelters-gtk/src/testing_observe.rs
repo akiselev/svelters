@@ -183,6 +183,17 @@ fn run(r: &Row) -> Result<Outcome, String> {
     if pid == 0 {
         return Ok(Outcome::Skip(format!("{kind} has no property {} on this GTK", r.prop)));
     }
+    // An older GTK can lack the GObject property (GtkIconPaintable `scale`/`size`) or have it construct-only
+    // (GtkIconPaintable `is-symbolic`, GtkMapListModel `model` on 4.14) where the facts' GTK lets it change.
+    if !full && !matches!(r.check, Check::Refused | Check::Via(..)) {
+        match obj.find_property(r.prop) {
+            None => return Ok(Outcome::Skip(format!("{kind} has no GObject property {} on this GTK", r.prop))),
+            Some(ps) if ps.flags().contains(glib::ParamFlags::CONSTRUCT_ONLY) => {
+                return Ok(Outcome::Skip(format!("{} is construct-only on this GTK", r.prop)));
+            }
+            Some(_) => {}
+        }
+    }
     let count = |h: &Harness| h.take_changed().into_iter().filter(|c| *c == (o, pid)).count();
     if let Check::Refused = r.check {
         return match h.observe_id(o, pid, true) {
