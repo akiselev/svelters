@@ -23,7 +23,7 @@ merged into `metadata/observe/<tk>.json`, carried as `ObserveSpec` in the semant
 Qt by one generated row per fact through the real `observe` path (AppKit and WinUI stay inferred until R4).
 Deviations from §4 are listed in the milestone file; the main one in the measurements: **`GtkRange:fill-level`
 does notify** (§3.1, §11 item 2 were a probe artifact: the research sweep's `c + 1` next to a `G_MAXDOUBLE` default
-did not change the value). `GtkEntry:text-length` stays a real miss.
+did not change the value). `GtkEntry:text-length` stays a real miss. Gates and CI (all five workflows green on `ci/r0` 0d10a073) are in the milestone's completion record.
 
 - **Prototypes and probes** (`docs/notes/scripts/reactivity/`; the pipeline versions are
   `tools/metadata/gtk/observe_probe.{c,py}` and `tools/metadata/qt/observe_probe.{cpp,py}`):

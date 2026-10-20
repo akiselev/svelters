@@ -1,5 +1,8 @@
 # R0 handoff (observability facts)
 
+**Closed:** the checklist below was finished after this note (read-only review, gates, CI); the results are in
+`plans/milestones/R0-observability-facts.md` "Completion record". Kept as the record of the handoff.
+
 Branch `worktree-agent-a4d83a1de5dd9e1bf` (worktree `.claude/worktrees/agent-a4d83a1de5dd9e1bf`), based on master
 5291bdf0. Not pushed, not merged. Brief: REACTIVITY.md §4/§10 R0/§13. Draft milestone file:
 `plans/milestones/R0-observability-facts.md` (scope, schema, layers, probes, rules with measured precision written;
