@@ -459,14 +459,14 @@
   "pattern": "observe:constant"
  },
  "Gdk:Drag:display": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gdk:Drag:selected-action": {
   "confidence": 0.9,
@@ -538,14 +538,14 @@
   "pattern": "observe:constant"
  },
  "Gdk:Drop:display": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gdk:Drop:drag": {
   "confidence": 0.95,
@@ -815,31 +815,31 @@
   "pattern": "observe:constant"
  },
  "Gio:Action:enabled": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gio:Action:name": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gio:Action:parameter-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gio:Action:state": {
   "confidence": 0.8,
@@ -851,13 +851,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gio:Action:state-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gio:Application:application-id": {
   "confidence": 0.9,
@@ -1018,13 +1018,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gio:DBusMessage:locked": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gio:FileIcon:file": {
   "confidence": 0.95,
@@ -1067,22 +1067,22 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gio:IOStream:input-stream": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gio:IOStream:output-stream": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gio:ListStore:item-type": {
   "confidence": 0.95,
@@ -1384,13 +1384,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gio:SimpleAction:state-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gio:ThemedIcon:names": {
   "confidence": 0.95,
@@ -2539,13 +2539,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:BookmarkList:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:BookmarkList:loading": {
   "confidence": 0.8,
@@ -4710,14 +4710,14 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:ColumnView:columns": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:ColumnView:enable-rubberband": {
   "confidence": 0.95,
@@ -4846,14 +4846,14 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:ColumnView:sorter": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:ColumnView:tab-behavior": {
   "confidence": 0.95,
@@ -5713,13 +5713,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:DirectoryList:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:DirectoryList:loading": {
   "confidence": 0.8,
@@ -5971,13 +5971,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:DropDown:selected-item": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:DropDown:show-arrow": {
   "confidence": 0.95,
@@ -6087,13 +6087,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:Editable:cursor-position": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:Editable:editable": {
   "confidence": 0.95,
@@ -6150,13 +6150,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:Editable:selection-bound": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:Editable:text": {
   "confidence": 0.95,
@@ -7202,9 +7202,9 @@
   "pattern": "observe:constant"
  },
  "Gtk:EnumList:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {},
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:EnumList:n-items": {
   "confidence": 0.9,
@@ -7212,19 +7212,19 @@
   "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:EnumListItem:name": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {},
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:EnumListItem:nick": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {},
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:EnumListItem:value": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {},
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:EventController:name": {
   "confidence": 0.95,
@@ -7277,13 +7277,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:EventController:widget": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:none-read-only-accepted"
  },
  "Gtk:EventControllerFocus:contains-focus": {
   "confidence": 0.8,
@@ -7808,13 +7808,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:FilterListModel:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:FilterListModel:model": {
   "confidence": 0.9,
@@ -7875,13 +7875,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:FlattenListModel:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:FlattenListModel:model": {
   "confidence": 0.9,
@@ -8230,13 +8230,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:FontChooserWidget:tweak-action": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:FontDialog:filter": {
   "confidence": 0.9,
@@ -10160,13 +10160,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:Label:mnemonic-keyval": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:Label:mnemonic-widget": {
   "confidence": 0.9,
@@ -11066,23 +11066,23 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:MapListModel:has-map": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:MapListModel:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:MapListModel:model": {
   "confidence": 0.9,
@@ -11466,13 +11466,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:MessageDialog:message-area": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:MessageDialog:message-type": {
   "confidence": 0.95,
@@ -11599,13 +11599,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:MultiFilter:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:MultiFilter:n-items": {
   "confidence": 0.9,
@@ -11617,13 +11617,13 @@
   "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:MultiSelection:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:MultiSelection:model": {
   "confidence": 0.9,
@@ -11646,13 +11646,13 @@
   "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:MultiSorter:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:MultiSorter:n-items": {
   "confidence": 0.9,
@@ -11731,13 +11731,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:NoSelection:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:NoSelection:model": {
   "confidence": 0.9,
@@ -14260,13 +14260,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:SelectionFilterModel:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:SelectionFilterModel:model": {
   "confidence": 0.9,
@@ -15202,13 +15202,13 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Gtk:ShortcutController:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:ShortcutController:mnemonic-modifiers": {
   "confidence": 0.9,
@@ -15629,13 +15629,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:SingleSelection:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:SingleSelection:model": {
   "confidence": 0.9,
@@ -15717,13 +15717,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:SliceListModel:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:SliceListModel:model": {
   "confidence": 0.9,
@@ -15797,13 +15797,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:SortListModel:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:SortListModel:model": {
   "confidence": 0.9,
@@ -16368,13 +16368,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:StringList:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:StringList:n-items": {
   "confidence": 0.95,
@@ -16394,13 +16394,13 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:StringObject:string": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:StringSorter:collation": {
   "confidence": 0.95,
@@ -19353,23 +19353,23 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:TreeListModel:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:TreeListModel:model": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:TreeListModel:n-items": {
   "confidence": 0.9,
@@ -19402,13 +19402,13 @@
   "pattern": "observe:exact-read-only-unprobed"
  },
  "Gtk:TreeListRow:depth": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Gtk:TreeListRow:expandable": {
   "confidence": 0.8,
@@ -20753,14 +20753,14 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:Widget:parent": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:Widget:receives-default": {
   "confidence": 0.95,
@@ -21514,31 +21514,31 @@
   "pattern": "observe:exact-writable-rule"
  },
  "Pango:FontFamily:is-monospace": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Pango:FontFamily:is-variable": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Pango:FontFamily:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Pango:FontFamily:n-items": {
   "confidence": 0.9,
@@ -21550,22 +21550,22 @@
   "pattern": "observe:exact-read-only-accepted"
  },
  "Pango:FontFamily:name": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Pango:FontMap:item-type": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:constant-read-only"
  },
  "Pango:FontMap:n-items": {
   "confidence": 0.9,

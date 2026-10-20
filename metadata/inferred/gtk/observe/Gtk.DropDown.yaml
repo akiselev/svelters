@@ -116,6 +116,22 @@ observe:
     'on': Gtk:DropDown
     check: connect
   confidence: 0.9
+- prop: selected-item
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selected-item
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selected-item'
+  - origin: manual
+    ref: 'review pattern ^Gtk:DropDown:selected-item$: notified with selected when the model or the selection changes; the generated test sets
+      a model and a selection (trigger)'
+  verify:
+    'on': Gtk:DropDown
+    check: cross
+    rust: let d = o.downcast_ref::<gtk::DropDown>().unwrap(); d.set_model(Some(&gtk::StringList::new(&["a", "b"]))); d.set_selected(1);
+  confidence: 0.9
 - prop: show-arrow
   class: exact
   via:

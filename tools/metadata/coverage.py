@@ -409,6 +409,12 @@ def render_observe(tk: str) -> list[str]:
              f"(not written, needs judgement): {un.get('middle', 0)} middle band, {un.get('low', 0)} low band"
              + ("; by pattern: " + ", ".join(f"`{k}` {v}" for k, v in un.get("by_pattern", {}).items()) if un.get("by_pattern") else "")
              + ".\n")
+    if un.get("by_group"):
+        o += ["Left without a fact on purpose (absent = unknown for the compiler), by group "
+              "(`observe.unreviewed` of `metadata/rules/" + tk + ".yaml`):\n",
+              "| Group | Properties | Why no fact |", "| --- | --- | --- |"]
+        o += [f"| {g} | {v['count']} | {v['reason']} |" for g, v in un["by_group"].items()]
+        o.append("")
     return o
 
 

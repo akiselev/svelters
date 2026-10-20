@@ -27646,6 +27646,24 @@ fn observe_gdk_monitor() {
     ]);
 }
 
+/// observe facts of Gio:Action (metadata/observe/gtk.json): one row per fact
+#[test]
+fn observe_gio_action() {
+    use crate::testing::observe::*;
+    table("generated::verify::observe_gio_action", vec![
+        Row { prop: "enabled", on: On::Construct("Gio.SimpleAction"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { let a = o.downcast_ref::<gtk::gio::SimpleAction>().unwrap(); a.set_enabled(!gtk::gio::prelude::ActionExt::is_enabled(a)); })), fires: Fires::Any, since: (0, 0), setup: None },
+    ]);
+}
+
+/// observe facts of Gio:DBusMessage (metadata/observe/gtk.json): one row per fact
+#[test]
+fn observe_gio_dbusmessage() {
+    use crate::testing::observe::*;
+    table("generated::verify::observe_gio_dbusmessage", vec![
+        Row { prop: "locked", on: On::Construct("Gio.DBusMessage"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { o.downcast_ref::<gtk::gio::DBusMessage>().unwrap().lock(); })), fires: Fires::Any, since: (0, 0), setup: None },
+    ]);
+}
+
 /// observe facts of Gio:ListStore (metadata/observe/gtk.json): one row per fact
 #[test]
 fn observe_gio_liststore() {
@@ -28442,6 +28460,7 @@ fn observe_gtk_dropdown() {
         Row { prop: "model", on: On::Construct("Gtk.DropDown"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "search-match-mode", on: On::Construct("Gtk.DropDown"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "selected", on: On::Construct("Gtk.DropDown"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
+        Row { prop: "selected-item", on: On::Construct("Gtk.DropDown"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { let d = o.downcast_ref::<gtk::DropDown>().unwrap(); d.set_model(Some(&gtk::StringList::new(&["a", "b"]))); d.set_selected(1); })), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "show-arrow", on: On::Construct("Gtk.DropDown"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
     ]);
 }
@@ -28472,9 +28491,11 @@ fn observe_gtk_droptargetasync() {
 fn observe_gtk_editable() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_editable", vec![
+        Row { prop: "cursor-position", on: On::Create("entry"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text("abcd"); e.select_region(1, 3); })), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "editable", on: On::Create("editable-label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "enable-undo", on: On::Create("editable-label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "max-width-chars", on: On::Create("editable-label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "selection-bound", on: On::Create("entry"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text("abcd"); e.select_region(1, 3); })), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "text", on: On::Create("editable-label"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "width-chars", on: On::Create("editable-label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "xalign", on: On::Create("editable-label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
@@ -28574,6 +28595,7 @@ fn observe_gtk_eventcontroller() {
         Row { prop: "name", on: On::Construct("Gtk.DragSource"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "propagation-limit", on: On::Construct("Gtk.DragSource"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "propagation-phase", on: On::Construct("Gtk.DragSource"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "widget", on: On::Create("event-controller-focus"), check: Check::Silent(Trig::Rust(|o: &gtk::glib::Object| { let c = o.downcast_ref::<gtk::EventController>().unwrap(); if let Some(w) = c.widget() { w.remove_controller(c); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal, 0); b.add_controller(c.clone()); std::mem::forget(b); } })), fires: Fires::Any, since: (0, 0), setup: None },
     ]);
 }
 
@@ -29056,6 +29078,7 @@ fn observe_gtk_label() {
         Row { prop: "label", on: On::Create("label"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "lines", on: On::Create("label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "max-width-chars", on: On::Create("label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "mnemonic-keyval", on: On::Create("label"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { let l = o.downcast_ref::<gtk::Label>().unwrap(); l.set_use_underline(true); l.set_label("_abc"); })), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "mnemonic-widget", on: On::Create("label"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "natural-wrap-mode", on: On::Create("label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "selectable", on: On::Create("label"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
@@ -29195,6 +29218,7 @@ fn observe_gtk_lockbutton() {
 fn observe_gtk_maplistmodel() {
     use crate::testing::observe::*;
     table("generated::verify::observe_gtk_maplistmodel", vec![
+        Row { prop: "has-map", on: On::Construct("Gtk.MapListModel"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { let m = o.downcast_ref::<gtk::MapListModel>().unwrap(); m.set_model(Some(&gtk::StringList::new(&["a"]))); m.set_map_func(|x| x.clone()); })), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "model", on: On::Construct("Gtk.MapListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "n-items", on: On::Construct("Gtk.MapListModel"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);
@@ -30338,6 +30362,7 @@ fn observe_gtk_widget() {
         Row { prop: "name", on: On::Create("about-dialog"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "opacity", on: On::Create("about-dialog"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "overflow", on: On::Create("about-dialog"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "parent", on: On::Create("label"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { let w = o.downcast_ref::<gtk::Widget>().unwrap(); if w.parent().is_some() { w.unparent(); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal, 0); b.append(w); std::mem::forget(b); } })), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "receives-default", on: On::Create("label"), check: Check::Change, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "sensitive", on: On::Create("about-dialog"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "tooltip-markup", on: On::Create("about-dialog"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },

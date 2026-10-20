@@ -1,8 +1,8 @@
 {
  "inferred": {
-  "constant": 109,
-  "exact": 1121,
-  "none": 2,
+  "constant": 149,
+  "exact": 1129,
+  "none": 3,
   "partial": 16,
   "set_only": 2
  },
@@ -11,1521 +11,1411 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Clipboard",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "content"
+   "prop": "content",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Clipboard",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "local"
+   "prop": "local",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "active-layout-index"
+   "prop": "active-layout-index",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "caps-lock-state"
+   "prop": "caps-lock-state",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "direction"
+   "prop": "direction",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "has-bidi-layouts"
+   "prop": "has-bidi-layouts",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "layout-names"
+   "prop": "layout-names",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "modifier-state"
+   "prop": "modifier-state",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-axes"
+   "prop": "n-axes",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "num-lock-state"
+   "prop": "num-lock-state",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scroll-lock-state"
+   "prop": "scroll-lock-state",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Device",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "tool"
+   "prop": "tool",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Display",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "composited"
+   "prop": "composited",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Display",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "input-shapes"
+   "prop": "input-shapes",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Display",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "rgba"
+   "prop": "rgba",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Display",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "shadow-width"
+   "prop": "shadow-width",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gdk:Drag",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "display"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gdk:Drop",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "display"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "realize",
    "owner": "Gdk:GLContext",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "api"
+   "prop": "api",
+   "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "connector"
+   "prop": "connector",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "description"
+   "prop": "description",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "height-mm"
+   "prop": "height-mm",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "manufacturer"
+   "prop": "manufacturer",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "model"
+   "prop": "model",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "refresh-rate"
+   "prop": "refresh-rate",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scale"
+   "prop": "scale",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scale-factor"
+   "prop": "scale-factor",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "subpixel-layout"
+   "prop": "subpixel-layout",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "valid"
+   "prop": "valid",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Monitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "width-mm"
+   "prop": "width-mm",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Surface",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "height"
+   "prop": "height",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Surface",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "mapped"
+   "prop": "mapped",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Surface",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scale"
+   "prop": "scale",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Surface",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scale-factor"
+   "prop": "scale-factor",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gdk:Surface",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "width"
+   "prop": "width",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "stateless-instance",
    "owner": "Gio:Action",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "enabled"
+   "prop": "state",
+   "reason": "GSimpleAction notifies state in g_simple_action_set_state, but a bare instance is stateless (state-type is construct-only), so the generated test has nothing to change"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gio:Action",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "name"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gio:Action",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "parameter-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gio:Action",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "state"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gio:Action",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "state-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Application",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-busy"
+   "prop": "is-busy",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Application",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-registered"
+   "prop": "is-registered",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Application",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-remote"
+   "prop": "is-remote",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:ApplicationCommandLine",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-remote"
+   "prop": "is-remote",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:DBusConnection",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "capabilities"
+   "prop": "capabilities",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:DBusConnection",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "closed"
+   "prop": "closed",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:DBusConnection",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "unique-name"
+   "prop": "unique-name",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gio:DBusMessage",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "locked"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:FileMonitor",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "cancelled"
+   "prop": "cancelled",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:IOStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "closed"
+   "prop": "closed",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gio:IOStream",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "input-stream"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gio:IOStream",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "output-stream"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Permission",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "allowed"
+   "prop": "allowed",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Permission",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "can-acquire"
+   "prop": "can-acquire",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Permission",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "can-release"
+   "prop": "can-release",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Settings",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "delay-apply"
+   "prop": "delay-apply",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gio:Settings",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "has-unapplied"
+   "prop": "has-unapplied",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gio:SimpleAction",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "state-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "realize",
    "owner": "Gsk:Renderer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "realized"
+   "prop": "realized",
+   "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "realize",
    "owner": "Gsk:Renderer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "surface"
+   "prop": "surface",
+   "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "realize",
    "owner": "Gtk:ATContext",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "realized"
+   "prop": "realized",
+   "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "gio-service",
    "owner": "Gtk:Application",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "active-window"
+   "prop": "active-window",
+   "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gtk:Application",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "screensaver-active"
+   "prop": "screensaver-active",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "lazy-model",
    "owner": "Gtk:Assistant",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "pages"
+   "prop": "pages",
+   "reason": "a GListModel the widget creates on first read (weakly held); consumers observe the model's items-changed, not the property"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:BookmarkList",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
+   "prop": "loading",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:BookmarkList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "loading"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:CellArea",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "edit-widget"
+   "prop": "edit-widget",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:CellArea",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "edited-cell"
+   "prop": "edited-cell",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:CellAreaContext",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "minimum-height"
+   "prop": "minimum-height",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:CellAreaContext",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "minimum-width"
+   "prop": "minimum-width",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:CellAreaContext",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "natural-height"
+   "prop": "natural-height",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:CellAreaContext",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "natural-width"
+   "prop": "natural-width",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:CellRenderer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "editing"
+   "prop": "editing",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:ColumnView",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "columns"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:ColumnView",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "sorter"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewCell",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item"
+   "prop": "item",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewCell",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "position"
+   "prop": "position",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewCell",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "selected"
+   "prop": "selected",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewColumn",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "column-view"
+   "prop": "column-view",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewRow",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item"
+   "prop": "item",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewRow",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "position"
+   "prop": "position",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewRow",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "selected"
+   "prop": "selected",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewSorter",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "primary-sort-column"
+   "prop": "primary-sort-column",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ColumnViewSorter",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "primary-sort-order"
+   "prop": "primary-sort-order",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:ComboBox",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "popup-shown"
+   "prop": "popup-shown",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:DirectoryList",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "error"
+   "prop": "error",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:DirectoryList",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
+   "prop": "loading",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:DirectoryList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "loading"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:DropControllerMotion",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "contains-pointer"
+   "prop": "contains-pointer",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:DropControllerMotion",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "drop"
+   "prop": "drop",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:DropControllerMotion",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-pointer"
+   "prop": "is-pointer",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:DropDown",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "selected-item"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:DropTarget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "current-drop"
+   "prop": "current-drop",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:DropTarget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "drop"
+   "prop": "drop",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:DropTarget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "value"
+   "prop": "value",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:Editable",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "cursor-position"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:Editable",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "selection-bound"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Entry",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scroll-offset"
+   "prop": "scroll-offset",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:EnumList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:EnumListItem",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "name"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:EnumListItem",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "nick"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:EnumListItem",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "value"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:EventController",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "widget"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:EventControllerFocus",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "contains-focus"
+   "prop": "contains-focus",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:EventControllerFocus",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-focus"
+   "prop": "is-focus",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:EventControllerMotion",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "contains-pointer"
+   "prop": "contains-pointer",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:EventControllerMotion",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-pointer"
+   "prop": "is-pointer",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "lazy-model",
    "owner": "Gtk:FileChooser",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "filters"
+   "prop": "filters",
+   "reason": "a GListModel the widget creates on first read (weakly held); consumers observe the model's items-changed, not the property"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "lazy-model",
    "owner": "Gtk:FileChooser",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "shortcut-folders"
+   "prop": "shortcut-folders",
+   "reason": "a GListModel the widget creates on first read (weakly held); consumers observe the model's items-changed, not the property"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:FileChooserWidget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "show-time"
+   "prop": "show-time",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:FilterListModel",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
+   "prop": "pending",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:FilterListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "pending"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:FlattenListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:FontChooser",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "font-features"
+   "prop": "font-features",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:FontChooserWidget",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "tweak-action"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "realize",
    "owner": "Gtk:GLArea",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "api"
+   "prop": "api",
+   "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "realize",
    "owner": "Gtk:GLArea",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "context"
+   "prop": "context",
+   "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:IconTheme",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "icon-names"
+   "prop": "icon-names",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:Label",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "mnemonic-keyval"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ListHeader",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "end"
+   "prop": "end",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ListHeader",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item"
+   "prop": "item",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ListHeader",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "start"
+   "prop": "start",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ListItem",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item"
+   "prop": "item",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ListItem",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "position"
+   "prop": "position",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:ListItem",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "selected"
+   "prop": "selected",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:MapListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "has-map"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:MapListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "duration"
+   "prop": "duration",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "ended"
+   "prop": "ended",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "error"
+   "prop": "error",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "has-audio"
+   "prop": "has-audio",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "has-video"
+   "prop": "has-video",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "prepared"
+   "prop": "prepared",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "seekable"
+   "prop": "seekable",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "seeking"
+   "prop": "seeking",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:MediaStream",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "timestamp"
+   "prop": "timestamp",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:MessageDialog",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "message-area"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:MountOperation",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-showing"
+   "prop": "is-showing",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:MultiFilter",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:MultiSelection",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:MultiSorter",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:NoSelection",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "lazy-model",
    "owner": "Gtk:Notebook",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "pages"
+   "prop": "pages",
+   "reason": "a GListModel the widget creates on first read (weakly held); consumers observe the model's items-changed, not the property"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Paned",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "max-position"
+   "prop": "max-position",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Paned",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "min-position"
+   "prop": "min-position",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:PrintOperation",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "n-pages-to-print"
+   "prop": "n-pages-to-print",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:PrintOperation",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "status"
+   "prop": "status",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:PrintOperation",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "status-string"
+   "prop": "status-string",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:PrintUnixDialog",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "selected-printer"
+   "prop": "selected-printer",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:Printer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "accepting-jobs"
+   "prop": "accepting-jobs",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:Printer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "icon-name"
+   "prop": "icon-name",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:Printer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "job-count"
+   "prop": "job-count",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:Printer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "location"
+   "prop": "location",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:Printer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "paused"
+   "prop": "paused",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "print-backend",
    "owner": "Gtk:Printer",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "state-message"
+   "prop": "state-message",
+   "reason": "set by a print backend or a running print operation"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:RecentManager",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "size"
+   "prop": "size",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:ScaleButton",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "active"
+   "prop": "active",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:SelectionFilterModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:ShortcutController",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:ShortcutsGroup",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "height"
+   "prop": "height",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:SingleSelection",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:SliceListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "async-io",
    "owner": "Gtk:SortListModel",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
+   "prop": "pending",
+   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:SortListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "pending"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "lazy-model",
    "owner": "Gtk:Stack",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "pages"
+   "prop": "pages",
+   "reason": "a GListModel the widget creates on first read (weakly held); consumers observe the model's items-changed, not the property"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Stack",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "transition-running"
+   "prop": "transition-running",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:StringList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:StringObject",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "string"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Text",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scroll-offset"
+   "prop": "scroll-offset",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:TreeExpander",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item"
+   "prop": "item",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:TreeListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Gtk:TreeListModel",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "model"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:TreeListRow",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "children"
+   "prop": "children",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:TreeListRow",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "depth"
+   "prop": "expandable",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "list-view",
    "owner": "Gtk:TreeListRow",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "expandable"
+   "prop": "item",
+   "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:TreeListRow",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:TreeViewColumn",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "width"
+   "prop": "width",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:TreeViewColumn",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "x-offset"
+   "prop": "x-offset",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Widget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "has-default"
+   "prop": "has-default",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Widget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "has-focus"
+   "prop": "has-focus",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:Widget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "parent"
+   "prop": "root",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gtk:Widget",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "root"
+   "prop": "scale-factor",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "owner": "Gtk:Widget",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "scale-factor"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
+   "group": "display-server",
    "owner": "Gtk:Window",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "suspended"
+   "prop": "suspended",
+   "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
   },
   {
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
+   "group": "window-input",
    "owner": "Gtk:WindowControls",
    "pattern": "observe:exact-read-only-unprobed",
-   "prop": "empty"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Pango:FontFamily",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-monospace"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Pango:FontFamily",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "is-variable"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Pango:FontFamily",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Pango:FontFamily",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "name"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
-   "owner": "Pango:FontMap",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "item-type"
+   "prop": "empty",
+   "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
   }
  ],
  "schema": "svelters-observe-review/v1",
@@ -1534,11 +1424,49 @@
  },
  "toolkit": "gtk",
  "unreviewed": {
+  "by_group": {
+   "async-io": {
+    "count": 16,
+    "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
+   },
+   "display-server": {
+    "count": 35,
+    "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
+   },
+   "gio-service": {
+    "count": 15,
+    "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
+   },
+   "lazy-model": {
+    "count": 5,
+    "reason": "a GListModel the widget creates on first read (weakly held); consumers observe the model's items-changed, not the property"
+   },
+   "list-view": {
+    "count": 19,
+    "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
+   },
+   "print-backend": {
+    "count": 10,
+    "reason": "set by a print backend or a running print operation"
+   },
+   "realize": {
+    "count": 6,
+    "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
+   },
+   "stateless-instance": {
+    "count": 1,
+    "reason": "GSimpleAction notifies state in g_simple_action_set_state, but a bare instance is stateless (state-type is construct-only), so the generated test has nothing to change"
+   },
+   "window-input": {
+    "count": 34,
+    "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
+   }
+  },
   "by_pattern": {
-   "middle:observe:exact-read-only-unprobed": 190
+   "middle:observe:exact-read-only-unprobed": 141
   },
   "low": 0,
-  "middle": 190
+  "middle": 141
  },
  "version": "4.22.4"
 }

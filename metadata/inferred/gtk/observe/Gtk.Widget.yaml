@@ -338,6 +338,23 @@ observe:
     'on': Gtk:AboutDialog
     check: change
   confidence: 0.95
+- prop: parent
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::parent
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::parent (EXPLICIT_NOTIFY)'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Widget:parent$: gtk_widget_set_parent and gtk_widget_unparent notify parent; the generated test appends the widget
+      to a box (trigger)'
+  verify:
+    'on': Gtk:Label
+    check: cross
+    rust: let w = o.downcast_ref::<gtk::Widget>().unwrap(); if w.parent().is_some() { w.unparent(); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal,
+      0); b.append(w); std::mem::forget(b); }
+  confidence: 0.9
 - prop: receives-default
   class: exact
   via:

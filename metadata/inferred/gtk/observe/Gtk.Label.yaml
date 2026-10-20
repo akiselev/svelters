@@ -106,6 +106,22 @@ observe:
     'on': Gtk:Label
     check: change
   confidence: 0.95
+- prop: mnemonic-keyval
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::mnemonic-keyval
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::mnemonic-keyval'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Label:mnemonic-keyval$: recomputed and notified when the label text with use-underline changes; the generated test
+      sets "_abc" (trigger)'
+  verify:
+    'on': Gtk:Label
+    check: cross
+    rust: let l = o.downcast_ref::<gtk::Label>().unwrap(); l.set_use_underline(true); l.set_label("_abc");
+  confidence: 0.9
 - prop: mnemonic-widget
   class: exact
   via:

@@ -12,7 +12,9 @@ Rules:
       a notify on every observed change -> exact (0.95); a change without notify while other changes notify ->
       partial, missed: cross_prop (or the scenario's cause) (0.95); changes never announced -> none (0.95). With no
       observed change: writable -> exact (0.9, the generated test sets it natively and decides), read-only -> exact
-      (0.8: no trigger known, review). `fires`: on_set when an identical set re-notifies (probe), or for a
+      (0.8: no trigger known, review), unless a review decision of the rules covers it: `accept` -> exact (0.9),
+      `constant` (fixed for the object's lifetime) -> constant (0.9, no test), `unreviewed` -> the review row names
+      the group and its reason. `fires`: on_set when an identical set re-notifies (probe), or for a
       non-EXPLICIT_NOTIFY property without a probe row (GObject notifies every set); on_change when the probe saw
       no re-notify.
   O2  CONSTRUCT_ONLY -> constant (0.95).
@@ -115,6 +117,8 @@ class Rules:
         self.triggers = dict(o.get("triggers") or {})
         self.setup = dict(o.get("setup") or {})
         self.accept = list(o.get("accept") or [])
+        self.constant = list(o.get("constant") or [])
+        self.unreviewed = list(o.get("unreviewed") or [])
         self.subjects = dict(doc.get("subjects") or {})
 
 
@@ -287,15 +291,30 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
                    else "not a scalar: the generated test only installs the mechanism")
             rec.update({"class": "exact", "provenance": prov + [{"origin": "rule", "ref": f"no probe row; {how}"}]})
             conf, pattern = 0.9, "observe:exact-writable-rule"
+        elif (con := next((a for a in rules.constant if re.search(a["pattern"], fid)), None)):
+            # Read-only and fixed for the object's lifetime: no mechanism and no runnable test (the backend refuses
+            # only CONSTRUCT_ONLY properties, so a `refused` row would not hold).
+            for k in ("via", "fires", "derived_from"):
+                rec.pop(k, None)
+            rec.update({"class": "constant", "provenance": [
+                {"origin": "runtime" if flags else "gir", "ref": "read-only, never seen changing in the probe"},
+                {"origin": "manual", "ref": f"review pattern {con['pattern']}: {con['reason']}"}]})
+            return rec, 0.9, "observe:constant-read-only", evid
         elif (acc := next((a for a in rules.accept if re.search(a["pattern"], fid)), None)):
-            rec.update({"class": "exact", "provenance": prov + [{"origin": "manual", "ref": f"review pattern {acc['pattern']}: {acc['reason']}"}]})
-            conf, pattern = 0.9, "observe:exact-read-only-accepted"
+            # `class: none`: a review decision that the change is not announced (the trigger checks it silently).
+            cls = acc.get("class", "exact")
+            rec.update({"class": cls, "provenance": prov + [{"origin": "manual", "ref": f"review pattern {acc['pattern']}: {acc['reason']}"}]})
+            if cls == "none":
+                for k in ("via", "fires", "derived_from"):
+                    rec.pop(k, None)
+                rec["provenance"] = rec["provenance"][1:]
+            conf, pattern = 0.9, f"observe:{cls}-read-only-accepted"
         else:
             rec.update({"class": "exact", "provenance": prov + [{"origin": "rule", "ref": "read-only and never seen changing in the probe"}]})
             conf, pattern = 0.8, "observe:exact-read-only-unprobed"
         if verify.get("on"):
             if fid in rules.triggers:
-                verify.update({"check": "cross", "rust": rules.triggers[fid]})
+                verify.update({"check": "silent" if rec["class"] == "none" else "cross", "rust": rules.triggers[fid]})
             elif pr["write"] and scalar_writable(key, name) and find_writable(verify["on"], name) and \
                     not (sw and sw["readback"] == "ignored" and verify["on"] not in rules.setup):
                 # (a write the probe saw ignored needs a precondition: only with a setup from the rules)
@@ -329,8 +348,13 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
             if conf >= rules.promote_at:
                 out.setdefault(key, []).append(rec)
             else:
-                review.append({"owner": key, "prop": pr["name"], "class": rec["class"], "confidence": conf,
-                               "band": "middle" if conf >= 0.6 else "low", "pattern": pattern})
+                row = {"owner": key, "prop": pr["name"], "class": rec["class"], "confidence": conf,
+                       "band": "middle" if conf >= 0.6 else "low", "pattern": pattern}
+                grp = next((u for u in rules.unreviewed if re.search(u["pattern"], f"{key}:{pr['name']}")), None)
+                row["group"] = grp["group"] if grp else "unclassified"
+                if grp:
+                    row["reason"] = grp["reason"]
+                review.append(row)
     # O9: forwarded properties take the class of the property they forward to.
     for key, pr, rec in pending_via:
         v = rec.pop("_via")

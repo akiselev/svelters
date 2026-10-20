@@ -32,6 +32,15 @@ observe:
     'on': Gtk:SingleSelection
     check: change
   confidence: 0.95
+- prop: item-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8,
+      the element type otherwise)'
+  confidence: 0.9
 - prop: model
   class: exact
   via:

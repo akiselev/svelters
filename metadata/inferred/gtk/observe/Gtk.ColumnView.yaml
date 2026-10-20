@@ -2,6 +2,15 @@ schema: svelters-observe-layer/v1
 toolkit: gtk
 owner: Gtk:ColumnView
 observe:
+- prop: columns
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal
+      object the widget creates in init and never replaces'
+  confidence: 0.9
 - prop: enable-rubberband
   class: exact
   via:
@@ -119,6 +128,15 @@ observe:
     'on': Gtk:ColumnView
     check: change
   confidence: 0.95
+- prop: sorter
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal
+      object the widget creates in init and never replaces'
+  confidence: 0.9
 - prop: tab-behavior
   class: exact
   via:

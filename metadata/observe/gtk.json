@@ -472,6 +472,23 @@
     ],
     "record_fp": "127f105998e13940"
    },
+   "display": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gdk:Drag:prop:display:observe",
+    "layer": "inferred",
+    "prop": "display",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gdk:(Drag|Drop):display$: the display of the construct-only device"
+     }
+    ],
+    "record_fp": "e76975a65de57f36"
+   },
    "selected-action": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gdk:Drag:prop:selected-action:observe",
@@ -563,6 +580,23 @@
      }
     ],
     "record_fp": "127f105998e13940"
+   },
+   "display": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gdk:Drop:prop:display:observe",
+    "layer": "inferred",
+    "prop": "display",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gdk:(Drag|Drop):display$: the display of the construct-only device"
+     }
+    ],
+    "record_fp": "e76975a65de57f36"
    },
    "drag": {
     "class": "constant",
@@ -728,6 +762,87 @@
      }
     ],
     "record_fp": "b8bf98771ed5d7ea"
+   }
+  },
+  "Gio:Action": {
+   "enabled": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gio:Action:prop:enabled:observe",
+    "layer": "inferred",
+    "prop": "enabled",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::enabled"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:Action:enabled$: GSimpleAction notifies enabled in g_simple_action_set_enabled; the generated test toggles it (trigger)"
+     }
+    ],
+    "record_fp": "262b686baedeaa3d",
+    "verify": {
+     "check": "cross",
+     "on": "Gio:SimpleAction",
+     "rust": "let a = o.downcast_ref::<gtk::gio::SimpleAction>().unwrap(); a.set_enabled(!gtk::gio::prelude::ActionExt::is_enabled(a));"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::enabled"
+     }
+    ]
+   },
+   "name": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gio:Action:prop:name:observe",
+    "layer": "inferred",
+    "prop": "name",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable"
+     }
+    ],
+    "record_fp": "2a276d8fa8f7f600"
+   },
+   "parameter-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gio:Action:prop:parameter-type:observe",
+    "layer": "inferred",
+    "prop": "parameter-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable"
+     }
+    ],
+    "record_fp": "f584dcf93dd601eb"
+   },
+   "state-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gio:Action:prop:state-type:observe",
+    "layer": "inferred",
+    "prop": "state-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable"
+     }
+    ],
+    "record_fp": "914d50040cb8038f"
    }
   },
   "Gio:Application": {
@@ -916,6 +1031,36 @@
     "record_fp": "e7373f85f6c3a52f"
    }
   },
+  "Gio:DBusMessage": {
+   "locked": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gio:DBusMessage:prop:locked:observe",
+    "layer": "inferred",
+    "prop": "locked",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::locked"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:DBusMessage:locked$: notified by g_dbus_message_lock; the generated test locks the message (trigger)"
+     }
+    ],
+    "record_fp": "e8b76bed8e76feec",
+    "verify": {
+     "check": "cross",
+     "on": "Gio:DBusMessage",
+     "rust": "o.downcast_ref::<gtk::gio::DBusMessage>().unwrap().lock();"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::locked"
+     }
+    ]
+   }
+  },
   "Gio:FileIcon": {
    "file": {
     "class": "constant",
@@ -954,6 +1099,42 @@
       "signal": "notify::rate-limit"
      }
     ]
+   }
+  },
+  "Gio:IOStream": {
+   "input-stream": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gio:IOStream:prop:input-stream:observe",
+    "layer": "inferred",
+    "prop": "input-stream",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:IOStream:(input-stream|output-stream)$: the streams of an IO stream are fixed when it is built"
+     }
+    ],
+    "record_fp": "54a697b12ba9dbb4"
+   },
+   "output-stream": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gio:IOStream:prop:output-stream:observe",
+    "layer": "inferred",
+    "prop": "output-stream",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:IOStream:(input-stream|output-stream)$: the streams of an IO stream are fixed when it is built"
+     }
+    ],
+    "record_fp": "205460b3707c6b79"
    }
   },
   "Gio:ListStore": {
@@ -1388,6 +1569,23 @@
       "signal": "notify::state"
      }
     ]
+   },
+   "state-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gio:SimpleAction:prop:state-type:observe",
+    "layer": "inferred",
+    "prop": "state-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable"
+     }
+    ],
+    "record_fp": "914d50040cb8038f"
    }
   },
   "Gio:ThemedIcon": {
@@ -3202,6 +3400,23 @@
       "signal": "notify::io-priority"
      }
     ]
+   },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:BookmarkList:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
    },
    "n-items": {
     "class": "exact",
@@ -7250,6 +7465,23 @@
    }
   },
   "Gtk:ColumnView": {
+   "columns": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:columns:observe",
+    "layer": "inferred",
+    "prop": "columns",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal object the widget creates in init and never replaces"
+     }
+    ],
+    "record_fp": "d8b0b39bc1924f3e"
+   },
    "enable-rubberband": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:enable-rubberband:observe",
@@ -7470,6 +7702,23 @@
       "signal": "notify::single-click-activate"
      }
     ]
+   },
+   "sorter": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:sorter:observe",
+    "layer": "inferred",
+    "prop": "sorter",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal object the widget creates in init and never replaces"
+     }
+    ],
+    "record_fp": "bfe79714f1bbd15a"
    },
    "tab-behavior": {
     "class": "exact",
@@ -8769,6 +9018,23 @@
      }
     ]
    },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "monitored": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:monitored:observe",
@@ -9196,6 +9462,34 @@
      }
     ]
    },
+   "selected-item": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:selected-item:observe",
+    "layer": "inferred",
+    "prop": "selected-item",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::selected-item"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:DropDown:selected-item$: notified with selected when the model or the selection changes; the generated test sets a model and a selection (trigger)"
+     }
+    ],
+    "record_fp": "fe2a818d0a26baf1",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:DropDown",
+     "rust": "let d = o.downcast_ref::<gtk::DropDown>().unwrap(); d.set_model(Some(&gtk::StringList::new(&[\"a\", \"b\"]))); d.set_selected(1);"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::selected-item"
+     }
+    ]
+   },
    "show-arrow": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:show-arrow:observe",
@@ -9356,6 +9650,34 @@
    }
   },
   "Gtk:Editable": {
+   "cursor-position": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:cursor-position:observe",
+    "layer": "inferred",
+    "prop": "cursor-position",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::cursor-position"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:Editable:(cursor-position|selection-bound)$: GtkText notifies both on cursor moves and selection changes and editable delegates (GtkEntry) forward the notify; the generated test selects a region (trigger)"
+     }
+    ],
+    "record_fp": "b225b3abfe8469a0",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:Entry",
+     "rust": "let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text(\"abcd\"); e.select_region(1, 3);"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::cursor-position"
+     }
+    ]
+   },
    "editable": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:editable:observe",
@@ -9437,6 +9759,34 @@
      {
       "mechanism": "notify",
       "signal": "notify::max-width-chars"
+     }
+    ]
+   },
+   "selection-bound": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:selection-bound:observe",
+    "layer": "inferred",
+    "prop": "selection-bound",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::selection-bound"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:Editable:(cursor-position|selection-bound)$: GtkText notifies both on cursor moves and selection changes and editable delegates (GtkEntry) forward the notify; the generated test selects a region (trigger)"
+     }
+    ],
+    "record_fp": "0e9ed61a1a496337",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:Entry",
+     "rust": "let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text(\"abcd\"); e.select_region(1, 3);"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::selection-bound"
      }
     ]
    },
@@ -11045,6 +11395,23 @@
     ],
     "record_fp": "80b3b025fb028dd8"
    },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:EnumList:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "gir",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "63c829332ce1d759"
+   },
    "n-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:EnumList:prop:n-items:observe",
@@ -11067,6 +11434,59 @@
       "signal": "notify::n-items"
      }
     ]
+   }
+  },
+  "Gtk:EnumListItem": {
+   "name": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:EnumListItem:prop:name:observe",
+    "layer": "inferred",
+    "prop": "name",
+    "provenance": [
+     {
+      "origin": "gir",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:EnumListItem:(name|nick|value)$: an enum list item is created for one enum value and never changes"
+     }
+    ],
+    "record_fp": "d65d54e8b71522fc"
+   },
+   "nick": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:EnumListItem:prop:nick:observe",
+    "layer": "inferred",
+    "prop": "nick",
+    "provenance": [
+     {
+      "origin": "gir",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:EnumListItem:(name|nick|value)$: an enum list item is created for one enum value and never changes"
+     }
+    ],
+    "record_fp": "546779b2e4388a36"
+   },
+   "value": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:EnumListItem:prop:value:observe",
+    "layer": "inferred",
+    "prop": "value",
+    "provenance": [
+     {
+      "origin": "gir",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:EnumListItem:(name|nick|value)$: an enum list item is created for one enum value and never changes"
+     }
+    ],
+    "record_fp": "e8807731e7a6aab6"
    }
   },
   "Gtk:EventController": {
@@ -11153,6 +11573,24 @@
       "signal": "notify::propagation-phase"
      }
     ]
+   },
+   "widget": {
+    "class": "none",
+    "fact": "svelters-api:v1:type:gtk:Gtk:EventController:prop:widget:observe",
+    "layer": "inferred",
+    "prop": "widget",
+    "provenance": [
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:EventController:widget$: set when the controller is added to or removed from a widget, without notify (GTK 4.22 gtk_event_controller_set_widget; the generated cross test saw no announcement, R0); the generated test adds it to a box (trigger)"
+     }
+    ],
+    "record_fp": "4b83096968520eaf",
+    "verify": {
+     "check": "silent",
+     "on": "Gtk:EventControllerFocus",
+     "rust": "let c = o.downcast_ref::<gtk::EventController>().unwrap(); if let Some(w) = c.widget() { w.remove_controller(c); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal, 0); b.add_controller(c.clone()); std::mem::forget(b); }"
+    }
    }
   },
   "Gtk:EventControllerScroll": {
@@ -12010,6 +12448,23 @@
      }
     ]
    },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:model:observe",
@@ -12123,6 +12578,23 @@
    }
   },
   "Gtk:FlattenListModel": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:FlattenListModel:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:FlattenListModel:prop:model:observe",
@@ -12714,6 +13186,25 @@
       "signal": "notify::show-preview-entry"
      }
     ]
+   }
+  },
+  "Gtk:FontChooserWidget": {
+   "tweak-action": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:FontChooserWidget:prop:tweak-action:observe",
+    "layer": "inferred",
+    "prop": "tweak-action",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal object the widget creates in init and never replaces"
+     }
+    ],
+    "record_fp": "6ff22e8e56a8b652"
    }
   },
   "Gtk:FontDialog": {
@@ -15927,6 +16418,34 @@
      }
     ]
    },
+   "mnemonic-keyval": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-keyval:observe",
+    "layer": "inferred",
+    "prop": "mnemonic-keyval",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::mnemonic-keyval"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:Label:mnemonic-keyval$: recomputed and notified when the label text with use-underline changes; the generated test sets \"_abc\" (trigger)"
+     }
+    ],
+    "record_fp": "4f25cb571fcee18a",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:Label",
+     "rust": "let l = o.downcast_ref::<gtk::Label>().unwrap(); l.set_use_underline(true); l.set_label(\"_abc\");"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::mnemonic-keyval"
+     }
+    ]
+   },
    "mnemonic-widget": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-widget:observe",
@@ -17349,6 +17868,51 @@
    }
   },
   "Gtk:MapListModel": {
+   "has-map": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:has-map:observe",
+    "layer": "inferred",
+    "prop": "has-map",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::has-map (EXPLICIT_NOTIFY)"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:MapListModel:has-map$: has-map reads whether the model maps items; notified by gtk_map_list_model_set_map_func; the generated test sets a model and a map function (trigger)"
+     }
+    ],
+    "record_fp": "ed4580d2d6fe2372",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:MapListModel",
+     "rust": "let m = o.downcast_ref::<gtk::MapListModel>().unwrap(); m.set_model(Some(&gtk::StringList::new(&[\"a\"]))); m.set_map_func(|x| x.clone());"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::has-map"
+     }
+    ]
+   },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:model:observe",
@@ -17913,6 +18477,23 @@
    }
   },
   "Gtk:MessageDialog": {
+   "message-area": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:message-area:observe",
+    "layer": "inferred",
+    "prop": "message-area",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal object the widget creates in init and never replaces"
+     }
+    ],
+    "record_fp": "b740dd0f73832112"
+   },
    "message-type": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:message-type:observe",
@@ -18123,6 +18704,23 @@
    }
   },
   "Gtk:MultiFilter": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MultiFilter:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "n-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:MultiFilter:prop:n-items:observe",
@@ -18152,6 +18750,23 @@
    }
   },
   "Gtk:MultiSelection": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MultiSelection:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:MultiSelection:prop:model:observe",
@@ -18208,6 +18823,23 @@
    }
   },
   "Gtk:MultiSorter": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:MultiSorter:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "n-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:MultiSorter:prop:n-items:observe",
@@ -18364,6 +18996,23 @@
    }
   },
   "Gtk:NoSelection": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:NoSelection:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:NoSelection:prop:model:observe",
@@ -22686,6 +23335,23 @@
    }
   },
   "Gtk:SelectionFilterModel": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SelectionFilterModel:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:SelectionFilterModel:prop:model:observe",
@@ -24367,6 +25033,23 @@
    }
   },
   "Gtk:ShortcutController": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "mnemonic-modifiers": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:mnemonic-modifiers:observe",
@@ -25060,6 +25743,23 @@
      }
     ]
    },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:model:observe",
@@ -25200,6 +25900,23 @@
    }
   },
   "Gtk:SliceListModel": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "model": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:model:observe",
@@ -25339,6 +26056,23 @@
       "signal": "notify::incremental"
      }
     ]
+   },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
    },
    "model": {
     "class": "exact",
@@ -26384,6 +27118,23 @@
    }
   },
   "Gtk:StringList": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:StringList:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "n-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:StringList:prop:n-items:observe",
@@ -26411,6 +27162,25 @@
       "signal": "notify::n-items"
      }
     ]
+   }
+  },
+  "Gtk:StringObject": {
+   "string": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:StringObject:prop:string:observe",
+    "layer": "inferred",
+    "prop": "string",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:StringObject:string$: GtkStringObject is immutable (gtk_string_object_new)"
+     }
+    ],
+    "record_fp": "f6845734695245d0"
    }
   },
   "Gtk:StringSorter": {
@@ -30735,6 +31505,40 @@
      }
     ]
    },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
+   "model": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:model:observe",
+    "layer": "inferred",
+    "prop": "model",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:TreeListModel:model$|^Gtk:TreeListRow:depth$: the root model of a tree list model and the depth of a row are fixed when they are created"
+     }
+    ],
+    "record_fp": "d059c91389dfc8f6"
+   },
    "n-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:TreeListModel:prop:n-items:observe",
@@ -30781,6 +31585,23 @@
    }
   },
   "Gtk:TreeListRow": {
+   "depth": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Gtk:TreeListRow:prop:depth:observe",
+    "layer": "inferred",
+    "prop": "depth",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:TreeListModel:model$|^Gtk:TreeListRow:depth$: the root model of a tree list model and the depth of a row are fixed when they are created"
+     }
+    ],
+    "record_fp": "9fbc72fb30a1c011"
+   },
    "expanded": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:TreeListRow:prop:expanded:observe",
@@ -32731,6 +33552,34 @@
      }
     ]
    },
+   "parent": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:parent:observe",
+    "layer": "inferred",
+    "prop": "parent",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::parent (EXPLICIT_NOTIFY)"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:Widget:parent$: gtk_widget_set_parent and gtk_widget_unparent notify parent; the generated test appends the widget to a box (trigger)"
+     }
+    ],
+    "record_fp": "edc81a4eb790d330",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:Label",
+     "rust": "let w = o.downcast_ref::<gtk::Widget>().unwrap(); if w.parent().is_some() { w.unparent(); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal, 0); b.append(w); std::mem::forget(b); }"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::parent"
+     }
+    ]
+   },
    "receives-default": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:receives-default:observe",
@@ -33810,6 +34659,57 @@
    }
   },
   "Pango:FontFamily": {
+   "is-monospace": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Pango:FontFamily:prop:is-monospace:observe",
+    "layer": "inferred",
+    "prop": "is-monospace",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Pango:FontFamily:(name|is-monospace|is-variable)$: properties of a font family the font map loaded; immutable"
+     }
+    ],
+    "record_fp": "9ae6ffdbceb68288"
+   },
+   "is-variable": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Pango:FontFamily:prop:is-variable:observe",
+    "layer": "inferred",
+    "prop": "is-variable",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Pango:FontFamily:(name|is-monospace|is-variable)$: properties of a font family the font map loaded; immutable"
+     }
+    ],
+    "record_fp": "e413e4179556cd6b"
+   },
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Pango:FontFamily:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "n-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Pango:FontFamily:prop:n-items:observe",
@@ -33832,9 +34732,43 @@
       "signal": "notify::n-items"
      }
     ]
+   },
+   "name": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Pango:FontFamily:prop:name:observe",
+    "layer": "inferred",
+    "prop": "name",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Pango:FontFamily:(name|is-monospace|is-variable)$: properties of a font family the font map loaded; immutable"
+     }
+    ],
+    "record_fp": "21f029a0247472eb"
    }
   },
   "Pango:FontMap": {
+   "item-type": {
+    "class": "constant",
+    "fact": "svelters-api:v1:type:gtk:Pango:FontMap:prop:item-type:observe",
+    "layer": "inferred",
+    "prop": "item-type",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "read-only, never seen changing in the probe"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8, the element type otherwise)"
+     }
+    ],
+    "record_fp": "ad9613c309905243"
+   },
    "n-items": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Pango:FontMap:prop:n-items:observe",

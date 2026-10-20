@@ -47,3 +47,15 @@ observe:
     'on': Gtk:DragSource
     check: change
   confidence: 0.95
+- prop: widget
+  class: none
+  provenance:
+  - origin: manual
+    ref: 'review pattern ^Gtk:EventController:widget$: set when the controller is added to or removed from a widget, without notify (GTK 4.22
+      gtk_event_controller_set_widget; the generated cross test saw no announcement, R0); the generated test adds it to a box (trigger)'
+  verify:
+    'on': Gtk:EventControllerFocus
+    check: silent
+    rust: let c = o.downcast_ref::<gtk::EventController>().unwrap(); if let Some(w) = c.widget() { w.remove_controller(c); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal,
+      0); b.add_controller(c.clone()); std::mem::forget(b); }
+  confidence: 0.9

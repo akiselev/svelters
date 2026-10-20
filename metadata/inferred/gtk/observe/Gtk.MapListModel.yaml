@@ -2,6 +2,31 @@ schema: svelters-observe-layer/v1
 toolkit: gtk
 owner: Gtk:MapListModel
 observe:
+- prop: has-map
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::has-map
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::has-map (EXPLICIT_NOTIFY)'
+  - origin: manual
+    ref: 'review pattern ^Gtk:MapListModel:has-map$: has-map reads whether the model maps items; notified by gtk_map_list_model_set_map_func;
+      the generated test sets a model and a map function (trigger)'
+  verify:
+    'on': Gtk:MapListModel
+    check: cross
+    rust: let m = o.downcast_ref::<gtk::MapListModel>().unwrap(); m.set_model(Some(&gtk::StringList::new(&["a"]))); m.set_map_func(|x| x.clone());
+  confidence: 0.9
+- prop: item-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8,
+      the element type otherwise)'
+  confidence: 0.9
 - prop: model
   class: exact
   via:

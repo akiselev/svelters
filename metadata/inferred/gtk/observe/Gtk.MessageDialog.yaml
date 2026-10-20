@@ -2,6 +2,15 @@ schema: svelters-observe-layer/v1
 toolkit: gtk
 owner: Gtk:MessageDialog
 observe:
+- prop: message-area
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gtk:MessageDialog:message-area$|^Gtk:FontChooserWidget:tweak-action$|^Gtk:ColumnView:(columns|sorter)$: an internal
+      object the widget creates in init and never replaces'
+  confidence: 0.9
 - prop: message-type
   class: exact
   via:

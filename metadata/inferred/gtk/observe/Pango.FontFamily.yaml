@@ -2,6 +2,31 @@ schema: svelters-observe-layer/v1
 toolkit: gtk
 owner: Pango:FontFamily
 observe:
+- prop: is-monospace
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Pango:FontFamily:(name|is-monospace|is-variable)$: properties of a font family the font map loaded; immutable'
+  confidence: 0.9
+- prop: is-variable
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Pango:FontFamily:(name|is-monospace|is-variable)$: properties of a font family the font map loaded; immutable'
+  confidence: 0.9
+- prop: item-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8,
+      the element type otherwise)'
+  confidence: 0.9
 - prop: n-items
   class: exact
   via:
@@ -13,4 +38,12 @@ observe:
   - origin: manual
     ref: 'review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore
       and Gtk.StringList'
+  confidence: 0.9
+- prop: name
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Pango:FontFamily:(name|is-monospace|is-variable)$: properties of a font family the font map loaded; immutable'
   confidence: 0.9

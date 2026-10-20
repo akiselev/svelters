@@ -2,6 +2,15 @@ schema: svelters-observe-layer/v1
 toolkit: gtk
 owner: Gtk:SelectionFilterModel
 observe:
+- prop: item-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8,
+      the element type otherwise)'
+  confidence: 0.9
 - prop: model
   class: exact
   via:

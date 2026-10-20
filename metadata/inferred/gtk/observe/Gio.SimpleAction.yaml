@@ -50,3 +50,11 @@ observe:
     'on': Gio:SimpleAction
     check: connect
   confidence: 0.9
+- prop: state-type
+  class: constant
+  provenance:
+  - origin: runtime
+    ref: read-only, never seen changing in the probe
+  - origin: manual
+    ref: 'review pattern ^Gio:(Simple)?Action:(name|parameter-type|state-type)$: GAction documents name, parameter-type and state-type as immutable'
+  confidence: 0.9

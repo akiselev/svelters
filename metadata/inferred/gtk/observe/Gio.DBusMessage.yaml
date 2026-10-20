@@ -1,0 +1,19 @@
+schema: svelters-observe-layer/v1
+toolkit: gtk
+owner: Gio:DBusMessage
+observe:
+- prop: locked
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::locked
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::locked'
+  - origin: manual
+    ref: 'review pattern ^Gio:DBusMessage:locked$: notified by g_dbus_message_lock; the generated test locks the message (trigger)'
+  verify:
+    'on': Gio:DBusMessage
+    check: cross
+    rust: o.downcast_ref::<gtk::gio::DBusMessage>().unwrap().lock();
+  confidence: 0.9

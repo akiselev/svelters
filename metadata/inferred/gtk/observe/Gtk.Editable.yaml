@@ -2,6 +2,22 @@ schema: svelters-observe-layer/v1
 toolkit: gtk
 owner: Gtk:Editable
 observe:
+- prop: cursor-position
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::cursor-position
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::cursor-position'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Editable:(cursor-position|selection-bound)$: GtkText notifies both on cursor moves and selection changes and editable
+      delegates (GtkEntry) forward the notify; the generated test selects a region (trigger)'
+  verify:
+    'on': Gtk:Entry
+    check: cross
+    rust: let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text("abcd"); e.select_region(1, 3);
+  confidence: 0.9
 - prop: editable
   class: exact
   via:
@@ -47,6 +63,22 @@ observe:
     'on': Gtk:EditableLabel
     check: change
   confidence: 0.95
+- prop: selection-bound
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::selection-bound
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::selection-bound'
+  - origin: manual
+    ref: 'review pattern ^Gtk:Editable:(cursor-position|selection-bound)$: GtkText notifies both on cursor moves and selection changes and editable
+      delegates (GtkEntry) forward the notify; the generated test selects a region (trigger)'
+  verify:
+    'on': Gtk:Entry
+    check: cross
+    rust: let e = o.downcast_ref::<gtk::Editable>().unwrap(); e.set_text("abcd"); e.select_region(1, 3);
+  confidence: 0.9
 - prop: text
   class: exact
   via:

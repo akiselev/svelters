@@ -17229,6 +17229,32 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gio:Action:prop:enabled:observe",
+   "fingerprint": "c116410656d24427",
+   "kind": "Gio:Action",
+   "name": "enabled",
+   "origin": "inferred",
+   "record_fp": "262b686baedeaa3d",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gio_action#enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:DBusMessage:prop:locked:observe",
+   "fingerprint": "00a02ce8a95c2c33",
+   "kind": "Gio:DBusMessage",
+   "name": "locked",
+   "origin": "inferred",
+   "record_fp": "e8b76bed8e76feec",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gio_dbusmessage#locked"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gio:ListStore:prop:item-type:observe",
    "fingerprint": "97bc7bfe2e48c86f",
    "kind": "Gio:ListStore",
@@ -21064,6 +21090,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:selected-item:observe",
+   "fingerprint": "29f8fb0481b2cdad",
+   "kind": "Gtk:DropDown",
+   "name": "selected-item",
+   "origin": "inferred",
+   "record_fp": "fe2a818d0a26baf1",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_dropdown#selected-item"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:show-arrow:observe",
    "fingerprint": "bceef5098b0c34d6",
    "kind": "Gtk:DropDown",
@@ -21142,6 +21181,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:cursor-position:observe",
+   "fingerprint": "77e9e0bbf6bb7eb0",
+   "kind": "Gtk:Editable",
+   "name": "cursor-position",
+   "origin": "inferred",
+   "record_fp": "b225b3abfe8469a0",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_editable#cursor-position"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:editable:observe",
    "fingerprint": "9bdbfc42b1c1e8dd",
    "kind": "Gtk:Editable",
@@ -21178,6 +21230,19 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_editable#max-width-chars"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Editable:prop:selection-bound:observe",
+   "fingerprint": "01ff687ef3104b45",
+   "kind": "Gtk:Editable",
+   "name": "selection-bound",
+   "origin": "inferred",
+   "record_fp": "0e9ed61a1a496337",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_editable#selection-bound"
    ]
   },
   {
@@ -21945,6 +22010,19 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_eventcontroller#propagation-phase"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:EventController:prop:widget:observe",
+   "fingerprint": "ac0c19f0a23a4bba",
+   "kind": "Gtk:EventController",
+   "name": "widget",
+   "origin": "inferred",
+   "record_fp": "4b83096968520eaf",
+   "section": "observe",
+   "strength": "silent",
+   "tests": [
+    "generated::verify::observe_gtk_eventcontroller#widget"
    ]
   },
   {
@@ -24158,6 +24236,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-keyval:observe",
+   "fingerprint": "6924604d033442af",
+   "kind": "Gtk:Label",
+   "name": "mnemonic-keyval",
+   "origin": "inferred",
+   "record_fp": "4f25cb571fcee18a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_label#mnemonic-keyval"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-widget:observe",
    "fingerprint": "994b52495d9fa0a6",
    "kind": "Gtk:Label",
@@ -24818,6 +24909,19 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_lockbutton#tooltip-unlock"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:has-map:observe",
+   "fingerprint": "3d28920640c2e1c9",
+   "kind": "Gtk:MapListModel",
+   "name": "has-map",
+   "origin": "inferred",
+   "record_fp": "ed4580d2d6fe2372",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_maplistmodel#has-map"
    ]
   },
   {
@@ -31461,6 +31565,19 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_widget#overflow"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:parent:observe",
+   "fingerprint": "902829de931f89c2",
+   "kind": "Gtk:Widget",
+   "name": "parent",
+   "origin": "inferred",
+   "record_fp": "edc81a4eb790d330",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_widget#parent"
    ]
   },
   {

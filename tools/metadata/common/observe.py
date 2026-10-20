@@ -299,15 +299,20 @@ def inferred_files(tk: str, recs: dict[str, list[dict]], evidence: dict, review:
             out.append({k: r[k] for k in ORDER if k in r})
         files[owner_file(owner)] = layer_doc(tk, owner, out)
     by_pattern: dict[str, int] = {}
+    by_group: dict[str, dict] = {}
     for r in review:
         k = f"{r['band']}:{r['pattern']}"
         by_pattern[k] = by_pattern.get(k, 0) + 1
+        if "group" in r:
+            g = by_group.setdefault(r["group"], {"count": 0, "reason": r.get("reason", "no review decision covers it")})
+            g["count"] += 1
     files["_evidence.json"] = json.dumps(evidence, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
     files["_review.json"] = json.dumps({
         "schema": "svelters-observe-review/v1", "toolkit": tk, **(extra or {}),
         "inferred": by_class, "unreviewed": {"middle": sum(1 for r in review if r["band"] == "middle"),
                                              "low": sum(1 for r in review if r["band"] == "low"),
-                                             "by_pattern": dict(sorted(by_pattern.items()))},
+                                             "by_pattern": dict(sorted(by_pattern.items())),
+                                             **({"by_group": dict(sorted(by_group.items()))} if by_group else {})},
         "skipped": dict(sorted(skipped.items())),
         "rows": sorted(review, key=lambda r: (r["owner"], r["prop"]))}, indent=1, sort_keys=True, ensure_ascii=False) + "\n"
     return files

@@ -53,9 +53,9 @@
   "classes": {
    "constant": {
     "manual": 0,
-    "no_test": 38,
+    "no_test": 78,
     "pending": 0,
-    "total": 109,
+    "total": 149,
     "verified": 0,
     "verified_weak": 71
    },
@@ -63,16 +63,16 @@
     "manual": 0,
     "no_test": 58,
     "pending": 0,
-    "total": 1119,
-    "verified": 823,
+    "total": 1127,
+    "verified": 831,
     "verified_weak": 238
    },
    "none": {
     "manual": 0,
     "no_test": 0,
     "pending": 0,
-    "total": 2,
-    "verified": 2,
+    "total": 3,
+    "verified": 3,
     "verified_weak": 0
    },
    "partial": {
@@ -94,11 +94,49 @@
   },
   "parked": 4,
   "unreviewed": {
+   "by_group": {
+    "async-io": {
+     "count": 16,
+     "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
+    },
+    "display-server": {
+     "count": 35,
+     "reason": "changed by the display server, an input device or another client; no synthesizer without a real display (REACTIVITY section 4.4 keeps WM-driven causes manual)"
+    },
+    "gio-service": {
+     "count": 15,
+     "reason": "needs a registered application, a D-Bus connection, a GSettings schema, a permission or file monitor backend"
+    },
+    "lazy-model": {
+     "count": 5,
+     "reason": "a GListModel the widget creates on first read (weakly held); consumers observe the model's items-changed, not the property"
+    },
+    "list-view": {
+     "count": 19,
+     "reason": "set by a list or column view while it binds rows, expands or sorts; needs a realized view"
+    },
+    "print-backend": {
+     "count": 10,
+     "reason": "set by a print backend or a running print operation"
+    },
+    "realize": {
+     "count": 6,
+     "reason": "changes when a surface, renderer or GL context is realized; the generated tests do not realize"
+    },
+    "stateless-instance": {
+     "count": 1,
+     "reason": "GSimpleAction notifies state in g_simple_action_set_state, but a bare instance is stateless (state-type is construct-only), so the generated test has nothing to change"
+    },
+    "window-input": {
+     "count": 34,
+     "reason": "set by layout, focus, pointer, drag-and-drop, settings or a user dialog in a mapped window; the generated tests neither map windows nor synthesize input"
+    }
+   },
    "by_pattern": {
-    "middle:observe:exact-read-only-unprobed": 190
+    "middle:observe:exact-read-only-unprobed": 141
    },
    "low": 0,
-   "middle": 190
+   "middle": 141
   }
  },
  "qt": {
