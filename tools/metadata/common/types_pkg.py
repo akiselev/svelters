@@ -9,8 +9,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-HEAD = ["./core", "./vite", "./manifest", "./manifest-qt"]
-GROUPS = ["./gtk/", "./qt/"]
+HEAD = ["./core", "./vite", "./manifest", "./manifest-qt", "./manifest-appkit"]
+GROUPS = ["./gtk/", "./qt/", "./appkit/"]
 DESCRIPTION = "Native object model and generated non-UI types (svelters:gtk/gio, svelters:qt/core, ...) for Svelters apps"
 
 

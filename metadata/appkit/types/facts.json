@@ -1,0 +1,1266 @@
+{
+ "facts": [
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSAdaptiveImageGlyph:members",
+   "facts_digest": "4e8f2a5999a248a1",
+   "kind": "NSAdaptiveImageGlyph",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsadaptiveimageglyph_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAffineTransform:members",
+   "facts_digest": "ad2862134e6c7698",
+   "kind": "NSAffineTransform",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsaffinetransform_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:construct",
+   "facts_digest": "c5536b4496d59213",
+   "kind": "NSAttributedString",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsattributedstring_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:props",
+   "facts_digest": "c5536b4496d59213",
+   "kind": "NSAttributedString",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsattributedstring_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:methods",
+   "facts_digest": "c5536b4496d59213",
+   "kind": "NSAttributedString",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsattributedstring_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:statics",
+   "facts_digest": "c5536b4496d59213",
+   "kind": "NSAttributedString",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsattributedstring_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:lifetime",
+   "facts_digest": "c5536b4496d59213",
+   "kind": "NSAttributedString",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsattributedstring_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:members",
+   "facts_digest": "c5536b4496d59213",
+   "kind": "NSAttributedString",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsattributedstring_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedStringMarkdownParsingOptions:members",
+   "facts_digest": "9e65f17b718fcfc7",
+   "kind": "NSAttributedStringMarkdownParsingOptions",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsattributedstringmarkdownparsingoptions_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBezierPath:members",
+   "facts_digest": "5bf3746736d74e3a",
+   "kind": "NSBezierPath",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsbezierpath_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBitmapImageRep:members",
+   "facts_digest": "8f90b8dfe9ad6c1d",
+   "kind": "NSBitmapImageRep",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsbitmapimagerep_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSBundle:members",
+   "facts_digest": "2318d8f495f6134d",
+   "kind": "NSBundle",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsbundle_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSByteCountFormatter:members",
+   "facts_digest": "f26433da8e3712c7",
+   "kind": "NSByteCountFormatter",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsbytecountformatter_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSCalendar:members",
+   "facts_digest": "13bec896c722bc2a",
+   "kind": "NSCalendar",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nscalendar_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSCharacterSet:members",
+   "facts_digest": "488ea090b1cee3ae",
+   "kind": "NSCharacterSet",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nscharacterset_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:construct",
+   "facts_digest": "9798dce594afc7d9",
+   "kind": "NSColor",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nscolor_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:props",
+   "facts_digest": "9798dce594afc7d9",
+   "kind": "NSColor",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nscolor_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:methods",
+   "facts_digest": "9798dce594afc7d9",
+   "kind": "NSColor",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nscolor_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:statics",
+   "facts_digest": "9798dce594afc7d9",
+   "kind": "NSColor",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nscolor_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:lifetime",
+   "facts_digest": "9798dce594afc7d9",
+   "kind": "NSColor",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nscolor_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:members",
+   "facts_digest": "9798dce594afc7d9",
+   "kind": "NSColor",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nscolor_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSColorSpace:members",
+   "facts_digest": "eebd90f8ce14b013",
+   "kind": "NSColorSpace",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nscolorspace_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSDateComponents:members",
+   "facts_digest": "2d245e6b558edbfd",
+   "kind": "NSDateComponents",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsdatecomponents_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSDateFormatter:members",
+   "facts_digest": "975233f1074acf80",
+   "kind": "NSDateFormatter",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsdateformatter_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSDecimalNumberHandler:members",
+   "facts_digest": "5d9eb427898d68bd",
+   "kind": "NSDecimalNumberHandler",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsdecimalnumberhandler_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:construct",
+   "facts_digest": "df24e813a166a6e7",
+   "kind": "NSFileManager",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsfilemanager_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:props",
+   "facts_digest": "df24e813a166a6e7",
+   "kind": "NSFileManager",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsfilemanager_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:methods",
+   "facts_digest": "df24e813a166a6e7",
+   "kind": "NSFileManager",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsfilemanager_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:statics",
+   "facts_digest": "df24e813a166a6e7",
+   "kind": "NSFileManager",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsfilemanager_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:lifetime",
+   "facts_digest": "df24e813a166a6e7",
+   "kind": "NSFileManager",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsfilemanager_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:members",
+   "facts_digest": "df24e813a166a6e7",
+   "kind": "NSFileManager",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsfilemanager_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:async",
+   "facts_digest": "df24e813a166a6e7",
+   "kind": "NSFileManager",
+   "name": "async",
+   "section": "types",
+   "tests": [
+    "types_nsfilemanager_async"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileProviderService:members",
+   "facts_digest": "d6a68aa3239325b4",
+   "kind": "NSFileProviderService",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsfileproviderservice_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileVersion:members",
+   "facts_digest": "b79b6cdda927d2a6",
+   "kind": "NSFileVersion",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsfileversion_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFileWrapper:members",
+   "facts_digest": "8b1240dc01a6269e",
+   "kind": "NSFileWrapper",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsfilewrapper_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:construct",
+   "facts_digest": "d0f7840dd0332bb5",
+   "kind": "NSFont",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsfont_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:props",
+   "facts_digest": "d0f7840dd0332bb5",
+   "kind": "NSFont",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsfont_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:methods",
+   "facts_digest": "d0f7840dd0332bb5",
+   "kind": "NSFont",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsfont_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:statics",
+   "facts_digest": "d0f7840dd0332bb5",
+   "kind": "NSFont",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsfont_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:lifetime",
+   "facts_digest": "d0f7840dd0332bb5",
+   "kind": "NSFont",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsfont_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:members",
+   "facts_digest": "d0f7840dd0332bb5",
+   "kind": "NSFont",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsfont_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSFontDescriptor:members",
+   "facts_digest": "2f63a268358d741c",
+   "kind": "NSFontDescriptor",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsfontdescriptor_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSFormatter:members",
+   "facts_digest": "cdf9733227c8119c",
+   "kind": "NSFormatter",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsformatter_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSGlyphGenerator:members",
+   "facts_digest": "b9870ac44c2b4d82",
+   "kind": "NSGlyphGenerator",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsglyphgenerator_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSGraphicsContext:members",
+   "facts_digest": "ecd824dadfdcc00e",
+   "kind": "NSGraphicsContext",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsgraphicscontext_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:construct",
+   "facts_digest": "08ca43535065afbe",
+   "kind": "NSImage",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsimage_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:props",
+   "facts_digest": "08ca43535065afbe",
+   "kind": "NSImage",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsimage_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:methods",
+   "facts_digest": "08ca43535065afbe",
+   "kind": "NSImage",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsimage_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:statics",
+   "facts_digest": "08ca43535065afbe",
+   "kind": "NSImage",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsimage_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:lifetime",
+   "facts_digest": "08ca43535065afbe",
+   "kind": "NSImage",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsimage_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:members",
+   "facts_digest": "08ca43535065afbe",
+   "kind": "NSImage",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsimage_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImageRep:members",
+   "facts_digest": "485cbe94e10e2466",
+   "kind": "NSImageRep",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsimagerep_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSImageSymbolConfiguration:members",
+   "facts_digest": "d21ed24c319c726a",
+   "kind": "NSImageSymbolConfiguration",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsimagesymbolconfiguration_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:construct",
+   "facts_digest": "817bce3fdf5b3017",
+   "kind": "NSItemProvider",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsitemprovider_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:props",
+   "facts_digest": "817bce3fdf5b3017",
+   "kind": "NSItemProvider",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsitemprovider_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:methods",
+   "facts_digest": "817bce3fdf5b3017",
+   "kind": "NSItemProvider",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsitemprovider_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:statics",
+   "facts_digest": "817bce3fdf5b3017",
+   "kind": "NSItemProvider",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsitemprovider_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:lifetime",
+   "facts_digest": "817bce3fdf5b3017",
+   "kind": "NSItemProvider",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsitemprovider_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:members",
+   "facts_digest": "817bce3fdf5b3017",
+   "kind": "NSItemProvider",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsitemprovider_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:async",
+   "facts_digest": "817bce3fdf5b3017",
+   "kind": "NSItemProvider",
+   "name": "async",
+   "section": "types",
+   "tests": [
+    "types_nsitemprovider_async"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSLayoutManager:members",
+   "facts_digest": "e93d8a2c5c15550f",
+   "kind": "NSLayoutManager",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nslayoutmanager_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSLocale:members",
+   "facts_digest": "a6d0270fe5d94338",
+   "kind": "NSLocale",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nslocale_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSMutableAttributedString:members",
+   "facts_digest": "5e82523d95e36f81",
+   "kind": "NSMutableAttributedString",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsmutableattributedstring_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSMutableParagraphStyle:members",
+   "facts_digest": "f012b694c075e8bb",
+   "kind": "NSMutableParagraphStyle",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsmutableparagraphstyle_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSNumberFormatter:members",
+   "facts_digest": "218303a1ba7b9bf4",
+   "kind": "NSNumberFormatter",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsnumberformatter_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSParagraphStyle:members",
+   "facts_digest": "b993680806e49f43",
+   "kind": "NSParagraphStyle",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsparagraphstyle_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:construct",
+   "facts_digest": "d9ff58343fc82400",
+   "kind": "NSPasteboard",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nspasteboard_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:props",
+   "facts_digest": "d9ff58343fc82400",
+   "kind": "NSPasteboard",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nspasteboard_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:methods",
+   "facts_digest": "d9ff58343fc82400",
+   "kind": "NSPasteboard",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nspasteboard_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:statics",
+   "facts_digest": "d9ff58343fc82400",
+   "kind": "NSPasteboard",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nspasteboard_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:lifetime",
+   "facts_digest": "d9ff58343fc82400",
+   "kind": "NSPasteboard",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nspasteboard_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:members",
+   "facts_digest": "d9ff58343fc82400",
+   "kind": "NSPasteboard",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nspasteboard_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:async",
+   "facts_digest": "d9ff58343fc82400",
+   "kind": "NSPasteboard",
+   "name": "async",
+   "section": "types",
+   "tests": [
+    "types_nspasteboard_async"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboardItem:members",
+   "facts_digest": "d80b097f305a4cbd",
+   "kind": "NSPasteboardItem",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nspasteboarditem_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSPersonNameComponents:members",
+   "facts_digest": "ec85bddaac2c1b69",
+   "kind": "NSPersonNameComponents",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nspersonnamecomponents_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSProcessInfo:members",
+   "facts_digest": "c25eb3c6a44ce173",
+   "kind": "NSProcessInfo",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsprocessinfo_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSProgress:members",
+   "facts_digest": "e3db0d33a5ac3dc4",
+   "kind": "NSProgress",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsprogress_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSRunningApplication:members",
+   "facts_digest": "45da9e781b7794ca",
+   "kind": "NSRunningApplication",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsrunningapplication_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSScreen:members",
+   "facts_digest": "e053da518186ee70",
+   "kind": "NSScreen",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsscreen_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSShadow:members",
+   "facts_digest": "1e4698ec381b9489",
+   "kind": "NSShadow",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsshadow_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSound:members",
+   "facts_digest": "149bf49f0297967d",
+   "kind": "NSSound",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nssound_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStringDrawingContext:members",
+   "facts_digest": "141672ff67894374",
+   "kind": "NSStringDrawingContext",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsstringdrawingcontext_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextAttachment:members",
+   "facts_digest": "1565f242d493b956",
+   "kind": "NSTextAttachment",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextattachment_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextAttachmentViewProvider:members",
+   "facts_digest": "0f23a3a09150b12a",
+   "kind": "NSTextAttachmentViewProvider",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextattachmentviewprovider_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextBlock:members",
+   "facts_digest": "1839c2c783954a67",
+   "kind": "NSTextBlock",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextblock_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextContainer:members",
+   "facts_digest": "f5aeb38c280bab6d",
+   "kind": "NSTextContainer",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextcontainer_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextContentManager:members",
+   "facts_digest": "5fdc080f60478614",
+   "kind": "NSTextContentManager",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextcontentmanager_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextElement:members",
+   "facts_digest": "58fdea1b6b7ac3da",
+   "kind": "NSTextElement",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextelement_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextLayoutFragment:members",
+   "facts_digest": "d08b4c8b4c0a808a",
+   "kind": "NSTextLayoutFragment",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextlayoutfragment_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextLayoutManager:members",
+   "facts_digest": "6f0b7583fd897a86",
+   "kind": "NSTextLayoutManager",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextlayoutmanager_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextLineFragment:members",
+   "facts_digest": "23140bcb570b52f5",
+   "kind": "NSTextLineFragment",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextlinefragment_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextList:members",
+   "facts_digest": "966531d99a932b7f",
+   "kind": "NSTextList",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextlist_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextRange:members",
+   "facts_digest": "19863a7e4faaff3f",
+   "kind": "NSTextRange",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextrange_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextSelection:members",
+   "facts_digest": "1d7cc7bb4e6abeee",
+   "kind": "NSTextSelection",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextselection_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextSelectionNavigation:members",
+   "facts_digest": "5eef23fbaa82782b",
+   "kind": "NSTextSelectionNavigation",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextselectionnavigation_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextStorage:members",
+   "facts_digest": "c2f807847a7ba962",
+   "kind": "NSTextStorage",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextstorage_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextTab:members",
+   "facts_digest": "74c09322e7b73570",
+   "kind": "NSTextTab",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstexttab_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextTable:members",
+   "facts_digest": "701eeaed612ca0ba",
+   "kind": "NSTextTable",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstexttable_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextTableBlock:members",
+   "facts_digest": "e1e8e4ddec9352bc",
+   "kind": "NSTextTableBlock",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstexttableblock_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextViewportLayoutController:members",
+   "facts_digest": "65a19a9c0f219bd3",
+   "kind": "NSTextViewportLayoutController",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstextviewportlayoutcontroller_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSTimeZone:members",
+   "facts_digest": "baead3f0947680bc",
+   "kind": "NSTimeZone",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstimezone_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTypesetter:members",
+   "facts_digest": "fd9dddaaf44bd251",
+   "kind": "NSTypesetter",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nstypesetter_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:construct",
+   "facts_digest": "fe50b7f4cca35212",
+   "kind": "NSURL",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsurl_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:props",
+   "facts_digest": "fe50b7f4cca35212",
+   "kind": "NSURL",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsurl_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:methods",
+   "facts_digest": "fe50b7f4cca35212",
+   "kind": "NSURL",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsurl_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:statics",
+   "facts_digest": "fe50b7f4cca35212",
+   "kind": "NSURL",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsurl_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:lifetime",
+   "facts_digest": "fe50b7f4cca35212",
+   "kind": "NSURL",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsurl_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:members",
+   "facts_digest": "fe50b7f4cca35212",
+   "kind": "NSURL",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsurl_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURLComponents:members",
+   "facts_digest": "e3025890fa186ddb",
+   "kind": "NSURLComponents",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsurlcomponents_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSURLQueryItem:members",
+   "facts_digest": "4624b0e712a73e91",
+   "kind": "NSURLQueryItem",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsurlqueryitem_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUUID:members",
+   "facts_digest": "8af49c1651d0c9fb",
+   "kind": "NSUUID",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsuuid_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:construct",
+   "facts_digest": "dc243509030735a5",
+   "kind": "NSUndoManager",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsundomanager_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:props",
+   "facts_digest": "dc243509030735a5",
+   "kind": "NSUndoManager",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsundomanager_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:methods",
+   "facts_digest": "dc243509030735a5",
+   "kind": "NSUndoManager",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsundomanager_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:statics",
+   "facts_digest": "dc243509030735a5",
+   "kind": "NSUndoManager",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsundomanager_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:lifetime",
+   "facts_digest": "dc243509030735a5",
+   "kind": "NSUndoManager",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsundomanager_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:members",
+   "facts_digest": "dc243509030735a5",
+   "kind": "NSUndoManager",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsundomanager_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:construct",
+   "facts_digest": "227f199382bb90c1",
+   "kind": "NSUserDefaults",
+   "name": "construct",
+   "section": "types",
+   "tests": [
+    "types_nsuserdefaults_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:props",
+   "facts_digest": "227f199382bb90c1",
+   "kind": "NSUserDefaults",
+   "name": "props",
+   "section": "types",
+   "tests": [
+    "types_nsuserdefaults_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:methods",
+   "facts_digest": "227f199382bb90c1",
+   "kind": "NSUserDefaults",
+   "name": "methods",
+   "section": "types",
+   "tests": [
+    "types_nsuserdefaults_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:statics",
+   "facts_digest": "227f199382bb90c1",
+   "kind": "NSUserDefaults",
+   "name": "statics",
+   "section": "types",
+   "tests": [
+    "types_nsuserdefaults_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:lifetime",
+   "facts_digest": "227f199382bb90c1",
+   "kind": "NSUserDefaults",
+   "name": "lifetime",
+   "section": "types",
+   "tests": [
+    "types_nsuserdefaults_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:members",
+   "facts_digest": "227f199382bb90c1",
+   "kind": "NSUserDefaults",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsuserdefaults_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWorkspace:members",
+   "facts_digest": "eb8f6e392baa7363",
+   "kind": "NSWorkspace",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsworkspace_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWorkspaceAuthorization:members",
+   "facts_digest": "6801c0f42861eee5",
+   "kind": "NSWorkspaceAuthorization",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsworkspaceauthorization_members"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWorkspaceOpenConfiguration:members",
+   "facts_digest": "8b751d6fd4f7b66a",
+   "kind": "NSWorkspaceOpenConfiguration",
+   "name": "members",
+   "section": "types",
+   "tests": [
+    "types_nsworkspaceopenconfiguration_members"
+   ]
+  }
+ ],
+ "schema": "svelters-types-facts/v1",
+ "toolkit": "appkit"
+}

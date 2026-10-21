@@ -517,6 +517,31 @@ added to the header. Conventions a host or test may rely on (`plans/milestones/N
 - **Async.** A `QFuture<T>` result completes the host's one-shot callback (`SVL_M_ASYNC`); no bound Qt 6.11
   member returns one yet, so only the adapter exists (tested through a test hook).
 
+### AppKit non-GUI types (N4, no ABI change)
+
+The AppKit backend now implements the v2.5 members (`construct`, `call_static`, `describe(SVL_KIND)`) and
+`cancel`; nothing is added to the header (`plans/milestones/N4-appkit-types.md` has the design).
+
+- **Kinds.** Any loaded Objective-C class is a kind named by its class (`NSURL`, `NSPasteboard`), ids from
+  `0x10000`, registered on first use; element tags resolve first. An object's kind is the nearest class of the
+  bound scope (`metadata/appkit/types/`) along its class chain, so a cluster's private class reports the public
+  one. `describe(SVL_KIND, 0, k)` answers the class name and its superclass's kind (element kinds too).
+- **Lifetimes.** Every non-widget object crosses as a `SHARED` handle holding one strong reference, one handle
+  per object (identity by pointer). That includes objects element getters return (`font`, `text-color`): only
+  views, windows, cells and other responders stay `BORROWED`. Immutable value classes (`NSURL`, `NSColor`) use
+  the same `SHARED` handles; nothing crosses as `BOXED`.
+- **Members by selector.** `resolve(SVL_METHOD, type_kind, name)` takes the selector itself (`setString:forType:`)
+  for instance or class methods; `call` invokes on the object and `call_static` on the class (`NSInvocation`).
+  `call_static` of an `init…` selector is alloc + init (the result is +1); results of the new/copy families are
+  +1. A selector ending in `error:` hides its `NSError **`: a failure is `Ok(ERROR)`, i.e. a `NativeError`
+  (domain, integer code, `localizedDescription`). Props resolve by KVC key or kebab name (`levelsOfUndo`).
+- **Async.** A member of the generated `ASYNC` table describes itself with `SVL_M_ASYNC` (plus `SVL_M_STATIC`)
+  and a trailing `CALLBACK` slot; the backend builds a completion block of the member's shape, queues its
+  retained arguments from whatever thread runs it, and completes the callback on the main thread with the
+  result or the `NSError`. `cancel` cancels a returned `NSProgress` and rejects at once with
+  `NSCocoaErrorDomain` 3072; destroying the owner drops its operations.
+- **Op-log hosts.** The TestHost answers `callStatic(kind, "init…:")` with a fresh handle, like `new`.
+
 ### ABI v2.6 additive (property observation)
 
 Status: R1a (2026-10-19) added the members; R1 (2026-10-20) implemented the host contract of

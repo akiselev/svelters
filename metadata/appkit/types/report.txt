@@ -1,0 +1,35 @@
+== classes by category (all classes; objc2-foundation 0.3.2 + objc2-app-kit 0.3.2)
+framework       record     value    object   statics primitive    widget  excluded
+Foundation           9        37        91         0        18         0       126
+AppKit               1        30       172         0         0        95        18
+total               10        67       263         0        18        95       144
+  non-widget classes 492: MainThreadOnly 50, Send 88; records the core converts: Insets, Point, Range, Rect, Size
+
+== bound scope (roots + signature closure + ancestors), by framework and category
+  Foundation     29  object 21, value 8
+  AppKit         44  object 35, value 9
+  total          73  (roots 24)
+
+== members of bound types: bound / blocked
+  Foundation   members   903  bound   828 ( 91%)  blocked   75
+  AppKit       members  1099  bound   963 ( 87%)  blocked  136
+  excluded by rule: core 28, deprecated 173, unsafe 13
+  VALUE mutators hidden (decision Q3: setters and mutating selectors of value classes): 14
+  async members (completion handler -> Promise): 23; block shapes: (e) 7, (oe) 16
+  blocking reasons: pointer 116, callback 24, type:excluded:NSCoder 16, widget 9, type:unknown:UTType 5, type:unknown:CGContext 4, type:unknown:CGImage 3, type:excluded:NSMeasurement 2, type:unknown:NSItemProviderCompletionHandler 2, record-shape:NSOperatingSystemVersion 2, selector 2, type:unknown:CGPath 2, type:unknown:CGColor 2, type:unknown:CGColorSpace 2, type:unknown:libc::pid_t 2, type:excluded:NSOperationQueue 2, block-arg:map-key 2, record-shape:NSAffineTransformStruct 1
+  props from the macOS probe (read-only getters): 0 (no probe file yet: read-only properties are zero-argument methods)
+
+== naming (selectors joined in camelCase; `error:` and completion pieces dropped; init… -> static new…)
+  JS member names 1462; ambiguous after dropping hidden pieces: 0
+
+== curated set
+  NSAttributedString     value   bound   42 blocked  15 hidden   0  async 0
+  NSColor                value   bound  124 blocked  11 hidden   3  async 0
+  NSFileManager          object  bound   52 blocked  11 hidden   0  async 6
+  NSFont                 value   bound   58 blocked   7 hidden   2  async 0
+  NSImage                object  bound   52 blocked   4 hidden   0  async 0
+  NSItemProvider         object  bound   14 blocked   9 hidden   0  async 2
+  NSPasteboard           object  bound   35 blocked   0 hidden   0  async 3
+  NSURL                  value   bound   63 blocked   8 hidden   5  async 0
+  NSUndoManager          object  bound   34 blocked   2 hidden   0  async 0
+  NSUserDefaults         object  bound   35 blocked   0 hidden   0  async 0

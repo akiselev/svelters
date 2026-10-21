@@ -34,6 +34,10 @@ use svelters_apple::objc::target::{self, SveltersTarget, TargetEvent};
 
 #[path = "observe.rs"]
 mod observe;
+#[path = "types.rs"]
+mod types;
+
+use crate::types_table::TYPE_KIND_BASE;
 
 /// `NSRect` with its ObjC encoding (avoids the objc2-core-foundation dependency for one struct).
 #[repr(C)]
@@ -127,6 +131,10 @@ pub(crate) struct Inner {
     observer: Retained<observe::SveltersObserver>,
     /// The (handle, prop) `set_prop` is writing (backend-side echo suppression of proportional props).
     setting: Cell<Option<(u64, u32)>>,
+    /// Non-GUI type kinds (ObjC classes) registered by name (N4, `types.rs`).
+    type_kinds: RefCell<types::TypeKinds>,
+    /// Async operations in flight, by completion callback id.
+    pending: RefCell<HashMap<u64, types::Pending>>,
 }
 
 thread_local! {
@@ -182,6 +190,8 @@ impl LoopEvents for Events {
             i.drain();
             // KVO from other threads and deaths of observed borrowed objects, hopped here (REACTIVITY.md 5.6).
             i.observe_hops();
+            // Completion blocks of async type members, queued from any thread (N4).
+            i.type_hops();
             i.checkpoint();
             i.drain();
         }
@@ -248,6 +258,8 @@ impl AppKitBackend {
             quit_requested: Cell::new(false),
             observer: observe::SveltersObserver::new(),
             setting: Cell::new(None),
+            type_kinds: RefCell::new(Default::default()),
+            pending: RefCell::new(HashMap::new()),
         });
         observe::set_waker(inner.rl.waker());
         let weak = Rc::downgrade(&inner);
@@ -280,6 +292,16 @@ impl AppKitBackend {
     /// Releases natives whose handles were destroyed (normally done by the run loop).
     pub fn drain(&self) {
         self.inner.drain();
+    }
+
+    /// Async type operations in flight (N4 tests).
+    pub fn pending_async(&self) -> usize {
+        self.inner.pending_async()
+    }
+
+    /// Delivers completions other threads queued, as the run loop's wake does (tests).
+    pub fn run_type_hops(&self) {
+        self.inner.type_hops();
     }
 
     /// Live handles (leak checks in tests).
@@ -382,6 +404,9 @@ impl Inner {
     }
 
     fn class_of_kind(&self, kind: u32) -> Option<&'static AnyClass> {
+        if kind >= TYPE_KIND_BASE {
+            return self.type_kind(kind).map(|t| t.1);
+        }
         lookup::kind(kind).and_then(|k| bridge::class_named(k.class))
     }
 
@@ -391,7 +416,7 @@ impl Inner {
         if prop >= DYN_BASE {
             let d = self.dyn_props.borrow();
             let (k, _, p) = d.get((prop - DYN_BASE) as usize).ok_or("unknown prop id")?;
-            if !lookup::chain(kind).contains(k) && *k != kind {
+            if !lookup::chain(kind).contains(k) && *k != kind && !self.type_chain(kind).contains(k) {
                 return Err("prop does not apply to this kind".into());
             }
             return Ok(PropSpec { key: p.key.clone(), ty: p.ty.clone(), members: &[], flags: false, writable: p.writable, setter: "", string: false });
@@ -653,6 +678,7 @@ impl Inner {
     }
 
     fn destroy(&self, h: u64) {
+        self.drop_pending_of(h);
         let parent = self.table.borrow().get(h).and_then(|e| e.parent);
         let Some(e) = self.table.borrow_mut().take(h) else { return };
         self.by_ptr.borrow_mut().remove(&match &e.obj.obj {
@@ -683,6 +709,9 @@ impl Inner {
 
     fn call(&self, h: u64, method: u32, args: &[Value]) -> Result<Value, String> {
         let (kind, _) = self.entry_kind(h)?;
+        if kind >= TYPE_KIND_BASE {
+            return self.type_call(h, kind, method, args);
+        }
         let s = if method >= DYN_BASE {
             let d = self.dyn_methods.borrow();
             let (k, _, s) = d.get((method - DYN_BASE) as usize).ok_or("unknown method id")?;
@@ -1002,6 +1031,10 @@ impl Objects for Inner {
         if let Some(h) = found {
             return h;
         }
+        // NON-GUI types (decision Q1): a non-widget object is a SHARED handle with a strong reference.
+        if let Some(h) = self.shared_handle(obj) {
+            return h;
+        }
         // A native-made object: mint a borrowed handle of the nearest kind along its class chain.
         let kind = bridge::class_chain(obj.class())
             .into_iter()
@@ -1064,7 +1097,10 @@ impl Backend for AppKitBackend {
     fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
         let i = &self.inner;
         match what {
-            NameKind::Kind => lookup::kind_by_tag(name),
+            NameKind::Kind => match lookup::kind_by_tag(name) {
+                0 => i.type_kind_by_name(name),
+                k => k,
+            },
             NameKind::Prop => {
                 let id = lookup::prop(kind, name);
                 if id != 0 {
@@ -1073,6 +1109,7 @@ impl Backend for AppKitBackend {
                 i.dyn_prop(kind, name)
             }
             NameKind::Signal => lookup::signal(kind, name),
+            NameKind::Method if kind >= TYPE_KIND_BASE => i.type_method(kind, name),
             NameKind::Method => {
                 let id = lookup::method(kind, name);
                 if id != 0 {
@@ -1144,6 +1181,20 @@ impl Backend for AppKitBackend {
     }
 
     fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        // ABI v2.5: a kind's native (class) name and its superclass's kind (the host's typeChain).
+        if what == NameKind::Kind {
+            let (name, parent) = if member >= TYPE_KIND_BASE {
+                let (n, _, p) = self.inner.type_kind(member)?;
+                (n, p)
+            } else {
+                let k = lookup::kind(member)?;
+                (k.class.to_string(), k.parent as u32)
+            };
+            return Some(MemberDesc { name, params: Vec::new(), ret: SlotDesc::new(SVL_NULL).typed(parent), flags: 0 });
+        }
+        if what == NameKind::Method && kind >= TYPE_KIND_BASE {
+            return self.inner.type_method_desc(kind, member);
+        }
         // Scalar props get descriptors so the renderer coerces static attributes ("8" -> 8,
         // "" -> true). Everything else converts dynamically.
         if what != NameKind::Prop || member >= DYN_BASE {
@@ -1179,7 +1230,32 @@ impl Backend for AppKitBackend {
         objc2::rc::autoreleasepool(|_| self.inner.observe(h, prop, on))
     }
 
+    fn supports_construct(&self) -> bool {
+        true
+    }
+
+    fn construct(&self, kind: svl_id, props: &[svl_id], values: &[Value]) -> StrResult<Value> {
+        if kind < TYPE_KIND_BASE {
+            return Err("construct makes non-GUI objects; elements are made with create".into());
+        }
+        objc2::rc::autoreleasepool(|_| self.inner.type_construct(kind, props, values))
+    }
+
+    fn call_static(&self, kind: svl_id, method: svl_id, args: &[Value]) -> StrResult<Value> {
+        if kind < TYPE_KIND_BASE {
+            return Err("this kind has no static methods".into());
+        }
+        objc2::rc::autoreleasepool(|_| self.inner.type_call_static(kind, method, args))
+    }
+
+    fn cancel(&self, callback: u64) -> bool {
+        self.inner.type_cancel(callback)
+    }
+
     fn describe_type(&self, ty: svl_id) -> Option<TypeDesc> {
+        if ty == types::T_ASYNC_DONE {
+            return Some(types::async_done_desc());
+        }
         let (name, fields): (&str, &[&str]) = match ty {
             SVL_T_RECT => ("Rect", &["x", "y", "width", "height"]),
             SVL_T_SIZE => ("Size", &["width", "height"]),
@@ -1204,7 +1280,8 @@ impl Inner {
             return DYN_BASE + i as u32;
         }
         let Some(cls) = self.class_of_kind(kind) else { return 0 };
-        let Some((key, attrs)) = bridge::find_property(cls, name).or_else(|| bridge::find_accessor(cls, name)) else { return 0 };
+        let js = if kind >= TYPE_KIND_BASE { svelters_apple::names::kebab(name) } else { name.to_string() };
+        let Some((key, attrs)) = bridge::find_property(cls, &js).or_else(|| bridge::find_accessor(cls, &js)) else { return 0 };
         let mut d = self.dyn_props.borrow_mut();
         d.push((kind, name.to_string(), DynProp { key, ty: attrs.ty, writable: !attrs.readonly }));
         DYN_BASE + d.len() as u32 - 1
