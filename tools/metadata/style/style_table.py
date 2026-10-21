@@ -125,7 +125,9 @@ def build(toolkit: str, doc: dict, tags: dict[str, str], kinds: dict[str, dict])
                 if p is None or not p.get("writable") or p.get("construct_only"):
                     bad.append(t)
                     continue
-                if _norm(p["type"]) not in TYPES[ty] or (ty == "insets" and p.get("of") != "Insets"):
+                # A uniform radius: WinUI CornerRadius takes a single number (svelters-winui parse::corner_radius).
+                radius = ty == "length" and p.get("ref") == "value<Microsoft.UI.Xaml.CornerRadius>"
+                if not radius and (_norm(p["type"]) not in TYPES[ty] or (ty == "insets" and p.get("of") != "Insets")):
                     _fail(f"{w}: type {ty} cannot target {rec['prop']} on <{t}>, a {p['type']} property")
                 if first is None:
                     first = p

@@ -8714,6 +8714,17 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn IsInOverflowProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IAppBarButtonStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).IsInOverflowProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn DynamicOverflowOrderProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::IAppBarButtonStatics(|this| unsafe {
@@ -8888,6 +8899,17 @@ pub mod Microsoft {
                         Self::IAppBarSeparatorStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsCompactProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn IsInOverflowProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IAppBarSeparatorStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).IsInOverflowProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -9185,6 +9207,17 @@ pub mod Microsoft {
                         Self::IAppBarToggleButtonStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsCompactProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn IsInOverflowProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IAppBarToggleButtonStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).IsInOverflowProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -9731,6 +9764,16 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IAutoSuggestBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn AutoMaximizeSuggestionAreaProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::IAutoSuggestBoxStatics(|this| unsafe {
@@ -9758,6 +9801,17 @@ pub mod Microsoft {
                         Self::IAutoSuggestBoxStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).LightDismissOverlayModeProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn DescriptionProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IAutoSuggestBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).DescriptionProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -11036,11 +11090,32 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::ICalendarDatePickerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn LightDismissOverlayModeProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::ICalendarDatePickerStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).LightDismissOverlayModeProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn DescriptionProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::ICalendarDatePickerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).DescriptionProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -15916,6 +15991,16 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IComboBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn PlaceholderTextProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::IComboBoxStatics(|this| unsafe {
@@ -15975,6 +16060,17 @@ pub mod Microsoft {
                         Self::IComboBoxStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).TextProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn DescriptionProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IComboBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).DescriptionProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -17046,6 +17142,16 @@ pub mod Microsoft {
                             .ok()?;
                             let _ = &derived__;
                             windows_core::imp::Type::from_abi(result__)
+                        })
+                    }
+                    pub fn TitleProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IContentDialogStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).TitleProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
                     pub fn FullSizeDesiredProperty()
@@ -18808,6 +18914,16 @@ pub mod Microsoft {
                             windows_core::imp::Type::from_abi(result__)
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IDatePickerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn CalendarIdentifierProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::IDatePickerStatics(|this| unsafe {
@@ -19544,6 +19660,16 @@ pub mod Microsoft {
                             .ok()?;
                             let _ = &derived__;
                             windows_core::imp::Type::from_abi(result__)
+                        })
+                    }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IExpanderStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
                     pub fn IsExpandedProperty() -> windows_core::Result<super::DependencyProperty> {
@@ -21038,7 +21164,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    IsInOverflowProperty: usize,
+                    pub IsInOverflowProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub DynamicOverflowOrderProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -21124,7 +21254,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    IsInOverflowProperty: usize,
+                    pub IsInOverflowProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub DynamicOverflowOrderProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -21290,7 +21424,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    IsInOverflowProperty: usize,
+                    pub IsInOverflowProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub DynamicOverflowOrderProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -21522,7 +21660,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub AutoMaximizeSuggestionAreaProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -21539,6 +21681,11 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
+                    pub DescriptionProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                 }
                 windows_core::imp::define_interface!(
                     IAutoSuggestBoxSuggestionChosenEventArgs,
@@ -22092,7 +22239,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     CalendarViewStyleProperty: usize,
                     pub LightDismissOverlayModeProperty:
@@ -22100,7 +22251,11 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    DescriptionProperty: usize,
+                    pub DescriptionProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub MinDateProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
@@ -24266,7 +24421,11 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     pub PlaceholderTextProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -24294,6 +24453,12 @@ pub mod Microsoft {
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
                     pub TextProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    TextBoxStyleProperty: usize,
+                    pub DescriptionProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
                     )
@@ -24971,7 +25136,11 @@ pub mod Microsoft {
                 #[repr(C)]
                 pub struct IContentDialogStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
-                    TitleProperty: usize,
+                    pub TitleProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     TitleTemplateProperty: usize,
                     pub FullSizeDesiredProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -25704,7 +25873,11 @@ pub mod Microsoft {
                 #[repr(C)]
                 pub struct IDatePickerStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     pub CalendarIdentifierProperty:
                         unsafe extern "system" fn(
@@ -26038,7 +26211,11 @@ pub mod Microsoft {
                 #[repr(C)]
                 pub struct IExpanderStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     HeaderTemplateSelectorProperty: usize,
                     pub IsExpandedProperty: unsafe extern "system" fn(
@@ -27364,6 +27541,15 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
+                    ItemContainerStyleProperty: usize,
+                    ItemContainerStyleSelectorProperty: usize,
+                    ItemContainerTransitionsProperty: usize,
+                    GroupStyleSelectorProperty: usize,
+                    pub IsGroupingProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                 }
                 windows_core::imp::define_interface!(
                     IListView,
@@ -27712,6 +27898,11 @@ pub mod Microsoft {
                     )
                         -> windows_core::HRESULT,
                     pub IsZoomedInViewProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub HeaderProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
                     )
@@ -28966,6 +29157,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
+                    pub CompactPaneLengthProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
                 }
                 windows_core::imp::define_interface!(
                     INavigationViewItemStatics2,
@@ -29099,9 +29295,17 @@ pub mod Microsoft {
                     FooterMenuItemsProperty: usize,
                     FooterMenuItemsSourceProperty: usize,
                     PaneFooterProperty: usize,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
-                    DisplayModeProperty: usize,
+                    pub DisplayModeProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub IsSettingsVisibleProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -29468,7 +29672,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     pub PlaceholderTextProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -29491,7 +29699,11 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    DescriptionProperty: usize,
+                    pub DescriptionProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub ValidationModeProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
@@ -29848,7 +30060,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     pub PlaceholderTextProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -29875,6 +30091,18 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
+                    InputScopeProperty: usize,
+                    pub CanPasteClipboardContentProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
+                    SelectionFlyoutProperty: usize,
+                    pub DescriptionProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                 }
                 windows_core::imp::define_interface!(
                     IPersonPicture,
@@ -30502,6 +30730,11 @@ pub mod Microsoft {
                         -> windows_core::HRESULT,
                     SelectedItemProperty: usize,
                     pub MaxColumnsProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub HeaderProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
                     )
@@ -31135,7 +31368,11 @@ pub mod Microsoft {
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
                     InputScopeProperty: usize,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     pub PlaceholderTextProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -31180,7 +31417,11 @@ pub mod Microsoft {
                     DisabledFormattingAcceleratorsProperty: usize,
                     SelectionFlyoutProperty: usize,
                     ProofingMenuFlyoutProperty: usize,
-                    DescriptionProperty: usize,
+                    pub DescriptionProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub DesiredCandidateWindowAlignmentProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -31690,16 +31931,56 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    HorizontalOffsetProperty: usize,
-                    ViewportWidthProperty: usize,
-                    ScrollableWidthProperty: usize,
-                    ComputedHorizontalScrollBarVisibilityProperty: usize,
-                    ExtentWidthProperty: usize,
-                    VerticalOffsetProperty: usize,
-                    ViewportHeightProperty: usize,
-                    ScrollableHeightProperty: usize,
-                    ComputedVerticalScrollBarVisibilityProperty: usize,
-                    ExtentHeightProperty: usize,
+                    pub HorizontalOffsetProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
+                    pub ViewportWidthProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub ScrollableWidthProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub ComputedHorizontalScrollBarVisibilityProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
+                    pub ExtentWidthProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub VerticalOffsetProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub ViewportHeightProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub ScrollableHeightProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
+                    pub ComputedVerticalScrollBarVisibilityProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
+                    pub ExtentHeightProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub MinZoomFactorProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
@@ -31710,7 +31991,11 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    ZoomFactorProperty: usize,
+                    pub ZoomFactorProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     ZoomSnapPointsProperty: usize,
                     TopLeftHeaderProperty: usize,
                     LeftHeaderProperty: usize,
@@ -33420,7 +33705,11 @@ pub mod Microsoft {
                 #[repr(C)]
                 pub struct ITabViewItemStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     IconSourceProperty: usize,
                     pub IsClosableProperty: unsafe extern "system" fn(
@@ -33926,11 +34215,19 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    ActionButtonContentProperty: usize,
+                    pub ActionButtonContentProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
                     ActionButtonStyleProperty: usize,
                     ActionButtonCommandProperty: usize,
                     ActionButtonCommandParameterProperty: usize,
-                    CloseButtonContentProperty: usize,
+                    pub CloseButtonContentProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
                     CloseButtonStyleProperty: usize,
                     CloseButtonCommandProperty: usize,
                     CloseButtonCommandParameterProperty: usize,
@@ -35357,7 +35654,11 @@ pub mod Microsoft {
                 #[repr(C)]
                 pub struct ITimePickerStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     pub ClockIdentifierProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -35567,6 +35868,23 @@ pub mod Microsoft {
                 pub struct IToggleSwitchStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
                     pub IsOnProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    HeaderTemplateProperty: usize,
+                    pub OnContentProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    OnContentTemplateProperty: usize,
+                    pub OffContentProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
                     )
@@ -36905,6 +37223,16 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn IsGroupingProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IItemsControlStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).IsGroupingProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     fn IItemsControlFactory<
                         R,
                         F: FnOnce(&IItemsControlFactory) -> windows_core::Result<R>,
@@ -37769,6 +38097,16 @@ pub mod Microsoft {
                         Self::IListViewBaseStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsZoomedInViewProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IListViewBaseStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -39686,6 +40024,27 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::INavigationViewStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn DisplayModeProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::INavigationViewStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).DisplayModeProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn IsSettingsVisibleProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::INavigationViewStatics(|this| unsafe {
@@ -40173,6 +40532,17 @@ pub mod Microsoft {
                         Self::INavigationViewItemStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IconProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn CompactPaneLengthProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::INavigationViewItemStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).CompactPaneLengthProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -41100,6 +41470,16 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::INumberBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn PlaceholderTextProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::INumberBoxStatics(|this| unsafe {
@@ -41139,6 +41519,17 @@ pub mod Microsoft {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this)
                                 .PreventKeyboardDisplayOnProgrammaticFocusProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn DescriptionProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::INumberBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).DescriptionProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -41884,6 +42275,16 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IPasswordBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn PlaceholderTextProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::IPasswordBoxStatics(|this| unsafe {
@@ -41934,6 +42335,24 @@ pub mod Microsoft {
                         Self::IPasswordBoxStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).TextReadingOrderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn CanPasteClipboardContentProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IPasswordBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable (this) . CanPasteClipboardContentProperty)(windows_core::Interface::as_raw (this) , & mut result__) . and_then (|| windows_core::imp::Type::from_abi (result__))
+                        })
+                    }
+                    pub fn DescriptionProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IPasswordBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).DescriptionProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -43074,6 +43493,16 @@ pub mod Microsoft {
                         Self::IRadioButtonsStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).MaxColumnsProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IRadioButtonsStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -44407,6 +44836,16 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IRichEditBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn PlaceholderTextProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::IRichEditBoxStatics(|this| unsafe {
@@ -44490,6 +44929,17 @@ pub mod Microsoft {
                         Self::IRichEditBoxStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).CharacterCasingProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn DescriptionProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IRichEditBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).DescriptionProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -45758,6 +46208,118 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HorizontalOffsetProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HorizontalOffsetProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ViewportWidthProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ViewportWidthProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ScrollableWidthProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ScrollableWidthProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ComputedHorizontalScrollBarVisibilityProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this)
+                                .ComputedHorizontalScrollBarVisibilityProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ExtentWidthProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ExtentWidthProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn VerticalOffsetProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).VerticalOffsetProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ViewportHeightProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ViewportHeightProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ScrollableHeightProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ScrollableHeightProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ComputedVerticalScrollBarVisibilityProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this)
+                                .ComputedVerticalScrollBarVisibilityProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ExtentHeightProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ExtentHeightProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn MinZoomFactorProperty() -> windows_core::Result<super::DependencyProperty>
                     {
                         Self::IScrollViewerStatics(|this| unsafe {
@@ -45774,6 +46336,16 @@ pub mod Microsoft {
                         Self::IScrollViewerStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).MaxZoomFactorProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ZoomFactorProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IScrollViewerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ZoomFactorProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -49418,6 +49990,16 @@ pub mod Microsoft {
                             windows_core::imp::Type::from_abi(result__)
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITabViewItemStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn IsClosableProperty() -> windows_core::Result<super::DependencyProperty> {
                         Self::ITabViewItemStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
@@ -50159,6 +50741,28 @@ pub mod Microsoft {
                         Self::ITeachingTipStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).SubtitleProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn ActionButtonContentProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITeachingTipStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ActionButtonContentProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn CloseButtonContentProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITeachingTipStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).CloseButtonContentProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -53474,6 +54078,16 @@ pub mod Microsoft {
                             windows_core::imp::Type::from_abi(result__)
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITimePickerStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn ClockIdentifierProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::ITimePickerStatics(|this| unsafe {
@@ -53885,6 +54499,36 @@ pub mod Microsoft {
                         Self::IToggleSwitchStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsOnProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IToggleSwitchStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn OnContentProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IToggleSwitchStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).OnContentProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn OffContentProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IToggleSwitchStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).OffContentProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -55788,6 +56432,19 @@ pub mod Microsoft {
                                 .and_then(|| windows_core::imp::Type::from_abi(result__))
                             })
                         }
+                        pub fn InputDevicePrefersPrimaryCommandsProperty()
+                        -> windows_core::Result<super::super::DependencyProperty>
+                        {
+                            Self::IFlyoutBaseStatics(|this| unsafe {
+                                let mut result__ = core::mem::zeroed();
+                                (windows_core::Interface::vtable(this)
+                                    .InputDevicePrefersPrimaryCommandsProperty)(
+                                    windows_core::Interface::as_raw(this),
+                                    &mut result__,
+                                )
+                                .and_then(|| windows_core::imp::Type::from_abi(result__))
+                            })
+                        }
                         pub fn AreOpenCloseAnimationsEnabledProperty()
                         -> windows_core::Result<super::super::DependencyProperty>
                         {
@@ -55820,6 +56477,18 @@ pub mod Microsoft {
                             Self::IFlyoutBaseStatics(|this| unsafe {
                                 let mut result__ = core::mem::zeroed();
                                 (windows_core::Interface::vtable(this).ElementSoundModeProperty)(
+                                    windows_core::Interface::as_raw(this),
+                                    &mut result__,
+                                )
+                                .and_then(|| windows_core::imp::Type::from_abi(result__))
+                            })
+                        }
+                        pub fn IsOpenProperty()
+                        -> windows_core::Result<super::super::DependencyProperty>
+                        {
+                            Self::IFlyoutBaseStatics(|this| unsafe {
+                                let mut result__ = core::mem::zeroed();
+                                (windows_core::Interface::vtable(this).IsOpenProperty)(
                                     windows_core::Interface::as_raw(this),
                                     &mut result__,
                                 )
@@ -56344,7 +57013,12 @@ pub mod Microsoft {
                             *mut *mut core::ffi::c_void,
                         )
                             -> windows_core::HRESULT,
-                        InputDevicePrefersPrimaryCommandsProperty: usize,
+                        pub InputDevicePrefersPrimaryCommandsProperty:
+                            unsafe extern "system" fn(
+                                *mut core::ffi::c_void,
+                                *mut *mut core::ffi::c_void,
+                            )
+                                -> windows_core::HRESULT,
                         pub AreOpenCloseAnimationsEnabledProperty:
                             unsafe extern "system" fn(
                                 *mut core::ffi::c_void,
@@ -56363,6 +57037,12 @@ pub mod Microsoft {
                                 *mut *mut core::ffi::c_void,
                             )
                                 -> windows_core::HRESULT,
+                        OverlayInputPassThroughElementProperty: usize,
+                        pub IsOpenProperty: unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        )
+                            -> windows_core::HRESULT,
                     }
                     windows_core::imp::define_interface!(
                         IFlyoutBaseStatics2,

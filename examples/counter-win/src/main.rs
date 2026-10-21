@@ -9,6 +9,8 @@
 //! (counter-win fixture; `--fixture winui-types` has its own checks, N4) drives the app through the real toolkit: clicks the button three
 //! times through UI Automation, types a name, moves the slider, checks the box, then reads the
 //! native widgets back and prints a JSON report (also written to `--report`). Exit code 0 = pass.
+//! With `--fixture gallery-winui` (WP-W) it clicks every sidebar button of the gallery instead and checks that each
+//! page created the kinds its `<!-- kinds: ... -->` header lists, with no JavaScript error.
 //!
 //! `--start-test` (G0, ABI v2.7 `start`, FU1) checks one host order on the counter-win bundle and
 //! reports the same way: `start-with` mounts in `Host::start_with`'s hook while it pumps messages
@@ -108,6 +110,106 @@ mod win {
         walk(b, root, &mut all);
         let find = |tag: &str| all.iter().find(|(_, t)| *t == tag).map(|(h, _)| *h).ok_or(format!("no <{tag}>"));
         Ok((find("text-block")?, find("button")?))
+    }
+
+    /// `AppBarButton` -> `app-bar-button` (the tags of the gallery's kind headers).
+    fn kebab(name: &str) -> String {
+        let mut out = String::new();
+        for (i, c) in name.chars().enumerate() {
+            if c.is_ascii_uppercase() && i > 0 {
+                out.push('-');
+            }
+            out.push(c.to_ascii_lowercase());
+        }
+        out
+    }
+
+    /// The gallery pages (file stem, tags from the `<!-- kinds: ... -->` header), sorted like the sidebar.
+    fn gallery_pages() -> Result<Vec<(String, Vec<String>)>, String> {
+        let dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/gallery-winui/src/pages");
+        let mut files: Vec<PathBuf> = std::fs::read_dir(&dir)
+            .map_err(|e| format!("{}: {e}", dir.display()))?
+            .filter_map(|e| e.ok().map(|e| e.path()))
+            .filter(|p| p.extension().is_some_and(|x| x == "svelte"))
+            .collect();
+        files.sort();
+        let mut out = Vec::new();
+        for f in files {
+            let text = std::fs::read_to_string(&f).map_err(|e| format!("{}: {e}", f.display()))?;
+            let kinds = text
+                .split_once("<!-- kinds:")
+                .and_then(|(_, rest)| rest.split_once("-->"))
+                .map(|(k, _)| k.split_whitespace().map(kebab).collect())
+                .unwrap_or_default();
+            out.push((f.file_stem().unwrap().to_string_lossy().into_owned(), kinds));
+        }
+        Ok(out)
+    }
+
+    /// The gallery's sidebar buttons: the buttons of the first stack-panel under the window.
+    fn sidebar(b: &WinUiBackend, host: &Host<'_>) -> Result<Vec<u64>, String> {
+        let root = *host.toplevel_handles().first().ok_or("no window")?;
+        let mut all = Vec::new();
+        walk(b, root, &mut all);
+        let panel = all.iter().find(|(_, t)| *t == "stack-panel").map(|(h, _)| *h).ok_or("no sidebar stack-panel")?;
+        let tag = |h: u64| b.handle_info(h).ok().and_then(|i| svelters_winui::table::kind(i.kind)).map_or("?", |k| k.tag);
+        Ok(b.children(panel, 0).into_iter().filter(|h| tag(*h) == "button").collect())
+    }
+
+    /// `--fixture gallery-winui --selftest`: click page i at 800 + 900 i ms, record the tags under the window 700 ms
+    /// later, then check every page's header kinds were created.
+    fn gallery_selftest(b: &WinUiBackend, host: &Rc<Host<'static>>, report: Rc<RefCell<Json>>, path: Option<PathBuf>) -> Result<(), String> {
+        let pages = gallery_pages()?;
+        let seen: Rc<RefCell<Vec<Vec<String>>>> = Rc::new(RefCell::new(vec![Vec::new(); pages.len()]));
+        let errors: Rc<RefCell<Vec<String>>> = Rc::new(RefCell::new(Vec::new()));
+        for i in 0..pages.len() {
+            let t = 800 + 900 * i as u64;
+            let (b1, h1, e1) = (b.clone(), host.clone(), errors.clone());
+            b.after(t, move || {
+                let r = sidebar(&b1, &h1).and_then(|s| s.get(i).copied().ok_or(format!("no sidebar button #{i}"))).and_then(|btn| b1.invoke(btn));
+                if let Err(e) = r {
+                    e1.borrow_mut().push(format!("page {i}: click: {e}"));
+                }
+            })?;
+            let (b2, h2, s2) = (b.clone(), host.clone(), seen.clone());
+            b.after(t + 700, move || {
+                let mut all = Vec::new();
+                if let Some(root) = h2.toplevel_handles().first() {
+                    walk(&b2, *root, &mut all);
+                }
+                s2.borrow_mut()[i] = all.iter().map(|(_, t)| t.to_string()).collect();
+            })?;
+        }
+        let (b3, h3) = (b.clone(), host.clone());
+        b.after(800 + 900 * pages.len() as u64 + 200, move || {
+            let mut failures: Vec<String> = errors.borrow().clone();
+            let seen = seen.borrow();
+            let mut shown = serde_json::Map::new();
+            for (i, (name, kinds)) in pages.iter().enumerate() {
+                let missing: Vec<&String> = kinds.iter().filter(|k| !seen[i].contains(k)).collect();
+                if !missing.is_empty() {
+                    failures.push(format!("{name}: not created: {missing:?}"));
+                }
+                shown.insert(name.clone(), json!({ "kinds": kinds.len(), "missing": missing, "handles": seen[i].len() }));
+            }
+            if sidebar(&b3, &h3).map(|s| s.len()).unwrap_or(0) != pages.len() {
+                failures.push(format!("the sidebar does not have {} buttons", pages.len()));
+            }
+            failures.extend(h3.take_errors().iter().map(|e| format!("js error: {e}")));
+            let mut rep = report.borrow_mut();
+            *rep = json!({
+                "backend": "winui",
+                "fixture": "gallery-winui",
+                "ok": failures.is_empty(),
+                "failures": failures,
+                "pages": shown,
+                "console": h3.take_console().iter().map(|l| format!("[{}] {}", l.level, l.text)).collect::<Vec<_>>(),
+            });
+            if let Some(p) = &path {
+                let _ = std::fs::write(p, serde_json::to_string_pretty(&*rep).unwrap());
+            }
+            b3.quit();
+        })
     }
 
     /// `--start-test <mode>` (G0): one host order on the counter-win bundle; a JSON report like `--selftest`.
@@ -270,7 +372,15 @@ mod win {
         let load_ms = start.elapsed().as_secs_f64() * 1e3;
         let report: Rc<RefCell<Json>> = Rc::new(RefCell::new(json!({ "ok": false, "failures": ["selftest did not finish"] })));
         let types = args.fixture == "winui-types";
-        if args.selftest {
+        if args.selftest && args.fixture == "gallery-winui" {
+            let b3 = driver.clone();
+            let ok = gallery_selftest(&driver, &host, report.clone(), args.report.clone())
+                .and_then(|_| driver.after((args.timeout * 1000.0) as u64, move || b3.quit()));
+            if let Err(e) = ok {
+                eprintln!("[counter-win] scheduling the gallery selftest: {e}");
+                return 3;
+            }
+        } else if args.selftest {
             let (b, h, r) = (driver.clone(), host.clone(), report.clone());
             let steps = move || -> Result<(), String> {
                 let root = *h.toplevel_handles().first().ok_or("no window")?;

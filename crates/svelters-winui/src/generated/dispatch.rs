@@ -5328,6 +5328,196 @@ pub static PROP_GET: &[Option<fn(&IInspectable) -> R<Value>>] = &[
     Some(get_prop595_window_visible),
 ];
 
+fn observe_prop0_app_bar_closed_display_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBar::ClosedDisplayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop1_app_bar_is_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBar::IsOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop2_app_bar_is_sticky(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBar::IsStickyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop3_app_bar_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBar::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop4_app_bar_button_label(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarButton::LabelProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop5_app_bar_button_dynamic_overflow_order(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarButton::DynamicOverflowOrderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop6_app_bar_button_icon(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarButton::IconProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop7_app_bar_button_is_compact(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarButton::IsCompactProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop8_app_bar_button_is_in_overflow(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarButton::IsInOverflowProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop9_app_bar_button_keyboard_accelerator_text_override(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarButton::KeyboardAcceleratorTextOverrideProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop10_app_bar_button_label_position(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarButton::LabelPositionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop11_app_bar_separator_dynamic_overflow_order(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarSeparator::DynamicOverflowOrderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop12_app_bar_separator_is_compact(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarSeparator::IsCompactProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop13_app_bar_separator_is_in_overflow(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarSeparator::IsInOverflowProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop14_app_bar_toggle_button_label(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarToggleButton::LabelProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop15_app_bar_toggle_button_dynamic_overflow_order(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarToggleButton::DynamicOverflowOrderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop16_app_bar_toggle_button_icon(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarToggleButton::IconProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop17_app_bar_toggle_button_is_compact(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarToggleButton::IsCompactProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop18_app_bar_toggle_button_is_in_overflow(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarToggleButton::IsInOverflowProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop19_app_bar_toggle_button_keyboard_accelerator_text_override(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarToggleButton::KeyboardAcceleratorTextOverrideProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop20_app_bar_toggle_button_label_position(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AppBarToggleButton::LabelPositionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop21_auto_suggest_box_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop22_auto_suggest_box_auto_maximize_suggestion_area(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::AutoMaximizeSuggestionAreaProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop23_auto_suggest_box_description(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::DescriptionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop24_auto_suggest_box_is_suggestion_list_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::IsSuggestionListOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop25_auto_suggest_box_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop26_auto_suggest_box_max_suggestion_list_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::MaxSuggestionListHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop27_auto_suggest_box_placeholder_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::PlaceholderTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop28_auto_suggest_box_query_icon(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::QueryIconProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop29_auto_suggest_box_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop30_auto_suggest_box_text_member_path(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::TextMemberPathProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop31_auto_suggest_box_update_text_on_select(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::AutoSuggestBox::UpdateTextOnSelectProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop32_border_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Border::BackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop33_border_background_sizing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Border::BackgroundSizingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop34_border_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Border::BorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop35_border_border_thickness(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Border::BorderThicknessProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop36_border_corner_radius(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Border::CornerRadiusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop37_border_padding(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Border::PaddingProperty()?, h, prop)?,
+    ])
+}
 fn observe_prop38_button_base_click_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase::ClickModeProperty()?, h, prop)?,
@@ -5343,9 +5533,659 @@ fn observe_prop40_button_base_is_pressed(o: &IInspectable, h: u64, prop: u32) ->
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase::IsPressedProperty()?, h, prop)?,
     ])
 }
+fn observe_prop41_calendar_date_picker_calendar_identifier(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::CalendarIdentifierProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop42_calendar_date_picker_date(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::DateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop43_calendar_date_picker_date_format(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::DateFormatProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop44_calendar_date_picker_day_of_week_format(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::DayOfWeekFormatProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop45_calendar_date_picker_description(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::DescriptionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop46_calendar_date_picker_display_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::DisplayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop47_calendar_date_picker_first_day_of_week(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::FirstDayOfWeekProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop48_calendar_date_picker_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop49_calendar_date_picker_is_calendar_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::IsCalendarOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop50_calendar_date_picker_is_group_label_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::IsGroupLabelVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop51_calendar_date_picker_is_out_of_scope_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::IsOutOfScopeEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop52_calendar_date_picker_is_today_highlighted(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::IsTodayHighlightedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop53_calendar_date_picker_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop54_calendar_date_picker_max_date(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::MaxDateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop55_calendar_date_picker_min_date(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::MinDateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop56_calendar_date_picker_placeholder_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarDatePicker::PlaceholderTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop57_calendar_view_blackout_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::BlackoutBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop58_calendar_view_blackout_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::BlackoutForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop59_calendar_view_blackout_strikethrough_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::BlackoutStrikethroughBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop60_calendar_view_calendar_identifier(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarIdentifierProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop61_calendar_view_calendar_item_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop62_calendar_view_calendar_item_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop63_calendar_view_calendar_item_border_thickness(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemBorderThicknessProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop64_calendar_view_calendar_item_corner_radius(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemCornerRadiusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop65_calendar_view_calendar_item_disabled_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemDisabledBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop66_calendar_view_calendar_item_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop67_calendar_view_calendar_item_hover_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemHoverBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop68_calendar_view_calendar_item_pressed_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::CalendarItemPressedBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop69_calendar_view_day_item_font_family(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DayItemFontFamilyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop70_calendar_view_day_item_font_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DayItemFontSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop71_calendar_view_day_item_font_style(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DayItemFontStyleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop72_calendar_view_day_item_font_weight(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DayItemFontWeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop73_calendar_view_day_item_margin(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DayItemMarginProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop74_calendar_view_day_of_week_format(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DayOfWeekFormatProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop75_calendar_view_disabled_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DisabledForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop76_calendar_view_display_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::DisplayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop77_calendar_view_first_day_of_week(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstDayOfWeekProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop78_calendar_view_first_of_month_label_font_family(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfMonthLabelFontFamilyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop79_calendar_view_first_of_month_label_font_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfMonthLabelFontSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop80_calendar_view_first_of_month_label_font_style(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfMonthLabelFontStyleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop81_calendar_view_first_of_month_label_font_weight(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfMonthLabelFontWeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop82_calendar_view_first_of_month_label_margin(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfMonthLabelMarginProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop83_calendar_view_first_of_year_decade_label_font_family(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfYearDecadeLabelFontFamilyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop84_calendar_view_first_of_year_decade_label_font_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfYearDecadeLabelFontSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop85_calendar_view_first_of_year_decade_label_font_style(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfYearDecadeLabelFontStyleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop86_calendar_view_first_of_year_decade_label_font_weight(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfYearDecadeLabelFontWeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop87_calendar_view_first_of_year_decade_label_margin(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FirstOfYearDecadeLabelMarginProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop88_calendar_view_focus_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::FocusBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop89_calendar_view_horizontal_day_item_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::HorizontalDayItemAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop90_calendar_view_horizontal_first_of_month_label_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::HorizontalFirstOfMonthLabelAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop91_calendar_view_hover_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::HoverBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop92_calendar_view_is_group_label_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::IsGroupLabelVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop93_calendar_view_is_out_of_scope_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::IsOutOfScopeEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop94_calendar_view_is_today_highlighted(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::IsTodayHighlightedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop95_calendar_view_max_date(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::MaxDateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop96_calendar_view_min_date(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::MinDateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop97_calendar_view_month_year_item_font_family(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::MonthYearItemFontFamilyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop98_calendar_view_month_year_item_font_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::MonthYearItemFontSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop99_calendar_view_month_year_item_font_style(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::MonthYearItemFontStyleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop100_calendar_view_month_year_item_font_weight(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::MonthYearItemFontWeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop101_calendar_view_month_year_item_margin(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::MonthYearItemMarginProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop102_calendar_view_number_of_weeks_in_view(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::NumberOfWeeksInViewProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop103_calendar_view_out_of_scope_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::OutOfScopeBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop104_calendar_view_out_of_scope_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::OutOfScopeForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop105_calendar_view_out_of_scope_hover_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::OutOfScopeHoverForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop106_calendar_view_out_of_scope_pressed_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::OutOfScopePressedForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop107_calendar_view_pressed_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::PressedBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop108_calendar_view_pressed_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::PressedForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop109_calendar_view_selected_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop110_calendar_view_selected_disabled_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedDisabledBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop111_calendar_view_selected_disabled_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedDisabledForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop112_calendar_view_selected_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop113_calendar_view_selected_hover_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedHoverBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop114_calendar_view_selected_hover_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedHoverForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop115_calendar_view_selected_pressed_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedPressedBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop116_calendar_view_selected_pressed_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectedPressedForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop117_calendar_view_selection_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::SelectionModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop118_calendar_view_today_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop119_calendar_view_today_blackout_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayBlackoutBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop120_calendar_view_today_blackout_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayBlackoutForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop121_calendar_view_today_disabled_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayDisabledBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop122_calendar_view_today_font_weight(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayFontWeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop123_calendar_view_today_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop124_calendar_view_today_hover_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayHoverBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop125_calendar_view_today_pressed_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodayPressedBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop126_calendar_view_today_selected_inner_border_brush(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::TodaySelectedInnerBorderBrushProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop127_calendar_view_vertical_day_item_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::VerticalDayItemAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop128_calendar_view_vertical_first_of_month_label_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CalendarView::VerticalFirstOfMonthLabelAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop129_color_picker_color(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::ColorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop130_color_picker_color_spectrum_components(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::ColorSpectrumComponentsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop131_color_picker_color_spectrum_shape(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::ColorSpectrumShapeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop132_color_picker_is_alpha_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsAlphaEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop133_color_picker_is_alpha_slider_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsAlphaSliderVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop134_color_picker_is_alpha_text_input_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsAlphaTextInputVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop135_color_picker_is_color_channel_text_input_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsColorChannelTextInputVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop136_color_picker_is_color_preview_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsColorPreviewVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop137_color_picker_is_color_slider_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsColorSliderVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop138_color_picker_is_color_spectrum_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsColorSpectrumVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop139_color_picker_is_hex_input_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsHexInputVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop140_color_picker_is_more_button_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::IsMoreButtonVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop141_color_picker_max_hue(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::MaxHueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop142_color_picker_max_saturation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::MaxSaturationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop143_color_picker_max_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::MaxValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop144_color_picker_min_hue(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::MinHueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop145_color_picker_min_saturation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::MinSaturationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop146_color_picker_min_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::MinValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop147_color_picker_orientation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::OrientationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop148_color_picker_previous_color(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ColorPicker::PreviousColorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop149_combo_box_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop150_combo_box_description(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::DescriptionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop151_combo_box_is_drop_down_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::IsDropDownOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop152_combo_box_is_editable(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::IsEditableProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop154_combo_box_is_text_search_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::IsTextSearchEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop155_combo_box_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop156_combo_box_max_drop_down_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::MaxDropDownHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop157_combo_box_placeholder_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::PlaceholderForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop158_combo_box_placeholder_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::PlaceholderTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop159_combo_box_selection_changed_trigger(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::SelectionChangedTriggerProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop160_combo_box_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ComboBox::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop161_command_bar_default_label_position(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CommandBar::DefaultLabelPositionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop162_command_bar_is_dynamic_overflow_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CommandBar::IsDynamicOverflowEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop163_command_bar_overflow_button_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::CommandBar::OverflowButtonVisibilityProperty()?, h, prop)?,
+    ])
+}
 fn observe_prop164_content_control_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentControl::ContentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop165_content_dialog_title(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::TitleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop166_content_dialog_close_button_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::CloseButtonTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop167_content_dialog_default_button(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::DefaultButtonProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop168_content_dialog_full_size_desired(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::FullSizeDesiredProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop169_content_dialog_is_primary_button_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::IsPrimaryButtonEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop170_content_dialog_is_secondary_button_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::IsSecondaryButtonEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop171_content_dialog_primary_button_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::PrimaryButtonTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop172_content_dialog_secondary_button_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentDialog::SecondaryButtonTextProperty()?, h, prop)?,
     ])
 }
 fn observe_prop173_control_is_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
@@ -5456,6 +6296,176 @@ fn observe_prop193_control_tab_navigation(o: &IInspectable, h: u64, prop: u32) -
 fn observe_prop194_control_vertical_content_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::VerticalContentAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop195_date_picker_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop196_date_picker_calendar_identifier(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::CalendarIdentifierProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop197_date_picker_date(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::DateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop198_date_picker_day_format(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::DayFormatProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop199_date_picker_day_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::DayVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop200_date_picker_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop201_date_picker_max_year(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::MaxYearProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop202_date_picker_min_year(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::MinYearProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop203_date_picker_month_format(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::MonthFormatProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop204_date_picker_month_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::MonthVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop205_date_picker_orientation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::OrientationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop206_date_picker_selected_date(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::SelectedDateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop207_date_picker_year_format(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::YearFormatProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop208_date_picker_year_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::DatePicker::YearVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop209_expander_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Expander::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop210_expander_expand_direction(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Expander::ExpandDirectionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop211_expander_is_expanded(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Expander::IsExpandedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop212_flyout_base_allow_focus_on_interaction(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::AllowFocusOnInteractionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop213_flyout_base_allow_focus_when_disabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::AllowFocusWhenDisabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop214_flyout_base_are_open_close_animations_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::AreOpenCloseAnimationsEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop215_flyout_base_element_sound_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::ElementSoundModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop216_flyout_base_input_device_prefers_primary_commands(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::InputDevicePrefersPrimaryCommandsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop218_flyout_base_is_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::IsOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop219_flyout_base_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop220_flyout_base_placement(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::PlacementProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop221_flyout_base_should_constrain_to_root_bounds(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::ShouldConstrainToRootBoundsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop222_flyout_base_show_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::ShowModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop223_font_icon_font_family(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::FontIcon::FontFamilyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop224_font_icon_font_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::FontIcon::FontSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop225_font_icon_font_style(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::FontIcon::FontStyleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop226_font_icon_font_weight(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::FontIcon::FontWeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop227_font_icon_glyph(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::FontIcon::GlyphProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop228_font_icon_is_text_scale_factor_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::FontIcon::IsTextScaleFactorEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop229_font_icon_mirrored_when_right_to_left(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::FontIcon::MirroredWhenRightToLeftProperty()?, h, prop)?,
     ])
 }
 fn observe_prop230_framework_element_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
@@ -5624,6 +6634,396 @@ fn observe_prop263_grid_corner_radius(o: &IInspectable, h: u64, prop: u32) -> Wi
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::CornerRadiusProperty()?, h, prop)?,
     ])
 }
+fn observe_prop264_hyperlink_button_navigate_uri(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::HyperlinkButton::NavigateUriProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop265_icon_element_foreground(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::IconElement::ForegroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop266_image_nine_grid(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Image::NineGridProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop267_image_source(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Image::SourceProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop268_image_stretch(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Image::StretchProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop269_info_badge_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::InfoBadge::ValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop270_info_bar_is_closable(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::InfoBar::IsClosableProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop271_info_bar_is_icon_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::InfoBar::IsIconVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop272_info_bar_is_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::InfoBar::IsOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop273_info_bar_message(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::InfoBar::MessageProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop274_info_bar_severity(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::InfoBar::SeverityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop275_info_bar_title(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::InfoBar::TitleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop276_item_container_is_selected(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ItemContainer::IsSelectedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop277_items_control_display_member_path(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ItemsControl::DisplayMemberPathProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop278_items_control_is_grouping(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ItemsControl::IsGroupingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop279_list_view_base_can_drag_items(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::CanDragItemsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop280_list_view_base_can_reorder_items(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::CanReorderItemsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop281_list_view_base_data_fetch_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::DataFetchSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop282_list_view_base_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop283_list_view_base_incremental_loading_threshold(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::IncrementalLoadingThresholdProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop284_list_view_base_incremental_loading_trigger(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::IncrementalLoadingTriggerProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop285_list_view_base_is_active_view(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::IsActiveViewProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop286_list_view_base_is_item_click_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::IsItemClickEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop287_list_view_base_is_multi_select_check_box_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::IsMultiSelectCheckBoxEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop288_list_view_base_is_swipe_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::IsSwipeEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop289_list_view_base_is_zoomed_in_view(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::IsZoomedInViewProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop290_list_view_base_reorder_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::ReorderModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop291_list_view_base_selection_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::SelectionModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop292_list_view_base_shows_scrolling_placeholders(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::ShowsScrollingPlaceholdersProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop293_list_view_base_single_selection_follows_focus(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ListViewBase::SingleSelectionFollowsFocusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop294_menu_bar_item_title(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::MenuBarItem::TitleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop295_menu_flyout_item_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::MenuFlyoutItem::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop296_menu_flyout_item_icon(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::MenuFlyoutItem::IconProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop297_menu_flyout_item_keyboard_accelerator_text_override(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::MenuFlyoutItem::KeyboardAcceleratorTextOverrideProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop298_menu_flyout_sub_item_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop299_menu_flyout_sub_item_icon(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::MenuFlyoutSubItem::IconProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop300_navigation_view_always_show_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::AlwaysShowHeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop301_navigation_view_compact_mode_threshold_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::CompactModeThresholdWidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop302_navigation_view_compact_pane_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::CompactPaneLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop303_navigation_view_display_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::DisplayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop304_navigation_view_expanded_mode_threshold_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::ExpandedModeThresholdWidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop305_navigation_view_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop306_navigation_view_is_back_button_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::IsBackButtonVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop307_navigation_view_is_back_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::IsBackEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop308_navigation_view_is_pane_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::IsPaneOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop309_navigation_view_is_pane_toggle_button_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::IsPaneToggleButtonVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop310_navigation_view_is_pane_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::IsPaneVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop311_navigation_view_is_settings_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::IsSettingsVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop312_navigation_view_is_title_bar_auto_padding_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::IsTitleBarAutoPaddingEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop313_navigation_view_open_pane_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::OpenPaneLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop314_navigation_view_overflow_label_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::OverflowLabelModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop315_navigation_view_pane_display_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::PaneDisplayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop316_navigation_view_pane_title(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::PaneTitleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop317_navigation_view_selection_follows_focus(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::SelectionFollowsFocusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop318_navigation_view_shoulder_navigation_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationView::ShoulderNavigationEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop319_navigation_view_item_compact_pane_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationViewItem::CompactPaneLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop320_navigation_view_item_has_unrealized_children(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationViewItem::HasUnrealizedChildrenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop321_navigation_view_item_icon(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationViewItem::IconProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop322_navigation_view_item_is_child_selected(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationViewItem::IsChildSelectedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop323_navigation_view_item_is_expanded(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationViewItem::IsExpandedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop324_navigation_view_item_selects_on_invoked(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationViewItem::SelectsOnInvokedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop325_navigation_view_item_base_is_selected(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NavigationViewItemBase::IsSelectedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop326_number_box_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop327_number_box_accepts_expression(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::AcceptsExpressionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop328_number_box_description(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::DescriptionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop329_number_box_is_wrap_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::IsWrapEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop330_number_box_large_change(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::LargeChangeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop331_number_box_maximum(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::MaximumProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop332_number_box_minimum(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::MinimumProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop333_number_box_placeholder_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::PlaceholderTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop334_number_box_prevent_keyboard_display_on_programmatic_focus(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::PreventKeyboardDisplayOnProgrammaticFocusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop335_number_box_selection_highlight_color(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::SelectionHighlightColorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop336_number_box_small_change(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::SmallChangeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop337_number_box_spin_button_placement_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::SpinButtonPlacementModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop338_number_box_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop339_number_box_text_reading_order(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::TextReadingOrderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop340_number_box_validation_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::ValidationModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop341_number_box_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::NumberBox::ValueProperty()?, h, prop)?,
+    ])
+}
 fn observe_prop342_panel_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Panel::BackgroundProperty()?, h, prop)?,
@@ -5632,6 +7032,171 @@ fn observe_prop342_panel_background(o: &IInspectable, h: u64, prop: u32) -> WinR
 fn observe_prop343_panel_is_items_host(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Panel::IsItemsHostProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop344_password_box_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop345_password_box_can_paste_clipboard_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::CanPasteClipboardContentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop346_password_box_description(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::DescriptionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop347_password_box_is_password_reveal_button_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::IsPasswordRevealButtonEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop348_password_box_max_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::MaxLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop349_password_box_password(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::PasswordProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop350_password_box_password_char(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::PasswordCharProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop351_password_box_password_reveal_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::PasswordRevealModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop352_password_box_placeholder_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::PlaceholderTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop353_password_box_prevent_keyboard_display_on_programmatic_focus(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::PreventKeyboardDisplayOnProgrammaticFocusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop354_password_box_selection_highlight_color(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::SelectionHighlightColorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop355_password_box_text_reading_order(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PasswordBox::TextReadingOrderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop356_person_picture_badge_glyph(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::BadgeGlyphProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop357_person_picture_badge_image_source(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::BadgeImageSourceProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop358_person_picture_badge_number(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::BadgeNumberProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop359_person_picture_badge_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::BadgeTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop360_person_picture_display_name(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::DisplayNameProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop361_person_picture_initials(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::InitialsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop362_person_picture_is_group(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::IsGroupProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop363_person_picture_prefer_small_image(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::PreferSmallImageProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop364_person_picture_profile_picture(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::PersonPicture::ProfilePictureProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop365_progress_bar_is_indeterminate(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressBar::IsIndeterminateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop366_progress_bar_show_error(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressBar::ShowErrorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop367_progress_bar_show_paused(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressBar::ShowPausedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop368_progress_ring_is_active(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressRing::IsActiveProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop369_progress_ring_is_indeterminate(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressRing::IsIndeterminateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop370_progress_ring_maximum(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressRing::MaximumProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop371_progress_ring_minimum(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressRing::MinimumProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop372_progress_ring_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ProgressRing::ValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop373_radio_button_group_name(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RadioButton::GroupNameProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop374_radio_buttons_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RadioButtons::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop375_radio_buttons_selected_index(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RadioButtons::SelectedIndexProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop376_radio_buttons_max_columns(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RadioButtons::MaxColumnsProperty()?, h, prop)?,
     ])
 }
 fn observe_prop377_range_base_minimum(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
@@ -5657,6 +7222,356 @@ fn observe_prop380_range_base_small_change(o: &IInspectable, h: u64, prop: u32) 
 fn observe_prop381_range_base_large_change(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::LargeChangeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop382_rating_control_caption(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RatingControl::CaptionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop383_rating_control_initial_set_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RatingControl::InitialSetValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop384_rating_control_is_clear_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RatingControl::IsClearEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop385_rating_control_is_read_only(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RatingControl::IsReadOnlyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop386_rating_control_max_rating(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RatingControl::MaxRatingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop387_rating_control_placeholder_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RatingControl::PlaceholderValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop388_rating_control_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RatingControl::ValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop389_repeat_button_delay(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RepeatButton::DelayProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop390_repeat_button_interval(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RepeatButton::IntervalProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop391_rich_edit_box_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop392_rich_edit_box_accepts_return(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::AcceptsReturnProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop393_rich_edit_box_character_casing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::CharacterCasingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop394_rich_edit_box_clipboard_copy_format(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::ClipboardCopyFormatProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop395_rich_edit_box_description(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::DescriptionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop396_rich_edit_box_desired_candidate_window_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::DesiredCandidateWindowAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop397_rich_edit_box_horizontal_text_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::HorizontalTextAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop398_rich_edit_box_is_color_font_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::IsColorFontEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop399_rich_edit_box_is_read_only(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::IsReadOnlyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop400_rich_edit_box_is_spell_check_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::IsSpellCheckEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop401_rich_edit_box_is_text_prediction_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::IsTextPredictionEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop402_rich_edit_box_max_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::MaxLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop403_rich_edit_box_placeholder_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::PlaceholderTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop404_rich_edit_box_prevent_keyboard_display_on_programmatic_focus(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::PreventKeyboardDisplayOnProgrammaticFocusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop405_rich_edit_box_selection_highlight_color(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::SelectionHighlightColorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop406_rich_edit_box_selection_highlight_color_when_not_focused(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::SelectionHighlightColorWhenNotFocusedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop407_rich_edit_box_text_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::TextAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop408_rich_edit_box_text_reading_order(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::TextReadingOrderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop409_rich_edit_box_text_wrapping(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RichEditBox::TextWrappingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop410_scroll_viewer_bring_into_view_on_focus_change(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::BringIntoViewOnFocusChangeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop411_scroll_viewer_can_content_render_outside_bounds(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::CanContentRenderOutsideBoundsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop412_scroll_viewer_computed_horizontal_scroll_bar_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ComputedHorizontalScrollBarVisibilityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop413_scroll_viewer_computed_vertical_scroll_bar_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ComputedVerticalScrollBarVisibilityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop414_scroll_viewer_extent_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ExtentHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop415_scroll_viewer_extent_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ExtentWidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop416_scroll_viewer_horizontal_anchor_ratio(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::HorizontalAnchorRatioProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop417_scroll_viewer_horizontal_offset(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::HorizontalOffsetProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop418_scroll_viewer_horizontal_scroll_bar_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::HorizontalScrollBarVisibilityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop419_scroll_viewer_horizontal_scroll_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::HorizontalScrollModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop420_scroll_viewer_horizontal_snap_points_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::HorizontalSnapPointsAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop421_scroll_viewer_horizontal_snap_points_type(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::HorizontalSnapPointsTypeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop422_scroll_viewer_is_deferred_scrolling_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsDeferredScrollingEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop423_scroll_viewer_is_horizontal_rail_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsHorizontalRailEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop424_scroll_viewer_is_horizontal_scroll_chaining_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsHorizontalScrollChainingEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop425_scroll_viewer_is_scroll_inertia_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsScrollInertiaEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop426_scroll_viewer_is_vertical_rail_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsVerticalRailEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop427_scroll_viewer_is_vertical_scroll_chaining_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsVerticalScrollChainingEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop428_scroll_viewer_is_zoom_chaining_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsZoomChainingEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop429_scroll_viewer_is_zoom_inertia_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::IsZoomInertiaEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop430_scroll_viewer_max_zoom_factor(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::MaxZoomFactorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop431_scroll_viewer_min_zoom_factor(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::MinZoomFactorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop432_scroll_viewer_reduce_viewport_for_core_input_view_occlusions(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ReduceViewportForCoreInputViewOcclusionsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop433_scroll_viewer_scrollable_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ScrollableHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop434_scroll_viewer_scrollable_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ScrollableWidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop435_scroll_viewer_vertical_anchor_ratio(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::VerticalAnchorRatioProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop436_scroll_viewer_vertical_offset(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::VerticalOffsetProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop437_scroll_viewer_vertical_scroll_bar_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::VerticalScrollBarVisibilityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop438_scroll_viewer_vertical_scroll_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::VerticalScrollModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop439_scroll_viewer_vertical_snap_points_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::VerticalSnapPointsAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop440_scroll_viewer_vertical_snap_points_type(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::VerticalSnapPointsTypeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop441_scroll_viewer_viewport_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ViewportHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop442_scroll_viewer_viewport_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ViewportWidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop443_scroll_viewer_zoom_factor(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ZoomFactorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop444_scroll_viewer_zoom_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ZoomModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop445_scroll_viewer_zoom_snap_points_type(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ScrollViewer::ZoomSnapPointsTypeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop446_selector_is_synchronized_with_current_item(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::Selector::IsSynchronizedWithCurrentItemProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop447_selector_selected_index(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::Selector::SelectedIndexProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop448_selector_selected_value_path(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::Selector::SelectedValuePathProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop449_selector_bar_item_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SelectorBarItem::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop450_selector_bar_item_icon(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SelectorBarItem::IconProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop451_selector_item_is_selected(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::SelectorItem::IsSelectedProperty()?, h, prop)?,
     ])
 }
 fn observe_prop452_slider_step_frequency(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
@@ -5704,6 +7619,41 @@ fn observe_prop460_slider_tick_placement(o: &IInspectable, h: u64, prop: u32) ->
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::TickPlacementProperty()?, h, prop)?,
     ])
 }
+fn observe_prop461_split_view_compact_pane_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SplitView::CompactPaneLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop462_split_view_display_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SplitView::DisplayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop463_split_view_is_pane_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SplitView::IsPaneOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop464_split_view_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SplitView::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop465_split_view_open_pane_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SplitView::OpenPaneLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop466_split_view_pane_background(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SplitView::PaneBackgroundProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop467_split_view_pane_placement(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SplitView::PanePlacementProperty()?, h, prop)?,
+    ])
+}
 fn observe_prop468_stack_panel_orientation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::OrientationProperty()?, h, prop)?,
@@ -5742,6 +7692,116 @@ fn observe_prop476_stack_panel_border_thickness(o: &IInspectable, h: u64, prop: 
 fn observe_prop477_stack_panel_corner_radius(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::CornerRadiusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop478_symbol_icon_symbol(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::SymbolIcon::SymbolProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop479_tab_view_selected_index(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::SelectedIndexProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop480_tab_view_allow_drop_tabs(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::AllowDropTabsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop481_tab_view_can_drag_tabs(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::CanDragTabsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop482_tab_view_can_reorder_tabs(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::CanReorderTabsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop483_tab_view_can_tear_out_tabs(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::CanTearOutTabsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop484_tab_view_close_button_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::CloseButtonOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop485_tab_view_is_add_tab_button_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::IsAddTabButtonVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop486_tab_view_tab_width_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabView::TabWidthModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop487_tab_view_item_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabViewItem::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop488_tab_view_item_is_closable(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TabViewItem::IsClosableProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop489_teaching_tip_action_button_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::ActionButtonContentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop490_teaching_tip_close_button_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::CloseButtonContentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop491_teaching_tip_hero_content_placement(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::HeroContentPlacementProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop492_teaching_tip_is_light_dismiss_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::IsLightDismissEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop493_teaching_tip_is_open(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::IsOpenProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop494_teaching_tip_placement_margin(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::PlacementMarginProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop495_teaching_tip_preferred_placement(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::PreferredPlacementProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop496_teaching_tip_should_constrain_to_root_bounds(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::ShouldConstrainToRootBoundsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop497_teaching_tip_subtitle(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::SubtitleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop498_teaching_tip_tail_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::TailVisibilityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop499_teaching_tip_title(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TeachingTip::TitleProperty()?, h, prop)?,
     ])
 }
 fn observe_prop500_text_block_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
@@ -5997,6 +8057,36 @@ fn observe_prop549_text_box_text_alignment(o: &IInspectable, h: u64, prop: u32) 
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextAlignmentProperty()?, h, prop)?,
     ])
 }
+fn observe_prop550_time_picker_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TimePicker::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop551_time_picker_clock_identifier(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TimePicker::ClockIdentifierProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop552_time_picker_light_dismiss_overlay_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TimePicker::LightDismissOverlayModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop553_time_picker_minute_increment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TimePicker::MinuteIncrementProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop554_time_picker_selected_time(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TimePicker::SelectedTimeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop555_time_picker_time(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TimePicker::TimeProperty()?, h, prop)?,
+    ])
+}
 fn observe_prop556_toggle_button_is_checked(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton::IsCheckedProperty()?, h, prop)?,
@@ -6005,6 +8095,31 @@ fn observe_prop556_toggle_button_is_checked(o: &IInspectable, h: u64, prop: u32)
 fn observe_prop557_toggle_button_is_three_state(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton::IsThreeStateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop558_toggle_menu_flyout_item_is_checked(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem::IsCheckedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop559_toggle_switch_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ToggleSwitch::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop560_toggle_switch_is_on(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ToggleSwitch::IsOnProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop561_toggle_switch_off_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ToggleSwitch::OffContentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop562_toggle_switch_on_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ToggleSwitch::OnContentProperty()?, h, prop)?,
     ])
 }
 fn observe_prop563_ui_element_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
@@ -6142,6 +8257,16 @@ fn observe_prop591_ui_element_xy_focus_up_navigation_strategy(o: &IInspectable, 
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusUpNavigationStrategyProperty()?, h, prop)?,
     ])
 }
+fn observe_prop592_viewbox_stretch(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Viewbox::StretchProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop593_viewbox_stretch_direction(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Viewbox::StretchDirectionProperty()?, h, prop)?,
+    ])
+}
 fn observe_prop595_window_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>()?.VisibilityChanged(move |_s, _a| {
@@ -6152,179 +8277,179 @@ fn observe_prop595_window_visible(o: &IInspectable, h: u64, prop: u32) -> WinRes
 
 /// ABI v2.6 `observe`: installs every mechanism of a prop's observe fact (None: no mechanism), parallel to PROPS.
 pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Vec<Registration>>>] = &[
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop0_app_bar_closed_display_mode),
+    Some(observe_prop1_app_bar_is_open),
+    Some(observe_prop2_app_bar_is_sticky),
+    Some(observe_prop3_app_bar_light_dismiss_overlay_mode),
+    Some(observe_prop4_app_bar_button_label),
+    Some(observe_prop5_app_bar_button_dynamic_overflow_order),
+    Some(observe_prop6_app_bar_button_icon),
+    Some(observe_prop7_app_bar_button_is_compact),
+    Some(observe_prop8_app_bar_button_is_in_overflow),
+    Some(observe_prop9_app_bar_button_keyboard_accelerator_text_override),
+    Some(observe_prop10_app_bar_button_label_position),
+    Some(observe_prop11_app_bar_separator_dynamic_overflow_order),
+    Some(observe_prop12_app_bar_separator_is_compact),
+    Some(observe_prop13_app_bar_separator_is_in_overflow),
+    Some(observe_prop14_app_bar_toggle_button_label),
+    Some(observe_prop15_app_bar_toggle_button_dynamic_overflow_order),
+    Some(observe_prop16_app_bar_toggle_button_icon),
+    Some(observe_prop17_app_bar_toggle_button_is_compact),
+    Some(observe_prop18_app_bar_toggle_button_is_in_overflow),
+    Some(observe_prop19_app_bar_toggle_button_keyboard_accelerator_text_override),
+    Some(observe_prop20_app_bar_toggle_button_label_position),
+    Some(observe_prop21_auto_suggest_box_header),
+    Some(observe_prop22_auto_suggest_box_auto_maximize_suggestion_area),
+    Some(observe_prop23_auto_suggest_box_description),
+    Some(observe_prop24_auto_suggest_box_is_suggestion_list_open),
+    Some(observe_prop25_auto_suggest_box_light_dismiss_overlay_mode),
+    Some(observe_prop26_auto_suggest_box_max_suggestion_list_height),
+    Some(observe_prop27_auto_suggest_box_placeholder_text),
+    Some(observe_prop28_auto_suggest_box_query_icon),
+    Some(observe_prop29_auto_suggest_box_text),
+    Some(observe_prop30_auto_suggest_box_text_member_path),
+    Some(observe_prop31_auto_suggest_box_update_text_on_select),
+    Some(observe_prop32_border_background),
+    Some(observe_prop33_border_background_sizing),
+    Some(observe_prop34_border_border_brush),
+    Some(observe_prop35_border_border_thickness),
+    Some(observe_prop36_border_corner_radius),
+    Some(observe_prop37_border_padding),
     Some(observe_prop38_button_base_click_mode),
     Some(observe_prop39_button_base_is_pointer_over),
     Some(observe_prop40_button_base_is_pressed),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop41_calendar_date_picker_calendar_identifier),
+    Some(observe_prop42_calendar_date_picker_date),
+    Some(observe_prop43_calendar_date_picker_date_format),
+    Some(observe_prop44_calendar_date_picker_day_of_week_format),
+    Some(observe_prop45_calendar_date_picker_description),
+    Some(observe_prop46_calendar_date_picker_display_mode),
+    Some(observe_prop47_calendar_date_picker_first_day_of_week),
+    Some(observe_prop48_calendar_date_picker_header),
+    Some(observe_prop49_calendar_date_picker_is_calendar_open),
+    Some(observe_prop50_calendar_date_picker_is_group_label_visible),
+    Some(observe_prop51_calendar_date_picker_is_out_of_scope_enabled),
+    Some(observe_prop52_calendar_date_picker_is_today_highlighted),
+    Some(observe_prop53_calendar_date_picker_light_dismiss_overlay_mode),
+    Some(observe_prop54_calendar_date_picker_max_date),
+    Some(observe_prop55_calendar_date_picker_min_date),
+    Some(observe_prop56_calendar_date_picker_placeholder_text),
+    Some(observe_prop57_calendar_view_blackout_background),
+    Some(observe_prop58_calendar_view_blackout_foreground),
+    Some(observe_prop59_calendar_view_blackout_strikethrough_brush),
+    Some(observe_prop60_calendar_view_calendar_identifier),
+    Some(observe_prop61_calendar_view_calendar_item_background),
+    Some(observe_prop62_calendar_view_calendar_item_border_brush),
+    Some(observe_prop63_calendar_view_calendar_item_border_thickness),
+    Some(observe_prop64_calendar_view_calendar_item_corner_radius),
+    Some(observe_prop65_calendar_view_calendar_item_disabled_background),
+    Some(observe_prop66_calendar_view_calendar_item_foreground),
+    Some(observe_prop67_calendar_view_calendar_item_hover_background),
+    Some(observe_prop68_calendar_view_calendar_item_pressed_background),
+    Some(observe_prop69_calendar_view_day_item_font_family),
+    Some(observe_prop70_calendar_view_day_item_font_size),
+    Some(observe_prop71_calendar_view_day_item_font_style),
+    Some(observe_prop72_calendar_view_day_item_font_weight),
+    Some(observe_prop73_calendar_view_day_item_margin),
+    Some(observe_prop74_calendar_view_day_of_week_format),
+    Some(observe_prop75_calendar_view_disabled_foreground),
+    Some(observe_prop76_calendar_view_display_mode),
+    Some(observe_prop77_calendar_view_first_day_of_week),
+    Some(observe_prop78_calendar_view_first_of_month_label_font_family),
+    Some(observe_prop79_calendar_view_first_of_month_label_font_size),
+    Some(observe_prop80_calendar_view_first_of_month_label_font_style),
+    Some(observe_prop81_calendar_view_first_of_month_label_font_weight),
+    Some(observe_prop82_calendar_view_first_of_month_label_margin),
+    Some(observe_prop83_calendar_view_first_of_year_decade_label_font_family),
+    Some(observe_prop84_calendar_view_first_of_year_decade_label_font_size),
+    Some(observe_prop85_calendar_view_first_of_year_decade_label_font_style),
+    Some(observe_prop86_calendar_view_first_of_year_decade_label_font_weight),
+    Some(observe_prop87_calendar_view_first_of_year_decade_label_margin),
+    Some(observe_prop88_calendar_view_focus_border_brush),
+    Some(observe_prop89_calendar_view_horizontal_day_item_alignment),
+    Some(observe_prop90_calendar_view_horizontal_first_of_month_label_alignment),
+    Some(observe_prop91_calendar_view_hover_border_brush),
+    Some(observe_prop92_calendar_view_is_group_label_visible),
+    Some(observe_prop93_calendar_view_is_out_of_scope_enabled),
+    Some(observe_prop94_calendar_view_is_today_highlighted),
+    Some(observe_prop95_calendar_view_max_date),
+    Some(observe_prop96_calendar_view_min_date),
+    Some(observe_prop97_calendar_view_month_year_item_font_family),
+    Some(observe_prop98_calendar_view_month_year_item_font_size),
+    Some(observe_prop99_calendar_view_month_year_item_font_style),
+    Some(observe_prop100_calendar_view_month_year_item_font_weight),
+    Some(observe_prop101_calendar_view_month_year_item_margin),
+    Some(observe_prop102_calendar_view_number_of_weeks_in_view),
+    Some(observe_prop103_calendar_view_out_of_scope_background),
+    Some(observe_prop104_calendar_view_out_of_scope_foreground),
+    Some(observe_prop105_calendar_view_out_of_scope_hover_foreground),
+    Some(observe_prop106_calendar_view_out_of_scope_pressed_foreground),
+    Some(observe_prop107_calendar_view_pressed_border_brush),
+    Some(observe_prop108_calendar_view_pressed_foreground),
+    Some(observe_prop109_calendar_view_selected_border_brush),
+    Some(observe_prop110_calendar_view_selected_disabled_border_brush),
+    Some(observe_prop111_calendar_view_selected_disabled_foreground),
+    Some(observe_prop112_calendar_view_selected_foreground),
+    Some(observe_prop113_calendar_view_selected_hover_border_brush),
+    Some(observe_prop114_calendar_view_selected_hover_foreground),
+    Some(observe_prop115_calendar_view_selected_pressed_border_brush),
+    Some(observe_prop116_calendar_view_selected_pressed_foreground),
+    Some(observe_prop117_calendar_view_selection_mode),
+    Some(observe_prop118_calendar_view_today_background),
+    Some(observe_prop119_calendar_view_today_blackout_background),
+    Some(observe_prop120_calendar_view_today_blackout_foreground),
+    Some(observe_prop121_calendar_view_today_disabled_background),
+    Some(observe_prop122_calendar_view_today_font_weight),
+    Some(observe_prop123_calendar_view_today_foreground),
+    Some(observe_prop124_calendar_view_today_hover_background),
+    Some(observe_prop125_calendar_view_today_pressed_background),
+    Some(observe_prop126_calendar_view_today_selected_inner_border_brush),
+    Some(observe_prop127_calendar_view_vertical_day_item_alignment),
+    Some(observe_prop128_calendar_view_vertical_first_of_month_label_alignment),
+    Some(observe_prop129_color_picker_color),
+    Some(observe_prop130_color_picker_color_spectrum_components),
+    Some(observe_prop131_color_picker_color_spectrum_shape),
+    Some(observe_prop132_color_picker_is_alpha_enabled),
+    Some(observe_prop133_color_picker_is_alpha_slider_visible),
+    Some(observe_prop134_color_picker_is_alpha_text_input_visible),
+    Some(observe_prop135_color_picker_is_color_channel_text_input_visible),
+    Some(observe_prop136_color_picker_is_color_preview_visible),
+    Some(observe_prop137_color_picker_is_color_slider_visible),
+    Some(observe_prop138_color_picker_is_color_spectrum_visible),
+    Some(observe_prop139_color_picker_is_hex_input_visible),
+    Some(observe_prop140_color_picker_is_more_button_visible),
+    Some(observe_prop141_color_picker_max_hue),
+    Some(observe_prop142_color_picker_max_saturation),
+    Some(observe_prop143_color_picker_max_value),
+    Some(observe_prop144_color_picker_min_hue),
+    Some(observe_prop145_color_picker_min_saturation),
+    Some(observe_prop146_color_picker_min_value),
+    Some(observe_prop147_color_picker_orientation),
+    Some(observe_prop148_color_picker_previous_color),
+    Some(observe_prop149_combo_box_header),
+    Some(observe_prop150_combo_box_description),
+    Some(observe_prop151_combo_box_is_drop_down_open),
+    Some(observe_prop152_combo_box_is_editable),
+    None,
+    Some(observe_prop154_combo_box_is_text_search_enabled),
+    Some(observe_prop155_combo_box_light_dismiss_overlay_mode),
+    Some(observe_prop156_combo_box_max_drop_down_height),
+    Some(observe_prop157_combo_box_placeholder_foreground),
+    Some(observe_prop158_combo_box_placeholder_text),
+    Some(observe_prop159_combo_box_selection_changed_trigger),
+    Some(observe_prop160_combo_box_text),
+    Some(observe_prop161_command_bar_default_label_position),
+    Some(observe_prop162_command_bar_is_dynamic_overflow_enabled),
+    Some(observe_prop163_command_bar_overflow_button_visibility),
     Some(observe_prop164_content_control_content),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop165_content_dialog_title),
+    Some(observe_prop166_content_dialog_close_button_text),
+    Some(observe_prop167_content_dialog_default_button),
+    Some(observe_prop168_content_dialog_full_size_desired),
+    Some(observe_prop169_content_dialog_is_primary_button_enabled),
+    Some(observe_prop170_content_dialog_is_secondary_button_enabled),
+    Some(observe_prop171_content_dialog_primary_button_text),
+    Some(observe_prop172_content_dialog_secondary_button_text),
     Some(observe_prop173_control_is_enabled),
     Some(observe_prop174_control_font_size),
     Some(observe_prop175_control_padding),
@@ -6347,41 +8472,41 @@ pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Ve
     Some(observe_prop192_control_requires_pointer),
     Some(observe_prop193_control_tab_navigation),
     Some(observe_prop194_control_vertical_content_alignment),
+    Some(observe_prop195_date_picker_header),
+    Some(observe_prop196_date_picker_calendar_identifier),
+    Some(observe_prop197_date_picker_date),
+    Some(observe_prop198_date_picker_day_format),
+    Some(observe_prop199_date_picker_day_visible),
+    Some(observe_prop200_date_picker_light_dismiss_overlay_mode),
+    Some(observe_prop201_date_picker_max_year),
+    Some(observe_prop202_date_picker_min_year),
+    Some(observe_prop203_date_picker_month_format),
+    Some(observe_prop204_date_picker_month_visible),
+    Some(observe_prop205_date_picker_orientation),
+    Some(observe_prop206_date_picker_selected_date),
+    Some(observe_prop207_date_picker_year_format),
+    Some(observe_prop208_date_picker_year_visible),
+    Some(observe_prop209_expander_header),
+    Some(observe_prop210_expander_expand_direction),
+    Some(observe_prop211_expander_is_expanded),
+    Some(observe_prop212_flyout_base_allow_focus_on_interaction),
+    Some(observe_prop213_flyout_base_allow_focus_when_disabled),
+    Some(observe_prop214_flyout_base_are_open_close_animations_enabled),
+    Some(observe_prop215_flyout_base_element_sound_mode),
+    Some(observe_prop216_flyout_base_input_device_prefers_primary_commands),
     None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop218_flyout_base_is_open),
+    Some(observe_prop219_flyout_base_light_dismiss_overlay_mode),
+    Some(observe_prop220_flyout_base_placement),
+    Some(observe_prop221_flyout_base_should_constrain_to_root_bounds),
+    Some(observe_prop222_flyout_base_show_mode),
+    Some(observe_prop223_font_icon_font_family),
+    Some(observe_prop224_font_icon_font_size),
+    Some(observe_prop225_font_icon_font_style),
+    Some(observe_prop226_font_icon_font_weight),
+    Some(observe_prop227_font_icon_glyph),
+    Some(observe_prop228_font_icon_is_text_scale_factor_enabled),
+    Some(observe_prop229_font_icon_mirrored_when_right_to_left),
     Some(observe_prop230_framework_element_width),
     Some(observe_prop231_framework_element_height),
     Some(observe_prop232_framework_element_min_width),
@@ -6416,194 +8541,194 @@ pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Ve
     Some(observe_prop261_grid_border_brush),
     Some(observe_prop262_grid_border_thickness),
     Some(observe_prop263_grid_corner_radius),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop264_hyperlink_button_navigate_uri),
+    Some(observe_prop265_icon_element_foreground),
+    Some(observe_prop266_image_nine_grid),
+    Some(observe_prop267_image_source),
+    Some(observe_prop268_image_stretch),
+    Some(observe_prop269_info_badge_value),
+    Some(observe_prop270_info_bar_is_closable),
+    Some(observe_prop271_info_bar_is_icon_visible),
+    Some(observe_prop272_info_bar_is_open),
+    Some(observe_prop273_info_bar_message),
+    Some(observe_prop274_info_bar_severity),
+    Some(observe_prop275_info_bar_title),
+    Some(observe_prop276_item_container_is_selected),
+    Some(observe_prop277_items_control_display_member_path),
+    Some(observe_prop278_items_control_is_grouping),
+    Some(observe_prop279_list_view_base_can_drag_items),
+    Some(observe_prop280_list_view_base_can_reorder_items),
+    Some(observe_prop281_list_view_base_data_fetch_size),
+    Some(observe_prop282_list_view_base_header),
+    Some(observe_prop283_list_view_base_incremental_loading_threshold),
+    Some(observe_prop284_list_view_base_incremental_loading_trigger),
+    Some(observe_prop285_list_view_base_is_active_view),
+    Some(observe_prop286_list_view_base_is_item_click_enabled),
+    Some(observe_prop287_list_view_base_is_multi_select_check_box_enabled),
+    Some(observe_prop288_list_view_base_is_swipe_enabled),
+    Some(observe_prop289_list_view_base_is_zoomed_in_view),
+    Some(observe_prop290_list_view_base_reorder_mode),
+    Some(observe_prop291_list_view_base_selection_mode),
+    Some(observe_prop292_list_view_base_shows_scrolling_placeholders),
+    Some(observe_prop293_list_view_base_single_selection_follows_focus),
+    Some(observe_prop294_menu_bar_item_title),
+    Some(observe_prop295_menu_flyout_item_text),
+    Some(observe_prop296_menu_flyout_item_icon),
+    Some(observe_prop297_menu_flyout_item_keyboard_accelerator_text_override),
+    Some(observe_prop298_menu_flyout_sub_item_text),
+    Some(observe_prop299_menu_flyout_sub_item_icon),
+    Some(observe_prop300_navigation_view_always_show_header),
+    Some(observe_prop301_navigation_view_compact_mode_threshold_width),
+    Some(observe_prop302_navigation_view_compact_pane_length),
+    Some(observe_prop303_navigation_view_display_mode),
+    Some(observe_prop304_navigation_view_expanded_mode_threshold_width),
+    Some(observe_prop305_navigation_view_header),
+    Some(observe_prop306_navigation_view_is_back_button_visible),
+    Some(observe_prop307_navigation_view_is_back_enabled),
+    Some(observe_prop308_navigation_view_is_pane_open),
+    Some(observe_prop309_navigation_view_is_pane_toggle_button_visible),
+    Some(observe_prop310_navigation_view_is_pane_visible),
+    Some(observe_prop311_navigation_view_is_settings_visible),
+    Some(observe_prop312_navigation_view_is_title_bar_auto_padding_enabled),
+    Some(observe_prop313_navigation_view_open_pane_length),
+    Some(observe_prop314_navigation_view_overflow_label_mode),
+    Some(observe_prop315_navigation_view_pane_display_mode),
+    Some(observe_prop316_navigation_view_pane_title),
+    Some(observe_prop317_navigation_view_selection_follows_focus),
+    Some(observe_prop318_navigation_view_shoulder_navigation_enabled),
+    Some(observe_prop319_navigation_view_item_compact_pane_length),
+    Some(observe_prop320_navigation_view_item_has_unrealized_children),
+    Some(observe_prop321_navigation_view_item_icon),
+    Some(observe_prop322_navigation_view_item_is_child_selected),
+    Some(observe_prop323_navigation_view_item_is_expanded),
+    Some(observe_prop324_navigation_view_item_selects_on_invoked),
+    Some(observe_prop325_navigation_view_item_base_is_selected),
+    Some(observe_prop326_number_box_header),
+    Some(observe_prop327_number_box_accepts_expression),
+    Some(observe_prop328_number_box_description),
+    Some(observe_prop329_number_box_is_wrap_enabled),
+    Some(observe_prop330_number_box_large_change),
+    Some(observe_prop331_number_box_maximum),
+    Some(observe_prop332_number_box_minimum),
+    Some(observe_prop333_number_box_placeholder_text),
+    Some(observe_prop334_number_box_prevent_keyboard_display_on_programmatic_focus),
+    Some(observe_prop335_number_box_selection_highlight_color),
+    Some(observe_prop336_number_box_small_change),
+    Some(observe_prop337_number_box_spin_button_placement_mode),
+    Some(observe_prop338_number_box_text),
+    Some(observe_prop339_number_box_text_reading_order),
+    Some(observe_prop340_number_box_validation_mode),
+    Some(observe_prop341_number_box_value),
     Some(observe_prop342_panel_background),
     Some(observe_prop343_panel_is_items_host),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop344_password_box_header),
+    Some(observe_prop345_password_box_can_paste_clipboard_content),
+    Some(observe_prop346_password_box_description),
+    Some(observe_prop347_password_box_is_password_reveal_button_enabled),
+    Some(observe_prop348_password_box_max_length),
+    Some(observe_prop349_password_box_password),
+    Some(observe_prop350_password_box_password_char),
+    Some(observe_prop351_password_box_password_reveal_mode),
+    Some(observe_prop352_password_box_placeholder_text),
+    Some(observe_prop353_password_box_prevent_keyboard_display_on_programmatic_focus),
+    Some(observe_prop354_password_box_selection_highlight_color),
+    Some(observe_prop355_password_box_text_reading_order),
+    Some(observe_prop356_person_picture_badge_glyph),
+    Some(observe_prop357_person_picture_badge_image_source),
+    Some(observe_prop358_person_picture_badge_number),
+    Some(observe_prop359_person_picture_badge_text),
+    Some(observe_prop360_person_picture_display_name),
+    Some(observe_prop361_person_picture_initials),
+    Some(observe_prop362_person_picture_is_group),
+    Some(observe_prop363_person_picture_prefer_small_image),
+    Some(observe_prop364_person_picture_profile_picture),
+    Some(observe_prop365_progress_bar_is_indeterminate),
+    Some(observe_prop366_progress_bar_show_error),
+    Some(observe_prop367_progress_bar_show_paused),
+    Some(observe_prop368_progress_ring_is_active),
+    Some(observe_prop369_progress_ring_is_indeterminate),
+    Some(observe_prop370_progress_ring_maximum),
+    Some(observe_prop371_progress_ring_minimum),
+    Some(observe_prop372_progress_ring_value),
+    Some(observe_prop373_radio_button_group_name),
+    Some(observe_prop374_radio_buttons_header),
+    Some(observe_prop375_radio_buttons_selected_index),
+    Some(observe_prop376_radio_buttons_max_columns),
     Some(observe_prop377_range_base_minimum),
     Some(observe_prop378_range_base_maximum),
     Some(observe_prop379_range_base_value),
     Some(observe_prop380_range_base_small_change),
     Some(observe_prop381_range_base_large_change),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop382_rating_control_caption),
+    Some(observe_prop383_rating_control_initial_set_value),
+    Some(observe_prop384_rating_control_is_clear_enabled),
+    Some(observe_prop385_rating_control_is_read_only),
+    Some(observe_prop386_rating_control_max_rating),
+    Some(observe_prop387_rating_control_placeholder_value),
+    Some(observe_prop388_rating_control_value),
+    Some(observe_prop389_repeat_button_delay),
+    Some(observe_prop390_repeat_button_interval),
+    Some(observe_prop391_rich_edit_box_header),
+    Some(observe_prop392_rich_edit_box_accepts_return),
+    Some(observe_prop393_rich_edit_box_character_casing),
+    Some(observe_prop394_rich_edit_box_clipboard_copy_format),
+    Some(observe_prop395_rich_edit_box_description),
+    Some(observe_prop396_rich_edit_box_desired_candidate_window_alignment),
+    Some(observe_prop397_rich_edit_box_horizontal_text_alignment),
+    Some(observe_prop398_rich_edit_box_is_color_font_enabled),
+    Some(observe_prop399_rich_edit_box_is_read_only),
+    Some(observe_prop400_rich_edit_box_is_spell_check_enabled),
+    Some(observe_prop401_rich_edit_box_is_text_prediction_enabled),
+    Some(observe_prop402_rich_edit_box_max_length),
+    Some(observe_prop403_rich_edit_box_placeholder_text),
+    Some(observe_prop404_rich_edit_box_prevent_keyboard_display_on_programmatic_focus),
+    Some(observe_prop405_rich_edit_box_selection_highlight_color),
+    Some(observe_prop406_rich_edit_box_selection_highlight_color_when_not_focused),
+    Some(observe_prop407_rich_edit_box_text_alignment),
+    Some(observe_prop408_rich_edit_box_text_reading_order),
+    Some(observe_prop409_rich_edit_box_text_wrapping),
+    Some(observe_prop410_scroll_viewer_bring_into_view_on_focus_change),
+    Some(observe_prop411_scroll_viewer_can_content_render_outside_bounds),
+    Some(observe_prop412_scroll_viewer_computed_horizontal_scroll_bar_visibility),
+    Some(observe_prop413_scroll_viewer_computed_vertical_scroll_bar_visibility),
+    Some(observe_prop414_scroll_viewer_extent_height),
+    Some(observe_prop415_scroll_viewer_extent_width),
+    Some(observe_prop416_scroll_viewer_horizontal_anchor_ratio),
+    Some(observe_prop417_scroll_viewer_horizontal_offset),
+    Some(observe_prop418_scroll_viewer_horizontal_scroll_bar_visibility),
+    Some(observe_prop419_scroll_viewer_horizontal_scroll_mode),
+    Some(observe_prop420_scroll_viewer_horizontal_snap_points_alignment),
+    Some(observe_prop421_scroll_viewer_horizontal_snap_points_type),
+    Some(observe_prop422_scroll_viewer_is_deferred_scrolling_enabled),
+    Some(observe_prop423_scroll_viewer_is_horizontal_rail_enabled),
+    Some(observe_prop424_scroll_viewer_is_horizontal_scroll_chaining_enabled),
+    Some(observe_prop425_scroll_viewer_is_scroll_inertia_enabled),
+    Some(observe_prop426_scroll_viewer_is_vertical_rail_enabled),
+    Some(observe_prop427_scroll_viewer_is_vertical_scroll_chaining_enabled),
+    Some(observe_prop428_scroll_viewer_is_zoom_chaining_enabled),
+    Some(observe_prop429_scroll_viewer_is_zoom_inertia_enabled),
+    Some(observe_prop430_scroll_viewer_max_zoom_factor),
+    Some(observe_prop431_scroll_viewer_min_zoom_factor),
+    Some(observe_prop432_scroll_viewer_reduce_viewport_for_core_input_view_occlusions),
+    Some(observe_prop433_scroll_viewer_scrollable_height),
+    Some(observe_prop434_scroll_viewer_scrollable_width),
+    Some(observe_prop435_scroll_viewer_vertical_anchor_ratio),
+    Some(observe_prop436_scroll_viewer_vertical_offset),
+    Some(observe_prop437_scroll_viewer_vertical_scroll_bar_visibility),
+    Some(observe_prop438_scroll_viewer_vertical_scroll_mode),
+    Some(observe_prop439_scroll_viewer_vertical_snap_points_alignment),
+    Some(observe_prop440_scroll_viewer_vertical_snap_points_type),
+    Some(observe_prop441_scroll_viewer_viewport_height),
+    Some(observe_prop442_scroll_viewer_viewport_width),
+    Some(observe_prop443_scroll_viewer_zoom_factor),
+    Some(observe_prop444_scroll_viewer_zoom_mode),
+    Some(observe_prop445_scroll_viewer_zoom_snap_points_type),
+    Some(observe_prop446_selector_is_synchronized_with_current_item),
+    Some(observe_prop447_selector_selected_index),
+    Some(observe_prop448_selector_selected_value_path),
+    Some(observe_prop449_selector_bar_item_text),
+    Some(observe_prop450_selector_bar_item_icon),
+    Some(observe_prop451_selector_item_is_selected),
     Some(observe_prop452_slider_step_frequency),
     Some(observe_prop453_slider_orientation),
     Some(observe_prop454_slider_header),
@@ -6613,13 +8738,13 @@ pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Ve
     Some(observe_prop458_slider_snaps_to),
     Some(observe_prop459_slider_tick_frequency),
     Some(observe_prop460_slider_tick_placement),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop461_split_view_compact_pane_length),
+    Some(observe_prop462_split_view_display_mode),
+    Some(observe_prop463_split_view_is_pane_open),
+    Some(observe_prop464_split_view_light_dismiss_overlay_mode),
+    Some(observe_prop465_split_view_open_pane_length),
+    Some(observe_prop466_split_view_pane_background),
+    Some(observe_prop467_split_view_pane_placement),
     Some(observe_prop468_stack_panel_orientation),
     Some(observe_prop469_stack_panel_spacing),
     Some(observe_prop470_stack_panel_padding),
@@ -6630,28 +8755,28 @@ pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Ve
     Some(observe_prop475_stack_panel_border_brush),
     Some(observe_prop476_stack_panel_border_thickness),
     Some(observe_prop477_stack_panel_corner_radius),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop478_symbol_icon_symbol),
+    Some(observe_prop479_tab_view_selected_index),
+    Some(observe_prop480_tab_view_allow_drop_tabs),
+    Some(observe_prop481_tab_view_can_drag_tabs),
+    Some(observe_prop482_tab_view_can_reorder_tabs),
+    Some(observe_prop483_tab_view_can_tear_out_tabs),
+    Some(observe_prop484_tab_view_close_button_overlay_mode),
+    Some(observe_prop485_tab_view_is_add_tab_button_visible),
+    Some(observe_prop486_tab_view_tab_width_mode),
+    Some(observe_prop487_tab_view_item_header),
+    Some(observe_prop488_tab_view_item_is_closable),
+    Some(observe_prop489_teaching_tip_action_button_content),
+    Some(observe_prop490_teaching_tip_close_button_content),
+    Some(observe_prop491_teaching_tip_hero_content_placement),
+    Some(observe_prop492_teaching_tip_is_light_dismiss_enabled),
+    Some(observe_prop493_teaching_tip_is_open),
+    Some(observe_prop494_teaching_tip_placement_margin),
+    Some(observe_prop495_teaching_tip_preferred_placement),
+    Some(observe_prop496_teaching_tip_should_constrain_to_root_bounds),
+    Some(observe_prop497_teaching_tip_subtitle),
+    Some(observe_prop498_teaching_tip_tail_visibility),
+    Some(observe_prop499_teaching_tip_title),
     Some(observe_prop500_text_block_text),
     Some(observe_prop501_text_block_font_size),
     Some(observe_prop502_text_block_text_wrapping),
@@ -6702,19 +8827,19 @@ pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Ve
     Some(observe_prop547_text_box_selection_length),
     Some(observe_prop548_text_box_selection_start),
     Some(observe_prop549_text_box_text_alignment),
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop550_time_picker_header),
+    Some(observe_prop551_time_picker_clock_identifier),
+    Some(observe_prop552_time_picker_light_dismiss_overlay_mode),
+    Some(observe_prop553_time_picker_minute_increment),
+    Some(observe_prop554_time_picker_selected_time),
+    Some(observe_prop555_time_picker_time),
     Some(observe_prop556_toggle_button_is_checked),
     Some(observe_prop557_toggle_button_is_three_state),
-    None,
-    None,
-    None,
-    None,
-    None,
+    Some(observe_prop558_toggle_menu_flyout_item_is_checked),
+    Some(observe_prop559_toggle_switch_header),
+    Some(observe_prop560_toggle_switch_is_on),
+    Some(observe_prop561_toggle_switch_off_content),
+    Some(observe_prop562_toggle_switch_on_content),
     Some(observe_prop563_ui_element_visibility),
     Some(observe_prop564_ui_element_opacity),
     Some(observe_prop565_ui_element_is_hit_test_visible),
@@ -6744,8 +8869,8 @@ pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Ve
     Some(observe_prop589_ui_element_xy_focus_left_navigation_strategy),
     Some(observe_prop590_ui_element_xy_focus_right_navigation_strategy),
     Some(observe_prop591_ui_element_xy_focus_up_navigation_strategy),
-    None,
-    None,
+    Some(observe_prop592_viewbox_stretch),
+    Some(observe_prop593_viewbox_stretch_direction),
     None,
     Some(observe_prop595_window_visible),
 ];

@@ -294,16 +294,16 @@
    },
    "exact": {
     "manual": 0,
-    "no_test": 611,
-    "pending": 22,
+    "no_test": 186,
+    "pending": 447,
     "total": 771,
     "verified": 130,
     "verified_weak": 8
    },
    "none": {
     "manual": 0,
-    "no_test": 48,
-    "pending": 1,
+    "no_test": 46,
+    "pending": 3,
     "total": 54,
     "verified": 0,
     "verified_weak": 5
