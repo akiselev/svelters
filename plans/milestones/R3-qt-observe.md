@@ -105,4 +105,78 @@ tool-box) were only `connect`-checked in R0 and now have a native trigger.
 
 ## Completion record
 
-(filled in below)
+Branch `ci/r3` (worktree branch `worktree-agent-a92549e46b7b87273`), based on master 9231ec3f, merged with master
+26e97040 (the cargo-slot sccache fix). Not merged into master.
+
+Commits: 19a687a5 (WIP of the first agent: the mechanisms, `kObsVia`, O4 from the probe, the pairs, rows for every
+mechanism, the notifier test), 5824f903 (merge master), afcf21f5 (`SVL_M_OBSERVABLE` in describe, bindings promoted
+through the facts, OB_META rows on a plain subclass element, triggers for the binding-backing and QUndoStack facts, more
+value types, Qt ledger refresh), 2c65b366 (`test_qt_infer` for promoted bindings, milestone draft), plus this record.
+
+### Gates
+
+| Gate | Result | Commit |
+|---|---|---|
+| `cargo test -p counter-qt --test generated` (headless) | 2349 tests, 0 failed (503 observe rows + `observe_runtime/bindable_notifier_outlives_object`) | afcf21f5 tree |
+| `ledger.py refresh --toolkit qt` | 1252 facts, 2361 tests, 0 manual / 0 inferred not passing, 0 parked (R0: 845 facts, 1922 tests) | afcf21f5 (ledger committed there) |
+| `ledger.py check` | pass: qt 634 manual + 631 inferred verified; appkit 79 + 147; winui 60 + 335 (8 parked, pre-R0) | afcf21f5, again in `pnpm test` on 2c65b366 |
+| `tools/dev/headless tools/dev/cargo-slot cargo nextest run --workspace --no-fail-fast` | 2295 run, 2295 passed, 7 skipped | 2c65b366 (a first run before `pnpm install`/`pnpm -r build` failed 66 tests that need the JS bundles; not code) |
+| `cargo build -p svelters-compiler`, `pnpm -r build` | rc 0 | 2c65b366 |
+| `pnpm test` (incl. `test:meta`) | rc 0: types 19, style 17, native-runtime 72, canvas 3, lists 2 pass; test:meta 140 passed 1 skipped + every `--check` | 2c65b366 |
+| `python3 tools/docs/build_ir.py`, `pnpm docs:test` | rc 0: unittest 11 (1 skipped), docs 17 pass | 2c65b366 |
+| ASan: notifier destroyed after its QTimer, 100x2 | clean on Qt 6.11.3 (SDK) and 6.12.0 | scratch program, not in the tree |
+
+### CI (`ci/r3` @ 2c65b366)
+
+| Workflow | Run | Result |
+|---|---|---|
+| js | 39551227465 | success |
+| linux-gtk | 39551227351 | success |
+| linux-qt | 39551227608 | success |
+| macos-appkit | 39551227330 | success |
+| windows-winui | 39551227259 | success |
+
+### Qt facts (`metadata/coverage/observe.json`)
+
+| | constant | set_only | exact | partial | none | all | verified | weak | no test |
+|---|---|---|---|---|---|---|---|---|---|
+| R0 | 0 | 452 | 169 | 10 | 77 | 708 | 40 | 56 | 612 |
+| R3 | 0 | 451 | **180** | 18 | 71 | 720 | 155 | 348 | 217 |
+
+- **exact 180**: 121 verified by a native change (and the identical set, coalescing, teardown), 14 `connect` only,
+  45 without a row. By mechanism: notify 104, event 33, signal 17, bindable 13, bindable+notify 13.
+- weak = `connect` or `unsupported`/`refused` without a native change: 296 of them are `set_only` (refusal checked;
+  §4.5 has no runnable negative for set_only). `none`: 23 verified silent (the native change happens, nothing could
+  announce it), 32 refusal only.
+- 12 more facts than R0: the O4 probe section and the pairs added properties R0 had no evidence for.
+- Bindings: 32 of 34 Qt `bind:` facts verified through their exact observe fact.
+
+### Compile-time impact (Qt backend)
+
+Generated `svl_qt_backend.cpp` 97 679 -> 98 091 lines (+412: `kObsVia` with 198 rows, mechanisms), `svl_qt_verify.cpp`
+25 731 -> 26 630 (+899: observe rows and trigger functions). One `g++ -O0 -c` of each against Qt 6.12, base and R3 in
+parallel on the shared machine: backend 213.6 s -> 214.5 s, verify 148.6 s -> 148.7 s. Within noise; the event and
+bindable code is not per class (one table, one filter type).
+
+### Open items
+
+- **45 exact facts without a row:** QGraphics* effects/transforms/objects (no element, not an NT2 type), QDockWidget
+  (crashes on a bare instance, as in R0), QRhiWidget, QScroller, QHeaderView, QStackedLayout, QDataWidgetMapper. 14 exact are `connect`
+  only (`QWidget:focus`/`isActiveWindow`: no reliable headless focus/activation; animations' `currentTime`/
+  `loopCount`, `QTextBrowser:source`, `QItemSelectionModel:selectedIndexes`, ...).
+- `SVL_M_PROPORTIONAL` (R1) is not set by the Qt describe yet: one flag in `emit_describe` once R1 is on master; the
+  backend already drops the proportional echo itself.
+- `QWidget:visible` uses the probe's minimal event cover (no `Show`); the hand table has it. Add `Show` if a real
+  case shows a `visible` change that arrives only as `Show`.
+- The probe's `QAction` NOTIFY misses (`iconVisibleInMenu`, `shortcutVisibleInContextMenu`: `changed()` not emitted)
+  stay `partial, missed: programmatic`; worth a check on xcb.
+- `ledger.py refresh` records the ledger `version` 6.11.0 for local runs (the metadata's qdoc version); CI runs 6.11.3.
+
+### Conflict risks
+
+- `metadata/semantics/qt.json` and `metadata/coverage/*` are generated from the facts: R2 (lowering goldens) and R1
+  regenerate them too. After merging, rerun `gen_semantics.py`, `coverage.py`, then R2's `gen_observe_outputs.py` and
+  its `tests/r2` goldens (more Qt props are now exact or observable).
+- `tools/metadata/qt/gen_cpp.py` (`emit_describe`, `observe_rows`, `promote_bindings`) and `backend.cpp.in`: R1 may
+  touch the describe flags for `SVL_M_PROPORTIONAL`.
+- `metadata/verified/qt.json`: any lane refreshing the Qt ledger conflicts; rerun `ledger.py refresh --toolkit qt`.
