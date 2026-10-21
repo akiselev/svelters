@@ -87,18 +87,36 @@
 //! `Buffer<T>` (on a worker, after a panic, or as a late result after an abort) releases it on the JS
 //! thread. Buffers work in records, lists, worker arguments and results.
 
+//!
+//! # Reactive exports (E3)
+//!
+//! - `#[svelters::store(module = "m")]` on a struct: a [`Store<S>`] (or an app-wide [`StoreStatic<S>`],
+//!   exported with `#[svelters::export(module = "m")]` on the `static`) that any thread writes and Svelte
+//!   reads like `$state`: one dirty bit per field (decision 2026-10-22), folded into the host's change
+//!   batch at the next checkpoint. `#[store(writable)]` fields are assignable from JS (and `bind:`-able;
+//!   [`StoreHooks::on_write`] validates), `#[store(proportional)]` fields are delivered as invalidations.
+//! - `#[svelters::service(module = "m")] fn name(cx: ServiceCx) -> V`: started with the app (the first
+//!   `Host`), never restarted by a hot reload, stopped by [`exports::shutdown_services`].
+//! - [`Emitter<E>`] with `#[derive(svelters::Events)]`: events from any thread to `obj.on(name, fn)`,
+//!   delivered at the checkpoint after the change batch.
+//! - [`Sink<T>`] parameters of offloaded exports and [`Stream<T>`] results: bounded async iterables.
+//! - JS `persist(key, () => new T(...))` (from `@svelters/types/core`) keeps an app object across hot
+//!   reloads; objects that are not persisted die with their runtime.
+
 pub use svelters_host::exports;
 pub use svelters_host::exports::{
-    Buffer, CallCx, Cancelled, Element, ExportError, ExportObject, FromJs, IntoJs, JsType, NativeError, Obj, Shared, SharedObject, TypeBuilder, TypeRef,
-    UiObject, Value, WorkCx,
+    Buffer, CallCx, Cancelled, Closed, Element, Emitter, EventSet, ExportError, ExportObject, FromJs, IntoJs, JsType, NativeError, Obj, ServiceCx, Shared,
+    SharedObject, Sink, StopToken, Store, StoreHooks, StoreState, StoreStatic, Stream, TypeBuilder, TypeRef, UiObject, Value, WorkCx, channel,
 };
 /// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
 pub use svelters_host::exports::offload::rayon;
-pub use svelters_macros::{Enum, Error, Record, export, object};
+pub use svelters_macros::{Enum, Error, Events, Record, export, object, service, store};
 
 /// `use svelters::prelude::*;`
 pub mod prelude {
-    pub use super::{Buffer, Cancelled, ExportError, NativeError, Obj, Shared, WorkCx};
+    pub use super::{
+        Buffer, Cancelled, Closed, Emitter, ExportError, NativeError, Obj, ServiceCx, Shared, Sink, StopToken, Store, StoreHooks, StoreStatic, Stream, WorkCx, channel,
+    };
     pub use std::sync::Arc;
 }
 

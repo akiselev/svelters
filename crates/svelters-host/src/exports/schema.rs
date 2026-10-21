@@ -33,6 +33,52 @@ pub struct ClassSchema {
     pub methods: Vec<MemberSchema>,
     pub statics: Vec<MemberSchema>,
     pub props: Vec<MemberSchema>,
+    /// E3: a `#[svelters::store]` class (its props are the store's fields, `exact` by construction).
+    pub store: Option<StoreSchema>,
+    /// E3: the events of an object with an `Emitter<E>` field (`obj.on(name, fn)`), in variant order.
+    pub events: Vec<EventSchema>,
+    /// E3: the `Emitter` of an object of this class.
+    pub emitter: Option<fn(&AnyObj) -> Option<Arc<reactive::EmitterCore>>>,
+}
+
+/// E3: the store behind a store class.
+pub struct StoreSchema {
+    /// In field (declaration) order.
+    pub fields: Vec<StoreFieldSchema>,
+    pub subscribe: fn(&AnyObj, &Arc<reactive::StoreSub>) -> bool,
+}
+
+/// E3: one field of a store class.
+pub struct StoreFieldSchema {
+    pub name: &'static str,
+    /// The prop id (`resolve(Prop, kind, name)`).
+    pub prop: svl_id,
+    pub writable: bool,
+    pub proportional: bool,
+}
+
+impl StoreSchema {
+    /// The field behind prop id `prop`: (field index, field).
+    pub fn field_of_prop(&self, prop: svl_id) -> Option<(usize, &StoreFieldSchema)> {
+        self.fields.iter().enumerate().find(|(_, f)| f.prop == prop)
+    }
+}
+
+/// E3: one event of a class (`obj.on(name, fn)`).
+pub struct EventSchema {
+    pub name: &'static str,
+    pub latest: bool,
+    pub docs: &'static str,
+    /// The handler's argument (`None`: no argument).
+    pub payload: Option<TypeRef>,
+}
+
+/// E3: a module-level value (`export const`): an exported `static` or a service.
+pub struct ValueSchema {
+    /// `"static"` or `"service"`.
+    pub what: &'static str,
+    /// Read through `callStatic(module, name)`; `sig.ret` is its type.
+    pub member: MemberSchema,
 }
 
 /// A module function.
@@ -57,6 +103,8 @@ pub struct ModuleSchema {
     pub kind: svl_id,
     pub classes: Vec<ClassSchema>,
     pub functions: Vec<FnSchema>,
+    /// E3: module-level values (`export const`), by name.
+    pub values: Vec<ValueSchema>,
     /// Named types the module refers to (declared in its typings), in first-use order.
     pub types: Vec<TypeSchema>,
     /// Classes of other modules this one refers to: (module, class).
@@ -153,7 +201,7 @@ fn add_accessor(props: &mut Vec<MemberSchema>, def: &MemberDef, b: &mut TypeBuil
                     kind: MemberKind::Getter,
                     receiver: def.receiver,
                     docs: def.docs,
-                    sig: Sig { params: vparam.into_iter().collect(), ret: TypeRef::void(), throws: m.sig.throws.clone(), progress: None },
+                    sig: Sig { params: vparam.into_iter().collect(), ret: TypeRef::void(), throws: m.sig.throws.clone(), progress: None, items: None },
                     desc: MemberDesc { name: def.name.to_string(), params: vec![value], ret: SlotDesc::new(SVL_NULL), flags: 0 },
                     thunk: None,
                     setter: Some((def.thunk, def.receiver)),
@@ -170,9 +218,13 @@ fn build() -> Schema {
     let mut fns: Vec<&FnDef> = inventory::iter::<FnDef>.into_iter().collect();
     fns.sort_by(|a, b| (a.module, a.member.name).cmp(&(b.module, b.member.name)));
     let impls: Vec<&ImplDef> = inventory::iter::<ImplDef>.into_iter().collect();
+    let store_defs: Vec<&reactive::StoreDef> = inventory::iter::<reactive::StoreDef>.into_iter().collect();
+    let emitter_defs: Vec<&reactive::EmitterDef> = inventory::iter::<reactive::EmitterDef>.into_iter().collect();
+    let mut value_defs: Vec<&reactive::ValueDef> = inventory::iter::<reactive::ValueDef>.into_iter().collect();
+    value_defs.sort_by(|a, b| (a.module, a.name).cmp(&(b.module, b.name)));
 
-    // Module names: every object's and function's.
-    let mut module_names: Vec<&str> = objects.iter().map(|o| o.module).chain(fns.iter().map(|f| f.module)).collect();
+    // Module names: every object's, function's and value's.
+    let mut module_names: Vec<&str> = objects.iter().map(|o| o.module).chain(fns.iter().map(|f| f.module)).chain(value_defs.iter().map(|v| v.module)).collect();
     module_names.sort_unstable();
     module_names.dedup();
 
@@ -204,6 +256,9 @@ fn build() -> Schema {
                 methods: Vec::new(),
                 statics: Vec::new(),
                 props: Vec::new(),
+                store: None,
+                events: Vec::new(),
+                emitter: None,
             };
             let mut defs: Vec<&MemberDef> = impls.iter().filter(|i| (i.type_id)() == tid).flat_map(|i| i.members.iter()).collect();
             defs.sort_by_key(|d| d.name);
@@ -215,10 +270,57 @@ fn build() -> Schema {
                     MemberKind::Getter | MemberKind::Setter => add_accessor(&mut c.props, d, &mut b),
                 }
             }
+            if let Some(sd) = store_defs.iter().find(|s| (s.type_id)() == tid) {
+                let fields = sd
+                    .fields
+                    .iter()
+                    .map(|f| StoreFieldSchema {
+                        name: f.name,
+                        prop: c.props.iter().position(|p| p.name == f.name).map_or(0, |i| i as svl_id + 1),
+                        writable: f.writable,
+                        proportional: f.proportional,
+                    })
+                    .collect();
+                c.store = Some(StoreSchema { fields, subscribe: sd.subscribe });
+            }
+            if let Some(ed) = emitter_defs.iter().find(|e| (e.type_id)() == tid) {
+                let payloads = (ed.describe)(&mut b);
+                c.events = ed
+                    .events
+                    .iter()
+                    .enumerate()
+                    .map(|(i, e)| EventSchema { name: e.name, latest: e.latest, docs: e.docs, payload: payloads.get(i).cloned().flatten() })
+                    .collect();
+                c.emitter = Some(ed.emitter);
+            }
             classes.push(c);
         }
         let functions = fns.iter().filter(|f| f.module == *m).map(|f| member(&f.member, &mut b)).collect();
-        modules.push(ModuleSchema { name: m.to_string(), kind: kinds[&format!("app:{m}")], classes, functions, types: Vec::new(), imports: Vec::new() });
+        let values = value_defs
+            .iter()
+            .filter(|v| v.module == *m)
+            .map(|v| {
+                let ty = (v.ty)(&mut b);
+                let sig = Sig { params: Vec::new(), ret: ty.clone(), throws: Vec::new(), progress: None, items: None };
+                let desc = MemberDesc { name: v.name.to_string(), params: Vec::new(), ret: ty.slot.clone(), flags: SVL_M_STATIC | SVL_M_THROWS };
+                ValueSchema {
+                    what: v.what,
+                    member: MemberSchema {
+                        name: v.name.to_string(),
+                        rust: v.rust,
+                        kind: MemberKind::Static,
+                        receiver: Receiver::None,
+                        docs: v.docs,
+                        sig,
+                        desc,
+                        thunk: Some(v.get),
+                        setter: None,
+                        offload: None,
+                    },
+                }
+            })
+            .collect();
+        modules.push(ModuleSchema { name: m.to_string(), kind: kinds[&format!("app:{m}")], classes, functions, values, types: Vec::new(), imports: Vec::new() });
     }
 
     // Declared types per module: the used ones, closed over their dependencies.
@@ -249,7 +351,7 @@ fn build() -> Schema {
     let mut names = HashMap::new();
     for (mi, m) in modules.iter().enumerate() {
         by_kind.insert(m.kind, (mi, None));
-        names.insert((NameKind::Method as u32, m.kind), m.functions.iter().map(|f| f.name.clone()).collect());
+        names.insert((NameKind::Method as u32, m.kind), m.functions.iter().map(|f| f.name.clone()).chain(m.values.iter().map(|v| v.member.name.clone())).collect());
         names.insert((NameKind::Prop as u32, m.kind), Vec::new());
         for (ci, c) in m.classes.iter().enumerate() {
             by_kind.insert(c.kind, (mi, Some(ci)));
@@ -259,6 +361,7 @@ fn build() -> Schema {
             }
             names.insert((NameKind::Method as u32, c.kind), methods);
             names.insert((NameKind::Prop as u32, c.kind), c.props.iter().map(|p| p.name.clone()).collect());
+            names.insert((NameKind::Signal as u32, c.kind), c.events.iter().map(|e| e.name.to_string()).collect());
         }
     }
     let mut type_ids = HashMap::new();
@@ -314,9 +417,12 @@ impl Schema {
         self.modules.iter().find(|m| m.name == name)
     }
 
-    /// Member id (1-based) of `name` in `kind`'s method or prop namespace.
+    /// Member id (1-based) of `name` in `kind`'s method, prop or (E3) signal namespace.
     pub fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
-        let ns = if what == NameKind::Prop { NameKind::Prop } else { NameKind::Method };
+        let ns = match what {
+            NameKind::Prop | NameKind::Signal => what,
+            _ => NameKind::Method,
+        };
         self.names
             .get(&(ns as u32, kind))
             .and_then(|v| v.iter().position(|n| n == name))
@@ -325,12 +431,15 @@ impl Schema {
 
     /// The member behind an id from [`Schema::resolve`].
     pub fn member(&self, what: NameKind, kind: svl_id, id: svl_id) -> Option<&MemberSchema> {
+        if what == NameKind::Signal {
+            return None;
+        }
         let ns = if what == NameKind::Prop { NameKind::Prop } else { NameKind::Method };
         let name = self.names.get(&(ns as u32, kind))?.get((id as usize).checked_sub(1)?)?;
         let (mi, ci) = self.by_kind.get(&kind)?;
         let m = &self.modules[*mi];
         match ci {
-            None => m.functions.iter().find(|f| &f.name == name),
+            None => m.functions.iter().find(|f| &f.name == name).or_else(|| m.values.iter().map(|v| &v.member).find(|v| &v.name == name)),
             Some(ci) => {
                 let c = &m.classes[*ci];
                 if ns == NameKind::Prop {

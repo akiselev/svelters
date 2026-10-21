@@ -62,11 +62,19 @@ fn main() -> ExitCode {
         eprintln!("{e}");
         return ExitCode::FAILURE;
     }
-    match host.run() {
+    let code = match host.run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
             eprintln!("{e}");
             ExitCode::FAILURE
         }
+    };
+    // Shutdown order (design note §8): the JS runtime first, then the services (the telemetry sampler
+    // started with the first host), then the toolkit.
+    drop(host);
+    let report = svelters::exports::shutdown_services(std::time::Duration::from_secs(2));
+    if !report.timed_out.is_empty() {
+        eprintln!("[exports] services still running at exit: {:?}", report.timed_out);
     }
+    code
 }

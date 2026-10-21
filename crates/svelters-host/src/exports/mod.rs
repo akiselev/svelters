@@ -17,7 +17,10 @@ pub(crate) mod buffers;
 mod codegen;
 pub(crate) mod objects;
 pub mod offload;
+pub mod reactive;
 mod schema;
+pub mod service;
+pub mod stream;
 
 pub use buffers::{Buffer, Element, Shared};
 pub(crate) use codegen::builtin_module;
@@ -25,7 +28,10 @@ pub use codegen::{DumpReport, dump, dump_if_debug, javascript, json, typescript}
 pub use offload::{Cancelled, CancelledFuture, Exec, Spawned, WorkCx, blocking, set_worker_pool, worker};
 #[cfg(feature = "tokio")]
 pub use offload::set_tokio_handle;
-pub use schema::{ClassSchema, FnSchema, MemberSchema, ModuleSchema, Schema, TypeSchema, schema};
+pub use reactive::{Emitter, EventInfo, EventSet, ExportStatic, Store, StoreField, StoreHooks, StoreState, StoreStatic};
+pub use schema::{ClassSchema, EventSchema, FnSchema, MemberSchema, ModuleSchema, Schema, StoreSchema, TypeSchema, ValueSchema, schema};
+pub use service::{ServiceCx, StopToken, shutdown_services, start_services};
+pub use stream::{Closed, Sink, Stream, TrySendError, channel};
 
 use std::any::{Any, TypeId};
 use std::cell::{Ref, RefCell, RefMut};
@@ -506,6 +512,28 @@ pub mod __private {
     pub const fn assert_shared<T: Send + Sync + ?Sized>() {}
 
     pub use super::offload::{Injected, Job, OpShared, OffloadSelf, TokioFuture, WorkerSend, assert_offload_self, assert_worker_send, local_job, pool_job, tokio_job};
+    // E3
+    pub use super::reactive::{
+        EmitterCore, EmitterDef, EventInfo, HookProbe, HookViaDefault, HookViaHooks, StoreCell, StoreDef, StoreField, StoreSub, ValueDef, emitter_of, store_get, store_set,
+        subscribe_any,
+    };
+    pub use super::service::{ServiceDef, ServiceSlot};
+    pub use super::stream::{DEFAULT_BUFFER, StreamItem, item_type, sink_for, stream_job};
+
+    /// The value of an exported `static` (a module-level `export const`).
+    pub fn static_value<T: ExportStatic>(v: &'static T, cx: &CallCx<'_>) -> Result<Value, NativeError> {
+        IntoJs::into_js(v.js(), cx)
+    }
+
+    /// The JS type of an exported `static`.
+    pub fn static_type<T: ExportStatic>(b: &mut TypeBuilder) -> TypeRef {
+        <T::Js as JsType>::describe(b)
+    }
+
+    /// A plain-object type (an event payload with named fields): copied as a map, typed `ts`.
+    pub fn object_type(ts: String) -> TypeRef {
+        TypeRef::new(SlotDesc::new(svelters_abi::SVL_MAP), ts)
+    }
 
     /// The sync thunk of an offloaded member (never called: the host starts it with its `start`).
     pub fn offload_thunk(_: &CallCx<'_>, _: Vec<Value>) -> Result<Value, NativeError> {
@@ -912,6 +940,9 @@ pub struct Sig {
     pub throws: Vec<&'static str>,
     /// Offloaded members with a `WorkCx<P>`: the progress type `P` (`options.onProgress`).
     pub progress: Option<TypeRef>,
+    /// E3 stream members (a `Sink<T>` parameter or a `Stream<T>` result): the item type `T`. The JS
+    /// call returns a `NativeStream<T>` (an async iterable) instead of a Promise.
+    pub items: Option<TypeRef>,
 }
 
 /// The generated call: owned, validated arguments in, a result or a `NativeError` out.

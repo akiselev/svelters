@@ -246,7 +246,16 @@ impl Core {
         let value = convert::owned_all(r, &[raw]).map_err(|m| type_err(format!("{}.{}: {m}", kname(), p.name)))?.pop().unwrap_or(Value::Null);
         drop(ar);
         self.note_op(|| format!("set {} {}.{} {}", tag(h), kname(), p.name, svelters_backend_log::json_string(&value)));
-        self.app_invoke(Some(h), kind, set, recv, vec![value]).map(|_| ())
+        let pid = schema().resolve(NameKind::Prop, kind, &p.name);
+        let observed = self.st.borrow().observed.contains_key(&(h, pid));
+        let written = observed.then(|| value.clone());
+        self.app_invoke(Some(h), kind, set, recv, vec![value])?;
+        // E3: R1's set path for an observed store field: the value is read back as `last`, so the echo of
+        // this write is dropped and a value `on_write` normalized is delivered once.
+        if observed {
+            self.after_set(h, pid, written);
+        }
+        Ok(())
     }
 
     /// `host.destroy(h)` (`dispose()`, or a collected wrapper): drops our reference. Idempotent.
@@ -254,6 +263,7 @@ impl Core {
     pub(crate) fn app_destroy(&self, h: svl_handle) {
         // In-flight calls on it reject with `disposed` (E1); their jobs keep their own reference.
         self.ops_owner_gone(h);
+        self.app_forget(h);
         self.apps.release(h);
     }
 
@@ -269,7 +279,27 @@ impl Core {
 
     pub(crate) fn app_release_all(&self, hs: &[svl_handle]) {
         for h in hs {
+            self.app_forget(*h);
             self.apps.release(*h);
         }
+    }
+
+    /// A reload starts (E3): handles the new runtime receives are tagged with the next generation.
+    pub(crate) fn app_begin_generation(&self) -> u64 {
+        self.apps.begin_generation()
+    }
+
+    /// The reload succeeded: releases the old runtime's handles the new one did not receive again (a
+    /// persisted object, an app-wide store and a service's object keep theirs).
+    pub(crate) fn app_release_stale(&self, old: &[svl_handle]) {
+        let stale = self.apps.not_received(old);
+        self.app_release_all(&stale);
+    }
+
+    /// The reload failed: back to generation `old`; the handles the failed load made are released.
+    pub(crate) fn app_restore_generation(&self, old: u64, old_handles: &[svl_handle]) {
+        self.apps.restore_generation(old, old_handles);
+        let new: Vec<_> = self.app_handles().into_iter().filter(|h| !old_handles.contains(h)).collect();
+        self.app_release_all(&new);
     }
 }

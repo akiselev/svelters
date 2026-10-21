@@ -632,6 +632,16 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 }
             })?,
         )?;
+        // E3: a stream iterator handed `n` items out: room for the producer.
+        let w = core.clone();
+        native.set(
+            "streamAck",
+            Function::new(ctx.clone(), move |id: f64, n: f64| {
+                if let Some(c) = w.upgrade() {
+                    c.op_stream_ack(id as u64, n.max(0.0) as usize);
+                }
+            })?,
+        )?;
         // Boxed values: explicit release is immediate; the GC path only queues the handle.
         let w = core.clone();
         native.set(
@@ -887,6 +897,42 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                     let flags = flags.0.unwrap_or(0);
                     let r = msg(&ctx, conv.with_name(&signal, |n| c.op_listen(h, n, on, flags)))?;
                     op(&ctx, r)
+                },
+            )?,
+        )?;
+        // E3: `persist(key)` → [handle, native class] or null; `persist(key, h)` keeps the app object `h`
+        // across hot reloads; `persist(key, null)` forgets it.
+        let w = core.clone();
+        host.set(
+            "persist",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, key: String, value: rquickjs::function::Opt<Value<'js>>| -> Res<Value<'js>> {
+                    let c = core_of(&ctx, &w)?;
+                    match value.0 {
+                        None => match c.op_persist_get(&key) {
+                            Some((h, native)) => {
+                                let a = rquickjs::Array::new(ctx.clone())?;
+                                a.set(0, h as f64)?;
+                                a.set(1, native)?;
+                                Ok(a.into_value())
+                            }
+                            None => Ok(Value::new_null(ctx.clone())),
+                        },
+                        Some(v) => {
+                            let h = if v.is_null() || v.is_undefined() {
+                                None
+                            } else if let Some(n) = v.as_number() {
+                                Some(handle_of(&ctx, n)?)
+                            } else {
+                                let o = v.as_object().ok_or_else(|| Exception::throw_type(&ctx, "persist(key, obj): obj must be an object of a svelters:app module"))?;
+                                let n: f64 = o.get("svlHandle").map_err(|_| Exception::throw_type(&ctx, "persist(key, obj): obj has no handle"))?;
+                                Some(handle_of(&ctx, n)?)
+                            };
+                            op(&ctx, c.op_persist_set(&key, h))?;
+                            Ok(Value::new_bool(ctx.clone(), true))
+                        }
+                    }
                 },
             )?,
         )?;

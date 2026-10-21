@@ -242,8 +242,9 @@
     signal.addEventListener('abort', () => native.cancelAsync(id), { once: true });
   };
   // E1: offloaded export calls. The host settles them in batches at checkpoint start (`settleOps`:
-  // kind 0 resolve, 1 reject, 2 progress); an abort of `options.signal` rejects at once.
+  // kind 0 resolve, 1 reject, 2 progress, 3 stream items (E3)); an abort of `options.signal` rejects at once.
   const ops = new Map();
+  const STREAM = Symbol.for('svelters.stream');
   const makeOp = (id, options) => {
     let resolve;
     let reject;
@@ -252,8 +253,25 @@
       reject = rej;
     });
     const onProgress = options && typeof options.onProgress === 'function' ? options.onProgress : null;
-    const op = { resolve, reject, onProgress, unwatch: null };
+    const op = { resolve, reject, onProgress, unwatch: null, items: null };
     ops.set(id, op);
+    // E3: a stream call. The iterator (`@svelters/types/core`'s NativeStream) takes the items, acks the
+    // ones it hands out (room for the producer) and closes the call when the loop ends early.
+    const port = options ? options[STREAM] : null;
+    if (port && typeof port.bind === 'function') {
+      op.items = (vs) => port.items(vs);
+      port.bind(
+        (n) => native.streamAck(id, n),
+        () => {
+          if (ops.get(id) === op) {
+            ops.delete(id);
+            if (op.unwatch) op.unwatch();
+            resolve(undefined);
+          }
+          native.cancelOp(id);
+        },
+      );
+    }
     const signal = options ? options.signal : null;
     if (signal && typeof signal.addEventListener === 'function' && !signal.aborted) {
       const onAbort = () => {
@@ -295,6 +313,11 @@
         progressOp(ops.get(id), v);
         continue;
       }
+      if (kind === 3) {
+        const op = ops.get(id);
+        if (op && op.items) op.items(v);
+        continue;
+      }
       const op = finishOp(id);
       if (op) (kind === 0 ? op.resolve : op.reject)(v);
     }
@@ -302,6 +325,11 @@
   const settleOpSoon = (kind, id, v) => {
     if (kind === 2) {
       progressOp(ops.get(id), v);
+      return;
+    }
+    if (kind === 3) {
+      const op = ops.get(id);
+      if (op && op.items) op.items(v);
       return;
     }
     const op = finishOp(id);

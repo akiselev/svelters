@@ -61,6 +61,32 @@ export interface WorkOptions<P> extends AsyncOptions {
   onProgress?: ((progress: P) => void) | null;
 }
 
+/**
+ * A Rust stream (an app export with a `Sink<T>` parameter or a `Stream<T>` result): an async iterable.
+ * Items arrive at host checkpoints; the producer runs ahead by at most its buffer. Leaving a `for await`
+ * early, `close()` or an abort of `options.signal` closes it.
+ */
+export class NativeStream<T> implements AsyncIterable<T> {
+  private constructor();
+  next(): Promise<IteratorResult<T, undefined>>;
+  return(): Promise<IteratorResult<T, undefined>>;
+  [Symbol.asyncIterator](): NativeStream<T>;
+  /** The items as arrays, one per host checkpoint that delivered some. */
+  batches(): AsyncGenerator<T[], void, undefined>;
+  /** Closes the stream: the producer's next `send` fails. */
+  close(): void;
+}
+
+/**
+ * The app object persisted under `key` (it survives hot reloads), or `make()`'s result, persisted now.
+ * Objects that are not persisted die with their JS runtime.
+ */
+export function persist<T extends NativeObject>(key: string, make: () => T): T;
+/** Forgets the object persisted under `key`. */
+export function unpersist(key: string): void;
+/** Registers generated classes so `persist` gives objects back as their class. */
+export function registerClass(...classes: Array<{ readonly native: string }>): void;
+
 /** An element (a renderer node) where a native widget is expected. */
 export interface NativeElement {
   readonly svlHandle: number | null;
