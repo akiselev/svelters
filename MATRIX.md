@@ -42,7 +42,7 @@ The feature score only counts features that are built or planned for the desktop
 | **Native API beyond widgets** | | | | | | | |
 | Non-GUI classes as ES modules (`construct`, statics) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | N4 (AppKit, WinUI) |
 | App Rust exports (`svelters:app/<module>`, E0) | ✅ | 🟡 | 🟡 | 🟡 | ❌ | ❌ | host-level registry, backend-independent; tested on GTK only; offload/buffers/stores/widgets are E1–E4 |
-| Non-blocking host start + started hook (G0, ABI v2.7) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | AppKit/WinUI keep `attach_host` |
+| Non-blocking host start + started hook (G0, ABI v2.7) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | AppKit/WinUI: FU1, tested on CI |
 | Async native calls as Promises | ✅ | 🟡 | ❌ | ❌ | ❌ | ❌ | Qt: QFuture adapter exists, no Qt 6.11 core/gui member returns one |
 | Native models feeding `@svelters/lists` | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | N3: `<ListView items={model}>` reads GTK `GListModel` / Qt `QAbstractItemModel` directly, no JS copy; Qt `rowCount()` not reactive; tree rows/columns >0 not shown |
 | **Reactivity** | | | | | | | |
