@@ -542,8 +542,10 @@ impl Core {
         if !ok {
             self.ops.generation.set(old);
         }
-        // Pending host rejections of retired calls have no runtime to go to.
+        // Pending host rejections of retired calls have no runtime to go to, and their finished results
+        // are dropped now (E2: transferred buffers in them are let go before their runtime is dropped).
         let current = self.ops.generation.get();
+        self.ops_reap();
         self.ops.rejects.borrow_mut().retain(|(_, g, _)| *g == current);
     }
 
@@ -558,6 +560,29 @@ impl Core {
         drop(ops);
         self.ops.keys.borrow_mut().clear();
         self.ops.rejects.borrow_mut().clear();
+        // Finished results nobody will settle: dropped now, so their transferred buffers (E2) are let go
+        // before the runtime is.
+        self.ops_reap();
+    }
+
+    /// Drops, on this (the JS) thread, the finished results no Promise waits for (their calls were
+    /// cancelled, retired by a reload, or the host is shutting down), freeing their slots. E2: a runtime
+    /// that goes away reaps first, so transferred buffers in such results are let go before it is dropped.
+    pub(crate) fn ops_reap(&self) {
+        let all = self.ops.queue.take_done_except(|_| false);
+        if all.is_empty() {
+            return;
+        }
+        let mut keep = Vec::new();
+        for (id, generation, outcome) in all {
+            let pending = self.ops.ops.borrow().get(&id).is_some_and(|op| !op.settled && op.generation == generation);
+            if pending {
+                keep.push((id, generation, outcome));
+            } else {
+                let _ = self.op_complete(id, generation, Done::Send(outcome));
+            }
+        }
+        self.ops.queue.requeue(keep);
     }
 
     fn ops_have_work(&self) -> bool {

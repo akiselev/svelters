@@ -108,7 +108,8 @@ pub struct BufferStats {
     pub copied_bytes: u64,
     /// Transfer tokens alive now (memory Rust holds).
     pub tokens_live: u64,
-    /// Runtimes leaked process-wide because a worker still held their memory when they went away.
+    /// JS runtimes leaked on this thread because Rust still held their memory (a transferred buffer)
+    /// when they went away (shutdown or reload; freeing them would free memory under a worker).
     pub leaked_runtimes: u64,
 }
 

@@ -78,9 +78,12 @@ thread_local! {
 /// Ids of transferred buffers: process-wide, so a release from another runtime never hits ours.
 static NEXT_TRANSFER: AtomicU64 = AtomicU64::new(1);
 
-/// Runtimes leaked at shutdown or reload because a worker still held one of their transferred
-/// buffers (freeing them would free memory under the worker).
-pub(crate) static LEAKED_RUNTIMES: AtomicUsize = AtomicUsize::new(0);
+thread_local! {
+    /// Runtimes leaked on this thread (a host and its runtimes live on one thread) at shutdown or
+    /// reload because Rust still held one of their transferred buffers: freeing them would free memory
+    /// under a worker.
+    pub(crate) static LEAKED_RUNTIMES: Cell<u64> = const { Cell::new(0) };
+}
 
 unsafe extern "C" fn ext_free(_rt: *mut qjs::JSRuntime, opaque: *mut c_void, _ptr: *mut c_void, size: qjs::size_t) -> *mut c_void {
     if size != 0 {
@@ -254,7 +257,7 @@ impl QjsHome {
             copies: g(&s.copies),
             copied_bytes: g(&s.copied_bytes),
             tokens_live: self.live.load(Ordering::Acquire) as u64,
-            leaked_runtimes: LEAKED_RUNTIMES.load(Ordering::Relaxed) as u64,
+            leaked_runtimes: LEAKED_RUNTIMES.with(Cell::get),
         }
     }
 }

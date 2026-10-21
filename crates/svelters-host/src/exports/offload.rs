@@ -358,6 +358,16 @@ impl Completions {
         self.wake();
     }
 
+    /// Takes the finished results whose generation `keep` refuses (a runtime that went away), for the
+    /// JS thread to drop before that runtime is (E2: transfer tokens in them are let go first). The
+    /// caller drops them outside the lock: dropping a token pushes its release to this queue.
+    pub(crate) fn take_done_except(&self, keep: impl Fn(u64) -> bool) -> Vec<(u64, u64, Outcome)> {
+        let mut q = lock(&self.q);
+        let (k, g): (VecDeque<_>, VecDeque<_>) = std::mem::take(&mut q.done).into_iter().partition(|(_, generation, _)| keep(*generation));
+        q.done = k;
+        g.into_iter().collect()
+    }
+
     /// E2: the released transfers since the last take.
     pub(crate) fn take_released(&self) -> Vec<u64> {
         std::mem::take(&mut lock(&self.q).released)

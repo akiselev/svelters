@@ -721,6 +721,166 @@ fn shutdown_waits_for_workers_and_leaks_a_runtime_still_in_use() {
     // The worker may still write its memory safely; let it finish.
     open(602);
     await_record("hold-dropped 602");
+
+    // A worker that finished but whose result (the buffer) was never drained, and a UI object that keeps
+    // a buffer: both are dropped before the runtime, so nothing leaks and nothing waits.
+    open(603);
+    let (took, leaked) = run(
+        "shutdown-undrained",
+        "import { holdReturn } from 'svelters:app/buf';\nholdReturn(new Float32Array(64), 603).catch(() => {});\n",
+        "hr-done 603",
+    );
+    assert_eq!(leaked, 0);
+    assert!(took < Duration::from_millis(900), "{took:?}");
+    let (took, leaked) = run(
+        "shutdown-keeper",
+        "import { Keeper } from 'svelters:app/buf';\nglobalThis.k = new Keeper();\nk.keep(new Float32Array(64));\n",
+        "kept 64",
+    );
+    assert_eq!(leaked, 0);
+    assert!(took < Duration::from_millis(900), "{took:?}");
+}
+
+/// A UI object that keeps a moved buffer.
+#[svelters::object(module = "buf")]
+pub struct Keeper {
+    held: Vec<Buffer<f32>>,
+}
+
+#[svelters::export]
+impl Keeper {
+    #[js(constructor)]
+    pub fn new() -> Keeper {
+        Keeper { held: Vec::new() }
+    }
+
+    pub fn keep(&mut self, b: Buffer<f32>) {
+        record(format!("kept {}", b.len()));
+        self.held.push(b);
+    }
+}
+
+/// Hot reload with a transferred buffer in flight: the old runtime's call is cancelled before the
+/// runtime is dropped, so a cooperative worker lets go in time (the runtime is freed); one that does not
+/// gets the old runtime leaked instead of freed under it.
+#[test]
+fn reload_with_a_transferred_buffer_in_flight() {
+    pool();
+    let reload = |name: &str, v1: &str, started: &str| -> (Duration, u64) {
+        let dir = stage(name, v1);
+        let (cfg, _) = fixture_config();
+        let log = LogBackend::new(Vec::new());
+        let vt = log.vtable();
+        let host = Host::new(vt.backend_ref(), cfg).unwrap();
+        host.load_bundle(dir.join("main.js")).unwrap();
+        host.drain_jobs();
+        await_record(started);
+        assert_eq!(host.buffer_stats().tokens_live, 1);
+        let leaked = host.buffer_stats().leaked_runtimes;
+        std::fs::write(dir.join("main.js"), "console.log('v2');\n").unwrap();
+        let ok = std::rc::Rc::new(std::cell::Cell::new(None));
+        let flag = ok.clone();
+        host.on_reload(move |rep| flag.set(Some((rep.ok, rep.elapsed))));
+        host.request_reload();
+        unsafe { svelters_abi::HostRef::from_raw(host.host_callbacks()) }.checkpoint();
+        let (ok, took) = ok.get().expect("reloaded");
+        assert!(ok, "{:#?}", host.take_errors());
+        host.checkpoint();
+        assert!(host.take_errors().is_empty());
+        (took, host.buffer_stats().leaked_runtimes - leaked)
+    };
+    let (took, leaked) = reload("reload-coop", "import { holdCoop } from 'svelters:app/buf';\nholdCoop(new Float32Array(64), 701).catch(() => {});\n", "coop-start 701");
+    assert!(recorded("coop-dropped 701"), "the worker saw the cancel before the old runtime was dropped");
+    assert_eq!(leaked, 0);
+    assert!(took < Duration::from_millis(900), "{took:?}");
+    let (took, leaked) = reload("reload-stuck", "import { hold } from 'svelters:app/buf';\nhold(new Float32Array(64), 702).catch(() => {});\n", "hold-start 702");
+    assert_eq!(leaked, 1, "the old runtime is leaked while the worker holds its memory");
+    assert!(took >= Duration::from_millis(900), "{took:?}");
+    open(702);
+    await_record("hold-dropped 702");
+}
+
+/// Hands the buffer straight back from a worker (measures the path, not a kernel).
+#[svelters::export(module = "buf")]
+#[js(worker)]
+pub fn pass_worker(samples: Buffer<f32>) -> Buffer<f32> {
+    samples
+}
+
+/// A 64 MiB `Arc<[f32]>` as a read-only view.
+#[svelters::export(module = "buf")]
+pub fn view64() -> Shared<[f32]> {
+    static V: std::sync::OnceLock<Arc<[f32]>> = std::sync::OnceLock::new();
+    Shared::new(V.get_or_init(|| vec![1.0f32; 16 << 20].into()).clone())
+}
+
+/// Costs of the buffer paths for 64 MiB, against a copy. Run with
+/// `cargo test --release -p svelters --test buffers -- --ignored --nocapture buffer_costs`.
+#[test]
+#[ignore]
+fn buffer_costs() {
+    with_host(
+        "costs",
+        r#"
+import { pass, passWorker, view64 } from 'svelters:app/buf';
+import { alloc } from 'svelters:core';
+const N = 16 * 1024 * 1024;
+const best = (xs) => Math.min(...xs).toFixed(3);
+globalThis.start = async () => {
+  let a = new Float32Array(N);
+  const sync = [], worker = [], copy = [], viewT = [], allocT = [];
+  for (let i = 0; i < 5; i++) {
+    let t0 = performance.now();
+    a = pass(a, 100 + i);
+    sync.push(performance.now() - t0);
+    t0 = performance.now();
+    a = await passWorker(a);
+    worker.push(performance.now() - t0);
+    t0 = performance.now();
+    const c = a.slice();
+    copy.push(performance.now() - t0);
+    t0 = performance.now();
+    const v = view64();
+    viewT.push(performance.now() - t0);
+    void [c, v];
+  }
+  let b = alloc(Float32Array, N);
+  for (let i = 0; i < 5; i++) {
+    const t0 = performance.now();
+    b = pass(b, 200 + i);
+    allocT.push(performance.now() - t0);
+  }
+  console.log(`costs ms (best of 5, 64 MiB): sync JS->Rust->JS ${best(sync)} | worker round trip incl. checkpoint ${best(worker)} | Rust-backed (alloc) sync round trip ${best(allocT)} | read-only view of a 64 MiB Arc ${best(viewT)} | JS copy (slice) ${best(copy)}`);
+};
+"#,
+        |r| {
+            r.cmd("start");
+            r.until("costs", |_, l| l.iter().any(|x| x.starts_with("costs")));
+            println!("{}", r.lines.iter().find(|x| x.starts_with("costs")).unwrap());
+            println!("{:?}", r.host.buffer_stats());
+            r.no_errors();
+        },
+    );
+}
+
+#[test]
+fn op_log_names_buffers_without_their_contents() {
+    let b = svelters_abi::BufferValue::whole(svelters_abi::Elem::F32, svelters_abi::BufData::Shared(Arc::new(Bytes(vec![0u8; 64]))));
+    use svelters_abi::Value;
+    assert_eq!(svelters_backend_log::json_string(&Value::List(vec![Value::Buffer(b), Value::I64(1)])), "[\"<Float32Array 16>\",1]");
+}
+
+struct Bytes(Vec<u8>);
+unsafe impl svelters_abi::BufSource for Bytes {
+    fn as_ptr(&self) -> *mut u8 {
+        self.0.as_ptr() as *mut u8
+    }
+    fn byte_len(&self) -> usize {
+        self.0.len()
+    }
+    fn as_any(&self) -> &dyn std::any::Any {
+        self
+    }
 }
 
 #[test]

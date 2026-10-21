@@ -318,3 +318,82 @@ impl PartialEq for BufferValue {
         self.elem() == other.elem() && self.len() == other.len() && self.with_bytes(|a| other.with_bytes(|b| a == b))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{SVL_BYTES, Value};
+
+    struct Bytes(Vec<u8>);
+    unsafe impl BufSource for Bytes {
+        fn as_ptr(&self) -> *mut u8 {
+            self.0.as_ptr() as *mut u8
+        }
+        fn byte_len(&self) -> usize {
+            self.0.len()
+        }
+        fn as_any(&self) -> &dyn Any {
+            self
+        }
+    }
+
+    struct Home(Mutex<Vec<(u64, bool)>>);
+    impl TransferHome for Home {
+        fn token_gone(&self, id: u64, returned: bool) {
+            self.0.lock().unwrap().push((id, returned));
+        }
+    }
+
+    #[test]
+    fn raw_path_borrows_the_same_bytes() {
+        let src = Bytes((0u8..16).collect());
+        let addr = src.0.as_ptr() as usize;
+        let v = Value::Buffer(BufferValue::new(Elem::U16, BufData::Owned(Box::new(src)), 4, 3));
+        v.with_raw(|r| {
+            assert_eq!(r.tag, SVL_BYTES);
+            let b = unsafe { r.u.bytes };
+            assert_eq!((b.ptr as usize, b.len), (addr + 4, 6), "BYTES over the buffer's own memory");
+        });
+        // Clones share the payload; a taken payload degrades to empty bytes.
+        let Value::Buffer(b) = &v else { unreachable!() };
+        let clone = b.clone();
+        assert!(matches!(clone.take(), Some(BufData::Owned(_))));
+        assert!(b.is_taken() && b.take().is_none());
+        v.with_raw(|r| assert_eq!(unsafe { r.u.bytes }.len, 0));
+    }
+
+    #[test]
+    fn shared_payloads_are_never_taken_and_compare_by_content() {
+        let a = BufferValue::whole(Elem::U8, BufData::Shared(Arc::new(Bytes(vec![1, 2, 3]))));
+        let b = BufferValue::whole(Elem::U8, BufData::Shared(Arc::new(Bytes(vec![1, 2, 3]))));
+        assert_eq!(a, b);
+        assert!(a.shared().is_some() && a.shared().is_some());
+        assert_eq!(a.len(), 3);
+        assert_eq!(format!("{a:?}"), "Buffer(Shared 3 x U8)");
+    }
+
+    #[test]
+    fn tokens_report_drop_and_return() {
+        let home = Arc::new(Home(Mutex::new(Vec::new())));
+        let mut mem = [0u8; 8];
+        let t1 = unsafe { TransferToken::new(1, mem.as_mut_ptr(), 8, home.clone()) };
+        let t2 = unsafe { TransferToken::new(2, mem.as_mut_ptr(), 8, home.clone()) };
+        std::thread::spawn(move || drop(t1)).join().unwrap();
+        assert_eq!(t2.into_returned(), 2);
+        assert_eq!(*home.0.lock().unwrap(), vec![(1, false), (2, true)]);
+    }
+
+    #[test]
+    #[should_panic(expected = "exceeds")]
+    fn ranges_are_checked() {
+        let _ = BufferValue::new(Elem::F32, BufData::Owned(Box::new(Bytes(vec![0; 8]))), 4, 2);
+    }
+
+    #[test]
+    fn elem_names_round_trip() {
+        for e in Elem::ALL {
+            assert_eq!(Elem::from_js_name(e.js_name()), Some(e));
+            assert_eq!(Elem::from_code(e.code()), Some(e));
+        }
+    }
+}

@@ -179,12 +179,12 @@ impl Reloader {
                 // The old runtime's calls are cancelled before it is dropped, so workers holding its
                 // transferred buffers (E2) see the cancel while the drop waits for them.
                 core.ops_end_generation(old_gen, true);
+                core.app_release_all(&old_apps);
                 drop(old_engine);
                 drop(old_timers);
                 for h in old_roots {
                     core.destroy_subtree(h);
                 }
-                core.app_release_all(&old_apps);
                 None
             }
             Err(e) => {

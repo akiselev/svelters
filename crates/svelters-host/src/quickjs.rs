@@ -24,9 +24,9 @@ mod buffers;
 mod conv;
 use conv::QjsConv;
 
-/// Runtimes leaked because a worker still held one of their transferred buffers (E2).
+/// Runtimes leaked on this thread because Rust still held one of their transferred buffers (E2).
 pub(crate) fn leaked_runtimes() -> u64 {
-    buffers::LEAKED_RUNTIMES.load(Ordering::Relaxed) as u64
+    buffers::LEAKED_RUNTIMES.with(std::cell::Cell::get)
 }
 
 /// How long dropping a runtime waits for workers to drop its transferred buffers before it leaks the
@@ -441,17 +441,22 @@ impl Drop for QjsEngine {
         // E2: a worker may still use a transferred buffer of this runtime (its call was cancelled, but
         // it has not looked yet). Wait a little; past that, leak the runtime rather than free memory
         // under the worker (`docs/notes/egui-rust-exports.md` §8, shutdown order).
-        let home = &self.callbacks.home;
+        let home = self.callbacks.home.clone();
         if home.live.load(Ordering::Acquire) == 0 {
             return;
         }
         let end = Instant::now() + TRANSFER_GRACE;
-        while home.live.load(Ordering::Acquire) > 0 && Instant::now() < end {
+        loop {
+            // A worker that stops returns its buffer as a result nobody waits for: dropped here.
+            self.core.ops_reap();
+            if home.live.load(Ordering::Acquire) == 0 || Instant::now() >= end {
+                break;
+            }
             std::thread::sleep(Duration::from_millis(1));
         }
         let live = home.live.load(Ordering::Acquire);
         if live > 0 {
-            buffers::LEAKED_RUNTIMES.fetch_add(1, Ordering::Relaxed);
+            buffers::LEAKED_RUNTIMES.with(|n| n.set(n.get() + 1));
             eprintln!(
                 "[svelters] {live} transferred buffer(s) of a JS runtime that is going away are still held by Rust                  (a worker that ignores cancellation, or a stored Buffer<T>): the runtime is leaked instead of freed"
             );

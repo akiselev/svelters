@@ -500,6 +500,9 @@ impl Drop for Host<'_> {
     fn drop(&mut self) {
         // E1: workers that finish later post to a queue nobody drains and wake nobody.
         self.core.ops_shutdown();
+        // E2: app objects go before the JS runtime, so a transferred buffer one of them holds is let go
+        // first (the runtime is only leaked when Rust really keeps its memory).
+        self.core.app_release_all(&self.core.app_handles());
         self.reloader.stop_watch();
         // A backend attached through `start` must not call the vtable that is about to be freed.
         self.stop();
