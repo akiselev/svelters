@@ -72,7 +72,7 @@
     <button onclicked={toggle}>Toggle step</button>
     {#if error}<label>{error}</label>{/if}
     <label>words {words}</label>
-    <progress-bar fraction={progress} />
+    <progress-bar fraction={progress}></progress-bar>
     <label>{crunchText}</label>
     {#if ctl}
       <button onclicked={() => ctl?.abort()}>Cancel</button>

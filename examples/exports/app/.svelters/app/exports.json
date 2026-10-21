@@ -23,22 +23,28 @@
         },
         {
           "constructor": {
+            "async": false,
             "docs": "",
             "kind": "constructor",
+            "maxInFlight": 0,
             "name": "new",
             "params": [],
+            "progress": null,
             "readonly": false,
             "returns": "Notebook",
             "runsOn": "ui",
             "rust": "new",
+            "supersede": false,
             "throws": [],
             "writeonly": false
           },
           "docs": "A notebook of shared notes.",
           "methods": [
             {
+              "async": false,
               "docs": "Adds a note and returns it.",
               "kind": "method",
+              "maxInFlight": 0,
               "name": "add",
               "params": [
                 {
@@ -47,16 +53,20 @@
                   "type": "string"
                 }
               ],
+              "progress": null,
               "readonly": false,
               "returns": "Note",
               "runsOn": "ui",
               "rust": "add",
+              "supersede": false,
               "throws": [],
               "writeonly": false
             },
             {
+              "async": false,
               "docs": "The note at `i` (the same JS object as the one `add` returned).",
               "kind": "method",
+              "maxInFlight": 0,
               "name": "get",
               "params": [
                 {
@@ -65,10 +75,12 @@
                   "type": "number"
                 }
               ],
+              "progress": null,
               "readonly": false,
               "returns": "Note | null",
               "runsOn": "ui",
               "rust": "get",
+              "supersede": false,
               "throws": [],
               "writeonly": false
             }
@@ -90,8 +102,10 @@
         },
         {
           "constructor": {
+            "async": false,
             "docs": "A tally starting at `start`.",
             "kind": "constructor",
+            "maxInFlight": 0,
             "name": "new",
             "params": [
               {
@@ -100,32 +114,40 @@
                 "type": "number"
               }
             ],
+            "progress": null,
             "readonly": false,
             "returns": "Tally",
             "runsOn": "ui",
             "rust": "new",
+            "supersede": false,
             "throws": [],
             "writeonly": false
           },
           "docs": "A counter that lives on the UI thread (`&mut self`).",
           "methods": [
             {
+              "async": false,
               "docs": "Adds one step; fails outside -1000..=1000.",
               "kind": "method",
+              "maxInFlight": 0,
               "name": "bump",
               "params": [],
+              "progress": null,
               "readonly": false,
               "returns": "number",
               "runsOn": "ui",
               "rust": "bump",
+              "supersede": false,
               "throws": [
                 "out-of-range"
               ],
               "writeonly": false
             },
             {
+              "async": false,
               "docs": "",
               "kind": "method",
+              "maxInFlight": 0,
               "name": "summary",
               "params": [
                 {
@@ -134,10 +156,12 @@
                   "type": "string | null"
                 }
               ],
+              "progress": null,
               "readonly": false,
               "returns": "Summary",
               "runsOn": "ui",
               "rust": "summary",
+              "supersede": false,
               "throws": [],
               "writeonly": false
             }
@@ -167,8 +191,54 @@
       ],
       "functions": [
         {
+          "async": true,
+          "docs": "Counts primes for about `ms` milliseconds on a worker thread: the UI stays responsive.\n`options.onProgress` receives the fraction done.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "crunch",
+          "params": [
+            {
+              "name": "ms",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": "number",
+          "readonly": false,
+          "returns": "Crunch",
+          "runsOn": "worker",
+          "rust": "crunch",
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
+          "docs": "The same computation on the JS thread, synchronously: the UI freezes meanwhile (for comparison).",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "crunchBlocking",
+          "params": [
+            {
+              "name": "ms",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "Crunch",
+          "runsOn": "ui",
+          "rust": "crunch_blocking",
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
           "docs": "The n-th Fibonacci number (a checked JS number).",
           "kind": "static",
+          "maxInFlight": 0,
           "name": "fib",
           "params": [
             {
@@ -177,16 +247,20 @@
               "type": "number"
             }
           ],
+          "progress": null,
           "readonly": false,
           "returns": "number",
           "runsOn": "ui",
           "rust": "fib",
+          "supersede": false,
           "throws": [],
           "writeonly": false
         },
         {
+          "async": false,
           "docs": "A greeting from Rust.",
           "kind": "static",
+          "maxInFlight": 0,
           "name": "greet",
           "params": [
             {
@@ -195,16 +269,20 @@
               "type": "string"
             }
           ],
+          "progress": null,
           "readonly": false,
           "returns": "string",
           "runsOn": "ui",
           "rust": "greet",
+          "supersede": false,
           "throws": [],
           "writeonly": false
         },
         {
+          "async": false,
           "docs": "A no-op, for measuring the per-call cost of the registry path.",
           "kind": "static",
+          "maxInFlight": 0,
           "name": "noop",
           "params": [
             {
@@ -213,10 +291,78 @@
               "type": "number"
             }
           ],
+          "progress": null,
           "readonly": false,
           "returns": "number",
           "runsOn": "ui",
           "rust": "noop",
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "A JS-thread async no-op (ready at once), for measuring the eager path.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "noopLocal",
+          "params": [
+            {
+              "name": "x",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "number",
+          "runsOn": "local",
+          "rust": "noop_local",
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "A worker no-op, for measuring the settle cost of the offload path.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "noopWorker",
+          "params": [
+            {
+              "name": "x",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "number",
+          "runsOn": "worker",
+          "rust": "noop_worker",
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "Counts the words of `text`: an async fn on the JS thread that hands the counting to a worker.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "wordCount",
+          "params": [
+            {
+              "name": "text",
+              "optional": false,
+              "type": "string"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "number",
+          "runsOn": "local",
+          "rust": "word_count",
+          "supersede": false,
           "throws": [],
           "writeonly": false
         }
@@ -260,6 +406,24 @@
           ],
           "kind": "record",
           "name": "Summary",
+          "values": []
+        },
+        {
+          "docs": "What a crunch found.",
+          "fields": [
+            {
+              "name": "primes",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "ms",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "kind": "record",
+          "name": "Crunch",
           "values": []
         }
       ]
