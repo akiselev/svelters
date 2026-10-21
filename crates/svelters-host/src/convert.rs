@@ -88,6 +88,13 @@ pub(crate) trait JsPromises: JsReader {
     fn new_completion(&self, id: u64) -> Result<Self::V, String>;
     /// Calls `backend->cancel(id)` when the AbortSignal `signal` aborts.
     fn watch_abort(&self, signal: &Self::V, id: u64) -> Result<(), String>;
+    /// E1: creates the Promise of offloaded export call `id`. `options` is the call's
+    /// `{ signal, onProgress }`: an abort of `signal` rejects the Promise at once (`cancelled`) and
+    /// cancels the op; `onProgress` receives progress values.
+    fn new_op(&self, id: u64, options: Option<&Self::V>) -> Result<Self::V, String>;
+    /// E1: settles (or reports progress of) op `id` from inside a host op: one microtask later, so a
+    /// rejection is not reported as unhandled before the caller could attach a handler.
+    fn settle_op_soon(&self, s: &crate::engine::OpSettle) -> Result<(), String>;
 }
 
 /// What the converter needs from a JS engine to build values.

@@ -8,7 +8,7 @@
 
 use std::fmt;
 use std::path::Path;
-use svelters_abi::Value;
+use svelters_abi::{NativeError, SlotDesc, Value};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ErrorKind {
@@ -74,6 +74,25 @@ pub struct ChangedProp {
     pub value: Option<Value>,
 }
 
+/// How one offloaded export call ends, or what it reports (E1): settled directly in the engine at
+/// checkpoint start, a whole batch per engine entry.
+#[derive(Clone, Debug)]
+pub enum OpOutcome {
+    /// Resolve the call's Promise with the value, converted as the slot says.
+    Resolve(Value, SlotDesc),
+    /// Reject it with a `NativeError`.
+    Reject(NativeError),
+    /// Call its `options.onProgress` with the value (the Promise stays pending).
+    Progress(Value, SlotDesc),
+}
+
+/// One entry of an [`JsEngine::settle_ops`] batch.
+#[derive(Clone, Debug)]
+pub struct OpSettle {
+    pub id: u64,
+    pub outcome: OpOutcome,
+}
+
 pub trait JsEngine {
     /// Evaluates the entry module. Imports resolve relative to the entry file's directory and may
     /// not leave it. Jobs may remain queued afterwards.
@@ -126,4 +145,12 @@ pub trait JsEngine {
     /// Errors the engine collected outside a call it returned from: job exceptions and unhandled
     /// rejections. Drains the list.
     fn take_errors(&mut self) -> Vec<JsError>;
+
+    /// Settles offloaded export calls (E1) in one engine entry: resolves or rejects their Promises
+    /// and delivers progress. Ids the runtime does not know (an older runtime's) are ignored.
+    /// Reactions run as jobs afterwards, like every other completion.
+    fn settle_ops(&mut self, batch: &[OpSettle]) -> Result<(), JsError> {
+        let _ = batch;
+        Err(JsError::new(ErrorKind::Host, "this engine does not run offloaded exports"))
+    }
 }

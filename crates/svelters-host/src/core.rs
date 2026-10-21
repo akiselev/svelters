@@ -34,8 +34,10 @@ use svelters_abi::{
 mod apps;
 mod asyncs;
 mod callbacks;
+mod offload;
 mod ops;
 mod statics;
+pub use offload::OffloadStats;
 pub(crate) use callbacks::{CallbackEngine, CallbackRegistry, CbTable};
 pub(crate) use ops::{Name, OpError, OpKind};
 
@@ -328,6 +330,8 @@ pub(crate) struct Core {
     pub(crate) apps: crate::exports::objects::AppObjects,
     /// Where app-export calls are logged (the op log of a test harness), if anywhere.
     pub(crate) op_log: RefCell<Option<Rc<dyn Fn(&str)>>>,
+    /// Offloaded app-export calls in flight (E1) and the completion queue workers post to.
+    pub(crate) ops: offload::OpTable,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -368,6 +372,7 @@ impl Core {
             maps: RefCell::default(),
             apps: Default::default(),
             op_log: RefCell::new(None),
+            ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
         }
     }
 
@@ -813,6 +818,9 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.timing.set(t);
     }
     let mut eng = engine.borrow_mut();
+    // E1 (egui-rust-exports.md §6.2): offloaded export calls settle first, so the changes, events
+    // and the one job drain below see their results in the same checkpoint.
+    offload::drain(core, &mut eng);
     if core.cfg.scripted {
         checkpoint_scripted(core, &mut eng);
         core.process_releases();

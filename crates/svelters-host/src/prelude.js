@@ -241,12 +241,79 @@
   const watchAbort = (signal, id) => {
     signal.addEventListener('abort', () => native.cancelAsync(id), { once: true });
   };
+  // E1: offloaded export calls. The host settles them in batches at checkpoint start (`settleOps`:
+  // kind 0 resolve, 1 reject, 2 progress); an abort of `options.signal` rejects at once.
+  const ops = new Map();
+  const makeOp = (id, options) => {
+    let resolve;
+    let reject;
+    const promise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    const onProgress = options && typeof options.onProgress === 'function' ? options.onProgress : null;
+    const op = { resolve, reject, onProgress, unwatch: null };
+    ops.set(id, op);
+    const signal = options ? options.signal : null;
+    if (signal && typeof signal.addEventListener === 'function' && !signal.aborted) {
+      const onAbort = () => {
+        if (ops.get(id) === op) {
+          ops.delete(id);
+          reject(new NativeError('svelters', 'cancelled', 'The operation was aborted'));
+        }
+        native.cancelOp(id);
+      };
+      signal.addEventListener('abort', onAbort, { once: true });
+      op.unwatch = () => signal.removeEventListener?.('abort', onAbort);
+    }
+    return promise;
+  };
+  const finishOp = (id) => {
+    const op = ops.get(id);
+    if (op) {
+      ops.delete(id);
+      if (op.unwatch) op.unwatch();
+    }
+    return op;
+  };
+  const progressOp = (op, v) => {
+    if (!op || !op.onProgress) return;
+    try {
+      op.onProgress(v);
+    } catch (e) {
+      queueMicrotask(() => {
+        throw e;
+      });
+    }
+  };
+  const settleOps = (batch) => {
+    for (let i = 0; i < batch.length; i += 3) {
+      const kind = batch[i];
+      const id = batch[i + 1];
+      const v = batch[i + 2];
+      if (kind === 2) {
+        progressOp(ops.get(id), v);
+        continue;
+      }
+      const op = finishOp(id);
+      if (op) (kind === 0 ? op.resolve : op.reject)(v);
+    }
+  };
+  const settleOpSoon = (kind, id, v) => {
+    if (kind === 2) {
+      progressOp(ops.get(id), v);
+      return;
+    }
+    const op = finishOp(id);
+    if (op) Promise.resolve().then(() => (kind === 0 ? op.resolve : op.reject)(v));
+  };
+  const opsLive = () => ops.size;
   const isView = (v) => ArrayBuffer.isView(v);
   const dateMs = (v) => (v instanceof Date ? v.getTime() : null);
   const makeDate = (ms) => new Date(ms);
 
   Object.defineProperty(global, '__svelters_internal', {
-    value: { fire, frame: runFrame, makeBoxed, makeNativeError, isView, dateMs, makeDate, makeCompletion, watchAbort },
+    value: { fire, frame: runFrame, makeBoxed, makeNativeError, isView, dateMs, makeDate, makeCompletion, watchAbort, makeOp, settleOps, settleOpSoon, opsLive },
     enumerable: false,
   });
 })

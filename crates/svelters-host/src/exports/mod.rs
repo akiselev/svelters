@@ -15,10 +15,14 @@
 
 mod codegen;
 pub(crate) mod objects;
+pub mod offload;
 mod schema;
 
 pub(crate) use codegen::builtin_module;
 pub use codegen::{DumpReport, dump, dump_if_debug, javascript, json, typescript};
+pub use offload::{Cancelled, CancelledFuture, Exec, Spawned, WorkCx, blocking, set_worker_pool, worker};
+#[cfg(feature = "tokio")]
+pub use offload::set_tokio_handle;
 pub use schema::{ClassSchema, FnSchema, MemberSchema, ModuleSchema, Schema, TypeSchema, schema};
 
 use std::any::{Any, TypeId};
@@ -499,6 +503,13 @@ pub mod __private {
     /// Compile-time check of `#[svelters::object(shared)]`.
     pub const fn assert_shared<T: Send + Sync + ?Sized>() {}
 
+    pub use super::offload::{Injected, Job, OpShared, OffloadSelf, TokioFuture, WorkerSend, assert_offload_self, assert_worker_send, local_job, pool_job, tokio_job};
+
+    /// The sync thunk of an offloaded member (never called: the host starts it with its `start`).
+    pub fn offload_thunk(_: &CallCx<'_>, _: Vec<Value>) -> Result<Value, NativeError> {
+        Err(host_error("internal", "an offloaded export was called synchronously"))
+    }
+
     /// An object argument (`&T`, `&mut T`, `Arc<T>`, `Obj<T>`).
     pub fn object<T: ExportObject>(v: Value, cx: &CallCx<'_>) -> Result<T::Holder, NativeError> {
         match v {
@@ -897,10 +908,29 @@ pub struct Sig {
     pub params: Vec<Param>,
     pub ret: TypeRef,
     pub throws: Vec<&'static str>,
+    /// Offloaded members with a `WorkCx<P>`: the progress type `P` (`options.onProgress`).
+    pub progress: Option<TypeRef>,
 }
 
 /// The generated call: owned, validated arguments in, a result or a `NativeError` out.
 pub type Thunk = fn(&CallCx<'_>, Vec<Value>) -> Result<Value, NativeError>;
+
+/// The generated start of an offloaded call (E1): owned arguments in, the job to run out. Runs on
+/// the JS thread; the job runs where [`OffloadDef::exec`] says.
+pub type StartThunk = fn(&CallCx<'_>, Vec<Value>, &Arc<offload::OpShared>) -> Result<offload::Job, NativeError>;
+
+/// How an offloaded member runs (`#[js(worker)]`, `#[js(blocking)]`, `async fn`, `#[js(tokio)]`).
+#[derive(Clone, Copy, Debug)]
+pub struct OffloadDef {
+    pub exec: Exec,
+    pub start: StartThunk,
+    /// `#[js(supersede)]`: a new call cancels the previous in-flight calls of this member on the same
+    /// object (they reject with `superseded`).
+    pub supersede: bool,
+    /// `#[js(max_in_flight = n)]`: at most `n` calls of this member on the same object run at once;
+    /// further calls wait in a FIFO. 0 = unlimited.
+    pub max_in_flight: u32,
+}
 
 /// One exported member, as `#[svelters::export]` emits it.
 pub struct MemberDef {
@@ -912,6 +942,8 @@ pub struct MemberDef {
     pub docs: &'static str,
     pub sig: fn(&mut TypeBuilder) -> Sig,
     pub thunk: Thunk,
+    /// Offloaded members (E1): the call returns a Promise and runs as [`OffloadDef`] says.
+    pub offload: Option<OffloadDef>,
 }
 
 /// `#[svelters::object]` on a struct.

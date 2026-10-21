@@ -16,6 +16,8 @@ pub struct MemberSchema {
     pub thunk: Option<Thunk>,
     /// Property setter (props only).
     pub setter: Option<(Thunk, Receiver)>,
+    /// Offloaded members (E1): a Promise-returning call that runs as this says.
+    pub offload: Option<OffloadDef>,
 }
 
 /// An exported object type.
@@ -111,6 +113,7 @@ fn member(def: &MemberDef, b: &mut TypeBuilder) -> MemberSchema {
         desc,
         thunk: Some(def.thunk),
         setter: None,
+        offload: def.offload,
     }
 }
 
@@ -150,10 +153,11 @@ fn add_accessor(props: &mut Vec<MemberSchema>, def: &MemberDef, b: &mut TypeBuil
                     kind: MemberKind::Getter,
                     receiver: def.receiver,
                     docs: def.docs,
-                    sig: Sig { params: vparam.into_iter().collect(), ret: TypeRef::void(), throws: m.sig.throws.clone() },
+                    sig: Sig { params: vparam.into_iter().collect(), ret: TypeRef::void(), throws: m.sig.throws.clone(), progress: None },
                     desc: MemberDesc { name: def.name.to_string(), params: vec![value], ret: SlotDesc::new(SVL_NULL), flags: 0 },
                     thunk: None,
                     setter: Some((def.thunk, def.receiver)),
+                    offload: None,
                 }),
             }
         }
