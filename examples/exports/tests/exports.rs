@@ -92,8 +92,11 @@ fn worker_job_keeps_the_ui_responsive() {
     assert!(label_texts(&backend).iter().any(|t| t == "words 5"), "{:?}", label_texts(&backend));
 
     // The GTK loop is driven by hand: the longest single dispatch (`iteration`) is how long the loop
-    // was blocked; the number of dispatches shows it kept turning.
-    let measure = |button: &str, prefix: &str| -> (Duration, u32, String) {
+    // was blocked; the number of dispatches shows it kept turning. A default-priority 1 ms probe timer
+    // runs meanwhile: its longest gap is the same stall seen from inside the loop, and the job's
+    // completion (a `wake` from the worker) must still get through it (FU2: wakes used to be idle
+    // priority, which a busy default-priority timer starves).
+    let measure = |button: &str, prefix: &str| -> (Duration, u32, String, Duration) {
         // The newest button of that label (`{#if}` re-creates them).
         let b = (1..4096u64)
             .filter_map(|h| backend.object(h))
@@ -101,6 +104,13 @@ fn worker_job_keeps_the_ui_responsive() {
             .filter(|b| b.label().as_deref() == Some(button) && b.parent().is_some())
             .last()
             .unwrap_or_else(|| panic!("no {button} button"));
+        let probe = std::rc::Rc::new(std::cell::Cell::new((Instant::now(), Duration::ZERO)));
+        let p = probe.clone();
+        let timer = glib::timeout_add_local_full(Duration::from_millis(1), glib::Priority::DEFAULT, move || {
+            let (last, gap) = p.get();
+            p.set((Instant::now(), gap.max(last.elapsed())));
+            glib::ControlFlow::Continue
+        });
         b.emit_clicked();
         let ctx = glib::MainContext::default();
         let end = Instant::now() + Duration::from_secs(30);
@@ -113,7 +123,8 @@ fn worker_job_keeps_the_ui_responsive() {
                 turns += 1;
             }
             if let Some(t) = label_texts(&backend).into_iter().find(|t| t.starts_with(prefix)) {
-                return (longest, turns, t);
+                timer.remove();
+                return (longest, turns, t, probe.get().1);
             }
             assert!(Instant::now() < end, "no {prefix} label: {:?} {:?}", label_texts(&backend), host.take_errors());
             std::thread::sleep(Duration::from_millis(1));
@@ -121,15 +132,17 @@ fn worker_job_keeps_the_ui_responsive() {
     };
     let ticks = |t: &str| -> u32 { t.rsplit(' ').next().and_then(|n| n.parse().ok()).unwrap_or(0) };
 
-    let (worker_gap, worker_turns, worker_text) = measure("Crunch", "crunched ");
-    let (ui_gap, ui_turns, ui_text) = measure("Crunch on the UI thread", "blocked: ");
-    println!("worker: longest GTK dispatch {:.1} ms over {worker_turns} dispatches; {worker_text}", worker_gap.as_secs_f64() * 1e3);
-    println!("JS thread: longest GTK dispatch {:.1} ms over {ui_turns} dispatches; {ui_text}", ui_gap.as_secs_f64() * 1e3);
+    let (worker_gap, worker_turns, worker_text, worker_probe) = measure("Crunch", "crunched ");
+    let (ui_gap, ui_turns, ui_text, ui_probe) = measure("Crunch on the UI thread", "blocked: ");
+    println!("worker: longest GTK dispatch {:.1} ms over {worker_turns} dispatches, probe gap {:.1} ms; {worker_text}", worker_gap.as_secs_f64() * 1e3, worker_probe.as_secs_f64() * 1e3);
+    println!("JS thread: longest GTK dispatch {:.1} ms over {ui_turns} dispatches, probe gap {:.1} ms; {ui_text}", ui_gap.as_secs_f64() * 1e3, ui_probe.as_secs_f64() * 1e3);
     // The worker job: the loop never stalls for anything like the job's 200 ms, and JS timers keep firing.
     assert!(worker_gap < Duration::from_millis(100), "worker job stalled the loop for {worker_gap:?}");
+    assert!(worker_probe < Duration::from_millis(100), "worker job: the 1 ms probe timer waited {worker_probe:?}");
     assert!(ticks(&worker_text) >= 5, "JS timer ticks during the worker job: {worker_text}");
     // The same job on the JS thread: one stall of about the job's length, and no JS timer tick.
     assert!(ui_gap >= Duration::from_millis(150), "blocking job: longest gap only {ui_gap:?}");
+    assert!(ui_probe >= Duration::from_millis(150), "blocking job: the probe timer's longest gap only {ui_probe:?}");
     assert_eq!(ticks(&ui_text), 0, "{ui_text}");
     let errors = host.take_errors();
     assert!(errors.is_empty(), "{errors:#?}");

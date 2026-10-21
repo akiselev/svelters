@@ -36,7 +36,7 @@
 //!
 //! Threads: `notify` is emitted on the thread that changed the object. On the backend's thread the
 //! host is called synchronously; from any other thread the call is moved to the default main
-//! context with an idle (plans/research/REACTIVITY.md §5.6).
+//! context with a default-priority idle (plans/research/REACTIVITY.md §5.6; FU2 for the priority).
 
 use super::*;
 use std::sync::Mutex;
@@ -167,7 +167,15 @@ impl Reporter {
             f(self);
         } else {
             let r = self.clone();
-            glib::idle_add_once(move || f(&r));
+            // At the default priority, like `wake` (FU2): an idle below it is starved by any busy
+            // default-priority source, and this report is host work.
+            let mut f = Some(f);
+            glib::idle_add_full(glib::Priority::DEFAULT, move || {
+                if let Some(f) = f.take() {
+                    f(&r);
+                }
+                glib::ControlFlow::Break
+            });
         }
     }
 
