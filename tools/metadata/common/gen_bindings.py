@@ -288,8 +288,11 @@ def winui_bindings() -> dict[str, dict[str, dict]]:
             for e in m.events:
                 if e["class"] == c:
                     signals.setdefault(e["name"], len(e["payload"]))
-        for c in k["chain"]:
+        for c in k["chain"]:  # nearest class first: a subclass binding shadows a base one of the same name
+            seen = set(out.get(k["tag"], {}))
             for b in m.ovr.get(c, {}).get("bindings", []):
+                if b["name"] in seen:
+                    continue
                 _add_binding(out, k["tag"], b, "winui", props, signals)
     return out
 

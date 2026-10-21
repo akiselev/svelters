@@ -35,6 +35,26 @@ export interface BindableProps {
   "action-bar": {
     revealed: boolean; // gtk
   };
+  "app-bar-button": {
+    "dynamic-overflow-order": number; // winui
+    "is-compact": boolean; // winui
+    "keyboard-accelerator-text-override": string; // winui
+    label: string; // winui
+    "label-position": string; // winui
+  };
+  "app-bar-separator": {
+    "dynamic-overflow-order": number; // winui
+    "is-compact": boolean; // winui
+  };
+  "app-bar-toggle-button": {
+    "dynamic-overflow-order": number; // winui
+    "is-checked": boolean; // winui
+    "is-compact": boolean; // winui
+    "is-three-state": boolean; // winui
+    "keyboard-accelerator-text-override": string; // winui
+    label: string; // winui
+    "label-position": string; // winui
+  };
   "application-window": {
     decorated: boolean; // gtk
     "default-height": number; // gtk
@@ -56,6 +76,19 @@ export interface BindableProps {
     "obey-child": boolean; // gtk
     ratio: number; // gtk
   };
+  "auto-suggest-box": {
+    "auto-maximize-suggestion-area": boolean; // winui
+    "is-suggestion-list-open": boolean; // winui
+    "light-dismiss-overlay-mode": string; // winui
+    "max-suggestion-list-height": number; // winui
+    "placeholder-text": string; // winui
+    text: string; // winui
+    "text-member-path": string; // winui
+    "update-text-on-select": boolean; // winui
+  };
+  border: {
+    "background-sizing": string; // winui
+  };
   box: {
     "baseline-child": number; // gtk
     "baseline-position": string; // gtk
@@ -76,6 +109,42 @@ export interface BindableProps {
     "show-heading": boolean; // gtk
     "show-week-numbers": boolean; // gtk
   };
+  "calendar-date-picker": {
+    "calendar-identifier": string; // winui
+    "date-format": string; // winui
+    "day-of-week-format": string; // winui
+    "display-mode": string; // winui
+    "first-day-of-week": string; // winui
+    "is-calendar-open": boolean; // winui
+    "is-group-label-visible": boolean; // winui
+    "is-out-of-scope-enabled": boolean; // winui
+    "is-today-highlighted": boolean; // winui
+    "light-dismiss-overlay-mode": string; // winui
+    "placeholder-text": string; // winui
+  };
+  "calendar-view": {
+    "calendar-identifier": string; // winui
+    "day-item-font-size": number; // winui
+    "day-item-font-style": string; // winui
+    "day-of-week-format": string; // winui
+    "display-mode": string; // winui
+    "first-day-of-week": string; // winui
+    "first-of-month-label-font-size": number; // winui
+    "first-of-month-label-font-style": string; // winui
+    "first-of-year-decade-label-font-size": number; // winui
+    "first-of-year-decade-label-font-style": string; // winui
+    "horizontal-day-item-alignment": string; // winui
+    "horizontal-first-of-month-label-alignment": string; // winui
+    "is-group-label-visible": boolean; // winui
+    "is-out-of-scope-enabled": boolean; // winui
+    "is-today-highlighted": boolean; // winui
+    "month-year-item-font-size": number; // winui
+    "month-year-item-font-style": string; // winui
+    "number-of-weeks-in-view": number; // winui
+    "selection-mode": string; // winui
+    "vertical-day-item-alignment": string; // winui
+    "vertical-first-of-month-label-alignment": string; // winui
+  };
   "center-box": {
     "baseline-position": string; // gtk
     "shrink-center-last": boolean; // gtk
@@ -83,17 +152,71 @@ export interface BindableProps {
   "check-box": {
     checked: boolean; // qt
     "is-checked": boolean; // winui
+    "is-three-state": boolean; // winui
   };
   "check-button": {
     active: boolean; // gtk
     inconsistent: boolean; // gtk
     "use-underline": boolean; // gtk
   };
+  "color-picker": {
+    "color-spectrum-components": string; // winui
+    "color-spectrum-shape": string; // winui
+    "is-alpha-enabled": boolean; // winui
+    "is-alpha-slider-visible": boolean; // winui
+    "is-alpha-text-input-visible": boolean; // winui
+    "is-color-channel-text-input-visible": boolean; // winui
+    "is-color-preview-visible": boolean; // winui
+    "is-color-slider-visible": boolean; // winui
+    "is-color-spectrum-visible": boolean; // winui
+    "is-hex-input-visible": boolean; // winui
+    "is-more-button-visible": boolean; // winui
+    "max-hue": number; // winui
+    "max-saturation": number; // winui
+    "max-value": number; // winui
+    "min-hue": number; // winui
+    "min-saturation": number; // winui
+    "min-value": number; // winui
+    orientation: string; // winui
+  };
   "combo-box": {
     "current-index": number; // qt
+    "is-drop-down-open": boolean; // winui
+    "is-editable": boolean; // winui
+    "is-text-search-enabled": boolean; // winui
+    "light-dismiss-overlay-mode": string; // winui
+    "max-drop-down-height": number; // winui
+    "placeholder-text": string; // winui
+    "selection-changed-trigger": string; // winui
+    text: string; // winui
+  };
+  "command-bar": {
+    "default-label-position": string; // winui
+    "is-dynamic-overflow-enabled": boolean; // winui
+    "overflow-button-visibility": string; // winui
+  };
+  "content-dialog": {
+    "close-button-text": string; // winui
+    "default-button": string; // winui
+    "full-size-desired": boolean; // winui
+    "is-primary-button-enabled": boolean; // winui
+    "is-secondary-button-enabled": boolean; // winui
+    "primary-button-text": string; // winui
+    "secondary-button-text": string; // winui
   };
   "date-edit": {
     date: { year: number; month: number; day: number }; // qt
+  };
+  "date-picker": {
+    "calendar-identifier": string; // winui
+    "day-format": string; // winui
+    "day-visible": boolean; // winui
+    "light-dismiss-overlay-mode": string; // winui
+    "month-format": string; // winui
+    "month-visible": boolean; // winui
+    orientation: string; // winui
+    "year-format": string; // winui
+    "year-visible": boolean; // winui
   };
   "date-time-edit": {
     "date-time": Date; // qt
@@ -138,7 +261,9 @@ export interface BindableProps {
     visibility: boolean; // gtk
   };
   expander: {
+    "expand-direction": string; // winui
     expanded: boolean; // gtk
+    "is-expanded": boolean; // winui
     "resize-toplevel": boolean; // gtk
     "use-markup": boolean; // gtk
     "use-underline": boolean; // gtk
@@ -157,6 +282,13 @@ export interface BindableProps {
     level: string; // gtk
     "use-font": boolean; // gtk
     "use-size": boolean; // gtk
+  };
+  "font-icon": {
+    "font-size": number; // winui
+    "font-style": string; // winui
+    glyph: string; // winui
+    "is-text-scale-factor-enabled": boolean; // winui
+    "mirrored-when-right-to-left": boolean; // winui
   };
   frame: {
     "label-xalign": number; // gtk
@@ -183,7 +315,19 @@ export interface BindableProps {
   image: {
     "icon-size": string; // gtk
     "pixel-size": number; // gtk
+    stretch: string; // winui
     "use-fallback": boolean; // gtk
+  };
+  "info-badge": {
+    value: number; // winui
+  };
+  "info-bar": {
+    "is-closable": boolean; // winui
+    "is-icon-visible": boolean; // winui
+    "is-open": boolean; // winui
+    message: string; // winui
+    severity: string; // winui
+    title: string; // winui
   };
   inscription: {
     "min-chars": number; // gtk
@@ -244,6 +388,9 @@ export interface BindableProps {
     "has-frame": boolean; // gtk
     "use-underline": boolean; // gtk
   };
+  "menu-bar-item": {
+    title: string; // winui
+  };
   "menu-button": {
     active: boolean; // gtk
     "always-show-arrow": boolean; // gtk
@@ -253,6 +400,38 @@ export interface BindableProps {
     primary: boolean; // gtk
     "use-underline": boolean; // gtk
   };
+  "menu-flyout-item": {
+    "keyboard-accelerator-text-override": string; // winui
+    text: string; // winui
+  };
+  "menu-flyout-sub-item": {
+    text: string; // winui
+  };
+  "navigation-view": {
+    "always-show-header": boolean; // winui
+    "compact-mode-threshold-width": number; // winui
+    "compact-pane-length": number; // winui
+    "expanded-mode-threshold-width": number; // winui
+    "is-back-button-visible": string; // winui
+    "is-back-enabled": boolean; // winui
+    "is-pane-open": boolean; // winui
+    "is-pane-toggle-button-visible": boolean; // winui
+    "is-pane-visible": boolean; // winui
+    "is-settings-visible": boolean; // winui
+    "is-title-bar-auto-padding-enabled": boolean; // winui
+    "open-pane-length": number; // winui
+    "overflow-label-mode": string; // winui
+    "pane-display-mode": string; // winui
+    "pane-title": string; // winui
+    "selection-follows-focus": string; // winui
+    "shoulder-navigation-enabled": string; // winui
+  };
+  "navigation-view-item": {
+    "has-unrealized-children": boolean; // winui
+    "is-child-selected": boolean; // winui
+    "is-expanded": boolean; // winui
+    "selects-on-invoked": boolean; // winui
+  };
   notebook: {
     "enable-popup": boolean; // gtk
     page: number; // gtk
@@ -260,6 +439,21 @@ export interface BindableProps {
     "show-border": boolean; // gtk
     "show-tabs": boolean; // gtk
     "tab-pos": string; // gtk
+  };
+  "number-box": {
+    "accepts-expression": boolean; // winui
+    "is-wrap-enabled": boolean; // winui
+    "large-change": number; // winui
+    maximum: number; // winui
+    minimum: number; // winui
+    "placeholder-text": string; // winui
+    "prevent-keyboard-display-on-programmatic-focus": boolean; // winui
+    "small-change": number; // winui
+    "spin-button-placement-mode": string; // winui
+    text: string; // winui
+    "text-reading-order": string; // winui
+    "validation-mode": string; // winui
+    value: number; // winui
   };
   paned: {
     position: number; // gtk
@@ -270,10 +464,29 @@ export interface BindableProps {
     "shrink-start-child": boolean; // gtk
     "wide-handle": boolean; // gtk
   };
+  "password-box": {
+    "is-password-reveal-button-enabled": boolean; // winui
+    "max-length": number; // winui
+    password: string; // winui
+    "password-char": string; // winui
+    "password-reveal-mode": string; // winui
+    "placeholder-text": string; // winui
+    "prevent-keyboard-display-on-programmatic-focus": boolean; // winui
+    "text-reading-order": string; // winui
+  };
   "password-entry": {
     "activates-default": boolean; // gtk
     "show-peek-icon": boolean; // gtk
     text: string; // gtk
+  };
+  "person-picture": {
+    "badge-glyph": string; // winui
+    "badge-number": number; // winui
+    "badge-text": string; // winui
+    "display-name": string; // winui
+    initials: string; // winui
+    "is-group": boolean; // winui
+    "prefer-small-image": boolean; // winui
   };
   picture: {
     "can-shrink": boolean; // gtk
@@ -301,11 +514,28 @@ export interface BindableProps {
     ellipsize: string; // gtk
     fraction: number; // gtk
     inverted: boolean; // gtk
+    "is-indeterminate": boolean; // winui
     "pulse-step": number; // gtk
+    "show-error": boolean; // winui
+    "show-paused": boolean; // winui
     "show-text": boolean; // gtk
+  };
+  "progress-ring": {
+    "is-active": boolean; // winui
+    "is-indeterminate": boolean; // winui
+    maximum: number; // winui
+    minimum: number; // winui
+    value: number; // winui
   };
   "radio-button": {
     checked: boolean; // qt
+    "group-name": string; // winui
+    "is-checked": boolean; // winui
+    "is-three-state": boolean; // winui
+  };
+  "radio-buttons": {
+    "max-columns": number; // winui
+    "selected-index": number; // winui
   };
   range: {
     "fill-level": number; // gtk
@@ -315,10 +545,40 @@ export interface BindableProps {
     "show-fill-level": boolean; // gtk
     value: number; // gtk
   };
+  "rating-control": {
+    caption: string; // winui
+    "initial-set-value": number; // winui
+    "is-clear-enabled": boolean; // winui
+    "is-read-only": boolean; // winui
+    "max-rating": number; // winui
+    "placeholder-value": number; // winui
+    value: number; // winui
+  };
+  "repeat-button": {
+    delay: number; // winui
+    interval: number; // winui
+  };
   revealer: {
     "reveal-child": boolean; // gtk
     "transition-duration": number; // gtk
     "transition-type": string; // gtk
+  };
+  "rich-edit-box": {
+    "accepts-return": boolean; // winui
+    "character-casing": string; // winui
+    "clipboard-copy-format": string; // winui
+    "desired-candidate-window-alignment": string; // winui
+    "horizontal-text-alignment": string; // winui
+    "is-color-font-enabled": boolean; // winui
+    "is-read-only": boolean; // winui
+    "is-spell-check-enabled": boolean; // winui
+    "is-text-prediction-enabled": boolean; // winui
+    "max-length": number; // winui
+    "placeholder-text": string; // winui
+    "prevent-keyboard-display-on-programmatic-focus": boolean; // winui
+    "text-alignment": string; // winui
+    "text-reading-order": string; // winui
+    "text-wrapping": string; // winui
   };
   scale: {
     digits: number; // gtk
@@ -338,6 +598,31 @@ export interface BindableProps {
   };
   "scroll-bar": {
     value: number; // qt
+  };
+  "scroll-viewer": {
+    "bring-into-view-on-focus-change": boolean; // winui
+    "can-content-render-outside-bounds": boolean; // winui
+    "horizontal-anchor-ratio": number; // winui
+    "horizontal-scroll-bar-visibility": string; // winui
+    "horizontal-scroll-mode": string; // winui
+    "horizontal-snap-points-alignment": string; // winui
+    "horizontal-snap-points-type": string; // winui
+    "is-deferred-scrolling-enabled": boolean; // winui
+    "is-horizontal-rail-enabled": boolean; // winui
+    "is-horizontal-scroll-chaining-enabled": boolean; // winui
+    "is-scroll-inertia-enabled": boolean; // winui
+    "is-vertical-rail-enabled": boolean; // winui
+    "is-vertical-scroll-chaining-enabled": boolean; // winui
+    "is-zoom-chaining-enabled": boolean; // winui
+    "is-zoom-inertia-enabled": boolean; // winui
+    "reduce-viewport-for-core-input-view-occlusions": boolean; // winui
+    "vertical-anchor-ratio": number; // winui
+    "vertical-scroll-bar-visibility": string; // winui
+    "vertical-scroll-mode": string; // winui
+    "vertical-snap-points-alignment": string; // winui
+    "vertical-snap-points-type": string; // winui
+    "zoom-mode": string; // winui
+    "zoom-snap-points-type": string; // winui
   };
   "scrolled-window": {
     "has-frame": boolean; // gtk
@@ -370,6 +655,9 @@ export interface BindableProps {
     "integer-value": number; // appkit
     "string-value": string; // appkit
   };
+  "selector-bar-item": {
+    text: string; // winui
+  };
   slider: {
     "double-value": number; // appkit
     "float-value": number; // appkit
@@ -401,6 +689,14 @@ export interface BindableProps {
   spinner: {
     spinning: boolean; // gtk
   };
+  "split-view": {
+    "compact-pane-length": number; // winui
+    "display-mode": string; // winui
+    "is-pane-open": boolean; // winui
+    "light-dismiss-overlay-mode": string; // winui
+    "open-pane-length": number; // winui
+    "pane-placement": string; // winui
+  };
   stack: {
     hhomogeneous: boolean; // gtk
     "interpolate-size": boolean; // gtk
@@ -421,11 +717,37 @@ export interface BindableProps {
     active: boolean; // gtk
     state: boolean; // gtk
   };
+  "symbol-icon": {
+    symbol: string; // winui
+  };
   "tab-bar": {
     "current-index": number; // qt
   };
+  "tab-view": {
+    "allow-drop-tabs": boolean; // winui
+    "can-drag-tabs": boolean; // winui
+    "can-reorder-tabs": boolean; // winui
+    "can-tear-out-tabs": boolean; // winui
+    "close-button-overlay-mode": string; // winui
+    "is-add-tab-button-visible": boolean; // winui
+    "selected-index": number; // winui
+    "tab-width-mode": string; // winui
+  };
+  "tab-view-item": {
+    "is-closable": boolean; // winui
+  };
   "tab-widget": {
     "current-index": number; // qt
+  };
+  "teaching-tip": {
+    "hero-content-placement": string; // winui
+    "is-light-dismiss-enabled": boolean; // winui
+    "is-open": boolean; // winui
+    "preferred-placement": string; // winui
+    "should-constrain-to-root-bounds": boolean; // winui
+    subtitle: string; // winui
+    "tail-visibility": string; // winui
+    title: string; // winui
   };
   text: {
     "activates-default": boolean; // gtk
@@ -506,11 +828,26 @@ export interface BindableProps {
   "time-edit": {
     time: { hour: number; minute: number; second: number; ms: number }; // qt
   };
+  "time-picker": {
+    "clock-identifier": string; // winui
+    "light-dismiss-overlay-mode": string; // winui
+    "minute-increment": number; // winui
+  };
   "toggle-button": {
     active: boolean; // gtk
     "can-shrink": boolean; // gtk
     "has-frame": boolean; // gtk
+    "is-checked": boolean; // winui
+    "is-three-state": boolean; // winui
     "use-underline": boolean; // gtk
+  };
+  "toggle-menu-flyout-item": {
+    "is-checked": boolean; // winui
+    "keyboard-accelerator-text-override": string; // winui
+    text: string; // winui
+  };
+  "toggle-switch": {
+    "is-on": boolean; // winui
   };
   "tool-bar": {
     movable: boolean; // qt
@@ -524,6 +861,10 @@ export interface BindableProps {
     autoplay: boolean; // gtk
     "graphics-offload": string; // gtk
     loop: boolean; // gtk
+  };
+  viewbox: {
+    stretch: string; // winui
+    "stretch-direction": string; // winui
   };
   viewport: {
     "scroll-to-focus": boolean; // gtk

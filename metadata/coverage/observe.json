@@ -294,17 +294,17 @@
    },
    "exact": {
     "manual": 0,
-    "no_test": 69,
-    "pending": 0,
-    "total": 207,
+    "no_test": 611,
+    "pending": 22,
+    "total": 771,
     "verified": 130,
     "verified_weak": 8
    },
    "none": {
     "manual": 0,
-    "no_test": 21,
-    "pending": 0,
-    "total": 26,
+    "no_test": 48,
+    "pending": 1,
+    "total": 54,
     "verified": 0,
     "verified_weak": 5
    },
@@ -318,16 +318,16 @@
    },
    "set_only": {
     "manual": 0,
-    "no_test": 16,
-    "pending": 0,
-    "total": 18,
+    "no_test": 19,
+    "pending": 1,
+    "total": 22,
     "verified": 0,
     "verified_weak": 2
    }
   },
   "exact_by_verification": {
    "delivery": 130,
-   "none": 69,
+   "none": 633,
    "weak": 8
   },
   "exact_unverified_groups": {
@@ -344,7 +344,7 @@
     "reason": "set by layout or by an items control that hosts the panel; no trigger in the generated rows"
    },
    "not-exposed": {
-    "count": 69,
+    "count": 633,
     "reason": "the backend does not expose the property (brushes, templates, transitions, ...), so no row is generated and no `bind:` can name it (R4)"
    }
   },
