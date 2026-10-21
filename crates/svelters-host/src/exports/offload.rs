@@ -84,6 +84,8 @@ pub struct OpShared {
     hooks: Mutex<Vec<Box<dyn FnOnce() + Send>>>,
     progress_pending: AtomicBool,
     progress: OnceLock<Arc<dyn ProgressSource>>,
+    /// E3: the stream of a call with a `Sink<T>` parameter or a `Stream<T>` result.
+    stream: OnceLock<Arc<dyn super::stream::StreamSource>>,
     pub(crate) queue: Arc<Completions>,
 }
 
@@ -96,8 +98,19 @@ impl OpShared {
             hooks: Mutex::new(Vec::new()),
             progress_pending: AtomicBool::new(false),
             progress: OnceLock::new(),
+            stream: OnceLock::new(),
             queue,
         })
+    }
+
+    /// E3: attaches the call's stream (once).
+    pub(crate) fn set_stream(&self, s: Arc<dyn super::stream::StreamSource>) {
+        let _ = self.stream.set(s);
+    }
+
+    /// E3: the call's stream, if it has one.
+    pub(crate) fn stream(&self) -> Option<&Arc<dyn super::stream::StreamSource>> {
+        self.stream.get()
     }
 
     pub(crate) fn is_cancelled(&self) -> bool {
@@ -310,6 +323,8 @@ struct Queue {
     done: VecDeque<(u64, u64, Outcome)>,
     progress: Vec<u64>,
     ready: Vec<u64>,
+    /// E3: calls whose stream has items (or ended).
+    items: Vec<u64>,
 }
 
 /// The host's completion queue: finished jobs, progress notifications and woken local futures.
@@ -348,6 +363,17 @@ impl Completions {
     fn push_ready(&self, id: u64) {
         lock(&self.q).ready.push(id);
         self.wake();
+    }
+
+    /// E3: the stream of call `id` has items for its iterator.
+    pub(crate) fn push_items(&self, id: u64) {
+        lock(&self.q).items.push(id);
+        self.wake();
+    }
+
+    /// E3: the calls whose streams have items (taken with the rest of a drain).
+    pub(crate) fn take_items(&self) -> Vec<u64> {
+        std::mem::take(&mut lock(&self.q).items)
     }
 
     /// The host is going away: no more wakes.
@@ -604,6 +630,12 @@ mod tokio_rt {
 
 #[cfg(feature = "tokio")]
 pub use tokio_rt::set_tokio_handle;
+
+/// E3: the tokio runtime services spawn on (the app's handle, else ours).
+#[cfg(feature = "tokio")]
+pub(crate) fn tokio_handle() -> tokio::runtime::Handle {
+    tokio_rt::handle()
+}
 
 /// Spawns a tokio task; an abort drops the future at its next `.await`.
 pub(crate) fn spawn_tokio(fut: SendFuture, op: Arc<OpShared>, what: Label) {

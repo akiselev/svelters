@@ -36,8 +36,10 @@ mod asyncs;
 mod callbacks;
 mod offload;
 mod ops;
+mod reactive;
 mod statics;
 pub use offload::OffloadStats;
+pub use reactive::ReactiveStats;
 pub(crate) use callbacks::{CallbackEngine, CallbackRegistry, CbTable};
 pub(crate) use ops::{Name, OpError, OpKind};
 
@@ -332,6 +334,8 @@ pub(crate) struct Core {
     pub(crate) op_log: RefCell<Option<Rc<dyn Fn(&str)>>>,
     /// Offloaded app-export calls in flight (E1) and the completion queue workers post to.
     pub(crate) ops: offload::OpTable,
+    /// Stores, events and persisted objects of app exports (E3).
+    pub(crate) reactive: reactive::Reactive,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -373,6 +377,7 @@ impl Core {
             apps: Default::default(),
             op_log: RefCell::new(None),
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
+            reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),
         }
     }
 
@@ -550,8 +555,30 @@ impl Core {
                 let Some(o) = st.observed.get_mut(&key) else { continue };
                 (o.name.clone(), o.proportional, std::mem::take(&mut o.force))
             };
+            let app = crate::exports::is_app_handle(key.0);
             if proportional {
+                if app {
+                    self.note_store_change(true);
+                }
                 out.push(ChangedProp { handle: key.0, prop: name, value: None });
+                continue;
+            }
+            // E3: a store field is read through its getter (a clone under the store's read lock).
+            if app {
+                let Some(v) = self.app_prop_value(key.0, key.1) else { continue };
+                let changed = {
+                    let mut st = self.st.borrow_mut();
+                    let Some(o) = st.observed.get_mut(&key) else { continue };
+                    let changed = force || !o.last.as_ref().is_some_and(|l| same_value(l, &v));
+                    if changed {
+                        o.last = Some(v.clone());
+                    }
+                    changed
+                };
+                self.note_store_change(changed);
+                if changed {
+                    out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
+                }
                 continue;
             }
             // A failed read (the object died meanwhile) delivers nothing; `on_destroyed` follows.
@@ -580,6 +607,9 @@ impl Core {
     /// `set_prop`. A value holding `BOXED` handles is released at once and leaves `last` unknown
     /// (each read mints new handles, so such a value always counts as changed).
     pub(crate) fn read_last(&self, h: svl_handle, p: svl_id) -> Option<Value> {
+        if crate::exports::is_app_handle(h) {
+            return self.app_prop_value(h, p);
+        }
         let v = self.backend.get_prop(h, p).ok()?;
         if has_boxed(&v) {
             release_boxed_in(&self.backend, &v);
@@ -641,17 +671,17 @@ impl Core {
                     flags,
                 } => (handle, signal, args, deferred, flags),
             };
+            let app = crate::exports::is_app_handle(handle);
             let name = {
                 let st = self.st.borrow();
-                if st.dead.why.contains_key(&handle) {
+                // E3: an app object released since its event was queued is not an error.
+                if st.dead.why.contains_key(&handle) || (app && self.apps.kind(handle).is_none()) {
                     drop(st);
                     self.pin_args(&args, false);
                     continue;
                 }
-                st.handles
-                    .get(&handle)
-                    .and_then(|k| st.signal_names.get(&(*k, signal)))
-                    .cloned()
+                let kind = if app { self.apps.kind(handle) } else { st.handles.get(&handle).copied() };
+                kind.and_then(|k| st.signal_names.get(&(k, signal))).cloned()
             };
             // Objects the backend minted for the event (a GFileMonitor's file) join the handle table.
             if name.is_some() {
@@ -821,6 +851,9 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     // E1 (egui-rust-exports.md §6.2): offloaded export calls settle first, so the changes, events
     // and the one job drain below see their results in the same checkpoint.
     offload::drain(core, &mut eng);
+    // E3 (§6.4): dirty store fields join the dirty set, queued `Emitter` events the event queue, so the
+    // change batch and the events below carry them.
+    reactive::collect(core);
     if core.cfg.scripted {
         checkpoint_scripted(core, &mut eng);
         core.process_releases();
@@ -957,7 +990,8 @@ pub(crate) fn call_sync(
     }
     let mut eng = engine.borrow_mut();
     // REACTIVITY.md §5.2 "sync handlers": invalidate what changed before the handler runs (no
-    // drain), so `$derived` values it reads are fresh.
+    // drain), so `$derived` values it reads are fresh. Stores included (E3).
+    reactive::collect(core);
     deliver_changes(core, &mut eng);
     let result = match eng.dispatch_sync(h, &name, args, flags) {
         Ok(v) => v,
@@ -1014,6 +1048,9 @@ fn deliver_changes(core: &Core, eng: &mut Box<dyn JsEngine>) -> bool {
     let batch = core.take_changes();
     if batch.is_empty() {
         return false;
+    }
+    if batch.iter().any(|c| crate::exports::is_app_handle(c.handle)) {
+        core.note_store_batch();
     }
     if let Err(e) = eng.dispatch_changed(&batch) {
         core.report(e);

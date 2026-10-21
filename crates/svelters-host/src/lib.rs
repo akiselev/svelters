@@ -28,7 +28,7 @@ mod reload;
 mod sourcemap;
 pub mod testing;
 
-pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, Timing};
+pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timing};
 pub use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, OpOutcome, OpSettle};
 pub use crate::reload::ReloadReport;
 
@@ -200,6 +200,8 @@ impl<'a> Host<'a> {
         cfg: HostConfig,
         make: MakeEngine,
     ) -> Result<Host<'a>, JsError> {
+        // E3: the app's services start with its first host (once per process; later hosts find them running).
+        crate::exports::start_services();
         // SAFETY: `'a` ties the host to the backend borrow, so the erased reference cannot outlive it.
         let backend_static = unsafe { backend.erase_lifetime() };
         let core = Rc::new(Core::new(backend_static, cfg));
@@ -447,6 +449,17 @@ impl<'a> Host<'a> {
         self.core.offload_stats()
     }
 
+    /// Counters of the reactive exports (E3): store fields marked, delivered and dropped by the compare,
+    /// change batches with store fields, `Emitter` events queued and dropped.
+    pub fn reactive_stats(&self) -> ReactiveStats {
+        self.core.reactive_stats()
+    }
+
+    /// Keys of the app objects JS persisted with `persist(key, ...)` (E3); they survive hot reloads.
+    pub fn persisted(&self) -> Vec<String> {
+        self.core.persisted_keys()
+    }
+
     /// Number of live boxed values held by JS wrappers (released, disposed or collected ones excluded).
     pub fn live_boxed(&self) -> usize {
         self.core.live_boxed()
@@ -492,6 +505,8 @@ impl Drop for Host<'_> {
     fn drop(&mut self) {
         // E1: workers that finish later post to a queue nobody drains and wake nobody.
         self.core.ops_shutdown();
+        // E3: store writers and emitters on other threads reach nobody either.
+        self.core.reactive_shutdown();
         self.reloader.stop_watch();
         // A backend attached through `start` must not call the vtable that is about to be freed.
         self.stop();

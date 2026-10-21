@@ -159,10 +159,14 @@ impl Reloader {
         core.clear_events();
         let old_timers = core.swap_timers(Timers::default());
 
-        // App objects the old runtime held die with it (E0: nothing is persisted yet), and so do its
-        // offloaded calls (E1): results tagged with its generation are dropped.
+        // App objects the old runtime held die with it unless the new one receives them again (E3: a
+        // persisted object, an app-wide store, a service), and so do its offloaded calls (E1): results
+        // tagged with its generation are dropped. Its observations of and listeners on app objects are
+        // set aside while the new bundle loads.
         let old_apps = core.app_handles();
         let old_gen = core.ops_begin_generation();
+        let old_app_gen = core.app_begin_generation();
+        let stash = core.reactive_stash();
         let loaded = (self.make)(core).and_then(|fresh| {
             let old_engine = std::mem::replace(&mut *engine.borrow_mut(), fresh);
             match core::load_bundle(core, engine, &path) {
@@ -182,7 +186,8 @@ impl Reloader {
                     core.destroy_subtree(h);
                 }
                 core.ops_end_generation(old_gen, true);
-                core.app_release_all(&old_apps);
+                drop(stash);
+                core.app_release_stale(&old_apps);
                 None
             }
             Err(e) => {
@@ -193,8 +198,8 @@ impl Reloader {
                 }
                 drop(core.swap_timers(old_timers));
                 core.ops_end_generation(old_gen, false);
-                let new_apps: Vec<_> = core.app_handles().into_iter().filter(|h| !old_apps.contains(h)).collect();
-                core.app_release_all(&new_apps);
+                core.app_restore_generation(old_app_gen, &old_apps);
+                core.reactive_restore(stash);
                 let e = core.map_error(e);
                 core.report(e.clone());
                 Some(e)

@@ -4,7 +4,7 @@
 //! `@svelters/types/core` and sibling stubs as `./<module>.js`), and the QuickJS host serves it as the
 //! built-in module `svelters:app/<module>` (core from the built-in `svelters:core`).
 
-use super::schema::{ClassSchema, MemberSchema, ModuleSchema, schema};
+use super::schema::{ClassSchema, MemberSchema, ModuleSchema, ValueSchema, schema};
 use super::{MemberKind, prop_key};
 use serde_json::{Value as Json, json};
 use std::fmt::Write as _;
@@ -32,9 +32,13 @@ fn params_with_options(m: &MemberSchema) -> String {
     p.join(", ")
 }
 
-/// `callAsync(...)`'s trailing `shape` argument: the result wrapper, if any.
+/// `callAsync(...)`'s trailing `shape` argument: the result wrapper, if any (for a stream: the item's).
 fn shape(m: &MemberSchema) -> String {
-    match &m.sig.ret.wrap {
+    let w = match &m.sig.items {
+        Some(t) => &t.wrap,
+        None => &m.sig.ret.wrap,
+    };
+    match w {
         Some(w) => format!(", {w}"),
         None => String::new(),
     }
@@ -50,9 +54,21 @@ pub fn javascript(module: &str, core: &str, sibling: &dyn Fn(&str) -> String) ->
 fn js_module(m: &ModuleSchema, core: &str, sibling: &dyn Fn(&str) -> String) -> String {
     let mut s = String::new();
     let _ = writeln!(s, "// svelters:app/{} - {HEADER}", m.name);
-    let offloaded = m.functions.iter().chain(m.classes.iter().flat_map(|c| c.methods.iter().chain(c.statics.iter()))).any(|x| x.offload.is_some());
-    let asyncs = if offloaded { "callAsync, callStaticAsync, " } else { "" };
-    let _ = writeln!(s, "import {{ NativeObject, CONSTRUCT, call, callStatic, {asyncs}construct, getProp, setProp, wrapObject }} from '{core}';");
+    let members = || m.functions.iter().chain(m.classes.iter().flat_map(|c| c.methods.iter().chain(c.statics.iter())));
+    let offloaded = members().any(|x| x.offload.is_some() && x.sig.items.is_none());
+    let streams = members().any(|x| x.sig.items.is_some());
+    let stores = m.classes.iter().any(|c| c.store.is_some());
+    let mut extra = String::new();
+    if offloaded {
+        extra.push_str("callAsync, callStaticAsync, ");
+    }
+    if streams {
+        extra.push_str("stream, streamStatic, ");
+    }
+    if stores {
+        extra.push_str("observed, ");
+    }
+    let _ = writeln!(s, "import {{ NativeObject, CONSTRUCT, call, callStatic, {extra}construct, getProp, setProp, wrapObject, registerClass }} from '{core}';");
     let mut by_mod: std::collections::BTreeMap<&str, Vec<&str>> = Default::default();
     for (om, c) in &m.imports {
         by_mod.entry(om).or_default().push(c);
@@ -69,9 +85,24 @@ const own = (w) => { const h = w.svlHandle; if (gc && typeof h === 'number' && t
     for c in &m.classes {
         js_class(&mut s, c);
     }
+    if !m.classes.is_empty() {
+        let names = m.classes.iter().map(|c| c.name).collect::<Vec<_>>().join(", ");
+        let _ = writeln!(s, "\n// For persist(): a persisted object comes back as its class.\nregisterClass({names});");
+    }
     let kind = format!("app:{}", m.name);
     for f in &m.functions {
         let p = params(f);
+        if f.sig.items.is_some() {
+            let _ = writeln!(
+                s,
+                "\nexport function {}({}) {{\n  return streamStatic('{kind}', '{}', [{p}], options{});\n}}",
+                f.name,
+                params_with_options(f),
+                f.name,
+                shape(f)
+            );
+            continue;
+        }
         if f.offload.is_some() {
             let _ = writeln!(
                 s,
@@ -85,7 +116,17 @@ const own = (w) => { const h = w.svlHandle; if (gc && typeof h === 'number' && t
         }
         let _ = writeln!(s, "\nexport function {}({p}) {{\n  return {};\n}}", f.name, wrap_call(f, &format!("callStatic('{kind}', '{}', [{p}])", f.name)));
     }
+    for v in &m.values {
+        js_value(&mut s, &kind, v);
+    }
     s
+}
+
+/// A module-level value (E3): read once when the module is evaluated. An app-wide store and a service's
+/// value are the same Rust object in every runtime, so a hot reload sees the same state.
+fn js_value(s: &mut String, kind: &str, v: &ValueSchema) {
+    let m = &v.member;
+    let _ = writeln!(s, "\nexport const {} = /* @__PURE__ */ {};", m.name, wrap_call(m, &format!("callStatic('{kind}', '{}', [])", m.name)));
 }
 
 fn js_class(s: &mut String, c: &ClassSchema) {
@@ -95,6 +136,9 @@ fn js_class(s: &mut String, c: &ClassSchema) {
         Some(_) => {
             let _ = writeln!(s, "  static [CONSTRUCT](...args) {{\n    return construct('{}', args);\n  }}", c.native);
         }
+        None if c.store.is_some() => {
+            let _ = writeln!(s, "  static [CONSTRUCT]() {{\n    throw new TypeError('{} is a store: import its instance (an exported static or a service)');\n  }}", c.name);
+        }
         None => {
             let _ = writeln!(s, "  static [CONSTRUCT]() {{\n    throw new TypeError('{} has no #[js(constructor)]');\n  }}", c.name);
         }
@@ -102,8 +146,10 @@ fn js_class(s: &mut String, c: &ClassSchema) {
     let _ = writeln!(s, "  constructor(...args) {{\n    super(...args);\n    own(this);\n  }}");
     for p in &c.props {
         let key = prop_key(&p.name);
+        // E3: a store field is `exact` (every write goes through the store): a reactive read.
+        let read = if c.store.is_some() { "observed" } else { "getProp" };
         if p.thunk.is_some() {
-            let _ = writeln!(s, "  get {key}() {{\n    return {};\n  }}", wrap_call(p, &format!("getProp(this, '{}')", p.name)));
+            let _ = writeln!(s, "  get {key}() {{\n    return {};\n  }}", wrap_call(p, &format!("{read}(this, '{}')", p.name)));
         }
         if p.setter.is_some() {
             let _ = writeln!(s, "  set {key}(v) {{\n    setProp(this, '{}', v);\n  }}", p.name);
@@ -111,6 +157,10 @@ fn js_class(s: &mut String, c: &ClassSchema) {
     }
     for m in &c.methods {
         let p = params(m);
+        if m.sig.items.is_some() {
+            let _ = writeln!(s, "  {}({}) {{\n    return stream(this, '{}', [{p}], options{});\n  }}", prop_key(&m.name), params_with_options(m), m.name, shape(m));
+            continue;
+        }
         if m.offload.is_some() {
             let _ = writeln!(s, "  {}({}) {{\n    return callAsync(this, '{}', [{p}], options{});\n  }}", prop_key(&m.name), params_with_options(m), m.name, shape(m));
             continue;
@@ -119,6 +169,18 @@ fn js_class(s: &mut String, c: &ClassSchema) {
     }
     for m in &c.statics {
         let p = params(m);
+        if m.sig.items.is_some() {
+            let _ = writeln!(
+                s,
+                "  static {}({}) {{\n    return streamStatic('{}', '{}', [{p}], options{});\n  }}",
+                prop_key(&m.name),
+                params_with_options(m),
+                c.native,
+                m.name,
+                shape(m)
+            );
+            continue;
+        }
         if m.offload.is_some() {
             let _ = writeln!(
                 s,
@@ -143,6 +205,16 @@ fn doc(s: &mut String, indent: &str, docs: &str, throws: &[&str], module: &str) 
 /// What the typings say about where an offloaded member runs.
 fn runs_on(m: &MemberSchema) -> Option<String> {
     let o = m.offload?;
+    if m.sig.items.is_some() {
+        let mut line = match o.exec {
+            super::Exec::Worker => "A stream produced on a worker thread (rayon)".to_string(),
+            super::Exec::Blocking => "A stream produced on the blocking pool".to_string(),
+            super::Exec::Local => "A stream (async iterable)".to_string(),
+            super::Exec::Tokio => "A stream produced on tokio".to_string(),
+        };
+        line.push_str(": bounded (the producer waits while the reader is behind); leaving the loop or aborting closes it.");
+        return Some(line);
+    }
     let mut line = match o.exec {
         super::Exec::Worker => "Runs on a worker thread (rayon)".to_string(),
         super::Exec::Blocking => "Runs on the blocking pool".to_string(),
@@ -204,8 +276,11 @@ fn ts_params(m: &MemberSchema) -> String {
     p.join(", ")
 }
 
-/// The TS result type: `Promise<T>` for offloaded members.
+/// The TS result type: `Promise<T>` for offloaded members, `NativeStream<T>` for streams.
 fn ts_ret(m: &MemberSchema) -> String {
+    if let Some(t) = &m.sig.items {
+        return format!("NativeStream<{}>", t.ts);
+    }
     if m.offload.is_some() { format!("Promise<{}>", m.sig.ret.ts) } else { m.sig.ret.ts.clone() }
 }
 
@@ -222,13 +297,25 @@ pub fn typescript() -> String {
         if members().any(|x| x.offload.is_some() && x.sig.progress.is_some()) {
             core.push("WorkOptions");
         }
+        if members().any(|x| x.sig.items.is_some()) {
+            core.push("NativeStream");
+        }
         let _ = writeln!(s, "  import type {{ {} }} from '@svelters/types/core';", core.join(", "));
         for t in &m.types {
             doc(&mut s, "  ", &t.docs, &[], &m.name);
             let _ = writeln!(s, "  export {}", t.decl);
         }
         for c in &m.classes {
-            doc(&mut s, "  ", c.docs, &[], &m.name);
+            if c.store.is_some() {
+                let mut d = c.docs.trim().to_string();
+                if !d.is_empty() {
+                    d.push('\n');
+                }
+                d.push_str("A reactive store: its fields are `exact` (reactive reads in effects and templates); writable fields accept `bind:`.");
+                doc(&mut s, "  ", &d, &[], &m.name);
+            } else {
+                doc(&mut s, "  ", c.docs, &[], &m.name);
+            }
             let _ = writeln!(s, "  export class {} extends NativeObject {{", c.name);
             match &c.constructor {
                 Some(k) => {
@@ -253,11 +340,41 @@ pub fn typescript() -> String {
                 doc_runs(&mut s, "    ", x.docs, &x.sig.throws, &m.name, runs_on(x));
                 let _ = writeln!(s, "    static {}({}): {};", prop_key(&x.name), ts_params(x), ts_ret(x));
             }
+            for e in &c.events {
+                let mut d = e.docs.trim().to_string();
+                if e.latest {
+                    if !d.is_empty() {
+                        d.push('\n');
+                    }
+                    d.push_str("Latest value: delivered at most once per checkpoint.");
+                }
+                doc(&mut s, "    ", &d, &[], &m.name);
+                let arg = match &e.payload {
+                    Some(t) => format!("e: {}", t.ts),
+                    None => String::new(),
+                };
+                let _ = writeln!(s, "    on(event: '{}', fn: ({arg}) => void): () => void;", e.name);
+            }
+            if !c.events.is_empty() {
+                let _ = writeln!(s, "    on(signal: string, fn: (...args: any[]) => void): () => void;");
+            }
             s.push_str("  }\n");
         }
         for f in &m.functions {
             doc_runs(&mut s, "  ", f.docs, &f.sig.throws, &m.name, runs_on(f));
             let _ = writeln!(s, "  export function {}({}): {};", f.name, ts_params(f), ts_ret(f));
+        }
+        for v in &m.values {
+            let mut d = v.member.docs.trim().to_string();
+            if !d.is_empty() {
+                d.push('\n');
+            }
+            d.push_str(match v.what {
+                "service" => "A service (started with the app, stopped at shutdown): the same Rust object after a hot reload.",
+                _ => "App-wide (a Rust `static`): the same Rust object after a hot reload.",
+            });
+            doc(&mut s, "  ", &d, &[], &m.name);
+            let _ = writeln!(s, "  export const {}: {};", v.member.name, v.member.sig.ret.ts);
         }
         s.push_str("}\n");
     }
@@ -288,6 +405,7 @@ fn member_json(m: &MemberSchema) -> Json {
         "supersede": m.offload.is_some_and(|o| o.supersede),
         "maxInFlight": m.offload.map_or(0, |o| o.max_in_flight),
         "progress": m.sig.progress.as_ref().map(|t| t.ts.clone()),
+        "stream": m.sig.items.as_ref().map(|t| t.ts.clone()),
         "docs": m.docs.trim(),
     })
 }
@@ -308,20 +426,42 @@ pub fn json() -> String {
                     "shared": c.shared,
                     "docs": c.docs.trim(),
                     "constructor": c.constructor.as_ref().map(member_json),
+                    "store": c.store.is_some(),
                     "props": c.props.iter().map(|p| {
                         let ty = if p.thunk.is_some() { p.sig.ret.ts.clone() } else { p.sig.params.first().map(|x| x.ty.ts.clone()).unwrap_or_default() };
-                        json!({
+                        // E3: store fields are `exact` by construction (every write goes through the
+                        // store and is announced, verified by delivery); other getters are plain reads.
+                        let field = c.store.as_ref().and_then(|st| st.fields.iter().find(|f| f.name == p.name));
+                        let mut j = json!({
                             "name": p.name,
                             "type": ty,
                             "readonly": p.setter.is_none(),
-                            "observability": "none",
+                            "observability": if field.is_some() { "exact" } else { "none" },
                             "docs": p.docs.trim(),
-                        })
+                        });
+                        if let Some(f) = field {
+                            j["verified"] = json!("delivery");
+                            j["proportional"] = json!(f.proportional);
+                        }
+                        j
                     }).collect::<Vec<_>>(),
+                    "events": c.events.iter().map(|e| json!({
+                        "name": e.name,
+                        "latest": e.latest,
+                        "payload": e.payload.as_ref().map(|t| t.ts.clone()),
+                        "docs": e.docs.trim(),
+                    })).collect::<Vec<_>>(),
                     "methods": c.methods.iter().map(member_json).collect::<Vec<_>>(),
                     "statics": c.statics.iter().map(member_json).collect::<Vec<_>>(),
                 })).collect::<Vec<_>>(),
                 "functions": m.functions.iter().map(member_json).collect::<Vec<_>>(),
+                "values": m.values.iter().map(|v| json!({
+                    "name": v.member.name,
+                    "rust": v.member.rust,
+                    "kind": v.what,
+                    "type": v.member.sig.ret.ts,
+                    "docs": v.member.docs.trim(),
+                })).collect::<Vec<_>>(),
                 "types": m.types.iter().map(|t| json!({
                     "name": t.name,
                     "kind": t.kind,

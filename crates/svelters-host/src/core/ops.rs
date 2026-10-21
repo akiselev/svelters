@@ -667,8 +667,8 @@ impl Core {
     pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool, flags: u32) -> Result<(), OpError> {
         self.timed(|| {
             if crate::exports::is_app_handle(h) {
-                // E0 exports have no events (Emitter is E3): nothing to connect, nothing to disconnect.
-                return if on { Err(format!("app objects have no signals yet (listen '{}')", match signal { Name::Str(s) => s.to_string(), Name::Id(i) => format!("#{i}") }).into()) } else { Ok(()) };
+                // E3: events of an object with an `Emitter` field.
+                return self.app_listen(h, signal, on);
             }
             let k = match self.live_kind(h)? {
                 Some(k) => k,
@@ -698,8 +698,8 @@ impl Core {
     pub(crate) fn op_observe(&self, h: svl_handle, prop: Name<'_>, on: bool) -> Result<bool, OpError> {
         self.timed(|| {
             if crate::exports::is_app_handle(h) {
-                // Getters of E0 exports are plain reads (stores are E3): never observable.
-                return Ok(false);
+                // E3: store fields are observable (`exact`); other getters are plain reads.
+                return self.app_observe(h, prop, on);
             }
             let k = match self.live_kind(h)? {
                 Some(k) => k,

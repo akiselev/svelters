@@ -94,6 +94,8 @@ pub(crate) struct OpTable {
     rejects: RefCell<Vec<(u64, u64, NativeError)>>,
     /// A cap freed a slot: the next drain starts waiting calls.
     kick: Cell<bool>,
+    /// E3: the last items of streams whose calls completed in this drain (settled before them).
+    pending_items: RefCell<Vec<OpSettle>>,
     warned: RefCell<HashSet<String>>,
     stats: Cell<OffloadStats>,
 }
@@ -108,6 +110,7 @@ impl OpTable {
             keys: RefCell::default(),
             rejects: RefCell::default(),
             kick: Cell::new(false),
+            pending_items: RefCell::default(),
             warned: RefCell::default(),
             stats: Cell::new(OffloadStats::default()),
         }
@@ -272,6 +275,11 @@ impl Core {
         if run_now {
             if let Some(s) = self.op_run(id) {
                 t.stat(|x| x.settled_eagerly += 1);
+                // E3: a stream that ended at once hands its items over first.
+                let tails = std::mem::take(&mut *t.pending_items.borrow_mut());
+                for tail in &tails {
+                    e.settle_op_soon(tail).map_err(OpError::from)?;
+                }
                 e.settle_op_soon(&s).map_err(OpError::from)?;
             }
         }
@@ -373,6 +381,13 @@ impl Core {
         }
         let module = schema().module_of(op.kind).map(|x| x.name.as_str()).unwrap_or("");
         let cx = CallCx { objects: &self.apps, schema: schema(), this: op.owner, module };
+        // E3: a stream's last items reach the iterator before its end; the stream is then closed, so a
+        // sink kept beyond the call fails instead of filling up.
+        let tail = op.shared.stream().map(|s| {
+            let items = s.take(&cx);
+            s.close();
+            items
+        });
         let r = match done {
             Done::Send(Ok(f)) => catch_unwind(AssertUnwindSafe(|| f(&cx))).unwrap_or_else(|p| Err(offload::panic_error(p, &what(op.member, op.kind)))),
             Done::Local(Ok(f)) => catch_unwind(AssertUnwindSafe(|| f(&cx))).unwrap_or_else(|p| Err(offload::panic_error(p, &what(op.member, op.kind)))),
@@ -382,7 +397,51 @@ impl Core {
             Ok(v) => OpOutcome::Resolve(v, &op.member.desc.ret),
             Err(n) => OpOutcome::Reject(n),
         };
+        match tail {
+            Some(Ok(items)) if !items.is_empty() => {
+                let slot = op.member.sig.items.as_ref().map_or(&*NULL_SLOT, |t| &t.slot);
+                self.ops.pending_items.borrow_mut().push(OpSettle { id, outcome: OpOutcome::Items(items, slot) });
+            }
+            Some(Err(n)) => return Some(OpSettle { id, outcome: OpOutcome::Reject(n) }),
+            _ => {}
+        }
         Some(OpSettle { id, outcome })
+    }
+
+    /// E3: the items the stream of op `id` has queued, for its iterator. A conversion failure ends the
+    /// call (rejects the iterator) and cancels the producer.
+    fn op_items(&self, id: u64) -> Option<OpSettle> {
+        let (shared, owner, kind, member) = {
+            let ops = self.ops.ops.borrow();
+            let op = ops.get(&id).filter(|o| !o.settled)?;
+            (op.shared.clone(), op.owner, op.kind, op.member)
+        };
+        let stream = shared.stream()?;
+        let module = schema().module_of(kind).map(|x| x.name.as_str()).unwrap_or("");
+        let cx = CallCx { objects: &self.apps, schema: schema(), this: owner, module };
+        match catch_unwind(AssertUnwindSafe(|| stream.take(&cx))) {
+            Ok(Ok(items)) if items.is_empty() => None,
+            Ok(Ok(items)) => {
+                let slot: &'static SlotDesc = member.sig.items.as_ref().map_or(&*NULL_SLOT, |t| &t.slot);
+                Some(OpSettle { id, outcome: OpOutcome::Items(items, slot) })
+            }
+            Ok(Err(n)) => {
+                self.op_cancel(id);
+                Some(OpSettle { id, outcome: OpOutcome::Reject(n) })
+            }
+            Err(p) => {
+                self.op_cancel(id);
+                Some(OpSettle { id, outcome: OpOutcome::Reject(offload::panic_error(p, &what(member, kind))) })
+            }
+        }
+    }
+
+    /// E3: `native.streamAck(id, n)`: the iterator of op `id` handed `n` items out.
+    pub(crate) fn op_stream_ack(&self, id: u64, n: usize) {
+        let shared = self.ops.ops.borrow().get(&id).map(|o| o.shared.clone());
+        if let Some(s) = shared.as_ref().and_then(|s| s.stream()) {
+            s.ack(n);
+        }
     }
 
     /// The latest progress value of op `id`, if its call is still pending.
@@ -574,6 +633,15 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
         core.op_start_waiting(&mut out);
     }
     let (done, progress, ready, more) = t.queue.take(MAX_PER_DRAIN);
+    // E3: stream items before completions, so an iterator gets every item before its end.
+    for id in t.queue.take_items() {
+        if let Some(s) = core.op_items(id) {
+            if matches!(s.outcome, OpOutcome::Reject(_)) {
+                settled += 1;
+            }
+            out.push(s);
+        }
+    }
     for id in ready {
         if let Some(s) = core.op_poll(id) {
             out.push(s);
@@ -603,6 +671,11 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
     }
     if t.kick.replace(false) {
         core.op_start_waiting(&mut out);
+    }
+    // E3: the last items of streams that ended in this drain go right before their ends.
+    for tail in std::mem::take(&mut *t.pending_items.borrow_mut()) {
+        let pos = out.iter().position(|s| s.id == tail.id).unwrap_or(out.len());
+        out.insert(pos, tail);
     }
     let mut engine_ns = 0;
     if !out.is_empty() {
