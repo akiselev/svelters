@@ -56,4 +56,92 @@ death is reported through the sentinel; codes and `SVL_M_OBSERVABLE`.
 
 ## Completion record
 
-(filled in below)
+Branch `r4-appkit-winui` (pushed as `ci/r4`), based on master 9231ec3f. Not merged.
+
+Commits: 4156088c (WinUI observe, generator, rows, verify triggers), 3ee417bf (AppKit observe, KVO observer, sentinel,
+hop, rows, hand-written tests, minimum macOS 11), 996b40de (first CI round: WinUI writes cycle through the initial
+value, `TextBlock.SelectedText` via SelectionChanged, burst counts logged instead of bounded), 3df9b019 (select-all is
+a one-shot trigger; the borrowed KVO test covers the retained path), then the ledger import and this record.
+
+### CI (`ci/r4`)
+
+| Workflow | 3ee417bf | 996b40de | 3df9b019 (code head) |
+|---|---|---|---|
+| macos-appkit | failure 39538249180: `observe_nswindow_views_need_display` (58 announcements for 10 sets, AppKit changes it itself), `observe_borrowed_object_death` | failure 39541027676: `observe_borrowed_object_death` only | **success 39542111803**: generated 570/570 (344 observe rows), backend 17/17 (4 observe tests), counter ok |
+| windows-winui | failure 39538249160: 456/495, 39 observe rows (single test value rewritten = no change; echo writes in the getter's format) | failure 39541027728: 494/495 (`observe_text_block_selected_text`: select-all cannot repeat) | **success 39542111789**: generated 495/495 (145 observe rows), lib, selftest, counter ok |
+| js | failure (coverage stale) | success 39541027801 | success 39542111853 |
+| linux-gtk | success | success 39541027691 | success 39542111835 |
+| linux-qt | success | success 39541027688 | success 39542111918 |
+
+The commits after 3df9b019 change only the ledgers, coverage (`tools/metadata/coverage.py` now counts the AppKit/WinUI
+observe rows) and docs.
+
+Acceptance (§10 R4), seen in the logs of the green runs: `observe_typing_into_text_field` ok ("typing 3 keys announced
+string-value 3 time(s)", and `string-value` reads "abc"); `observe_text_box_selection_start`, `_selection_length`,
+`_selected_text` ok (`select(1, 3)` / `select(2, 2)` on a mounted TextBox, SelectionChanged).
+
+### Verified observe facts (ledger import of 39542111803 and 39542111789)
+
+| Toolkit | facts | before | after: verified (native change announced) | after: weak (`unsupported`/`connect`) | no row |
+|---|---|---|---|---|---|
+| AppKit | 344 | 0 | 154 (exact 149, partial 5) | 190 (none 116, set_only 70, connect 4) | 0 |
+| WinUI | 251 | 0 | 130 | 15 (unsupported 7, connect 8) | 106 (props the backend does not expose) |
+
+Ledgers: appkit 570 facts / 570 tests, 0 not passing, 0 parked; winui 540 facts, 0 not passing, 0 pending, 8 parked
+(pre-R4). Nothing was parked by R4.
+
+### Facts changed and why
+
+- `Microsoft.UI.Xaml.Controls:TextBlock:SelectedText`: `notify` -> `event: SelectionChanged` (rule `no_notify` in
+  `metadata/rules/winui.yaml`). On the runner the SelectedTextProperty change callback did not fire for `SelectAll` on a
+  mounted, selectable TextBlock (run 39538249160); SelectionChanged does (39541027728 onwards).
+- `verify` blocks (how the generated row triggers the change) from `observe.verify` in both rules files: WinUI
+  TextBox/TextBlock selection, ActualWidth/ActualHeight/ActualSize/RenderSize (resize), ActualTheme (theme), IsLoaded
+  (mount), Window.Visible (activate); AppKit `NSWindow:frame` (`setFrame:display:`). Record fingerprints changed; no
+  verified fact existed for them.
+- No class changed otherwise: every row with a mechanism announced its native change.
+
+### Observations recorded, not yet facts
+
+- Identical writes: AppKit KVO re-announces an identical KVC set for 147 of 150 rows (one twice; not: NSView `hidden`,
+  `wants-layer`, NSWindow `titlebar-appears-transparent`); WinUI DP callbacks re-announce for 6 of 121 (`content`,
+  `is-enabled`, `name`, slider/text-box `header`, `use-layout-rounding`). A `fires` rule could record this; the host's
+  compare makes it harmless.
+- Bursts: 10 sets announced 19-20 times for a few AppKit props (button `is-enabled`, `border-shape`,
+  `tint-prominence`, stack-view `alignment`, view `additional-safe-area-insets`) and 58 times for NSWindow
+  `views-need-display`: AppKit changes them itself in between. The host coalesces per checkpoint.
+- NSView is not autonotifying with NSObject's KVO state by the backend's test (`+automaticallyNotifiesObserversForKey:`
+  / `-observationInfo`), so a borrowed NSView is retained while KVO-observed: the CI test exercised the retained path
+  (off removes the registration from the live object, `observationInfo` NULL, then released).
+
+### Gates
+
+| Gate | Result |
+|---|---|
+| `tools/dev/cargo-slot cargo check --workspace --all-targets` | rc 0 (on the import head; code as 3df9b019) |
+| `cargo check -p svelters-apple -p svelters-appkit --all-targets --target aarch64-apple-darwin` (no SDK) | rc 0 |
+| `cargo check -p svelters-winui -p counter-win --tests --target x86_64-pc-windows-gnu` | rc 0 |
+| `pnpm test` (incl. `test:meta`: pytest 140 passed / 1 skipped, every `--check`, `ledger.py check`) | rc 0 after the import |
+| `ledger.py check` | pass: appkit 79 manual + 491 inferred verified; winui 60 + 480, 8 parked |
+
+The generated AppKit tests and `counter-mac/tests/backend.rs` were type-checked locally by compiling a copy as a test
+target of `svelters-appkit` for `aarch64-apple-darwin` (counter-mac itself needs the SDK for QuickJS).
+
+### Open items
+
+- **Identity sentinel path not exercised on CI**: every borrowed object of the current kinds (NSView, NSWindow
+  subclasses) takes the retained path. The sentinel (death reported as `SVL_GONE_OWNER`) is only reachable for an
+  autonotifying class; a test needs a borrowed handle of such a class.
+- **Proportional echo suppression** is implemented in both backends but no AppKit/WinUI fact is `value_cost:
+  proportional`, so no CI row covers it.
+- AppKit `describe` returns descriptors (and so `SVL_M_OBSERVABLE`) for scalar and record props only; enum, object and
+  list props are observable through `observe` but carry no flag.
+- `fires` per fact (above) is not recorded.
+- **WinUI user path through UI Automation is not generated**: the rows change props natively or run a trigger
+  (`select`, `activate`); only the ButtonAutomationPeer `Invoke` existed before (selftest). A UIA row for TextBox text
+  (ValuePattern) and selection (TextPattern) needs those peers in the bindings filter.
+- WinUI: 106 facts have no row because the backend does not expose the prop (brushes, templates, transitions, ...).
+- Real Mac / Windows checks the runner cannot do: typing with an input method and undo; slider drag (the row uses the
+  arrow key); live window resize/move by the user (the row uses `setFrame:display:`); user selection in a TextBox by
+  mouse and keyboard (the row uses `Select`); a KVO change from a
+  background thread in a real app (the hop is tested with `setValue:forKey:` on a thread).
