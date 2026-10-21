@@ -346,6 +346,22 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/counter-egui:
+    dependencies:
+      svelte:
+        specifier: 5.57.2
+        version: 5.57.2
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/counter-mac:
     dependencies:
       svelte:
@@ -499,7 +515,39 @@ importers:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
+  fixtures/if-toggle-egui:
+    dependencies:
+      svelte:
+        specifier: 5.57.2
+        version: 5.57.2
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   fixtures/keyed-list:
+    dependencies:
+      svelte:
+        specifier: 5.57.2
+        version: 5.57.2
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/keyed-list-egui:
     dependencies:
       svelte:
         specifier: 5.57.2
@@ -809,6 +857,22 @@ importers:
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
 
   fixtures/timers:
+    dependencies:
+      svelte:
+        specifier: 5.57.2
+        version: 5.57.2
+    devDependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../../packages/build
+      '@svelters/testhost':
+        specifier: workspace:*
+        version: link:../../packages/testhost
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  fixtures/timers-egui:
     dependencies:
       svelte:
         specifier: 5.57.2

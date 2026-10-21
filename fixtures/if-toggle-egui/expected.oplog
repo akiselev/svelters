@@ -1,0 +1,31 @@
+create window #1
+set #1 title "If toggle"
+create box #2
+set #2 gap 8
+create button #3
+listen #3 clicked on
+set #3 text "Toggle"
+insert #2 #3 before=end slot=default
+create label #4
+set #4 text "Hidden"
+insert #2 #4 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #3 clicked []
+create label #5
+set #5 text "Shown"
+insert #2 #5 before=end slot=default
+remove #2 #4
+destroy #4
+event #3 clicked []
+create label #6
+set #6 text "Hidden"
+insert #2 #6 before=end slot=default
+remove #2 #5
+destroy #5
+event #3 clicked []
+create label #7
+set #7 text "Shown"
+insert #2 #7 before=end slot=default
+remove #2 #6
+destroy #6

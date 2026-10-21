@@ -1,4 +1,4 @@
-//! `svelters-compile --backend gtk|qt|appkit|winui[,...] [--spec path.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
+//! `svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec path.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
 //!
 //! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
 //! `--backend gtk,qt,appkit,winui` is the portability mode: the output is for the first platform, the
@@ -11,7 +11,7 @@ use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile
 use svelters_compiler::semantics::SpecBackend;
 use svelters_compiler::target::builtin_target;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui[,...] [--spec spec.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
 
 fn main() {
     let mut backend = "gtk".to_string();

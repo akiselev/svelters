@@ -9,6 +9,8 @@ const GTK_JSON: &str = include_str!("../../../../metadata/semantics/gtk.json");
 const QT_JSON: &str = include_str!("../../../../metadata/semantics/qt.json");
 const APPKIT_JSON: &str = include_str!("../../../../metadata/semantics/appkit.json");
 const WINUI_JSON: &str = include_str!("../../../../metadata/semantics/winui.json");
+/// G1: generated from the egui backend's kind table (crates/svelters-egui/src/kinds.rs).
+const EGUI_JSON: &str = include_str!("../../../../metadata/semantics/egui.json");
 const GTK_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/gtk.json");
 const QT_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/qt.json");
 
@@ -42,7 +44,8 @@ impl SpecBackend {
             "qt" => SpecBackend::from_json(QT_JSON)?.with_types(QT_TYPES_JSON),
             "appkit" => SpecBackend::from_json(APPKIT_JSON),
             "winui" => SpecBackend::from_json(WINUI_JSON),
-            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui)")),
+            "egui" => SpecBackend::from_json(EGUI_JSON),
+            other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui, egui)")),
         }
     }
 

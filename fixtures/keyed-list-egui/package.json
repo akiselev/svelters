@@ -1,0 +1,22 @@
+{
+  "name": "@svelters-fixtures/keyed-list-egui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test": "vite build && node --experimental-vm-modules --no-warnings ../../packages/testhost/bin/svelters-test.mjs .",
+    "watch": "svelters-build --watch"
+  },
+  "dependencies": {
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "@svelters/testhost": "workspace:*",
+    "vite": "8.3.4"
+  },
+  "svelters": {
+    "toolkit": "egui"
+  }
+}
