@@ -1,6 +1,6 @@
 # egui: exposing the app's own Rust types, functions and widgets to Svelte
 
-Status: research proposal, 2026-10-21, for M7 (egui). **E0, E1 and E3 are implemented** (`plans/milestones/E0-rust-exports.md`, `plans/milestones/E1-exports-offload.md`, `plans/milestones/E3-exports-reactive.md`: as built, deviations, measurements); E2, E4 and E5 are not.
+Status: research proposal, 2026-10-21, for M7 (egui). **E0, E1, E2 and E3 are implemented** (`plans/milestones/E0-rust-exports.md`, `plans/milestones/E1-exports-offload.md`, `plans/milestones/E2-exports-buffers.md`, `plans/milestones/E3-exports-reactive.md`: as built, deviations, measurements); E4 and E5 are not.
 
 - **Scope:** how the developer of an all-Rust svelters-egui app exposes their own types, functions, background services and egui widgets to Svelte/TS, with compute offloaded to Rust threads.
 - **Not in scope:** the retained scene graph that the egui backend renders. Another lane is designing it; §7.4 lists only the interface this design needs from it.

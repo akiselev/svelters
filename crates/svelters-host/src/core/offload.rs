@@ -181,18 +181,17 @@ impl Core {
         }
         let mut ar = Arena::new();
         let cx = Cx { types: self, utf16: false, callbacks: None, owner: 0 };
-        let mut values = Vec::with_capacity(slots.len());
+        let mut raws = Vec::with_capacity(slots.len());
         for (i, slot) in slots.iter().enumerate() {
             if i >= given {
-                values.push(Value::Null);
+                raws.push(svelters_abi::svl_value::null());
                 continue;
             }
             let v = JsReader::index(e, args, i)?;
             let raw = convert::encode(e, &v, slot, &cx, &mut ar)
                 .map_err(|c| self.conv_err(&format!("{}({})", prefix(), slot.name.as_deref().unwrap_or("arg")), c))?;
-            values.push(unsafe { Value::from_raw(&raw) });
+            raws.push(raw);
         }
-        drop(ar);
         let aborted = match &options {
             Some(o) if JsReader::has_field(e, o, "signal")? => {
                 let s = JsReader::field(e, o, "signal")?;
@@ -206,14 +205,24 @@ impl Core {
             _ => false,
         };
 
+        // E2: typed arrays are moved out of JS only for a call that starts (not aborted already, owner
+        // alive), after every argument converted; otherwise the log shows them as null.
+        let live = match this {
+            Some(h) => self.app_check_live(h).map(|_| ()),
+            None => Ok(()),
+        };
+        let values = if aborted || live.is_err() {
+            raws.iter().map(|x| convert::owned(x, &mut [])).collect()
+        } else {
+            convert::owned_all(e, &raws).map_err(|m| type_err(format!("{}: {m}", prefix())))?
+        };
+        drop(ar);
         let kname = || schema().kind_name(kind).unwrap_or_default();
         match this {
             Some(h) => self.note_op(|| format!("call #a{} {}.{} {}", h & !exports::APP_HANDLE_BIT, kname(), m.name, super::apps::json_args(&values))),
             None => self.note_op(|| format!("static {}.{} {}", kname(), m.name, super::apps::json_args(&values))),
         }
-        if let Some(h) = this {
-            self.app_check_live(h)?;
-        }
+        live?;
 
         let t = &self.ops;
         let id = t.next.get() + 1;
@@ -592,8 +601,10 @@ impl Core {
         if !ok {
             self.ops.generation.set(old);
         }
-        // Pending host rejections of retired calls have no runtime to go to.
+        // Pending host rejections of retired calls have no runtime to go to, and their finished results
+        // are dropped now (E2: transferred buffers in them are let go before their runtime is dropped).
         let current = self.ops.generation.get();
+        self.ops_reap();
         self.ops.rejects.borrow_mut().retain(|(_, g, _)| *g == current);
     }
 
@@ -608,6 +619,29 @@ impl Core {
         drop(ops);
         self.ops.keys.borrow_mut().clear();
         self.ops.rejects.borrow_mut().clear();
+        // Finished results nobody will settle: dropped now, so their transferred buffers (E2) are let go
+        // before the runtime is.
+        self.ops_reap();
+    }
+
+    /// Drops, on this (the JS) thread, the finished results no Promise waits for (their calls were
+    /// cancelled, retired by a reload, or the host is shutting down), freeing their slots. E2: a runtime
+    /// that goes away reaps first, so transferred buffers in such results are let go before it is dropped.
+    pub(crate) fn ops_reap(&self) {
+        let all = self.ops.queue.take_done_except(|_| false);
+        if all.is_empty() {
+            return;
+        }
+        let mut keep = Vec::new();
+        for (id, generation, outcome) in all {
+            let pending = self.ops.ops.borrow().get(&id).is_some_and(|op| !op.settled && op.generation == generation);
+            if pending {
+                keep.push((id, generation, outcome));
+            } else {
+                let _ = self.op_complete(id, generation, Done::Send(outcome));
+            }
+        }
+        self.ops.queue.requeue(keep);
     }
 
     fn ops_have_work(&self) -> bool {
@@ -685,6 +719,12 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
         }
         engine_ns = t1.elapsed().as_nanos() as u64;
         core.report_all(eng.take_errors());
+    }
+    // E2: transferred buffers whose tokens were dropped (late results dropped above included) are
+    // freed here, on the JS thread.
+    let released = t.queue.take_released();
+    if !released.is_empty() {
+        eng.release_buffers(&released);
     }
     let ns = t0.elapsed().as_nanos() as u64;
     t.stat(|s| {

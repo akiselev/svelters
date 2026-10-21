@@ -29,7 +29,7 @@ mod sourcemap;
 pub mod testing;
 
 pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timing};
-pub use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, OpOutcome, OpSettle};
+pub use crate::engine::{BufferStats, ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, OpOutcome, OpSettle};
 pub use crate::reload::ReloadReport;
 
 use crate::core::Core;
@@ -460,6 +460,14 @@ impl<'a> Host<'a> {
         self.core.persisted_keys()
     }
 
+    /// Counters of the zero-copy buffer paths (E2): transfers, reclaims, buffers handed back, releases
+    /// on the JS thread, views handed out, fallback copies, live transfer tokens.
+    pub fn buffer_stats(&self) -> BufferStats {
+        let mut s = self.engine.borrow().buffer_stats();
+        s.leaked_runtimes = quickjs::leaked_runtimes();
+        s
+    }
+
     /// Number of live boxed values held by JS wrappers (released, disposed or collected ones excluded).
     pub fn live_boxed(&self) -> usize {
         self.core.live_boxed()
@@ -505,7 +513,11 @@ impl Drop for Host<'_> {
     fn drop(&mut self) {
         // E1: workers that finish later post to a queue nobody drains and wake nobody.
         self.core.ops_shutdown();
-        // E3: store writers and emitters on other threads reach nobody either.
+        // E2: app objects go before the JS runtime, so a transferred buffer one of them holds is let go
+        // first (the runtime is only leaked when Rust really keeps its memory).
+        self.core.app_release_all(&self.core.app_handles());
+        // E3: store writers and emitters on other threads reach nobody either; persisted objects are
+        // dropped here, also before the runtime.
         self.core.reactive_shutdown();
         self.reloader.stop_watch();
         // A backend attached through `start` must not call the vtable that is about to be freed.

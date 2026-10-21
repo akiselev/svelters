@@ -231,11 +231,31 @@ fn runs_on(m: &MemberSchema) -> Option<String> {
     Some(line)
 }
 
+/// E2: `@param` lines for typed arrays a member moves out of JS (`Buffer<T>` parameters).
+fn moved_params(m: &MemberSchema) -> Vec<String> {
+    m.sig
+        .params
+        .iter()
+        .zip(&m.desc.params)
+        .filter(|(_, slot)| slot.tag == svelters_abi::SVL_BYTES && matches!(super::buffers::spec(slot.ty), Some((_, super::buffers::Take::Move))))
+        .map(|(p, _)| format!("@param {} moved to Rust: the array is detached (length 0) once the call starts; use the result instead", p.name))
+        .collect()
+}
+
+fn doc_member(s: &mut String, indent: &str, m: &MemberSchema, module: &str) {
+    doc_lines(s, indent, m.docs, &m.sig.throws, module, runs_on(m), moved_params(m));
+}
+
 fn doc_runs(s: &mut String, indent: &str, docs: &str, throws: &[&str], module: &str, runs: Option<String>) {
+    doc_lines(s, indent, docs, throws, module, runs, Vec::new());
+}
+
+fn doc_lines(s: &mut String, indent: &str, docs: &str, throws: &[&str], module: &str, runs: Option<String>, params: Vec<String>) {
     let mut lines: Vec<String> = docs.lines().map(|l| l.trim().to_string()).filter(|l| !l.is_empty()).collect();
     if let Some(r) = runs {
         lines.push(r);
     }
+    lines.extend(params);
     if !throws.is_empty() {
         lines.push(format!("@throws NativeError `app:{module}` {}", throws.iter().map(|c| format!("`{c}`")).collect::<Vec<_>>().join(" | ")));
     }
@@ -290,17 +310,35 @@ pub fn typescript() -> String {
     for m in &schema().modules {
         let _ = writeln!(s, "\ndeclare module 'svelters:app/{}' {{", m.name);
         let members = || m.functions.iter().chain(m.classes.iter().flat_map(|c| c.methods.iter().chain(c.statics.iter())));
-        let mut core = vec!["NativeObject"];
+        let mut core = vec!["NativeObject".to_string()];
         if members().any(|x| x.offload.is_some() && x.sig.progress.is_none()) {
-            core.push("AsyncOptions");
+            core.push("AsyncOptions".into());
         }
         if members().any(|x| x.offload.is_some() && x.sig.progress.is_some()) {
-            core.push("WorkOptions");
+            core.push("WorkOptions".into());
+        }
+        let body = ts_module_body(m);
+        // E2: the read-only typed array interfaces `Shared<[T]>` uses.
+        for e in svelters_abi::Elem::ALL {
+            let name = super::buffers::readonly_ts(e);
+            let used = body.match_indices(&name).any(|(i, _)| !body[i + name.len()..].starts_with(|c: char| c.is_ascii_alphanumeric()));
+            if used {
+                core.push(name);
+            }
         }
         if members().any(|x| x.sig.items.is_some()) {
-            core.push("NativeStream");
+            core.push("NativeStream".into());
         }
         let _ = writeln!(s, "  import type {{ {} }} from '@svelters/types/core';", core.join(", "));
+        s.push_str(&body);
+        s.push_str("}\n");
+    }
+    s
+}
+
+fn ts_module_body(m: &ModuleSchema) -> String {
+    let mut s = String::new();
+    {
         for t in &m.types {
             doc(&mut s, "  ", &t.docs, &[], &m.name);
             let _ = writeln!(s, "  export {}", t.decl);
@@ -319,7 +357,7 @@ pub fn typescript() -> String {
             let _ = writeln!(s, "  export class {} extends NativeObject {{", c.name);
             match &c.constructor {
                 Some(k) => {
-                    doc(&mut s, "    ", k.docs, &k.sig.throws, &m.name);
+                    doc_member(&mut s, "    ", k, &m.name);
                     let _ = writeln!(s, "    constructor({});", ts_params(k));
                 }
                 None => {
@@ -333,11 +371,11 @@ pub fn typescript() -> String {
                 let _ = writeln!(s, "    {ro}{}: {ty};", prop_key(&p.name));
             }
             for x in &c.methods {
-                doc_runs(&mut s, "    ", x.docs, &x.sig.throws, &m.name, runs_on(x));
+                doc_member(&mut s, "    ", x, &m.name);
                 let _ = writeln!(s, "    {}({}): {};", prop_key(&x.name), ts_params(x), ts_ret(x));
             }
             for x in &c.statics {
-                doc_runs(&mut s, "    ", x.docs, &x.sig.throws, &m.name, runs_on(x));
+                doc_member(&mut s, "    ", x, &m.name);
                 let _ = writeln!(s, "    static {}({}): {};", prop_key(&x.name), ts_params(x), ts_ret(x));
             }
             for e in &c.events {
@@ -358,7 +396,7 @@ pub fn typescript() -> String {
             s.push_str("  }\n");
         }
         for f in &m.functions {
-            doc_runs(&mut s, "  ", f.docs, &f.sig.throws, &m.name, runs_on(f));
+            doc_member(&mut s, "  ", f, &m.name);
             let _ = writeln!(s, "  export function {}({}): {};", f.name, ts_params(f), ts_ret(f));
         }
         for v in &m.values {
@@ -373,7 +411,6 @@ pub fn typescript() -> String {
             doc(&mut s, "  ", &d, &[], &m.name);
             let _ = writeln!(s, "  export const {}: {};", v.member.name, v.member.sig.ret.ts);
         }
-        s.push_str("}\n");
     }
     s
 }

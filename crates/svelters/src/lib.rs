@@ -68,6 +68,24 @@
 //! 'cancelled' }` (decision 2026-10-21); the job sees the cancel through `WorkCx`, and its late result
 //! is dropped on the JS thread. A panic rejects with `code: 'panic'`, disposing the object a call runs
 //! on rejects it with `disposed`, and a hot reload drops the calls of the old runtime.
+//!
+//! # Buffers (E2)
+//!
+//! Large numeric data crosses without a copy:
+//!
+//! - [`Buffer<T>`] (`T` = `u8`, `i8`, `u16`, `i16`, `u32`, `i32`, `u64`, `i64`, `f32`, `f64`) is an owned
+//!   typed array. As a parameter the caller's `Float32Array` is **moved**: it is detached in JS (length
+//!   0) for good, and Rust gets its memory; a worker may mutate it in place and return it, and JS then
+//!   gets the same memory back as a new typed array. As a result, JS owns the memory.
+//! - [`Shared<[T]>`] is an `Arc<[T]>`: JS gets a read-only view (`ReadonlyFloat32Array` in the typings;
+//!   the engine ignores writes) and the `Arc` is released when JS collects it. As a parameter, a view
+//!   the host handed out gives back its `Arc`; other arrays are copied.
+//! - `alloc(Float32Array, n)` from `@svelters/types/core` makes a typed array over a Rust allocation;
+//!   passing it as a `Buffer<T>` gives Rust that allocation back (no copy).
+//!
+//! Memory that came from JS stays in the JS engine's allocator while Rust holds it: dropping the
+//! `Buffer<T>` (on a worker, after a panic, or as a late result after an abort) releases it on the JS
+//! thread. Buffers work in records, lists, worker arguments and results.
 
 //!
 //! # Reactive exports (E3)
@@ -87,8 +105,8 @@
 
 pub use svelters_host::exports;
 pub use svelters_host::exports::{
-    CallCx, Cancelled, Closed, Emitter, EventSet, ExportError, ExportObject, FromJs, IntoJs, JsType, NativeError, Obj, ServiceCx, SharedObject, Sink, StopToken, Store,
-    StoreHooks, StoreState, StoreStatic, Stream, TypeBuilder, TypeRef, UiObject, Value, WorkCx, channel,
+    Buffer, CallCx, Cancelled, Closed, Element, Emitter, EventSet, ExportError, ExportObject, FromJs, IntoJs, JsType, NativeError, Obj, ServiceCx, Shared,
+    SharedObject, Sink, StopToken, Store, StoreHooks, StoreState, StoreStatic, Stream, TypeBuilder, TypeRef, UiObject, Value, WorkCx, channel,
 };
 /// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
 pub use svelters_host::exports::offload::rayon;
@@ -96,7 +114,9 @@ pub use svelters_macros::{Enum, Error, Events, Record, export, object, service, 
 
 /// `use svelters::prelude::*;`
 pub mod prelude {
-    pub use super::{Cancelled, Closed, Emitter, ExportError, NativeError, Obj, ServiceCx, Sink, StopToken, Store, StoreHooks, StoreStatic, Stream, WorkCx, channel};
+    pub use super::{
+        Buffer, Cancelled, Closed, Emitter, ExportError, NativeError, Obj, ServiceCx, Shared, Sink, StopToken, Store, StoreHooks, StoreStatic, Stream, WorkCx, channel,
+    };
     pub use std::sync::Arc;
 }
 

@@ -36,6 +36,7 @@ pub(crate) use menus::signal_name as menus_signal_name;
 mod observe;
 mod style;
 mod vlist;
+mod wake;
 use extras::CallErr;
 
 struct Entry {
@@ -1492,6 +1493,8 @@ impl gi::Host for Inner {
 struct Ctl {
     host: Arc<AtomicPtr<svl_host>>,
     local: Rc<Inner>,
+    /// `wake`'s queue: thread-safe, the only part of `Ctl` touched off the UI thread besides `host`.
+    wake: Arc<wake::WakeQueue>,
 }
 
 thread_local! {
@@ -1603,7 +1606,8 @@ impl GtkBackend {
             style_flush_queued: Cell::new(false),
             main_thread: std::thread::current().id(),
         });
-        let mut ctl = Box::new(Ctl { host, local: inner });
+        let wake = wake::WakeQueue::new(host.clone());
+        let mut ctl = Box::new(Ctl { host, local: inner, wake });
         let vtable = Box::new(svl_backend {
             abi_version: SVL_ABI_VERSION,
             self_: &mut *ctl as *mut Ctl as *mut c_void,
@@ -2017,21 +2021,10 @@ unsafe extern "C" fn b_start(p: *mut c_void, host: *const svl_host) -> c_int {
     0
 }
 
-/// Thread-safe: schedules a host checkpoint on the default main context.
+/// Thread-safe: schedules one host checkpoint on the default main context (coalesced, at the default
+/// priority so busy default-priority sources cannot starve it; see `backend/wake.rs`).
 unsafe extern "C" fn b_wake(p: *mut c_void) {
-    let slot = unsafe { &(*(p as *const Ctl)).host };
-    if slot.load(Ordering::Acquire).is_null() {
-        return;
-    }
-    let slot = slot.clone();
-    glib::idle_add_once(move || {
-        // Re-read at dispatch: a host detached (`start(NULL)`, or `run` returned) since the wake
-        // must not be called.
-        let h = slot.load(Ordering::Acquire);
-        if !h.is_null() {
-            unsafe { ((*h).checkpoint)((*h).self_) };
-        }
-    });
+    unsafe { &(*(p as *const Ctl)).wake }.request();
 }
 
 unsafe extern "C" fn b_quit(p: *mut c_void) {

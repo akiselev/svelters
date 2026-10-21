@@ -93,8 +93,11 @@ fn worker_job_keeps_the_ui_responsive() {
     assert!(label_texts(&backend).iter().any(|t| t == "words 5"), "{:?}", label_texts(&backend));
 
     // The GTK loop is driven by hand: the longest single dispatch (`iteration`) is how long the loop
-    // was blocked; the number of dispatches shows it kept turning.
-    let measure = |button: &str, prefix: &str| -> (Duration, u32, String) {
+    // was blocked; the number of dispatches shows it kept turning. A default-priority 1 ms probe timer
+    // runs meanwhile: its longest gap is the same stall seen from inside the loop, and the job's
+    // completion (a `wake` from the worker) must still get through it (FU2: wakes used to be idle
+    // priority, which a busy default-priority timer starves).
+    let measure = |button: &str, prefix: &str| -> (Duration, u32, String, Duration) {
         // The newest button of that label (`{#if}` re-creates them).
         let b = (1..4096u64)
             .filter_map(|h| backend.object(h))
@@ -102,6 +105,13 @@ fn worker_job_keeps_the_ui_responsive() {
             .filter(|b| b.label().as_deref() == Some(button) && b.parent().is_some())
             .last()
             .unwrap_or_else(|| panic!("no {button} button"));
+        let probe = std::rc::Rc::new(std::cell::Cell::new((Instant::now(), Duration::ZERO)));
+        let p = probe.clone();
+        let timer = glib::timeout_add_local_full(Duration::from_millis(1), glib::Priority::DEFAULT, move || {
+            let (last, gap) = p.get();
+            p.set((Instant::now(), gap.max(last.elapsed())));
+            glib::ControlFlow::Continue
+        });
         b.emit_clicked();
         let ctx = glib::MainContext::default();
         let end = Instant::now() + Duration::from_secs(30);
@@ -114,7 +124,8 @@ fn worker_job_keeps_the_ui_responsive() {
                 turns += 1;
             }
             if let Some(t) = label_texts(&backend).into_iter().find(|t| t.starts_with(prefix)) {
-                return (longest, turns, t);
+                timer.remove();
+                return (longest, turns, t, probe.get().1);
             }
             assert!(Instant::now() < end, "no {prefix} label: {:?} {:?}", label_texts(&backend), host.take_errors());
             std::thread::sleep(Duration::from_millis(1));
@@ -122,15 +133,17 @@ fn worker_job_keeps_the_ui_responsive() {
     };
     let ticks = |t: &str| -> u32 { t.rsplit(' ').next().and_then(|n| n.parse().ok()).unwrap_or(0) };
 
-    let (worker_gap, worker_turns, worker_text) = measure("Crunch", "crunched ");
-    let (ui_gap, ui_turns, ui_text) = measure("Crunch on the UI thread", "blocked: ");
-    println!("worker: longest GTK dispatch {:.1} ms over {worker_turns} dispatches; {worker_text}", worker_gap.as_secs_f64() * 1e3);
-    println!("JS thread: longest GTK dispatch {:.1} ms over {ui_turns} dispatches; {ui_text}", ui_gap.as_secs_f64() * 1e3);
+    let (worker_gap, worker_turns, worker_text, worker_probe) = measure("Crunch", "crunched ");
+    let (ui_gap, ui_turns, ui_text, ui_probe) = measure("Crunch on the UI thread", "blocked: ");
+    println!("worker: longest GTK dispatch {:.1} ms over {worker_turns} dispatches, probe gap {:.1} ms; {worker_text}", worker_gap.as_secs_f64() * 1e3, worker_probe.as_secs_f64() * 1e3);
+    println!("JS thread: longest GTK dispatch {:.1} ms over {ui_turns} dispatches, probe gap {:.1} ms; {ui_text}", ui_gap.as_secs_f64() * 1e3, ui_probe.as_secs_f64() * 1e3);
     // The worker job: the loop never stalls for anything like the job's 200 ms, and JS timers keep firing.
     assert!(worker_gap < Duration::from_millis(100), "worker job stalled the loop for {worker_gap:?}");
+    assert!(worker_probe < Duration::from_millis(100), "worker job: the 1 ms probe timer waited {worker_probe:?}");
     assert!(ticks(&worker_text) >= 5, "JS timer ticks during the worker job: {worker_text}");
     // The same job on the JS thread: one stall of about the job's length, and no JS timer tick.
     assert!(ui_gap >= Duration::from_millis(150), "blocking job: longest gap only {ui_gap:?}");
+    assert!(ui_probe >= Duration::from_millis(150), "blocking job: the probe timer's longest gap only {ui_probe:?}");
     assert_eq!(ticks(&ui_text), 0, "{ui_text}");
     let errors = host.take_errors();
     assert!(errors.is_empty(), "{errors:#?}");
@@ -246,6 +259,30 @@ fn store_burst_is_batched_event_burst_is_not() {
     assert!(errors.is_empty(), "{errors:#?}");
 }
 
+/// E2: the app's DSP panel moves 1 Mi samples Rust -> JS -> worker -> JS without a copy (the worker sees
+/// the allocation `noise` made; the input array is detached), and reads a `Shared` view in place.
+#[test]
+fn dsp_round_trips_samples_without_a_copy() {
+    exports_demo::link();
+    let Some(bundle) = bundle() else { return };
+    let backend = GtkBackend::new().expect("backend");
+    let br = unsafe { BackendRef::from_raw(backend.as_raw()) }.unwrap();
+    let host = Host::new(br, HostConfig { echo_console: false, ..HostConfig::default() }).unwrap();
+    unsafe { backend.attach_host(host.host_callbacks()) };
+    host.load_bundle(&bundle).unwrap();
+    settle(&host, |_| find_button(&backend, "Smooth").is_some());
+    assert!(label_texts(&backend).iter().any(|t| t == "wave 4096 samples, max 1.00, in place true"), "{:?} {:?}", label_texts(&backend), host.take_errors());
+    find_button(&backend, "Smooth").unwrap().emit_clicked();
+    settle(&host, |_| label_texts(&backend).iter().any(|t| t.starts_with("smoothed ")));
+    let text = label_texts(&backend).into_iter().find(|t| t.starts_with("smoothed ")).unwrap_or_else(|| panic!("{:?} {:?}", label_texts(&backend), host.take_errors()));
+    assert!(text.starts_with("smoothed 1048576 samples, zero-copy true, input length 0, max "), "{text}");
+    let s = host.buffer_stats();
+    assert_eq!(s.copies, 2, "only the two `stats` snapshots of non-shared arrays copy: {s:?}");
+    assert!(s.reclaimed >= 1 && s.shared_in >= 1 && s.shared_out >= 1, "{s:?}");
+    let errors = host.take_errors();
+    assert!(errors.is_empty(), "{errors:#?}");
+}
+
 /// The committed `app/.svelters/app` is what this binary dumps (CI fails on stale typings, like
 /// `svelters exports --check` would).
 #[test]
@@ -255,7 +292,7 @@ fn committed_typings_are_current() {
     let _ = std::fs::remove_dir_all(&tmp);
     svelters::exports::dump(&tmp).unwrap();
     let committed = exports_demo::exports_dir();
-    for name in ["exports.json", "app.d.ts", "demo.js", "telemetry.js"] {
+    for name in ["exports.json", "app.d.ts", "demo.js", "dsp.js", "telemetry.js"] {
         let want = std::fs::read_to_string(tmp.join(name)).unwrap();
         let have = std::fs::read_to_string(committed.join(name)).unwrap_or_default();
         assert!(

@@ -142,6 +142,10 @@ pub enum Value {
     Map(Vec<(String, Value)>),
     /// `[domain, code, message]` on the wire.
     Error(Box<NativeError>),
+    /// A typed array that crosses without a copy (E2): host and Rust exports only. On the raw
+    /// `svl_value` path it is `BYTES` borrowed from the same memory (a C backend copies if it keeps
+    /// it); [`Value::from_raw`] never makes one.
+    Buffer(BufferValue),
 }
 
 /// Raw values built from a [`Value`] slice. Pointers inside stay valid while this lives and the
@@ -208,6 +212,10 @@ fn build_raw(v: &Value, lists: &mut Vec<Vec<svl_value>>) -> svl_value {
                 },
             },
         ),
+        Value::Buffer(b) => {
+            let (ptr, len) = b.raw_range();
+            svl_value::new(SVL_BYTES, svl_value_u { bytes: svl_bytes { ptr, len } })
+        }
         Value::Boxed { ty, handle } => svl_value::typed(SVL_BOXED, *ty, svl_value_u { h: *handle }),
         Value::Callback { id, ty } => svl_value::typed(SVL_CALLBACK, *ty, svl_value_u { u: *id }),
         Value::Map(entries) => {

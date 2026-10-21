@@ -325,6 +325,8 @@ struct Queue {
     ready: Vec<u64>,
     /// E3: calls whose stream has items (or ended).
     items: Vec<u64>,
+    /// E2: transferred buffers whose tokens were dropped: freed on the JS thread at the next drain.
+    released: Vec<u64>,
 }
 
 /// The host's completion queue: finished jobs, progress notifications and woken local futures.
@@ -374,6 +376,27 @@ impl Completions {
     /// E3: the calls whose streams have items (taken with the rest of a drain).
     pub(crate) fn take_items(&self) -> Vec<u64> {
         std::mem::take(&mut lock(&self.q).items)
+    }
+
+    /// E2: a transfer token was dropped (any thread): its JS memory is freed at the next drain.
+    pub(crate) fn push_release(&self, id: u64) {
+        lock(&self.q).released.push(id);
+        self.wake();
+    }
+
+    /// Takes the finished results whose generation `keep` refuses (a runtime that went away), for the
+    /// JS thread to drop before that runtime is (E2: transfer tokens in them are let go first). The
+    /// caller drops them outside the lock: dropping a token pushes its release to this queue.
+    pub(crate) fn take_done_except(&self, keep: impl Fn(u64) -> bool) -> Vec<(u64, u64, Outcome)> {
+        let mut q = lock(&self.q);
+        let (k, g): (VecDeque<_>, VecDeque<_>) = std::mem::take(&mut q.done).into_iter().partition(|(_, generation, _)| keep(*generation));
+        q.done = k;
+        g.into_iter().collect()
+    }
+
+    /// E2: the released transfers since the last take.
+    pub(crate) fn take_released(&self) -> Vec<u64> {
+        std::mem::take(&mut lock(&self.q).released)
     }
 
     /// The host is going away: no more wakes.

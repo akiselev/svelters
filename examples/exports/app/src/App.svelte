@@ -3,6 +3,7 @@
   import { Tally, Notebook, greet, fib, crunch, crunchBlocking, wordCount, type Summary, type Step } from 'svelters:app/demo';
   import { telemetry, setSpeed, burst, burstStore, burstSize, Bursts } from 'svelters:app/telemetry';
   import { persist } from '@svelters/types/core';
+  import Dsp from './Dsp.svelte';
 
   const tally = new Tally(5);
   // E3: a persisted object is the same Rust object after a hot reload (the others die with the runtime).
@@ -140,5 +141,6 @@
     <button onclicked={burstEvents}>Burst events</button>
     <label>{storeText}</label>
     <label>{eventText}</label>
+    <Dsp />
   </box>
 </window>

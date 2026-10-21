@@ -450,6 +450,186 @@
       "values": []
     },
     {
+      "classes": [],
+      "functions": [
+        {
+          "async": false,
+          "docs": "True if `view` is `waveform()`'s own memory (no copy was made on the way in).",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "isWaveform",
+          "params": [
+            {
+              "name": "view",
+              "optional": false,
+              "type": "ReadonlyFloat32Array"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "boolean",
+          "runsOn": "ui",
+          "rust": "is_waveform",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
+          "docs": "`n` samples of uniform noise in -1..1 (a small xorshift generator; deterministic per `seed`).",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "noise",
+          "params": [
+            {
+              "name": "n",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "seed",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "Float32Array",
+          "runsOn": "ui",
+          "rust": "noise",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "Smooths `samples` in place with `passes` 3-tap moving averages on a worker thread. The caller's\narray is detached (moved to Rust) until the result comes back as the same memory.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "smooth",
+          "params": [
+            {
+              "name": "samples",
+              "optional": false,
+              "type": "Float32Array"
+            },
+            {
+              "name": "passes",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": "number",
+          "readonly": false,
+          "returns": "Smoothed",
+          "runsOn": "worker",
+          "rust": "smooth",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
+          "docs": "Statistics of a signal: a view Rust handed out is read in place, any other array is copied once.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "stats",
+          "params": [
+            {
+              "name": "signal",
+              "optional": false,
+              "type": "ReadonlyFloat32Array"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "SignalStats",
+          "runsOn": "ui",
+          "rust": "stats",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
+          "docs": "A sine table Rust keeps, as a read-only view (no copy; the view holds the `Arc` until JS collects it).",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "waveform",
+          "params": [],
+          "progress": null,
+          "readonly": false,
+          "returns": "ReadonlyFloat32Array",
+          "runsOn": "ui",
+          "rust": "waveform",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        }
+      ],
+      "name": "dsp",
+      "specifier": "svelters:app/dsp",
+      "types": [
+        {
+          "docs": "What `smooth` returns: the filtered samples (the input's memory) and the time it took.",
+          "fields": [
+            {
+              "name": "samples",
+              "optional": false,
+              "type": "Float32Array"
+            },
+            {
+              "name": "ms",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "zeroCopy",
+              "optional": false,
+              "type": "boolean"
+            }
+          ],
+          "kind": "record",
+          "name": "Smoothed",
+          "values": []
+        },
+        {
+          "docs": "Summary statistics of a signal.",
+          "fields": [
+            {
+              "name": "len",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "min",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "max",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "mean",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "kind": "record",
+          "name": "SignalStats",
+          "values": []
+        }
+      ],
+      "values": []
+    },
+    {
       "classes": [
         {
           "constructor": null,

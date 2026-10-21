@@ -13,6 +13,7 @@
 //!
 //! The items marked `#[doc(hidden)]` are the macros' contract, not an API.
 
+pub(crate) mod buffers;
 mod codegen;
 pub(crate) mod objects;
 pub mod offload;
@@ -21,6 +22,7 @@ mod schema;
 pub mod service;
 pub mod stream;
 
+pub use buffers::{Buffer, Element, Shared};
 pub(crate) use codegen::builtin_module;
 pub use codegen::{DumpReport, dump, dump_if_debug, javascript, json, typescript};
 pub use offload::{Cancelled, CancelledFuture, Exec, Spawned, WorkCx, blocking, set_worker_pool, worker};

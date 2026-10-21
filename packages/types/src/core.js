@@ -714,3 +714,10 @@ if (typeof Symbol.dispose === 'symbol') {
     writable: true,
   });
 }
+
+/** E2: a zeroed typed array over Rust memory (see core.d.ts); plain `new ctor(length)` without the host. */
+export function alloc(ctor, length) {
+  const h = globalThis.__svelters_host;
+  if (h && typeof h.alloc === 'function') return h.alloc(ctor.name, length);
+  return new ctor(length);
+}
