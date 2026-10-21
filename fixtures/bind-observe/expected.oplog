@@ -1,0 +1,43 @@
+create window #1
+set #1 title "bind observe"
+create box #2
+set #2 orientation "vertical"
+set #2 spacing 6
+create entry #3
+set #3 text "Ann"
+observe #3 text on
+observe #3 cursor-position on
+insert #2 #3 before=end slot=default
+create entry #4
+set #4 text "Ann"
+insert #2 #4 before=end slot=default
+create button #5
+listen #5 clicked on
+set #5 label "native"
+insert #2 #5 before=end slot=default
+create button #6
+listen #6 clicked on
+set #6 label "state"
+insert #2 #6 before=end slot=default
+create label #7
+set #7 label "name Ann"
+insert #2 #7 before=end slot=default
+create label #8
+set #8 label "draft Ann"
+insert #2 #8 before=end slot=default
+create label #9
+set #9 label "pos "
+insert #2 #9 before=end slot=default
+insert #1 #2 before=end slot=default
+call #1 present []
+event #5 clicked []
+set #3 text "Zed"
+set #4 text "Zed"
+changed #3 text
+changed #4 text
+set #7 label "name Zed"
+event #6 clicked []
+set #3 text "Bob"
+set #4 text "Bob"
+set #7 label "name Bob"
+set #8 label "draft Bob"

@@ -81,6 +81,8 @@ export function cases() {
     'listen-phases',
     'bind-this',
     'bind-value',
+    // R2: bind: lowered from the observe facts (bind_prop, bind_readonly, bind_once)
+    'bind-observe',
     'borrowed-walk',
     'buffer-bind',
     'dialogs',

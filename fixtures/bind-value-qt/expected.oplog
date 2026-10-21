@@ -6,6 +6,7 @@ set #2 spacing 6
 create line-edit #3
 listen #3 text-changed on
 set #3 text "Ann"
+observe #3 text on
 insert #2 #3 before=end slot=default
 create push-button #4
 listen #4 clicked on
@@ -24,7 +25,6 @@ insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []
 event #3 text-changed ["Zed"]
-set #6 text "Hello Zed"
 set #7 text "changes: 1"
 event #4 clicked []
 set #3 text "Bob"

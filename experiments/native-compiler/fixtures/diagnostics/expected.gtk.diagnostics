@@ -1,7 +1,7 @@
 [plugin svelters-native-compiler] experiments/native-compiler/fixtures/diagnostics/App.svelte:8:7
 bad_attribute_value (gtk): `orientation`: "diagonal" is not one of horizontal, vertical
   App.svelte:8:43: text_not_allowed: <box> cannot contain text on gtk
-  App.svelte:10:18: bind_no_plan: bind:text is not supported on <inscription> (gtk): its native change notification `notify::text` is not exposed as a signal by the gtk backend
+  App.svelte:10:12: bind_not_observable: bind:text-length on <entry>: `text-length` is none on gtk: its native changes are not announced
   App.svelte:11:13: unknown_event: <button> has no event `klick` on gtk
   App.svelte:12:12: unknown_property: <entry> has no property `colour` on gtk
   App.svelte:13:6: unknown_element: <frobnicator> is not an element of the gtk backend
