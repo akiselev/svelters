@@ -92,7 +92,7 @@ test('methods call by native name, statics by native type, returns are wrapped a
   const store = new ListStore({ itemType: 'Gio.File' });
   results.set('get_n_items', 3);
   assert.equal(store.getNItems(), 3);
-  results.set('get_object', (_a, nodeOf) => nodeOf(55));
+  results.set('get_item', (_a, nodeOf) => nodeOf(55));
   const item = store.getObject(0);
   assert.equal(item.svlHandle, 55);
   assert.equal(store.getObject(0), item, 'the same node gives the same wrapper');

@@ -1941,23 +1941,26 @@ extern "C" void svl_qt_close_menus(void) {
 }
 
 // One line per visible row widget: the texts of its labels joined by a space.
+// The shown rows of every virtual list (N3 tests show several), one line per row.
 extern "C" const char *svl_qt_vlist_rows(void) {
   g_vl_str.clear();
-  SvVirtualList *v = vl_find();
-  if (!v) return "";
-  for (QObject *c : v->viewport()->children()) {
-    auto *w = qobject_cast<QWidget *>(c);
-    if (!w || !w->isVisibleTo(v->viewport())) continue;
-    QStringList parts;
-    for (QLabel *l : w->findChildren<QLabel *>()) parts << l->text();
-    g_vl_str += parts.join(' ').toStdString() + "\n";
+  for (QWidget *top : QApplication::allWidgets()) {
+    auto *v = dynamic_cast<SvVirtualList *>(top);
+    if (!v) continue;
+    for (QObject *c : v->viewport()->children()) {
+      auto *w = qobject_cast<QWidget *>(c);
+      if (!w || !w->isVisibleTo(v->viewport())) continue;
+      QStringList parts;
+      for (QLabel *l : w->findChildren<QLabel *>()) parts << l->text();
+      g_vl_str += parts.join(' ').toStdString() + "\n";
+    }
   }
   return g_vl_str.c_str();
 }
 
 extern "C" long svl_qt_vlist_count(void) {
   SvVirtualList *v = vl_find();
-  return v ? v->mdl->rowCount() : -1;
+  return v ? v->cur()->rowCount() : -1;
 }
 
 extern "C" int svl_qt_vlist_pool(void) {
@@ -1967,20 +1970,31 @@ extern "C" int svl_qt_vlist_pool(void) {
 
 extern "C" int svl_qt_vlist_present(void) { return vl_find() != nullptr; }
 
-// Starts recording the model's change notifications ("I first count;", "R first count;", "C first count;").
+// Starts recording the change notifications of the model the list shows (its id model, or the app's
+// model in model mode): "I first count;", "R first count;", "C first count;", "M first count dest;",
+// "reset;", "layout;". A later call moves the recording to the model shown then.
 extern "C" void svl_qt_vlist_watch(void) {
+  static std::vector<QMetaObject::Connection> conns;
+  for (auto &c : conns) QObject::disconnect(c);
+  conns.clear();
   SvVirtualList *v = vl_find();
   if (!v) return;
-  QObject::connect(v->mdl, &QAbstractItemModel::rowsInserted, v, [](const QModelIndex &, int a, int b) {
+  QAbstractItemModel *m = v->cur();
+  conns.push_back(QObject::connect(m, &QAbstractItemModel::rowsInserted, v, [](const QModelIndex &, int a, int b) {
     g_vl_changes += "I " + std::to_string(a) + " " + std::to_string(b - a + 1) + ";";
-  });
-  QObject::connect(v->mdl, &QAbstractItemModel::rowsRemoved, v, [](const QModelIndex &, int a, int b) {
+  }));
+  conns.push_back(QObject::connect(m, &QAbstractItemModel::rowsRemoved, v, [](const QModelIndex &, int a, int b) {
     g_vl_changes += "R " + std::to_string(a) + " " + std::to_string(b - a + 1) + ";";
-  });
-  QObject::connect(v->mdl, &QAbstractItemModel::dataChanged, v, [](const QModelIndex &a, const QModelIndex &b) {
+  }));
+  conns.push_back(QObject::connect(m, &QAbstractItemModel::rowsMoved, v,
+                                   [](const QModelIndex &, int a, int b, const QModelIndex &, int d) {
+                                     g_vl_changes += "M " + std::to_string(a) + " " + std::to_string(b - a + 1) + " " + std::to_string(d) + ";";
+                                   }));
+  conns.push_back(QObject::connect(m, &QAbstractItemModel::dataChanged, v, [](const QModelIndex &a, const QModelIndex &b) {
     g_vl_changes += "C " + std::to_string(a.row()) + " " + std::to_string(b.row() - a.row() + 1) + ";";
-  });
-  QObject::connect(v->mdl, &QAbstractItemModel::modelReset, v, [] { g_vl_changes += "reset;"; });
+  }));
+  conns.push_back(QObject::connect(m, &QAbstractItemModel::modelReset, v, [] { g_vl_changes += "reset;"; }));
+  conns.push_back(QObject::connect(m, &QAbstractItemModel::layoutChanged, v, [] { g_vl_changes += "layout;"; }));
 }
 
 extern "C" const char *svl_qt_vlist_changes(int clear) {
@@ -1992,15 +2006,15 @@ extern "C" const char *svl_qt_vlist_changes(int clear) {
 // The user selects / activates an item (as a click or Enter would).
 extern "C" int svl_qt_vlist_select(int pos) {
   SvVirtualList *v = vl_find();
-  if (!v || pos < 0 || pos >= v->mdl->rowCount()) return -1;
-  v->setCurrentIndex(v->mdl->index(pos));
+  if (!v || pos < 0 || pos >= v->cur()->rowCount()) return -1;
+  v->setCurrentIndex(v->cur()->index(pos, 0));
   return 0;
 }
 
 extern "C" int svl_qt_vlist_activate(int pos) {
   SvVirtualList *v = vl_find();
-  if (!v || pos < 0 || pos >= v->mdl->rowCount()) return -1;
-  emit v->activated(v->mdl->index(pos));
+  if (!v || pos < 0 || pos >= v->cur()->rowCount()) return -1;
+  emit v->activated(v->cur()->index(pos, 0));
   return 0;
 }
 

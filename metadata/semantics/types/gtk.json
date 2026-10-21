@@ -173,7 +173,7 @@
   "Gtk:CustomFilter": {"parents": ["Gtk:Filter"], "props": {}},
   "Gtk:CustomLayout": {"parents": ["Gtk:LayoutManager"], "props": {}},
   "Gtk:CustomSorter": {"parents": ["Gtk:Sorter"], "props": {}},
-  "Gtk:DirectoryList": {"parents": ["GObject:Object", "Gio:ListModel"], "props": {"attributes": {"class": "exact", "native": "attributes"}, "file": {"class": "exact", "native": "file"}, "ioPriority": {"class": "exact", "native": "io-priority"}, "itemType": {"class": "constant", "native": "item-type"}, "monitored": {"class": "exact", "native": "monitored"}, "nItems": {"class": "exact", "native": "n-items"}}},
+  "Gtk:DirectoryList": {"parents": ["GObject:Object", "Gio:ListModel"], "props": {"attributes": {"class": "exact", "native": "attributes"}, "file": {"class": "exact", "native": "file"}, "ioPriority": {"class": "exact", "native": "io-priority"}, "itemType": {"class": "constant", "native": "item-type"}, "loading": {"class": "exact", "native": "loading"}, "monitored": {"class": "exact", "native": "monitored"}, "nItems": {"class": "exact", "native": "n-items"}}},
   "Gtk:DragSource": {"parents": ["Gtk:GestureSingle"], "props": {"actions": {"class": "exact", "native": "actions"}, "content": {"class": "exact", "native": "content"}}},
   "Gtk:DropControllerMotion": {"parents": ["Gtk:EventController"], "props": {}},
   "Gtk:DropTarget": {"parents": ["Gtk:EventController"], "props": {"actions": {"class": "exact", "native": "actions"}, "preload": {"class": "exact", "native": "preload"}}},

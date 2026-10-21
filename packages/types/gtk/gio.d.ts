@@ -1207,8 +1207,10 @@ declare module 'svelters:gtk/gio' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
+      /** `get_item`, since 2.44 */
+      getItem(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
     on(signal: string, fn: (...args: any[]) => void): () => void;
@@ -1227,18 +1229,24 @@ declare module 'svelters:gtk/gio' {
       find(item: Object): { ret: boolean; position: number | null };
       /** `insert`, since 2.44 */
       insert(position: number, item: Object): void;
+      /** `insert_sorted`, since 2.44 */
+      insertSorted(item: Object, compareFunc: ((a: Object, b: Object) => number)): number;
       /** `remove`, since 2.44 */
       remove(position: number): void;
       /** `remove_all`, since 2.44 */
       removeAll(): void;
+      /** `sort`, since 2.46 */
+      sort(compareFunc: ((a: Object, b: Object) => number)): void;
       /** `splice`, since 2.44 */
       splice(position: number, nRemovals: number, additions: Object[]): void;
       /** `get_item_type`, since 2.44 */
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
+      /** `get_item`, since 2.44 */
+      getItem(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
     readonly itemType: string | { readonly native: string } | null;

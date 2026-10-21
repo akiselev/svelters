@@ -74,8 +74,8 @@
     "manual": 0,
     "no_test": 33,
     "pending": 0,
-    "total": 1125,
-    "verified": 1079,
+    "total": 1126,
+    "verified": 1080,
     "verified_weak": 13
    },
    "none": {
@@ -104,7 +104,7 @@
    }
   },
   "exact_by_verification": {
-   "delivery": 1079,
+   "delivery": 1080,
    "none": 33,
    "weak": 13
   },
@@ -170,7 +170,7 @@
   "unreviewed": {
    "by_group": {
     "async-io": {
-     "count": 16,
+     "count": 15,
      "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
     },
     "display-server": {
@@ -207,10 +207,10 @@
     }
    },
    "by_pattern": {
-    "middle:observe:exact-read-only-unprobed": 141
+    "middle:observe:exact-read-only-unprobed": 140
    },
    "low": 0,
-   "middle": 141
+   "middle": 140
   }
  },
  "qt": {

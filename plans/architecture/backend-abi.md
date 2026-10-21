@@ -371,6 +371,34 @@ async  activate(pos)                 user activated an item (double click, Enter
 - **Handles and accounting.** `setRow` takes a widget handle, so every row costs exactly one `create` for its container plus whatever the row component mounts; all of them are destroyed at `teardown`. Tests assert `live handles after teardown == baseline`.
 - **Sort/filter** are done in JS: the app sorts or filters its array and the keyed diff turns the new order into minimal splices.
 
+### Native models (N3, protocol extension, no vtable change)
+
+The `virtuallist` kind can also show a *native* model the app holds as a handle (NON-GUI-TYPES §9 N3; design in `plans/milestones/N3-native-models.md`). Additive: an id-mode list (the M5 protocol above) behaves exactly as before. Nothing in `svl_backend` or `svl_host` changes.
+
+```text
+props  model      handle|null  GTK: any object implementing GListModel; Qt: any QAbstractItemModel (column 0, root rows).
+                               Set: the list shows that model and the id vector is emptied (model mode). null: back to the
+                               (empty) id model. In model mode `splice` fails.
+sync   bind(row, pos, id, gen, epoch, item)
+                               two arguments appended: `epoch` is the number of model changes the list has reported so far
+                               (see `items-changed`); `item` is the item's object handle on GTK (g_list_model_get_item,
+                               adopted by the host like any handle in an event), null on Qt and in id mode. `id` is 0 in model mode
+async  items-changed(pos, removed, added, epoch)
+                               model mode only: the model replaced `removed` items at `pos` with `added` new ones; epoch
+                               increments by one per event. GTK: the model's items-changed. Qt: rowsInserted / rowsRemoved
+                               (one event each), rowsMoved (a remove then an insert), modelReset and layoutChanged
+                               (pos 0, removed = the old count, added = the new count)
+       data-changed(first, last, epoch)
+                               model mode, Qt only: dataChanged over rows first..last (no epoch increment). GTK items
+                               announce their own changes (notify), and a replaced item is an items-changed
+```
+
+- **The model never calls JS.** The toolkit's view reads the native model directly (GtkListView over the model or over a `GtkSingleSelection`/`GtkNoSelection` wrapping it; `QListView::setModel`). JS holds no copy of the list, no keys and no ids; it hears only the row lifecycle and the change reports.
+- **A selection model is used as is.** On GTK, a model that implements `GtkSelectionModel` (`SingleSelection`, `MultiSelection`, `NoSelection`) is shown directly and `selection` is ignored; `selected`/`select` work when it is a `GtkSingleSelection`. Qt uses the view's own `QItemSelectionModel` (`currentIndex`) as before.
+- **Ordering by epoch.** A sync `bind` can run before JS has seen a change event that was posted earlier (the host runs `call_sync` at once while events wait for the checkpoint), and a deferred `bind` can run after change events that were posted later. The backend reports its change counter with each bind; JS applies a change to a bound slot only when the change's epoch is newer than the slot's. The backend connects its change handler to the model *before* the view's own, so the epoch a bind reports already includes the change that caused it.
+- **Host:** `call_sync` adopts handles in its arguments (as `post_event` already did since NT1), so a sync `bind` can carry the item.
+- Qt items are resolved by JS at bind time (the default: `QStandardItemModel.item(row)`, else `index(row, 0)`); Qt binds run from the pool's relayout timer, never inside a model mutation, so the model is consistent when JS reads it.
+
 ### ABI v2.2 additive (X3: child attributes and listen phases)
 
 Three optional members appended after `request_frame` in `svl_backend` (nullable function pointers: a backend that does not implement one sets it to NULL), one name kind and one id convention. No existing member changes.

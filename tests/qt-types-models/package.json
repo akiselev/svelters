@@ -1,0 +1,21 @@
+{
+  "name": "@svelters-fixtures/qt-types-models",
+  "version": "0.0.0",
+  "private": true,
+  "svelters": {
+    "toolkit": "qt"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test": "vite build"
+  },
+  "dependencies": {
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "@svelters/lists": "workspace:*",
+    "vite": "8.3.4"
+  }
+}

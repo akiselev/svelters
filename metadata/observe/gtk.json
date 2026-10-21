@@ -9185,6 +9185,34 @@
     ],
     "record_fp": "ad9613c309905243"
    },
+   "loading": {
+    "class": "exact",
+    "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:loading:observe",
+    "layer": "inferred",
+    "prop": "loading",
+    "provenance": [
+     {
+      "origin": "runtime",
+      "ref": "O1: GObject property, notify::loading (EXPLICIT_NOTIFY)"
+     },
+     {
+      "origin": "manual",
+      "ref": "review pattern ^Gtk:DirectoryList:loading$: GtkDirectoryList notifies loading when it starts and stops enumerating (N3, the list's loading indicator); the generated test sets a directory (trigger)"
+     }
+    ],
+    "record_fp": "0c03751350e32d4b",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:DirectoryList",
+     "rust": "o.downcast_ref::<gtk::DirectoryList>().unwrap().set_file(Some(&gtk::gio::File::for_path(\"/\")));"
+    },
+    "via": [
+     {
+      "mechanism": "notify",
+      "signal": "notify::loading"
+     }
+    ]
+   },
    "monitored": {
     "class": "exact",
     "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:monitored:observe",

@@ -102,6 +102,8 @@ Guidance: plain `{#each}` plus a snippet is right for tens to a few hundred rows
 
 ## Virtualized lists: `<ListView>`
 
+`items` is a JS array here. A native list model (a GTK `GListModel`, a Qt `QAbstractItemModel`) can be shown directly instead, without a copy in JS: see [Native models in lists](/guides/native-models/).
+
 ```svelte
 <script>
   import { ListView } from '@svelters/lists';

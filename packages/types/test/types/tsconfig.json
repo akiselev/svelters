@@ -6,9 +6,29 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": false,
-    "lib": ["ES2022", "ESNext.Disposable"],
+    "lib": [
+      "ES2022",
+      "ESNext.Disposable"
+    ],
     "types": [],
-    "paths": { "@svelters/types/core": ["../../src/core.d.ts"] }
+    "paths": {
+      "@svelters/types/core": [
+        "../../src/core.d.ts"
+      ],
+      "@svelters/lists": [
+        "../../../lists/src/index.d.ts"
+      ]
+    }
   },
-  "include": ["usage.ts", "qt_usage.ts", "appkit_usage.ts", "winui_usage.ts", "../../gtk/*.d.ts", "../../qt/*.d.ts", "../../appkit/*.d.ts", "../../winui/*.d.ts"]
+  "include": [
+    "usage.ts",
+    "qt_usage.ts",
+    "lists_usage.ts",
+    "appkit_usage.ts",
+    "winui_usage.ts",
+    "../../gtk/*.d.ts",
+    "../../qt/*.d.ts",
+    "../../appkit/*.d.ts",
+    "../../winui/*.d.ts"
+  ]
 }

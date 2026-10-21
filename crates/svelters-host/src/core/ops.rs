@@ -354,6 +354,11 @@ impl Core {
             if self.live_kind(h)?.is_none() {
                 return Ok(());
             }
+            // A queued event still carries `h` (its JS wrapper was collected meanwhile): the event
+            // makes a new wrapper, whose collection destroys the handle later.
+            if self.pinned(h) {
+                return Ok(());
+            }
             {
                 let mut st = self.st.borrow_mut();
                 st.handles.remove(&h);

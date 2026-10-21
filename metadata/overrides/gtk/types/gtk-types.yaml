@@ -13,6 +13,13 @@ curated:
   - Gdk.Clipboard
   - Pango.AttrList
   - Pango.FontDescription
+  # N3: the model kinds native lists are tested with (tests/gtk-types-models).
+  - Gtk.FilterListModel
+  - Gtk.SortListModel
+  - Gtk.SingleSelection
+  - Gtk.MultiSelection
+  - Gtk.CustomFilter
+  - Gtk.CustomSorter
 
 # Types bound beyond the closure of what the Gtk API mentions.
 roots:
@@ -76,6 +83,12 @@ verify_subject:
   Gtk.TextBuffer: {construct: {text: "hello"}}
   Gtk.StringList: {construct: {strings: ["a", "b"]}}
   Gtk.DirectoryList: {construct: {attributes: "standard::display-name"}}
+  Gtk.FilterListModel: {construct: {}}
+  Gtk.SortListModel: {construct: {}}
+  Gtk.SingleSelection: {construct: {}}
+  Gtk.MultiSelection: {construct: {}}
+  Gtk.CustomFilter: {construct: {}}
+  Gtk.CustomSorter: {construct: {}}
   Gtk.FileDialog: {construct: {title: "Open", modal: true}}
   Gdk.Texture: {static: [Gdk.Texture, new_from_filename, ["$png"]]}
   Gdk.Clipboard:

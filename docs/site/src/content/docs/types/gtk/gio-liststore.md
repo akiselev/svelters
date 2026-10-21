@@ -41,12 +41,14 @@ Getters marked *reactive* re-run the effects (and template expressions) that rea
 - `append(item)`, since 2.44
 - `find(item)`, since 2.64
 - `insert(position, item)`, since 2.44
+- `insertSorted(item, compareFunc)`, since 2.44; `compareFunc` is a callback (call scope)
 - `remove(position)`, since 2.44
 - `removeAll()`, since 2.44
+- `sort(compareFunc)`, since 2.46; `compareFunc` is a callback (call scope)
 - `splice(position, nRemovals, additions)`, since 2.44
 - `getItemType()`, since 2.44
 - `getNItems()`, since 2.44
-- `getObject(position)`, since 2.44
+- `getItem(position)`, since 2.44
 - `itemsChanged(position, removed, added)`, since 2.44
 
 ## Events
@@ -57,5 +59,5 @@ Listen with `obj.on('name', fn)`; it returns its disposer.
 
 ## Not bound yet
 
-4 members are not bound; reasons: callback 4.
+2 members are not bound; reasons: callback 2.
 

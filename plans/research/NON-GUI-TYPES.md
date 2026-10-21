@@ -593,6 +593,17 @@ Where the build deviates from the plan above:
 - **Thread class** as §4.1 proposed (`dispatcher` / `ui` / `any`); the minting check is tested with a Compositor made on a second dispatcher thread.
 - **Not bound yet:** delegate parameters, collection and array arguments (JS arrays into `IIterable<T>`), static events, async progress.
 
+### N3 as built (2026-10-21, `plans/milestones/N3-native-models.md`)
+
+- `<ListView items={model}>` takes any GTK `GListModel` / Qt `QAbstractItemModel`; the toolkit's view reads it
+  directly and JS keeps no copy. §7's sketch works with `itemClass={FileInfo}` (native-made items have no class
+  to infer) and without `key` (identity and native positions replace keys).
+- Not ABI-free after all, but no vtable change: the `virtual-list` protocol gained a `model` prop, two `bind`
+  arguments and three signals (`backend-abi.md`, "Native models (N3)"). The host pins handles carried by queued
+  events.
+- Reactive accessors were R1's; the TextBuffer example needs no mirror on master (`host_types` on both toolkits).
+  N3 added the `DirectoryList:loading` observe fact.
+
 ## 10. Decisions (user, 2026-10-17)
 
 - **Q1 — transfer-none returns of non-widget objects are SHARED** (strong references), for now. The `lifetime: borrowed` override stays available for exceptions.

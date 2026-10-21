@@ -295,6 +295,10 @@ struct CoreState {
     dirty: Vec<(svl_handle, svl_id)>,
     dirty_set: HashSet<(svl_handle, svl_id)>,
     events: VecDeque<Event>,
+    /// Handles carried in the arguments of queued events (a list item in a deferred `bind`, N3), with
+    /// a count: `destroy` leaves a pinned handle alive, so a wrapper collected while its event waits
+    /// cannot kill the handle the event is about to deliver. Unpinned when the event is delivered.
+    pins: HashMap<svl_handle, u32>,
     timers: Timers,
     console: Vec<ConsoleLine>,
     errors: Vec<JsError>,
@@ -455,6 +459,7 @@ impl Core {
 
     pub(crate) fn push_event(&self, handle: svl_handle, signal: svl_id, args: Vec<Value>) {
         let (signal, flags) = split_signal(signal);
+        self.pin_args(&args, true);
         self.st.borrow_mut().events.push_back(Event::Signal {
             handle,
             signal,
@@ -462,6 +467,32 @@ impl Core {
             deferred: false,
             flags,
         });
+    }
+
+    /// Pins (or unpins) the handles in the arguments of a queued event.
+    pub(crate) fn pin_args(&self, args: &[Value], on: bool) {
+        let mut hs = Vec::new();
+        for a in args {
+            handles_in(a, &mut hs);
+        }
+        if hs.is_empty() {
+            return;
+        }
+        let mut st = self.st.borrow_mut();
+        for h in hs {
+            if on {
+                *st.pins.entry(h).or_insert(0) += 1;
+            } else if let Some(n) = st.pins.get_mut(&h) {
+                *n -= 1;
+                if *n == 0 {
+                    st.pins.remove(&h);
+                }
+            }
+        }
+    }
+
+    pub(crate) fn pinned(&self, h: svl_handle) -> bool {
+        self.st.borrow().pins.contains_key(&h)
     }
 
     /// The name of `signal` on `h` if `h` is live and a listener was registered for it.
@@ -601,6 +632,8 @@ impl Core {
             let name = {
                 let st = self.st.borrow();
                 if st.dead.why.contains_key(&handle) {
+                    drop(st);
+                    self.pin_args(&args, false);
                     continue;
                 }
                 st.handles
@@ -622,12 +655,15 @@ impl Core {
                     deferred,
                     flags,
                 }),
-                None => self.report(JsError::new(
+                None => {
+                    self.pin_args(&args, false);
+                    self.report(JsError::new(
                     ErrorKind::Host,
                     format!(
                         "dropped event for handle {handle} signal id {signal}: no listener or stale handle"
                     ),
-                )),
+                ))
+                }
             }
         }
         out
@@ -789,7 +825,7 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     // with no job drain in between (handlers see the new state; Svelte flushes once after them).
     deliver_changes(core, &mut eng);
     for ev in core.take_events() {
-        if let Err(e) = deliver(&mut eng, ev) {
+        if let Err(e) = deliver(core, &mut eng, ev) {
             core.report(e);
         }
         pending |= drain(&mut eng, &mut budget);
@@ -883,6 +919,7 @@ pub(crate) fn call_sync(
         )));
     };
     if core.js_running() || engine.try_borrow_mut().is_err() {
+        core.pin_args(args, true);
         core.st.borrow_mut().events.push_back(Event::Signal {
             handle: h,
             signal,
@@ -898,6 +935,11 @@ pub(crate) fn call_sync(
     let Some(_guard) = core.enter() else {
         return Err(SyncError::Busy);
     };
+    // Objects the backend minted for the call (a list item in a virtual-list `bind`, N3) join the
+    // handle table, as they do for queued events (`take_events`).
+    for a in args {
+        core.adopt_handles(a);
+    }
     let mut eng = engine.borrow_mut();
     // REACTIVITY.md §5.2 "sync handlers": invalidate what changed before the handler runs (no
     // drain), so `$derived` values it reads are fresh.
@@ -918,12 +960,23 @@ pub(crate) fn call_sync(
     Ok(result)
 }
 
+/// The handles inside a value (lists, records and maps included).
+fn handles_in(v: &Value, out: &mut Vec<svl_handle>) {
+    match v {
+        Value::Handle(h) => out.push(*h),
+        Value::List(items) => items.iter().for_each(|i| handles_in(i, out)),
+        Value::Record { fields, .. } => fields.iter().for_each(|i| handles_in(i, out)),
+        Value::Map(entries) => entries.iter().for_each(|(_, v)| handles_in(v, out)),
+        _ => {}
+    }
+}
+
 /// Splits a signal id from a backend into the id and its `SVL_LISTEN_*` flags (ABI v2.2).
 fn split_signal(signal: svl_id) -> (svl_id, u32) {
     (signal & svelters_abi::SVL_SIGNAL_ID_MASK, signal >> svelters_abi::SVL_SIGNAL_FLAGS_SHIFT)
 }
 
-fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError> {
+fn deliver(core: &Core, eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError> {
     match ev {
         DispatchEvent::Signal {
             handle,
@@ -931,7 +984,11 @@ fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError
             args,
             deferred,
             flags,
-        } => eng.dispatch(handle, &signal, &args, deferred, flags),
+        } => {
+            let r = eng.dispatch(handle, &signal, &args, deferred, flags);
+            core.pin_args(&args, false);
+            r
+        }
         DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason),
     }
 }
@@ -1020,7 +1077,7 @@ fn checkpoint_scripted(core: &Core, eng: &mut Box<dyn JsEngine>) {
     let events = core.take_events();
     if changed || !events.is_empty() {
         for ev in events {
-            if let Err(e) = deliver(eng, ev) {
+            if let Err(e) = deliver(core, eng, ev) {
                 core.report(e);
             }
             core.report_all(eng.take_errors());

@@ -58,6 +58,22 @@ observe:
     ref: 'review pattern :item-type$: the item type of a list model is fixed by its class (G_TYPE_OBJECT for the wrapping models since GTK 4.8,
       the element type otherwise)'
   confidence: 0.9
+- prop: loading
+  class: exact
+  via:
+  - mechanism: notify
+    signal: notify::loading
+  provenance:
+  - origin: runtime
+    ref: 'O1: GObject property, notify::loading (EXPLICIT_NOTIFY)'
+  - origin: manual
+    ref: 'review pattern ^Gtk:DirectoryList:loading$: GtkDirectoryList notifies loading when it starts and stops enumerating (N3, the list''s
+      loading indicator); the generated test sets a directory (trigger)'
+  verify:
+    'on': Gtk:DirectoryList
+    check: cross
+    rust: o.downcast_ref::<gtk::DirectoryList>().unwrap().set_file(Some(&gtk::gio::File::for_path("/")));
+  confidence: 0.9
 - prop: monitored
   class: exact
   via:

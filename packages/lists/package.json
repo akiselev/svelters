@@ -6,7 +6,7 @@
   "type": "module",
   "description": "Virtualized, model-backed lists for svelters: `<ListView>` (a JS array exposed to GtkListView/QListView, rows rendered into recycled row slots, implemented by @svelters/native-runtime/lists) and `arrange`",
   "exports": {
-    ".": "./src/index.js",
+    ".": { "types": "./src/index.d.ts", "default": "./src/index.js" },
     "./diff": "./src/diff.js",
     "./arrange": "./src/arrange.js"
   },

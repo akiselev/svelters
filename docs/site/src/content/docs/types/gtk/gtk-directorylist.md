@@ -37,7 +37,7 @@ Getters marked *reactive* re-run the effects (and template expressions) that rea
 - `file` (object, reactive)
 - `ioPriority` (int, reactive)
 - `itemType` (gtype, read-only)
-- `loading` (bool, read-only)
+- `loading` (bool, read-only, reactive)
 - `monitored` (bool, reactive)
 - `nItems` (int, read-only, reactive)
 
@@ -54,7 +54,7 @@ Getters marked *reactive* re-run the effects (and template expressions) that rea
 - `setMonitored(monitored)`
 - `getItemType()`, since 2.44
 - `getNItems()`, since 2.44
-- `getObject(position)`, since 2.44
+- `getItem(position)`, since 2.44
 - `itemsChanged(position, removed, added)`, since 2.44
 
 ## Events

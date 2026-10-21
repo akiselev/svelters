@@ -24,23 +24,29 @@ total             6       108       327        26         2         7        82 
 == members of bound types: bound / blocked
   GLib      members   283  bound   176 ( 62%)  blocked  107
   GObject   members    45  bound    21 ( 46%)  blocked   24
-  Gio       members   843  bound   750 ( 88%)  blocked   93
+  Gio       members   843  bound   752 ( 89%)  blocked   91
   Gdk       members   374  bound   351 ( 93%)  blocked   23
   Gsk       members    80  bound    73 ( 91%)  blocked    7
   Pango     members   217  bound   192 ( 88%)  blocked   25
   Graphene  members   285  bound   278 ( 97%)  blocked    7
-  Gtk       members  2014  bound  1891 ( 93%)  blocked  123
+  Gtk       members  2014  bound  1893 ( 93%)  blocked  121
   VALUE mutators hidden by the rules: 261
   residual hand list (undecided mutators, hidden until decided): 0 methods in 0 types
-  blocking reasons: variant 146, struct by value 54, gpointer 33, fundamental 31, callback 20, hash table 20, unbound 13, type:needs-override:Pango.Rectangle 10, gerror 9, async 6, type:needs-override:Gsk.ColorStop 5, type:needs-override:Gio.OutputVector 4, type:needs-override:Gtk.CssLocation 4, type:needs-override:Gtk.PageRange 4
+  blocking reasons: variant 146, struct by value 54, gpointer 33, fundamental 31, hash table 20, callback 16, unbound 13, type:needs-override:Pango.Rectangle 10, gerror 9, async 6, type:needs-override:Gsk.ColorStop 5, type:needs-override:Gio.OutputVector 4, type:needs-override:Gtk.CssLocation 4, type:needs-override:Gtk.PageRange 4
 
 == curated set
   Gdk.Clipboard            object  bound   13 blocked   3 hidden   0
   Gdk.Texture              object  bound   14 blocked   2 hidden   0
   Gio.File                 object  bound   95 blocked   4 hidden   0
-  Gio.ListStore            model   bound    9 blocked   4 hidden   0
+  Gio.ListStore            model   bound   11 blocked   2 hidden   0
+  Gtk.CustomFilter         object  bound    2 blocked   0 hidden   0
+  Gtk.CustomSorter         object  bound    2 blocked   0 hidden   0
   Gtk.DirectoryList        model   bound   17 blocked   2 hidden   0
   Gtk.FileDialog           object  bound   33 blocked   0 hidden   0
+  Gtk.FilterListModel      model   bound   17 blocked   0 hidden   0
+  Gtk.MultiSelection       model   bound    6 blocked   0 hidden   0
+  Gtk.SingleSelection      model   bound   17 blocked   0 hidden   0
+  Gtk.SortListModel        model   bound   17 blocked   0 hidden   0
   Gtk.StringList           model   bound   10 blocked   0 hidden   0
   Gtk.TextBuffer           object  bound   85 blocked   7 hidden   0
   Pango.AttrList           value   bound    6 blocked   0 hidden   6

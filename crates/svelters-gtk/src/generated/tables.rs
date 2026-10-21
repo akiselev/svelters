@@ -2380,7 +2380,7 @@ pub const O_CLASS: u8 = 0x0f;
 pub const O_PROPORTIONAL: u8 = 0x80;
 
 /// (owner GType, canonical property name, class | flags), sorted: one entry per observe fact.
-pub static OBSERVE: [(&str, &str, u8); 1295] = [
+pub static OBSERVE: [(&str, &str, u8); 1296] = [
     ("GAction", "enabled", 3),
     ("GAction", "name", 1),
     ("GAction", "parameter-type", 1),
@@ -2737,6 +2737,7 @@ pub static OBSERVE: [(&str, &str, u8); 1295] = [
     ("GtkDirectoryList", "file", 3),
     ("GtkDirectoryList", "io-priority", 3),
     ("GtkDirectoryList", "item-type", 1),
+    ("GtkDirectoryList", "loading", 3),
     ("GtkDirectoryList", "monitored", 3),
     ("GtkDirectoryList", "n-items", 3),
     ("GtkDragIcon", "child", 3),
