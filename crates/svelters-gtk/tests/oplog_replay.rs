@@ -66,9 +66,6 @@ fn replay(name: &str, log: String) {
         let h = Harness::new();
         let mut map: HashMap<String, u64> = HashMap::new();
         let mut events = 0;
-        // (handle, signal) pairs JS listens to: since R2 a `bind:` on an observable prop observes it
-        // instead of listening, so its change signal is produced natively but not delivered
-        let mut listened: std::collections::HashSet<(u64, String)> = std::collections::HashSet::new();
         let mut gone_queue: Vec<(u64, u32)> = Vec::new();
         for (n, line) in log.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
             let ctx = format!("{name}:{}: {line}", n + 1);
@@ -157,13 +154,14 @@ fn replay(name: &str, log: String) {
                     }
                     let r = if flags == 0 { h.listen(hd(parts[1]), parts[2], on) } else { h.listen_ex(hd(parts[1]), parts[2], on, flags) };
                     r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
-                    if on {
-                        listened.insert((hd(parts[1]), parts[2].to_string()));
-                    }
                 }
-                // ABI v2.6 observation (R2 `bind:` lowering) and its scripted announcements: the native
-                // path is covered by tests/observe*.rs and the examples/counter integration tests.
-                "observe" | "changed" => {}
+                // ABI v2.6 observation (R2 `bind:` lowering): `observe #h prop on|off` must be accepted
+                // natively. `changed` is a scripted announcement into the op-log host, not a backend call;
+                // the native announcement path is covered by tests/observe*.rs and examples/counter.
+                "observe" => {
+                    h.observe(hd(parts[1]), parts[2], parts[3].trim() == "on").unwrap_or_else(|e| panic!("{ctx}: {e:?}"));
+                }
+                "changed" => {}
                 // ABI v2.2 child attribute: `attr #parent #child name json`.
                 "attr" => {
                     let rest: Vec<&str> = line.splitn(5, ' ').collect();
@@ -262,10 +260,8 @@ fn replay(name: &str, log: String) {
                         other => panic!("{ctx}: cannot produce {other}"),
                     }
                     let got = h.take_events();
-                    if listened.contains(&(o, sig.to_string())) {
-                        assert!(got.contains(&(o, sig.to_string())), "{ctx}: event not delivered, got {got:?}");
-                        events += 1;
-                    }
+                    assert!(got.contains(&(o, sig.to_string())), "{ctx}: event not delivered, got {got:?}");
+                    events += 1;
                 }
                 other => panic!("{ctx}: unknown op {other}"),
             }

@@ -195,7 +195,6 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
     // Results of construct / static (N2): handles and VALUE handles, by their `#n` in the log.
     let mut vals: HashMap<String, Value> = HashMap::new();
     let (mut events, mut attrs) = (0, 0);
-    let mut listened: std::collections::HashSet<(u64, svl_id)> = std::collections::HashSet::new();
     for (n, line) in log.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
         let ctx = format!("{name}:{}: {line}", n + 1);
         let parts: Vec<&str> = line.splitn(4, ' ').collect();
@@ -294,13 +293,16 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 let flags = listen_flags(words.next().unwrap_or(""));
                 let r = if flags == 0 { b.listen(o, sig, on) } else { b.listen_ex(o, sig, on, flags) };
                 r.unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
-                if on {
-                    listened.insert((o, sig));
-                }
             }
-            // ABI v2.6 observation (R2 `bind:` lowering) and its scripted announcements: the native
-            // path is covered by tests/observe.rs and the examples/counter integration tests.
-            "observe" | "changed" => {}
+            // ABI v2.6 observation (R2 `bind:` lowering): `observe #h prop on|off` must be accepted
+            // natively. `changed` is a scripted announcement into the op-log host, not a backend call;
+            // the native announcement path is covered by tests/observe.rs and examples/counter.
+            "observe" => {
+                let o = hd(parts[1]);
+                let prop = b.resolve(NameKind::Prop, kind(o), parts[2]);
+                b.observe(o, prop, parts[3].trim() == "on").unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+            }
+            "changed" => {}
             // ABI v2.2 child attribute: `attr #parent #child name json`.
             "attr" => {
                 let rest: Vec<&str> = line.splitn(5, ' ').collect();
@@ -367,12 +369,8 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 let click = b.resolve(NameKind::Method, kind(o), if matches!(sig, "triggered" | "toggled") { "trigger" } else { "click" });
                 b.call(o, click, &[]).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
                 let got = EVENTS.lock().unwrap().clone();
-                // since R2 a `bind:` on an observable prop observes it instead of listening: the signal
-                // is produced natively but not delivered
-                if listened.contains(&(o, sid)) {
-                    assert!(got.contains(&(o, sid)), "{ctx}: event not delivered, got {got:?}");
-                    events += 1;
-                }
+                assert!(got.contains(&(o, sid)), "{ctx}: event not delivered, got {got:?}");
+                events += 1;
             }
             other => panic!("{ctx}: unknown op {other}"),
         }
