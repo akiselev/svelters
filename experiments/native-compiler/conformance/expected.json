@@ -132,6 +132,7 @@
   "legacy-runes-ambiguous-export-let": {"category": "legacy", "match": {"runtime": ["^expected '1' to equal '0'"]}, "note": "legacy mode inferred from `export let`"},
   "legacy-runes-ambiguous-export-$$restProps": {"category": "legacy", "match": {"runtime": ["^\\$\\$restProps is not defined"]}},
   "props-and-slots": {"category": "legacy", "match": {"runtime": ["^\\$\\$slots is not defined"]}},
+  "mount-props-updates": {"category": "legacy", "match": {"runtime": ["^target\\.appendChild is not a function"]}, "note": "`createClassComponent` from `svelte/legacy` (Svelte 4 class API) mounts through Svelte's DOM path; `mount` from `svelte` itself is native"},
   "legacy-class-transformation": {"category": "legacy", "match": {"runtime": ["^element\\(\\) outside a mounted component"]}, "note": "`new Inner({ target })` (Svelte 4 class components)"},
 
   "event-attribute-window": "dom-only-element",

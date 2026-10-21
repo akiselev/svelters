@@ -54,7 +54,14 @@ export const batchPath = path.join(path.dirname(effectsPath), 'batch.js');
 export const FLAGS_SPECIFIER = 'svelte/internal/flags/index';
 export const flagsPath = path.join(path.dirname(effectsPath), '../../flags/index.js');
 
-/** Every hidden Svelte module src/core/svelte.js imports: specifier -> absolute path. */
+/** Svelte's client entry (what `svelte` resolves to with the browser condition), for src/svelte.js. */
+export const SVELTE_CLIENT_SPECIFIER = 'svelte/index-client';
+export const svelteClientPath = path.join(path.dirname(effectsPath), '../../../index-client.js');
+
+/** `svelte` as app code sees it: Svelte's client API with a native `mount`/`unmount` (src/svelte.js). */
+export const svelteFacadePath = fileURLToPath(new URL('./src/svelte.js', import.meta.url));
+
+/** Every hidden Svelte module the runtime imports (src/core/svelte.js, src/svelte.js): specifier -> absolute path. */
 export const HIDDEN_MODULES = {
   [EFFECTS_SPECIFIER]: effectsPath,
   [TASK_SPECIFIER]: taskPath,
@@ -62,6 +69,7 @@ export const HIDDEN_MODULES = {
   [ASYNC_SPECIFIER]: asyncPath,
   [BATCH_SPECIFIER]: batchPath,
   [FLAGS_SPECIFIER]: flagsPath,
+  [SVELTE_CLIENT_SPECIFIER]: svelteClientPath,
 };
 
 /** What generated code imports when a component uses `$inspect.trace` in dev. */
@@ -84,6 +92,8 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
       alias: [
         // the hidden Svelte modules of the core adapter
         ...Object.entries(HIDDEN_MODULES).map(([find, replacement]) => ({ find: new RegExp(`^${escapeRegExp(find)}(\\.js)?$`), replacement })),
+        // `import { mount, flushSync } from 'svelte'`: Svelte's client API, mount/unmount native
+        { find: /^svelte$/, replacement: svelteFacadePath },
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
         { find: /^@svelters\/native-runtime\/core$/, replacement: corePath },

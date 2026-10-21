@@ -45,6 +45,8 @@ const hidden = {
   'context.js': ['getAllContexts', 'setContext'],
   'reactivity/async.js': ['capture', 'unset_context'],
   '../flags/index.js': ['enable_tracing_mode_flag'],
+  // src/svelte.js re-exports Svelte's client entry and replaces these three
+  '../../index-client.js': ['mount', 'unmount', 'hydrate', 'flushSync'],
 };
 // a live `let` binding, not a function
 {
