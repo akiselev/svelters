@@ -91,7 +91,7 @@ bindings:
     echo: { strategy: compare, compare_before_set: true, read_back: false }
     lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
     observability: { class: partial, missed: [programmatic] }
-    provenance: "two-way bind:index-of-selected-item: NSComboBoxSelectionDidChangeNotification is posted for a pick from the list and carries the index as argument 0. Whether -selectItemAtIndex: posts it too is not documented, so the echo strategy is compare (the host compares with the value it wrote)"
+    provenance: "two-way bind:index-of-selected-item: NSComboBoxSelectionDidChangeNotification is posted for a pick from the list and carries the index as argument 0. -selectItemAtIndex: posts it too (not documented; seen in the gallery test, CI run 39680099443), so the echo strategy is compare (the host compares with the value it wrote)"
 dangerous:
   properties:
     usesDataSource:

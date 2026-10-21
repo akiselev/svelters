@@ -100,8 +100,8 @@ observe:
     "NSButton:state": [{mechanism: target_action}]
     "NSWindow:frame": [{mechanism: notification, name: NSWindowDidResizeNotification}, {mechanism: notification, name: NSWindowDidMoveNotification}]
     # WP-A: the value a user edits on the newer controls is reported by their action (or the text system's notification).
-    "NSTextView:string": [{mechanism: notification, name: NSTextDidChangeNotification}]
-    # NSText declares `string`; its row is tested on <text-view>, where the backend resolves the NSTextView fallback.
+    # On NSText, which declares `string` (the probe saw KVO fire on it); a NSTextView key would add a second,
+    # KVO-less row that the backend resolves first on <text-view>.
     "NSText:string": [{mechanism: notification, name: NSTextDidChangeNotification}]
     "NSSegmentedControl:selected-segment": [{mechanism: target_action}]
     "NSStepper:double-value": [{mechanism: target_action}]

@@ -1289,7 +1289,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:bindings:index-of-selected-item",
-   "fingerprint": "a3ec7252691d8635",
+   "fingerprint": "a13ede12e18a1fe9",
    "kind": "NSComboBox",
    "name": "index-of-selected-item",
    "origin": "manual",
@@ -10679,19 +10679,6 @@
    "strength": "unsupported",
    "tests": [
     "observe_nstextview_spell_checker_document_tag"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:string:observe",
-   "fingerprint": "a106248f44381c7d",
-   "kind": "AppKit:NSTextView",
-   "name": "string",
-   "origin": "inferred",
-   "record_fp": "66f462fe977c19cd",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_nstextview_string"
    ]
   },
   {

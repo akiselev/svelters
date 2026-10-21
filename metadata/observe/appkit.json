@@ -7382,28 +7382,6 @@
     ],
     "record_fp": "7690cb8fe2742d7a"
    },
-   "string": {
-    "class": "partial",
-    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:string:observe",
-    "layer": "inferred",
-    "missed": [
-     "programmatic"
-    ],
-    "prop": "string",
-    "provenance": [
-     {
-      "origin": "rule",
-      "ref": "O7: not probed for KVO; the fallback reports user changes only"
-     }
-    ],
-    "record_fp": "66f462fe977c19cd",
-    "via": [
-     {
-      "mechanism": "notification",
-      "name": "NSTextDidChangeNotification"
-     }
-    ]
-   },
    "text-container": {
     "class": "set_only",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:text-container:observe",

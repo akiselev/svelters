@@ -3369,8 +3369,6 @@ interface AppkitObs_NSTextView {
   /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:smart-insert-delete-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:smart-insert-delete-enabled|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:spell-checker-document-tag|nonreactive"?: number;
-  /** @observable partial on appkit: misses programmatic changes (notification:NSTextDidChangeNotification) */ "bind:string"?: string | null;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:string|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-container|nonreactive"?: number | null;
   /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:text-container-inset"?: Size;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-container-inset|nonreactive"?: Size;
@@ -3723,7 +3721,7 @@ export interface AppkitObservedBindings {
   "tab-view": AppkitObs_NSTabView & AppkitObs_NSView;
   "tab-view-item": AppkitObs_NSTabViewItem;
   "text-field": AppkitObs_NSTextField & Omit<AppkitObs_NSControl, "bind:attributed-string-value|nonreactive" | "bind:object-value|nonreactive" | "bind:string-value" | "bind:string-value|nonreactive"> & Omit<AppkitObs_NSView, "bind:tag" | "bind:tag|nonreactive">;
-  "text-view": AppkitObs_NSTextView & Omit<AppkitObs_NSText, "bind:background-color|nonreactive" | "bind:delegate|nonreactive" | "bind:draws-background" | "bind:draws-background|nonreactive" | "bind:editable" | "bind:editable|nonreactive" | "bind:field-editor" | "bind:field-editor|nonreactive" | "bind:imports-graphics" | "bind:imports-graphics|nonreactive" | "bind:rich-text" | "bind:rich-text|nonreactive" | "bind:ruler-visible" | "bind:ruler-visible|nonreactive" | "bind:selectable" | "bind:selectable|nonreactive" | "bind:string" | "bind:string|nonreactive" | "bind:uses-font-panel" | "bind:uses-font-panel|nonreactive"> & Omit<AppkitObs_NSView, "bind:candidate-list-touch-bar-item|nonreactive">;
+  "text-view": AppkitObs_NSTextView & Omit<AppkitObs_NSText, "bind:background-color|nonreactive" | "bind:delegate|nonreactive" | "bind:draws-background" | "bind:draws-background|nonreactive" | "bind:editable" | "bind:editable|nonreactive" | "bind:field-editor" | "bind:field-editor|nonreactive" | "bind:imports-graphics" | "bind:imports-graphics|nonreactive" | "bind:rich-text" | "bind:rich-text|nonreactive" | "bind:ruler-visible" | "bind:ruler-visible|nonreactive" | "bind:selectable" | "bind:selectable|nonreactive" | "bind:uses-font-panel" | "bind:uses-font-panel|nonreactive"> & Omit<AppkitObs_NSView, "bind:candidate-list-touch-bar-item|nonreactive">;
   "token-field": AppkitObs_NSTokenField & Omit<AppkitObs_NSTextField, "bind:delegate|nonreactive"> & Omit<AppkitObs_NSControl, "bind:attributed-string-value|nonreactive" | "bind:object-value|nonreactive" | "bind:string-value" | "bind:string-value|nonreactive"> & Omit<AppkitObs_NSView, "bind:tag" | "bind:tag|nonreactive">;
   "view": AppkitObs_NSView;
   "visual-effect-view": AppkitObs_NSVisualEffectView & AppkitObs_NSView;

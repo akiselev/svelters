@@ -3135,13 +3135,6 @@
   },
   "pattern": "observe:none-rule"
  },
- "AppKit:NSTextView:string": {
-  "confidence": 0.9,
-  "evidence": {
-   "kvo": null
-  },
-  "pattern": "observe:fallback-only"
- },
  "AppKit:NSTextView:text-container": {
   "confidence": 0.9,
   "evidence": {

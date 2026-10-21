@@ -135,10 +135,10 @@ mod mac {
         assert!(sent, "NSApp delivered the menu item's action");
         pump(50);
         assert!(g.has_label("picked: Banana"), "the menu item's onaction ran: {:?}", g.labels());
-        // The context menu sits in the plain view's `menu` slot.
+        // The context menu sits in the plain view's `menu` slot (the pop-up button is a view with a menu too).
         let view = g.find("NSView", |o| {
             let m: Option<Retained<AnyObject>> = unsafe { msg_send![o, menu] };
-            m.is_some()
+            class_name(o) == "NSView" && m.is_some()
         });
         let menu: Retained<AnyObject> = unsafe { msg_send![&*view, menu] };
         let items: isize = unsafe { msg_send![&*menu, numberOfItems] };
@@ -242,8 +242,15 @@ mod mac {
                 .unwrap_or_else(|| panic!("page {}: no matching {class}", self.page))
         }
 
+        /// The first live object of exactly `class`, else the first of a subclass (AppKit may hand back a
+        /// private subclass).
         fn first(&self, class: &str) -> Retained<AnyObject> {
-            self.find(class, |o| class_name(o) == class)
+            let objs = self.objects();
+            objs.iter()
+                .find(|o| class_name(o) == class)
+                .or_else(|| objs.iter().find(|o| is_kind(o, class)))
+                .cloned()
+                .unwrap_or_else(|| panic!("page {}: no live {class}: {:?}", self.page, self.live_classes()))
         }
 
         /// The string values of every live NSTextField (labels and fields).

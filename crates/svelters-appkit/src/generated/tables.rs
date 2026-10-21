@@ -1389,7 +1389,6 @@ pub static OBSERVE: &[ObserveInfo] = &[
     ObserveInfo { kind: 28, name: "should-draw-insertion-point", kvo: "", class: ObsClass::None, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 28, name: "smart-insert-delete-enabled", kvo: "smartInsertDeleteEnabled", class: ObsClass::Exact, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 28, name: "spell-checker-document-tag", kvo: "", class: ObsClass::None, notifications: &[], action: false, proportional: false },
-    ObserveInfo { kind: 28, name: "string", kvo: "", class: ObsClass::Partial, notifications: &["NSTextDidChangeNotification"], action: false, proportional: false },
     ObserveInfo { kind: 28, name: "text-container", kvo: "", class: ObsClass::SetOnly, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 28, name: "text-container-inset", kvo: "textContainerInset", class: ObsClass::Exact, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 28, name: "text-container-origin", kvo: "", class: ObsClass::None, notifications: &[], action: false, proportional: false },

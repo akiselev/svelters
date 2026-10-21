@@ -378,17 +378,6 @@ observe:
   - origin: rule
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
-- prop: string
-  class: partial
-  via:
-  - mechanism: notification
-    name: NSTextDidChangeNotification
-  missed:
-  - programmatic
-  provenance:
-  - origin: rule
-    ref: 'O7: not probed for KVO; the fallback reports user changes only'
-  confidence: 0.9
 - prop: text-container
   class: set_only
   provenance:
