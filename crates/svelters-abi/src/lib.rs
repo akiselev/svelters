@@ -327,6 +327,10 @@ pub struct svl_backend {
         Option<unsafe extern "C" fn(*mut c_void, svl_id, svl_id, *const svl_value, usize, *mut svl_value) -> c_int>,
     /// ABI v2.6: start or stop watching a property natively (`host.prop_changed`). Optional.
     pub observe: Option<unsafe extern "C" fn(*mut c_void, svl_handle, svl_id, bool) -> c_int>,
+    /// ABI v2.7: attach the host and bring the toolkit up without running the loop; returns at
+    /// once (`0` ok, `< 0` + `last_error` failure). The caller then drives the loop and the backend
+    /// calls the host exactly as from `run`. `start(self, NULL)` detaches the host. Optional.
+    pub start: Option<unsafe extern "C" fn(*mut c_void, *const svl_host) -> c_int>,
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.

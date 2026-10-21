@@ -71,6 +71,10 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
         { find: /^@svelters\/(native-runtime\/)?lists$/, replacement: listsPath },
         // generated non-UI types: `import { File } from 'svelters:gtk/gio'`
         ...typesAliases(),
+        // the app's Rust exports (E0): `import { Simulation } from 'svelters:app/sim'` gets the stub the
+        // app binary dumped into <root>/.svelters/app (svelters::exports::dump); the QuickJS host also
+        // serves the same module itself when a bundle leaves the import external
+        { find: /^svelters:app\/([a-z0-9_-]+)$/, replacement: path.join(path.resolve(root), '.svelters/app/$1.js') },
       ],
       dedupe: ['svelte'],
     },

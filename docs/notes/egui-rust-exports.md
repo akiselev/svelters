@@ -1,6 +1,6 @@
 # egui: exposing the app's own Rust types, functions and widgets to Svelte
 
-Status: research proposal, 2026-10-21, for M7 (egui). Nothing here is implemented.
+Status: research proposal, 2026-10-21, for M7 (egui). **E0 is implemented** (`plans/milestones/E0-rust-exports.md`, as built and deviations); E1–E5 are not.
 
 - **Scope:** how the developer of an all-Rust svelters-egui app exposes their own types, functions, background services and egui widgets to Svelte/TS, with compute offloaded to Rust threads.
 - **Not in scope:** the retained scene graph that the egui backend renders. Another lane is designing it; §7.4 lists only the interface this design needs from it.
@@ -837,6 +837,15 @@ app crate (Rust)                         cargo build
 | E5 compiler | `PlatformSemantics::native_type`/`type_property` from `exports.json`; diagnostics for unknown members, `bind:` on read-only fields | compile-time errors for typos in `svelters:app/*` member access |
 
 ## 11. Open questions
+
+**Decided by the user on 2026-10-21** (E0 implements them; `plans/milestones/E0-rust-exports.md`):
+- **Q1 specifier:** `svelters:app/<module>`.
+- **Q6 `i64`/`u64`:** a checked JS `number` (a `RangeError` outside ±2^53, both ways); `#[js(bigint)]` on a parameter, record field or method opts that member into `bigint`.
+- **Q8 op log:** exported-object calls are logged in full, like native calls (`construct #a1 app:sim.Simulation [...]`, `call #a1 app:sim.Simulation.step [...]`, `static app:sim.f [...]`, `set #a1 app:sim.T.prop <json>`), so TestHost replay covers them.
+- E0 and G0 (non-blocking host start + started hook) ship together.
+
+Still open: Q2 (async executor default), Q3 (settle-on-abort), Q4 (foreign traits), Q5 (fast path: the registry path's per-call cost is now measured, see the milestone file), Q7 (store granularity), Q9 (subsecond), Q10 (CUSTOM-WIDGETS Q9).
+
 
 1. **Specifier.** `svelters:app/<module>` matches `svelters:<provider>/<ns>`, keeps the bare `svelters:app` for QUICKJS-RUNTIME's built-in app-info module, and gives the M6 linker static roots. Alternatives: `$native/<module>` (tsconfig paths) or `native:<module>`.
 2. **Default executor for `async fn`.** Recommendation: tokio, behind a default feature, with an app-supplied runtime handle. Should a bare `async fn` instead mean `local` (the JS thread, Deno-style) and require `#[js(tokio)]` for the pool? Local-by-default avoids a tokio dependency but makes `Send` futures easy to block the UI with.

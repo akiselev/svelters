@@ -347,6 +347,14 @@ impl<'js> JsWriter for QjsConv<'js> {
             .map_err(|e| self.err(e))
     }
 
+    fn bigint(&self, i: i64) -> R<Value<'js>> {
+        rquickjs::BigInt::from_i64(self.ctx.clone(), i).map(|b| b.into_value()).map_err(|e| self.err(e))
+    }
+
+    fn bigint_u(&self, u: u64) -> R<Value<'js>> {
+        rquickjs::BigInt::from_u64(self.ctx.clone(), u).map(|b| b.into_value()).map_err(|e| self.err(e))
+    }
+
     fn date(&self, ms: f64) -> R<Value<'js>> {
         let f: Function = self.internal()?.get("makeDate").map_err(|e| self.err(e))?;
         f.call::<_, Value>((ms,)).map_err(|e| self.err(e))

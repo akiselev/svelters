@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "types": [
+      "@svelters/native-runtime/types"
+    ]
+  },
+  "include": [
+    "src/**/*.svelte",
+    "src/**/*.ts",
+    ".svelters/app/app.d.ts"
+  ]
+}

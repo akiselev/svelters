@@ -1020,6 +1020,30 @@ impl<'a> BackendRef<'a> {
         self.check(unsafe { f(b.self_, h, prop, on) })
     }
 
+    /// ABI v2.7: whether the backend implements the non-blocking `start`.
+    pub fn has_start(&self) -> bool {
+        self.b().start.is_some()
+    }
+
+    /// ABI v2.7: attaches `host` and brings the toolkit up without running its loop; returns at
+    /// once. The caller drives the loop; the backend calls `host` as it would from `run`. The
+    /// vtable must stay alive until [`BackendRef::detach`].
+    pub fn start(&self, host: &HostVtable) -> AbiResult<()> {
+        let b = self.b();
+        let Some(f) = b.start else {
+            return Err(AbiError::plain(-1, "this backend does not implement start"));
+        };
+        self.check(unsafe { f(b.self_, host.as_raw()) })
+    }
+
+    /// ABI v2.7: `start(NULL)`: the backend makes no host callback afterwards. A no-op without `start`.
+    pub fn detach(&self) {
+        let b = self.b();
+        if let Some(f) = b.start {
+            unsafe { f(b.self_, ptr::null()) };
+        }
+    }
+
     pub fn insert(
         &self,
         parent: svl_handle,
@@ -1401,6 +1425,21 @@ pub trait Backend: 'static {
         Err(ObserveError::Unsupported("observe is not supported by this backend".into()))
     }
 
+    // ---- v2.7 ----
+
+    /// Whether this backend implements [`Backend::start`]; the vtable publishes the member only
+    /// when this is true.
+    fn supports_start(&self) -> bool {
+        false
+    }
+    /// ABI v2.7: attaches the host (`Some`) and brings the toolkit up without running the loop, or
+    /// detaches it (`None`: no host callback afterwards). Returns at once; the caller drives the
+    /// loop and the backend calls the host as it would from [`Backend::run`]. A backend keeping the
+    /// host stores [`HostRef::as_raw`].
+    fn start(&self, _host: Option<&HostRef<'_>>) -> StrResult<()> {
+        Err("start is not supported by this backend".into())
+    }
+
     // ---- v3 ----
 
     /// `SVL_CAP_*` bits.
@@ -1682,6 +1721,15 @@ unsafe extern "C" fn t_run(s: *mut c_void, host: *const svl_host) -> c_int {
     s.rc(|b| b.run(&host))
 }
 
+unsafe extern "C" fn t_start(s: *mut c_void, host: *const svl_host) -> c_int {
+    let s = unsafe { shim(s) };
+    if host.is_null() {
+        return s.rc(|b| b.start(None));
+    }
+    let host = unsafe { HostRef::from_raw(host) };
+    s.rc(|b| b.start(Some(&host)))
+}
+
 unsafe extern "C" fn t_wake(s: *mut c_void) {
     // Touch only the `waker` field: the other fields are not thread-safe.
     let waker: &Waker = unsafe { &*ptr::addr_of!((*(s as *const Shim)).waker) };
@@ -1769,6 +1817,7 @@ impl BackendVtable {
         let caps = backend.caps();
         let constructs = backend.supports_construct();
         let observes = backend.supports_observe();
+        let starts = backend.supports_start();
         let shim = Box::into_raw(Box::new(Shim {
             waker,
             backend: Box::new(backend),
@@ -1806,6 +1855,7 @@ impl BackendVtable {
             construct: constructs.then_some(t_construct as _),
             call_static: constructs.then_some(t_call_static as _),
             observe: observes.then_some(t_observe as _),
+            start: starts.then_some(t_start as _),
         });
         BackendVtable { raw, shim }
     }
