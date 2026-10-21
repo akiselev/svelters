@@ -15,7 +15,7 @@
 //! the engine, so backend callbacks (`post_event`, `on_destroyed`, nested `checkpoint`) cannot
 //! double-borrow.
 
-use crate::engine::{ErrorKind, JsEngine, JsError};
+use crate::engine::{ChangedProp, ErrorKind, JsEngine, JsError};
 use crate::sourcemap::SourceMaps;
 use std::cell::{Cell, RefCell};
 use std::cmp::Reverse;
@@ -117,8 +117,6 @@ enum Event {
     },
     /// The native object behind `handle` died (`reason` is an `SVL_GONE_*` code).
     Gone { handle: svl_handle, reason: u32 },
-    /// ABI v2.6: an observed property may have changed (`host.prop_changed`).
-    Changed { handle: svl_handle, prop: svl_id },
 }
 
 /// A queued event ready for JS: a signal with its name resolved (`__svelters_dispatch`), or a
@@ -135,8 +133,22 @@ pub(crate) enum DispatchEvent {
         handle: svl_handle,
         reason: &'static str,
     },
-    /// An observed property may have changed (`__svelters_prop_changed`).
-    Changed { handle: svl_handle, prop: String },
+}
+
+/// One observed (handle, prop): see `op_observe` and REACTIVITY.md §5.2.
+pub(crate) struct Observed {
+    /// JS-side observers (`host.observe(on)` calls not yet matched by an `off`).
+    pub count: u32,
+    /// The prop name as JS first asked for it: what `__svelters_changed` reports.
+    pub name: String,
+    /// `SVL_M_PROPORTIONAL`: never read or compared, delivered as an invalidation.
+    pub proportional: bool,
+    /// The last value delivered to JS or read back after our own `set_prop`; `None` = unknown
+    /// (the next notification is delivered whatever the value). Never holds a `BOXED` value.
+    pub last: Option<Value>,
+    /// Deliver at the next checkpoint even if equal to `last`: our own write was normalized by the
+    /// toolkit (the read-back differs from what JS wrote), so JS must see the value once.
+    pub force: bool,
 }
 
 /// Why a handle is no longer live.
@@ -276,8 +288,12 @@ struct CoreState {
     callbacks: CbTable,
     /// (kind id, signal id) → name, filled by `listen`
     signal_names: HashMap<(svl_id, svl_id), String>,
-    /// ABI v2.6 observations: (handle, prop id) → (refcount, prop name as JS asked for it).
-    observed: HashMap<(svl_handle, svl_id), (u32, String)>,
+    /// ABI v2.6 observations: (handle, prop id) → refcount, name, cost class, last value.
+    observed: HashMap<(svl_handle, svl_id), Observed>,
+    /// Observed (handle, prop) pairs announced by `prop_changed` since the last checkpoint, in
+    /// first-announcement order, each once (`dirty_set` deduplicates).
+    dirty: Vec<(svl_handle, svl_id)>,
+    dirty_set: HashSet<(svl_handle, svl_id)>,
     events: VecDeque<Event>,
     timers: Timers,
     console: Vec<ConsoleLine>,
@@ -457,20 +473,107 @@ impl Core {
             .cloned()
     }
 
-    /// ABI v2.6 `host.prop_changed`: queues a notification for an observed (h, prop) and reports
-    /// whether it did. Unobserved pairs (cross-notified props, a late native emission after
-    /// `observe(off)`) are ignored. Never runs JS.
+    /// ABI v2.6 `host.prop_changed`: marks an observed (h, prop) dirty. Returns true for the first
+    /// insert into an empty dirty set, when the caller wakes the backend (one wake per turn).
+    /// Unobserved pairs (cross-notified props, a late native emission after `observe(off)`) and
+    /// repeats are ignored. Never runs JS and never reads the property: that is the checkpoint's job.
     pub(crate) fn prop_changed(&self, h: svl_handle, prop: svl_id) -> bool {
         let Ok(mut st) = self.st.try_borrow_mut() else { return false };
         if !st.observed.contains_key(&(h, prop)) {
             return false;
         }
-        st.events.push_back(Event::Changed { handle: h, prop });
-        true
+        mark_dirty(&mut st, (h, prop))
     }
 
+    /// Queued events or dirty observed properties: work for the next checkpoint.
     pub(crate) fn has_events(&self) -> bool {
-        !self.st.borrow().events.is_empty()
+        let st = self.st.borrow();
+        !st.events.is_empty() || !st.dirty.is_empty()
+    }
+
+    /// Drains the dirty set into a `__svelters_changed` batch (REACTIVITY.md §5.2): each pair that
+    /// is still observed is read natively (no JS) unless it is proportional, compared with its
+    /// `last` value and kept only if it differs (or a normalized write forces it). Never runs JS.
+    pub(crate) fn take_changes(&self) -> Vec<ChangedProp> {
+        let dirty = {
+            let mut st = self.st.borrow_mut();
+            st.dirty_set.clear();
+            std::mem::take(&mut st.dirty)
+        };
+        let mut out = Vec::new();
+        for key in dirty {
+            let (name, proportional, force) = {
+                let mut st = self.st.borrow_mut();
+                let Some(o) = st.observed.get_mut(&key) else { continue };
+                (o.name.clone(), o.proportional, std::mem::take(&mut o.force))
+            };
+            if proportional {
+                out.push(ChangedProp { handle: key.0, prop: name, value: None });
+                continue;
+            }
+            // A failed read (the object died meanwhile) delivers nothing; `on_destroyed` follows.
+            let Ok(v) = self.backend.get_prop(key.0, key.1) else { continue };
+            self.adopt_handles(&v);
+            let changed = {
+                let mut st = self.st.borrow_mut();
+                let Some(o) = st.observed.get_mut(&key) else { continue };
+                let changed = force || !o.last.as_ref().is_some_and(|l| same_value(l, &v));
+                if changed {
+                    o.last = (!has_boxed(&v)).then(|| v.clone());
+                }
+                changed
+            };
+            if changed {
+                out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
+            } else {
+                // Dropped: a read that minted VALUE handles must not leak them.
+                release_boxed_in(&self.backend, &v);
+            }
+        }
+        out
+    }
+
+    /// Reads (h, prop) to become its `last` value: at the first observation and after our own
+    /// `set_prop`. A value holding `BOXED` handles is released at once and leaves `last` unknown
+    /// (each read mints new handles, so such a value always counts as changed).
+    pub(crate) fn read_last(&self, h: svl_handle, p: svl_id) -> Option<Value> {
+        let v = self.backend.get_prop(h, p).ok()?;
+        if has_boxed(&v) {
+            release_boxed_in(&self.backend, &v);
+            return None;
+        }
+        self.adopt_handles(&v);
+        Some(v)
+    }
+
+    /// The set path of REACTIVITY.md §5.2: after a successful `set_prop` on an observed, non-
+    /// proportional (h, prop), read the value back once and store it as `last`, so the native echo
+    /// of our write is dropped at the checkpoint. When the toolkit normalized the value (the read
+    /// differs from `written`), the pair is forced dirty so JS gets the normalized value once.
+    pub(crate) fn after_set(&self, h: svl_handle, p: svl_id, written: Option<Value>) {
+        match self.st.borrow().observed.get(&(h, p)) {
+            Some(o) if !o.proportional => {}
+            _ => return,
+        }
+        let last = self.read_last(h, p);
+        let normalized = match (&written, &last) {
+            (Some(w), Some(l)) => !same_value(w, l),
+            _ => false,
+        };
+        let wake = {
+            let mut st = self.st.borrow_mut();
+            let Some(o) = st.observed.get_mut(&(h, p)) else { return };
+            o.last = last;
+            if normalized {
+                o.force = true;
+                mark_dirty(&mut st, (h, p))
+            } else {
+                false
+            }
+        };
+        if wake && !self.cfg.scripted {
+            self.backend.wake();
+        }
     }
 
     /// Drains the queue, resolving signal ids to names. Signals for handles that died are
@@ -480,15 +583,6 @@ impl Core {
         let mut out = Vec::new();
         for e in events {
             let (handle, signal, args, deferred, flags) = match e {
-                Event::Changed { handle, prop } => {
-                    // Delivered only while still observed: an observation dropped (or a handle that
-                    // died) after the backend queued the notification is silently skipped.
-                    let name = self.st.borrow().observed.get(&(handle, prop)).map(|o| o.1.clone());
-                    if let Some(prop) = name {
-                        out.push(DispatchEvent::Changed { handle, prop });
-                    }
-                    continue;
-                }
                 Event::Gone { handle, reason } => {
                     out.push(DispatchEvent::Gone {
                         handle,
@@ -551,6 +645,7 @@ impl Core {
             st.toplevels.remove(&h);
             st.tree.remove(&h);
             st.observed.retain(|k, _| k.0 != h);
+            st.dirty.retain(|k| k.0 != h);
             st.dead.push(h, Death::Gone(reason));
             st.events.push_back(Event::Gone { handle: h, reason });
         }
@@ -688,6 +783,9 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         st.pending
     };
 
+    // REACTIVITY.md §5.3: the batch of changed properties first, then the queued signal events,
+    // with no job drain in between (handlers see the new state; Svelte flushes once after them).
+    deliver_changes(core, &mut eng);
     for ev in core.take_events() {
         if let Err(e) = deliver(&mut eng, ev) {
             core.report(e);
@@ -799,6 +897,9 @@ pub(crate) fn call_sync(
         return Err(SyncError::Busy);
     };
     let mut eng = engine.borrow_mut();
+    // REACTIVITY.md §5.2 "sync handlers": invalidate what changed before the handler runs (no
+    // drain), so `$derived` values it reads are fresh.
+    deliver_changes(core, &mut eng);
     let result = match eng.dispatch_sync(h, &name, args, flags) {
         Ok(v) => v,
         Err(e) => {
@@ -830,15 +931,92 @@ fn deliver(eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Result<(), JsError
             flags,
         } => eng.dispatch(handle, &signal, &args, deferred, flags),
         DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason),
-        DispatchEvent::Changed { handle, prop } => eng.dispatch_prop_changed(handle, &prop),
+    }
+}
+
+/// Reads, compares and delivers the dirty set as one `__svelters_changed` batch (if not empty).
+/// Returns whether a batch was delivered. Runs no jobs.
+fn deliver_changes(core: &Core, eng: &mut Box<dyn JsEngine>) -> bool {
+    let batch = core.take_changes();
+    if batch.is_empty() {
+        return false;
+    }
+    if let Err(e) = eng.dispatch_changed(&batch) {
+        core.report(e);
+    }
+    core.report_all(eng.take_errors());
+    true
+}
+
+/// Inserts `key` into the dirty set; true for the first insert into an empty set.
+fn mark_dirty(st: &mut CoreState, key: (svl_handle, svl_id)) -> bool {
+    if !st.dirty_set.insert(key) {
+        return false;
+    }
+    st.dirty.push(key);
+    st.dirty.len() == 1
+}
+
+/// The compare of REACTIVITY.md §5.2: handles by id, strings by content (UTF-8 and UTF-16 alike),
+/// records, lists and maps deeply, f64 by bits (NaN equals NaN). `BOXED` values, callbacks and
+/// errors never compare equal (each read mints a new handle).
+pub(crate) fn same_value(a: &Value, b: &Value) -> bool {
+    use Value as V;
+    let f = |x: f64, y: f64| x.to_bits() == y.to_bits() || (x.is_nan() && y.is_nan());
+    match (a, b) {
+        (V::Null, V::Null) => true,
+        (V::Bool(x), V::Bool(y)) => x == y,
+        (V::I64(x), V::I64(y)) => x == y,
+        (V::U64(x), V::U64(y)) => x == y,
+        (V::I64(x), V::U64(y)) | (V::U64(y), V::I64(x)) => u64::try_from(*x).is_ok_and(|x| x == *y),
+        (V::F64(x), V::F64(y)) | (V::DateTime(x), V::DateTime(y)) => f(*x, *y),
+        (V::Str(x), V::Str(y)) => x == y,
+        (V::Str16(x), V::Str16(y)) => x == y,
+        (V::Str(x), V::Str16(y)) | (V::Str16(y), V::Str(x)) => x.encode_utf16().eq(y.iter().copied()),
+        (V::Handle(x), V::Handle(y)) => x == y,
+        (V::List(x), V::List(y)) => x.len() == y.len() && x.iter().zip(y).all(|(a, b)| same_value(a, b)),
+        (V::Enum { ty: t1, value: v1 }, V::Enum { ty: t2, value: v2 }) => t1 == t2 && v1 == v2,
+        (V::Flags { ty: t1, mask: m1 }, V::Flags { ty: t2, mask: m2 }) => t1 == t2 && m1 == m2,
+        (V::Record { ty: t1, fields: f1 }, V::Record { ty: t2, fields: f2 }) => {
+            t1 == t2 && f1.len() == f2.len() && f1.iter().zip(f2).all(|(a, b)| same_value(a, b))
+        }
+        (V::Bytes(x), V::Bytes(y)) => x == y,
+        (V::Map(x), V::Map(y)) => {
+            x.len() == y.len() && x.iter().zip(y).all(|((k1, v1), (k2, v2))| k1 == k2 && same_value(v1, v2))
+        }
+        _ => false,
+    }
+}
+
+/// Whether `v` holds a `BOXED` (VALUE) handle anywhere.
+fn has_boxed(v: &Value) -> bool {
+    match v {
+        Value::Boxed { .. } => true,
+        Value::List(items) => items.iter().any(has_boxed),
+        Value::Record { fields, .. } => fields.iter().any(has_boxed),
+        Value::Map(entries) => entries.iter().any(|(_, v)| has_boxed(v)),
+        _ => false,
+    }
+}
+
+/// Releases the `BOXED` handles a read minted and nobody will see.
+fn release_boxed_in(backend: &BackendRef<'static>, v: &Value) {
+    match v {
+        Value::Boxed { handle, .. } => backend.destroy(*handle),
+        Value::List(items) => items.iter().for_each(|i| release_boxed_in(backend, i)),
+        Value::Record { fields, .. } => fields.iter().for_each(|i| release_boxed_in(backend, i)),
+        Value::Map(entries) => entries.iter().for_each(|(_, v)| release_boxed_in(backend, v)),
+        _ => {}
     }
 }
 
 /// Scripted-mode checkpoint; see [`HostConfig::scripted`].
 fn checkpoint_scripted(core: &Core, eng: &mut Box<dyn JsEngine>) {
     const MAX_DRAIN_ROUNDS: usize = 100;
+    // A batch of changed properties is delivered like an event: first, and without draining.
+    let changed = deliver_changes(core, eng);
     let events = core.take_events();
-    if !events.is_empty() {
+    if changed || !events.is_empty() {
         for ev in events {
             if let Err(e) = deliver(eng, ev) {
                 core.report(e);
@@ -981,7 +1159,10 @@ impl Core {
     }
 
     pub(crate) fn clear_events(&self) {
-        self.st.borrow_mut().events.clear();
+        let mut st = self.st.borrow_mut();
+        st.events.clear();
+        st.dirty.clear();
+        st.dirty_set.clear();
     }
 
     /// Replaces the timer heap (reload keeps the old runtime's timers aside while the new bundle

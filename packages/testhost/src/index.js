@@ -65,8 +65,10 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
   const methodIdOf = new Map();
   const widgets = new Map(); // handle -> { kind, parent, children[], props: Map }
   const dead = new Set(); // handles that died (destroyed or gone): teardown-shaped ops on them are no-ops
-  // ABI v2.6 observations: `${h}:${prop}` -> refcount. Like the QuickJS host, only the 0->1 and 1->0
-  // transitions reach the "backend" (the log).
+  // ABI v2.6 observations: `${h}:${prop}` -> { count, name, last }. Like the QuickJS host, only the
+  // 0->1 and 1->0 transitions reach the "backend" (the log), and a native change is delivered only
+  // when its value differs from `last`: the value at the first observation, after our own setProp,
+  // or as last delivered (REACTIVITY.md section 5.2; the TestHost has no proportional props).
   const observed = new Map();
   const forgetObserved = (h) => {
     for (const k of [...observed.keys()]) if (k.startsWith(`${h}:`)) observed.delete(k);
@@ -194,6 +196,9 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
       const name = nameOf(propNames, w(h).kid, nameRef);
       w(h).props.set(name, value);
       lines.push(`set #${h} ${name} ${json(value)}`);
+      // The set path: the read-back becomes `last`, so the echo of our own write is dropped.
+      const o = observed.get(`${h}:${name}`);
+      if (o) o.last = value ?? null;
     },
     getProp(h, nameRef) {
       return w(h).props.get(nameOf(propNames, w(h).kid, nameRef)) ?? null;
@@ -208,15 +213,19 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
       if (!on && dead.has(h)) return false;
       const name = nameOf(propNames, w(h).kid, propRef);
       const key = `${h}:${name}`;
-      const n = observed.get(key) ?? 0;
+      const o = observed.get(key);
+      const n = o?.count ?? 0;
       if (on) {
-        observed.set(key, n + 1);
-        if (n === 0) lines.push(`observe #${h} ${name} on`);
+        if (o) o.count++;
+        else {
+          observed.set(key, { count: 1, name: typeof propRef === 'string' ? propRef : name, last: w(h).props.get(name) ?? null });
+          lines.push(`observe #${h} ${name} on`);
+        }
         return true;
       }
       if (n === 0) return false;
       if (n > 1) {
-        observed.set(key, n - 1);
+        o.count--;
         return true;
       }
       observed.delete(key);
@@ -309,6 +318,21 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
     killNative,
     /** Whether JS observes `prop` of `h` (ABI v2.6): the host delivers `changed` steps only then. */
     isObserved: (h, prop) => observed.has(`${h}:${prop}`),
+    /**
+     * A scripted native change (ABI v2.6): `value` (when not undefined) becomes the native value, the
+     * `changed` line is logged, and the `__svelters_changed` batch the host would deliver is returned:
+     * `[h, prop, value]` when JS observes the prop and the value differs from the last one, else null.
+     */
+    nativeChange(h, prop, value) {
+      if (value !== undefined) w(h).props.set(prop, value);
+      lines.push(value === undefined ? `changed #${h} ${prop}` : `changed #${h} ${prop} ${json(value)}`);
+      const o = observed.get(`${h}:${prop}`);
+      if (!o) return null;
+      const v = w(h).props.get(prop) ?? null;
+      if (sameValue(o.last, v)) return null;
+      o.last = v;
+      return [h, o.name, v];
+    },
     /** Hands results that are handles to `fn` (the vm context's `__svelters_node`). */
     setNodeFor: (fn) => void (nodeFor = fn),
   };
@@ -378,9 +402,11 @@ const MAX_TIMER_FIRINGS = 10_000;
  *   { deferred: [h, signal, args] } a sync signal the toolkit could not deliver synchronously (JS was
  *                                 busy) and queued instead: append `deferred #h signal args`, call
  *                                 globalThis.__svelters_dispatch(h, signal, args, true) (result ignored).
- *   { changed: [h, prop] }        ABI v2.6: the toolkit announces that prop of h may have changed: append
- *                                 `changed #h prop`, then, if JS observes it (host.observe), call
- *                                 globalThis.__svelters_prop_changed(h, prop) synchronously.
+ *   { changed: [h, prop, value?] } ABI v2.6: prop of h changed natively to `value` (stored when given)
+ *                                 and the toolkit announces it: append `changed #h prop <json>`, then,
+ *                                 if JS observes it (host.observe) and the value differs from the last
+ *                                 one delivered or written, call globalThis.__svelters_changed([h, prop,
+ *                                 value]) synchronously (the host's batch of one).
  *   { gone: [h, reason] }         the native object behind h died: log `gone #h reason` for h and each
  *                                 descendant (pre-order, reason `parent`), then call
  *                                 globalThis.__svelters_gone(handle, reason) for each, synchronously.
@@ -388,6 +414,16 @@ const MAX_TIMER_FIRINGS = 10_000;
  *                                 fire the earliest one (advancing virtual time); else stop }.
  * The bundle is evaluated before step 1, with no implicit checkpoint.
  */
+/** The host's compare (REACTIVITY.md section 5.2): numbers by value with NaN equal to NaN, the rest deeply. */
+export function sameValue(a, b) {
+  if (Object.is(a, b)) return true;
+  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null) return false;
+  if (Array.isArray(a) !== Array.isArray(b)) return false;
+  const ka = Object.keys(a);
+  const kb = Object.keys(b);
+  return ka.length === kb.length && ka.every((k) => Object.hasOwn(b, k) && sameValue(a[k], b[k]));
+}
+
 export async function runBundle({ bundlePath, script, toolkit, styleDialect = toolkit === 'qt' ? 'qss' : 'css' }) {
   const th = createTestHost({ toolkit });
   if (styleDialect === 'qss') {
@@ -440,9 +476,9 @@ export async function runBundle({ bundlePath, script, toolkit, styleDialect = to
         th.lines.push(`deferred #${h} ${signal} ${JSON.stringify(args)}`);
         ctx.__svelters_dispatch(h, signal, args, true, 0);
       } else if (step.changed) {
-        const [h, prop] = step.changed;
-        th.lines.push(`changed #${h} ${prop}`);
-        if (th.isObserved(h, prop)) ctx.__svelters_prop_changed?.(h, prop);
+        const [h, prop, value] = step.changed;
+        const batch = th.nativeChange(h, prop, value);
+        if (batch) ctx.__svelters_changed?.(batch);
       } else if (step.gone) {
         const [h, reason] = step.gone;
         for (const [x, why] of th.killNative(h, reason)) ctx.__svelters_gone?.(x, why);

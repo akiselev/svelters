@@ -5,8 +5,8 @@
 //! 1. processes the script steps in order: `event` logs the event, posts it to the host and
 //!    calls `host.checkpoint` so it is delivered at once; `checkpoint` calls `host.checkpoint`
 //!    (what that drains is the host's business; see `HostConfig::scripted`);
-//!    `changed` logs `changed #h prop` and calls `host.prop_changed` (ABI v2.6), then
-//!    `host.checkpoint`;
+//!    `changed` stores the step's value as the property's native value (when it has one), logs
+//!    `changed #h prop <json>` and calls `host.prop_changed` (ABI v2.6), then `host.checkpoint`;
 //! 2. before each step, and after the last, runs a checkpoint if the host called `wake` meanwhile;
 //! 3. then idles, running a checkpoint on every `wake`, and returns when `quit` is called or when
 //!    no wake arrives for [`LogOptions::settle`].
@@ -46,12 +46,14 @@ pub enum Step {
         args: Vec<Value>,
         flags: u32,
     },
-    /// ABI v2.6: the toolkit announces that property `prop` of `handle` may have changed. Logs
-    /// `changed #h prop`, calls `host.prop_changed` and then `host.checkpoint` (the host ignores
-    /// it unless JS observes the property).
+    /// ABI v2.6: property `prop` of `handle` changed natively (to `value`, when given: it becomes
+    /// what `get_prop` answers) and the toolkit announces it. Logs `changed #h prop <json>` (no
+    /// json without a value), calls `host.prop_changed` and then `host.checkpoint`; the host reads,
+    /// compares and delivers it only if JS observes the property.
     Changed {
         handle: svl_handle,
         prop: String,
+        value: Option<Value>,
     },
     Checkpoint,
 }
@@ -86,7 +88,7 @@ fn flags_from_word(w: &str) -> Result<u32, String> {
 
 /// Parses a fixture's `script.json`: an array of `{"event": [h, signal, args, flags?]}`
 /// (`flags` is `"after"`, `"capture"` or `"after+capture"`), `{"sync": [h, signal, args, flags?]}`, `{"gone": [h, reason]}`,
-/// `{"changed": [h, prop]}` and `{"checkpoint": true}` steps.
+/// `{"changed": [h, prop, value?]}` and `{"checkpoint": true}` steps.
 pub fn parse_script(json: &str) -> Result<Vec<Step>, String> {
     let root: serde_json::Value = serde_json::from_str(json).map_err(|e| format!("script: {e}"))?;
     let steps = root.as_array().ok_or("script: expected a JSON array")?;
@@ -147,10 +149,11 @@ fn parse_step(s: &serde_json::Value) -> Result<Step, String> {
         let reason = gone_from_name(name).ok_or_else(|| format!("gone: unknown reason `{name}`"))?;
         Ok(Step::Gone { handle, reason })
     } else if let Some(c) = obj.get("changed") {
-        let c = c.as_array().ok_or("changed: expected [handle, prop]")?;
+        let c = c.as_array().ok_or("changed: expected [handle, prop, value?]")?;
         let handle = c.first().and_then(|h| h.as_u64()).ok_or("changed: bad handle")?;
         let prop = c.get(1).and_then(|s| s.as_str()).ok_or("changed: bad prop")?.to_string();
-        Ok(Step::Changed { handle, prop })
+        let value = c.get(2).map(json_to_value).transpose()?;
+        Ok(Step::Changed { handle, prop, value })
     } else if obj.contains_key("checkpoint") {
         Ok(Step::Checkpoint)
     } else {
@@ -888,10 +891,16 @@ impl Backend for LogBackend {
                         Err(_) => self.append(format_args!("result #{handle} error")),
                     }
                 }
-                Step::Changed { handle, prop } => {
+                Step::Changed { handle, prop, value } => {
                     let kind = self.check_live(handle)?;
                     let id = self.shared.lock().names.intern(NameKind::Prop as u32, kind, &prop);
-                    self.append(format_args!("changed #{handle} {prop}"));
+                    match value {
+                        Some(v) => {
+                            self.append(format_args!("changed #{handle} {prop} {}", json_string(&v)));
+                            self.shared.lock().props.insert((handle, id), v);
+                        }
+                        None => self.append(format_args!("changed #{handle} {prop}")),
+                    }
                     host.prop_changed(handle, id);
                     self.checkpoint(host);
                 }
