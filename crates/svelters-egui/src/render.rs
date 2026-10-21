@@ -105,7 +105,8 @@ fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>) {
                 let tw = ui.ctx().fonts_mut(|f| f.layout_no_wrap(text.clone(), font, egui::Color32::WHITE).size().x);
                 extra += sp.item_spacing.x + tw;
             }
-            ui.spacing_mut().slider_width = (size.x - extra).max(sp.interact_size.x);
+            // 4 points of slack: the value box can come out slightly wider than interact_size.x.
+            ui.spacing_mut().slider_width = (size.x - extra - 4.0).max(sp.interact_size.x);
             let mut s = egui::Slider::new(value, *min..=*max).show_value(*show_value);
             if *step > 0.0 {
                 s = s.step_by(*step);
