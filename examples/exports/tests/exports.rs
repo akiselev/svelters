@@ -135,6 +135,30 @@ fn worker_job_keeps_the_ui_responsive() {
     assert!(errors.is_empty(), "{errors:#?}");
 }
 
+/// E2: the app's DSP panel moves 1 Mi samples Rust -> JS -> worker -> JS without a copy (the worker sees
+/// the allocation `noise` made; the input array is detached), and reads a `Shared` view in place.
+#[test]
+fn dsp_round_trips_samples_without_a_copy() {
+    exports_demo::link();
+    let Some(bundle) = bundle() else { return };
+    let backend = GtkBackend::new().expect("backend");
+    let br = unsafe { BackendRef::from_raw(backend.as_raw()) }.unwrap();
+    let host = Host::new(br, HostConfig { echo_console: false, ..HostConfig::default() }).unwrap();
+    unsafe { backend.attach_host(host.host_callbacks()) };
+    host.load_bundle(&bundle).unwrap();
+    settle(&host, |_| find_button(&backend, "Smooth").is_some());
+    assert!(label_texts(&backend).iter().any(|t| t == "wave 4096 samples, max 1.00, in place true"), "{:?} {:?}", label_texts(&backend), host.take_errors());
+    find_button(&backend, "Smooth").unwrap().emit_clicked();
+    settle(&host, |_| label_texts(&backend).iter().any(|t| t.starts_with("smoothed ")));
+    let text = label_texts(&backend).into_iter().find(|t| t.starts_with("smoothed ")).unwrap_or_else(|| panic!("{:?} {:?}", label_texts(&backend), host.take_errors()));
+    assert!(text.starts_with("smoothed 1048576 samples, zero-copy true, input length 0, max "), "{text}");
+    let s = host.buffer_stats();
+    assert_eq!(s.copies, 2, "only the two `stats` snapshots of non-shared arrays copy: {s:?}");
+    assert!(s.reclaimed >= 1 && s.shared_in >= 1 && s.shared_out >= 1, "{s:?}");
+    let errors = host.take_errors();
+    assert!(errors.is_empty(), "{errors:#?}");
+}
+
 /// The committed `app/.svelters/app` is what this binary dumps (CI fails on stale typings, like
 /// `svelters exports --check` would).
 #[test]
@@ -144,7 +168,7 @@ fn committed_typings_are_current() {
     let _ = std::fs::remove_dir_all(&tmp);
     svelters::exports::dump(&tmp).unwrap();
     let committed = exports_demo::exports_dir();
-    for name in ["exports.json", "app.d.ts", "demo.js"] {
+    for name in ["exports.json", "app.d.ts", "demo.js", "dsp.js"] {
         let want = std::fs::read_to_string(tmp.join(name)).unwrap();
         let have = std::fs::read_to_string(committed.join(name)).unwrap_or_default();
         assert!(
