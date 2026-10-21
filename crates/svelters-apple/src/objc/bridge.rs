@@ -287,6 +287,10 @@ pub fn object_out(obj: Option<&AnyObject>, objs: &dyn Objects) -> Value {
         return Value::Str(s.map(|s| s.to_string()).unwrap_or_default());
     }
     if let Some(n) = obj.downcast_ref::<NSNumber>() {
+        // A CFBoolean (`@YES`, a BOOL from NSUserDefaults) encodes as `c`: tell it by its class.
+        if std::ptr::eq(n.class(), NSNumber::new_bool(true).class()) {
+            return Value::Bool(n.as_bool());
+        }
         let t: *const c_char = unsafe { msg_send![n, objCType] };
         let t = if t.is_null() { String::new() } else { unsafe { CStr::from_ptr(t) }.to_string_lossy().into_owned() };
         return match enc::parse_type(&t).0 {
@@ -325,8 +329,8 @@ pub fn object_out(obj: Option<&AnyObject>, objs: &dyn Objects) -> Value {
     }
     if is_kind(obj, class!(NSData)) {
         let len: usize = unsafe { msg_send![obj, length] };
-        let p: *const u8 = unsafe { msg_send![obj, bytes] };
-        let b = if p.is_null() || len == 0 { Vec::new() } else { unsafe { std::slice::from_raw_parts(p, len) }.to_vec() };
+        let p: *const c_void = unsafe { msg_send![obj, bytes] };
+        let b = if p.is_null() || len == 0 { Vec::new() } else { unsafe { std::slice::from_raw_parts(p as *const u8, len) }.to_vec() };
         return Value::Bytes(b);
     }
     if is_kind(obj, class!(NSDate)) {

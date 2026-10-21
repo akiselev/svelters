@@ -24,7 +24,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:border-color:observe",
-   "fingerprint": "d9ddb4620de1c936",
+   "fingerprint": "f47914fb2897092e",
    "kind": "AppKit:NSBox",
    "name": "border-color",
    "origin": "inferred",
@@ -37,7 +37,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:border-rect:observe",
-   "fingerprint": "fa74e3e9efd93261",
+   "fingerprint": "a953324cb5d8c04d",
    "kind": "AppKit:NSBox",
    "name": "border-rect",
    "origin": "inferred",
@@ -50,7 +50,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:border-width:observe",
-   "fingerprint": "09f1692e55ce81da",
+   "fingerprint": "18ec0f4f3df87873",
    "kind": "AppKit:NSBox",
    "name": "border-width",
    "origin": "inferred",
@@ -63,7 +63,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:box-type:observe",
-   "fingerprint": "d711e19f1b758c0e",
+   "fingerprint": "d16803cb0d3bc8cd",
    "kind": "AppKit:NSBox",
    "name": "box-type",
    "origin": "inferred",
@@ -76,7 +76,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:content-view-margins:observe",
-   "fingerprint": "81c9f7badced6eef",
+   "fingerprint": "4182c4b31318a8b5",
    "kind": "AppKit:NSBox",
    "name": "content-view-margins",
    "origin": "inferred",
@@ -89,7 +89,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:content-view:observe",
-   "fingerprint": "a266fc2f65ec5b96",
+   "fingerprint": "b6f158d4deae3199",
    "kind": "AppKit:NSBox",
    "name": "content-view",
    "origin": "inferred",
@@ -102,7 +102,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:corner-radius:observe",
-   "fingerprint": "434c87e984795b8e",
+   "fingerprint": "4ebc940b91f18bb5",
    "kind": "AppKit:NSBox",
    "name": "corner-radius",
    "origin": "inferred",
@@ -115,7 +115,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:fill-color:observe",
-   "fingerprint": "7405964c67c908e2",
+   "fingerprint": "7d7a5295e951b4d4",
    "kind": "AppKit:NSBox",
    "name": "fill-color",
    "origin": "inferred",
@@ -128,7 +128,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-cell:observe",
-   "fingerprint": "3f6aba901946e4a8",
+   "fingerprint": "1c46fe907aa639d3",
    "kind": "AppKit:NSBox",
    "name": "title-cell",
    "origin": "inferred",
@@ -141,7 +141,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-font:observe",
-   "fingerprint": "eedf6dfd2373a9c8",
+   "fingerprint": "d589ebca4f5142ba",
    "kind": "AppKit:NSBox",
    "name": "title-font",
    "origin": "inferred",
@@ -154,7 +154,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-position:observe",
-   "fingerprint": "d64f8d962af3bba2",
+   "fingerprint": "88be56f731048711",
    "kind": "AppKit:NSBox",
    "name": "title-position",
    "origin": "inferred",
@@ -167,7 +167,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-rect:observe",
-   "fingerprint": "4a9feab04d2b981e",
+   "fingerprint": "9eeedc5d0f3b9c53",
    "kind": "AppKit:NSBox",
    "name": "title-rect",
    "origin": "inferred",
@@ -180,7 +180,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title:observe",
-   "fingerprint": "a66a047cd892611e",
+   "fingerprint": "693ef93735e58bdf",
    "kind": "AppKit:NSBox",
    "name": "title",
    "origin": "inferred",
@@ -193,7 +193,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:transparent:observe",
-   "fingerprint": "1f0b3e736550bb86",
+   "fingerprint": "694c252da1d91673",
    "kind": "AppKit:NSBox",
    "name": "transparent",
    "origin": "inferred",
@@ -355,7 +355,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:active-compression-options:observe",
-   "fingerprint": "aab2ca87ae3e602b",
+   "fingerprint": "18c9f67bf1d3c63c",
    "kind": "AppKit:NSButton",
    "name": "active-compression-options",
    "origin": "inferred",
@@ -368,7 +368,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:allows-mixed-state:observe",
-   "fingerprint": "931a8985ff8b19f7",
+   "fingerprint": "a7dc7c65e5734755",
    "kind": "AppKit:NSButton",
    "name": "allows-mixed-state",
    "origin": "inferred",
@@ -381,7 +381,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:alternate-image:observe",
-   "fingerprint": "3ebda5e6c2a684a9",
+   "fingerprint": "536af8f01c37fd14",
    "kind": "AppKit:NSButton",
    "name": "alternate-image",
    "origin": "inferred",
@@ -394,7 +394,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:alternate-title:observe",
-   "fingerprint": "d64fb9a3d7f7e417",
+   "fingerprint": "6f6a785a078808e5",
    "kind": "AppKit:NSButton",
    "name": "alternate-title",
    "origin": "inferred",
@@ -407,7 +407,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:attributed-alternate-title:observe",
-   "fingerprint": "5922c5490ce49078",
+   "fingerprint": "7b7be7e5446b4784",
    "kind": "AppKit:NSButton",
    "name": "attributed-alternate-title",
    "origin": "inferred",
@@ -420,7 +420,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:attributed-title:observe",
-   "fingerprint": "3e5ddb0f35ef30f9",
+   "fingerprint": "556661b071bc7fb0",
    "kind": "AppKit:NSButton",
    "name": "attributed-title",
    "origin": "inferred",
@@ -433,7 +433,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:bezel-color:observe",
-   "fingerprint": "58fd4610e170b4c8",
+   "fingerprint": "c230794658792e32",
    "kind": "AppKit:NSButton",
    "name": "bezel-color",
    "origin": "inferred",
@@ -446,7 +446,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:bezel-style:observe",
-   "fingerprint": "8502fef7c23dae29",
+   "fingerprint": "f4815473bdb7dd1c",
    "kind": "AppKit:NSButton",
    "name": "bezel-style",
    "origin": "inferred",
@@ -459,7 +459,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:border-shape:observe",
-   "fingerprint": "a3c9242d43db3c1c",
+   "fingerprint": "24715dd3291da129",
    "kind": "AppKit:NSButton",
    "name": "border-shape",
    "origin": "inferred",
@@ -472,7 +472,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:bordered:observe",
-   "fingerprint": "62374964d4800491",
+   "fingerprint": "21cb9428bb3b7863",
    "kind": "AppKit:NSButton",
    "name": "bordered",
    "origin": "inferred",
@@ -485,7 +485,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:content-tint-color:observe",
-   "fingerprint": "e1300c36fd1eb6d2",
+   "fingerprint": "855c0305a2827c67",
    "kind": "AppKit:NSButton",
    "name": "content-tint-color",
    "origin": "inferred",
@@ -498,7 +498,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:has-destructive-action:observe",
-   "fingerprint": "4225b231815c449e",
+   "fingerprint": "deee5b4f3b74ddb4",
    "kind": "AppKit:NSButton",
    "name": "has-destructive-action",
    "origin": "inferred",
@@ -511,7 +511,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image-hugs-title:observe",
-   "fingerprint": "e882faf8d62d6047",
+   "fingerprint": "89e2dd3ceb9fa34b",
    "kind": "AppKit:NSButton",
    "name": "image-hugs-title",
    "origin": "inferred",
@@ -524,7 +524,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image-position:observe",
-   "fingerprint": "2127e2dd8095fe52",
+   "fingerprint": "eeaf6c68a89e8208",
    "kind": "AppKit:NSButton",
    "name": "image-position",
    "origin": "inferred",
@@ -537,7 +537,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image-scaling:observe",
-   "fingerprint": "f468c1d11f3bda65",
+   "fingerprint": "eadc7cf0c1c65685",
    "kind": "AppKit:NSButton",
    "name": "image-scaling",
    "origin": "inferred",
@@ -550,7 +550,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image:observe",
-   "fingerprint": "3adb1342b124449d",
+   "fingerprint": "5963e83d4d2aec68",
    "kind": "AppKit:NSButton",
    "name": "image",
    "origin": "inferred",
@@ -563,7 +563,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:key-equivalent-modifier-mask:observe",
-   "fingerprint": "924c8f7c81a521e4",
+   "fingerprint": "27de530722921dc0",
    "kind": "AppKit:NSButton",
    "name": "key-equivalent-modifier-mask",
    "origin": "inferred",
@@ -576,7 +576,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:key-equivalent:observe",
-   "fingerprint": "aa1ed7721c74398b",
+   "fingerprint": "c17d57834eccb82d",
    "kind": "AppKit:NSButton",
    "name": "key-equivalent",
    "origin": "inferred",
@@ -589,7 +589,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:max-accelerator-level:observe",
-   "fingerprint": "f588a0218f3dca7d",
+   "fingerprint": "787a9cdc9b93975a",
    "kind": "AppKit:NSButton",
    "name": "max-accelerator-level",
    "origin": "inferred",
@@ -602,7 +602,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:shows-border-only-while-mouse-inside:observe",
-   "fingerprint": "d0685e1dfa56d404",
+   "fingerprint": "d132a37996bc1266",
    "kind": "AppKit:NSButton",
    "name": "shows-border-only-while-mouse-inside",
    "origin": "inferred",
@@ -615,7 +615,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:sound:observe",
-   "fingerprint": "23892621b15b8367",
+   "fingerprint": "11692c1b0857b667",
    "kind": "AppKit:NSButton",
    "name": "sound",
    "origin": "inferred",
@@ -628,7 +628,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:spring-loaded:observe",
-   "fingerprint": "aeb34b7a0842ff46",
+   "fingerprint": "09d675d190a7a30a",
    "kind": "AppKit:NSButton",
    "name": "spring-loaded",
    "origin": "inferred",
@@ -641,7 +641,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:state:observe",
-   "fingerprint": "197e9adb712d874d",
+   "fingerprint": "c2affbcab674ecd6",
    "kind": "AppKit:NSButton",
    "name": "state",
    "origin": "inferred",
@@ -654,7 +654,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:symbol-configuration:observe",
-   "fingerprint": "1d5d796d97afb400",
+   "fingerprint": "57e369d022553726",
    "kind": "AppKit:NSButton",
    "name": "symbol-configuration",
    "origin": "inferred",
@@ -667,7 +667,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:tint-prominence:observe",
-   "fingerprint": "2b8f3dd271646aac",
+   "fingerprint": "7b668b3a56d956ba",
    "kind": "AppKit:NSButton",
    "name": "tint-prominence",
    "origin": "inferred",
@@ -680,7 +680,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:title:observe",
-   "fingerprint": "d27a7cb200cf8e11",
+   "fingerprint": "4f45b20c07642a2d",
    "kind": "AppKit:NSButton",
    "name": "title",
    "origin": "inferred",
@@ -693,7 +693,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:transparent:observe",
-   "fingerprint": "6a6d2a773e979fd6",
+   "fingerprint": "65118a1adf0807ab",
    "kind": "AppKit:NSButton",
    "name": "transparent",
    "origin": "inferred",
@@ -975,7 +975,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:action:observe",
-   "fingerprint": "6af22a269f36acbd",
+   "fingerprint": "d775871a403d57a5",
    "kind": "AppKit:NSControl",
    "name": "action",
    "origin": "inferred",
@@ -988,7 +988,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:alignment:observe",
-   "fingerprint": "6734071b4ec279e4",
+   "fingerprint": "251d7c29456fa104",
    "kind": "AppKit:NSControl",
    "name": "alignment",
    "origin": "inferred",
@@ -1001,7 +1001,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:allows-expansion-tool-tips:observe",
-   "fingerprint": "f3d6a2d62b4d1d39",
+   "fingerprint": "500b0fead21321f4",
    "kind": "AppKit:NSControl",
    "name": "allows-expansion-tool-tips",
    "origin": "inferred",
@@ -1014,7 +1014,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:attributed-string-value:observe",
-   "fingerprint": "5caf203156cb76f5",
+   "fingerprint": "8d1f4a3b75332980",
    "kind": "AppKit:NSControl",
    "name": "attributed-string-value",
    "origin": "inferred",
@@ -1027,7 +1027,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:base-writing-direction:observe",
-   "fingerprint": "1884c52087ca6a1e",
+   "fingerprint": "e34247fac43d53f1",
    "kind": "AppKit:NSControl",
    "name": "base-writing-direction",
    "origin": "inferred",
@@ -1040,7 +1040,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:cell:observe",
-   "fingerprint": "f615a6be1fbea54f",
+   "fingerprint": "49cfe22642f74199",
    "kind": "AppKit:NSControl",
    "name": "cell",
    "origin": "inferred",
@@ -1053,7 +1053,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:continuous:observe",
-   "fingerprint": "204dcc8eb95cc4f1",
+   "fingerprint": "ed3579a60dee2b3f",
    "kind": "AppKit:NSControl",
    "name": "continuous",
    "origin": "inferred",
@@ -1066,7 +1066,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:control-size:observe",
-   "fingerprint": "5271645c00d1346c",
+   "fingerprint": "ca1c51f17320d961",
    "kind": "AppKit:NSControl",
    "name": "control-size",
    "origin": "inferred",
@@ -1079,7 +1079,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:double-value:observe",
-   "fingerprint": "9c2690902eb958e8",
+   "fingerprint": "43e3965d22b9f0da",
    "kind": "AppKit:NSControl",
    "name": "double-value",
    "origin": "inferred",
@@ -1092,7 +1092,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:enabled:observe",
-   "fingerprint": "252019cffc49ae96",
+   "fingerprint": "12637e953d3df435",
    "kind": "AppKit:NSControl",
    "name": "enabled",
    "origin": "inferred",
@@ -1105,7 +1105,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:float-value:observe",
-   "fingerprint": "dc9a7028fea1f35c",
+   "fingerprint": "30b26f7c7c90706d",
    "kind": "AppKit:NSControl",
    "name": "float-value",
    "origin": "inferred",
@@ -1118,7 +1118,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:font:observe",
-   "fingerprint": "1e4190a15a9c17ea",
+   "fingerprint": "21917bf536e05b1f",
    "kind": "AppKit:NSControl",
    "name": "font",
    "origin": "inferred",
@@ -1131,7 +1131,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:formatter:observe",
-   "fingerprint": "d5ee921687f8f7b3",
+   "fingerprint": "82b71a60d3c39c99",
    "kind": "AppKit:NSControl",
    "name": "formatter",
    "origin": "inferred",
@@ -1144,7 +1144,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:highlighted:observe",
-   "fingerprint": "34710d439cb2f7a9",
+   "fingerprint": "06343acf03728e3e",
    "kind": "AppKit:NSControl",
    "name": "highlighted",
    "origin": "inferred",
@@ -1157,7 +1157,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:ignores-multi-click:observe",
-   "fingerprint": "209344487fe869fd",
+   "fingerprint": "16a9c7002ed879b6",
    "kind": "AppKit:NSControl",
    "name": "ignores-multi-click",
    "origin": "inferred",
@@ -1170,7 +1170,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:int-value:observe",
-   "fingerprint": "d46e232379cc8ae7",
+   "fingerprint": "eace9bb0a61c0b82",
    "kind": "AppKit:NSControl",
    "name": "int-value",
    "origin": "inferred",
@@ -1183,7 +1183,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:integer-value:observe",
-   "fingerprint": "aed854fe2c1ed175",
+   "fingerprint": "c99dfe3f5e7897ca",
    "kind": "AppKit:NSControl",
    "name": "integer-value",
    "origin": "inferred",
@@ -1196,7 +1196,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:line-break-mode:observe",
-   "fingerprint": "b59d7e45b7dce90a",
+   "fingerprint": "3ea4bd5f8d817e76",
    "kind": "AppKit:NSControl",
    "name": "line-break-mode",
    "origin": "inferred",
@@ -1209,7 +1209,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:object-value:observe",
-   "fingerprint": "4a9000afaa9a5db2",
+   "fingerprint": "4e2b9ce8652de81b",
    "kind": "AppKit:NSControl",
    "name": "object-value",
    "origin": "inferred",
@@ -1222,7 +1222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:refuses-first-responder:observe",
-   "fingerprint": "6b965ee6ef50cb0d",
+   "fingerprint": "9f40186e91823dad",
    "kind": "AppKit:NSControl",
    "name": "refuses-first-responder",
    "origin": "inferred",
@@ -1235,7 +1235,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:string-value:observe",
-   "fingerprint": "8b0b7ec31bf78a84",
+   "fingerprint": "5a754ff62697428a",
    "kind": "AppKit:NSControl",
    "name": "string-value",
    "origin": "inferred",
@@ -1248,7 +1248,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:tag:observe",
-   "fingerprint": "4cbaa10564a50e78",
+   "fingerprint": "b6a78740b30eef55",
    "kind": "AppKit:NSControl",
    "name": "tag",
    "origin": "inferred",
@@ -1261,7 +1261,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:target:observe",
-   "fingerprint": "48286bd51dd0b2d2",
+   "fingerprint": "ae2b8695610c10d0",
    "kind": "AppKit:NSControl",
    "name": "target",
    "origin": "inferred",
@@ -1274,7 +1274,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:uses-single-line-mode:observe",
-   "fingerprint": "e342e53cf8380065",
+   "fingerprint": "98245c671ef4e997",
    "kind": "AppKit:NSControl",
    "name": "uses-single-line-mode",
    "origin": "inferred",
@@ -1508,7 +1508,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:control-size:observe",
-   "fingerprint": "4be9cf51cd917eb2",
+   "fingerprint": "194da2eb391cb15e",
    "kind": "AppKit:NSProgressIndicator",
    "name": "control-size",
    "origin": "inferred",
@@ -1521,7 +1521,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:displayed-when-stopped:observe",
-   "fingerprint": "0288077c35bdc36e",
+   "fingerprint": "cf94fefd0e744a99",
    "kind": "AppKit:NSProgressIndicator",
    "name": "displayed-when-stopped",
    "origin": "inferred",
@@ -1534,7 +1534,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:double-value:observe",
-   "fingerprint": "13d84c3a4d8133ad",
+   "fingerprint": "d33e739cb6e4df7b",
    "kind": "AppKit:NSProgressIndicator",
    "name": "double-value",
    "origin": "inferred",
@@ -1547,7 +1547,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:indeterminate:observe",
-   "fingerprint": "e91e1599c5617d03",
+   "fingerprint": "b0b39451f50ff641",
    "kind": "AppKit:NSProgressIndicator",
    "name": "indeterminate",
    "origin": "inferred",
@@ -1560,7 +1560,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:max-value:observe",
-   "fingerprint": "23b214a7aed6d144",
+   "fingerprint": "0379a3eb54376168",
    "kind": "AppKit:NSProgressIndicator",
    "name": "max-value",
    "origin": "inferred",
@@ -1573,7 +1573,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:min-value:observe",
-   "fingerprint": "a552bc2908345125",
+   "fingerprint": "4687e5848e1ad6fc",
    "kind": "AppKit:NSProgressIndicator",
    "name": "min-value",
    "origin": "inferred",
@@ -1586,7 +1586,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:observed-progress:observe",
-   "fingerprint": "84e0748374e9c236",
+   "fingerprint": "46c1b5ed31c334cb",
    "kind": "AppKit:NSProgressIndicator",
    "name": "observed-progress",
    "origin": "inferred",
@@ -1599,7 +1599,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:style:observe",
-   "fingerprint": "ef815be10cecfb7f",
+   "fingerprint": "e3a053e2d985aee9",
    "kind": "AppKit:NSProgressIndicator",
    "name": "style",
    "origin": "inferred",
@@ -1612,7 +1612,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:uses-threaded-animation:observe",
-   "fingerprint": "2b306e1dbeb764a6",
+   "fingerprint": "7b2d0786033513dd",
    "kind": "AppKit:NSProgressIndicator",
    "name": "uses-threaded-animation",
    "origin": "inferred",
@@ -1867,7 +1867,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:allows-tick-mark-values-only:observe",
-   "fingerprint": "09ebd727dcf34e2c",
+   "fingerprint": "4c4cbb71c0602cd1",
    "kind": "AppKit:NSSlider",
    "name": "allows-tick-mark-values-only",
    "origin": "inferred",
@@ -1880,7 +1880,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:alt-increment-value:observe",
-   "fingerprint": "385336c6f34c0616",
+   "fingerprint": "b8ea56740139ea28",
    "kind": "AppKit:NSSlider",
    "name": "alt-increment-value",
    "origin": "inferred",
@@ -1893,7 +1893,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:double-value:observe",
-   "fingerprint": "4312ad9a34913770",
+   "fingerprint": "b1cdd5acf287a3b6",
    "kind": "AppKit:NSSlider",
    "name": "double-value",
    "origin": "inferred",
@@ -1906,7 +1906,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:float-value:observe",
-   "fingerprint": "d486b2749dba514d",
+   "fingerprint": "8b10eeb2ab9c6193",
    "kind": "AppKit:NSSlider",
    "name": "float-value",
    "origin": "inferred",
@@ -1919,7 +1919,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:int-value:observe",
-   "fingerprint": "45fbcbdbcfd20129",
+   "fingerprint": "092df744ee9bf9ca",
    "kind": "AppKit:NSSlider",
    "name": "int-value",
    "origin": "inferred",
@@ -1932,7 +1932,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:integer-value:observe",
-   "fingerprint": "5e0b116d08eaed57",
+   "fingerprint": "9557ed56197a710b",
    "kind": "AppKit:NSSlider",
    "name": "integer-value",
    "origin": "inferred",
@@ -1945,7 +1945,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:knob-thickness:observe",
-   "fingerprint": "34971a162c8dd6dc",
+   "fingerprint": "14da88b828ab3fa6",
    "kind": "AppKit:NSSlider",
    "name": "knob-thickness",
    "origin": "inferred",
@@ -1958,7 +1958,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:max-value:observe",
-   "fingerprint": "9ab2cb460b4c3816",
+   "fingerprint": "a8a773b99921a57a",
    "kind": "AppKit:NSSlider",
    "name": "max-value",
    "origin": "inferred",
@@ -1971,7 +1971,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:min-value:observe",
-   "fingerprint": "e046b8075fbd5b48",
+   "fingerprint": "be6ab85c271a7496",
    "kind": "AppKit:NSSlider",
    "name": "min-value",
    "origin": "inferred",
@@ -1984,7 +1984,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:neutral-value:observe",
-   "fingerprint": "cf5a636db50b90f7",
+   "fingerprint": "1aceb2857263d434",
    "kind": "AppKit:NSSlider",
    "name": "neutral-value",
    "origin": "inferred",
@@ -1997,7 +1997,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:number-of-tick-marks:observe",
-   "fingerprint": "9e9c087b4d16cfd5",
+   "fingerprint": "700ad1e3641837ef",
    "kind": "AppKit:NSSlider",
    "name": "number-of-tick-marks",
    "origin": "inferred",
@@ -2010,7 +2010,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:object-value:observe",
-   "fingerprint": "4e4ee97af82beba8",
+   "fingerprint": "0e88703dfba51863",
    "kind": "AppKit:NSSlider",
    "name": "object-value",
    "origin": "inferred",
@@ -2023,7 +2023,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:slider-type:observe",
-   "fingerprint": "f425888a628be6e2",
+   "fingerprint": "02404b048bb39d59",
    "kind": "AppKit:NSSlider",
    "name": "slider-type",
    "origin": "inferred",
@@ -2036,7 +2036,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:tick-mark-position:observe",
-   "fingerprint": "cd10632feabe0089",
+   "fingerprint": "4b723f2b343726dc",
    "kind": "AppKit:NSSlider",
    "name": "tick-mark-position",
    "origin": "inferred",
@@ -2049,7 +2049,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:tint-prominence:observe",
-   "fingerprint": "efe5ce9437ac0854",
+   "fingerprint": "9112d131ad8e3d38",
    "kind": "AppKit:NSSlider",
    "name": "tint-prominence",
    "origin": "inferred",
@@ -2062,7 +2062,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:track-fill-color:observe",
-   "fingerprint": "817912eb81aa3f38",
+   "fingerprint": "07a27cb57bc62d8b",
    "kind": "AppKit:NSSlider",
    "name": "track-fill-color",
    "origin": "inferred",
@@ -2075,7 +2075,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:vertical:observe",
-   "fingerprint": "84b85a0446c2c4fa",
+   "fingerprint": "5e78e28820aba501",
    "kind": "AppKit:NSSlider",
    "name": "vertical",
    "origin": "inferred",
@@ -2272,7 +2272,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:alignment:observe",
-   "fingerprint": "06b7972b8acc548f",
+   "fingerprint": "847d1c208fc38dd4",
    "kind": "AppKit:NSStackView",
    "name": "alignment",
    "origin": "inferred",
@@ -2285,7 +2285,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:arranged-subviews:observe",
-   "fingerprint": "7a630864e4f567b0",
+   "fingerprint": "efec8d9349609143",
    "kind": "AppKit:NSStackView",
    "name": "arranged-subviews",
    "origin": "inferred",
@@ -2298,7 +2298,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:delegate:observe",
-   "fingerprint": "35c4c7d79b38bef2",
+   "fingerprint": "2e622b088600e410",
    "kind": "AppKit:NSStackView",
    "name": "delegate",
    "origin": "inferred",
@@ -2311,7 +2311,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:detached-views:observe",
-   "fingerprint": "ce9c2016d046a8f7",
+   "fingerprint": "08a28e51e6392597",
    "kind": "AppKit:NSStackView",
    "name": "detached-views",
    "origin": "inferred",
@@ -2324,7 +2324,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:detaches-hidden-views:observe",
-   "fingerprint": "0979aa6345f94e08",
+   "fingerprint": "23b5c5925efddcb0",
    "kind": "AppKit:NSStackView",
    "name": "detaches-hidden-views",
    "origin": "inferred",
@@ -2337,7 +2337,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:distribution:observe",
-   "fingerprint": "403f83799cfde3a0",
+   "fingerprint": "5e17420e8e31772d",
    "kind": "AppKit:NSStackView",
    "name": "distribution",
    "origin": "inferred",
@@ -2350,7 +2350,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:edge-insets:observe",
-   "fingerprint": "7ef19cfebff7217b",
+   "fingerprint": "bbee89537279f24f",
    "kind": "AppKit:NSStackView",
    "name": "edge-insets",
    "origin": "inferred",
@@ -2363,7 +2363,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:orientation:observe",
-   "fingerprint": "d3819a42247a9d82",
+   "fingerprint": "48b6f848087f3b25",
    "kind": "AppKit:NSStackView",
    "name": "orientation",
    "origin": "inferred",
@@ -2376,7 +2376,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:spacing:observe",
-   "fingerprint": "2f88be72c0a96975",
+   "fingerprint": "775904e4c7dc3866",
    "kind": "AppKit:NSStackView",
    "name": "spacing",
    "origin": "inferred",
@@ -2389,7 +2389,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:views:observe",
-   "fingerprint": "da5ed60a7b0846aa",
+   "fingerprint": "4760e09b0d08b9a8",
    "kind": "AppKit:NSStackView",
    "name": "views",
    "origin": "inferred",
@@ -2561,7 +2561,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:accepts-first-responder:observe",
-   "fingerprint": "01a30273e4290b48",
+   "fingerprint": "9cc5de18fd1494af",
    "kind": "AppKit:NSTextField",
    "name": "accepts-first-responder",
    "origin": "inferred",
@@ -2574,7 +2574,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-character-picker-touch-bar-item:observe",
-   "fingerprint": "363ff2aab449e9c6",
+   "fingerprint": "5f86aedb07a9efce",
    "kind": "AppKit:NSTextField",
    "name": "allows-character-picker-touch-bar-item",
    "origin": "inferred",
@@ -2587,7 +2587,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-default-tightening-for-truncation:observe",
-   "fingerprint": "97a92ceb1d092f8c",
+   "fingerprint": "26108f748b811498",
    "kind": "AppKit:NSTextField",
    "name": "allows-default-tightening-for-truncation",
    "origin": "inferred",
@@ -2600,7 +2600,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-editing-text-attributes:observe",
-   "fingerprint": "67cc709b693338d6",
+   "fingerprint": "60f22a49da305243",
    "kind": "AppKit:NSTextField",
    "name": "allows-editing-text-attributes",
    "origin": "inferred",
@@ -2613,7 +2613,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-writing-tools-affordance:observe",
-   "fingerprint": "38fd3737a7eec25c",
+   "fingerprint": "22b6062a57520228",
    "kind": "AppKit:NSTextField",
    "name": "allows-writing-tools-affordance",
    "origin": "inferred",
@@ -2626,7 +2626,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-writing-tools:observe",
-   "fingerprint": "874cb2765b29c9fb",
+   "fingerprint": "732a556810b4530e",
    "kind": "AppKit:NSTextField",
    "name": "allows-writing-tools",
    "origin": "inferred",
@@ -2639,7 +2639,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:attributed-string-value:observe",
-   "fingerprint": "f9f5170d3bd8bc8f",
+   "fingerprint": "3ad3fd745f05b25c",
    "kind": "AppKit:NSTextField",
    "name": "attributed-string-value",
    "origin": "inferred",
@@ -2652,7 +2652,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:automatic-text-completion-enabled:observe",
-   "fingerprint": "5dbedfb492b73272",
+   "fingerprint": "c4048547e6370df4",
    "kind": "AppKit:NSTextField",
    "name": "automatic-text-completion-enabled",
    "origin": "inferred",
@@ -2665,7 +2665,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:background-color:observe",
-   "fingerprint": "f8ca89bb1e4ace5d",
+   "fingerprint": "cb69dca4196a94f6",
    "kind": "AppKit:NSTextField",
    "name": "background-color",
    "origin": "inferred",
@@ -2678,7 +2678,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:bezel-style:observe",
-   "fingerprint": "8b015c2424ecc208",
+   "fingerprint": "0c0fbe45bd0e9447",
    "kind": "AppKit:NSTextField",
    "name": "bezel-style",
    "origin": "inferred",
@@ -2691,7 +2691,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:bezeled:observe",
-   "fingerprint": "724e84d6791a6300",
+   "fingerprint": "b2c4304f5c015c07",
    "kind": "AppKit:NSTextField",
    "name": "bezeled",
    "origin": "inferred",
@@ -2704,7 +2704,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:bordered:observe",
-   "fingerprint": "4af9ba29a532b286",
+   "fingerprint": "ac500899cd17e5be",
    "kind": "AppKit:NSTextField",
    "name": "bordered",
    "origin": "inferred",
@@ -2717,7 +2717,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:delegate:observe",
-   "fingerprint": "71719a94f1a86762",
+   "fingerprint": "85fa081641189ec9",
    "kind": "AppKit:NSTextField",
    "name": "delegate",
    "origin": "inferred",
@@ -2730,7 +2730,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:draws-background:observe",
-   "fingerprint": "c7d50ae499460a92",
+   "fingerprint": "f4de4e82bf4a06c4",
    "kind": "AppKit:NSTextField",
    "name": "draws-background",
    "origin": "inferred",
@@ -2743,7 +2743,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:editable:observe",
-   "fingerprint": "cb89b25b5b7039e7",
+   "fingerprint": "94625440dc51a60b",
    "kind": "AppKit:NSTextField",
    "name": "editable",
    "origin": "inferred",
@@ -2756,7 +2756,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:imports-graphics:observe",
-   "fingerprint": "907a93a011565d13",
+   "fingerprint": "77f1256ff1d77660",
    "kind": "AppKit:NSTextField",
    "name": "imports-graphics",
    "origin": "inferred",
@@ -2769,7 +2769,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:line-break-strategy:observe",
-   "fingerprint": "5a51b0b72d3a3606",
+   "fingerprint": "4faf407c128dbae1",
    "kind": "AppKit:NSTextField",
    "name": "line-break-strategy",
    "origin": "inferred",
@@ -2782,7 +2782,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:maximum-number-of-lines:observe",
-   "fingerprint": "2342f462d7471410",
+   "fingerprint": "91aeb6047c7ca59e",
    "kind": "AppKit:NSTextField",
    "name": "maximum-number-of-lines",
    "origin": "inferred",
@@ -2795,7 +2795,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:object-value:observe",
-   "fingerprint": "1d76c468e03a71e0",
+   "fingerprint": "c68f4a5e4373b448",
    "kind": "AppKit:NSTextField",
    "name": "object-value",
    "origin": "inferred",
@@ -2808,7 +2808,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-attributed-string:observe",
-   "fingerprint": "05cd0e9982fbe777",
+   "fingerprint": "70b6c9e1feb0fc3c",
    "kind": "AppKit:NSTextField",
    "name": "placeholder-attributed-string",
    "origin": "inferred",
@@ -2821,7 +2821,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-attributed-strings:observe",
-   "fingerprint": "219ed449dfe2ad04",
+   "fingerprint": "d4c50ef88be4bcea",
    "kind": "AppKit:NSTextField",
    "name": "placeholder-attributed-strings",
    "origin": "inferred",
@@ -2834,7 +2834,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-string:observe",
-   "fingerprint": "895a4fc6ac630f8e",
+   "fingerprint": "daa76e77fd41b3cf",
    "kind": "AppKit:NSTextField",
    "name": "placeholder-string",
    "origin": "inferred",
@@ -2847,7 +2847,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-strings:observe",
-   "fingerprint": "b3b9800509c13f27",
+   "fingerprint": "21e49a0d4b8f3764",
    "kind": "AppKit:NSTextField",
    "name": "placeholder-strings",
    "origin": "inferred",
@@ -2860,7 +2860,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:preferred-max-layout-width:observe",
-   "fingerprint": "d232b14dd6d65348",
+   "fingerprint": "60d2882736b685c7",
    "kind": "AppKit:NSTextField",
    "name": "preferred-max-layout-width",
    "origin": "inferred",
@@ -2873,7 +2873,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:resolves-natural-alignment-with-base-writing-direction:observe",
-   "fingerprint": "9ce69fb4c1065aef",
+   "fingerprint": "1bfd24400611d469",
    "kind": "AppKit:NSTextField",
    "name": "resolves-natural-alignment-with-base-writing-direction",
    "origin": "inferred",
@@ -2886,7 +2886,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:selectable:observe",
-   "fingerprint": "532e63fae5974f29",
+   "fingerprint": "e30e96429ce0332a",
    "kind": "AppKit:NSTextField",
    "name": "selectable",
    "origin": "inferred",
@@ -2899,7 +2899,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:string-value:observe",
-   "fingerprint": "0566409a03b29b6a",
+   "fingerprint": "0985e49c862444ae",
    "kind": "AppKit:NSTextField",
    "name": "string-value",
    "origin": "inferred",
@@ -2912,7 +2912,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:text-color:observe",
-   "fingerprint": "082b7fb7c7faf33b",
+   "fingerprint": "f1dc96ee24d44ecf",
    "kind": "AppKit:NSTextField",
    "name": "text-color",
    "origin": "inferred",
@@ -3263,7 +3263,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:additional-safe-area-insets:observe",
-   "fingerprint": "0f0c792b79e8e004",
+   "fingerprint": "0380af2df49a5bda",
    "kind": "AppKit:NSView",
    "name": "additional-safe-area-insets",
    "origin": "inferred",
@@ -3276,7 +3276,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:alignment-rect-insets:observe",
-   "fingerprint": "8b25b6602ccb2fe3",
+   "fingerprint": "1ee185f339b02c86",
    "kind": "AppKit:NSView",
    "name": "alignment-rect-insets",
    "origin": "inferred",
@@ -3289,7 +3289,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:allowed-touch-types:observe",
-   "fingerprint": "ca9bb6474b767407",
+   "fingerprint": "8f7391e7c701f5e9",
    "kind": "AppKit:NSView",
    "name": "allowed-touch-types",
    "origin": "inferred",
@@ -3302,7 +3302,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:allows-vibrancy:observe",
-   "fingerprint": "cf424541e13ccc77",
+   "fingerprint": "7ac09331151a94a3",
    "kind": "AppKit:NSView",
    "name": "allows-vibrancy",
    "origin": "inferred",
@@ -3315,7 +3315,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:alpha-value:observe",
-   "fingerprint": "081d0839d9c37447",
+   "fingerprint": "2c317f3517d8f8c6",
    "kind": "AppKit:NSView",
    "name": "alpha-value",
    "origin": "inferred",
@@ -3328,7 +3328,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:autoresizes-subviews:observe",
-   "fingerprint": "30d74ac777702d2d",
+   "fingerprint": "c7a450362e4cb385",
    "kind": "AppKit:NSView",
    "name": "autoresizes-subviews",
    "origin": "inferred",
@@ -3341,7 +3341,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:autoresizing-mask:observe",
-   "fingerprint": "04cfd263a6332ee1",
+   "fingerprint": "5fb7edec097ebf95",
    "kind": "AppKit:NSView",
    "name": "autoresizing-mask",
    "origin": "inferred",
@@ -3354,7 +3354,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:background-filters:observe",
-   "fingerprint": "9363329ce05883d5",
+   "fingerprint": "16e23d2dacded9f2",
    "kind": "AppKit:NSView",
    "name": "background-filters",
    "origin": "inferred",
@@ -3367,7 +3367,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:baseline-offset-from-bottom:observe",
-   "fingerprint": "887ea6f427bcb083",
+   "fingerprint": "4ddecfdd56ddd689",
    "kind": "AppKit:NSView",
    "name": "baseline-offset-from-bottom",
    "origin": "inferred",
@@ -3380,7 +3380,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:bottom-anchor:observe",
-   "fingerprint": "dceb5b01012c3da7",
+   "fingerprint": "c48ef7d5a4108dbc",
    "kind": "AppKit:NSView",
    "name": "bottom-anchor",
    "origin": "inferred",
@@ -3393,7 +3393,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:bounds-rotation:observe",
-   "fingerprint": "2e82c077af72f03d",
+   "fingerprint": "c55afef90f90642b",
    "kind": "AppKit:NSView",
    "name": "bounds-rotation",
    "origin": "inferred",
@@ -3406,7 +3406,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:bounds:observe",
-   "fingerprint": "e2d37cb3d962afaf",
+   "fingerprint": "48229d7719330c59",
    "kind": "AppKit:NSView",
    "name": "bounds",
    "origin": "inferred",
@@ -3419,7 +3419,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:can-become-key-view:observe",
-   "fingerprint": "d001e0413e6d0eb7",
+   "fingerprint": "ed9baac5c61eb291",
    "kind": "AppKit:NSView",
    "name": "can-become-key-view",
    "origin": "inferred",
@@ -3432,7 +3432,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:can-draw-concurrently:observe",
-   "fingerprint": "2c3744f0e2443bc1",
+   "fingerprint": "c7efa0894194ae77",
    "kind": "AppKit:NSView",
    "name": "can-draw-concurrently",
    "origin": "inferred",
@@ -3445,7 +3445,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:can-draw-subviews-into-layer:observe",
-   "fingerprint": "ad3209104632f25b",
+   "fingerprint": "6ae55c16f38c09bb",
    "kind": "AppKit:NSView",
    "name": "can-draw-subviews-into-layer",
    "origin": "inferred",
@@ -3458,7 +3458,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:candidate-list-touch-bar-item:observe",
-   "fingerprint": "8c6ba8e66bed86c1",
+   "fingerprint": "159bda31073bd0cb",
    "kind": "AppKit:NSView",
    "name": "candidate-list-touch-bar-item",
    "origin": "inferred",
@@ -3471,7 +3471,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:center-x-anchor:observe",
-   "fingerprint": "d8bac8997d875b72",
+   "fingerprint": "5033a51306f2f778",
    "kind": "AppKit:NSView",
    "name": "center-x-anchor",
    "origin": "inferred",
@@ -3484,7 +3484,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:center-y-anchor:observe",
-   "fingerprint": "690a569e640a0832",
+   "fingerprint": "da2c47030849f9ae",
    "kind": "AppKit:NSView",
    "name": "center-y-anchor",
    "origin": "inferred",
@@ -3497,7 +3497,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:clips-to-bounds:observe",
-   "fingerprint": "2dbfe5c270b19731",
+   "fingerprint": "a7133acb0e6dcd6f",
    "kind": "AppKit:NSView",
    "name": "clips-to-bounds",
    "origin": "inferred",
@@ -3510,7 +3510,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:compositing-filter:observe",
-   "fingerprint": "54d70d2a73ae4beb",
+   "fingerprint": "8b134c71d86817e8",
    "kind": "AppKit:NSView",
    "name": "compositing-filter",
    "origin": "inferred",
@@ -3523,7 +3523,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:constraints:observe",
-   "fingerprint": "6bede92b64fbb30c",
+   "fingerprint": "a4e0c48862902ca8",
    "kind": "AppKit:NSView",
    "name": "constraints",
    "origin": "inferred",
@@ -3536,7 +3536,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:content-filters:observe",
-   "fingerprint": "27c6b57e501b9a93",
+   "fingerprint": "d20bd841e742d35e",
    "kind": "AppKit:NSView",
    "name": "content-filters",
    "origin": "inferred",
@@ -3549,7 +3549,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:drawing-find-indicator:observe",
-   "fingerprint": "e15d6c5d6f53dde5",
+   "fingerprint": "ef1e7162bb1ed4ae",
    "kind": "AppKit:NSView",
    "name": "drawing-find-indicator",
    "origin": "inferred",
@@ -3562,7 +3562,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:enclosing-menu-item:observe",
-   "fingerprint": "e41f6805b1e9b9aa",
+   "fingerprint": "adaf824846fca706",
    "kind": "AppKit:NSView",
    "name": "enclosing-menu-item",
    "origin": "inferred",
@@ -3575,7 +3575,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:enclosing-scroll-view:observe",
-   "fingerprint": "b82b826054b722ea",
+   "fingerprint": "1759a50ceef5a709",
    "kind": "AppKit:NSView",
    "name": "enclosing-scroll-view",
    "origin": "inferred",
@@ -3588,7 +3588,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:first-baseline-anchor:observe",
-   "fingerprint": "6ee02a4c02907a55",
+   "fingerprint": "70d1591e5dcdf21d",
    "kind": "AppKit:NSView",
    "name": "first-baseline-anchor",
    "origin": "inferred",
@@ -3601,7 +3601,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:first-baseline-offset-from-top:observe",
-   "fingerprint": "d81d51dca651b6d7",
+   "fingerprint": "1e9f06a0ea55ff0a",
    "kind": "AppKit:NSView",
    "name": "first-baseline-offset-from-top",
    "origin": "inferred",
@@ -3614,7 +3614,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:fitting-size:observe",
-   "fingerprint": "ae00f2b30193242f",
+   "fingerprint": "b460108e0342aebd",
    "kind": "AppKit:NSView",
    "name": "fitting-size",
    "origin": "inferred",
@@ -3627,7 +3627,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:flipped:observe",
-   "fingerprint": "e7c7c5db431e68f1",
+   "fingerprint": "65acb15422bed4b4",
    "kind": "AppKit:NSView",
    "name": "flipped",
    "origin": "inferred",
@@ -3640,7 +3640,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:focus-ring-mask-bounds:observe",
-   "fingerprint": "cbf6efecd3bd3844",
+   "fingerprint": "21b8ddb9bea880ad",
    "kind": "AppKit:NSView",
    "name": "focus-ring-mask-bounds",
    "origin": "inferred",
@@ -3653,7 +3653,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:focus-ring-type:observe",
-   "fingerprint": "8976b4b7a8e519af",
+   "fingerprint": "e35587e666b01a69",
    "kind": "AppKit:NSView",
    "name": "focus-ring-type",
    "origin": "inferred",
@@ -3666,7 +3666,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:frame-center-rotation:observe",
-   "fingerprint": "33705b8f9a3f6983",
+   "fingerprint": "21fee3ffac55f374",
    "kind": "AppKit:NSView",
    "name": "frame-center-rotation",
    "origin": "inferred",
@@ -3679,7 +3679,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:frame-rotation:observe",
-   "fingerprint": "5595cd0f9ca7164f",
+   "fingerprint": "f81fb7e890c326c0",
    "kind": "AppKit:NSView",
    "name": "frame-rotation",
    "origin": "inferred",
@@ -3692,7 +3692,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:frame:observe",
-   "fingerprint": "57e4a3eed3a1e12d",
+   "fingerprint": "2fa30dc7e7cffa34",
    "kind": "AppKit:NSView",
    "name": "frame",
    "origin": "inferred",
@@ -3705,7 +3705,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:gesture-recognizers:observe",
-   "fingerprint": "b0b7f0d6a34d78cd",
+   "fingerprint": "035f0f873e1bca9b",
    "kind": "AppKit:NSView",
    "name": "gesture-recognizers",
    "origin": "inferred",
@@ -3718,7 +3718,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:has-ambiguous-layout:observe",
-   "fingerprint": "ddc0248150ebe66b",
+   "fingerprint": "3af1072aeccbb2d5",
    "kind": "AppKit:NSView",
    "name": "has-ambiguous-layout",
    "origin": "inferred",
@@ -3731,7 +3731,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:height-adjust-limit:observe",
-   "fingerprint": "3c3e04e50d335904",
+   "fingerprint": "bb7ed566612f4677",
    "kind": "AppKit:NSView",
    "name": "height-adjust-limit",
    "origin": "inferred",
@@ -3744,7 +3744,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:height-anchor:observe",
-   "fingerprint": "95d8b28c4c0e3d40",
+   "fingerprint": "506d7f8515853ce5",
    "kind": "AppKit:NSView",
    "name": "height-anchor",
    "origin": "inferred",
@@ -3757,7 +3757,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:hidden-or-has-hidden-ancestor:observe",
-   "fingerprint": "7a3c8f6262f15647",
+   "fingerprint": "7cdd4a92c8e94a5c",
    "kind": "AppKit:NSView",
    "name": "hidden-or-has-hidden-ancestor",
    "origin": "inferred",
@@ -3770,7 +3770,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:hidden:observe",
-   "fingerprint": "b656f15bc8713fc3",
+   "fingerprint": "ec5c37a75d93026c",
    "kind": "AppKit:NSView",
    "name": "hidden",
    "origin": "inferred",
@@ -3783,7 +3783,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:horizontal-content-size-constraint-active:observe",
-   "fingerprint": "410ee71343f95b4b",
+   "fingerprint": "601047e827415ba7",
    "kind": "AppKit:NSView",
    "name": "horizontal-content-size-constraint-active",
    "origin": "inferred",
@@ -3796,7 +3796,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:in-full-screen-mode:observe",
-   "fingerprint": "2020ba861e8e6a2e",
+   "fingerprint": "96213a6afcc21e8c",
    "kind": "AppKit:NSView",
    "name": "in-full-screen-mode",
    "origin": "inferred",
@@ -3809,7 +3809,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:in-live-resize:observe",
-   "fingerprint": "7ad98858b882a94b",
+   "fingerprint": "4614fca3934a4ae0",
    "kind": "AppKit:NSView",
    "name": "in-live-resize",
    "origin": "inferred",
@@ -3822,7 +3822,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:input-context:observe",
-   "fingerprint": "9a8d6368b97f53f9",
+   "fingerprint": "e269d05f54483947",
    "kind": "AppKit:NSView",
    "name": "input-context",
    "origin": "inferred",
@@ -3835,7 +3835,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:intrinsic-content-size:observe",
-   "fingerprint": "a5273cf406999bbc",
+   "fingerprint": "6b5354f01ee15d5e",
    "kind": "AppKit:NSView",
    "name": "intrinsic-content-size",
    "origin": "inferred",
@@ -3848,7 +3848,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:last-baseline-anchor:observe",
-   "fingerprint": "c0124b6dcd4f0c36",
+   "fingerprint": "e8ef20e57f098798",
    "kind": "AppKit:NSView",
    "name": "last-baseline-anchor",
    "origin": "inferred",
@@ -3861,7 +3861,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:last-baseline-offset-from-bottom:observe",
-   "fingerprint": "175bd3533d913620",
+   "fingerprint": "b68fefb7c783b52f",
    "kind": "AppKit:NSView",
    "name": "last-baseline-offset-from-bottom",
    "origin": "inferred",
@@ -3874,7 +3874,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer-contents-placement:observe",
-   "fingerprint": "e2c0a662b99f2f17",
+   "fingerprint": "e66f26802b2bcb89",
    "kind": "AppKit:NSView",
    "name": "layer-contents-placement",
    "origin": "inferred",
@@ -3887,7 +3887,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer-contents-redraw-policy:observe",
-   "fingerprint": "9862d18e842561dd",
+   "fingerprint": "19d27eddb5783ec2",
    "kind": "AppKit:NSView",
    "name": "layer-contents-redraw-policy",
    "origin": "inferred",
@@ -3900,7 +3900,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer-uses-core-image-filters:observe",
-   "fingerprint": "c929c328c409d02f",
+   "fingerprint": "5b808357f3a9d8d7",
    "kind": "AppKit:NSView",
    "name": "layer-uses-core-image-filters",
    "origin": "inferred",
@@ -3913,7 +3913,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer:observe",
-   "fingerprint": "5c156e36ef64b766",
+   "fingerprint": "4b97b4cb54c5dc43",
    "kind": "AppKit:NSView",
    "name": "layer",
    "origin": "inferred",
@@ -3926,7 +3926,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layout-guides:observe",
-   "fingerprint": "c14a9204e1ace998",
+   "fingerprint": "2effbfe800354ff1",
    "kind": "AppKit:NSView",
    "name": "layout-guides",
    "origin": "inferred",
@@ -3939,7 +3939,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layout-margins-guide:observe",
-   "fingerprint": "63dc42271b8e07f4",
+   "fingerprint": "22dff92a5973ba82",
    "kind": "AppKit:NSView",
    "name": "layout-margins-guide",
    "origin": "inferred",
@@ -3952,7 +3952,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:leading-anchor:observe",
-   "fingerprint": "58cdfa0f08ec7a99",
+   "fingerprint": "861a6832bf161d34",
    "kind": "AppKit:NSView",
    "name": "leading-anchor",
    "origin": "inferred",
@@ -3965,7 +3965,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:left-anchor:observe",
-   "fingerprint": "b2fceed47d7b9b52",
+   "fingerprint": "f2d969e8b4310360",
    "kind": "AppKit:NSView",
    "name": "left-anchor",
    "origin": "inferred",
@@ -3978,7 +3978,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:mouse-down-can-move-window:observe",
-   "fingerprint": "434ae58eff6c197d",
+   "fingerprint": "4bbf62f7925c91e4",
    "kind": "AppKit:NSView",
    "name": "mouse-down-can-move-window",
    "origin": "inferred",
@@ -3991,7 +3991,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-display:observe",
-   "fingerprint": "6f99ab2d573ef0f4",
+   "fingerprint": "18d64628eccd1e07",
    "kind": "AppKit:NSView",
    "name": "needs-display",
    "origin": "inferred",
@@ -4004,7 +4004,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-layout:observe",
-   "fingerprint": "f25fe4edf2f330c2",
+   "fingerprint": "bb824304cecf5340",
    "kind": "AppKit:NSView",
    "name": "needs-layout",
    "origin": "inferred",
@@ -4017,7 +4017,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-panel-to-become-key:observe",
-   "fingerprint": "9b39b9eccf5d21c0",
+   "fingerprint": "94da7f13f775a9b6",
    "kind": "AppKit:NSView",
    "name": "needs-panel-to-become-key",
    "origin": "inferred",
@@ -4030,7 +4030,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-update-constraints:observe",
-   "fingerprint": "f1bc8dc3c6e9d561",
+   "fingerprint": "f3a18573036da19c",
    "kind": "AppKit:NSView",
    "name": "needs-update-constraints",
    "origin": "inferred",
@@ -4043,7 +4043,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:next-key-view:observe",
-   "fingerprint": "6754bdf7a5709765",
+   "fingerprint": "9ac207514ce7a754",
    "kind": "AppKit:NSView",
    "name": "next-key-view",
    "origin": "inferred",
@@ -4056,7 +4056,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:next-valid-key-view:observe",
-   "fingerprint": "a80df99b947432ef",
+   "fingerprint": "c070e2e55e6d2fae",
    "kind": "AppKit:NSView",
    "name": "next-valid-key-view",
    "origin": "inferred",
@@ -4069,7 +4069,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:opaque-ancestor:observe",
-   "fingerprint": "8cc5d02c38c4fffc",
+   "fingerprint": "4c647e242f0025ef",
    "kind": "AppKit:NSView",
    "name": "opaque-ancestor",
    "origin": "inferred",
@@ -4082,7 +4082,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:opaque:observe",
-   "fingerprint": "ace608a45b4ef98f",
+   "fingerprint": "5fdc37e547f2113e",
    "kind": "AppKit:NSView",
    "name": "opaque",
    "origin": "inferred",
@@ -4095,7 +4095,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:page-footer:observe",
-   "fingerprint": "eed74febd972e988",
+   "fingerprint": "7b6ea15516f25848",
    "kind": "AppKit:NSView",
    "name": "page-footer",
    "origin": "inferred",
@@ -4108,7 +4108,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:page-header:observe",
-   "fingerprint": "6caf9f7f949a80ce",
+   "fingerprint": "13805d93e02649a2",
    "kind": "AppKit:NSView",
    "name": "page-header",
    "origin": "inferred",
@@ -4121,7 +4121,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:posts-bounds-changed-notifications:observe",
-   "fingerprint": "0f55384c6b3591c3",
+   "fingerprint": "cbac42922732b7e9",
    "kind": "AppKit:NSView",
    "name": "posts-bounds-changed-notifications",
    "origin": "inferred",
@@ -4134,7 +4134,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:posts-frame-changed-notifications:observe",
-   "fingerprint": "698eb33c264289f3",
+   "fingerprint": "d8e726ac074a3779",
    "kind": "AppKit:NSView",
    "name": "posts-frame-changed-notifications",
    "origin": "inferred",
@@ -4147,7 +4147,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:prefers-compact-control-size-metrics:observe",
-   "fingerprint": "33a6c91f0e069d01",
+   "fingerprint": "bdffb4776168400f",
    "kind": "AppKit:NSView",
    "name": "prefers-compact-control-size-metrics",
    "origin": "inferred",
@@ -4160,7 +4160,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:prepared-content-rect:observe",
-   "fingerprint": "d8653230499521fc",
+   "fingerprint": "ee6b8bb7a984161c",
    "kind": "AppKit:NSView",
    "name": "prepared-content-rect",
    "origin": "inferred",
@@ -4173,7 +4173,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:preserves-content-during-live-resize:observe",
-   "fingerprint": "78d83de7eecd09f6",
+   "fingerprint": "50beb7e401f3f16e",
    "kind": "AppKit:NSView",
    "name": "preserves-content-during-live-resize",
    "origin": "inferred",
@@ -4186,7 +4186,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:pressure-configuration:observe",
-   "fingerprint": "85025a1f1ce3946e",
+   "fingerprint": "a61844d1e96134cd",
    "kind": "AppKit:NSView",
    "name": "pressure-configuration",
    "origin": "inferred",
@@ -4199,7 +4199,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:previous-key-view:observe",
-   "fingerprint": "5f1c969378a52670",
+   "fingerprint": "d78e827a1540977c",
    "kind": "AppKit:NSView",
    "name": "previous-key-view",
    "origin": "inferred",
@@ -4212,7 +4212,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:previous-valid-key-view:observe",
-   "fingerprint": "7720b16a92e2a675",
+   "fingerprint": "7a8378bf0fb957e1",
    "kind": "AppKit:NSView",
    "name": "previous-valid-key-view",
    "origin": "inferred",
@@ -4225,7 +4225,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:print-job-title:observe",
-   "fingerprint": "7e2a7ba586112aa8",
+   "fingerprint": "cb52c5ce1dd7901c",
    "kind": "AppKit:NSView",
    "name": "print-job-title",
    "origin": "inferred",
@@ -4238,7 +4238,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:rect-preserved-during-live-resize:observe",
-   "fingerprint": "ddfc3ca065e94c65",
+   "fingerprint": "7b19f3a21146e402",
    "kind": "AppKit:NSView",
    "name": "rect-preserved-during-live-resize",
    "origin": "inferred",
@@ -4251,7 +4251,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:registered-dragged-types:observe",
-   "fingerprint": "ca830e173a83f9e2",
+   "fingerprint": "b609bbf10d609f57",
    "kind": "AppKit:NSView",
    "name": "registered-dragged-types",
    "origin": "inferred",
@@ -4264,7 +4264,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:right-anchor:observe",
-   "fingerprint": "5d1f6e7f317855f7",
+   "fingerprint": "1d0f3d5e2cfb14e5",
    "kind": "AppKit:NSView",
    "name": "right-anchor",
    "origin": "inferred",
@@ -4277,7 +4277,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:rotated-from-base:observe",
-   "fingerprint": "a4dbae2423dcf2d1",
+   "fingerprint": "5453f0841c4e74e5",
    "kind": "AppKit:NSView",
    "name": "rotated-from-base",
    "origin": "inferred",
@@ -4290,7 +4290,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:rotated-or-scaled-from-base:observe",
-   "fingerprint": "47b73b1a19ecf13c",
+   "fingerprint": "e9f15b5e0bda1110",
    "kind": "AppKit:NSView",
    "name": "rotated-or-scaled-from-base",
    "origin": "inferred",
@@ -4303,7 +4303,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:safe-area-insets:observe",
-   "fingerprint": "eefb5e95a65e5d7c",
+   "fingerprint": "0826095d37207fbe",
    "kind": "AppKit:NSView",
    "name": "safe-area-insets",
    "origin": "inferred",
@@ -4316,7 +4316,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:safe-area-layout-guide:observe",
-   "fingerprint": "d46a30a47fcb2a74",
+   "fingerprint": "622b395112a0f06a",
    "kind": "AppKit:NSView",
    "name": "safe-area-layout-guide",
    "origin": "inferred",
@@ -4329,7 +4329,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:safe-area-rect:observe",
-   "fingerprint": "25cccc13dfff1fbd",
+   "fingerprint": "f0904f4598321196",
    "kind": "AppKit:NSView",
    "name": "safe-area-rect",
    "origin": "inferred",
@@ -4342,7 +4342,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:shadow:observe",
-   "fingerprint": "5c8fb35731bfd294",
+   "fingerprint": "a62a7e1aa96f8c76",
    "kind": "AppKit:NSView",
    "name": "shadow",
    "origin": "inferred",
@@ -4355,7 +4355,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:subviews:observe",
-   "fingerprint": "23b9a0c932d18b03",
+   "fingerprint": "673484ecbabdad75",
    "kind": "AppKit:NSView",
    "name": "subviews",
    "origin": "inferred",
@@ -4368,7 +4368,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:superview:observe",
-   "fingerprint": "c49d6fbb113dadde",
+   "fingerprint": "386654ebdaaf969c",
    "kind": "AppKit:NSView",
    "name": "superview",
    "origin": "inferred",
@@ -4381,7 +4381,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:tag:observe",
-   "fingerprint": "7a0fe8cffaa1478d",
+   "fingerprint": "d65eeabbb594810a",
    "kind": "AppKit:NSView",
    "name": "tag",
    "origin": "inferred",
@@ -4394,7 +4394,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:tool-tip:observe",
-   "fingerprint": "db4982ae48cf9a56",
+   "fingerprint": "e841846cdedf37e9",
    "kind": "AppKit:NSView",
    "name": "tool-tip",
    "origin": "inferred",
@@ -4407,7 +4407,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:top-anchor:observe",
-   "fingerprint": "1d19cb81fe6a7f74",
+   "fingerprint": "b2c8d288d14017dd",
    "kind": "AppKit:NSView",
    "name": "top-anchor",
    "origin": "inferred",
@@ -4420,7 +4420,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:tracking-areas:observe",
-   "fingerprint": "4bc89e6520844a35",
+   "fingerprint": "b7cfa647f8cf2504",
    "kind": "AppKit:NSView",
    "name": "tracking-areas",
    "origin": "inferred",
@@ -4433,7 +4433,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:trailing-anchor:observe",
-   "fingerprint": "408a05d29c7be91e",
+   "fingerprint": "7359986e92301ceb",
    "kind": "AppKit:NSView",
    "name": "trailing-anchor",
    "origin": "inferred",
@@ -4446,7 +4446,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:translates-autoresizing-mask-into-constraints:observe",
-   "fingerprint": "53a28c240d254f07",
+   "fingerprint": "100e8426e2404c69",
    "kind": "AppKit:NSView",
    "name": "translates-autoresizing-mask-into-constraints",
    "origin": "inferred",
@@ -4459,7 +4459,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:user-interface-layout-direction:observe",
-   "fingerprint": "d5ecb2f376058395",
+   "fingerprint": "ab2f00ab4ef3dc7d",
    "kind": "AppKit:NSView",
    "name": "user-interface-layout-direction",
    "origin": "inferred",
@@ -4472,7 +4472,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:vertical-content-size-constraint-active:observe",
-   "fingerprint": "e6d8c4a687ac4b10",
+   "fingerprint": "64f527f36f7453b9",
    "kind": "AppKit:NSView",
    "name": "vertical-content-size-constraint-active",
    "origin": "inferred",
@@ -4485,7 +4485,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:visible-rect:observe",
-   "fingerprint": "c686d18f8ef7ecc2",
+   "fingerprint": "278c5e4bfc5317a9",
    "kind": "AppKit:NSView",
    "name": "visible-rect",
    "origin": "inferred",
@@ -4498,7 +4498,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-default-clipping:observe",
-   "fingerprint": "8b8d985febafe404",
+   "fingerprint": "4320bc4b143b4d52",
    "kind": "AppKit:NSView",
    "name": "wants-default-clipping",
    "origin": "inferred",
@@ -4511,7 +4511,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-layer:observe",
-   "fingerprint": "e9a507a989abde38",
+   "fingerprint": "5bbaacb10b74eecc",
    "kind": "AppKit:NSView",
    "name": "wants-layer",
    "origin": "inferred",
@@ -4524,7 +4524,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-resting-touches:observe",
-   "fingerprint": "5994321efb8cddbf",
+   "fingerprint": "24358a13ce6e5cd9",
    "kind": "AppKit:NSView",
    "name": "wants-resting-touches",
    "origin": "inferred",
@@ -4537,7 +4537,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-update-layer:observe",
-   "fingerprint": "7928c7ade96c9d15",
+   "fingerprint": "7477760e77ac4ae8",
    "kind": "AppKit:NSView",
    "name": "wants-update-layer",
    "origin": "inferred",
@@ -4550,7 +4550,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:width-adjust-limit:observe",
-   "fingerprint": "afcbb362b3b71741",
+   "fingerprint": "8e8327883259e1f2",
    "kind": "AppKit:NSView",
    "name": "width-adjust-limit",
    "origin": "inferred",
@@ -4563,7 +4563,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:width-anchor:observe",
-   "fingerprint": "38583a3cc8c7def8",
+   "fingerprint": "0abc3142714c3e8f",
    "kind": "AppKit:NSView",
    "name": "width-anchor",
    "origin": "inferred",
@@ -4576,7 +4576,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:window:observe",
-   "fingerprint": "54b881f03db8d7a2",
+   "fingerprint": "f2804689fbe4d1b5",
    "kind": "AppKit:NSView",
    "name": "window",
    "origin": "inferred",
@@ -4589,7 +4589,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:writing-tools-coordinator:observe",
-   "fingerprint": "88d7fa3aab745f34",
+   "fingerprint": "9543c3ad7beaceeb",
    "kind": "AppKit:NSView",
    "name": "writing-tools-coordinator",
    "origin": "inferred",
@@ -5026,7 +5026,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:accepts-mouse-moved-events:observe",
-   "fingerprint": "ff7e70e2191776a0",
+   "fingerprint": "4132cb831e6f7167",
    "kind": "AppKit:NSWindow",
    "name": "accepts-mouse-moved-events",
    "origin": "inferred",
@@ -5039,7 +5039,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:allows-concurrent-view-drawing:observe",
-   "fingerprint": "e8e9d914702d4668",
+   "fingerprint": "55e5cc596c97b1da",
    "kind": "AppKit:NSWindow",
    "name": "allows-concurrent-view-drawing",
    "origin": "inferred",
@@ -5052,7 +5052,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:allows-tool-tips-when-application-is-inactive:observe",
-   "fingerprint": "3029a9983333e543",
+   "fingerprint": "4498ea849a751816",
    "kind": "AppKit:NSWindow",
    "name": "allows-tool-tips-when-application-is-inactive",
    "origin": "inferred",
@@ -5065,7 +5065,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:alpha-value:observe",
-   "fingerprint": "f26529e3b4fb740e",
+   "fingerprint": "87a9ec72cc6c614f",
    "kind": "AppKit:NSWindow",
    "name": "alpha-value",
    "origin": "inferred",
@@ -5078,7 +5078,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:animation-behavior:observe",
-   "fingerprint": "3a012845e2e8d1a0",
+   "fingerprint": "7bfbd63edd56c54f",
    "kind": "AppKit:NSWindow",
    "name": "animation-behavior",
    "origin": "inferred",
@@ -5091,7 +5091,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:appearance-source:observe",
-   "fingerprint": "aa78a1098d2f76d1",
+   "fingerprint": "49d34d4a369e854c",
    "kind": "AppKit:NSWindow",
    "name": "appearance-source",
    "origin": "inferred",
@@ -5104,7 +5104,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:are-cursor-rects-enabled:observe",
-   "fingerprint": "1ff03c396f1c5e9d",
+   "fingerprint": "5846b5d8d29fe6fd",
    "kind": "AppKit:NSWindow",
    "name": "are-cursor-rects-enabled",
    "origin": "inferred",
@@ -5117,7 +5117,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:aspect-ratio:observe",
-   "fingerprint": "7ed420ab6d08ea24",
+   "fingerprint": "c9e924f8b3dc23a2",
    "kind": "AppKit:NSWindow",
    "name": "aspect-ratio",
    "origin": "inferred",
@@ -5130,7 +5130,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:attached-sheet:observe",
-   "fingerprint": "ac6b529aaa2f4532",
+   "fingerprint": "107742e300afe6b1",
    "kind": "AppKit:NSWindow",
    "name": "attached-sheet",
    "origin": "inferred",
@@ -5143,7 +5143,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:autorecalculates-key-view-loop:observe",
-   "fingerprint": "06a757404473284b",
+   "fingerprint": "dcdb47faade3819c",
    "kind": "AppKit:NSWindow",
    "name": "autorecalculates-key-view-loop",
    "origin": "inferred",
@@ -5156,7 +5156,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:background-color:observe",
-   "fingerprint": "8ffaf6ca9ce76655",
+   "fingerprint": "8f125af7bf25318d",
    "kind": "AppKit:NSWindow",
    "name": "background-color",
    "origin": "inferred",
@@ -5169,7 +5169,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:backing-scale-factor:observe",
-   "fingerprint": "32825ed8f3821026",
+   "fingerprint": "06a255d9d5d05da3",
    "kind": "AppKit:NSWindow",
    "name": "backing-scale-factor",
    "origin": "inferred",
@@ -5182,7 +5182,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:backing-type:observe",
-   "fingerprint": "9d7ea05f52932244",
+   "fingerprint": "c46dadb2915a1ceb",
    "kind": "AppKit:NSWindow",
    "name": "backing-type",
    "origin": "inferred",
@@ -5195,7 +5195,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-become-key-window:observe",
-   "fingerprint": "567af1e1d3521148",
+   "fingerprint": "dbfe3f57f6a9de1c",
    "kind": "AppKit:NSWindow",
    "name": "can-become-key-window",
    "origin": "inferred",
@@ -5208,7 +5208,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-become-main-window:observe",
-   "fingerprint": "8ed53a3a9b75adc2",
+   "fingerprint": "73468c7df79a30e0",
    "kind": "AppKit:NSWindow",
    "name": "can-become-main-window",
    "origin": "inferred",
@@ -5221,7 +5221,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-become-visible-without-login:observe",
-   "fingerprint": "39aa6f06cba5bcc3",
+   "fingerprint": "e7b6f720038426cc",
    "kind": "AppKit:NSWindow",
    "name": "can-become-visible-without-login",
    "origin": "inferred",
@@ -5234,7 +5234,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-hide:observe",
-   "fingerprint": "5ef1a4039cab0521",
+   "fingerprint": "a4d8dde9ca219f31",
    "kind": "AppKit:NSWindow",
    "name": "can-hide",
    "origin": "inferred",
@@ -5247,7 +5247,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:cascading-reference-frame:observe",
-   "fingerprint": "e7816e0f981907b2",
+   "fingerprint": "904f851493736b13",
    "kind": "AppKit:NSWindow",
    "name": "cascading-reference-frame",
    "origin": "inferred",
@@ -5260,7 +5260,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:child-windows:observe",
-   "fingerprint": "89c8af6002007e5f",
+   "fingerprint": "90d33d97f006d7e4",
    "kind": "AppKit:NSWindow",
    "name": "child-windows",
    "origin": "inferred",
@@ -5273,7 +5273,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:collection-behavior:observe",
-   "fingerprint": "b8cd7f7c4e80299b",
+   "fingerprint": "36eab3b05867fd00",
    "kind": "AppKit:NSWindow",
    "name": "collection-behavior",
    "origin": "inferred",
@@ -5286,7 +5286,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:color-space:observe",
-   "fingerprint": "c0de8b275f3f4695",
+   "fingerprint": "671b33ff39161f38",
    "kind": "AppKit:NSWindow",
    "name": "color-space",
    "origin": "inferred",
@@ -5299,7 +5299,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-aspect-ratio:observe",
-   "fingerprint": "babd434566ccfd29",
+   "fingerprint": "1ebe2abb2b13ba0d",
    "kind": "AppKit:NSWindow",
    "name": "content-aspect-ratio",
    "origin": "inferred",
@@ -5312,7 +5312,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-layout-guide:observe",
-   "fingerprint": "202032933532abc9",
+   "fingerprint": "84f16464eb84fe38",
    "kind": "AppKit:NSWindow",
    "name": "content-layout-guide",
    "origin": "inferred",
@@ -5325,7 +5325,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-layout-rect:observe",
-   "fingerprint": "b84f112466e8d3a3",
+   "fingerprint": "b3b4552c6d66d331",
    "kind": "AppKit:NSWindow",
    "name": "content-layout-rect",
    "origin": "inferred",
@@ -5338,7 +5338,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-max-size:observe",
-   "fingerprint": "6b4dc080583dd9f8",
+   "fingerprint": "332573030fcdce2e",
    "kind": "AppKit:NSWindow",
    "name": "content-max-size",
    "origin": "inferred",
@@ -5351,7 +5351,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-min-size:observe",
-   "fingerprint": "b6d094b567d13f3f",
+   "fingerprint": "41ce1ca456321c9a",
    "kind": "AppKit:NSWindow",
    "name": "content-min-size",
    "origin": "inferred",
@@ -5364,7 +5364,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-resize-increments:observe",
-   "fingerprint": "78a77d43fa357a73",
+   "fingerprint": "5d54b9c526105649",
    "kind": "AppKit:NSWindow",
    "name": "content-resize-increments",
    "origin": "inferred",
@@ -5377,7 +5377,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-view-controller:observe",
-   "fingerprint": "543451b6d1997bed",
+   "fingerprint": "587857499794f2c7",
    "kind": "AppKit:NSWindow",
    "name": "content-view-controller",
    "origin": "inferred",
@@ -5390,7 +5390,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-view:observe",
-   "fingerprint": "f5db4325f0620928",
+   "fingerprint": "ba11e87df5254653",
    "kind": "AppKit:NSWindow",
    "name": "content-view",
    "origin": "inferred",
@@ -5403,7 +5403,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:current-event:observe",
-   "fingerprint": "05260fa81a2e01b8",
+   "fingerprint": "f199ea56273523bc",
    "kind": "AppKit:NSWindow",
    "name": "current-event",
    "origin": "inferred",
@@ -5416,7 +5416,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:deepest-screen:observe",
-   "fingerprint": "ed679daa676fc6bd",
+   "fingerprint": "05dc8014936ec19a",
    "kind": "AppKit:NSWindow",
    "name": "deepest-screen",
    "origin": "inferred",
@@ -5429,7 +5429,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:default-button-cell:observe",
-   "fingerprint": "5022e2dfe411ca65",
+   "fingerprint": "42cdde476187c10a",
    "kind": "AppKit:NSWindow",
    "name": "default-button-cell",
    "origin": "inferred",
@@ -5442,7 +5442,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:delegate:observe",
-   "fingerprint": "531ed714d7ce790a",
+   "fingerprint": "2079acb7ffdf33be",
    "kind": "AppKit:NSWindow",
    "name": "delegate",
    "origin": "inferred",
@@ -5455,7 +5455,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:depth-limit:observe",
-   "fingerprint": "6059ae5b4da7a330",
+   "fingerprint": "110c5b3ab7a45736",
    "kind": "AppKit:NSWindow",
    "name": "depth-limit",
    "origin": "inferred",
@@ -5468,7 +5468,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:device-description:observe",
-   "fingerprint": "94bfa50139d3f4f1",
+   "fingerprint": "cb2277593ef0edd6",
    "kind": "AppKit:NSWindow",
    "name": "device-description",
    "origin": "inferred",
@@ -5481,7 +5481,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:displays-when-screen-profile-changes:observe",
-   "fingerprint": "a86cf8e16207d43d",
+   "fingerprint": "470c8b2ba1641ca4",
    "kind": "AppKit:NSWindow",
    "name": "displays-when-screen-profile-changes",
    "origin": "inferred",
@@ -5494,7 +5494,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:dock-tile:observe",
-   "fingerprint": "dcfc23a7b3782658",
+   "fingerprint": "a977e1897a29cd6a",
    "kind": "AppKit:NSWindow",
    "name": "dock-tile",
    "origin": "inferred",
@@ -5507,7 +5507,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:document-edited:observe",
-   "fingerprint": "c9faf2fb55578cc1",
+   "fingerprint": "9e92fb696f6147fd",
    "kind": "AppKit:NSWindow",
    "name": "document-edited",
    "origin": "inferred",
@@ -5520,7 +5520,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:drawers:observe",
-   "fingerprint": "87ec81d66dae5a31",
+   "fingerprint": "81d28aa11dfb3951",
    "kind": "AppKit:NSWindow",
    "name": "drawers",
    "origin": "inferred",
@@ -5533,7 +5533,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:excluded-from-windows-menu:observe",
-   "fingerprint": "f2a397f902f514a0",
+   "fingerprint": "505fdc87d5250f79",
    "kind": "AppKit:NSWindow",
    "name": "excluded-from-windows-menu",
    "origin": "inferred",
@@ -5546,7 +5546,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:first-responder:observe",
-   "fingerprint": "b287ca4c5d6208db",
+   "fingerprint": "9439f5ee2c959344",
    "kind": "AppKit:NSWindow",
    "name": "first-responder",
    "origin": "inferred",
@@ -5559,7 +5559,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:floating-panel:observe",
-   "fingerprint": "bffb6cc4a23d25c8",
+   "fingerprint": "7be0eba655d5f1c2",
    "kind": "AppKit:NSWindow",
    "name": "floating-panel",
    "origin": "inferred",
@@ -5572,7 +5572,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:frame-autosave-name:observe",
-   "fingerprint": "3eef465062a3f8b4",
+   "fingerprint": "af7cb0906dffb6c3",
    "kind": "AppKit:NSWindow",
    "name": "frame-autosave-name",
    "origin": "inferred",
@@ -5585,7 +5585,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:frame:observe",
-   "fingerprint": "9ead760837c56a85",
+   "fingerprint": "65e7a7e6e90a1f40",
    "kind": "AppKit:NSWindow",
    "name": "frame",
    "origin": "inferred",
@@ -5598,7 +5598,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-active-window-sharing-session:observe",
-   "fingerprint": "7430b5f313ba300d",
+   "fingerprint": "748b20278d0dc8f2",
    "kind": "AppKit:NSWindow",
    "name": "has-active-window-sharing-session",
    "origin": "inferred",
@@ -5611,7 +5611,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-close-box:observe",
-   "fingerprint": "fd4c75242fa7c2bd",
+   "fingerprint": "31b099ffa09759a8",
    "kind": "AppKit:NSWindow",
    "name": "has-close-box",
    "origin": "inferred",
@@ -5624,7 +5624,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-dynamic-depth-limit:observe",
-   "fingerprint": "3db72c2c27f054eb",
+   "fingerprint": "ce427906bec68068",
    "kind": "AppKit:NSWindow",
    "name": "has-dynamic-depth-limit",
    "origin": "inferred",
@@ -5637,7 +5637,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-shadow:observe",
-   "fingerprint": "80d3140c942d45e8",
+   "fingerprint": "0b26a78a746efd88",
    "kind": "AppKit:NSWindow",
    "name": "has-shadow",
    "origin": "inferred",
@@ -5650,7 +5650,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-title-bar:observe",
-   "fingerprint": "834f6af1b710c457",
+   "fingerprint": "023eddac1de861eb",
    "kind": "AppKit:NSWindow",
    "name": "has-title-bar",
    "origin": "inferred",
@@ -5663,7 +5663,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:hides-on-deactivate:observe",
-   "fingerprint": "24240d0c17106729",
+   "fingerprint": "26420b24e474c7f6",
    "kind": "AppKit:NSWindow",
    "name": "hides-on-deactivate",
    "origin": "inferred",
@@ -5676,7 +5676,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:ignores-mouse-events:observe",
-   "fingerprint": "a68840e4ce384614",
+   "fingerprint": "90af015a1bc0c33a",
    "kind": "AppKit:NSWindow",
    "name": "ignores-mouse-events",
    "origin": "inferred",
@@ -5689,7 +5689,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:in-live-resize:observe",
-   "fingerprint": "605704345dc639d4",
+   "fingerprint": "3a181932490d30ac",
    "kind": "AppKit:NSWindow",
    "name": "in-live-resize",
    "origin": "inferred",
@@ -5702,7 +5702,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:initial-first-responder:observe",
-   "fingerprint": "ba0bf5f23734ec2d",
+   "fingerprint": "47c381efd2c85461",
    "kind": "AppKit:NSWindow",
    "name": "initial-first-responder",
    "origin": "inferred",
@@ -5715,7 +5715,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:key-view-selection-direction:observe",
-   "fingerprint": "385f7cb55ccadf7f",
+   "fingerprint": "10e23829216cddc2",
    "kind": "AppKit:NSWindow",
    "name": "key-view-selection-direction",
    "origin": "inferred",
@@ -5728,7 +5728,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:key-window:observe",
-   "fingerprint": "f894270638250b38",
+   "fingerprint": "30a95a1b62818287",
    "kind": "AppKit:NSWindow",
    "name": "key-window",
    "origin": "inferred",
@@ -5741,7 +5741,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:level:observe",
-   "fingerprint": "8f8e7647f14bf106",
+   "fingerprint": "a9ff3cb8d66c4ef6",
    "kind": "AppKit:NSWindow",
    "name": "level",
    "origin": "inferred",
@@ -5754,7 +5754,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:main-window:observe",
-   "fingerprint": "d071f43346e96465",
+   "fingerprint": "17ebca40b13b7f0a",
    "kind": "AppKit:NSWindow",
    "name": "main-window",
    "origin": "inferred",
@@ -5767,7 +5767,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:max-full-screen-content-size:observe",
-   "fingerprint": "3fad729d81a2eb45",
+   "fingerprint": "2027665d6a7bf81d",
    "kind": "AppKit:NSWindow",
    "name": "max-full-screen-content-size",
    "origin": "inferred",
@@ -5780,7 +5780,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:max-size:observe",
-   "fingerprint": "252591cc220049b4",
+   "fingerprint": "42c13bc7e8833411",
    "kind": "AppKit:NSWindow",
    "name": "max-size",
    "origin": "inferred",
@@ -5793,7 +5793,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:min-full-screen-content-size:observe",
-   "fingerprint": "920e7fb57c602268",
+   "fingerprint": "4c103863dce9bd7f",
    "kind": "AppKit:NSWindow",
    "name": "min-full-screen-content-size",
    "origin": "inferred",
@@ -5806,7 +5806,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:min-size:observe",
-   "fingerprint": "4217ccf1f0cbe59a",
+   "fingerprint": "a6bb50f05a922a73",
    "kind": "AppKit:NSWindow",
    "name": "min-size",
    "origin": "inferred",
@@ -5819,7 +5819,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniaturizable:observe",
-   "fingerprint": "de16b9484532df16",
+   "fingerprint": "da0c502bc0deec86",
    "kind": "AppKit:NSWindow",
    "name": "miniaturizable",
    "origin": "inferred",
@@ -5832,7 +5832,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniaturized:observe",
-   "fingerprint": "fc9d9d6317b1f4bf",
+   "fingerprint": "e39aed59d5f3735c",
    "kind": "AppKit:NSWindow",
    "name": "miniaturized",
    "origin": "inferred",
@@ -5845,7 +5845,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniwindow-image:observe",
-   "fingerprint": "ab8e9aefd41be978",
+   "fingerprint": "db3780080a6a72ff",
    "kind": "AppKit:NSWindow",
    "name": "miniwindow-image",
    "origin": "inferred",
@@ -5858,7 +5858,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniwindow-title:observe",
-   "fingerprint": "0df282adcde90045",
+   "fingerprint": "165ab556a46d517b",
    "kind": "AppKit:NSWindow",
    "name": "miniwindow-title",
    "origin": "inferred",
@@ -5871,7 +5871,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:modal-panel:observe",
-   "fingerprint": "1b96d4d54124bf4b",
+   "fingerprint": "3c453c1da053217c",
    "kind": "AppKit:NSWindow",
    "name": "modal-panel",
    "origin": "inferred",
@@ -5884,7 +5884,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:mouse-location-outside-of-event-stream:observe",
-   "fingerprint": "af1f9c84d4b27849",
+   "fingerprint": "7378a0365a5cd826",
    "kind": "AppKit:NSWindow",
    "name": "mouse-location-outside-of-event-stream",
    "origin": "inferred",
@@ -5897,7 +5897,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:movable-by-window-background:observe",
-   "fingerprint": "ecfda03cc74e2238",
+   "fingerprint": "cab459b1240e740b",
    "kind": "AppKit:NSWindow",
    "name": "movable-by-window-background",
    "origin": "inferred",
@@ -5910,7 +5910,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:movable:observe",
-   "fingerprint": "f34f1f9a9e9c6689",
+   "fingerprint": "73c8098a8c7968b4",
    "kind": "AppKit:NSWindow",
    "name": "movable",
    "origin": "inferred",
@@ -5923,7 +5923,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:occlusion-state:observe",
-   "fingerprint": "7ec6f4e9b7ee0ddc",
+   "fingerprint": "d872804f56a74c48",
    "kind": "AppKit:NSWindow",
    "name": "occlusion-state",
    "origin": "inferred",
@@ -5936,7 +5936,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:on-active-space:observe",
-   "fingerprint": "fb14fa4b9af526ec",
+   "fingerprint": "57e98c4ba4c9d55c",
    "kind": "AppKit:NSWindow",
    "name": "on-active-space",
    "origin": "inferred",
@@ -5949,7 +5949,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:opaque:observe",
-   "fingerprint": "527d61e6db069d89",
+   "fingerprint": "59e01f41681744e6",
    "kind": "AppKit:NSWindow",
    "name": "opaque",
    "origin": "inferred",
@@ -5962,7 +5962,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:ordered-index:observe",
-   "fingerprint": "402a65b0ece171df",
+   "fingerprint": "5a87765c14de4bab",
    "kind": "AppKit:NSWindow",
    "name": "ordered-index",
    "origin": "inferred",
@@ -5975,7 +5975,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:parent-window:observe",
-   "fingerprint": "7a4418ae21fc4516",
+   "fingerprint": "120e259355f3bef1",
    "kind": "AppKit:NSWindow",
    "name": "parent-window",
    "origin": "inferred",
@@ -5988,7 +5988,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:preserves-content-during-live-resize:observe",
-   "fingerprint": "a3e0243fd4b21cc0",
+   "fingerprint": "f91b9e00b5e6c1eb",
    "kind": "AppKit:NSWindow",
    "name": "preserves-content-during-live-resize",
    "origin": "inferred",
@@ -6001,7 +6001,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:prevents-application-termination-when-modal:observe",
-   "fingerprint": "67040efc6a7aacb7",
+   "fingerprint": "9d6277dc1b5872c3",
    "kind": "AppKit:NSWindow",
    "name": "prevents-application-termination-when-modal",
    "origin": "inferred",
@@ -6014,7 +6014,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:released-when-closed:observe",
-   "fingerprint": "1c5c3e5d79bcbb8c",
+   "fingerprint": "3c52580087e99301",
    "kind": "AppKit:NSWindow",
    "name": "released-when-closed",
    "origin": "inferred",
@@ -6027,7 +6027,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:represented-filename:observe",
-   "fingerprint": "2a53fe1e7d0e62de",
+   "fingerprint": "cc55c2c0aebcab25",
    "kind": "AppKit:NSWindow",
    "name": "represented-filename",
    "origin": "inferred",
@@ -6040,7 +6040,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:represented-url:observe",
-   "fingerprint": "74bf239c4a0dd3e7",
+   "fingerprint": "a03cb2a3ddccea64",
    "kind": "AppKit:NSWindow",
    "name": "represented-url",
    "origin": "inferred",
@@ -6053,7 +6053,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:resizable:observe",
-   "fingerprint": "24e5929cf242b05d",
+   "fingerprint": "64179d6be8569b6f",
    "kind": "AppKit:NSWindow",
    "name": "resizable",
    "origin": "inferred",
@@ -6066,7 +6066,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:resize-flags:observe",
-   "fingerprint": "8bbca6ea8b33730d",
+   "fingerprint": "6bbbc88a271dd19e",
    "kind": "AppKit:NSWindow",
    "name": "resize-flags",
    "origin": "inferred",
@@ -6079,7 +6079,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:resize-increments:observe",
-   "fingerprint": "04a2e93979c633ee",
+   "fingerprint": "f09fccb46b6af959",
    "kind": "AppKit:NSWindow",
    "name": "resize-increments",
    "origin": "inferred",
@@ -6092,7 +6092,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:restorable:observe",
-   "fingerprint": "f768cee9c0bbb011",
+   "fingerprint": "3c30470052410145",
    "kind": "AppKit:NSWindow",
    "name": "restorable",
    "origin": "inferred",
@@ -6105,7 +6105,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:restoration-class:observe",
-   "fingerprint": "453e875e77f36b4e",
+   "fingerprint": "3648b375cd5bb818",
    "kind": "AppKit:NSWindow",
    "name": "restoration-class",
    "origin": "inferred",
@@ -6118,7 +6118,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:screen:observe",
-   "fingerprint": "02f0f4a44fbd9a3d",
+   "fingerprint": "3cd0247f31bb53e2",
    "kind": "AppKit:NSWindow",
    "name": "screen",
    "origin": "inferred",
@@ -6131,7 +6131,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sharing-type:observe",
-   "fingerprint": "bc98cdbbd7b801dd",
+   "fingerprint": "66e586e4a38955ab",
    "kind": "AppKit:NSWindow",
    "name": "sharing-type",
    "origin": "inferred",
@@ -6144,7 +6144,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sheet-parent:observe",
-   "fingerprint": "c190abb2fbe4dd9d",
+   "fingerprint": "bbfcc9a4cbbaad49",
    "kind": "AppKit:NSWindow",
    "name": "sheet-parent",
    "origin": "inferred",
@@ -6157,7 +6157,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sheet:observe",
-   "fingerprint": "e890e09f55669c16",
+   "fingerprint": "df8a10c2bcc69670",
    "kind": "AppKit:NSWindow",
    "name": "sheet",
    "origin": "inferred",
@@ -6170,7 +6170,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sheets:observe",
-   "fingerprint": "fccfe4bb19558636",
+   "fingerprint": "2f05f4b25c4cb050",
    "kind": "AppKit:NSWindow",
    "name": "sheets",
    "origin": "inferred",
@@ -6183,7 +6183,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:string-with-saved-frame:observe",
-   "fingerprint": "2aeb2c9f0fae2828",
+   "fingerprint": "4685db7231572f83",
    "kind": "AppKit:NSWindow",
    "name": "string-with-saved-frame",
    "origin": "inferred",
@@ -6196,7 +6196,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:style-mask:observe",
-   "fingerprint": "08071927a7671b3b",
+   "fingerprint": "9d95582da9a01f90",
    "kind": "AppKit:NSWindow",
    "name": "style-mask",
    "origin": "inferred",
@@ -6209,7 +6209,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:subtitle:observe",
-   "fingerprint": "8f37971a29c4b3a4",
+   "fingerprint": "17e10c52f2e0cc41",
    "kind": "AppKit:NSWindow",
    "name": "subtitle",
    "origin": "inferred",
@@ -6222,7 +6222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tab-group:observe",
-   "fingerprint": "a122f4b5132efe4a",
+   "fingerprint": "11ee2351e8a8e84c",
    "kind": "AppKit:NSWindow",
    "name": "tab-group",
    "origin": "inferred",
@@ -6235,7 +6235,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tab:observe",
-   "fingerprint": "05d9ada40666664d",
+   "fingerprint": "f5c1831a89556224",
    "kind": "AppKit:NSWindow",
    "name": "tab",
    "origin": "inferred",
@@ -6248,7 +6248,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tabbed-windows:observe",
-   "fingerprint": "604be98ed0f2e396",
+   "fingerprint": "a2d5e3c649189af5",
    "kind": "AppKit:NSWindow",
    "name": "tabbed-windows",
    "origin": "inferred",
@@ -6261,7 +6261,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tabbing-identifier:observe",
-   "fingerprint": "be1c50e947f46a8e",
+   "fingerprint": "07610d20be6cbee1",
    "kind": "AppKit:NSWindow",
    "name": "tabbing-identifier",
    "origin": "inferred",
@@ -6274,7 +6274,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tabbing-mode:observe",
-   "fingerprint": "4a9f299e3b35582b",
+   "fingerprint": "bcbc45f652bb8db0",
    "kind": "AppKit:NSWindow",
    "name": "tabbing-mode",
    "origin": "inferred",
@@ -6287,7 +6287,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:title-visibility:observe",
-   "fingerprint": "dc2b88a6524ec48e",
+   "fingerprint": "8d29fd7e48c9629b",
    "kind": "AppKit:NSWindow",
    "name": "title-visibility",
    "origin": "inferred",
@@ -6300,7 +6300,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:title:observe",
-   "fingerprint": "94e4950989de856c",
+   "fingerprint": "01df8d6be2853c06",
    "kind": "AppKit:NSWindow",
    "name": "title",
    "origin": "inferred",
@@ -6313,7 +6313,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:titlebar-accessory-view-controllers:observe",
-   "fingerprint": "f8bacc9454786887",
+   "fingerprint": "903e1eda0e1c1ccd",
    "kind": "AppKit:NSWindow",
    "name": "titlebar-accessory-view-controllers",
    "origin": "inferred",
@@ -6326,7 +6326,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:titlebar-appears-transparent:observe",
-   "fingerprint": "d2d0195428c9289d",
+   "fingerprint": "33931b9d1c467952",
    "kind": "AppKit:NSWindow",
    "name": "titlebar-appears-transparent",
    "origin": "inferred",
@@ -6339,7 +6339,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:titlebar-separator-style:observe",
-   "fingerprint": "46934eaef4c677ed",
+   "fingerprint": "7596dc8451bc5c91",
    "kind": "AppKit:NSWindow",
    "name": "titlebar-separator-style",
    "origin": "inferred",
@@ -6352,7 +6352,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:toolbar-style:observe",
-   "fingerprint": "edd3047139739d60",
+   "fingerprint": "801da20de0ce496f",
    "kind": "AppKit:NSWindow",
    "name": "toolbar-style",
    "origin": "inferred",
@@ -6365,7 +6365,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:toolbar:observe",
-   "fingerprint": "9a7852b43ac38b88",
+   "fingerprint": "34441ada471a7929",
    "kind": "AppKit:NSWindow",
    "name": "toolbar",
    "origin": "inferred",
@@ -6378,7 +6378,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:views-need-display:observe",
-   "fingerprint": "c39d52905dff41f6",
+   "fingerprint": "bb416d9608e10530",
    "kind": "AppKit:NSWindow",
    "name": "views-need-display",
    "origin": "inferred",
@@ -6391,7 +6391,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:visible:observe",
-   "fingerprint": "b0405b0c766e3195",
+   "fingerprint": "9aeb2e0b53e7d9b1",
    "kind": "AppKit:NSWindow",
    "name": "visible",
    "origin": "inferred",
@@ -6404,7 +6404,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:window-controller:observe",
-   "fingerprint": "cf792b75e47114a8",
+   "fingerprint": "bcb68654bab23ef4",
    "kind": "AppKit:NSWindow",
    "name": "window-controller",
    "origin": "inferred",
@@ -6417,7 +6417,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:window-number:observe",
-   "fingerprint": "a223ac333c301d09",
+   "fingerprint": "f7ed3e4edb7c0eba",
    "kind": "AppKit:NSWindow",
    "name": "window-number",
    "origin": "inferred",
@@ -6430,7 +6430,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:window-titlebar-layout-direction:observe",
-   "fingerprint": "fa37a77487e5d6f1",
+   "fingerprint": "7687b59bb9c831de",
    "kind": "AppKit:NSWindow",
    "name": "window-titlebar-layout-direction",
    "origin": "inferred",
@@ -6443,7 +6443,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:works-when-modal:observe",
-   "fingerprint": "cfdb108afc97178b",
+   "fingerprint": "531a7b7214f533c1",
    "kind": "AppKit:NSWindow",
    "name": "works-when-modal",
    "origin": "inferred",
@@ -6456,7 +6456,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:zoomable:observe",
-   "fingerprint": "040d96a626f7c439",
+   "fingerprint": "f628f3dbfb31f8a9",
    "kind": "AppKit:NSWindow",
    "name": "zoomable",
    "origin": "inferred",
@@ -6469,7 +6469,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:zoomed:observe",
-   "fingerprint": "e177f8f1ee422711",
+   "fingerprint": "582a057e57bffc85",
    "kind": "AppKit:NSWindow",
    "name": "zoomed",
    "origin": "inferred",

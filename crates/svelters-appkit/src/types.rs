@@ -155,7 +155,9 @@ impl Inner {
         }
         let Some((_, cls, _)) = self.type_kind(kind) else { return 0 };
         let s = bridge::sel(name);
-        let found = if cls.instance_method(s).is_some() || bridge::responds(class_object(cls), s) {
+        // Initializers of class clusters live on the placeholder `+alloc` returns, not on the class: an
+        // `init…` selector resolves by name and is checked against the allocated object when called.
+        let found = if cls.instance_method(s).is_some() || bridge::responds(class_object(cls), s) || name.starts_with("init") {
             Some(s)
         } else {
             bridge::find_selector(cls, name)
@@ -228,9 +230,7 @@ impl Inner {
         let error_out = sname.ends_with("error:");
         let prev = self.cur_owner.replace(0);
         let r = if sname.starts_with("init") {
-            if !cls.instance_method(s).is_some() {
-                Err(format!("{name} has no initializer {sname}"))
-            } else {
+            {
                 // SAFETY: `+alloc` returns a +1 object, which the initializer consumes (invoke_ex `init`).
                 let a: *mut AnyObject = unsafe { MessageReceiver::send_message(cls, sel!(alloc), ()) };
                 match unsafe { a.as_ref() } {

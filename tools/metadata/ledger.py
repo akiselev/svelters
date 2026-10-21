@@ -64,7 +64,8 @@ LEDGER_DIR = ROOT / "metadata/verified"
 GTK_FACTS = ROOT / "crates/svelters-gtk/src/generated/facts.json"
 # Facts manifests written by a generator (gtk is extended with the hand-written kinds below; qt is built on the fly).
 WINUI_FACTS = ROOT / "crates/svelters-winui/src/generated/facts.json"
-FACTS = {"gtk": GTK_FACTS, "appkit": ROOT / "crates/svelters-appkit/src/generated/facts.json", "winui": WINUI_FACTS}
+APPKIT_FACTS = ROOT / "crates/svelters-appkit/src/generated/facts.json"
+FACTS = {"gtk": GTK_FACTS, "appkit": APPKIT_FACTS, "winui": WINUI_FACTS}
 # Toolkits verified on a CI runner only (no local `refresh`; `import` reads the CI artifact with import_ci).
 CI_ONLY = {"winui": WINUI_FACTS}
 
@@ -137,7 +138,7 @@ def appkit_type_facts() -> list[dict]:
 
 
 def manifest(tk: str) -> dict:
-    if tk == "appkit":
+    if tk == "appkit" and FACTS[tk] == APPKIT_FACTS:
         m = json.loads(FACTS[tk].read_text())
         m["facts"] = m["facts"] + appkit_type_facts()
         return m

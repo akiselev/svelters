@@ -327,7 +327,21 @@ pub fn members(m: &Members) {
     let mut missing = Vec::new();
     for (sel, is_static) in m.members {
         let s = svelters_apple::objc::bridge::sel(sel);
-        let ok = if *is_static && !sel.starts_with("init") { svelters_apple::objc::bridge::responds(meta, s) } else { c.instance_method(s).is_some() };
+        let ok = if sel.starts_with("init") {
+            // Class clusters implement initializers on the placeholder `+alloc` returns.
+            c.instance_method(s).is_some() || {
+                let a: *mut objc2::runtime::AnyObject = unsafe { objc2::runtime::MessageReceiver::send_message(c, objc2::sel!(alloc), ()) };
+                let ok = unsafe { a.as_ref() }.is_some_and(|a| svelters_apple::objc::bridge::responds(a, s));
+                if let Some(a) = unsafe { a.as_ref() } {
+                    let _: () = unsafe { objc2::msg_send![a, release] };
+                }
+                ok
+            }
+        } else if *is_static {
+            svelters_apple::objc::bridge::responds(meta, s)
+        } else {
+            c.instance_method(s).is_some()
+        };
         if !ok {
             missing.push(format!("{}{sel}", if *is_static { "+" } else { "-" }));
         }
