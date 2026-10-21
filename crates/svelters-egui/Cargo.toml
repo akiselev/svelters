@@ -1,0 +1,25 @@
+[package]
+name = "svelters-egui"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "The egui backend (G1): a retained scene arena laid out by taffy and painted through egui each frame"
+
+[features]
+default = ["eframe", "kittest"]
+# The windowed runner (`Backend::run`): eframe with the glow renderer on X11/Wayland.
+eframe = ["dep:eframe"]
+# The headless test runner (`harness`): egui_kittest without a renderer, so no GPU and no display.
+kittest = ["dep:egui_kittest"]
+
+[dependencies]
+svelters-abi.workspace = true
+svelters-host.workspace = true
+serde_json.workspace = true
+# D9 (provisional, plans/milestones/G1-egui-skeleton.md): one egui minor per svelters-egui line,
+# pinned exactly. All egui crates move together.
+egui = { version = "=0.37.0", default-features = false, features = ["default_fonts"] }
+eframe = { version = "=0.37.0", optional = true, default-features = false, features = ["glow", "default_fonts", "x11", "wayland", "accesskit"] }
+egui_kittest = { version = "=0.37.0", optional = true }
+taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "block_layout", "content_size"] }
