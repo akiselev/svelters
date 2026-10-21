@@ -1117,7 +1117,7 @@ pub static OBSERVE: &[Observe] = &[
     Observe { class: ObsClass::Exact, proportional: false },
     Observe { class: ObsClass::Exact, proportional: false },
     Observe { class: ObsClass::Exact, proportional: false },
-    Observe { class: ObsClass::Exact, proportional: false },
+    Observe { class: ObsClass::Unknown, proportional: false },
     Observe { class: ObsClass::Exact, proportional: false },
     Observe { class: ObsClass::Exact, proportional: false },
     Observe { class: ObsClass::Exact, proportional: false },

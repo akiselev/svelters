@@ -16151,19 +16151,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:SelectedIndex:observe",
-   "fingerprint": "435ed067de4bd9cd",
-   "kind": "Microsoft.UI.Xaml.Controls:RadioButtons",
-   "name": "SelectedIndex",
-   "origin": "inferred",
-   "record_fp": "7af7bf70e93502b6",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_radio_buttons_selected_index"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:slot:items",
    "fingerprint": "f6f71fa1da0af61f",
    "kind": "RadioButtons",

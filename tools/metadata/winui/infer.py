@@ -338,9 +338,11 @@ def run(rules: Rules | None = None) -> tuple[dict[str, str], dict[str, str], dic
     return files, evid, summary
 
 
-def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str]:
-    """(class short name, section, name) -> the fingerprint layers.py gives the inferred record (the ledger parks by it)."""
-    out = {}
+def record_fingerprints(files: dict[str, str], observe_files: dict[str, str] | None = None) -> dict[tuple[str, str, str], str]:
+    """(class short name, section, name) -> the fingerprint layers.py gives the inferred record (the ledger parks by it).
+    Observe facts: (owner, "observe", prop) -> the fingerprint of the stripped record (observe.Layers), as on GTK."""
+    import observe as obs
+    out = obs.layer_fingerprints(observe_files or {})
     for fname, text in files.items():
         doc = yaml.safe_load(text)
         for sec in ("props", "notify", "events", "methods", "bindings"):
@@ -349,13 +351,13 @@ def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str
     return out
 
 
-def prune_parked(files: dict[str, str], check: bool) -> bool:
+def prune_parked(files: dict[str, str], check: bool, observe_files: dict[str, str] | None = None) -> bool:
     """Drop parked facts whose inferred record changed or went away: they are tried again. True if stale."""
     path = OUT / "_parked.json"
     if not path.exists():
         return False
     doc = json.loads(path.read_text())
-    fps = record_fingerprints(files)
+    fps = record_fingerprints(files, observe_files)
     keep = [r for r in doc["parked"] if fps.get((r["kind"], r["section"], r["name"])) == r.get("record_fp")]
     if len(keep) == len(doc["parked"]):
         return False
@@ -386,14 +388,14 @@ def main() -> int:
         print("infer: the inferred layer breaks the override schema:", *errs[:20], sep="\n  ", file=sys.stderr)
         return 1
     want = {**files, **evid, "_review.json": json.dumps(summary, indent=1, sort_keys=True) + "\n"}
-    parked_stale = prune_parked(files, a.check)
-    have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
-    stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
     # The observe layer (rules O5, O6, O8: tools/metadata/winui/observe_rules.py), milestone R0.
     import observe as obs
     import observe_rules
     orecs, oev, orev, oskip = observe_rules.infer(svmeta.load_yaml(RULES))
     ofiles = obs.inferred_files("winui", orecs, oev, orev, oskip, {k: v["confidence"] for k, v in oev.items()})
+    parked_stale = prune_parked(files, a.check, ofiles)
+    have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
+    stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
     if a.check:
         for n in stale:
             print(f"infer: metadata/inferred/winui/{n} is stale (run tools/metadata/winui/infer.py)", file=sys.stderr)

@@ -81,6 +81,16 @@
    "version": "2.3.9"
   },
   {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:SelectedIndex:observe",
+   "kind": "Microsoft.UI.Xaml.Controls:RadioButtons",
+   "message": "<radio-buttons> selected-index: a native change was not announced",
+   "name": "SelectedIndex",
+   "record_fp": "7af7bf70e93502b6",
+   "section": "observe",
+   "test": "observe_radio_buttons_selected_index",
+   "version": "2.3.9"
+  },
+  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:binding:text-reading-order",
    "kind": "NumberBox",
    "message": "generator: NumberBox.yaml: bind:text-reading-order: property text-reading-order is not exposed",

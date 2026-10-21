@@ -30621,11 +30621,7 @@ pub mod Microsoft {
                     ItemsSourceProperty: usize,
                     ItemsProperty: usize,
                     ItemTemplateProperty: usize,
-                    pub SelectedIndexProperty: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    SelectedIndexProperty: usize,
                     SelectedItemProperty: usize,
                     pub MaxColumnsProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -43212,17 +43208,6 @@ pub mod Microsoft {
                             .ok()?;
                             let _ = &derived__;
                             windows_core::imp::Type::from_abi(result__)
-                        })
-                    }
-                    pub fn SelectedIndexProperty() -> windows_core::Result<super::DependencyProperty>
-                    {
-                        Self::IRadioButtonsStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).SelectedIndexProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
                     pub fn MaxColumnsProperty() -> windows_core::Result<super::DependencyProperty> {

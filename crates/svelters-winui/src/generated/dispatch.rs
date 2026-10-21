@@ -7065,11 +7065,6 @@ fn observe_prop369_radio_buttons_header(o: &IInspectable, h: u64, prop: u32) -> 
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RadioButtons::HeaderProperty()?, h, prop)?,
     ])
 }
-fn observe_prop370_radio_buttons_selected_index(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
-    Ok(vec![
-        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RadioButtons::SelectedIndexProperty()?, h, prop)?,
-    ])
-}
 fn observe_prop371_radio_buttons_max_columns(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
         crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::RadioButtons::MaxColumnsProperty()?, h, prop)?,
@@ -8493,7 +8488,7 @@ pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Ve
     Some(observe_prop367_progress_ring_value),
     Some(observe_prop368_radio_button_group_name),
     Some(observe_prop369_radio_buttons_header),
-    Some(observe_prop370_radio_buttons_selected_index),
+    None,
     Some(observe_prop371_radio_buttons_max_columns),
     Some(observe_prop372_range_base_minimum),
     Some(observe_prop373_range_base_maximum),

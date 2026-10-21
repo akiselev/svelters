@@ -10661,28 +10661,6 @@
      }
     ]
    },
-   "SelectedIndex": {
-    "class": "exact",
-    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:SelectedIndex:observe",
-    "layer": "inferred",
-    "prop": "SelectedIndex",
-    "provenance": [
-     {
-      "origin": "winmd",
-      "ref": "O6: SelectedIndexProperty is a DependencyProperty: RegisterPropertyChangedCallback"
-     },
-     {
-      "origin": "rule",
-      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
-     }
-    ],
-    "record_fp": "7af7bf70e93502b6",
-    "via": [
-     {
-      "mechanism": "notify"
-     }
-    ]
-   },
    "SelectedItem": {
     "class": "exact",
     "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:SelectedItem:observe",

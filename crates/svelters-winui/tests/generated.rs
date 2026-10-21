@@ -2810,7 +2810,6 @@ pub static TESTS: &[(&str, fn())] = &[
     ("observe_progress_ring_value", || t::observe("progress-ring", "value", t::ObsCheck::Change(vec![Value::F64(12.0), Value::F64(24.0)]), t::Fires::Any)),
     ("observe_radio_button_group_name", || t::observe("radio-button", "group-name", t::ObsCheck::Change(vec![Value::Str("group-a".into())]), t::Fires::Any)),
     ("observe_radio_buttons_header", || t::observe("radio-buttons", "header", t::ObsCheck::Change(vec![Value::Str("Size".into())]), t::Fires::Any)),
-    ("observe_radio_buttons_selected_index", || t::observe("radio-buttons", "selected-index", t::ObsCheck::Change(vec![Value::I64(-1)]), t::Fires::Any)),
     ("observe_radio_buttons_max_columns", || t::observe("radio-buttons", "max-columns", t::ObsCheck::Change(vec![Value::I64(3), Value::I64(7)]), t::Fires::Any)),
     ("observe_progress_bar_minimum", || t::observe("progress-bar", "minimum", t::ObsCheck::Change(vec![Value::F64(5.0)]), t::Fires::Any)),
     ("observe_progress_bar_maximum", || t::observe("progress-bar", "maximum", t::ObsCheck::Change(vec![Value::F64(50.0)]), t::Fires::Any)),
