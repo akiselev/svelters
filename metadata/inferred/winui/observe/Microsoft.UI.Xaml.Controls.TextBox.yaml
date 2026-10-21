@@ -211,6 +211,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O5: event SelectionChanged'
+  verify:
+    'on': Microsoft.UI.Xaml.Controls:TextBox
+    check: cross
+    trigger: select
   confidence: 0.9
 - prop: SelectionFlyout
   class: exact
@@ -251,6 +255,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O5: event SelectionChanged'
+  verify:
+    'on': Microsoft.UI.Xaml.Controls:TextBox
+    check: cross
+    trigger: select
   confidence: 0.9
 - prop: SelectionStart
   class: exact
@@ -261,6 +269,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O5: event SelectionChanged'
+  verify:
+    'on': Microsoft.UI.Xaml.Controls:TextBox
+    check: cross
+    trigger: select
   confidence: 0.9
 - prop: Text
   class: exact

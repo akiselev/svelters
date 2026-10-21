@@ -14,6 +14,8 @@ Rules:
       (`SelectionStart`/`SelectionLength`/`SelectedText` -> SelectionChanged, `IsLoaded` -> Loaded/Unloaded) ->
       `event` (exact 0.9).
   O8  a plain writable property with no event -> set_only (0.9); a plain read-only one -> none (0.9).
+  R4  `observe.verify` names the native trigger of the generated row for props a plain write cannot change
+      (`verify: {check: cross, trigger}`; the triggers are `testing::Trig` of crates/svelters-winui).
 """
 from __future__ import annotations
 
@@ -29,6 +31,8 @@ def infer(rules_doc: dict) -> tuple[dict[str, list[dict]], dict, list[dict], dic
     promote_at = float(rules_doc["promote_at"])
     no_notify = {x["prop"]: x for x in rules_doc.get("no_notify", [])}
     pairs = {k: list(v) for k, v in (o.get("events") or {}).items()}
+    # How the generated row triggers a prop that is not a plain native write (milestone R4): `Class.Prop: trigger`.
+    verify = dict(o.get("verify") or {})
     classes = {}
     for p in sorted(META.glob("*.json")):
         if p.name.startswith("_"):
@@ -80,6 +84,8 @@ def infer(rules_doc: dict) -> tuple[dict[str, list[dict]], dict, list[dict], dic
                     rec.update({"class": "none", "provenance": [
                         {"origin": "rule", "ref": "a read-only plain property with no change event"}]})
                     conf, pattern = 0.9, "observe:none-rule"
+            if fid in verify and rec["class"] in ("exact", "partial"):
+                rec["verify"] = {"on": key, "check": "cross", "trigger": verify[fid]}
             evidence[f"{key}:{name}"] = {"confidence": conf, "pattern": pattern,
                                          "evidence": {"dependency_property": bool(pr.get("dependency_property"))}}
             if conf >= promote_at:

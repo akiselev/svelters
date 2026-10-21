@@ -68,6 +68,21 @@ pub fn default_slot(kind_id: u32) -> u32 {
     0
 }
 
+/// The observe fact of prop `name` for an element of `kind_id`: the most derived class along the chain that has one.
+pub fn observe_info(kind_id: u32, name: &str) -> Option<&'static ObserveInfo> {
+    match find(OBSERVE, kind_id, name, |o| o.kind, |o| o.name) {
+        0 => None,
+        i => OBSERVE.get(i as usize - 1),
+    }
+}
+
+/// `SVL_M_OBSERVABLE`: an exact or partial fact with at least one mechanism the backend installs.
+pub fn observable(kind_id: u32, name: &str) -> bool {
+    observe_info(kind_id, name).is_some_and(|o| {
+        matches!(o.class, ObsClass::Exact | ObsClass::Partial) && (!o.kvo.is_empty() || !o.notifications.is_empty() || o.action)
+    })
+}
+
 pub fn prop_info(id: u32) -> Option<&'static PropInfo> {
     PROPS.get((id as usize).wrapping_sub(1))
 }

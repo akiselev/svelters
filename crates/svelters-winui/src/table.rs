@@ -88,6 +88,30 @@ pub struct Enum {
     pub members: &'static [(&'static str, i32)],
 }
 
+/// The observe class of a prop (`metadata/observe/winui.json`, REACTIVITY.md 4.1); `Unknown` when there is no fact.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ObsClass {
+    Unknown,
+    Constant,
+    SetOnly,
+    Exact,
+    Partial,
+    None,
+}
+
+/// ABI v2.6 `observe` facts of a prop, parallel to `PROPS` (`names::OBSERVE`). The mechanisms themselves are the
+/// generated `dispatch::OBSERVE_CONNECT` functions (DP callbacks and events).
+pub struct Observe {
+    pub class: ObsClass,
+    /// `value_cost: proportional`: the backend does not report the prop while `set_prop` writes it (REACTIVITY.md 5.4).
+    pub proportional: bool,
+}
+
+/// The observe facts of prop `id`.
+pub fn observe(id: u32) -> Option<&'static Observe> {
+    crate::names::OBSERVE.get((id as usize).checked_sub(1)?)
+}
+
 use crate::names::{ATTRS, EVENTS, KINDS, METHODS, PROPS, SLOTS};
 
 pub fn kind(id: u32) -> Option<&'static Kind> {

@@ -37,6 +37,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O5: event SizeChanged'
+  verify:
+    'on': Microsoft.UI.Xaml:UIElement
+    check: cross
+    trigger: resize
   confidence: 0.9
 - prop: AllowDrop
   class: exact
@@ -357,6 +361,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O5: event SizeChanged'
+  verify:
+    'on': Microsoft.UI.Xaml:UIElement
+    check: cross
+    trigger: resize
   confidence: 0.9
 - prop: RenderTransform
   class: exact

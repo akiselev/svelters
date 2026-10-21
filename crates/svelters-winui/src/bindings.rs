@@ -34,6 +34,17 @@ pub mod Microsoft {
                         .map(|| result__)
                     }
                 }
+                pub fn HasThreadAccess(&self) -> windows_core::Result<bool> {
+                    let this = &windows_core::Interface::cast::<IDispatcherQueue2>(self)?;
+                    unsafe {
+                        let mut result__ = core::mem::zeroed();
+                        (windows_core::Interface::vtable(this).HasThreadAccess)(
+                            windows_core::Interface::as_raw(this),
+                            &mut result__,
+                        )
+                        .map(|| result__)
+                    }
+                }
                 fn IDispatcherQueueStatics<
                     R,
                     F: FnOnce(&IDispatcherQueueStatics) -> windows_core::Result<R>,
@@ -306,6 +317,28 @@ pub mod Microsoft {
                     *mut core::ffi::c_void,
                     *mut bool,
                 ) -> windows_core::HRESULT,
+            }
+            windows_core::imp::define_interface!(
+                IDispatcherQueue2,
+                IDispatcherQueue2_Vtbl,
+                0x0cf48751_f1ac_59b8_ba52_6ce7a1444d6f
+            );
+            impl windows_core::RuntimeType for IDispatcherQueue2 {
+                const SIGNATURE: windows_core::imp::ConstBuffer =
+                    windows_core::imp::ConstBuffer::for_interface::<Self>();
+                const NAME: windows_core::imp::ConstBuffer =
+                    windows_core::imp::ConstBuffer::from_slice(
+                        b"Microsoft.UI.Dispatching.IDispatcherQueue2",
+                    );
+            }
+            #[repr(C)]
+            pub struct IDispatcherQueue2_Vtbl {
+                pub base__: windows_core::IInspectable_Vtbl,
+                pub HasThreadAccess: unsafe extern "system" fn(
+                    *mut core::ffi::c_void,
+                    *mut bool,
+                )
+                    -> windows_core::HRESULT,
             }
             windows_core::imp::define_interface!(
                 IDispatcherQueueController,
@@ -5824,7 +5857,11 @@ pub mod Microsoft {
                 )
                     -> windows_core::HRESULT,
                 ShadowProperty: usize,
-                FocusStateProperty: usize,
+                pub FocusStateProperty: unsafe extern "system" fn(
+                    *mut core::ffi::c_void,
+                    *mut *mut core::ffi::c_void,
+                )
+                    -> windows_core::HRESULT,
                 pub UseSystemFocusVisualsProperty:
                     unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -5902,8 +5939,14 @@ pub mod Microsoft {
                     unsafe extern "system" fn(*mut core::ffi::c_void, i64) -> windows_core::HRESULT,
                 SizeChanged: usize,
                 RemoveSizeChanged: usize,
-                VisibilityChanged: usize,
-                RemoveVisibilityChanged: usize,
+                pub VisibilityChanged: unsafe extern "system" fn(
+                    *mut core::ffi::c_void,
+                    *mut core::ffi::c_void,
+                    *mut i64,
+                )
+                    -> windows_core::HRESULT,
+                pub RemoveVisibilityChanged:
+                    unsafe extern "system" fn(*mut core::ffi::c_void, i64) -> windows_core::HRESULT,
                 pub Activate:
                     unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
                 pub Close:
@@ -5994,6 +6037,23 @@ pub mod Microsoft {
             }
             #[repr(C)]
             pub struct IWindowStatics_Vtbl {
+                pub base__: windows_core::IInspectable_Vtbl,
+            }
+            windows_core::imp::define_interface!(
+                IWindowVisibilityChangedEventArgs,
+                IWindowVisibilityChangedEventArgs_Vtbl,
+                0x7bb24a6d_070c_5cb6_8e9c_547905be8265
+            );
+            impl windows_core::RuntimeType for IWindowVisibilityChangedEventArgs {
+                const SIGNATURE: windows_core::imp::ConstBuffer =
+                    windows_core::imp::ConstBuffer::for_interface::<Self>();
+                const NAME: windows_core::imp::ConstBuffer =
+                    windows_core::imp::ConstBuffer::from_slice(
+                        b"Microsoft.UI.Xaml.IWindowVisibilityChangedEventArgs",
+                    );
+            }
+            #[repr(C)]
+            pub struct IWindowVisibilityChangedEventArgs_Vtbl {
                 pub base__: windows_core::IInspectable_Vtbl,
             }
             #[repr(transparent)]
@@ -8620,6 +8680,16 @@ pub mod Microsoft {
                         .and_then(|| windows_core::imp::Type::from_abi(result__))
                     })
                 }
+                pub fn FocusStateProperty() -> windows_core::Result<DependencyProperty> {
+                    Self::IUIElementStatics(|this| unsafe {
+                        let mut result__ = core::mem::zeroed();
+                        (windows_core::Interface::vtable(this).FocusStateProperty)(
+                            windows_core::Interface::as_raw(this),
+                            &mut result__,
+                        )
+                        .and_then(|| windows_core::imp::Type::from_abi(result__))
+                    })
+                }
                 pub fn UseSystemFocusVisualsProperty() -> windows_core::Result<DependencyProperty> {
                     Self::IUIElementStatics(|this| unsafe {
                         let mut result__ = core::mem::zeroed();
@@ -8840,6 +8910,39 @@ pub mod Microsoft {
                         ))
                     }
                 }
+                pub fn VisibilityChanged<F>(
+                    &self,
+                    handler: F,
+                ) -> windows_core::Result<windows_core::EventRevoker>
+                where
+                    F: Fn(
+                            windows_core::Ref<windows_core::IInspectable>,
+                            windows_core::Ref<WindowVisibilityChangedEventArgs>,
+                        ) + Send
+                        + 'static,
+                {
+                    let handler = <super::super::super::Windows::Foundation::TypedEventHandler<
+                        windows_core::IInspectable,
+                        WindowVisibilityChangedEventArgs,
+                    >>::new(move |a0, a1| {
+                        handler(a0, a1);
+                        Ok(())
+                    });
+                    unsafe {
+                        let mut result__ = core::mem::zeroed();
+                        let token__ = (windows_core::Interface::vtable(self).VisibilityChanged)(
+                            windows_core::Interface::as_raw(self),
+                            windows_core::Interface::as_raw(&handler),
+                            &mut result__,
+                        )
+                        .map(|| result__)?;
+                        Ok(windows_core::EventRevoker::new(
+                            self.clone(),
+                            token__,
+                            windows_core::Interface::vtable(self).RemoveVisibilityChanged,
+                        ))
+                    }
+                }
                 pub fn Activate(&self) -> windows_core::Result<()> {
                     unsafe {
                         (windows_core::Interface::vtable(self).Activate)(
@@ -8999,6 +9102,32 @@ pub mod Microsoft {
             }
             unsafe impl Send for WindowEventArgs {}
             unsafe impl Sync for WindowEventArgs {}
+            #[repr(transparent)]
+            #[derive(Clone, Debug, Eq, PartialEq)]
+            pub struct WindowVisibilityChangedEventArgs(windows_core::IUnknown);
+            windows_core::imp::interface_hierarchy!(
+                WindowVisibilityChangedEventArgs,
+                windows_core::IUnknown,
+                windows_core::IInspectable
+            );
+            impl windows_core::RuntimeType for WindowVisibilityChangedEventArgs {
+                const SIGNATURE: windows_core::imp::ConstBuffer =
+                    windows_core::imp::ConstBuffer::for_class::<
+                        Self,
+                        IWindowVisibilityChangedEventArgs,
+                    >();
+            }
+            unsafe impl windows_core::Interface for WindowVisibilityChangedEventArgs {
+                type Vtable =
+                    <IWindowVisibilityChangedEventArgs as windows_core::Interface>::Vtable;
+                const IID: windows_core::GUID =
+                    <IWindowVisibilityChangedEventArgs as windows_core::Interface>::IID;
+            }
+            impl windows_core::RuntimeName for WindowVisibilityChangedEventArgs {
+                const NAME: &'static str = "Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs";
+            }
+            unsafe impl Send for WindowVisibilityChangedEventArgs {}
+            unsafe impl Sync for WindowVisibilityChangedEventArgs {}
             pub mod Automation {
                 pub mod Peers {
                     #[repr(transparent)]
@@ -16972,6 +17101,16 @@ pub mod Microsoft {
                             )
                             .ok()
                         }
+                    }
+                    pub fn ContentProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::IContentControlStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).ContentProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
                     }
                     pub fn IsFocusEngagementEnabled(&self) -> windows_core::Result<bool> {
                         let this = &windows_core::Interface::cast::<IControl>(self)?;
@@ -27353,6 +27492,11 @@ pub mod Microsoft {
                 #[repr(C)]
                 pub struct IContentControlStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
+                    pub ContentProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                 }
                 windows_core::imp::define_interface!(
                     IContextMenuEventArgs,
@@ -28041,6 +28185,12 @@ pub mod Microsoft {
                 #[repr(C)]
                 pub struct IPanelStatics_Vtbl {
                     pub base__: windows_core::IInspectable_Vtbl,
+                    BackgroundProperty: usize,
+                    pub IsItemsHostProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                 }
                 windows_core::imp::define_interface!(
                     IRowDefinition,
@@ -28275,6 +28425,12 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
+                    ThumbToolTipValueConverterProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                 }
                 windows_core::imp::define_interface!(
                     IStackPanel,
@@ -28776,7 +28932,11 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    SelectedTextProperty: usize,
+                    pub SelectedTextProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     SelectionHighlightColorProperty: usize,
                     pub MaxLinesProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -28805,7 +28965,11 @@ pub mod Microsoft {
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
                     TextDecorationsProperty: usize,
-                    IsTextTrimmedProperty: usize,
+                    pub IsTextTrimmedProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     pub HorizontalTextAlignmentProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -29345,7 +29509,11 @@ pub mod Microsoft {
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
                     InputScopeProperty: usize,
-                    HeaderProperty: usize,
+                    pub HeaderProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
                     pub PlaceholderTextProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -29375,9 +29543,21 @@ pub mod Microsoft {
                     )
                         -> windows_core::HRESULT,
                     PlaceholderForegroundProperty: usize,
-                    CanPasteClipboardContentProperty: usize,
-                    CanUndoProperty: usize,
-                    CanRedoProperty: usize,
+                    pub CanPasteClipboardContentProperty:
+                        unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        ) -> windows_core::HRESULT,
+                    pub CanUndoProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
+                    pub CanRedoProperty: unsafe extern "system" fn(
+                        *mut core::ffi::c_void,
+                        *mut *mut core::ffi::c_void,
+                    )
+                        -> windows_core::HRESULT,
                     SelectionFlyoutProperty: usize,
                     ProofingMenuFlyoutProperty: usize,
                     DescriptionProperty: usize,
@@ -30487,6 +30667,17 @@ pub mod Microsoft {
                             )
                             .map(|| result__)
                         }
+                    }
+                    pub fn IsItemsHostProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::IPanelStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).IsItemsHostProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
                     }
                     pub fn Opacity(&self) -> windows_core::Result<f64> {
                         let this = &windows_core::Interface::cast::<super::IUIElement>(self)?;
@@ -34401,6 +34592,16 @@ pub mod Microsoft {
                         Self::ISliderStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsThumbToolTipEnabledProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::ISliderStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -41127,6 +41328,17 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn SelectedTextProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::ITextBlockStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).SelectedTextProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn MaxLinesProperty() -> windows_core::Result<super::DependencyProperty> {
                         Self::ITextBlockStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
@@ -41175,6 +41387,17 @@ pub mod Microsoft {
                         Self::ITextBlockStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable (this) . IsTextScaleFactorEnabledProperty)(windows_core::Interface::as_raw (this) , & mut result__) . and_then (|| windows_core::imp::Type::from_abi (result__))
+                        })
+                    }
+                    pub fn IsTextTrimmedProperty() -> windows_core::Result<super::DependencyProperty>
+                    {
+                        Self::ITextBlockStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).IsTextTrimmedProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
                     pub fn HorizontalTextAlignmentProperty()
@@ -45509,6 +45732,16 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
+                    pub fn HeaderProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITextBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).HeaderProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
                     pub fn PlaceholderTextProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::ITextBoxStatics(|this| unsafe {
@@ -45559,6 +45792,33 @@ pub mod Microsoft {
                         Self::ITextBoxStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).CharacterCasingProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn CanPasteClipboardContentProperty()
+                    -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITextBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable (this) . CanPasteClipboardContentProperty)(windows_core::Interface::as_raw (this) , & mut result__) . and_then (|| windows_core::imp::Type::from_abi (result__))
+                        })
+                    }
+                    pub fn CanUndoProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITextBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).CanUndoProperty)(
+                                windows_core::Interface::as_raw(this),
+                                &mut result__,
+                            )
+                            .and_then(|| windows_core::imp::Type::from_abi(result__))
+                        })
+                    }
+                    pub fn CanRedoProperty() -> windows_core::Result<super::DependencyProperty> {
+                        Self::ITextBoxStatics(|this| unsafe {
+                            let mut result__ = core::mem::zeroed();
+                            (windows_core::Interface::vtable(this).CanRedoProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -48424,6 +48684,30 @@ pub mod Microsoft {
                             Self::IButtonBaseStatics(|this| unsafe {
                                 let mut result__ = core::mem::zeroed();
                                 (windows_core::Interface::vtable(this).ClickModeProperty)(
+                                    windows_core::Interface::as_raw(this),
+                                    &mut result__,
+                                )
+                                .and_then(|| windows_core::imp::Type::from_abi(result__))
+                            })
+                        }
+                        pub fn IsPointerOverProperty()
+                        -> windows_core::Result<super::super::DependencyProperty>
+                        {
+                            Self::IButtonBaseStatics(|this| unsafe {
+                                let mut result__ = core::mem::zeroed();
+                                (windows_core::Interface::vtable(this).IsPointerOverProperty)(
+                                    windows_core::Interface::as_raw(this),
+                                    &mut result__,
+                                )
+                                .and_then(|| windows_core::imp::Type::from_abi(result__))
+                            })
+                        }
+                        pub fn IsPressedProperty()
+                        -> windows_core::Result<super::super::DependencyProperty>
+                        {
+                            Self::IButtonBaseStatics(|this| unsafe {
+                                let mut result__ = core::mem::zeroed();
+                                (windows_core::Interface::vtable(this).IsPressedProperty)(
                                     windows_core::Interface::as_raw(this),
                                     &mut result__,
                                 )
@@ -51997,6 +52281,17 @@ pub mod Microsoft {
                     pub struct IButtonBaseStatics_Vtbl {
                         pub base__: windows_core::IInspectable_Vtbl,
                         pub ClickModeProperty: unsafe extern "system" fn(
+                            *mut core::ffi::c_void,
+                            *mut *mut core::ffi::c_void,
+                        )
+                            -> windows_core::HRESULT,
+                        pub IsPointerOverProperty:
+                            unsafe extern "system" fn(
+                                *mut core::ffi::c_void,
+                                *mut *mut core::ffi::c_void,
+                            )
+                                -> windows_core::HRESULT,
+                        pub IsPressedProperty: unsafe extern "system" fn(
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         )
