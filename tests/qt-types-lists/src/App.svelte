@@ -1,7 +1,9 @@
 <script>
-  // Native Qt models feeding @svelters/lists (NON-GUI-TYPES section 9, N2 acceptance). The ListView reads
-  // a QStringListModel and a QStandardItemModel through their generated classes and follows their native
-  // signals; rows of the item model are keyed by the QStandardItem wrapper itself (one wrapper per item).
+  // Native Qt models feeding @svelters/lists (NON-GUI-TYPES section 9; N2 acceptance, N3 model mode).
+  // Each ListView shows its model natively: the QListView reads the QAbstractItemModel, JS holds no copy
+  // of the rows. A QStandardItemModel's rows are its QStandardItem wrappers (one per item); any other
+  // model's rows are QModelIndex values read through the model. A row re-renders when the model reports
+  // dataChanged for it, so `it.text()` and `names.data(index)` stay current without a mirror.
   import { ListView } from '@svelters/lists';
   import { QStringListModel } from 'svelters:qt/core';
   import { QStandardItemModel, QStandardItem } from 'svelters:qt/gui';
@@ -12,17 +14,11 @@
   items.appendRow(new QStandardItem('one'));
   items.appendRow(new QStandardItem('two'));
 
-  const read = () => [
-    ...names.stringList().map((text, i) => ({ key: 'n' + i, text: `names ${text}` })),
-    ...Array.from({ length: items.rowCount() }, (_, i) => {
-      const it = items.item(i);
-      return { key: it, text: `items ${it.text()}` };
-    }),
-  ];
-  let rows = $state(read());
-  const refresh = () => (rows = read());
+  // The row count only (Qt's rowCount() has no change signal of its own).
+  const count = () => names.rowCount() + items.rowCount();
+  let rows = $state(count());
   for (const m of [names, items]) {
-    for (const s of ['rowsInserted', 'rowsRemoved', 'dataChanged', 'modelReset']) m.on(s, refresh);
+    for (const s of ['rowsInserted', 'rowsRemoved', 'modelReset']) m.on(s, () => (rows = count()));
   }
 
   let n = 0;
@@ -49,11 +45,16 @@
       <push-button onclicked={addItem}>addItem</push-button>
       <push-button onclicked={rename}>rename</push-button>
       <push-button onclicked={removeFirst}>removeFirst</push-button>
-      <label>rows={rows.length}</label>
+      <label>rows={rows}</label>
     </box-layout>
-    <ListView items={rows} key={(r) => r.key}>
-      {#snippet row(r)}
-        <label>{r.text}</label>
+    <ListView items={names}>
+      {#snippet row(index)}
+        <label>{`names ${names.data(index)}`}</label>
+      {/snippet}
+    </ListView>
+    <ListView items={items}>
+      {#snippet row(it)}
+        <label>{`items ${it.text()}`}</label>
       {/snippet}
     </ListView>
   </box-layout>
