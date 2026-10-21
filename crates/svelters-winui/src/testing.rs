@@ -481,9 +481,10 @@ pub fn observe(tag: &str, prop: &str, check: ObsCheck, fires: Fires) {
             }
         }
     }
-    // 4. coalescing input: 10 native changes (a one-shot trigger, mounting or activating, cannot repeat)
+    // 4. coalescing input: 10 native changes (a one-shot trigger, mounting, activating, select-all, cannot repeat)
     let repeatable = match &check {
-        ObsCheck::Cross(t) => !matches!(t, Trig::Mount | Trig::Activate),
+        // Selecting all again selects the same text: no change.
+        ObsCheck::Cross(t) => !matches!(t, Trig::Mount | Trig::Activate | Trig::SelectAll),
         _ => true,
     };
     if repeatable {

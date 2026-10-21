@@ -122,6 +122,21 @@ mod mac {
         assert_eq!(h.lifetime(cv), SVL_LIFE_BORROWED);
         h.observe(cv, "hidden", true).unwrap();
         h.take_gone();
+        let auto = h.backend.kvo_autonotifying(cv, "hidden");
+        let kept = h.backend.retained_while_observed(cv);
+        println!("NSView hidden: autonotifying with NSObject's KVO state {auto:?}, retained while observed {kept}");
+        assert_eq!(kept, auto == Some(false), "retained exactly when the class is not autonotifying");
+        if kept {
+            // The manual-notifying path: off removes the registration from the live object and releases it.
+            let obj = h.retain(cv);
+            h.observe(cv, "hidden", false).unwrap();
+            assert!(!h.backend.retained_while_observed(cv), "released with the last KVO observation");
+            assert_eq!(Harness::observation_info(&obj), 0, "the KVO registration was removed from the live object");
+            drop(obj);
+            h.destroy(cv);
+            h.destroy(w);
+            return;
+        }
         // Replace the content view: the window releases the old one, nothing else holds it.
         let nv = h.create("view");
         objc2::rc::autoreleasepool(|_| h.insert(w, nv, None, Some("content-view")).unwrap());

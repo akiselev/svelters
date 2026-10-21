@@ -442,6 +442,17 @@ impl AppKitBackend {
         self.inner.table.borrow().get(h).is_some_and(|e| e.obs.props.contains_key(&prop))
     }
 
+    /// Whether a BORROWED handle's object is retained because it is KVO-observed and its class is not autonotifying
+    /// with NSObject's KVO state (tests).
+    pub fn retained_while_observed(&self, h: u64) -> bool {
+        self.inner.table.borrow().get(h).is_some_and(|e| e.obs.keep.is_some())
+    }
+
+    /// Whether `key` of the object of `h` is autonotifying with NSObject's KVO state (tests, diagnostics).
+    pub fn kvo_autonotifying(&self, h: u64, key: &str) -> Option<bool> {
+        self.inner.object(h).map(|o| autonotifying(&o, key))
+    }
+
     /// Delivers what other threads queued (KVO hops, sentinel deaths) as the run loop's wake does (tests).
     pub fn run_observe_hops(&self) {
         self.inner.observe_hops();
