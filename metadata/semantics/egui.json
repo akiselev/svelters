@@ -1,0 +1,1689 @@
+{
+  "backend": "egui",
+  "event_aliases": {},
+  "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
+  "kinds": {
+    "Box": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A flexbox container laid out by taffy; draws nothing itself.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "taffy::Style (flexbox)",
+      "present": null,
+      "props": {
+        "align-items": {
+          "construct_only": false,
+          "default": "stretch",
+          "doc": "Cross-axis alignment of the children.",
+          "js": "align-items",
+          "native": "align-items",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:align-items",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "start",
+            "end",
+            "center",
+            "stretch",
+            "baseline"
+          ],
+          "writable": true
+        },
+        "column-gap": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Space between columns in points; null to use `gap`.",
+          "js": "column-gap",
+          "native": "column-gap",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:column-gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "flex-direction": {
+          "construct_only": false,
+          "default": "column",
+          "doc": "Main axis of the box.",
+          "js": "flex-direction",
+          "native": "flex-direction",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:flex-direction",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "column",
+            "row",
+            "column-reverse",
+            "row-reverse"
+          ],
+          "writable": true
+        },
+        "flex-wrap": {
+          "construct_only": false,
+          "default": "nowrap",
+          "doc": "Whether children wrap onto more lines.",
+          "js": "flex-wrap",
+          "native": "flex-wrap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:flex-wrap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "nowrap",
+            "wrap",
+            "wrap-reverse"
+          ],
+          "writable": true
+        },
+        "gap": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Space between children on both axes, in points (row-gap and column-gap override it).",
+          "js": "gap",
+          "native": "gap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "justify-content": {
+          "construct_only": false,
+          "default": "start",
+          "doc": "Main-axis distribution of the children.",
+          "js": "justify-content",
+          "native": "justify-content",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:justify-content",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "start",
+            "end",
+            "center",
+            "space-between",
+            "space-around",
+            "space-evenly"
+          ],
+          "writable": true
+        },
+        "padding": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Inner spacing on all four sides, in points.",
+          "js": "padding",
+          "native": "padding",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:padding",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "row-gap": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Space between rows in points; null to use `gap`.",
+          "js": "row-gap",
+          "native": "row-gap",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:row-gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "Button": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Button",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A push button.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Button",
+      "present": null,
+      "props": {
+        "frame": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Draws the button background and border.",
+          "js": "frame",
+          "native": "frame",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:frame",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "selected": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Drawn as selected (a toggle look); clicking does not change it.",
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:selected",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "small": {
+          "construct_only": false,
+          "default": false,
+          "doc": "No vertical padding (`Button::small`).",
+          "js": "small",
+          "native": "small",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:small",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {
+        "clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Pressed and released (`Response::clicked`).",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "double-clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Double click (`Response::double_clicked`).",
+          "handler_result": "none",
+          "js_event": "double-clicked",
+          "name": "double-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "secondary-clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Right click (`Response::secondary_clicked`).",
+          "handler_result": "none",
+          "js_event": "secondary-clicked",
+          "name": "secondary-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "text"
+    },
+    "Checkbox": {
+      "abstract": false,
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-egui: the egui::Checkbox widget writes checked into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Checkbox",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A check box with a caption.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Checkbox",
+      "present": null,
+      "props": {
+        "checked": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Checked state; clicking toggles it.",
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Checkbox:checked",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Checkbox:text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user toggled it; carries the new state.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Pressed and released.",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "text"
+    },
+    "Label": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Label",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "Static text.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Label",
+      "present": null,
+      "props": {
+        "selectable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The text can be selected and copied.",
+          "js": "selectable",
+          "native": "selectable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:selectable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The text.",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "wrap-mode": {
+          "construct_only": false,
+          "default": "wrap",
+          "doc": "What a line longer than the width does (`egui::TextWrapMode`).",
+          "js": "wrap-mode",
+          "native": "wrap-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:wrap-mode",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "wrap",
+            "truncate",
+            "extend"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {
+        "clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Pressed and released (`Response::clicked`).",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "text"
+    },
+    "Slider": {
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the egui::Slider widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Slider",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A horizontal slider with an optional value box.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Slider",
+      "present": null,
+      "props": {
+        "max": {
+          "construct_only": false,
+          "default": 100.0,
+          "doc": "Upper bound.",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Lower bound.",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "show-value": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the value box next to the slider.",
+          "js": "show-value",
+          "native": "show-value",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:show-value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Value granularity; 0 for continuous.",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Caption after the slider.",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "The value; dragging or the arrow keys change it.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Slider:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user moved it; carries the new value.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-started": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "A drag on the slider began.",
+          "handler_result": "none",
+          "js_event": "drag-started",
+          "name": "drag-started",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-stopped": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "A drag on the slider ended.",
+          "handler_result": "none",
+          "js_event": "drag-stopped",
+          "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "TextEdit": {
+      "abstract": false,
+      "bindings": {
+        "text": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "text",
+          "provenance": "svelters-egui: the egui::TextEdit widget writes text into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "TextEdit",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A single- or multi-line text field.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "request-focus": {
+          "dispatch": "generated",
+          "doc": "Moves keyboard focus here on the next frame.",
+          "native": "request-focus",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::TextEdit",
+      "present": null,
+      "props": {
+        "char-limit": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "Maximum number of characters; 0 for none.",
+          "js": "char-limit",
+          "native": "char-limit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:char-limit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "hint-text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Shown while the text is empty; also the default accessible name.",
+          "js": "hint-text",
+          "native": "hint-text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:hint-text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "multiline": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Several lines (`TextEdit::multiline`); Enter inserts a newline.",
+          "js": "multiline",
+          "native": "multiline",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:multiline",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "password": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Hides the characters.",
+          "js": "password",
+          "native": "password",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:password",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The edited text; typing changes it.",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:TextEdit:text",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user edited the text; carries the new text (once per frame).",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "gained-focus": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Took keyboard focus.",
+          "handler_result": "none",
+          "js_event": "gained-focus",
+          "name": "gained-focus",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "lost-focus": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Lost keyboard focus.",
+          "handler_result": "none",
+          "js_event": "lost-focus",
+          "name": "lost-focus",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "Widget": {
+      "abstract": true,
+      "bindings": {},
+      "chain": [
+        "Widget"
+      ],
+      "children": null,
+      "doc": "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Widget",
+      "present": null,
+      "props": {
+        "accessible-name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "AccessKit name (`Response::accessible_name`); inputs default to their hint or text.",
+          "js": "accessible-name",
+          "native": "accessible-name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:accessible-name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "align-self": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "Cross-axis alignment in the parent box, overriding its `align-items`.",
+          "js": "align-self",
+          "native": "align-self",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:align-self",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "start",
+            "end",
+            "center",
+            "stretch",
+            "baseline"
+          ],
+          "writable": true
+        },
+        "enabled": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Takes input when true; drawn greyed out otherwise (`Ui::add_enabled`).",
+          "js": "enabled",
+          "native": "enabled",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:enabled",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "flex-basis": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Main-axis size before growing or shrinking; null for auto.",
+          "js": "flex-basis",
+          "native": "flex-basis",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:flex-basis",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "flex-grow": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Share of the parent's free main-axis space.",
+          "js": "flex-grow",
+          "native": "flex-grow",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:flex-grow",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "flex-shrink": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "Share of the parent's main-axis overflow to give up.",
+          "js": "flex-shrink",
+          "native": "flex-shrink",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:flex-shrink",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "height": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Height in points; null for auto.",
+          "js": "height",
+          "native": "height",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "margin": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Outer spacing on all four sides, in points.",
+          "js": "margin",
+          "native": "margin",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:margin",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "max-height": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Maximum height in points; null for none.",
+          "js": "max-height",
+          "native": "max-height",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:max-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "max-width": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Maximum width in points; null for none.",
+          "js": "max-width",
+          "native": "max-width",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:max-width",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min-height": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Minimum height in points; null for auto.",
+          "js": "min-height",
+          "native": "min-height",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:min-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min-width": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Minimum width in points; null for auto.",
+          "js": "min-width",
+          "native": "min-width",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:min-width",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "tooltip": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Hover text (`Response::on_hover_text`); empty for none.",
+          "js": "tooltip",
+          "native": "tooltip",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:tooltip",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "visible": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown and laid out when true (`display: none` otherwise).",
+          "js": "visible",
+          "native": "visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:visible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "width": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Width in points; null for auto.",
+          "js": "width",
+          "native": "width",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:width",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "Window": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Window"
+      ],
+      "children": {
+        "default_slot": "content",
+        "policy": "ordered",
+        "slots": {
+          "content": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A native window (the root viewport, or an immediate viewport); its children are laid out as a flex column.",
+      "interface": false,
+      "lifetime": "toplevel",
+      "methods": {
+        "close": {
+          "dispatch": "generated",
+          "doc": "Closes the window as the user would (no close-request).",
+          "native": "close",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "present": {
+          "dispatch": "generated",
+          "doc": "Shows the window (the first one presented is the root viewport).",
+          "native": "present",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::ViewportBuilder",
+      "present": "present",
+      "props": {
+        "default-height": {
+          "construct_only": false,
+          "default": 360.0,
+          "doc": "Initial inner height in points.",
+          "js": "default-height",
+          "native": "default-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Window:default-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "default-width": {
+          "construct_only": false,
+          "default": 480.0,
+          "doc": "Initial inner width in points.",
+          "js": "default-width",
+          "native": "default-width",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Window:default-width",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "gap": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Space between the window's children, in points.",
+          "js": "gap",
+          "native": "gap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Window:gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "padding": {
+          "construct_only": false,
+          "default": 8.0,
+          "doc": "Inner spacing of the content area, in points.",
+          "js": "padding",
+          "native": "padding",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Window:padding",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Window title (`ViewportCommand::Title`).",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Window:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds.rs"
+      },
+      "signals": {
+        "close-request": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user asked to close the window; return true to keep it open. Runs before the frame's pass.",
+          "handler_result": "bool_stop",
+          "js_event": "close-request",
+          "name": "close-request",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    }
+  },
+  "method_lookup": "annotated",
+  "schema": "svelters-semantics/v0",
+  "source": {
+    "generator": "crates/svelters-egui/src/spec.rs",
+    "kinds": "crates/svelters-egui/src/kinds.rs"
+  },
+  "style": {
+    "dialect": "none",
+    "properties": {
+      "align-items": {
+        "kinds": [
+          "Box"
+        ],
+        "native": "align-items",
+        "prop": "align-items",
+        "tags": [
+          "box"
+        ],
+        "type": "enum",
+        "values": [
+          "start",
+          "end",
+          "center",
+          "stretch",
+          "baseline"
+        ],
+        "via": "setter"
+      },
+      "align-self": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "align-self",
+        "prop": "align-self",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "enum",
+        "values": [
+          "auto",
+          "start",
+          "end",
+          "center",
+          "stretch",
+          "baseline"
+        ],
+        "via": "setter"
+      },
+      "column-gap": {
+        "kinds": [
+          "Box"
+        ],
+        "native": "column-gap",
+        "prop": "column-gap",
+        "tags": [
+          "box"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "flex-basis": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "flex-basis",
+        "prop": "flex-basis",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "flex-direction": {
+        "kinds": [
+          "Box"
+        ],
+        "native": "flex-direction",
+        "prop": "flex-direction",
+        "tags": [
+          "box"
+        ],
+        "type": "enum",
+        "values": [
+          "column",
+          "row",
+          "column-reverse",
+          "row-reverse"
+        ],
+        "via": "setter"
+      },
+      "flex-grow": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "flex-grow",
+        "prop": "flex-grow",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "number",
+        "via": "setter"
+      },
+      "flex-shrink": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "flex-shrink",
+        "prop": "flex-shrink",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "number",
+        "via": "setter"
+      },
+      "flex-wrap": {
+        "kinds": [
+          "Box"
+        ],
+        "native": "flex-wrap",
+        "prop": "flex-wrap",
+        "tags": [
+          "box"
+        ],
+        "type": "enum",
+        "values": [
+          "nowrap",
+          "wrap",
+          "wrap-reverse"
+        ],
+        "via": "setter"
+      },
+      "gap": {
+        "kinds": [
+          "Window",
+          "Box"
+        ],
+        "native": "gap",
+        "prop": "gap",
+        "tags": [
+          "box",
+          "window"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "height": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "height",
+        "prop": "height",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "justify-content": {
+        "kinds": [
+          "Box"
+        ],
+        "native": "justify-content",
+        "prop": "justify-content",
+        "tags": [
+          "box"
+        ],
+        "type": "enum",
+        "values": [
+          "start",
+          "end",
+          "center",
+          "space-between",
+          "space-around",
+          "space-evenly"
+        ],
+        "via": "setter"
+      },
+      "margin": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "margin",
+        "prop": "margin",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "max-height": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "max-height",
+        "prop": "max-height",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "max-width": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "max-width",
+        "prop": "max-width",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "min-height": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "min-height",
+        "prop": "min-height",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "min-width": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "min-width",
+        "prop": "min-width",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "padding": {
+        "kinds": [
+          "Window",
+          "Box"
+        ],
+        "native": "padding",
+        "prop": "padding",
+        "tags": [
+          "box",
+          "window"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "row-gap": {
+        "kinds": [
+          "Box"
+        ],
+        "native": "row-gap",
+        "prop": "row-gap",
+        "tags": [
+          "box"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "visible": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "visible",
+        "prop": "visible",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "bool",
+        "via": "setter"
+      },
+      "width": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "width",
+        "prop": "width",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      }
+    },
+    "setter_selectors": [
+      "type",
+      "class",
+      "id"
+    ],
+    "units": {
+      "px": {
+        "provenance": "egui points: 1px in a style sheet is one point",
+        "scale": 1.0
+      }
+    }
+  },
+  "tags": {
+    "box": "Box",
+    "button": "Button",
+    "checkbox": "Checkbox",
+    "label": "Label",
+    "slider": "Slider",
+    "text-edit": "TextEdit",
+    "window": "Window"
+  }
+}
