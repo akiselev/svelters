@@ -1231,6 +1231,7 @@ dependencies = [
  "svelters-backend-log",
  "svelters-host",
  "svelters-macros",
+ "tokio",
 ]
 
 [[package]]
