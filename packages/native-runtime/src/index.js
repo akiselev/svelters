@@ -1226,7 +1226,15 @@ function indexed(r, owner, old, arr, item) {
 }
 
 function keyed(r, owner, old, arr, key, item) {
-  const keys = arr.map((v, i) => key(v, i));
+  const keys = arr.map((v, i) => {
+    const k = key(v, i);
+    if (DEV) {
+      // Svelte's each block: the key function must be idempotent
+      const again = key(v, i);
+      if (k !== again) svelteError('each_key_volatile', `Keyed each block has key that is not idempotent — the key for item at index ${i} was \`${String(k)}\` but is now \`${String(again)}\`. Keys must be the same each time for a given item`);
+    }
+    return k;
+  });
   if (new Set(keys).size !== keys.length) throw new Error('each_block: duplicate keys');
   const byKey = new Map(old.map((b) => [b.key, b]));
   const oldIndex = new Map(old.map((b, i) => [b, i]));
