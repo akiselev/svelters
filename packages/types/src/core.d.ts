@@ -25,10 +25,10 @@ export class NativeObject {
   /**
    * A snapshot of a property: the getter's value without subscribing the running effect to its changes
    * (getters of observable properties are reactive inside effects). A native spelling such as
-   * `'cursor-position'` works too.
+   * `'cursor-position'` works too. Classes with a native `peek` method of their own (Qt `QIODevice`,
+   * `Gio.UnixFDList`) shadow it: use Svelte's `untrack(() => obj.prop)` there.
    */
-  peek<K extends keyof this & string>(prop: K): this[K];
-  peek(prop: string): unknown;
+  peek(prop: any, ...rest: any[]): any;
   /** Releases our reference now. The native object lives on while anything else holds it. */
   dispose(): void;
   [Symbol.dispose](): void;
@@ -65,6 +65,8 @@ export interface Tracker {
   local(h: number, prop: string): void;
   /** Re-runs the readers of (handle, prop) now. */
   invalidate(h: number, prop: string): void;
+  /** Subscribes the running effect to a native signal of `obj`, as the accessor `prop`. */
+  signal?(obj: NativeObject, prop: string, signal: string): void;
   /** Runs `fn` without subscribing. */
   untrack<T>(fn: () => T): T;
 }
@@ -75,6 +77,8 @@ export function installTracker(t: Tracker | null): void;
 export function observed(self: NativeObject, name: string): any;
 /** A reactive read of a `set_only` property: re-runs on our own writes only. */
 export function observedLocal(self: NativeObject, name: string): any;
+/** A reactive accessor backed by a change signal and a read function. */
+export function observedSignal<T>(self: NativeObject, prop: string, signal: string, read: () => T): T;
 /** Re-runs the readers of (object, prop) now. */
 export function invalidate(self: NativeObject, name: string): void;
 /** `fn()` without reactive subscriptions. */

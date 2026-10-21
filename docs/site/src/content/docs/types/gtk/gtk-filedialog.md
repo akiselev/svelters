@@ -31,14 +31,16 @@ Construct-time properties (construct-only ones can only be given here): `acceptL
 
 ## Properties
 
-- `acceptLabel` (str)
-- `defaultFilter` (object)
-- `filters` (object)
-- `initialFile` (object)
-- `initialFolder` (object)
-- `initialName` (str)
-- `modal` (bool)
-- `title` (str)
+Getters marked *reactive* re-run the effects (and template expressions) that read them when the property changes natively; GTK announces the change (`notify`) and the host delivers it once per main-loop turn. *Reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. See [Reactivity](../../../concepts/reactivity/).
+
+- `acceptLabel` (str, reactive)
+- `defaultFilter` (object, reactive)
+- `filters` (object, reactive)
+- `initialFile` (object, reactive)
+- `initialFolder` (object, reactive)
+- `initialName` (str, reactive)
+- `modal` (bool, reactive)
+- `title` (str, reactive)
 
 ## Methods
 

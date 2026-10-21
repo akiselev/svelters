@@ -751,6 +751,8 @@ impl Core {
 }
 
 /// Runs one checkpoint (see "Checkpoint semantics" in `backend-abi.md`):
+/// 0. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
+///    (ABI v2.6), with no drain before the first event;
 /// 1. deliver queued events to JS, draining jobs after each;
 /// 2. fire due timers, draining jobs after each;
 /// 3. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;

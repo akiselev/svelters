@@ -152,6 +152,16 @@ export function observedLocal(self, name) {
   return host().getProp(h, name);
 }
 
+/**
+ * A reactive accessor with no native property behind it (Qt `QTextDocument.plainText` is `toPlainText()`):
+ * inside an effect it re-runs when the object emits `signal` (or after `invalidate(self, prop)`), then
+ * returns `read()`.
+ */
+export function observedSignal(self, prop, signal, read) {
+  tracker()?.signal?.(self, prop, signal);
+  return read();
+}
+
 /** Re-runs the readers of (object, prop) now: what every setter does after writing. */
 export function invalidate(self, name) {
   const n = self?.[NODE];

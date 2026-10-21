@@ -1316,6 +1316,7 @@ declare module 'svelters:gtk/gtk' {
     name: string | null;
     propagationLimit: string | null;
     propagationPhase: string | null;
+    /** @remarks Not observable on GTK: native changes are not announced, so this getter is a snapshot (not reactive). */
     readonly widget: NativeElement | null;
   }
 
@@ -4349,6 +4350,7 @@ declare module 'svelters:gtk/gtk' {
     enableUndo: boolean | null;
     readonly hasSelection: boolean | null;
     readonly tagTable: TextTagTable | null;
+    /** @remarks Reactive, but each read copies the whole value (its cost grows with its size): prefer a length-like property in effects that run often. */
     text: string | null;
     on(signal: string, fn: (...args: any[]) => void): () => void;
     on(signal: 'begin-user-action', fn: () => void): () => void;
@@ -4511,7 +4513,9 @@ declare module 'svelters:gtk/gtk' {
     fallback: boolean | null;
     fallbackSet: boolean | null;
     family: string | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     familySet: boolean | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     font: string | null;
     fontFeatures: string | null;
     fontFeaturesSet: boolean | null;
@@ -4556,14 +4560,18 @@ declare module 'svelters:gtk/gtk' {
     showSpaces: string | string[] | number | null;
     showSpacesSet: boolean | null;
     size: number | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     sizePoints: number | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     sizeSet: boolean | null;
     stretch: string | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     stretchSet: boolean | null;
     strikethrough: boolean | null;
     strikethroughRgbaSet: boolean | null;
     strikethroughSet: boolean | null;
     style: string | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     styleSet: boolean | null;
     tabsSet: boolean | null;
     textTransform: string | null;
@@ -4572,8 +4580,10 @@ declare module 'svelters:gtk/gtk' {
     underlineRgbaSet: boolean | null;
     underlineSet: boolean | null;
     variant: string | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     variantSet: boolean | null;
     weight: number | null;
+    /** @remarks Partly observable on GTK: changes caused by cross_prop are not announced, so effects reading it may miss them. */
     weightSet: boolean | null;
     word: boolean | null;
     wordSet: boolean | null;

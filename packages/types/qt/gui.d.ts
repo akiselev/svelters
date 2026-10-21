@@ -101,11 +101,13 @@ declare module 'svelters:qt/gui' {
     font: QFont;
     icon: QIcon;
     iconText: string;
+    /** @remarks Partly observable on Qt: changes caused by programmatic are not announced, so effects reading it may miss them. */
     iconVisibleInMenu: boolean;
     menuRole: 'about-qt-role' | 'about-role' | 'application-specific-role' | 'no-role' | 'preferences-role' | 'quit-role' | 'text-heuristic-role';
     priority: 'high-priority' | 'low-priority' | 'normal-priority';
     shortcut: QKeySequence;
     shortcutContext: 'application-shortcut' | 'widget-shortcut' | 'widget-with-children-shortcut' | 'window-shortcut';
+    /** @remarks Partly observable on Qt: changes caused by programmatic are not announced, so effects reading it may miss them. */
     shortcutVisibleInContextMenu: boolean;
     statusTip: string;
     text: string;
@@ -1391,9 +1393,13 @@ declare module 'svelters:qt/gui' {
     layoutEnabled: boolean;
     maximumBlockCount: number;
     modified: boolean;
+    /** @remarks Not observable on Qt: native changes are not announced, so this getter is a snapshot (not reactive). */
     pageSize: Size;
+    plainText: string;
+    /** @remarks Not observable on Qt: native changes are not announced, so this getter is a snapshot (not reactive). */
     readonly size: Size;
     textWidth: number;
+    /** @remarks Not observable on Qt: native changes are not announced, so this getter is a snapshot (not reactive). */
     undoRedoEnabled: boolean;
     useDesignMetrics: boolean;
     on(signal: string, fn: (...args: any[]) => void): () => void;

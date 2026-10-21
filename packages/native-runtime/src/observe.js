@@ -55,7 +55,7 @@ function entry(h, prop, create) {
   const e = props?.get(key);
   if (e || !create) return e;
   if (!props) t.set(h, (props = new Map()));
-  const n = { h, prop, updates: new Set(), fns: new Set(), nativeSub: null, localSub: null };
+  const n = { h, prop, updates: new Set(), fns: new Set(), nativeSub: null, localSub: null, signalSub: null };
   props.set(key, n);
   return n;
 }
@@ -109,6 +109,33 @@ export function trackProp(h, prop) {
 export function trackLocal(h, prop) {
   const e = entry(h, prop, true);
   (e.localSub ??= makeSub(e, false))();
+  forget(e);
+}
+
+/**
+ * Subscribes the running effect to the native `signal` of `obj` as the accessor `prop` (a property with
+ * no native notification of its own, such as Qt `QTextDocument.plainText` after `contentsChanged`). The
+ * listener holds the wrapper only while an effect is subscribed (`NativeObject.on`).
+ */
+export function trackSignal(obj, prop, signal) {
+  const h = obj?.svlHandle;
+  if (typeof h !== 'number') return;
+  const e = entry(h, prop, true);
+  (e.signalSub ??= subscriber((update) => {
+    e.updates.add(update);
+    let off = null;
+    try {
+      off = obj.on(signal, () => update());
+    } catch {
+      // a dead object: nothing to listen to
+    }
+    return () => {
+      off?.();
+      e.updates.delete(update);
+      e.signalSub = null;
+      forget(e);
+    };
+  }))();
   forget(e);
 }
 
@@ -169,4 +196,4 @@ export function trackedCount(hs = host()) {
 }
 
 globalThis.__svelters_changed = changed;
-installTracker({ track: trackProp, local: trackLocal, invalidate: invalidateProp, untrack });
+installTracker({ track: trackProp, local: trackLocal, signal: trackSignal, invalidate: invalidateProp, untrack });
