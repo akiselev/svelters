@@ -84,6 +84,8 @@ pub enum OpOutcome {
     Reject(NativeError),
     /// Call its `options.onProgress` with the value (the Promise stays pending).
     Progress(Value, &'static SlotDesc),
+    /// E3: hand items to the call's stream iterator (each converted as the slot says).
+    Items(Vec<Value>, &'static SlotDesc),
 }
 
 /// Counters of the zero-copy buffer paths (E2; see [`crate::Host::buffer_stats`]).

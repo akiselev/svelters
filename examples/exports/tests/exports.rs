@@ -56,9 +56,10 @@ fn gtk_app_calls_rust_exports() {
         host.take_errors()
     );
     assert!(label_texts(&backend).iter().any(|t| t == "count 5 (step one)"), "{:?}", label_texts(&backend));
-    // The tally stays (the handlers hold it); the notebook and its note were only used during mount, so
-    // QuickJS may already have collected them and released the Rust objects.
-    assert!((1..=3).contains(&host.live_app_objects()), "{}", host.live_app_objects());
+    // The tally stays (the handlers hold it), and so do the telemetry objects (two stores, the burst
+    // emitter); the notebook and its first note were only used during mount, so QuickJS may already have
+    // collected their wrappers and released the handles (`persist` keeps the notebook's Rust object, E3).
+    assert!((4..=6).contains(&host.live_app_objects()), "{}", host.live_app_objects());
 
     // A click runs Svelte, which calls `Tally::bump` (`&mut self`) and reads the record back.
     find_button(&backend, "Bump").unwrap().emit_clicked();
@@ -148,6 +149,116 @@ fn worker_job_keeps_the_ui_responsive() {
     assert!(errors.is_empty(), "{errors:#?}");
 }
 
+fn find_scale(backend: &GtkBackend) -> Option<gtk::Scale> {
+    (1..4096u64).filter_map(|h| backend.object(h)).find_map(|o| o.downcast::<gtk::Scale>().ok())
+}
+
+fn has_label(backend: &GtkBackend, text: &str) -> bool {
+    label_texts(backend).iter().any(|t| t == text)
+}
+
+fn number_after(backend: &GtkBackend, prefix: &str) -> Option<u64> {
+    label_texts(backend).iter().find_map(|t| t.strip_prefix(prefix).and_then(|n| n.trim().parse().ok()))
+}
+
+/// E3 acceptance on GTK: the `telemetry` service (started with the host) feeds a Rust store that Svelte
+/// reads like `$state`; `<scale bind:value={telemetry.speed}>` binds a writable store field (lowered to
+/// `bind_prop`: `Gtk.Range:value` is `exact`): a Rust write moves the scale, and a user drag past the
+/// range `on_write` allows is clamped, delivered once, with no echo loop.
+#[test]
+fn telemetry_store_drives_a_bound_scale() {
+    exports_demo::link();
+    let Some(bundle) = bundle() else { return };
+    let backend = GtkBackend::new().expect("backend");
+    let br = unsafe { BackendRef::from_raw(backend.as_raw()) }.unwrap();
+    let host = Host::new(br, HostConfig { echo_console: false, ..HostConfig::default() }).unwrap();
+    unsafe { backend.attach_host(host.host_callbacks()) };
+    host.load_bundle(&bundle).unwrap();
+    settle(&host, |_| has_label(&backend, "samples flowing") && has_label(&backend, "speed 1.0") && find_scale(&backend).is_some());
+    assert!(has_label(&backend, "samples flowing"), "the service feeds the store: {:?}", label_texts(&backend));
+    let scale = find_scale(&backend).expect("the scale");
+    assert_eq!(scale.value(), 1.0, "the scale shows the store's speed");
+
+    // Rust writes the field: the store change reaches the bound scale.
+    find_button(&backend, "Speed 4 from Rust").unwrap().emit_clicked();
+    settle(&host, |_| scale.value() == 4.0 && has_label(&backend, "speed 4.0"));
+    assert_eq!(scale.value(), 4.0, "{:?}", label_texts(&backend));
+    assert!(has_label(&backend, "speed 4.0"));
+
+    // The user drags to 15: JS writes `telemetry.speed = 15`, `on_write` clamps it to 10, the clamped
+    // value is delivered once and the scale follows; the echoes (the store's own dirty bit, the scale's
+    // notify of our set) are dropped.
+    let runs0 = number_after(&backend, "speed runs ").unwrap();
+    scale.set_value(15.0);
+    settle(&host, |_| scale.value() == 10.0 && has_label(&backend, "speed 10.0"));
+    assert_eq!(scale.value(), 10.0, "{:?}", label_texts(&backend));
+    assert_eq!(exports_demo::TELEMETRY.get(|t| t.speed), 10.0);
+    for _ in 0..30 {
+        pump(5);
+        host.checkpoint();
+    }
+    let runs = number_after(&backend, "speed runs ").unwrap() - runs0;
+    // One run for JS's own write (a local invalidation), one for the clamped value: no echo loop.
+    assert!((1..=2).contains(&runs), "speed effect ran {runs} times after the drag");
+    assert_eq!(scale.value(), 10.0);
+
+    // The proportional log field is an invalidation; the label re-reads it.
+    settle(&host, |_| label_texts(&backend).iter().any(|t| t.contains("samples, speed")));
+    assert!(label_texts(&backend).iter().any(|t| t.contains("samples, speed")), "{:?}", label_texts(&backend));
+    let errors = host.take_errors();
+    assert!(errors.is_empty(), "{errors:#?}");
+}
+
+/// E3 measurement on GTK: N worker writes to a store reach Svelte as one change batch per checkpoint
+/// (a handful of effect runs), against N events delivered one by one (N effect runs). N is
+/// `SVELTERS_BURST` (default 2000); the milestone numbers use 10000 in a release build:
+/// `SVELTERS_BURST=10000 cargo test --release -p exports-example --test exports -- --nocapture burst`.
+#[test]
+fn store_burst_is_batched_event_burst_is_not() {
+    exports_demo::link();
+    let Some(bundle) = bundle() else { return };
+    let n = exports_demo::burst_size() as u64;
+    let backend = GtkBackend::new().expect("backend");
+    let br = unsafe { BackendRef::from_raw(backend.as_raw()) }.unwrap();
+    let host = Host::new(br, HostConfig { echo_console: false, ..HostConfig::default() }).unwrap();
+    unsafe { backend.attach_host(host.host_callbacks()) };
+    host.load_bundle(&bundle).unwrap();
+    settle(&host, |_| find_button(&backend, "Burst store").is_some());
+
+    let effect_runs = |prefix: &str| -> Option<(u64, f64)> {
+        let t = label_texts(&backend).into_iter().find(|t| t.starts_with(prefix))?;
+        let runs = t.split(", ").nth(1)?.split(' ').next()?.parse().ok()?;
+        let ms = t.rsplit(", ").next()?.trim_end_matches(" ms").parse().ok()?;
+        Some((runs, ms))
+    };
+
+    let (s0, c0) = (host.reactive_stats(), host.checkpoint_count());
+    find_button(&backend, "Burst store").unwrap().emit_clicked();
+    settle(&host, |_| effect_runs("store burst:").is_some());
+    let (store_runs, store_ms) = effect_runs("store burst:").expect("store burst result");
+    let (s1, c1) = (host.reactive_stats(), host.checkpoint_count());
+
+    find_button(&backend, "Burst events").unwrap().emit_clicked();
+    settle(&host, |_| effect_runs("event burst:").is_some());
+    let (event_runs, event_ms) = effect_runs("event burst:").expect("event burst result");
+    let s2 = host.reactive_stats();
+
+    let batches = s1.store_batches - s0.store_batches;
+    println!(
+        "store burst: {n} worker writes -> {batches} change batch(es) over {} checkpoints, {} store fields delivered, {store_runs} effect run(s), {store_ms:.1} ms",
+        c1 - c0,
+        s1.store_delivered - s0.store_delivered
+    );
+    println!("event burst: {n} events -> {} delivered, {event_runs} effect run(s), {event_ms:.1} ms", s2.events - s1.events);
+    // Writes coalesce: far fewer deliveries than writes (one per checkpoint at most).
+    assert!(store_runs <= batches.max(1) + 1 && store_runs < n / 10, "{store_runs} effect runs for {n} writes");
+    // Events do not: every one is delivered and handled.
+    assert_eq!(s2.events - s1.events, n);
+    assert!(event_runs > store_runs * 10, "{event_runs} vs {store_runs}");
+    let errors = host.take_errors();
+    assert!(errors.is_empty(), "{errors:#?}");
+}
+
 /// E2: the app's DSP panel moves 1 Mi samples Rust -> JS -> worker -> JS without a copy (the worker sees
 /// the allocation `noise` made; the input array is detached), and reads a `Shared` view in place.
 #[test]
@@ -181,7 +292,7 @@ fn committed_typings_are_current() {
     let _ = std::fs::remove_dir_all(&tmp);
     svelters::exports::dump(&tmp).unwrap();
     let committed = exports_demo::exports_dir();
-    for name in ["exports.json", "app.d.ts", "demo.js", "dsp.js"] {
+    for name in ["exports.json", "app.d.ts", "demo.js", "dsp.js", "telemetry.js"] {
         let want = std::fs::read_to_string(tmp.join(name)).unwrap();
         let have = std::fs::read_to_string(committed.join(name)).unwrap_or_default();
         assert!(
