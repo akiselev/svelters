@@ -648,7 +648,11 @@ impl Harness {
 
     /// Whether `h`'s kind has property `prop` in the running library.
     pub fn has_prop(&self, h: u64, prop: &str) -> bool {
-        self.resolve(SVL_PROP, self.kind_of(h), prop) != 0
+        if self.resolve(SVL_PROP, self.kind_of(h), prop) == 0 {
+            return false;
+        }
+        // The tables come from a newer GTK than may be running (`watch-items` is 4.20): ask the class.
+        self.backend.object(h).map(|o| o.find_property(prop).is_some()).unwrap_or(true)
     }
     /// Whether `h`'s kind has signal `signal` in the running library.
     pub fn has_signal(&self, h: u64, signal: &str) -> bool {
