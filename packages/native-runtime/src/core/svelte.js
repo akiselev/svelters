@@ -11,6 +11,8 @@ import * as $ from 'svelte/internal/client';
 import { block as svelteBlock, branch as svelteBranch, component_root, destroy_effect } from 'svelte/internal/client/reactivity/effects';
 import { queue_micro_task } from 'svelte/internal/client/dom/task';
 import { getAllContexts, setContext } from 'svelte/internal/client/context';
+import { capture, unset_context } from 'svelte/internal/client/reactivity/async';
+import * as batches from 'svelte/internal/client/reactivity/batch';
 
 // ---- the compiler-facing contract (docs/notes/native-compiler/runtime-contract.md "Core API") ----
 
@@ -86,6 +88,15 @@ export const active = () => $.active_effect;
 export const destroyed = (effect) => effect !== null && (effect.f & (DESTROYED | DESTROYING)) !== 0;
 /** Runs `fn` in Svelte's microtask queue (drained by flushSync / `flush`). */
 export const queue_task = queue_micro_task;
+/**
+ * Svelte's `capture()`: the running effect, reaction, component context and batch. The returned
+ * `restore(false)` makes them current again (from a promise callback, so a branch created there
+ * belongs to the captured effect) without activating the batch; `release()` clears them after.
+ */
+export const capture_context = capture;
+export const release_context = () => unset_context(false);
+/** Whether a `flushSync` is running (Svelte's `is_flushing_sync`). */
+export const flushing_sync = () => batches.is_flushing_sync;
 /**
  * Svelte's `createSubscriber` (`svelte/reactivity`, 5.57.2), on the client internals: Node resolves
  * the public `svelte/reactivity` to its server build (a no-op) without the `browser` condition. When

@@ -18,7 +18,10 @@ import {
   destroy,
   destroyed as effectDestroyed,
   flush,
+  flushing_sync,
   queue_task,
+  capture_context,
+  release_context,
   reorder,
   root as componentRoot,
   root_boundary,
@@ -1071,71 +1074,68 @@ const is_promise = (v) => v != null && typeof v.then === 'function';
 
 /**
  * `{#await}` with Svelte 5's resolution order (svelte/src/internal/client/dom/blocks/await.js):
- * a non-promise shows `then` immediately; a promise shows nothing synchronously, `pending` from a
- * microtask unless it has settled by then (an already-resolved promise never shows `pending`),
- * then `then`/`catch` when it settles, unless a newer input (or teardown) superseded it. Settling
- * into the branch already shown only updates its value source. A rejection without `catch` is
- * rethrown (an unhandled rejection, as in Svelte). The branch switch happens in a second block
- * effect that reads the status, so new branches are always built inside the effect tree.
+ * a non-promise shows `then` immediately; a promise shows nothing synchronously, `pending` from
+ * Svelte's microtask queue unless it has settled by then (an already-resolved promise never shows
+ * `pending`; a `flushSync` before the microtask runs the queue, so `pending` shows at once), then
+ * `then`/`catch` when it settles, unless a newer input (or teardown) superseded it. Settling into
+ * the branch already shown only updates its value source. A rejection without `catch` is rethrown
+ * (an unhandled rejection, as in Svelte). As in Svelte, the callbacks build their branch directly,
+ * under the block effect (`capture_context`), and then flush: a branch shown by the `pending` task
+ * renders even when the same flush tears the block down (`{#if p}{#await p}` with `p` cleared).
  */
 export function await_block(container, getInput, pending, then, catch_) {
   const r = newRegion(container);
   const owner = scope;
   const value = $.state(undefined);
   const error = $.state(undefined);
-  const status = $.state(-1);
-  let token = 0;
+  let shown = -1;
+  let current = null;
+  const show = (s) => {
+    if (s === shown) return;
+    shown = s;
+    const fn = s === PENDING ? pending : s === THEN ? then : catch_;
+    current = swap(r, owner, current, fn, s === THEN ? value : error);
+  };
   block(() => {
     const input = getInput();
-    const t = ++token;
+    let destroyed = false;
     if (is_promise(input)) {
-      let settled = false;
-      const settle = (fn) => {
-        if (t !== token) return;
-        settled = true;
+      const restore = capture_context();
+      let resolved = false;
+      const resolve = (fn) => {
+        if (destroyed) return;
+        resolved = true;
+        restore(false);
         try {
           fn();
         } finally {
-          flush();
+          release_context();
+          if (!flushing_sync()) flush();
         }
       };
       input.then(
         (v) =>
-          settle(() => {
-            $.set(value, v);
-            $.set(status, THEN);
+          resolve(() => {
+            $.untrack(() => $.set(value, v));
+            show(THEN);
           }),
         (e) =>
-          settle(() => {
-            $.set(error, e);
-            $.set(status, CATCH);
+          resolve(() => {
+            $.untrack(() => $.set(error, e));
+            show(CATCH);
             if (!catch_) throw e;
           }),
       );
-      Promise.resolve().then(() => {
-        if (!settled && t === token) {
-          $.set(status, PENDING);
-          flush();
-        }
+      queue_task(() => {
+        if (!resolved) resolve(() => show(PENDING));
       });
     } else {
-      $.untrack(() => {
-        $.set(value, input);
-        $.set(status, THEN);
-      });
+      $.untrack(() => $.set(value, input));
+      show(THEN);
     }
     return () => {
-      token++;
+      destroyed = true;
     };
-  });
-  let shown = -1;
-  let current = null;
-  block(() => {
-    const s = $.get(status);
-    if (s === shown) return;
-    shown = s;
-    const fn = s === PENDING ? pending : s === THEN ? then : s === CATCH ? catch_ : null;
-    current = swap(r, owner, current, fn, s === THEN ? value : error);
   });
 }
 

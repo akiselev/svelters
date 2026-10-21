@@ -1,7 +1,7 @@
 import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 
-export default function input($$anchor, $$props) {
+export default function Input($$anchor, $$props) {
 	$.push($$props, true);
 	let tmp = { a: 1, b: 2, c: 3 }, a = $.state($.proxy(tmp.a)), renamed = $.proxy($.fallback(tmp.b, 5)), others = $.proxy($.exclude_from_object(tmp, ["a", "b"]));
 	let tmp_1 = [1, 2], $$array = $.derived(() => $.to_array(tmp_1)), x = $.state($.proxy($.get($$array)[0])), y = $.state($.proxy($.fallback($.get($$array)[2], 10))), tail = $.proxy($.get($$array).slice(3));

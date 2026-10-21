@@ -2,7 +2,7 @@ import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 var rest_excludes = new Set(["$$slots", "$$events", "$$legacy", "a", "b", "c", "d", "e", "f", "g-h"]);
 
-export default function input($$anchor, $$props) {
+export default function Input($$anchor, $$props) {
 	$.push($$props, true);
 	const uid = $.props_id();
 	let b = $.prop($$props, "b", 7, 1), c = $.prop($$props, "c", 19, compute), d = $.prop($$props, "d", 19, () => [1]), e = $.prop($$props, "e", 31, () => $.proxy({})), rest = $.rest_props($$props, rest_excludes);

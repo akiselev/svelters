@@ -43,7 +43,13 @@ const hidden = {
   'reactivity/effects.js': ['block', 'branch', 'component_root', 'destroy_effect'],
   'dom/task.js': ['queue_micro_task'],
   'context.js': ['getAllContexts', 'setContext'],
+  'reactivity/async.js': ['capture', 'unset_context'],
 };
+// a live `let` binding, not a function
+{
+  const batch = await import(pathToFileURL(path.join(client, 'reactivity/batch.js')).href);
+  check(typeof batch.is_flushing_sync === 'boolean', 'reactivity/batch.js no longer exports the boolean `is_flushing_sync`');
+}
 for (const [file, names] of Object.entries(hidden)) {
   let m = null;
   try {

@@ -134,9 +134,6 @@ None change behaviour (90,940 / 90,940 verdicts agree with acorn 8.19.0, message
 
 Semantics are specified in `runtime-contract.md` "Template blocks"; departures from Svelte 5:
 
-- **`{#await}` pending in a microtask**: Svelte batches it through `queue_micro_task`; the runtime
-  uses one promise job per input. Same order relative to the promise's own reactions (registered
-  first), so an already-settled promise never shows `pending` in both.
 - **Snippet params, `{@const}`, `{:then}`/`{:catch}`**: plain identifiers only (Svelte supports
   destructuring and parameter defaults via `$.derived`/`$.fallback`): `unsupported_feature`.
 - **Top-level snippets** follow Svelte: before the instance script, or at module level when

@@ -25,6 +25,13 @@ pub trait Rewriter {
     fn expr(&self, e: &Expression, mode: Mode, edits: &mut Edits);
     /// Whether evaluating `e` can read reactive state (decides `$.template_effect`).
     fn is_reactive(&self, e: &Expression) -> bool;
+    /// Svelte's `ExpressionMetadata.has_call`: `e` calls something that is not a pure global (or
+    /// calls anything while it references bindings), outside nested functions. Such template
+    /// expressions are memoized in a derived (`Memoizer`), so they run once per change of what they
+    /// read, not whenever a sibling expression of the same effect changes.
+    fn has_call(&self, _e: &Expression) -> bool {
+        false
+    }
     /// JS that assigns the JS expression text `value` to the lvalue `target` (bind: setters).
     fn assign(&self, target: &Expression, value: &str) -> String;
     /// Emits the instance script: (hoisted import text, component-body text), both mapped.
@@ -53,12 +60,15 @@ pub struct Codegen<'a, 's> {
     tmp: usize,
     /// The next `fragment` is the component root, whose snippets `generate` already emitted.
     root_fragment: bool,
+    /// Expressions memoized as `$.template_effect` dependencies while one effect is written
+    /// (address -> the effect parameter that holds its value).
+    memo: Vec<(usize, String)>,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports) -> (String, String) {
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, _p: std::marker::PhantomData };
+    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), _p: std::marker::PhantomData };
     g.w.write(&format!("import * as $ from '{}';\nimport * as $n from '{}';\n", imports.core, imports.native));
     rw.script(&mut g.w, true);
     let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
@@ -295,17 +305,7 @@ impl Codegen<'_, '_> {
             }
             Op::SetDynamic { prop, value, span } => {
                 self.w.map(span.start);
-                let reactive = self.dynamic_reactive(value);
-                if reactive {
-                    self.w.write("$.template_effect(() => ");
-                }
-                self.w.write(&format!("$n.set({n}, {}, ", js_str(prop)));
-                self.dynamic(value);
-                self.w.write(")");
-                if reactive {
-                    self.w.write(")");
-                }
-                self.w.write(";");
+                self.dynamic_call(&format!("$n.set({n}, {}, ", js_str(prop)), value);
             }
             Op::Listen { signal, handler, flags, span, .. } => {
                 self.w.map(span.start);
@@ -366,19 +366,7 @@ impl Codegen<'_, '_> {
                         self.json(v);
                         self.w.write(");");
                     }
-                    AttrValue::Dynamic(d) => {
-                        let reactive = self.dynamic_reactive(d);
-                        if reactive {
-                            self.w.write("$.template_effect(() => ");
-                        }
-                        self.w.write(&format!("$n.attr({n}, \"id\", "));
-                        self.dynamic(d);
-                        self.w.write(")");
-                        if reactive {
-                            self.w.write(")");
-                        }
-                        self.w.write(";");
-                    }
+                    AttrValue::Dynamic(d) => self.dynamic_call(&format!("$n.attr({n}, \"id\", "), d),
                 }
             }
             Op::InlineStyle { base, dynamic, directives, span } => {
@@ -434,19 +422,7 @@ impl Codegen<'_, '_> {
                         self.json(v);
                         self.w.write(");");
                     }
-                    AttrValue::Dynamic(d) => {
-                        let reactive = self.dynamic_reactive(d);
-                        if reactive {
-                            self.w.write("$.template_effect(() => ");
-                        }
-                        self.w.write(&format!("$n.child_attr({n}, {}, ", js_str(name)));
-                        self.dynamic(d);
-                        self.w.write(")");
-                        if reactive {
-                            self.w.write(")");
-                        }
-                        self.w.write(";");
-                    }
+                    AttrValue::Dynamic(d) => self.dynamic_call(&format!("$n.child_attr({n}, {}, ", js_str(name)), d),
                 }
             }
             Op::Bind { prop, signal, arg, target, span } => {
@@ -617,8 +593,56 @@ impl Codegen<'_, '_> {
         }
     }
 
+    /// `call_head` + the value + `)`: a one-off write, or a render effect when the value is
+    /// reactive. Call expressions of the value (`has_call`) are the effect's memoized dependencies
+    /// (Svelte's `Memoizer`): `$.template_effect(($0) => .., [() => f(x)])` runs `f(x)` in a
+    /// derived of its own, so it is not called again when only another part changes.
+    fn dynamic_call(&mut self, call_head: &str, d: &Dynamic) {
+        let reactive = self.dynamic_reactive(d);
+        let mut memo: Vec<&Expression> = Vec::new();
+        if reactive {
+            match d {
+                Dynamic::Expr(e) if self.rw.has_call(e) => memo.push(e),
+                Dynamic::Template(parts) => memo.extend(parts.iter().filter_map(|p| match p {
+                    TemplatePart::Expr(e) if self.rw.has_call(e) => Some(*e),
+                    _ => None,
+                })),
+                _ => {}
+            }
+            let params: Vec<String> = (0..memo.len()).map(|i| format!("${i}")).collect();
+            self.w.write(&format!("$.template_effect(({}) => ", params.join(", ")));
+        }
+        self.memo = memo.iter().enumerate().map(|(i, e)| (*e as *const Expression as usize, format!("${i}"))).collect();
+        self.w.write(call_head);
+        self.dynamic(d);
+        self.memo.clear();
+        self.w.write(")");
+        if reactive {
+            if !memo.is_empty() {
+                self.w.write(", [");
+                for (i, e) in memo.iter().enumerate() {
+                    if i > 0 {
+                        self.w.write(", ");
+                    }
+                    self.w.write("() => ");
+                    self.paren_expr(e, Mode::Read);
+                }
+                self.w.write("]");
+            }
+            self.w.write(")");
+        }
+        self.w.write(";");
+    }
+
+    /// The effect parameter holding `e`'s memoized value, while `dynamic_call` writes an effect.
+    fn memoized(&self, e: &Expression) -> Option<String> {
+        let addr = e as *const Expression as usize;
+        self.memo.iter().find(|(a, _)| *a == addr).map(|(_, id)| id.clone())
+    }
+
     fn dynamic(&mut self, d: &Dynamic) {
         match d {
+            Dynamic::Expr(e) if let Some(id) = self.memoized(e) => self.w.write(&id),
             Dynamic::Expr(e) => self.expr_text(e, Mode::Read),
             Dynamic::Template(parts) => self.template(parts),
             Dynamic::Member { object, key } => {
@@ -635,7 +659,10 @@ impl Codegen<'_, '_> {
                 TemplatePart::Text(t) => self.w.write(&escape_template(t)),
                 TemplatePart::Expr(e) => {
                     self.w.write("${");
-                    self.paren_expr(e, Mode::Read);
+                    match self.memoized(e) {
+                        Some(id) => self.w.write(&id),
+                        None => self.paren_expr(e, Mode::Read),
+                    }
                     self.w.write(" ?? ''}");
                 }
                 TemplatePart::If { test, consequent, alternate } => {
@@ -799,6 +826,22 @@ impl Codegen<'_, '_> {
     }
 
     fn render(&mut self, r: &RenderCall, container: &str) {
+        // arguments that call something are memoized (Svelte's RenderTag `Memoizer`): the snippet
+        // reads them through a derived, so the call runs once per change, not once per read
+        let mut memo: Vec<Option<String>> = Vec::new();
+        for a in &r.args {
+            if self.rw.has_call(a) {
+                self.tmp += 1;
+                let id = format!("$$arg{}", self.tmp);
+                self.line();
+                self.w.write(&format!("const {id} = $.derived(() => "));
+                self.paren_expr(a, Mode::Read);
+                self.w.write(");");
+                memo.push(Some(id));
+            } else {
+                memo.push(None);
+            }
+        }
         self.line();
         self.w.map(r.span.start);
         if self.rw.is_reactive(r.callee) {
@@ -815,9 +858,12 @@ impl Codegen<'_, '_> {
             self.w.write(if r.optional { "?.(" } else { "(" });
             self.w.write(&format!("$n.region({container})"));
         }
-        for a in &r.args {
+        for (a, m) in r.args.iter().zip(&memo) {
             self.w.write(", () => ");
-            self.paren_expr(a, Mode::Read);
+            match m {
+                Some(id) => self.w.write(&format!("$.get({id})")),
+                None => self.paren_expr(a, Mode::Read),
+            }
         }
         self.w.write(");");
     }

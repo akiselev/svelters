@@ -152,10 +152,26 @@ test('await: a pending promise shows nothing synchronously, `pending` from a mic
   assert.deepEqual(t.take(), ['create label #5', 'set #5 label "then ok"', 'insert #2 #5 before=#3 slot=default', 'remove #2 #4', 'destroy #4']);
 });
 
-test('await: an already-resolved promise never shows `pending`', async () => {
+test('await: a promise that settles before the pending task runs never shows `pending`', async () => {
   const t = harness();
-  mountAwait($.state(Promise.resolve(1)));
+  const input = $.state(0);
+  mountAwait(input);
   t.take();
+  // the block re-runs in Svelte's batch task; the promise's reaction is queued before the
+  // pending task (a microtask of its own), so `then` wins and the branch is kept
+  $.set(input, Promise.resolve(1));
+  await settle();
+  assert.deepEqual(t.take(), ['set #3 label "then 1"']);
+});
+
+test('await: under flushSync the pending task runs at once (Svelte\'s queue_micro_task)', async () => {
+  const t = harness();
+  const input = $.state(0);
+  mountAwait(input);
+  t.take();
+  $.set(input, Promise.resolve(1));
+  $.flush();
+  assert.deepEqual(labels(t.take()), ['"pending"'], 'flushSync drains the task queue: pending before the promise job');
   await settle();
   assert.deepEqual(labels(t.take()), ['"then 1"']);
 });
@@ -178,16 +194,18 @@ test('await: a superseded promise is ignored; settling into the shown branch upd
   await settle();
   assert.deepEqual(labels(t.take()), ['"then B"']);
   $.set(input, Promise.resolve('C'));
-  $.flush();
   await settle();
   assert.deepEqual(t.take(), ["set #5 label \"then C\""], 'same branch, new value: no rebuild, no pending');
 });
 
 test('await: rejection shows `catch`; without `catch` the error is rethrown', async () => {
   const t = harness();
-  mountAwait($.state(Promise.reject('boom')));
+  const input = $.state(0);
+  mountAwait(input);
+  t.take();
+  $.set(input, Promise.reject('boom'));
   await settle();
-  assert.deepEqual(labels(t.take()), ['"end"', '"catch boom"']);
+  assert.deepEqual(labels(t.take()), ['"catch boom"']);
 
   // a thenable lets the test observe what the rejection handler throws
   const t2 = harness();
@@ -203,10 +221,13 @@ test('await: rejection shows `catch`; without `catch` the error is rethrown', as
       });
     },
   };
-  mountAwait($.state(thenable), { catch_: false });
+  const input2 = $.state(0);
+  mountAwait(input2, { catch_: false });
+  t2.take();
+  $.set(input2, thenable);
   await settle();
   assert.equal(thrown, 'bad');
-  assert.deepEqual(labels(t2.take()), ['"end"'], 'no branch, and `pending` was never shown');
+  assert.deepEqual(labels(t2.take()), [], 'the then branch is removed, and `pending` was never shown');
 });
 
 test('await: a promise settling after teardown produces no ops', async () => {

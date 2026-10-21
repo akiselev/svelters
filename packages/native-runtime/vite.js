@@ -1,6 +1,6 @@
 // Vite config and plugin for apps compiled by the svelters compiler (svelters-compile) onto
 // @svelters/native-runtime: one self-contained ES module (dist/app.js; @svelters/build wraps it for an
-// app directory), the aliases that resolve the runtime's modules from any component, and the three
+// app directory), the aliases that resolve the runtime's modules from any component, and the
 // Svelte modules the core adapter (src/core/svelte.js) imports that Svelte's exports map hides.
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -42,8 +42,22 @@ export const taskPath = path.join(path.dirname(effectsPath), '../dom/task.js');
 export const CONTEXT_SPECIFIER = 'svelte/internal/client/context';
 export const contextPath = path.join(path.dirname(effectsPath), '../context.js');
 
+/** Svelte's `capture` / `unset_context` (an `{#await}` callback renders under its block, as Svelte's). */
+export const ASYNC_SPECIFIER = 'svelte/internal/client/reactivity/async';
+export const asyncPath = path.join(path.dirname(effectsPath), 'async.js');
+
+/** Svelte's batches: `is_flushing_sync` (a settled `{#await}` flushes unless a flushSync runs). */
+export const BATCH_SPECIFIER = 'svelte/internal/client/reactivity/batch';
+export const batchPath = path.join(path.dirname(effectsPath), 'batch.js');
+
 /** Every hidden Svelte module src/core/svelte.js imports: specifier -> absolute path. */
-export const HIDDEN_MODULES = { [EFFECTS_SPECIFIER]: effectsPath, [TASK_SPECIFIER]: taskPath, [CONTEXT_SPECIFIER]: contextPath };
+export const HIDDEN_MODULES = {
+  [EFFECTS_SPECIFIER]: effectsPath,
+  [TASK_SPECIFIER]: taskPath,
+  [CONTEXT_SPECIFIER]: contextPath,
+  [ASYNC_SPECIFIER]: asyncPath,
+  [BATCH_SPECIFIER]: batchPath,
+};
 
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not

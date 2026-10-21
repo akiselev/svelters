@@ -2,7 +2,7 @@ import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 var rest_excludes = new Set(["$$slots", "$$events", "$$legacy"]);
 
-export default function input($$anchor, $$props) {
+export default function Input($$anchor, $$props) {
 	$.push($$props, true);
 	let props = $.rest_props($$props, rest_excludes);
 	const $$n1 = $n.element("label");

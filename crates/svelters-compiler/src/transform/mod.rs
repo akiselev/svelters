@@ -304,6 +304,12 @@ impl<'a> ScopeRewriter<'a> {
         self.cx.diags.into_inner()
     }
 
+    /// The component function's name: `preferred`, renamed when the component declares or
+    /// references that name (Svelte's `module.scope.generate(component_name)`).
+    pub fn component_name(&self, preferred: &str) -> String {
+        self.cx.generate(preferred)
+    }
+
     fn store_subs(&self) -> impl Iterator<Item = (&str, BindingId)> + '_ {
         let scope = self.cx.instance_scope.expect("component");
         self.cx.arena.scope(scope).declarations.iter().filter(|(_, b)| self.cx.arena.binding(**b).kind == BindingKind::StoreSub).map(|(n, b)| (n, *b))
@@ -464,6 +470,70 @@ impl Rewriter for ScopeRewriter<'_> {
         let mut r = R { cx: &self.cx, found: false };
         Walker::walk(expr_ref(e), &(), &mut r);
         r.found
+    }
+
+    fn has_call(&self, e: &Expression) -> bool {
+        // upstream: a CallExpression whose callee is not pure (`is_pure`: literals, globals and
+        // members of globals, calls of those with pure arguments) or any call when the expression
+        // has dependencies; a tagged template with an impure tag; any spread element
+        struct H<'x, 'r, 'a> {
+            cx: &'x Ctx<'r, 'a>,
+            impure: bool,
+            calls: bool,
+            deps: bool,
+        }
+        impl H<'_, '_, '_> {
+            fn is_pure(&self, e: &Expression) -> bool {
+                match e {
+                    Expression::Literal(_) => true,
+                    Expression::CallExpression(c) => {
+                        self.is_pure(&c.callee) && c.arguments.iter().all(|a| matches!(a, ArrayElement::Expression(x) if self.is_pure(x)))
+                    }
+                    Expression::Identifier(_) | Expression::MemberExpression(_) => {
+                        let mut left = e;
+                        while let Expression::MemberExpression(m) = left {
+                            left = &m.object;
+                        }
+                        match left {
+                            // `$effect.tracking()` is never pure; other globals are assumed to be
+                            Expression::Identifier(id) => self.cx.arena.resolve(id).is_none() && !(id.name == "$effect"),
+                            other => self.is_pure(other),
+                        }
+                    }
+                    _ => false,
+                }
+            }
+        }
+        impl<'n> Visitor<'n> for H<'_, '_, '_> {
+            type State = ();
+            fn visit(&mut self, node: NodeRef<'n>, state: &(), w: &mut Walker<'n>) {
+                match node {
+                    n if n.is_function() => return,
+                    NodeRef::Identifier(id) => {
+                        if self.cx.arena.resolve(id).is_some() {
+                            self.deps = true;
+                        }
+                    }
+                    NodeRef::CallExpression(c) => {
+                        self.calls = true;
+                        if !self.is_pure(&c.callee) {
+                            self.impure = true;
+                        }
+                    }
+                    NodeRef::TaggedTemplateExpression(t) => {
+                        if !self.is_pure(&t.tag) {
+                            self.impure = true;
+                        }
+                    }
+                    NodeRef::SpreadElement(_) => self.impure = true,
+                    _ => {}
+                }
+                w.next(self, node, state);
+            }
+        }
+        let mut h = H { cx: &self.cx, impure: false, calls: false, deps: false };
+        Walker::walk(expr_ref(e), &(), &mut h);
+        h.impure || (h.calls && h.deps)
     }
 
     fn assign(&self, target: &Expression, value: &str) -> String {

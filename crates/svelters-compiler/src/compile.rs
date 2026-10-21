@@ -71,10 +71,27 @@ impl CompileResult {
     }
 }
 
+/// Svelte's `get_component_name` (2-analyze/index.js): the file's base name without `.svelte`
+/// (`index.svelte` takes its directory's name, except under `src`), first letter upper-cased, so a
+/// file named like a keyword (`await.svelte`) still gives a valid function name. The caller makes
+/// it a valid, unique identifier (`scope.generate`).
 fn component_name(filename: &str) -> String {
-    let base = filename.rsplit(['/', '\\']).next().unwrap_or(filename);
-    let stem = base.strip_suffix(".svelte").unwrap_or(base);
-    let mut name: String = stem.chars().map(|c| if c.is_ascii_alphanumeric() || c == '_' || c == '$' { c } else { '_' }).collect();
+    let mut parts: Vec<&str> = filename.split(['/', '\\']).collect();
+    let base = parts.pop().unwrap_or(filename);
+    let last_dir = parts.last().copied().filter(|d| !d.is_empty());
+    let mut stem = base.replacen(".svelte", "", 1);
+    if stem == "index"
+        && let Some(d) = last_dir
+        && d != "src"
+    {
+        stem = d.to_string();
+    }
+    let mut cs = stem.chars();
+    let mut name: String = match cs.next() {
+        Some(c) => c.to_uppercase().chain(cs).collect(),
+        None => String::new(),
+    };
+    name = name.chars().map(|c| if c.is_ascii_alphanumeric() || c == '_' || c == '$' { c } else { '_' }).collect();
     if name.is_empty() || name.starts_with(|c: char| c.is_ascii_digit()) {
         name.insert(0, '_');
     }
@@ -137,7 +154,8 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     let t = Instant::now();
     let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename);
     rw.strip_typescript(ts_strip);
-    let (code, map) = generate(src, &ir, &rw, &component_name(&opts.filename), &opts.filename, &opts.target.runtime_imports());
+    let name = rw.component_name(&component_name(&opts.filename));
+    let (code, map) = generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports());
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;
     if diags.has_errors() {

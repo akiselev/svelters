@@ -1,7 +1,7 @@
 import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 
-export default function input($$anchor, $$props) {
+export default function Input($$anchor, $$props) {
 	$.push($$props, true);
 	let count = $.state(0);
 	let snap = $.snapshot($.get(count));

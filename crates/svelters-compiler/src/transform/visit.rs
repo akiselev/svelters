@@ -57,6 +57,11 @@ pub(crate) fn is_simple_expression(e: &Expression) -> bool {
 
 /// Whether `e` contains an `await` outside nested functions (`is_expression_async`).
 pub(crate) fn has_await(e: &Expression) -> bool {
+    node_has_await(expr_ref(e))
+}
+
+/// `has_await` for any node (a destructuring pattern's defaults and computed keys).
+pub(crate) fn node_has_await(n: NodeRef<'_>) -> bool {
     struct A(bool);
     impl<'n> Visitor<'n> for A {
         type State = ();
@@ -69,7 +74,7 @@ pub(crate) fn has_await(e: &Expression) -> bool {
         }
     }
     let mut a = A(false);
-    Walker::walk(expr_ref(e), &(), &mut a);
+    Walker::walk(n, &(), &mut a);
     a.0
 }
 
@@ -717,7 +722,9 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
             if !standalone {
                 body.push_str(&format!("return {rhs}; "));
             }
-            if has_await(&a.right) {
+            // upstream: `is_expression_async(value) || assignments.some(is_expression_async)`; an
+            // assignment awaits when a default value (or a computed key) of the pattern does
+            if has_await(&a.right) || node_has_await(crate::svelte::scope::walk::pattern_ref(&a.left)) {
                 format!("(await (async ({rhs}) => {{ {body}}})({value}))")
             } else {
                 format!("(({rhs}) => {{ {body}}})({value})")
