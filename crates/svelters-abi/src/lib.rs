@@ -339,5 +339,7 @@ unsafe impl Sync for svl_backend {}
 /// Path to the C header, for C/C++ backends' build scripts.
 pub const HEADER_DIR: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/include");
 
+mod buffer;
 mod safe;
+pub use buffer::*;
 pub use safe::*;

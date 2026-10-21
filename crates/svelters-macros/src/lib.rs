@@ -82,6 +82,8 @@ struct Js {
     tokio: bool,
     supersede: bool,
     max_in_flight: Option<u32>,
+    // E3 streams
+    buffer: Option<usize>,
 }
 
 fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
@@ -113,7 +115,13 @@ fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
                     }
                     js.max_in_flight = Some(n);
                 }
-                "buffer" => return Err(m.error("#[js(buffer)] belongs to streams (Sink<T>), which arrive with E3")),
+                "buffer" => {
+                    let n = m.value()?.parse::<syn::LitInt>()?.base10_parse::<usize>()?;
+                    if n == 0 {
+                        return Err(m.error("a stream's buffer must hold at least 1 item"));
+                    }
+                    js.buffer = Some(n);
+                }
                 "tag" => return Err(m.error("data enums (#[js(tag)]) are not supported yet (E0): use a record with an enum field")),
                 _ => return Err(m.error(format!("unknown #[js] option `{id}`"))),
             }
@@ -131,6 +139,25 @@ fn last_ident(ty: &Type) -> Option<String> {
     match ty {
         Type::Path(p) => p.path.segments.last().map(|s| s.ident.to_string()),
         _ => None,
+    }
+}
+
+/// The first type argument of the last path segment (`T` of `Sink<T>`).
+fn generic_arg(ty: &Type) -> Option<Type> {
+    let Type::Path(p) = ty else { return None };
+    let syn::PathArguments::AngleBracketed(a) = &p.path.segments.last()?.arguments else { return None };
+    a.args.iter().find_map(|x| match x {
+        syn::GenericArgument::Type(t) => Some(t.clone()),
+        _ => None,
+    })
+}
+
+fn pascal(snake: &str) -> String {
+    let c = camel(snake);
+    let mut it = c.chars();
+    match it.next() {
+        Some(f) => f.to_uppercase().chain(it).collect(),
+        None => c,
     }
 }
 
@@ -391,9 +418,37 @@ fn object_impl(attr: Ts, item: ItemStruct) -> syn::Result<Ts> {
             impl #p::UiObject for #ty {}
         }
     };
+    // E3: an `Emitter<E>` field gives the class `E`'s events (`obj.on(name, fn)`).
+    let mut emitters = Vec::new();
+    for f in item.fields.iter() {
+        if last_ident(&f.ty).as_deref() == Some("Emitter") {
+            let ev = generic_arg(&f.ty).ok_or_else(|| syn::Error::new(f.ty.span(), "expected `Emitter<E>`"))?;
+            let fname = match &f.ident {
+                Some(i) => quote!(#i),
+                None => return Err(syn::Error::new(f.span(), "an `Emitter<E>` field needs a name")),
+            };
+            emitters.push((ev, fname));
+        }
+    }
+    if emitters.len() > 1 {
+        return Err(syn::Error::new(item.span(), "an exported object has at most one `Emitter<E>` field (put every event in one enum)"));
+    }
+    let emitter = emitters.first().map(|(ev, fname)| {
+        quote! {
+            #p::inventory::submit! {
+                #p::__private::EmitterDef {
+                    type_id: || ::std::any::TypeId::of::<#ty>(),
+                    events: <#ev as #p::EventSet>::EVENTS,
+                    describe: <#ev as #p::EventSet>::__describe,
+                    emitter: |o| #p::__private::emitter_of::<#ty>(o, |s: &#ty| s.#fname.__core()),
+                }
+            }
+        }
+    });
     Ok(quote! {
         #item
         #flavor
+        #emitter
         impl #p::JsType for #ty {
             fn describe(b: &mut #p::TypeBuilder) -> #p::TypeRef { b.class::<#ty>() }
         }
@@ -434,6 +489,8 @@ enum ArgKind {
     ObjMut(Type),
     /// `WorkCx<P>`: injected by the host (offloaded members), not a JS argument.
     Injected(Type),
+    /// E3: `Sink<T>` (the item type): a stream bound to the call, injected by the host.
+    Sink(Type),
 }
 
 struct Arg {
@@ -552,6 +609,16 @@ fn member(
                     ReplaceSelf(st).visit_type_mut(&mut ty);
                 }
                 let kind = match &ty {
+                    Type::Path(_) if last_ident(&ty).as_deref() == Some("Sink") => {
+                        if exec.is_none() {
+                            return Err(syn::Error::new(
+                                ty.span(),
+                                "a `Sink<T>` parameter streams from offloaded work: add #[js(worker)] or #[js(blocking)], or make the fn `async` (use `sink.feed(x).await` there); a plain fn returns a `Stream<T>` instead",
+                            ));
+                        }
+                        let item = generic_arg(&ty).ok_or_else(|| syn::Error::new(ty.span(), "expected `Sink<T>`"))?;
+                        ArgKind::Sink(item)
+                    }
                     Type::Path(_) if last_ident(&ty).as_deref() == Some("WorkCx") => {
                         if exec.is_none() {
                             return Err(syn::Error::new(ty.span(), "`WorkCx` is for offloaded calls: add #[js(worker)], #[js(blocking)], or make the fn `async`"));
@@ -575,7 +642,7 @@ fn member(
                             }
                             Type::Slice(s) => {
                                 if r.mutability.is_some() {
-                                    return Err(syn::Error::new(r.span(), "`&mut [T]` needs buffers (E2); take `Vec<T>` and return it"));
+                                    return Err(syn::Error::new(r.span(), "`&mut [T]` cannot borrow a JS array: take `svelters::Buffer<T>` (the typed array is moved, zero-copy) and return it"));
                                 }
                                 let e = &s.elem;
                                 ArgKind::ByRef(syn::parse_quote!(::std::vec::Vec<#e>))
@@ -628,6 +695,11 @@ fn member(
     let mut params = Vec::new();
     let mut checks = Vec::new();
     let mut progress = quote!(::core::option::Option::None);
+    let mut items = quote!(::core::option::Option::None);
+    let sinks = args.iter().filter(|a| matches!(a.kind, ArgKind::Sink(_))).count();
+    if sinks > 1 {
+        return Err(syn::Error::new(sig.span(), "an export streams through at most one `Sink<T>`"));
+    }
     for (i, a) in args.iter().enumerate() {
         let v = format_ident!("__a{i}");
         let b = format_ident!("__b{i}");
@@ -638,6 +710,19 @@ fn member(
                 conv.push(quote!(let #v = <#t as #p::__private::Injected>::inject(__op);));
                 pass.push(quote!(#v));
                 progress = quote!(<#t as #p::__private::Injected>::progress(b));
+                continue;
+            }
+            ArgKind::Sink(t) => {
+                let buf = match js.buffer {
+                    Some(n) => quote!(#n),
+                    None => quote!(#p::__private::DEFAULT_BUFFER),
+                };
+                conv.push(quote!(let #v = #p::__private::sink_for::<#t>(__op, #buf);));
+                pass.push(quote!(#v));
+                items = quote!(#p::__private::item_type::<#t>(b));
+                if pooled {
+                    checks.push(quote_spanned!(t.span()=> #p::__private::assert_worker_send::<#t>();));
+                }
                 continue;
             }
             ArgKind::Value(t) => {
@@ -679,7 +764,33 @@ fn member(
     if let Some(st) = self_ty {
         ReplaceSelf(st).visit_type_mut(&mut ret_ty);
     }
+    // E3: a plain fn returning `Stream<T>` hands JS an async iterable at once.
+    let stream_ret = last_ident(&ret_ty).as_deref() == Some("Stream");
+    if stream_ret {
+        if exec.is_some() {
+            return Err(syn::Error::new(
+                ret_ty.span(),
+                "an offloaded export streams through a `Sink<T>` parameter; a `Stream<T>` result is for a plain fn that returns at once",
+            ));
+        }
+        if sinks > 0 {
+            return Err(syn::Error::new(ret_ty.span(), "take a `Sink<T>` or return a `Stream<T>`, not both"));
+        }
+        if js.constructor || js.getter || js.setter {
+            return Err(syn::Error::new(ret_ty.span(), "constructors and accessors cannot return a stream"));
+        }
+        let item = generic_arg(&ret_ty).ok_or_else(|| syn::Error::new(ret_ty.span(), "expected `Stream<T>`"))?;
+        items = quote!(#p::__private::item_type::<#item>(b));
+    }
+    if js.buffer.is_some() && sinks == 0 {
+        return Err(syn::Error::new(sig.span(), "#[js(buffer = n)] sizes a `Sink<T>` parameter; a `Stream<T>` result takes its buffer from `channel(n)`"));
+    }
     let mut ret_d = quote!(<#ret_ty as #p::JsType>::describe(b));
+    let mut throws = quote!(<#ret_ty as #p::JsType>::throws());
+    if stream_ret {
+        ret_d = quote!(<() as #p::JsType>::describe(b));
+        throws = quote!(::std::vec::Vec::new());
+    }
     if js.bigint {
         ret_d = quote!(#p::__private::bigint(#ret_d));
     }
@@ -688,11 +799,41 @@ fn member(
     let sigf = format_ident!("__svl_sig_{idx}");
     g.items.push(quote! {
         fn #sigf(b: &mut #p::TypeBuilder) -> #p::Sig {
-            #p::Sig { params: ::std::vec![#(#params),*], ret: #ret_d, throws: <#ret_ty as #p::JsType>::throws(), progress: #progress }
+            #p::Sig { params: ::std::vec![#(#params),*], ret: #ret_d, throws: #throws, progress: #progress, items: #items }
         }
     });
 
     let offload = match exec {
+        None if stream_ret => {
+            let (recv_code, recv_arg) = match (recv, self_ty) {
+                (Recv::Arc, Some(st)) => (quote!(let __this = #p::__private::this_arc::<#st>(cx)?;), quote!(__this,)),
+                (Recv::Mut, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;), quote!(&mut *__s,))
+                }
+                (Recv::Ref, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let __s = <#st as #p::ExportObject>::__borrow(&__this)?;), quote!(&*__s,))
+                }
+                _ => (Ts::new(), Ts::new()),
+            };
+            g.items.push(quote! {
+                #[allow(non_snake_case, unused_mut, unused_variables, clippy::needless_borrow)]
+                fn #start(
+                    cx: &#p::CallCx<'_>,
+                    args: ::std::vec::Vec<#p::Value>,
+                    __op: &::std::sync::Arc<#p::__private::OpShared>,
+                ) -> ::core::result::Result<#p::__private::Job, #p::NativeError> {
+                    let mut __it = args.into_iter();
+                    #(#conv)*
+                    let __stream: #ret_ty = {
+                        #recv_code
+                        #(#borrows)*
+                        #call_path(#recv_arg #(#pass),*)
+                    };
+                    ::core::result::Result::Ok(#p::__private::stream_job(__stream, __op))
+                }
+            });
+            quote!(::core::option::Option::Some(#p::OffloadDef { exec: #p::Exec::Local, start: #start, supersede: false, max_in_flight: 0 }))
+        }
         None => {
             let (recv_code, recv_arg) = match (recv, self_ty) {
                 (Recv::Arc, Some(st)) => (quote!(let __this = #p::__private::this_arc::<#st>(cx)?;), quote!(__this,)),
@@ -800,7 +941,7 @@ fn member(
             quote!(::core::option::Option::Some(#p::OffloadDef { exec: #p::Exec::#e, start: #start, supersede: #supersede, max_in_flight: #max }))
         }
     };
-    let thunk_ref = if exec.is_some() { quote!(#p::__private::offload_thunk) } else { quote!(#thunk) };
+    let thunk_ref = if exec.is_some() || stream_ret { quote!(#p::__private::offload_thunk) } else { quote!(#thunk) };
     g.defs.push(quote! {
         #p::MemberDef {
             name: #jsname,
@@ -827,8 +968,10 @@ pub fn export(attr: TokenStream, item: TokenStream) -> TokenStream {
         export_impl(attr, imp)
     } else if let Ok(f) = syn::parse2::<ItemFn>(item.clone()) {
         export_fn(attr, f)
+    } else if let Ok(s) = syn::parse2::<syn::ItemStatic>(item.clone()) {
+        export_static(attr, s)
     } else {
-        Err(syn::Error::new(Span::call_site(), "#[svelters::export] goes on an `impl` block or a free `fn`"))
+        Err(syn::Error::new(Span::call_site(), "#[svelters::export] goes on an `impl` block, a free `fn` or a `static` (an app-wide store)"))
     };
     res.unwrap_or_else(|e| e.to_compile_error()).into()
 }
@@ -917,5 +1060,433 @@ fn export_fn(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
                 #p::FnDef { module: #module, member: #def }
             }
         };
+    })
+}
+
+// ---- E3: statics, stores, services, events ----
+
+/// `#[svelters::export(module = "m")]` on a `static` (a `StoreStatic<S>`): the module-level value
+/// `export const <camelName>` of `svelters:app/m`, the same Rust object in every JS runtime.
+fn export_static(attr: Ts, mut item: syn::ItemStatic) -> syn::Result<Ts> {
+    let a = object_args(attr)?;
+    let module = a.module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::export] on a static needs `module = \"...\"`"))?;
+    check_module(&module, item.span())?;
+    if !matches!(item.mutability, syn::StaticMutability::None) {
+        return Err(syn::Error::new(item.span(), "an exported static cannot be `mut`"));
+    }
+    let js = js_opts(&item.attrs)?;
+    strip_js(&mut item.attrs);
+    let ident = &item.ident;
+    let ty = &item.ty;
+    let rust = ident.to_string();
+    let jsname = js.rename.or(a.name).unwrap_or_else(|| camel(&rust.to_lowercase()));
+    let vdocs = docs(&item.attrs);
+    let p = quote!(::svelters::__private);
+    Ok(quote! {
+        #item
+        const _: () = {
+            #[allow(non_snake_case)]
+            fn __svl_get(cx: &#p::CallCx<'_>, _args: ::std::vec::Vec<#p::Value>) -> ::core::result::Result<#p::Value, #p::NativeError> {
+                #p::__private::static_value::<#ty>(&#ident, cx)
+            }
+            fn __svl_ty(b: &mut #p::TypeBuilder) -> #p::TypeRef {
+                #p::__private::static_type::<#ty>(b)
+            }
+            #p::inventory::submit! {
+                #p::__private::ValueDef { module: #module, name: #jsname, rust: #rust, docs: #vdocs, what: "static", ty: __svl_ty, get: __svl_get }
+            }
+        };
+    })
+}
+
+struct StoreArgs {
+    module: Option<String>,
+    name: Option<String>,
+}
+
+fn store_args(attr: Ts) -> syn::Result<StoreArgs> {
+    let mut a = StoreArgs { module: None, name: None };
+    let metas = Punctuated::<Meta, Token![,]>::parse_terminated.parse2(attr)?;
+    for m in metas {
+        match &m {
+            Meta::NameValue(nv) if nv.path.is_ident("module") || nv.path.is_ident("name") => {
+                let Expr::Lit(syn::ExprLit { lit: Lit::Str(s), .. }) = &nv.value else {
+                    return Err(syn::Error::new(nv.value.span(), "expected a string"));
+                };
+                if nv.path.is_ident("module") {
+                    a.module = Some(s.value());
+                } else {
+                    a.name = Some(s.value());
+                }
+            }
+            _ => return Err(syn::Error::new(m.span(), "expected `module = \"...\"` or `name = \"...\"`")),
+        }
+    }
+    Ok(a)
+}
+
+/// `#[store(writable)]`, `#[store(proportional)]` on a store field.
+fn store_field_opts(attrs: &[Attribute]) -> syn::Result<(bool, bool)> {
+    let (mut writable, mut proportional) = (false, false);
+    for a in attrs.iter().filter(|a| a.path().is_ident("store")) {
+        a.parse_nested_meta(|m| {
+            if m.path.is_ident("writable") {
+                writable = true;
+            } else if m.path.is_ident("proportional") {
+                proportional = true;
+            } else {
+                return Err(m.error("expected `writable` or `proportional`"));
+            }
+            Ok(())
+        })?;
+    }
+    Ok((writable, proportional))
+}
+
+/// `#[svelters::store(module = "m")]` on a struct with named fields: reactive state Svelte reads like
+/// `$state` (design note §6.4). Each field is a property of the JS store object, `exact` by construction;
+/// `#[store(writable)]` fields are assignable from JS (and so bindable), `#[store(proportional)]` fields are
+/// delivered as invalidations. Generates `<Name>Field` (an enum naming the fields) and the `StoreState`
+/// impl; `Store<Name>` / `StoreStatic<Name>` hold the state. Field types are `Clone + IntoJs`
+/// (writable ones `FromJs` too).
+#[proc_macro_attribute]
+pub fn store(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(item as ItemStruct);
+    store_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+fn store_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
+    let a = store_args(attr)?;
+    let module = a.module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::store] needs `module = \"...\"` (the JS module is `svelters:app/<module>`)"))?;
+    check_module(&module, item.span())?;
+    if !item.generics.params.is_empty() {
+        return Err(syn::Error::new(item.generics.span(), "stores cannot be generic"));
+    }
+    let Fields::Named(fields) = &mut item.fields else {
+        return Err(syn::Error::new(item.span(), "#[svelters::store] needs a struct with named fields"));
+    };
+    if fields.named.is_empty() {
+        return Err(syn::Error::new(item.span(), "a store needs at least one field"));
+    }
+    let ty = item.ident.clone();
+    let rust = ty.to_string();
+    let jsname = a.name.unwrap_or_else(|| rust.clone());
+    let sdocs = docs(&item.attrs);
+    let vis = item.vis.clone();
+    let field_enum = format_ident!("{}Field", ty);
+    let p = quote!(::svelters::__private);
+
+    let mut variants = Vec::new();
+    let mut infos = Vec::new();
+    let mut reads = Vec::new();
+    let mut writes = Vec::new();
+    let mut describes = Vec::new();
+    let mut members = Vec::new();
+    let mut fns = Vec::new();
+    for (i, f) in fields.named.iter_mut().enumerate() {
+        let (writable, proportional) = store_field_opts(&f.attrs)?;
+        let o = js_opts(&f.attrs)?;
+        f.attrs.retain(|a| !a.path().is_ident("store") && !a.path().is_ident("js"));
+        if o.bigint {
+            return Err(syn::Error::new(f.span(), "`#[js(bigint)]` store fields are not supported (E3): store a checked number (±2^53) or a string"));
+        }
+        let id = f.ident.clone().expect("named");
+        let fty = f.ty.clone();
+        let fname = o.rename.clone().unwrap_or_else(|| camel(&id.to_string()));
+        let frust = id.to_string();
+        let fdocs = docs(&f.attrs);
+        let variant = format_ident!("{}", pascal(&frust));
+        variants.push(quote!(#variant));
+        infos.push(quote!(#p::__private::StoreField { name: #fname, rust: #frust, writable: #writable, proportional: #proportional, docs: #fdocs }));
+        reads.push(quote!(#i => #p::IntoJs::into_js(::core::clone::Clone::clone(&self.#id), cx)));
+        describes.push(quote!(#i => <#fty as #p::JsType>::describe(b)));
+        let get = format_ident!("__svl_get_{i}");
+        let sig_get = format_ident!("__svl_sig_get_{i}");
+        fns.push(quote! {
+            #[allow(non_snake_case)]
+            fn #get(cx: &#p::CallCx<'_>, _args: ::std::vec::Vec<#p::Value>) -> ::core::result::Result<#p::Value, #p::NativeError> {
+                #p::__private::store_get::<#ty>(cx, #i)
+            }
+            fn #sig_get(b: &mut #p::TypeBuilder) -> #p::Sig {
+                #p::Sig { params: ::std::vec::Vec::new(), ret: <#fty as #p::JsType>::describe(b), throws: ::std::vec::Vec::new(), progress: ::core::option::Option::None, items: ::core::option::Option::None }
+            }
+        });
+        members.push(quote! {
+            #p::MemberDef { name: #fname, rust: #frust, kind: #p::MemberKind::Getter, receiver: #p::Receiver::Ref, docs: #fdocs, sig: #sig_get, thunk: #get, offload: ::core::option::Option::None }
+        });
+        if writable {
+            writes.push(quote! {
+                #i => {
+                    let __new = <#fty as #p::FromJs>::from_js(v, cx)?;
+                    let __old = ::std::mem::replace(&mut self.#id, __new);
+                    #[allow(unused_imports)]
+                    use #p::__private::{HookViaDefault as _, HookViaHooks as _};
+                    match (&#p::__private::HookProbe::<Self>::new()).__svl_on_write(self, #field_enum::#variant) {
+                        ::core::option::Option::None => ::core::result::Result::Ok(false),
+                        ::core::option::Option::Some(::core::result::Result::Ok(())) => ::core::result::Result::Ok(true),
+                        ::core::option::Option::Some(::core::result::Result::Err(e)) => {
+                            self.#id = __old;
+                            ::core::result::Result::Err(e)
+                        }
+                    }
+                }
+            });
+            let set = format_ident!("__svl_set_{i}");
+            let sig_set = format_ident!("__svl_sig_set_{i}");
+            fns.push(quote! {
+                #[allow(non_snake_case)]
+                fn #set(cx: &#p::CallCx<'_>, args: ::std::vec::Vec<#p::Value>) -> ::core::result::Result<#p::Value, #p::NativeError> {
+                    #p::__private::store_set::<#ty>(cx, #i, args)
+                }
+                fn #sig_set(b: &mut #p::TypeBuilder) -> #p::Sig {
+                    #p::Sig {
+                        params: ::std::vec![#p::Param { name: "value", ty: <#fty as #p::JsType>::describe(b) }],
+                        ret: <() as #p::JsType>::describe(b),
+                        throws: ::std::vec::Vec::new(),
+                        progress: ::core::option::Option::None,
+                        items: ::core::option::Option::None,
+                    }
+                }
+            });
+            members.push(quote! {
+                #p::MemberDef { name: #fname, rust: #frust, kind: #p::MemberKind::Setter, receiver: #p::Receiver::Ref, docs: #fdocs, sig: #sig_set, thunk: #set, offload: ::core::option::Option::None }
+            });
+            // Writable fields are `FromJs` too (checked here, with the field's span).
+            let check = quote_spanned!(fty.span()=> const _: fn() = || { fn __need<T: #p::FromJs>() {} __need::<#fty>(); };);
+            fns.push(check);
+        }
+    }
+    let n = variants.len();
+    let variant_list = variants.clone();
+    Ok(quote! {
+        #item
+
+        /// The fields of the store (for `Store::write`, `Store::touch` and `StoreHooks::on_write`).
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+        #vis enum #field_enum { #(#variants),* }
+
+        impl #p::StoreState for #ty {
+            const MODULE: &'static str = #module;
+            const NAME: &'static str = #jsname;
+            const DOCS: &'static str = #sdocs;
+            const FIELDS: &'static [#p::__private::StoreField] = &[#(#infos),*];
+            type Field = #field_enum;
+            fn __index(f: #field_enum) -> usize {
+                f as usize
+            }
+            fn __field(i: usize) -> #field_enum {
+                const ALL: [#field_enum; #n] = [#(#field_enum::#variant_list),*];
+                ALL[i]
+            }
+            fn __read(&self, i: usize, cx: &#p::CallCx<'_>) -> ::core::result::Result<#p::Value, #p::NativeError> {
+                match i {
+                    #(#reads,)*
+                    _ => ::core::result::Result::Err(#p::host_error("type", ::std::format!("{} has no field #{}", #jsname, i))),
+                }
+            }
+            #[allow(unreachable_code, unused_variables)]
+            fn __write(&mut self, i: usize, v: #p::Value, cx: &#p::CallCx<'_>) -> ::core::result::Result<bool, #p::NativeError> {
+                match i {
+                    #(#writes,)*
+                    _ => ::core::result::Result::Err(#p::host_error("type", ::std::format!("{}: field #{} is read-only (#[store(writable)] makes it assignable)", #jsname, i))),
+                }
+            }
+            fn __describe(i: usize, b: &mut #p::TypeBuilder) -> #p::TypeRef {
+                match i {
+                    #(#describes,)*
+                    _ => <() as #p::JsType>::describe(b),
+                }
+            }
+        }
+
+        const _: () = {
+            #(#fns)*
+            #p::inventory::submit! {
+                #p::ObjectDef { module: #module, name: #jsname, rust: #rust, docs: #sdocs, shared: true, type_id: || ::std::any::TypeId::of::<#p::__private::StoreCell<#ty>>() }
+            }
+            #p::inventory::submit! {
+                #p::ImplDef { type_id: || ::std::any::TypeId::of::<#p::__private::StoreCell<#ty>>(), rust: #rust, members: &[#(#members),*] }
+            }
+            #p::inventory::submit! {
+                #p::__private::StoreDef {
+                    type_id: || ::std::any::TypeId::of::<#p::__private::StoreCell<#ty>>(),
+                    fields: <#ty as #p::StoreState>::FIELDS,
+                    subscribe: #p::__private::subscribe_any::<#ty>,
+                }
+            }
+        };
+    })
+}
+
+/// `#[svelters::service(module = "m")]` on `fn name(cx: ServiceCx) -> V`: a service that starts with the
+/// app (or, with `lazy`, when JS first imports `svelters:app/m`), runs until `shutdown_services`, and is
+/// never restarted by a hot reload. JS imports its value `V` (a `Store<S>` or a shared object) as
+/// `export const <name>`.
+#[proc_macro_attribute]
+pub fn service(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(item as ItemFn);
+    service_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+fn service_impl(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
+    let (mut module, mut name, mut lazy) = (None, None, false);
+    let metas = Punctuated::<Meta, Token![,]>::parse_terminated.parse2(attr)?;
+    for m in metas {
+        match &m {
+            Meta::Path(p) if p.is_ident("lazy") => lazy = true,
+            Meta::NameValue(nv) if nv.path.is_ident("module") || nv.path.is_ident("name") => {
+                let Expr::Lit(syn::ExprLit { lit: Lit::Str(s), .. }) = &nv.value else {
+                    return Err(syn::Error::new(nv.value.span(), "expected a string"));
+                };
+                if nv.path.is_ident("module") {
+                    module = Some(s.value());
+                } else {
+                    name = Some(s.value());
+                }
+            }
+            _ => return Err(syn::Error::new(m.span(), "expected `module = \"...\"`, `name = \"...\"` or `lazy`")),
+        }
+    }
+    let module = module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::service] needs `module = \"...\"`"))?;
+    check_module(&module, f.sig.span())?;
+    let js = js_opts(&f.attrs)?;
+    strip_js(&mut f.attrs);
+    if f.sig.asyncness.is_some() {
+        return Err(syn::Error::new(f.sig.span(), "a service fn is synchronous: start long-running work with `cx.thread(...)` (or `cx.spawn(...)` with the `tokio` feature)"));
+    }
+    if !f.sig.generics.params.is_empty() || f.sig.inputs.len() != 1 {
+        return Err(syn::Error::new(f.sig.span(), "a service is `fn name(cx: ServiceCx) -> V`"));
+    }
+    let ReturnType::Type(_, ret) = &f.sig.output else {
+        return Err(syn::Error::new(f.sig.span(), "a service returns what JS imports: a `Store<S>` or a shared object (`Arc<T>`)"));
+    };
+    let ret = (**ret).clone();
+    let ident = f.sig.ident.clone();
+    let rust = ident.to_string();
+    let jsname = js.rename.or(name).unwrap_or_else(|| camel(&rust));
+    let sdocs = docs(&f.attrs);
+    let p = quote!(::svelters::__private);
+    Ok(quote! {
+        #f
+        const _: () = {
+            static __SVL_SLOT: #p::__private::ServiceSlot<#ret> = #p::__private::ServiceSlot::new();
+            fn __svl_start() {
+                let _ = __SVL_SLOT.get_or_start(#module, #jsname, #ident);
+            }
+            #[allow(non_snake_case)]
+            fn __svl_get(cx: &#p::CallCx<'_>, _args: ::std::vec::Vec<#p::Value>) -> ::core::result::Result<#p::Value, #p::NativeError> {
+                let v = __SVL_SLOT.get_or_start(#module, #jsname, #ident);
+                #p::IntoJs::into_js(::core::clone::Clone::clone(v), cx)
+            }
+            fn __svl_ty(b: &mut #p::TypeBuilder) -> #p::TypeRef {
+                <#ret as #p::JsType>::describe(b)
+            }
+            #p::inventory::submit! {
+                #p::__private::ServiceDef { module: #module, name: #jsname, lazy: #lazy, start: __svl_start }
+            }
+            #p::inventory::submit! {
+                #p::__private::ValueDef { module: #module, name: #jsname, rust: #rust, docs: #sdocs, what: "service", ty: __svl_ty, get: __svl_get }
+            }
+        };
+    })
+}
+
+/// `#[derive(svelters::Events)]` on an enum: one JS event per variant (`obj.on('<kebab-name>', fn)`). A unit
+/// variant has no argument, a one-field tuple variant passes its value, a struct variant passes a plain
+/// object (camelCase keys). `#[event(latest)]`: only the last occurrence per checkpoint is delivered.
+/// Needs `Clone` (an event goes to every listening host) and `Send`.
+#[proc_macro_derive(Events, attributes(js, event))]
+pub fn derive_events(input: TokenStream) -> TokenStream {
+    let input = syn::parse_macro_input!(input as DeriveInput);
+    events(input).unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+fn events(input: DeriveInput) -> syn::Result<Ts> {
+    let name = &input.ident;
+    if !input.generics.params.is_empty() {
+        return Err(syn::Error::new(input.generics.span(), "event enums cannot be generic"));
+    }
+    let Data::Enum(de) = &input.data else {
+        return Err(syn::Error::new(input.span(), "#[derive(svelters::Events)] needs an enum"));
+    };
+    if de.variants.len() > 64 {
+        return Err(syn::Error::new(input.span(), "an event enum has at most 64 variants"));
+    }
+    let p = quote!(::svelters::__private);
+    let mut infos = Vec::new();
+    let mut index = Vec::new();
+    let mut payload = Vec::new();
+    let mut describe = Vec::new();
+    for (i, v) in de.variants.iter().enumerate() {
+        let o = js_opts(&v.attrs)?;
+        let mut latest = false;
+        for a in v.attrs.iter().filter(|a| a.path().is_ident("event")) {
+            a.parse_nested_meta(|m| {
+                if m.path.is_ident("latest") {
+                    latest = true;
+                    Ok(())
+                } else {
+                    Err(m.error("expected `latest`"))
+                }
+            })?;
+        }
+        let ename = o.rename.unwrap_or_else(|| kebab(&v.ident.to_string()));
+        let vdocs = docs(&v.attrs);
+        infos.push(quote!(#p::__private::EventInfo { name: #ename, latest: #latest, docs: #vdocs }));
+        let id = &v.ident;
+        match &v.fields {
+            Fields::Unit => {
+                index.push(quote!(#name::#id => #i));
+                payload.push(quote!(#name::#id => ::core::result::Result::Ok(::core::option::Option::None)));
+                describe.push(quote!(::core::option::Option::None));
+            }
+            Fields::Unnamed(u) if u.unnamed.len() == 1 => {
+                let t = &u.unnamed[0].ty;
+                index.push(quote!(#name::#id(..) => #i));
+                payload.push(quote!(#name::#id(__x) => ::core::result::Result::Ok(::core::option::Option::Some(#p::IntoJs::into_js(__x, cx)?))));
+                describe.push(quote!(::core::option::Option::Some(<#t as #p::JsType>::describe(b))));
+            }
+            Fields::Unnamed(u) => {
+                return Err(syn::Error::new(u.span(), "an event passes one value: use one field, or named fields (a plain object)"));
+            }
+            Fields::Named(nf) => {
+                let ids: Vec<_> = nf.named.iter().map(|f| f.ident.clone().expect("named")).collect();
+                let mut keys = Vec::new();
+                let mut tys = Vec::new();
+                for f in &nf.named {
+                    let fo = js_opts(&f.attrs)?;
+                    keys.push(fo.rename.unwrap_or_else(|| camel(&f.ident.as_ref().expect("named").to_string())));
+                    tys.push(f.ty.clone());
+                }
+                index.push(quote!(#name::#id { .. } => #i));
+                payload.push(quote! {
+                    #name::#id { #(#ids),* } => ::core::result::Result::Ok(::core::option::Option::Some(#p::Value::Map(::std::vec![
+                        #((::std::string::String::from(#keys), #p::IntoJs::into_js(#ids, cx)?)),*
+                    ])))
+                });
+                describe.push(quote! {{
+                    let mut __ts = ::std::string::String::from("{ ");
+                    #(
+                        __ts.push_str(&::std::format!("{}: {}; ", #keys, <#tys as #p::JsType>::describe(b).ts));
+                    )*
+                    __ts.push('}');
+                    ::core::option::Option::Some(#p::__private::object_type(__ts))
+                }});
+            }
+        }
+    }
+    Ok(quote! {
+        impl #p::EventSet for #name {
+            const EVENTS: &'static [#p::__private::EventInfo] = &[#(#infos),*];
+            fn __index(&self) -> usize {
+                match self { #(#index),* }
+            }
+            fn __payload(self, cx: &#p::CallCx<'_>) -> ::core::result::Result<::core::option::Option<#p::Value>, #p::NativeError> {
+                match self { #(#payload),* }
+            }
+            fn __describe(b: &mut #p::TypeBuilder) -> ::std::vec::Vec<::core::option::Option<#p::TypeRef>> {
+                ::std::vec![#(#describe),*]
+            }
+        }
     })
 }
