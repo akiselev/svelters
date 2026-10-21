@@ -188,7 +188,23 @@ The machine was this WSL2 box (Ryzen 7 5700U) with other lanes building: load av
 | macos-appkit | 39635462393 | success |
 | windows-winui | 39635462624 | success |
 
-(head 29f8c019; the final head's runs are in the report.)
+The rows above are for head 29f8c019, except the failed linux-gtk run at 76e9aeb4. The table below is the final
+code head, 7c60b251. All five runs passed:
+
+| Workflow | Run | Result |
+|---|---|---|
+| linux-gtk (gtk 2205/2205; gtk-4-14 1928/1928 with 3 flaky; portable 48/48) | 39639664221 | success |
+| linux-qt | 39639664257 | success |
+| js | 39639664241 | success |
+| macos-appkit | 39639664724 | success |
+| windows-winui | 39639664362 | success |
+
+Local gates on 7c60b251:
+
+- `cargo check --workspace --all-targets`: clean. The only warnings are pre-existing ones outside svelters-egui.
+- `cargo nextest run --workspace` (headless, 4 threads): 2409 of 2409 tests passed, 8 skipped.
+- `pnpm -r build`, `pnpm test` (with `test:meta`) and `pnpm docs:test` (17 of 17): all exit 0. These ran before
+  the last two Rust-only edits: a clippy fix and the eframe_idle bound.
 
 ## Open items
 
