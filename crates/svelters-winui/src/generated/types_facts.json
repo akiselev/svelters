@@ -1,0 +1,500 @@
+{
+ "facts": [
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Dispatching:DispatcherQueueTimer:construct",
+   "fingerprint": "d408eb0c4ca36678",
+   "kind": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_dispatcherqueuetimer_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Dispatching:DispatcherQueueTimer:events",
+   "fingerprint": "ea08e6fdca678e2e",
+   "kind": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+   "name": "events",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_dispatcherqueuetimer_events"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Dispatching:DispatcherQueueTimer:lifetime",
+   "fingerprint": "51e7fe2c8b9e6e9d",
+   "kind": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_dispatcherqueuetimer_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Dispatching:DispatcherQueueTimer:methods",
+   "fingerprint": "9a9a403e5db189f0",
+   "kind": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+   "name": "methods",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_dispatcherqueuetimer_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Dispatching:DispatcherQueueTimer:props",
+   "fingerprint": "9aae9801056f95d7",
+   "kind": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_dispatcherqueuetimer_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:FontFamily:construct",
+   "fingerprint": "5f0c4f20745493ef",
+   "kind": "Microsoft.UI.Xaml.Media.FontFamily",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_fontfamily_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:FontFamily:lifetime",
+   "fingerprint": "e6d0ee030f69b939",
+   "kind": "Microsoft.UI.Xaml.Media.FontFamily",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_fontfamily_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:FontFamily:props",
+   "fingerprint": "d44f0d17eae76daf",
+   "kind": "Microsoft.UI.Xaml.Media.FontFamily",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_fontfamily_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:FontFamily:statics",
+   "fingerprint": "a0e651becde48d2e",
+   "kind": "Microsoft.UI.Xaml.Media.FontFamily",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_fontfamily_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:SolidColorBrush:construct",
+   "fingerprint": "e6d8912b28c44df5",
+   "kind": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_solidcolorbrush_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:SolidColorBrush:lifetime",
+   "fingerprint": "a15df58dfeb238d5",
+   "kind": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_solidcolorbrush_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:SolidColorBrush:props",
+   "fingerprint": "5718d5abe34f5954",
+   "kind": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_solidcolorbrush_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:SolidColorBrush:thread",
+   "fingerprint": "e9b5a4eef6b8e0fc",
+   "kind": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+   "name": "thread",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_solidcolorbrush_thread"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:CornerRadiusHelper:statics",
+   "fingerprint": "2fa5340cee5cd8ca",
+   "kind": "Microsoft.UI.Xaml.CornerRadiusHelper",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_cornerradiushelper_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:ThicknessHelper:statics",
+   "fingerprint": "5f44586eeffb15a8",
+   "kind": "Microsoft.UI.Xaml.ThicknessHelper",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_thicknesshelper_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI:ColorHelper:statics",
+   "fingerprint": "68d0fe4c394e85d8",
+   "kind": "Microsoft.UI.ColorHelper",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_colorhelper_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.ApplicationModel.DataTransfer:DataPackage:async",
+   "fingerprint": "e159e3907a394703",
+   "kind": "Windows.ApplicationModel.DataTransfer.DataPackage",
+   "name": "async",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_datapackage_async"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.ApplicationModel.DataTransfer:DataPackage:construct",
+   "fingerprint": "47162d0386c18099",
+   "kind": "Windows.ApplicationModel.DataTransfer.DataPackage",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_datapackage_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.ApplicationModel.DataTransfer:DataPackage:events",
+   "fingerprint": "a4f29f0b2f9e5553",
+   "kind": "Windows.ApplicationModel.DataTransfer.DataPackage",
+   "name": "events",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_datapackage_events"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.ApplicationModel.DataTransfer:DataPackage:lifetime",
+   "fingerprint": "1d5256ba9150a7e2",
+   "kind": "Windows.ApplicationModel.DataTransfer.DataPackage",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_datapackage_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.ApplicationModel.DataTransfer:DataPackage:methods",
+   "fingerprint": "17f2e507d3b28e98",
+   "kind": "Windows.ApplicationModel.DataTransfer.DataPackage",
+   "name": "methods",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_datapackage_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.ApplicationModel.DataTransfer:DataPackage:props",
+   "fingerprint": "1f14982bada0434c",
+   "kind": "Windows.ApplicationModel.DataTransfer.DataPackage",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_datapackage_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Data.Json:JsonObject:construct",
+   "fingerprint": "1044f7b85d4391ee",
+   "kind": "Windows.Data.Json.JsonObject",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_jsonobject_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Data.Json:JsonObject:lifetime",
+   "fingerprint": "0a83a2b2ab642f6d",
+   "kind": "Windows.Data.Json.JsonObject",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_jsonobject_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Data.Json:JsonObject:methods",
+   "fingerprint": "cea3152fe65be60d",
+   "kind": "Windows.Data.Json.JsonObject",
+   "name": "methods",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_jsonobject_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Data.Json:JsonObject:props",
+   "fingerprint": "68fe3c37e1544140",
+   "kind": "Windows.Data.Json.JsonObject",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_jsonobject_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Data.Json:JsonObject:statics",
+   "fingerprint": "432385b82d6d9bce",
+   "kind": "Windows.Data.Json.JsonObject",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_jsonobject_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation.Collections:PropertySet:construct",
+   "fingerprint": "0506c9c298c78e74",
+   "kind": "Windows.Foundation.Collections.PropertySet",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_propertyset_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation.Collections:PropertySet:events",
+   "fingerprint": "23c2479927c5bca6",
+   "kind": "Windows.Foundation.Collections.PropertySet",
+   "name": "events",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_propertyset_events"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation.Collections:PropertySet:lifetime",
+   "fingerprint": "0dba41603f9e66a2",
+   "kind": "Windows.Foundation.Collections.PropertySet",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_propertyset_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation.Collections:PropertySet:methods",
+   "fingerprint": "463008e8a0407348",
+   "kind": "Windows.Foundation.Collections.PropertySet",
+   "name": "methods",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_propertyset_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation.Collections:PropertySet:props",
+   "fingerprint": "2d975f658d5022c2",
+   "kind": "Windows.Foundation.Collections.PropertySet",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_propertyset_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation:Uri:construct",
+   "fingerprint": "660047495d7048fe",
+   "kind": "Windows.Foundation.Uri",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_uri_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation:Uri:lifetime",
+   "fingerprint": "7958df7b3ab8d742",
+   "kind": "Windows.Foundation.Uri",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_uri_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation:Uri:methods",
+   "fingerprint": "feece3f3841eabd7",
+   "kind": "Windows.Foundation.Uri",
+   "name": "methods",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_uri_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation:Uri:props",
+   "fingerprint": "77bc9b888218e4ab",
+   "kind": "Windows.Foundation.Uri",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_uri_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Foundation:Uri:statics",
+   "fingerprint": "6668bed63ca4699e",
+   "kind": "Windows.Foundation.Uri",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_uri_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:FileIO:async",
+   "fingerprint": "d80110666417dffa",
+   "kind": "Windows.Storage.FileIO",
+   "name": "async",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_fileio_async"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:FileIO:statics",
+   "fingerprint": "aaf6fab874d493ee",
+   "kind": "Windows.Storage.FileIO",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_fileio_statics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:StorageFolder:async",
+   "fingerprint": "117aa9835af3d9d8",
+   "kind": "Windows.Storage.StorageFolder",
+   "name": "async",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_storagefolder_async"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:StorageFolder:construct",
+   "fingerprint": "a05ff9cbb06e7e3e",
+   "kind": "Windows.Storage.StorageFolder",
+   "name": "construct",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_storagefolder_construct"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:StorageFolder:lifetime",
+   "fingerprint": "53804309736cada4",
+   "kind": "Windows.Storage.StorageFolder",
+   "name": "lifetime",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_storagefolder_lifetime"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:StorageFolder:methods",
+   "fingerprint": "d5e4b3cf88c54a55",
+   "kind": "Windows.Storage.StorageFolder",
+   "name": "methods",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_storagefolder_methods"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:StorageFolder:props",
+   "fingerprint": "ac837fb9a74b5307",
+   "kind": "Windows.Storage.StorageFolder",
+   "name": "props",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_storagefolder_props"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Windows.Storage:StorageFolder:statics",
+   "fingerprint": "6c56f0f46cba5f2d",
+   "kind": "Windows.Storage.StorageFolder",
+   "name": "statics",
+   "origin": "manual",
+   "section": "types",
+   "tests": [
+    "type_storagefolder_statics"
+   ]
+  }
+ ],
+ "schema": "svelters-winui-type-facts/v1"
+}

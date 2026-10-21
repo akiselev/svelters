@@ -312,6 +312,11 @@ impl Harness {
         self.s.backend.handle_info(h)
     }
 
+    /// Live handles of the backend (elements and type objects): the lifetime tests' baseline.
+    pub fn live_handles(&self) -> usize {
+        self.s.backend.inner().handles.borrow().len()
+    }
+
     pub fn destroy(&mut self, h: u64) {
         self.created.retain(|c| *c != h);
         self.s.backend.destroy(h);

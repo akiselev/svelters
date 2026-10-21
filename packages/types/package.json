@@ -14,6 +14,7 @@
     "./vite": "./vite.js",
     "./manifest": "./gtk/manifest.json",
     "./manifest-qt": "./qt/manifest.json",
+    "./manifest-winui": "./winui/manifest.json",
     "./gtk/glib": {
       "types": "./gtk/glib.d.ts",
       "default": "./gtk/glib/index.js"
@@ -57,6 +58,70 @@
     "./qt/widgets": {
       "types": "./qt/widgets.d.ts",
       "default": "./qt/widgets/index.js"
+    },
+    "./winui/microsoft.ui": {
+      "types": "./winui/microsoft.ui.d.ts",
+      "default": "./winui/microsoft.ui/index.js"
+    },
+    "./winui/microsoft.ui.composition": {
+      "types": "./winui/microsoft.ui.composition.d.ts",
+      "default": "./winui/microsoft.ui.composition/index.js"
+    },
+    "./winui/microsoft.ui.dispatching": {
+      "types": "./winui/microsoft.ui.dispatching.d.ts",
+      "default": "./winui/microsoft.ui.dispatching/index.js"
+    },
+    "./winui/microsoft.ui.xaml": {
+      "types": "./winui/microsoft.ui.xaml.d.ts",
+      "default": "./winui/microsoft.ui.xaml/index.js"
+    },
+    "./winui/microsoft.ui.xaml.media": {
+      "types": "./winui/microsoft.ui.xaml.media.d.ts",
+      "default": "./winui/microsoft.ui.xaml.media/index.js"
+    },
+    "./winui/microsoft.ui.xaml.media.imaging": {
+      "types": "./winui/microsoft.ui.xaml.media.imaging.d.ts",
+      "default": "./winui/microsoft.ui.xaml.media.imaging/index.js"
+    },
+    "./winui/windows.applicationmodel.datatransfer": {
+      "types": "./winui/windows.applicationmodel.datatransfer.d.ts",
+      "default": "./winui/windows.applicationmodel.datatransfer/index.js"
+    },
+    "./winui/windows.data.json": {
+      "types": "./winui/windows.data.json.d.ts",
+      "default": "./winui/windows.data.json/index.js"
+    },
+    "./winui/windows.foundation": {
+      "types": "./winui/windows.foundation.d.ts",
+      "default": "./winui/windows.foundation/index.js"
+    },
+    "./winui/windows.foundation.collections": {
+      "types": "./winui/windows.foundation.collections.d.ts",
+      "default": "./winui/windows.foundation.collections/index.js"
+    },
+    "./winui/windows.security.enterprisedata": {
+      "types": "./winui/windows.security.enterprisedata.d.ts",
+      "default": "./winui/windows.security.enterprisedata/index.js"
+    },
+    "./winui/windows.storage": {
+      "types": "./winui/windows.storage.d.ts",
+      "default": "./winui/windows.storage/index.js"
+    },
+    "./winui/windows.storage.fileproperties": {
+      "types": "./winui/windows.storage.fileproperties.d.ts",
+      "default": "./winui/windows.storage.fileproperties/index.js"
+    },
+    "./winui/windows.storage.search": {
+      "types": "./winui/windows.storage.search.d.ts",
+      "default": "./winui/windows.storage.search/index.js"
+    },
+    "./winui/windows.storage.streams": {
+      "types": "./winui/windows.storage.streams.d.ts",
+      "default": "./winui/windows.storage.streams/index.js"
+    },
+    "./winui/windows.ui": {
+      "types": "./winui/windows.ui.d.ts",
+      "default": "./winui/windows.ui/index.js"
     }
   },
   "scripts": {

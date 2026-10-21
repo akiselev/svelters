@@ -346,8 +346,8 @@ impl WinUiBackend {
             return self.type_call_static(kind, method, args);
         }
         let (args, done) = split_done(g, args)?;
-        let m = model::pick(g, args.len())?;
-        invoke(self.inner(), Recv::Instance(&obj), m, &args, done, h).or_else(|e| err_value(e)).map_err(|e| format!("{}(): {e}", g.name))
+        let m = model::pick_for(g, &args)?;
+        invoke(self.inner(), Recv::Instance(&obj), m, &args[..m.params.len()], done, h).or_else(|e| err_value(e)).map_err(|e| format!("{}(): {e}", g.name))
     }
 
     pub(crate) fn type_call_static(&self, kind: u32, method: u32, args: &[Value]) -> StrResult<Value> {
@@ -359,8 +359,8 @@ impl WinUiBackend {
             return Err(format!("{}.{} is an instance method", kind_name(kind), g.name));
         }
         let (args, done) = split_done(g, args)?;
-        let m = model::pick(g, args.len())?;
-        invoke(self.inner(), Recv::Static, m, &args, done, 0).or_else(|e| err_value(e)).map_err(|e| format!("{}.{}(): {e}", kind_name(kind), g.name))
+        let m = model::pick_for(g, &args)?;
+        invoke(self.inner(), Recv::Static, m, &args[..m.params.len()], done, 0).or_else(|e| err_value(e)).map_err(|e| format!("{}.{}(): {e}", kind_name(kind), g.name))
     }
 
     pub(crate) fn type_construct(&self, kind: u32, props: &[u32], values: &[Value]) -> StrResult<Value> {

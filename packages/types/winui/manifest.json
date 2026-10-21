@@ -1,0 +1,1238 @@
+{
+ "modules": {
+  "svelters:winui/microsoft.ui": {
+   "dir": "microsoft.ui",
+   "exports": {
+    "ColorHelper": {
+     "category": "statics",
+     "extends": null,
+     "file": "microsoft.ui/ColorHelper.js",
+     "implements": [],
+     "imports": [],
+     "native": "Microsoft.UI.ColorHelper",
+     "signature": []
+    },
+    "Colors": {
+     "category": "statics",
+     "extends": null,
+     "file": "microsoft.ui/Colors.js",
+     "implements": [],
+     "imports": [],
+     "native": "Microsoft.UI.Colors",
+     "signature": []
+    }
+   }
+  },
+  "svelters:winui/microsoft.ui.composition": {
+   "dir": "microsoft.ui.composition",
+   "exports": {
+    "Compositor": {
+     "category": "object",
+     "extends": null,
+     "file": "microsoft.ui.composition/Compositor.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Dispatching.DispatcherQueue"
+     ],
+     "native": "Microsoft.UI.Composition.Compositor",
+     "signature": [
+      "Microsoft.UI.Dispatching.DispatcherQueue"
+     ]
+    }
+   }
+  },
+  "svelters:winui/microsoft.ui.dispatching": {
+   "dir": "microsoft.ui.dispatching",
+   "exports": {
+    "DispatcherQueue": {
+     "category": "object",
+     "extends": null,
+     "file": "microsoft.ui.dispatching/DispatcherQueue.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs",
+      "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Microsoft.UI.Dispatching.DispatcherQueue",
+     "signature": [
+      "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs",
+      "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+      "Windows.Foundation.IInspectable"
+     ]
+    },
+    "DispatcherQueueShutdownStartingEventArgs": {
+     "category": "args",
+     "extends": null,
+     "file": "microsoft.ui.dispatching/DispatcherQueueShutdownStartingEventArgs.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Deferral"
+     ],
+     "native": "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs",
+     "signature": [
+      "Windows.Foundation.Deferral"
+     ]
+    },
+    "DispatcherQueueTimer": {
+     "category": "object",
+     "extends": null,
+     "file": "microsoft.ui.dispatching/DispatcherQueueTimer.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+     "signature": [
+      "Windows.Foundation.IInspectable"
+     ]
+    }
+   }
+  },
+  "svelters:winui/microsoft.ui.xaml": {
+   "dir": "microsoft.ui.xaml",
+   "exports": {
+    "CornerRadiusHelper": {
+     "category": "statics",
+     "extends": null,
+     "file": "microsoft.ui.xaml/CornerRadiusHelper.js",
+     "implements": [],
+     "imports": [],
+     "native": "Microsoft.UI.Xaml.CornerRadiusHelper",
+     "signature": []
+    },
+    "DependencyObject": {
+     "category": "object",
+     "extends": null,
+     "file": "microsoft.ui.xaml/DependencyObject.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Dispatching.DispatcherQueue",
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Microsoft.UI.Xaml.DependencyObject",
+     "signature": [
+      "Microsoft.UI.Dispatching.DispatcherQueue",
+      "Microsoft.UI.Xaml.DependencyProperty",
+      "Windows.Foundation.IInspectable"
+     ]
+    },
+    "DependencyProperty": {
+     "category": "object",
+     "extends": null,
+     "file": "microsoft.ui.xaml/DependencyProperty.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Microsoft.UI.Xaml.DependencyProperty",
+     "signature": [
+      "Windows.Foundation.IInspectable"
+     ]
+    },
+    "ExceptionRoutedEventArgs": {
+     "category": "args",
+     "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+     "file": "microsoft.ui.xaml/ExceptionRoutedEventArgs.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.RoutedEventArgs"
+     ],
+     "native": "Microsoft.UI.Xaml.ExceptionRoutedEventArgs",
+     "signature": []
+    },
+    "GridLengthHelper": {
+     "category": "statics",
+     "extends": null,
+     "file": "microsoft.ui.xaml/GridLengthHelper.js",
+     "implements": [],
+     "imports": [],
+     "native": "Microsoft.UI.Xaml.GridLengthHelper",
+     "signature": []
+    },
+    "RoutedEventArgs": {
+     "category": "args",
+     "extends": null,
+     "file": "microsoft.ui.xaml/RoutedEventArgs.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Microsoft.UI.Xaml.RoutedEventArgs",
+     "signature": [
+      "Windows.Foundation.IInspectable"
+     ]
+    },
+    "ThicknessHelper": {
+     "category": "statics",
+     "extends": null,
+     "file": "microsoft.ui.xaml/ThicknessHelper.js",
+     "implements": [],
+     "imports": [],
+     "native": "Microsoft.UI.Xaml.ThicknessHelper",
+     "signature": []
+    }
+   }
+  },
+  "svelters:winui/microsoft.ui.xaml.media": {
+   "dir": "microsoft.ui.xaml.media",
+   "exports": {
+    "Brush": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.DependencyObject",
+     "file": "microsoft.ui.xaml.media/Brush.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.DependencyObject",
+      "Microsoft.UI.Xaml.Media.Transform"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.Brush",
+     "signature": [
+      "Microsoft.UI.Xaml.Media.Transform"
+     ]
+    },
+    "FontFamily": {
+     "category": "object",
+     "extends": null,
+     "file": "microsoft.ui.xaml.media/FontFamily.js",
+     "implements": [],
+     "imports": [],
+     "native": "Microsoft.UI.Xaml.Media.FontFamily",
+     "signature": []
+    },
+    "GeneralTransform": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.DependencyObject",
+     "file": "microsoft.ui.xaml.media/GeneralTransform.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.DependencyObject"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.GeneralTransform",
+     "signature": []
+    },
+    "GradientBrush": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.Media.Brush",
+     "file": "microsoft.ui.xaml.media/GradientBrush.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.Media.Brush",
+      "Microsoft.UI.Xaml.Media.GradientStopCollection"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.GradientBrush",
+     "signature": [
+      "Microsoft.UI.Xaml.Media.GradientStopCollection"
+     ]
+    },
+    "GradientStop": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.DependencyObject",
+     "file": "microsoft.ui.xaml.media/GradientStop.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.DependencyObject"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.GradientStop",
+     "signature": []
+    },
+    "GradientStopCollection": {
+     "category": "model",
+     "extends": null,
+     "file": "microsoft.ui.xaml.media/GradientStopCollection.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.Media.GradientStop"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.GradientStopCollection",
+     "signature": [
+      "Microsoft.UI.Xaml.Media.GradientStop"
+     ]
+    },
+    "ImageSource": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.DependencyObject",
+     "file": "microsoft.ui.xaml.media/ImageSource.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.DependencyObject"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.ImageSource",
+     "signature": []
+    },
+    "LinearGradientBrush": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.Media.GradientBrush",
+     "file": "microsoft.ui.xaml.media/LinearGradientBrush.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.Media.GradientBrush"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.LinearGradientBrush",
+     "signature": [
+      "Microsoft.UI.Xaml.Media.GradientStopCollection"
+     ]
+    },
+    "SolidColorBrush": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.Media.Brush",
+     "file": "microsoft.ui.xaml.media/SolidColorBrush.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.Media.Brush"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+     "signature": []
+    },
+    "Transform": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.Media.GeneralTransform",
+     "file": "microsoft.ui.xaml.media/Transform.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.Media.GeneralTransform"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.Transform",
+     "signature": []
+    }
+   }
+  },
+  "svelters:winui/microsoft.ui.xaml.media.imaging": {
+   "dir": "microsoft.ui.xaml.media.imaging",
+   "exports": {
+    "BitmapImage": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+     "file": "microsoft.ui.xaml.media.imaging/BitmapImage.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+      "Microsoft.UI.Xaml.ExceptionRoutedEventArgs",
+      "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs",
+      "Microsoft.UI.Xaml.RoutedEventArgs",
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.Imaging.BitmapImage",
+     "signature": [
+      "Microsoft.UI.Xaml.ExceptionRoutedEventArgs",
+      "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs",
+      "Microsoft.UI.Xaml.RoutedEventArgs",
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri"
+     ]
+    },
+    "BitmapSource": {
+     "category": "object",
+     "extends": "Microsoft.UI.Xaml.Media.ImageSource",
+     "file": "microsoft.ui.xaml.media.imaging/BitmapSource.js",
+     "implements": [],
+     "imports": [
+      "Microsoft.UI.Xaml.Media.ImageSource"
+     ],
+     "native": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+     "signature": [
+      "Windows.Storage.Streams.IRandomAccessStream"
+     ]
+    },
+    "DownloadProgressEventArgs": {
+     "category": "args",
+     "extends": null,
+     "file": "microsoft.ui.xaml.media.imaging/DownloadProgressEventArgs.js",
+     "implements": [],
+     "imports": [],
+     "native": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs",
+     "signature": []
+    }
+   }
+  },
+  "svelters:winui/windows.applicationmodel.datatransfer": {
+   "dir": "windows.applicationmodel.datatransfer",
+   "exports": {
+    "Clipboard": {
+     "category": "statics",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/Clipboard.js",
+     "implements": [],
+     "imports": [
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResult",
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.Clipboard",
+     "signature": [
+      "Windows.ApplicationModel.DataTransfer.ClipboardContentOptions",
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem",
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResult",
+      "Windows.ApplicationModel.DataTransfer.DataPackage",
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ]
+    },
+    "ClipboardContentOptions": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/ClipboardContentOptions.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.ClipboardContentOptions",
+     "signature": [
+      "Windows.Foundation.Collections.IVector"
+     ]
+    },
+    "ClipboardHistoryItem": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/ClipboardHistoryItem.js",
+     "implements": [],
+     "imports": [
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem",
+     "signature": [
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ]
+    },
+    "ClipboardHistoryItemsResult": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/ClipboardHistoryItemsResult.js",
+     "implements": [],
+     "imports": [
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResult",
+     "signature": [
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem"
+     ]
+    },
+    "DataPackage": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/DataPackage.js",
+     "implements": [],
+     "imports": [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet",
+      "Windows.ApplicationModel.DataTransfer.DataPackageView",
+      "Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs",
+      "Windows.ApplicationModel.DataTransfer.ShareCompletedEventArgs",
+      "Windows.Foundation.Collections.IMap",
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+     "signature": [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet",
+      "Windows.ApplicationModel.DataTransfer.DataPackageView",
+      "Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs",
+      "Windows.ApplicationModel.DataTransfer.ShareCompletedEventArgs",
+      "Windows.Foundation.Collections.IMap",
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri",
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ]
+    },
+    "DataPackagePropertySet": {
+     "category": "model",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/DataPackagePropertySet.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector",
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri",
+      "Windows.Storage.Streams.IRandomAccessStreamReference"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet",
+     "signature": [
+      "Windows.Foundation.Collections.IVector",
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri",
+      "Windows.Storage.Streams.IRandomAccessStreamReference"
+     ]
+    },
+    "DataPackagePropertySetView": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/DataPackagePropertySetView.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri",
+      "Windows.Storage.Streams.IRandomAccessStreamReference",
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView",
+     "signature": [
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri",
+      "Windows.Storage.Streams.IRandomAccessStreamReference",
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ]
+    },
+    "DataPackageView": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/DataPackageView.js",
+     "implements": [],
+     "imports": [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView",
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri",
+      "Windows.Storage.IStorageItem",
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+     "signature": [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView",
+      "Windows.Foundation.IInspectable",
+      "Windows.Foundation.Uri",
+      "Windows.Storage.IStorageItem",
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ]
+    },
+    "OperationCompletedEventArgs": {
+     "category": "args",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/OperationCompletedEventArgs.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs",
+     "signature": []
+    },
+    "ShareCompletedEventArgs": {
+     "category": "args",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/ShareCompletedEventArgs.js",
+     "implements": [],
+     "imports": [
+      "Windows.ApplicationModel.DataTransfer.ShareTargetInfo"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.ShareCompletedEventArgs",
+     "signature": [
+      "Windows.ApplicationModel.DataTransfer.ShareTargetInfo"
+     ]
+    },
+    "ShareProvider": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/ShareProvider.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.IInspectable",
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.ShareProvider",
+     "signature": [
+      "Windows.Foundation.IInspectable",
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ]
+    },
+    "ShareTargetInfo": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.applicationmodel.datatransfer/ShareTargetInfo.js",
+     "implements": [],
+     "imports": [
+      "Windows.ApplicationModel.DataTransfer.ShareProvider"
+     ],
+     "native": "Windows.ApplicationModel.DataTransfer.ShareTargetInfo",
+     "signature": [
+      "Windows.ApplicationModel.DataTransfer.ShareProvider"
+     ]
+    }
+   }
+  },
+  "svelters:winui/windows.data.json": {
+   "dir": "windows.data.json",
+   "exports": {
+    "IJsonValue": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.data.json/IJsonValue.js",
+     "implements": [],
+     "imports": [
+      "Windows.Data.Json.JsonArray",
+      "Windows.Data.Json.JsonObject"
+     ],
+     "native": "Windows.Data.Json.IJsonValue",
+     "signature": [
+      "Windows.Data.Json.JsonArray",
+      "Windows.Data.Json.JsonObject"
+     ]
+    },
+    "JsonArray": {
+     "category": "model",
+     "extends": null,
+     "file": "windows.data.json/JsonArray.js",
+     "implements": [],
+     "imports": [
+      "Windows.Data.Json.IJsonValue",
+      "Windows.Data.Json.JsonObject"
+     ],
+     "native": "Windows.Data.Json.JsonArray",
+     "signature": [
+      "Windows.Data.Json.IJsonValue",
+      "Windows.Data.Json.JsonObject"
+     ]
+    },
+    "JsonObject": {
+     "category": "model",
+     "extends": null,
+     "file": "windows.data.json/JsonObject.js",
+     "implements": [],
+     "imports": [
+      "Windows.Data.Json.IJsonValue",
+      "Windows.Data.Json.JsonArray",
+      "Windows.Data.Json.JsonValue"
+     ],
+     "native": "Windows.Data.Json.JsonObject",
+     "signature": [
+      "Windows.Data.Json.IJsonValue",
+      "Windows.Data.Json.JsonArray",
+      "Windows.Data.Json.JsonValue"
+     ]
+    },
+    "JsonValue": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.data.json/JsonValue.js",
+     "implements": [],
+     "imports": [
+      "Windows.Data.Json.JsonArray",
+      "Windows.Data.Json.JsonObject"
+     ],
+     "native": "Windows.Data.Json.JsonValue",
+     "signature": [
+      "Windows.Data.Json.JsonArray",
+      "Windows.Data.Json.JsonObject"
+     ]
+    }
+   }
+  },
+  "svelters:winui/windows.foundation": {
+   "dir": "windows.foundation",
+   "exports": {
+    "Deferral": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.foundation/Deferral.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Foundation.Deferral",
+     "signature": []
+    },
+    "IInspectable": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.foundation/IInspectable.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Foundation.IInspectable",
+     "signature": []
+    },
+    "IWwwFormUrlDecoderEntry": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.foundation/IWwwFormUrlDecoderEntry.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Foundation.IWwwFormUrlDecoderEntry",
+     "signature": []
+    },
+    "PropertyValue": {
+     "category": "statics",
+     "extends": null,
+     "file": "windows.foundation/PropertyValue.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Windows.Foundation.PropertyValue",
+     "signature": [
+      "Windows.Foundation.IInspectable"
+     ]
+    },
+    "Uri": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.foundation/Uri.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.WwwFormUrlDecoder"
+     ],
+     "native": "Windows.Foundation.Uri",
+     "signature": [
+      "Windows.Foundation.WwwFormUrlDecoder"
+     ]
+    },
+    "WwwFormUrlDecoder": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.foundation/WwwFormUrlDecoder.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.IWwwFormUrlDecoderEntry"
+     ],
+     "native": "Windows.Foundation.WwwFormUrlDecoder",
+     "signature": [
+      "Windows.Foundation.IWwwFormUrlDecoderEntry"
+     ]
+    }
+   }
+  },
+  "svelters:winui/windows.foundation.collections": {
+   "dir": "windows.foundation.collections",
+   "exports": {
+    "IMap": {
+     "category": "collection",
+     "extends": null,
+     "file": "windows.foundation.collections/IMap.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ],
+     "native": "Windows.Foundation.Collections.IMap",
+     "signature": [
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ]
+    },
+    "IMapChangedEventArgs": {
+     "category": "collection",
+     "extends": null,
+     "file": "windows.foundation.collections/IMapChangedEventArgs.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Foundation.Collections.IMapChangedEventArgs",
+     "signature": []
+    },
+    "IObservableMap": {
+     "category": "collection",
+     "extends": null,
+     "file": "windows.foundation.collections/IObservableMap.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Windows.Foundation.Collections.IObservableMap",
+     "signature": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.IInspectable"
+     ]
+    },
+    "IVector": {
+     "category": "collection",
+     "extends": null,
+     "file": "windows.foundation.collections/IVector.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Foundation.Collections.IVector",
+     "signature": []
+    },
+    "PropertySet": {
+     "category": "model",
+     "extends": null,
+     "file": "windows.foundation.collections/PropertySet.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.Collections.IObservableMap",
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Windows.Foundation.Collections.PropertySet",
+     "signature": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.Collections.IObservableMap",
+      "Windows.Foundation.IInspectable"
+     ]
+    },
+    "StringMap": {
+     "category": "model",
+     "extends": null,
+     "file": "windows.foundation.collections/StringMap.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.Collections.IObservableMap"
+     ],
+     "native": "Windows.Foundation.Collections.StringMap",
+     "signature": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.Collections.IObservableMap"
+     ]
+    },
+    "ValueSet": {
+     "category": "model",
+     "extends": null,
+     "file": "windows.foundation.collections/ValueSet.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.Collections.IObservableMap",
+      "Windows.Foundation.IInspectable"
+     ],
+     "native": "Windows.Foundation.Collections.ValueSet",
+     "signature": [
+      "Windows.Foundation.Collections.IMapChangedEventArgs",
+      "Windows.Foundation.Collections.IObservableMap",
+      "Windows.Foundation.IInspectable"
+     ]
+    }
+   }
+  },
+  "svelters:winui/windows.storage": {
+   "dir": "windows.storage",
+   "exports": {
+    "FileIO": {
+     "category": "statics",
+     "extends": null,
+     "file": "windows.storage/FileIO.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector",
+      "Windows.Storage.Streams.IBuffer"
+     ],
+     "native": "Windows.Storage.FileIO",
+     "signature": [
+      "Windows.Foundation.Collections.IVector",
+      "Windows.Storage.IStorageFile",
+      "Windows.Storage.Streams.IBuffer"
+     ]
+    },
+    "IStorageFile": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage/IStorageFile.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.StorageFile",
+      "Windows.Storage.StorageStreamTransaction",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IRandomAccessStream",
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ],
+     "native": "Windows.Storage.IStorageFile",
+     "signature": [
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.IStorageFolder",
+      "Windows.Storage.StorageFile",
+      "Windows.Storage.StorageStreamTransaction",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IRandomAccessStream",
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ]
+    },
+    "IStorageFolder": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage/IStorageFolder.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.IStorageItem",
+      "Windows.Storage.StorageFile",
+      "Windows.Storage.StorageFolder"
+     ],
+     "native": "Windows.Storage.IStorageFolder",
+     "signature": [
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.IStorageItem",
+      "Windows.Storage.StorageFile",
+      "Windows.Storage.StorageFolder"
+     ]
+    },
+    "IStorageItem": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage/IStorageItem.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.FileProperties.BasicProperties"
+     ],
+     "native": "Windows.Storage.IStorageItem",
+     "signature": [
+      "Windows.Storage.FileProperties.BasicProperties"
+     ]
+    },
+    "PathIO": {
+     "category": "statics",
+     "extends": null,
+     "file": "windows.storage/PathIO.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector",
+      "Windows.Storage.Streams.IBuffer"
+     ],
+     "native": "Windows.Storage.PathIO",
+     "signature": [
+      "Windows.Foundation.Collections.IVector",
+      "Windows.Storage.Streams.IBuffer"
+     ]
+    },
+    "StorageFile": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageFile.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.FileProperties.StorageItemContentProperties",
+      "Windows.Storage.FileProperties.StorageItemThumbnail",
+      "Windows.Storage.StorageFolder",
+      "Windows.Storage.StorageProvider",
+      "Windows.Storage.StorageStreamTransaction",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IRandomAccessStream",
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ],
+     "native": "Windows.Storage.StorageFile",
+     "signature": [
+      "Windows.Foundation.Uri",
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.FileProperties.StorageItemContentProperties",
+      "Windows.Storage.FileProperties.StorageItemThumbnail",
+      "Windows.Storage.IStorageFile",
+      "Windows.Storage.IStorageFolder",
+      "Windows.Storage.IStorageItem",
+      "Windows.Storage.StorageFolder",
+      "Windows.Storage.StorageProvider",
+      "Windows.Storage.StorageStreamTransaction",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IRandomAccessStream",
+      "Windows.Storage.Streams.IRandomAccessStreamReference",
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ]
+    },
+    "StorageFolder": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageFolder.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.FileProperties.StorageItemContentProperties",
+      "Windows.Storage.FileProperties.StorageItemThumbnail",
+      "Windows.Storage.IStorageItem",
+      "Windows.Storage.StorageFile",
+      "Windows.Storage.StorageLibraryChangeTracker",
+      "Windows.Storage.StorageProvider"
+     ],
+     "native": "Windows.Storage.StorageFolder",
+     "signature": [
+      "Windows.Storage.FileProperties.BasicProperties",
+      "Windows.Storage.FileProperties.StorageItemContentProperties",
+      "Windows.Storage.FileProperties.StorageItemThumbnail",
+      "Windows.Storage.IStorageItem",
+      "Windows.Storage.StorageFile",
+      "Windows.Storage.StorageLibraryChangeTracker",
+      "Windows.Storage.StorageProvider"
+     ]
+    },
+    "StorageLibraryChange": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageLibraryChange.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.IStorageItem"
+     ],
+     "native": "Windows.Storage.StorageLibraryChange",
+     "signature": [
+      "Windows.Storage.IStorageItem"
+     ]
+    },
+    "StorageLibraryChangeReader": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageLibraryChangeReader.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.StorageLibraryChange"
+     ],
+     "native": "Windows.Storage.StorageLibraryChangeReader",
+     "signature": [
+      "Windows.Storage.StorageLibraryChange"
+     ]
+    },
+    "StorageLibraryChangeTracker": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageLibraryChangeTracker.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.StorageLibraryChangeReader"
+     ],
+     "native": "Windows.Storage.StorageLibraryChangeTracker",
+     "signature": [
+      "Windows.Storage.StorageLibraryChangeReader",
+      "Windows.Storage.StorageLibraryChangeTrackerOptions"
+     ]
+    },
+    "StorageLibraryChangeTrackerOptions": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageLibraryChangeTrackerOptions.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Storage.StorageLibraryChangeTrackerOptions",
+     "signature": []
+    },
+    "StorageProvider": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageProvider.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Storage.StorageProvider",
+     "signature": []
+    },
+    "StorageStreamTransaction": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage/StorageStreamTransaction.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.IRandomAccessStream"
+     ],
+     "native": "Windows.Storage.StorageStreamTransaction",
+     "signature": [
+      "Windows.Storage.Streams.IRandomAccessStream"
+     ]
+    }
+   }
+  },
+  "svelters:winui/windows.storage.fileproperties": {
+   "dir": "windows.storage.fileproperties",
+   "exports": {
+    "BasicProperties": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.fileproperties/BasicProperties.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Storage.FileProperties.BasicProperties",
+     "signature": []
+    },
+    "DocumentProperties": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.fileproperties/DocumentProperties.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector"
+     ],
+     "native": "Windows.Storage.FileProperties.DocumentProperties",
+     "signature": [
+      "Windows.Foundation.Collections.IVector"
+     ]
+    },
+    "ImageProperties": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.fileproperties/ImageProperties.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector"
+     ],
+     "native": "Windows.Storage.FileProperties.ImageProperties",
+     "signature": [
+      "Windows.Foundation.Collections.IVector"
+     ]
+    },
+    "MusicProperties": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.fileproperties/MusicProperties.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector"
+     ],
+     "native": "Windows.Storage.FileProperties.MusicProperties",
+     "signature": [
+      "Windows.Foundation.Collections.IVector"
+     ]
+    },
+    "StorageItemContentProperties": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.fileproperties/StorageItemContentProperties.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.FileProperties.DocumentProperties",
+      "Windows.Storage.FileProperties.ImageProperties",
+      "Windows.Storage.FileProperties.MusicProperties",
+      "Windows.Storage.FileProperties.VideoProperties"
+     ],
+     "native": "Windows.Storage.FileProperties.StorageItemContentProperties",
+     "signature": [
+      "Windows.Storage.FileProperties.DocumentProperties",
+      "Windows.Storage.FileProperties.ImageProperties",
+      "Windows.Storage.FileProperties.MusicProperties",
+      "Windows.Storage.FileProperties.VideoProperties"
+     ]
+    },
+    "StorageItemThumbnail": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.fileproperties/StorageItemThumbnail.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.IBuffer",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IOutputStream",
+      "Windows.Storage.Streams.IRandomAccessStream"
+     ],
+     "native": "Windows.Storage.FileProperties.StorageItemThumbnail",
+     "signature": [
+      "Windows.Storage.Streams.IBuffer",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IOutputStream",
+      "Windows.Storage.Streams.IRandomAccessStream"
+     ]
+    },
+    "VideoProperties": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.fileproperties/VideoProperties.js",
+     "implements": [],
+     "imports": [
+      "Windows.Foundation.Collections.IVector"
+     ],
+     "native": "Windows.Storage.FileProperties.VideoProperties",
+     "signature": [
+      "Windows.Foundation.Collections.IVector"
+     ]
+    }
+   }
+  },
+  "svelters:winui/windows.storage.streams": {
+   "dir": "windows.storage.streams",
+   "exports": {
+    "IBuffer": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage.streams/IBuffer.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Storage.Streams.IBuffer",
+     "signature": []
+    },
+    "IInputStream": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage.streams/IInputStream.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.IBuffer"
+     ],
+     "native": "Windows.Storage.Streams.IInputStream",
+     "signature": [
+      "Windows.Storage.Streams.IBuffer"
+     ]
+    },
+    "IOutputStream": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage.streams/IOutputStream.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.Storage.Streams.IOutputStream",
+     "signature": [
+      "Windows.Storage.Streams.IBuffer"
+     ]
+    },
+    "IRandomAccessStream": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage.streams/IRandomAccessStream.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.IBuffer",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IOutputStream"
+     ],
+     "native": "Windows.Storage.Streams.IRandomAccessStream",
+     "signature": [
+      "Windows.Storage.Streams.IBuffer",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IOutputStream"
+     ]
+    },
+    "IRandomAccessStreamReference": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage.streams/IRandomAccessStreamReference.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ],
+     "native": "Windows.Storage.Streams.IRandomAccessStreamReference",
+     "signature": [
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ]
+    },
+    "IRandomAccessStreamWithContentType": {
+     "category": "interface",
+     "extends": null,
+     "file": "windows.storage.streams/IRandomAccessStreamWithContentType.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.IBuffer",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IOutputStream",
+      "Windows.Storage.Streams.IRandomAccessStream"
+     ],
+     "native": "Windows.Storage.Streams.IRandomAccessStreamWithContentType",
+     "signature": [
+      "Windows.Storage.Streams.IBuffer",
+      "Windows.Storage.Streams.IInputStream",
+      "Windows.Storage.Streams.IOutputStream",
+      "Windows.Storage.Streams.IRandomAccessStream"
+     ]
+    },
+    "RandomAccessStreamReference": {
+     "category": "object",
+     "extends": null,
+     "file": "windows.storage.streams/RandomAccessStreamReference.js",
+     "implements": [],
+     "imports": [
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ],
+     "native": "Windows.Storage.Streams.RandomAccessStreamReference",
+     "signature": [
+      "Windows.Foundation.Uri",
+      "Windows.Storage.IStorageFile",
+      "Windows.Storage.Streams.IRandomAccessStream",
+      "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+     ]
+    }
+   }
+  },
+  "svelters:winui/windows.ui": {
+   "dir": "windows.ui",
+   "exports": {
+    "ColorHelper": {
+     "category": "statics",
+     "extends": null,
+     "file": "windows.ui/ColorHelper.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.UI.ColorHelper",
+     "signature": []
+    },
+    "Colors": {
+     "category": "statics",
+     "extends": null,
+     "file": "windows.ui/Colors.js",
+     "implements": [],
+     "imports": [],
+     "native": "Windows.UI.Colors",
+     "signature": []
+    }
+   }
+  }
+ },
+ "schema": "svelters-types-manifest/v1",
+ "toolkit": "winui"
+}

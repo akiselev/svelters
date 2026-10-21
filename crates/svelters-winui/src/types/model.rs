@@ -344,6 +344,19 @@ pub fn pick(g: &Group, n: usize) -> Result<&'static Method, String> {
     Err(format!("{}: no overload takes {n} argument(s) (takes {})", g.name, ar.join(" or ")))
 }
 
+/// The overload for a host argument list. The host pads omitted optional arguments with null up to the widest
+/// overload, so trailing nulls select the narrowest overload that still takes every non-null argument (an explicit
+/// trailing null therefore means "the overload without that parameter").
+pub fn pick_for(g: &Group, args: &[svelters_abi::Value]) -> Result<&'static Method, String> {
+    let n_eff = args.iter().rposition(|v| !matches!(v, svelters_abi::Value::Null)).map_or(0, |i| i + 1);
+    g.methods
+        .iter()
+        .map(|m| &METHODS[*m as usize])
+        .filter(|m| m.params.len() >= n_eff && m.params.len() <= args.len())
+        .min_by_key(|m| m.params.len())
+        .ok_or_else(|| pick(g, args.len()).err().unwrap_or_default())
+}
+
 /// Smallest and largest arity of a group.
 pub fn arity_range(g: &Group) -> (usize, usize) {
     let ns = g.methods.iter().map(|m| METHODS[*m as usize].params.len());
@@ -448,6 +461,11 @@ mod tests {
         let g = group(group_id(k, "new")).expect("constructors");
         assert_eq!(arity_range(g), (1, 2));
         assert!(pick(g, 3).unwrap_err().contains("takes 1 or 2"));
+        use svelters_abi::Value;
+        let s = |x: &str| Value::Str(x.into());
+        assert_eq!(pick_for(g, &[s("a"), Value::Null]).unwrap().params.len(), 1, "a padded null selects the narrower overload");
+        assert_eq!(pick_for(g, &[s("a"), s("b")]).unwrap().params.len(), 2);
+        assert!(pick_for(g, &[]).is_err());
         assert_ne!(prop_id(k, "host"), 0);
         assert_eq!(prop_id(k, "nope"), 0);
         let esc = group(group_id(k, "escapeComponent")).unwrap();

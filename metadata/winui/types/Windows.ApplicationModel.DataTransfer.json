@@ -570,21 +570,24 @@
   },
   "Windows.ApplicationModel.DataTransfer.DataPackage": {
    "abstract": false,
-   "async_checks": [
-    [
-     "$subject",
-     "setText",
-     "copied"
-    ],
-    [
-     "$subject",
-     "getView"
-    ],
-    [
-     "$1",
-     "getTextAsync"
+   "async_checks": {
+    "expect": "copied",
+    "steps": [
+     [
+      "$subject",
+      "setText",
+      "copied"
+     ],
+     [
+      "$subject",
+      "getView"
+     ],
+     [
+      "$1",
+      "getTextAsync"
+     ]
     ]
-   ],
+   },
    "blocked": {
     "SetDataProvider/2": "delegate-parameter",
     "SetStorageItems/1": "collection-argument",

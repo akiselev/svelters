@@ -116,7 +116,15 @@ def gtk_type_facts() -> list[dict]:
     return out
 
 
+WINUI_TYPE_FACTS = ROOT / "crates/svelters-winui/src/generated/types_facts.json"
+
+
 def manifest(tk: str) -> dict:
+    if tk == "winui" and WINUI_TYPE_FACTS.exists():
+        # N4: the curated non-GUI types' facts (tests in crates/svelters-winui/tests/types_verify.rs) join the winui ledger.
+        m = json.loads(FACTS[tk].read_text())
+        m["facts"] = m["facts"] + json.loads(WINUI_TYPE_FACTS.read_text())["facts"]
+        return m
     if tk == "gtk":
         m = json.loads(GTK_FACTS.read_text())
         m["facts"] = m["facts"] + gtk_extra_facts()
@@ -427,6 +435,9 @@ def read_ci_results(path: Path) -> tuple[dict[str, str], dict[str, str], dict | 
         jsonl = path
     snaps = sorted(jsonl.parent.rglob("facts.json"))
     snap = json.loads(snaps[0].read_text()) if snaps else None
+    # More than one snapshot (winui: the backend's facts.json and types/facts.json of the N4 types): their facts merge.
+    for extra in snaps[1:]:
+        snap["facts"] = snap["facts"] + json.loads(extra.read_text())["facts"]
     results: dict[str, str] = {}
     msgs: dict[str, str] = {}
     for line in jsonl.read_text().splitlines():

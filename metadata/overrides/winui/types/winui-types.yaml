@@ -103,19 +103,28 @@ subjects:
   Windows.Storage.StorageFolder: {static: [getFolderFromPathAsync, "<temp>"]}
   Windows.ApplicationModel.DataTransfer.DataPackage: {construct: {}}
 
-# Async round trips the tests run per curated type (in order; `$subject` is the subject, `$temp` the temporary
-# directory, `$N` the result of step N). Each step is [receiver or Type, method, args...].
+# Async round trips the tests run per curated type (`steps` in order; a step is [receiver or Type, method, args...],
+# `$subject` is the subject, `$temp` the temporary directory, `$N` the result of step N; `expect` is the last step's
+# result, `reject` a call that must reject with a WinRT NativeError).
 async_checks:
   Windows.Storage.StorageFolder:
-    - ["$subject", createFileAsync, "n4.txt", replace-existing]
-    - [Windows.Storage.FileIO, writeTextAsync, "$0", "hello from svelters"]
-    - [Windows.Storage.FileIO, readTextAsync, "$0"]
+    steps:
+      - ["$subject", createFileAsync, "n4.txt", replace-existing]
+      - [Windows.Storage.FileIO, writeTextAsync, "$0", "hello from svelters"]
+      - [Windows.Storage.FileIO, readTextAsync, "$0"]
+    expect: "hello from svelters"
+    reject: ["$subject", getFileAsync, "missing.txt"]
   Windows.Storage.FileIO:
-    - [Windows.Storage.StorageFolder, getFolderFromPathAsync, "$temp"]
-    - ["$0", createFileAsync, "io.txt", replace-existing]
-    - [Windows.Storage.FileIO, writeTextAsync, "$1", "line"]
-    - [Windows.Storage.FileIO, readTextAsync, "$1"]
+    steps:
+      - [Windows.Storage.StorageFolder, getFolderFromPathAsync, "$temp"]
+      - ["$0", createFileAsync, "io.txt", replace-existing]
+      - [Windows.Storage.FileIO, writeTextAsync, "$1", "line"]
+      - [Windows.Storage.FileIO, appendTextAsync, "$1", " two"]
+      - [Windows.Storage.FileIO, readTextAsync, "$1"]
+    expect: "line two"
   Windows.ApplicationModel.DataTransfer.DataPackage:
-    - ["$subject", setText, "copied"]
-    - ["$subject", getView]
-    - ["$1", getTextAsync]
+    steps:
+      - ["$subject", setText, "copied"]
+      - ["$subject", getView]
+      - ["$1", getTextAsync]
+    expect: "copied"

@@ -353,7 +353,7 @@ def write_all(files: dict[Path, str], check: bool, owned_globs: list[tuple[Path,
             p.write_text(text)
     for d, pat in owned_globs:
         for p in d.rglob(pat) if d.exists() else []:
-            if p not in files:
+            if p not in files and p.name != "_rt.js":
                 if check:
                     bad.append(f"{p.relative_to(ROOT)} (stale)")
                 else:
@@ -371,8 +371,16 @@ def main() -> int:
     ap.add_argument("--check", action="store_true")
     a = ap.parse_args()
     facts = C.load_facts()
+    import types_pkg  # noqa: E402
+    import types_winui_js as J  # noqa: E402
     files = {TABLES: rust_tables(facts)}
-    rc = write_all(files, not a.write, [])
+    import types_winui_tests as T  # noqa: E402
+    g = J.Gen(facts, C.Ingest())
+    files.update(g.files(types_pkg))
+    files.update(T.Tests(facts).files())
+    rc = write_all(files, not a.write, [(J.OUT, "*.js"), (J.OUT, "*.d.ts"), (J.DOCS, "*.md")])
+    for w in sorted(set(g.warnings)):
+        print("gen_types_winui: warning:", w, file=sys.stderr)
     if rc == 0:
         print(f"gen_types_winui: {len(facts['kinds'])} kinds, {len(files)} files {'written' if a.write else 'are current'}")
     return rc

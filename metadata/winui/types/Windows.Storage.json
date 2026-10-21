@@ -285,30 +285,39 @@
   },
   "Windows.Storage.FileIO": {
    "abstract": true,
-   "async_checks": [
-    [
-     "Windows.Storage.StorageFolder",
-     "getFolderFromPathAsync",
-     "$temp"
-    ],
-    [
-     "$0",
-     "createFileAsync",
-     "io.txt",
-     "replace-existing"
-    ],
-    [
-     "Windows.Storage.FileIO",
-     "writeTextAsync",
-     "$1",
-     "line"
-    ],
-    [
-     "Windows.Storage.FileIO",
-     "readTextAsync",
-     "$1"
+   "async_checks": {
+    "expect": "line two",
+    "steps": [
+     [
+      "Windows.Storage.StorageFolder",
+      "getFolderFromPathAsync",
+      "$temp"
+     ],
+     [
+      "$0",
+      "createFileAsync",
+      "io.txt",
+      "replace-existing"
+     ],
+     [
+      "Windows.Storage.FileIO",
+      "writeTextAsync",
+      "$1",
+      "line"
+     ],
+     [
+      "Windows.Storage.FileIO",
+      "appendTextAsync",
+      "$1",
+      " two"
+     ],
+     [
+      "Windows.Storage.FileIO",
+      "readTextAsync",
+      "$1"
+     ]
     ]
-   ],
+   },
    "blocked": {
     "static:AppendLinesAsync/2": "collection-argument",
     "static:AppendLinesAsync/3": "collection-argument",
@@ -3734,25 +3743,33 @@
   },
   "Windows.Storage.StorageFolder": {
    "abstract": true,
-   "async_checks": [
-    [
+   "async_checks": {
+    "expect": "hello from svelters",
+    "reject": [
      "$subject",
-     "createFileAsync",
-     "n4.txt",
-     "replace-existing"
+     "getFileAsync",
+     "missing.txt"
     ],
-    [
-     "Windows.Storage.FileIO",
-     "writeTextAsync",
-     "$0",
-     "hello from svelters"
-    ],
-    [
-     "Windows.Storage.FileIO",
-     "readTextAsync",
-     "$0"
+    "steps": [
+     [
+      "$subject",
+      "createFileAsync",
+      "n4.txt",
+      "replace-existing"
+     ],
+     [
+      "Windows.Storage.FileIO",
+      "writeTextAsync",
+      "$0",
+      "hello from svelters"
+     ],
+     [
+      "Windows.Storage.FileIO",
+      "readTextAsync",
+      "$0"
+     ]
     ]
-   ],
+   },
    "blocked": {
     "AreQueryOptionsSupported/1": "out-of-scope:Windows.Storage.Search.QueryOptions",
     "CreateFileQuery/0": "out-of-scope:Windows.Storage.Search.StorageFileQueryResult",

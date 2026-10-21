@@ -98,10 +98,16 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force logs/winui-ledger | Out-Null
           $env:SVELTERS_TEST_RESULTS = "$pwd\logs\winui-ledger\winui-results.jsonl"
+          New-Item -ItemType Directory -Force logs/winui-ledger/types | Out-Null
+          Copy-Item crates/svelters-winui/src/generated/types_facts.json logs/winui-ledger/types/facts.json
           cmd /c "cargo test -p svelters-winui --test types_core > logs\types_core.log 2>&1"
-          $code = $LASTEXITCODE
+          $core = $LASTEXITCODE
           Get-Content logs\types_core.log
-          exit $code
+          cmd /c "cargo test -p svelters-winui --test types_verify > logs\types_verify.log 2>&1"
+          $verify = $LASTEXITCODE
+          Get-Content logs\types_verify.log
+          if ($core -ne 0) { exit $core }
+          exit $verify
       - name: counter-win selftest
         if: ${{ !cancelled() }}
         timeout-minutes: 10
