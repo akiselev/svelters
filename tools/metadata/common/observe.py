@@ -82,12 +82,16 @@ KEYS = {"prop", "class", "via", "missed", "fires", "derived_from", "value_cost",
 #            refused  observe is refused (constant)
 #            unsupported  observe answers SVL_OBSERVE_UNSUPPORTED: the backend has no mechanism (none); with a
 #                     `trigger` (Qt), the native change happens and nothing could announce it (a verified `none`)
+#   values   (GTK, check change) Rust expressions on `o` making new values of an object/boxed property's type, set in
+#            turn (`observe.values` of the rules; OV1)
+#   make     (GTK) how the test gets the instance when a bare `on` cannot be built: `static:<method>` (a static
+#            constructor of `on`), `borrow:<tag or Ns.Type>.<getter>` (the object a new instance's getter returns; OV1)
 #   setup / native / user (Qt): C++ statements on `o` (the subject class) run before observing, as the native
 #            trigger, and as the user-path synthesizer (key/mouse events) whose change must be announced too
 VERIFY_CHECKS = ("change", "cross", "via", "silent", "connect", "refused", "unsupported")
 # Key order of a written record.
 ORDER = ("prop", "class", "via", "missed", "fires", "derived_from", "value_cost", "timing", "provenance", "verify", "confidence")
-VERIFY_KEYS = {"on", "check", "trigger", "rust", "native", "setup", "user"}
+VERIFY_KEYS = {"on", "check", "trigger", "rust", "native", "setup", "user", "values", "make"}
 MECH_KEYS = {"notify": {"signal", "coarse"}, "bindable": set(), "signal": {"signal"}, "event": {"events"},
              "notification": {"name"}, "target_action": set(), "via": {"object", "prop"}}
 MECH_REQUIRED = {"signal": {"signal"}, "event": {"events"}, "notification": {"name"}, "via": {"object", "prop"}}
@@ -224,6 +228,27 @@ def verification(tk: str, facts: dict[str, dict[str, dict]] | None = None) -> di
                 continue
             s = strengths.get(fid) or (check_strength(r["verify"]) if r.get("verify") else "connect")
             out[fid] = "weak" if s in WEAK_STRENGTHS else "delivery"
+    return out
+
+
+def unverified_groups(tk: str, facts: dict[str, dict[str, dict]], ver: dict[str, str]) -> dict[str, dict]:
+    """OV1: the `exact` facts that are not `delivery`-verified, by the group of `observe.connect_only` in
+    metadata/rules/<tk>.yaml (`facts`: `<Owner>:<prop>` names, or `pattern`: a regex over them): {group: {count,
+    reason, facts}}. Facts no group names are under `unclassified`."""
+    import re
+    rp = ROOT / f"metadata/rules/{tk}.yaml"
+    groups = (svmeta.load_yaml(rp).get("observe") or {}).get("connect_only") or [] if rp.exists() else []
+    out: dict[str, dict] = {}
+    for owner, props in sorted(facts.items()):
+        for p, r in sorted(props.items()):
+            if r["class"] != "exact" or ver.get(r["fact"]) == "delivery":
+                continue
+            name = f"{owner}:{p}"
+            g = next((g for g in groups if name in g.get("facts", []) or (g.get("pattern") and re.search(g["pattern"], name))), None)
+            key = g["group"] if g else "unclassified"
+            e = out.setdefault(key, {"count": 0, "reason": g["reason"] if g else "no group in observe.connect_only", "facts": []})
+            e["count"] += 1
+            e["facts"].append(name)
     return out
 
 

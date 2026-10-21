@@ -175,3 +175,158 @@ observe:
     "Gtk:EventController:widget": 'let c = o.downcast_ref::<gtk::EventController>().unwrap(); if let Some(w) = c.widget() { w.remove_controller(c); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal, 0); b.add_controller(c.clone()); std::mem::forget(b); }'
     "Gio:DBusMessage:locked": 'o.downcast_ref::<gtk::gio::DBusMessage>().unwrap().lock();'
     "Gio:Action:enabled": 'let a = o.downcast_ref::<gtk::gio::SimpleAction>().unwrap(); a.set_enabled(!gtk::gio::prelude::ActionExt::is_enabled(a));'
+    # OV1: native changes for exact facts whose plain native set is ignored on a bare instance (no model, no
+    # children) or that are read-only; each call changes the property again (the test fires it three times).
+    "Gtk:Stack:visible-child": 'let s = o.downcast_ref::<gtk::Stack>().unwrap(); if s.first_child().is_none() { s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None), Some("b")); } let n = if s.visible_child_name().as_deref() == Some("b") { "a" } else { "b" }; s.set_visible_child_name(n);'
+    "Gtk:Stack:visible-child-name": 'let s = o.downcast_ref::<gtk::Stack>().unwrap(); if s.first_child().is_none() { s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None), Some("b")); } let n = if s.visible_child_name().as_deref() == Some("b") { "a" } else { "b" }; s.set_visible_child_name(n);'
+    "Gtk:TreeView:expander-column": 'let t = o.downcast_ref::<gtk::TreeView>().unwrap(); while t.n_columns() < 2 { t.append_column(&gtk::TreeViewColumn::new()); } let c0 = t.column(0); let next = if t.expander_column() == c0 { t.column(1) } else { c0 }; t.set_expander_column(next.as_ref());'
+    "Gtk:Window:focus-widget": 'let w = o.downcast_ref::<gtk::Window>().unwrap(); let e = w.child().unwrap_or_else(|| { let e = gtk::Entry::new(); w.set_child(Some(&e)); e.upcast() }); if gtk::prelude::GtkWindowExt::focus(w).is_some() { gtk::prelude::GtkWindowExt::set_focus(w, None::<&gtk::Widget>); } else { gtk::prelude::GtkWindowExt::set_focus(w, Some(&e)); }'
+    "Gtk:ComboBox:active": 'let c = o.downcast_ref::<gtk::ComboBox>().unwrap(); if c.model().is_none() { let m = gtk::ListStore::new(&[gtk::glib::Type::STRING]); m.insert_with_values(None, &[(0, &"a")]); m.insert_with_values(None, &[(0, &"b")]); c.set_model(Some(&m)); c.set_id_column(0); } c.set_active(Some(if c.active() == Some(1) { 0 } else { 1 }));'
+    "Gtk:ComboBox:active-id": 'let c = o.downcast_ref::<gtk::ComboBox>().unwrap(); if c.model().is_none() { let m = gtk::ListStore::new(&[gtk::glib::Type::STRING]); m.insert_with_values(None, &[(0, &"a")]); m.insert_with_values(None, &[(0, &"b")]); c.set_model(Some(&m)); c.set_id_column(0); } let n = if c.active_id().as_deref() == Some("b") { "a" } else { "b" }; c.set_active_id(Some(n));'
+    "Gtk:DropDown:selected": 'let d = o.downcast_ref::<gtk::DropDown>().unwrap(); if d.model().is_none() { d.set_model(Some(&gtk::StringList::new(&["a", "b"]))); } d.set_selected(if d.selected() == 1 { 0 } else { 1 });'
+    "Gtk:Notebook:page": 'let n = o.downcast_ref::<gtk::Notebook>().unwrap(); if n.n_pages() == 0 { n.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); n.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } n.set_current_page(Some(if n.current_page() == Some(1) { 0 } else { 1 }));'
+    "Gtk:SingleSelection:selected": 'let s = o.downcast_ref::<gtk::SingleSelection>().unwrap(); if s.model().is_none() { s.set_model(Some(&gtk::StringList::new(&["a", "b"]))); } s.set_selected(if s.selected() == 1 { 0 } else { 1 });'
+    "Gtk:SingleSelection:selected-item": 'let s = o.downcast_ref::<gtk::SingleSelection>().unwrap(); if s.model().is_none() { s.set_model(Some(&gtk::StringList::new(&["a", "b"]))); } s.set_selected(if s.selected() == 1 { 0 } else { 1 });'
+    "Gtk:MessageDialog:secondary-use-markup": 'let d = o.downcast_ref::<gtk::MessageDialog>().unwrap(); d.set_secondary_text(Some("x")); d.set_secondary_use_markup(!d.is_secondary_use_markup());'
+    "Gtk:PopoverMenu:visible-submenu": 'let p = o.downcast_ref::<gtk::PopoverMenu>().unwrap(); if p.menu_model().is_none() { let m = gtk::gio::Menu::new(); let sub = gtk::gio::Menu::new(); sub.append(Some("x"), Some("ov1.x")); m.append_submenu(Some("Sub"), &sub); p.set_menu_model(Some(&m)); } let cur: Option<String> = p.property("visible-submenu"); p.set_property("visible-submenu", if cur.as_deref() == Some("Sub") { "main" } else { "Sub" });'
+    "Gtk:Image:resource": 'let i = o.downcast_ref::<gtk::Image>().unwrap(); if i.resource().is_some() { i.clear(); } else { i.set_resource(Some("/org/gtk/libgtk/icons/16x16/status/image-missing.png")); }'
+    "Gtk:TextBuffer:can-redo": 'let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); if b.can_redo() { b.redo(); } else { b.insert_at_cursor("a"); b.undo(); }'
+    "Gtk:FilterListModel:n-items": 'let m = o.downcast_ref::<gtk::FilterListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");'
+    "Gtk:SortListModel:n-items": 'let m = o.downcast_ref::<gtk::SortListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");'
+    "Gtk:SliceListModel:n-items": 'let m = o.downcast_ref::<gtk::SliceListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");'
+    "Gtk:MapListModel:n-items": 'let m = o.downcast_ref::<gtk::MapListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");'
+    "Gtk:NoSelection:n-items": 'let m = o.downcast_ref::<gtk::NoSelection>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");'
+    "Gtk:SingleSelection:n-items": 'let m = o.downcast_ref::<gtk::SingleSelection>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");'
+    "Gtk:MultiSelection:n-items": 'let m = o.downcast_ref::<gtk::MultiSelection>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");'
+    "Gtk:SelectionFilterModel:n-items": 'let m = o.downcast_ref::<gtk::SelectionFilterModel>().unwrap(); let s = m.model().unwrap_or_else(|| { let s = gtk::MultiSelection::new(Some(gtk::StringList::new(&["a", "b"]))).upcast::<gtk::SelectionModel>(); m.set_model(Some(&s)); s }); if m.n_items() == 0 { s.select_all(); } else { s.unselect_all(); }'
+    "Gtk:FlattenListModel:n-items": 'let m = o.downcast_ref::<gtk::FlattenListModel>().unwrap(); let s = m.model().and_downcast::<gtk::gio::ListStore>().unwrap_or_else(|| { let s = gtk::gio::ListStore::new::<gtk::StringList>(); m.set_model(Some(&s)); s }); s.append(&gtk::StringList::new(&["a"]));'
+    "Gtk:MultiFilter:n-items": 'o.downcast_ref::<gtk::MultiFilter>().unwrap().append(gtk::CustomFilter::new(|_| true));'
+    "Gtk:MultiSorter:n-items": 'o.downcast_ref::<gtk::MultiSorter>().unwrap().append(gtk::StringSorter::new(None::<gtk::Expression>));'
+    "Gtk:ShortcutController:n-items": 'o.downcast_ref::<gtk::ShortcutController>().unwrap().add_shortcut(gtk::Shortcut::new(gtk::ShortcutTrigger::parse_string("<Control>a"), None::<gtk::ShortcutAction>));'
+    "Gtk:DirectoryList:n-items": 'let d = o.downcast_ref::<gtk::DirectoryList>().unwrap(); let dir = std::env::temp_dir().join("svelters-ov1-dir"); std::fs::create_dir_all(&dir).unwrap(); std::fs::write(dir.join("a"), "a").unwrap(); if d.file().is_some() { d.set_file(None::<&gtk::gio::File>); } else { d.set_file(Some(&gtk::gio::File::for_path(&dir))); for _ in 0..200 { if !d.is_loading() { break; } crate::testing::pump(10); } }'
+    "Gio:Application:application-id": 'let a = o.downcast_ref::<gtk::gio::Application>().unwrap(); let n = if a.application_id().as_deref() == Some("org.svelters.OvA") { "org.svelters.OvB" } else { "org.svelters.OvA" }; a.set_application_id(Some(n));'
+    "Gio:Application:resource-base-path": 'let a = o.downcast_ref::<gtk::gio::Application>().unwrap(); let n = if a.resource_base_path().as_deref() == Some("/org/svelters/a") { "/org/svelters/b" } else { "/org/svelters/a" }; a.set_resource_base_path(Some(n));'
+    "Gtk:BoolFilter:expression": 'let f = o.downcast_ref::<gtk::BoolFilter>().unwrap(); f.set_expression(Some(gtk::ConstantExpression::new(true)));'
+    "Gtk:FileDialog:initial-file": 'let dir = std::env::temp_dir(); let (a, b) = (dir.join("svelters-ov1-a"), dir.join("svelters-ov1-b")); std::fs::write(&a, "a").unwrap(); std::fs::write(&b, "b").unwrap(); let cur: Option<gtk::gio::File> = o.property("initial-file"); let next = if cur.and_then(|f| f.path()) == Some(a.clone()) { b } else { a }; o.set_property("initial-file", gtk::gio::File::for_path(next));'
+    "Gtk:PrintOperation:n-pages": 'let p = o.downcast_ref::<gtk::PrintOperation>().unwrap(); let n: i32 = p.property("n-pages"); p.set_n_pages(if n == 2 { 3 } else { 2 });'
+  # OV1: exact by rule O1, but the generated test saw a native change notify misses (the probe never ran that cause):
+  # partial with `missed`, verified by a `silent` row running `rust` (a statement on `o`)
+  missed:
+    "Gtk:Image:file":
+      missed: [programmatic]
+      reason: gtk_image_set_from_file with a loadable file changes `file` without notify::file (a property set notifies, through GObject)
+      rust: 'let i = o.downcast_ref::<gtk::Image>().unwrap(); let p = std::env::temp_dir().join("svelters-ov1-image.png"); if !p.exists() { gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 1, 1).unwrap().savev(&p, "png", &[]).unwrap(); } i.set_from_file(Some(&p));'
+    "Gtk:TreeView:headers-clickable":
+      missed: [cross_prop]
+      reason: headers-clickable reads whether every column is clickable; appending a column that is not (or changing a column's clickable) changes it without notify
+      rust: 'let t = o.downcast_ref::<gtk::TreeView>().unwrap(); t.append_column(&gtk::TreeViewColumn::new());'
+  # OV1: new values for writable object and boxed properties, by value type (GType name): Rust expressions on
+  # `o: &glib::Object` (the instance under test) whose result `.to_value()` is set natively, in turn, by the
+  # generated test (`verify.values`, check `change`). Objects are made fresh on every call, so each set is a
+  # change; boxed types list two values that differ from each other and from a fresh instance's default.
+  values:
+    GtkWidget: ['gtk::Label::new(Some("ov1"))']
+    GtkWindow: ['gtk::Window::new()']
+    GtkStack: ['gtk::Stack::new()']
+    GtkPopover: ['gtk::Popover::new()']
+    GtkTreeViewColumn: ['gtk::TreeViewColumn::new()']
+    GtkCellRenderer: ['gtk::CellRendererToggle::new()']
+    GMenuModel: ['gtk::gio::Menu::new()']
+    GListModel: ['gtk::StringList::new(&["a", "b"])']
+    GtkSelectionModel: ['gtk::SingleSelection::new(Some(gtk::StringList::new(&["a", "b"])))']
+    GtkTreeModel: ['gtk::ListStore::new(&[gtk::glib::Type::STRING])']
+    GtkListItemFactory: ['gtk::SignalListItemFactory::new()']
+    GtkAdjustment: ['gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)']
+    GtkExpression: ['gtk::ConstantExpression::new("ov1")']
+    GtkSorter: ['gtk::StringSorter::new(None::<gtk::Expression>)']
+    GtkFilter: ['gtk::CustomFilter::new(|_| true)']
+    GtkFileFilter: ['gtk::FileFilter::new()']
+    GtkEntryBuffer: ['gtk::EntryBuffer::new(None::<&str>)']
+    GtkTextBuffer: ['gtk::TextBuffer::new(None)']
+    GtkEntryCompletion: ['gtk::EntryCompletion::new()']
+    GtkLayoutManager: ['gtk::BoxLayout::new(gtk::Orientation::Vertical)']
+    GtkBuilderScope: ['new_type("GtkBuilderCScope")']
+    GtkMediaStream: ['gtk::MediaFile::new()']
+    GtkPrintSettings: ['gtk::PrintSettings::new()']
+    GtkPageSetup: ['gtk::PageSetup::new()']
+    GtkFontDialog: ['new_type("GtkFontDialog")']
+    GtkColorDialog: ['new_type("GtkColorDialog")']
+    GtkShortcutTrigger: ['gtk::ShortcutTrigger::parse_string("<Control>a").unwrap()', 'gtk::ShortcutTrigger::parse_string("<Control>b").unwrap()']
+    GtkShortcutAction: ['gtk::ShortcutAction::parse_string("action(ov1.a)").unwrap()', 'gtk::ShortcutAction::parse_string("action(ov1.b)").unwrap()']
+    GObject: ['gtk::glib::Object::new::<gtk::glib::Object>()']
+    GFile: ['gtk::gio::File::for_path("/tmp/svelters-ov1-a")', 'gtk::gio::File::for_path("/tmp/svelters-ov1-b")']
+    GIcon: ['gtk::gio::ThemedIcon::new("ov1-a")', 'gtk::gio::ThemedIcon::new("ov1-b")']
+    GPermission: ['gtk::gio::SimplePermission::new(true)']
+    GInputStream: ['gtk::gio::MemoryInputStream::new()']
+    GdkPaintable: ['gtk::gdk::Paintable::new_empty(1, 1)']
+    GdkTexture: ['gtk::gdk::MemoryTexture::new(1, 1, gtk::gdk::MemoryFormat::R8g8b8a8, &gtk::glib::Bytes::from_static(&[0, 0, 0, 255]), 4)']
+    GdkPixbuf: ['gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 1, 1).unwrap()']
+    GdkContentProvider: ['gtk::gdk::ContentProvider::for_value(&"ov1".to_value())']
+    GdkCursor: ['gtk::gdk::Cursor::from_name("pointer", None).unwrap()', 'gtk::gdk::Cursor::from_name("text", None).unwrap()']
+    GdkDisplay: ['gtk::gdk::Display::open(None).unwrap()']
+    GdkRGBA: ['gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)', 'gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)']
+    GdkRectangle: ['gtk::gdk::Rectangle::new(1, 2, 3, 4)', 'gtk::gdk::Rectangle::new(5, 6, 7, 8)']
+    GdkContentFormats: ['gtk::gdk::ContentFormats::new(&["text/plain"])', 'gtk::gdk::ContentFormats::new(&["image/png"])']
+    PangoFontDescription: ['gtk::pango::FontDescription::from_string("Sans 13")', 'gtk::pango::FontDescription::from_string("Serif 9")']
+    PangoTabArray: ['gtk::pango::TabArray::new(1, true)', 'gtk::pango::TabArray::new(2, true)']
+    PangoAttrList: ['gtk::pango::AttrList::from_string("0 1 weight bold").unwrap()', 'gtk::pango::AttrList::from_string("0 2 style italic").unwrap()']
+    PangoLanguage: ['gtk::pango::Language::from_string("de")', 'gtk::pango::Language::from_string("fr")']
+    GskTransform: ['gtk::gsk::Transform::new().translate(&gtk::graphene::Point::new(1.0, 2.0))', 'gtk::gsk::Transform::new().translate(&gtk::graphene::Point::new(3.0, 4.0))']
+    GDateTime: ['gtk::glib::DateTime::from_unix_utc(86400).unwrap()', 'gtk::glib::DateTime::from_unix_utc(172800).unwrap()']
+    PangoFontMap: ['new_type("PangoCairoFcFontMap")']
+    GtkTreeListRow: ['gtk::TreeListModel::new(gtk::StringList::new(&["a"]), false, false, |_| None).row(0).unwrap()']
+  # OV1: the instance the generated test of an owner's facts uses where the probe made none (it skips types that
+  # could reach printers, D-Bus or other processes) or the bare instance is abstract: `on` (a type by `<Ns>:<Type>`),
+  # `make` (`static:<method>` of `on`, or `borrow:<tag>.<getter>`). Each was tried headless (no printer, no bus).
+  instances:
+    "Gio:Application": {"on": "Gio:Application", reason: "a bare GApplication, never registered"}
+    "Gtk:Application": {"on": "Gtk:Application", reason: "a bare GtkApplication, never registered"}
+    "Gtk:PrintOperation": {"on": "Gtk:PrintOperation", reason: "a bare print operation; nothing prints until gtk_print_operation_run"}
+    "Gtk:MountOperation": {"on": "Gtk:MountOperation", reason: "a bare mount operation; nothing is shown until a mount asks"}
+    "Gtk:TreeSelection": {"on": "Gtk:TreeSelection", make: "borrow:Gtk.TreeView.get_selection", reason: "a bare GtkTreeSelection crashes; a tree view's selection"}
+  # OV1: exact facts whose generated test stays `connect` (installs and removes the mechanism only): no native
+  # change the headless test can make. By group with the reason; the compiler keeps a declared signal plan for them
+  # (`verified: weak`), or warns `bind_observation_unverified`.
+  connect_only:
+    - group: display-server
+      reason: changed by the window manager (activation) or needs a real display connection a test cannot fake
+      facts: ["Gtk:Window:is-active", "Gdk:Device:seat", "Gdk:Drag:actions", "Gdk:Drag:selected-action", "Gtk:DragIcon:child"]
+    - group: gio-service
+      reason: needs a registered GApplication (gtk_application_add_window and gtk_application_set_menubar act on a registered application only), a D-Bus connection or a file monitor backend; no test instance is made for the last two
+      facts: ["Gtk:Window:application", "Gtk:Application:menubar", "Gio:DBusConnection:exit-on-close", "Gio:FileMonitor:rate-limit"]
+    - group: list-view
+      reason: a tree list row, a list header and a tree list model's root exist only inside a list model or view that creates them; a bare instance has no model, so nothing can change them
+      facts: ["Gtk:TreeListRow:expanded", "Gtk:TreeListModel:n-items", "Gtk:ListHeader:n-items"]
+    - group: container-page
+      reason: a page object belongs to its container (gtk_notebook_get_page, gtk_stack_get_page); a bare GtkNotebookPage has no container to reorder it in, and a bare GtkStackPage crashes (the probe's crash list), so no test instance exists
+      facts: ["Gtk:NotebookPage:position", "Gtk:StackPage:icon-name", "Gtk:StackPage:name", "Gtk:StackPage:needs-attention", "Gtk:StackPage:title", "Gtk:StackPage:use-underline", "Gtk:StackPage:visible"]
+    - group: stateless-instance
+      reason: GSimpleAction notifies state in g_simple_action_set_state, but a bare instance is stateless (state-type is construct-only), so the generated test has nothing to change
+      facts: ["Gio:SimpleAction:state"]
+    - group: async-io
+      reason: GtkBookmarkList loads its construct-only file asynchronously; a bare instance reads the user's bookmarks
+      facts: ["Gtk:BookmarkList:n-items"]
+    - group: deprecated-content
+      reason: the shortcuts window shows sections added from a builder file (gtk_shortcuts_window_add_section needs GTK 4.14 bindings this crate does not enable); a bare window has none to switch to
+      facts: ["Gtk:ShortcutsWindow:section-name"]
+    - group: normalized-read
+      reason: a native set leaves the read value unchanged, so there is no change to observe (GtkPasswordEntry extra-menu reads its own wrapper menu, which stays the same object; GtkFileDialog initial-file reads back unchanged on a dialog that is not shown, GTK 4.22)
+      facts: ["Gtk:PasswordEntry:extra-menu", "Gtk:FileDialog:initial-file"]
+    - group: media-backend
+      reason: GtkMediaStream and GtkMediaFile are abstract; gtk_media_file_new returns the media backend's private subclass (GtkNoMediaFile without GStreamer), which the backend's property tables do not name, so no test instance exists (no row)
+      facts: ["Gtk:MediaStream:loop", "Gtk:MediaStream:muted", "Gtk:MediaStream:playing", "Gtk:MediaStream:volume", "Gtk:MediaFile:file", "Gtk:MediaFile:input-stream"]
+    - group: layout-child
+      reason: a layout child belongs to a layout manager and its child widget; on a bare GtkFixedLayoutChild (no manager) the set transform is dropped, and making a real one needs a GtkFixed with a child
+      facts: ["Gtk:FixedLayoutChild:transform"]
+    - group: print-backend
+      reason: a print dialog or print job enumerates printers through the print backends (CUPS, file); the probe and the tests make no instance
+      facts: ["Gtk:PrintJob:track-print-status", "Gtk:PrintUnixDialog:current-page", "Gtk:PrintUnixDialog:embed-page-setup", "Gtk:PrintUnixDialog:has-selection", "Gtk:PrintUnixDialog:manual-capabilities", "Gtk:PrintUnixDialog:page-setup", "Gtk:PrintUnixDialog:print-settings", "Gtk:PrintUnixDialog:support-selection"]
+    - group: realize
+      reason: the instance exists only once a widget or surface is realized (GL context, accessibility context, surface); the tests do not realize
+      facts: ["Gdk:GLContext:allowed-apis", "Gdk:Surface:cursor", "Gtk:ATContext:accessible-role", "Gtk:ATContext:display"]
+    - group: font-config
+      reason: the families of a font map change when the font configuration changes (fonts installed or added); no headless trigger, and the abstract font map types have no bare instance
+      facts: ["Pango:FontFamily:n-items", "Pango:FontMap:n-items"]
+    - group: newer-gtk
+      reason: GtkEnumList is not in GTK 4.22.4, the version the facts are made for (the probe found no type), so no row is generated
+      facts: ["Gtk:EnumList:n-items"]

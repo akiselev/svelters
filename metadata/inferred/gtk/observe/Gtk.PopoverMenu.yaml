@@ -11,10 +11,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::flags (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:PopoverMenu
-    check: connect
+    check: change
   confidence: 0.9
 - prop: menu-model
   class: exact
@@ -29,7 +29,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PopoverMenu:menu-model)'
   verify:
     'on': Gtk:PopoverMenu
-    check: connect
+    check: change
+    values:
+    - gtk::gio::Menu::new()
   confidence: 0.95
 - prop: visible-submenu
   class: exact
@@ -44,5 +46,8 @@ observe:
     ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:PopoverMenu
-    check: connect
+    check: cross
+    rust: 'let p = o.downcast_ref::<gtk::PopoverMenu>().unwrap(); if p.menu_model().is_none() { let m = gtk::gio::Menu::new(); let sub = gtk::gio::Menu::new();
+      sub.append(Some("x"), Some("ov1.x")); m.append_submenu(Some("Sub"), &sub); p.set_menu_model(Some(&m)); } let cur: Option<String> = p.property("visible-submenu");
+      p.set_property("visible-submenu", if cur.as_deref() == Some("Sub") { "main" } else { "Sub" });'
   confidence: 0.9

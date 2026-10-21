@@ -94,7 +94,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)
+    - gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)
   confidence: 0.9
 - prop: background-set
   class: exact
@@ -267,7 +270,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::pango::FontDescription::from_string("Sans 13")
+    - gtk::pango::FontDescription::from_string("Serif 9")
   confidence: 0.9
 - prop: font-features
   class: exact
@@ -314,7 +320,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)
+    - gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)
   confidence: 0.9
 - prop: foreground-set
   class: exact
@@ -625,7 +634,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)
+    - gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)
   confidence: 0.9
 - prop: overline-rgba-set
   class: exact
@@ -672,7 +684,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)
+    - gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)
   confidence: 0.9
 - prop: paragraph-background-set
   class: exact
@@ -924,10 +939,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::show-spaces'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
   confidence: 0.9
 - prop: show-spaces-set
   class: exact
@@ -1063,7 +1078,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)
+    - gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)
   confidence: 0.9
 - prop: strikethrough-rgba-set
   class: exact
@@ -1145,7 +1163,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::pango::TabArray::new(1, true)
+    - gtk::pango::TabArray::new(2, true)
   confidence: 0.9
 - prop: tabs-set
   class: exact
@@ -1222,7 +1243,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TextTag
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)
+    - gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)
   confidence: 0.9
 - prop: underline-rgba-set
   class: exact

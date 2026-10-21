@@ -53,7 +53,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:SingleSelection
-    check: connect
+    check: change
+    values:
+    - gtk::StringList::new(&["a", "b"])
   confidence: 0.9
 - prop: n-items
   class: exact
@@ -68,7 +70,9 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:SingleSelection
-    check: connect
+    check: cross
+    rust: let m = o.downcast_ref::<gtk::SingleSelection>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let
+      s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");
   confidence: 0.9
 - prop: selected
   class: exact
@@ -82,7 +86,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:SingleSelection set_selected)'
   verify:
     'on': Gtk:SingleSelection
-    check: connect
+    check: cross
+    rust: let s = o.downcast_ref::<gtk::SingleSelection>().unwrap(); if s.model().is_none() { s.set_model(Some(&gtk::StringList::new(&["a", "b"])));
+      } s.set_selected(if s.selected() == 1 { 0 } else { 1 });
   confidence: 0.95
 - prop: selected-item
   class: exact
@@ -96,5 +102,7 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:SingleSelection set_selected)'
   verify:
     'on': Gtk:SingleSelection
-    check: connect
+    check: cross
+    rust: let s = o.downcast_ref::<gtk::SingleSelection>().unwrap(); if s.model().is_none() { s.set_model(Some(&gtk::StringList::new(&["a", "b"])));
+      } s.set_selected(if s.selected() == 1 { 0 } else { 1 });
   confidence: 0.95

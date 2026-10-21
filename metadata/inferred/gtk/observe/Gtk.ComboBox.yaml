@@ -14,7 +14,10 @@ observe:
     ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:ComboBox
-    check: connect
+    check: cross
+    rust: let c = o.downcast_ref::<gtk::ComboBox>().unwrap(); if c.model().is_none() { let m = gtk::ListStore::new(&[gtk::glib::Type::STRING]);
+      m.insert_with_values(None, &[(0, &"a")]); m.insert_with_values(None, &[(0, &"b")]); c.set_model(Some(&m)); c.set_id_column(0); } c.set_active(Some(if
+      c.active() == Some(1) { 0 } else { 1 }));
   confidence: 0.9
 - prop: active-id
   class: exact
@@ -28,7 +31,10 @@ observe:
     ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:ComboBox
-    check: connect
+    check: cross
+    rust: let c = o.downcast_ref::<gtk::ComboBox>().unwrap(); if c.model().is_none() { let m = gtk::ListStore::new(&[gtk::glib::Type::STRING]);
+      m.insert_with_values(None, &[(0, &"a")]); m.insert_with_values(None, &[(0, &"b")]); c.set_model(Some(&m)); c.set_id_column(0); } let n =
+      if c.active_id().as_deref() == Some("b") { "a" } else { "b" }; c.set_active_id(Some(n));
   confidence: 0.9
 - prop: button-sensitivity
   class: exact
@@ -57,7 +63,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:ComboBox
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: entry-text-column
   class: exact
@@ -125,7 +133,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:ComboBox
-    check: connect
+    check: change
+    values:
+    - gtk::ListStore::new(&[gtk::glib::Type::STRING])
   confidence: 0.9
 - prop: popup-fixed-width
   class: exact

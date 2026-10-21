@@ -15,7 +15,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:hadjustment)'
   verify:
     'on': Gtk:TextView
-    check: connect
+    check: change
+    values:
+    - gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)
   confidence: 0.95
 - prop: hscroll-policy
   class: exact
@@ -45,7 +47,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:vadjustment)'
   verify:
     'on': Gtk:TextView
-    check: connect
+    check: change
+    values:
+    - gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)
   confidence: 0.95
 - prop: vscroll-policy
   class: exact

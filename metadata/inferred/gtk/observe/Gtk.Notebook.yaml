@@ -44,7 +44,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:Notebook remove the current page, set:Gtk.Notebook:page)'
   verify:
     'on': Gtk:Notebook
-    check: connect
+    check: cross
+    rust: let n = o.downcast_ref::<gtk::Notebook>().unwrap(); if n.n_pages() == 0 { n.append_page(&gtk::Label::new(None), None::<&gtk::Widget>);
+      n.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } n.set_current_page(Some(if n.current_page() == Some(1) { 0 } else { 1 }));
   confidence: 0.95
 - prop: scrollable
   class: exact

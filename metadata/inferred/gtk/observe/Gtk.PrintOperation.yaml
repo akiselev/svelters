@@ -12,6 +12,9 @@ observe:
     ref: 'O1: GObject property, notify::allow-async (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: current-page
   class: exact
@@ -23,6 +26,9 @@ observe:
     ref: 'O1: GObject property, notify::current-page (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: custom-tab-label
   class: exact
@@ -35,6 +41,9 @@ observe:
     ref: 'O1: GObject property, notify::custom-tab-label'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: default-page-setup
   class: exact
@@ -47,6 +56,11 @@ observe:
     ref: 'O1: GObject property, notify::default-page-setup'
   - origin: rule
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
+    values:
+    - gtk::PageSetup::new()
   confidence: 0.9
 - prop: embed-page-setup
   class: exact
@@ -58,6 +72,9 @@ observe:
     ref: 'O1: GObject property, notify::embed-page-setup (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: export-filename
   class: exact
@@ -70,6 +87,9 @@ observe:
     ref: 'O1: GObject property, notify::export-filename'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: has-selection
   class: exact
@@ -81,6 +101,9 @@ observe:
     ref: 'O1: GObject property, notify::has-selection (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: job-name
   class: exact
@@ -93,6 +116,9 @@ observe:
     ref: 'O1: GObject property, notify::job-name'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: n-pages
   class: exact
@@ -104,6 +130,11 @@ observe:
     ref: 'O1: GObject property, notify::n-pages (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: cross
+    rust: 'let p = o.downcast_ref::<gtk::PrintOperation>().unwrap(); let n: i32 = p.property("n-pages"); p.set_n_pages(if n == 2 { 3 } else {
+      2 });'
   confidence: 0.9
 - prop: print-settings
   class: exact
@@ -116,6 +147,11 @@ observe:
     ref: 'O1: GObject property, notify::print-settings'
   - origin: rule
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
+    values:
+    - gtk::PrintSettings::new()
   confidence: 0.9
 - prop: show-progress
   class: exact
@@ -127,6 +163,9 @@ observe:
     ref: 'O1: GObject property, notify::show-progress (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: support-selection
   class: exact
@@ -138,6 +177,9 @@ observe:
     ref: 'O1: GObject property, notify::support-selection (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: track-print-status
   class: exact
@@ -149,6 +191,9 @@ observe:
     ref: 'O1: GObject property, notify::track-print-status (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: unit
   class: exact
@@ -160,6 +205,9 @@ observe:
     ref: 'O1: GObject property, notify::unit (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9
 - prop: use-full-page
   class: exact
@@ -171,4 +219,7 @@ observe:
     ref: 'O1: GObject property, notify::use-full-page (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:PrintOperation
+    check: change
   confidence: 0.9

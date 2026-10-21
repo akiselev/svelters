@@ -15,5 +15,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:StyleContext
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::Display::open(None).unwrap()
   confidence: 0.9

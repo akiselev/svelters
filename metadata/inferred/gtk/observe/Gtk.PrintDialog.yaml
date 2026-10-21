@@ -44,7 +44,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:PrintDialog
-    check: connect
+    check: change
+    values:
+    - gtk::PageSetup::new()
   confidence: 0.9
 - prop: print-settings
   class: exact
@@ -58,7 +60,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:PrintDialog
-    check: connect
+    check: change
+    values:
+    - gtk::PrintSettings::new()
   confidence: 0.9
 - prop: title
   class: exact

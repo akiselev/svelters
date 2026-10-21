@@ -14,7 +14,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScaleButton:adjustment)'
   verify:
     'on': Gtk:ScaleButton
-    check: connect
+    check: change
+    values:
+    - gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)
   confidence: 0.95
 - prop: has-frame
   class: exact
@@ -45,9 +47,8 @@ observe:
   - origin: probe
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.VolumeButton:use-symbolic)'
   verify:
-    'on': Gtk:VolumeButton
-    check: cross
-    trigger: use-symbolic
+    'on': Gtk:ScaleButton
+    check: change
   confidence: 0.95
 - prop: value
   class: exact

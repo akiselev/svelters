@@ -58,6 +58,14 @@ Observe facts per class (`metadata/observe/appkit.json`; plans/research/REACTIVI
 
 Parked (an inferred fact whose generated test failed): 0. Below the promotion threshold (not written, needs judgement): 0 middle band, 0 low band.
 
+`exact` facts by verification strength (milestone OV1; `bind:` lowers onto observation only for `delivery`): delivery 149, weak 1, none 0.
+
+`exact` facts without delivery evidence (a passing native-change row), by group (`observe.connect_only` of `metadata/rules/appkit.yaml`):
+
+| Group | Facts | Why no native change |
+| --- | --- | --- |
+| read-only-on-class | 1 | NSView's tag is read-only on NSView itself (only NSControl and other subclasses set it), so the row on NSView can only connect |
+
 ## Kinds
 
 | Kind | Element | Props | Signals | Methods | Slots | Ownership | Signal results | Bindings | Verified | Gallery | Lifetime |

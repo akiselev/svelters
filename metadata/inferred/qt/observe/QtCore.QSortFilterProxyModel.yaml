@@ -75,7 +75,8 @@ observe:
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterCaseSensitivity)'
   verify:
     'on': QtCore:QSortFilterProxyModel
-    check: connect
+    check: cross
+    native: o->setFilterRegularExpression(QRegularExpression(o->filterRegularExpression().pattern() + "x"))
   confidence: 0.95
 - prop: filterRole
   class: exact

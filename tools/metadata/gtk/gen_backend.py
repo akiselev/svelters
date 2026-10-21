@@ -1297,7 +1297,13 @@ def observe_row(m: Model, owner: str, rec: dict) -> tuple[str, tuple[int, int] |
         return None
     ns, typ = v["on"].split(":", 1)
     doc = m.docs.get(typ) if ns == "Gtk" else None
-    if doc is not None and "element" in doc and not doc.get("abstract"):
+    make = v.get("make", "")
+    if make.startswith("static:"):
+        on = f"On::Static({rs(f'{ns}.{typ}')}, {rs(make[7:])})"
+    elif make.startswith("borrow:"):
+        tag, getter = make[7:].rsplit(".", 1)
+        on = f"On::Borrow({rs(f'{ns}.{typ}')}, {rs(tag)}, {rs(getter)})"
+    elif doc is not None and "element" in doc and not doc.get("abstract"):
         on = f"On::Create({rs(doc['element']['tag'])})"
     else:
         on = f"On::Construct({rs(f'{ns}.{typ}')})"
@@ -1306,7 +1312,11 @@ def observe_row(m: Model, owner: str, rec: dict) -> tuple[str, tuple[int, int] |
             return f"Trig::Rust(|o: &gtk::glib::Object| {{ {x['rust']} }})"
         return f"Trig::Set({rs(x['trigger'])})"
     c = v["check"]
-    if c == "change":
+    if c == "change" and v.get("values"):
+        fns = ", ".join(f"(|o: &gtk::glib::Object| -> gtk::glib::Value {{ let _ = o; {{ {x} }}.to_value() }}) as fn(&gtk::glib::Object) -> gtk::glib::Value"
+                        for x in v["values"])
+        check = f"Check::Values(vec![{fns}])"
+    elif c == "change":
         check = "Check::Change"
     elif c == "cross":
         check = f"Check::Cross({trig(v)})"

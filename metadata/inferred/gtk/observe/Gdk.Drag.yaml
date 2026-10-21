@@ -11,7 +11,7 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::actions (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   confidence: 0.9
 - prop: content
   class: constant
@@ -42,7 +42,7 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::selected-action (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   confidence: 0.9
 - prop: surface
   class: constant

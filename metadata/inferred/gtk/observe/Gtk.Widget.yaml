@@ -81,9 +81,11 @@ observe:
   - origin: probe
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:selectable, set:Gtk.Text:im-module, set:Gtk.TextView:im-module)'
   verify:
-    'on': Gtk:Label
-    check: cross
-    trigger: selectable
+    'on': Gtk:Entry
+    check: change
+    values:
+    - gtk::gdk::Cursor::from_name("pointer", None).unwrap()
+    - gtk::gdk::Cursor::from_name("text", None).unwrap()
   confidence: 0.95
 - prop: focus-on-click
   class: exact
@@ -216,7 +218,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:layout-manager)'
   verify:
     'on': Gtk:Label
-    check: connect
+    check: change
+    values:
+    - gtk::BoxLayout::new(gtk::Orientation::Vertical)
   confidence: 0.95
 - prop: limit-events
   class: exact

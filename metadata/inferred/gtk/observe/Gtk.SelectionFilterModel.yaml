@@ -23,7 +23,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:SelectionFilterModel
-    check: connect
+    check: change
+    values:
+    - gtk::SingleSelection::new(Some(gtk::StringList::new(&["a", "b"])))
   confidence: 0.9
 - prop: n-items
   class: exact
@@ -38,5 +40,7 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:SelectionFilterModel
-    check: connect
+    check: cross
+    rust: let m = o.downcast_ref::<gtk::SelectionFilterModel>().unwrap(); let s = m.model().unwrap_or_else(|| { let s = gtk::MultiSelection::new(Some(gtk::StringList::new(&["a",
+      "b"]))).upcast::<gtk::SelectionModel>(); m.set_model(Some(&s)); s }); if m.n_items() == 0 { s.select_all(); } else { s.unselect_all(); }
   confidence: 0.9

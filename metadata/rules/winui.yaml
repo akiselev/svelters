@@ -105,3 +105,18 @@ observe:
     "UIElement.ActualSize": resize
     "UIElement.RenderSize": resize
     "Window.Visible": activate
+  # OV1: exact facts without delivery evidence (no passing native-change row on the windows-winui job), by group.
+  # Read by tools/metadata/common/observe.py `unverified_groups` for the coverage report.
+  connect_only:
+    - group: input-state
+      reason: set by pointer input or focus (IsPointerOver, IsPressed, FocusState); the generated row has no UI Automation or input synthesizer for them, so it only connects
+      facts: ["Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:IsPointerOver", "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:IsPressed", "Microsoft.UI.Xaml:UIElement:FocusState"]
+    - group: edit-history
+      reason: changed by text edits, undo history or the clipboard; the generated rows have no trigger for them yet (a TextBox edit + Undo trigger in the WinUI harness would verify CanUndo/CanRedo)
+      facts: ["Microsoft.UI.Xaml.Controls:TextBox:CanUndo", "Microsoft.UI.Xaml.Controls:TextBox:CanRedo", "Microsoft.UI.Xaml.Controls:TextBox:CanPasteClipboardContent"]
+    - group: layout
+      reason: set by layout or by an items control that hosts the panel; no trigger in the generated rows
+      facts: ["Microsoft.UI.Xaml.Controls:TextBlock:IsTextTrimmed", "Microsoft.UI.Xaml.Controls:Panel:IsItemsHost"]
+    - group: not-exposed
+      reason: the backend does not expose the property (brushes, templates, transitions, ...), so no row is generated and no `bind:` can name it (R4)
+      pattern: '^Microsoft\.UI\.Xaml'

@@ -116,10 +116,27 @@ class Rules:
         self.scenario_missed = dict(o.get("scenario_missed") or {})
         self.triggers = dict(o.get("triggers") or {})
         self.setup = dict(o.get("setup") or {})
+        # value type (GType name) -> Rust expressions on `o: &glib::Object` making a new value of that type
+        # (`verify.values`: the generated test sets them in turn; OV1)
+        self.values = dict(o.get("values") or {})
+        # OV1: `owner:prop` -> {missed, rust, reason}: exact by O1, but a generated test saw a native change that
+        # notify misses; `rust` is that change (the fact becomes partial with a `silent` row)
+        self.missed = dict(o.get("missed") or {})
         self.accept = list(o.get("accept") or [])
         self.constant = list(o.get("constant") or [])
         self.unreviewed = list(o.get("unreviewed") or [])
         self.subjects = dict(doc.get("subjects") or {})
+        # OV1: owner -> {on, make?, reason}: the instance a test of the owner's facts uses where the probe made none
+        # (it skips types that could reach printers or D-Bus) or a bare instance is useless
+        self.instances = dict(o.get("instances") or {})
+        # OV1: facts whose generated test stays `connect` (no native change the headless test can make), by
+        # group with a reason: `owner:prop` -> group
+        self.connect_only: dict[str, str] = {}
+        self.connect_groups: dict[str, str] = {}
+        for g in o.get("connect_only") or []:
+            self.connect_groups[g["group"]] = g["reason"]
+            for f in g["facts"]:
+                self.connect_only[f] = g["group"]
 
 
 def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list[dict]], dict, list[dict], dict[str, int]]:
@@ -149,6 +166,8 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
 
     def subject(key: str, sweep_on: str | None) -> str | None:
         """The concrete type a test of `key`'s properties instantiates."""
+        if key in rules.instances:
+            return rules.instances[key]["on"]
         o = owners[key]
         if not o.abstract and not o.interface and instantiable(key):
             return key
@@ -183,15 +202,30 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
         e = ev_props.get(f"{gir_dot(key)}:{pr['name']}") or {}
         return e.get("flags")
 
+    def value_type(owner_key: str, pr: dict) -> str | None:
+        return pr.get("gtype") or (ev_props.get(f"{gir_dot(owner_key)}:{pr['name']}") or {}).get("value_type")
+
     def scalar_writable(owner_key: str, name: str) -> bool:
+        """Writable, and the generated test can make a new value from the ParamSpec alone (testing_observe.rs
+        `next_value`): scalars, enums, flags (OV1), string lists (OV1) and variants (OV1)."""
         o = owners.get(owner_key)
         if o is None:
             return False
         for pr in o.props:
             if pr["name"] == name:
-                gt = pr.get("gtype") or (ev_props.get(f"{gir_dot(owner_key)}:{name}") or {}).get("value_type")
-                return pr["write"] and not pr["construct_only"] and (gt in SCALAR_GTYPES or pr["ref"].startswith("enum<"))
+                gt = value_type(owner_key, pr)
+                generic = (gt in SCALAR_GTYPES or gt in ("GStrv", "GVariant") or pr["ref"].startswith(("enum", "flags"))
+                           or pr["ref"] in ("list<string>", "variant"))
+                return pr["write"] and not pr["construct_only"] and generic
         return False
+
+    def sample_values(owner_key: str, name: str) -> list[str] | None:
+        """The rules' sample values (`observe.values`) for a writable object/boxed property, by value type."""
+        o = owners.get(owner_key)
+        for pr in (o.props if o else []):
+            if pr["name"] == name and pr["write"] and not pr["construct_only"]:
+                return rules.values.get(value_type(owner_key, pr) or "")
+        return None
 
     def find_writable(key: str, name: str) -> str | None:
         """The owner (key or an ancestor/interface) declaring a writable scalar property `name`."""
@@ -248,6 +282,8 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
         if f"{key}:{name}" in rules.proportional:
             rec["value_cost"] = "proportional"
         verify: dict = {"on": sub} if sub else {}
+        if sub and rules.instances.get(key, {}).get("make"):
+            verify["make"] = rules.instances[key]["make"]
         if miss:
             def cause_kind(s: dict) -> str:
                 if s["cause"].startswith("scenario:"):
@@ -281,6 +317,14 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
             return rec, 0.95, f"observe:{rec['class']}-probe", evid
         prov = [{"origin": "runtime" if flags else "gir", "ref": "O1: GObject property, notify::" + name
                  + (" (EXPLICIT_NOTIFY)" if explicit else "")}]
+        if fid in rules.missed:
+            # OV1: a generated test saw this property change without notify on a cause the probe never ran
+            m = rules.missed[fid]
+            rec.update({"class": "partial", "missed": sorted(m["missed"]),
+                        "provenance": prov + [{"origin": "manual", "ref": f"rules observe.missed (OV1): {m['reason']}"}]})
+            if verify.get("on"):
+                rec["verify"] = {**verify, "check": "silent", "rust": m["rust"]}
+            return rec, 0.95, "observe:partial-missed-rule", evid
         if ok:
             how = ", ".join(sorted({s["cause"] for s in ok})[:3])
             prov.append({"origin": "probe", "ref": f"observe probe GTK {obs['version']}: notified on every observed change ({how})"})
@@ -313,12 +357,18 @@ def infer(probe_rt: dict, rules_doc: dict, version: str) -> tuple[dict[str, list
             rec.update({"class": "exact", "provenance": prov + [{"origin": "rule", "ref": "read-only and never seen changing in the probe"}]})
             conf, pattern = 0.8, "observe:exact-read-only-unprobed"
         if verify.get("on"):
-            if fid in rules.triggers:
+            if fid in rules.connect_only:
+                # OV1: no native change the headless test can make (the group's reason is in the rules)
+                verify["check"] = "connect"
+            elif fid in rules.triggers:
                 verify.update({"check": "silent" if rec["class"] == "none" else "cross", "rust": rules.triggers[fid]})
             elif pr["write"] and scalar_writable(key, name) and find_writable(verify["on"], name) and \
                     not (sw and sw["readback"] == "ignored" and verify["on"] not in rules.setup):
                 # (a write the probe saw ignored needs a precondition: only with a setup from the rules)
                 verify["check"] = "change"
+            elif pr["write"] and (vals := sample_values(key, name)):
+                # OV1: an object/boxed property set natively to the rules' sample values
+                verify.update({"check": "change", "values": list(vals)})
             else:
                 cross = next((s for s in ok if s["cause"].startswith("set:") and "." in s["on"]), None)
                 inst = cross["on"].replace(".", ":", 1) if cross else None

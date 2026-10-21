@@ -388,8 +388,18 @@ def observe_summary(tk: str) -> dict:
     review = {}
     rp = ROOT / f"metadata/inferred/{tk}/observe/_review.json"
     if rp.exists():
-        review = json.loads(rp.read_text())["unreviewed"]
-    return {"classes": by, "parked": len(parked), "unreviewed": review}
+        doc = json.loads(rp.read_text())
+        review = doc["unreviewed"]
+    # OV1: exact facts by verification strength (what the compiler's `bind:` lowering reads)
+    ver = obs.verification(tk, facts)
+    exact = {v: 0 for v in obs.VERIFIED}
+    for props in facts.values():
+        for r in props.values():
+            if r["class"] == "exact":
+                exact[ver[r["fact"]]] += 1
+    unverified = {g: {"count": v["count"], "reason": v["reason"]} for g, v in obs.unverified_groups(tk, facts, ver).items()}
+    return {"classes": by, "parked": len(parked), "unreviewed": review, "exact_by_verification": exact,
+            "exact_unverified_groups": unverified}
 
 
 def render_observe(tk: str) -> list[str]:
@@ -411,6 +421,14 @@ def render_observe(tk: str) -> list[str]:
              f"(not written, needs judgement): {un.get('middle', 0)} middle band, {un.get('low', 0)} low band"
              + ("; by pattern: " + ", ".join(f"`{k}` {v}" for k, v in un.get("by_pattern", {}).items()) if un.get("by_pattern") else "")
              + ".\n")
+    ev = s["exact_by_verification"]
+    o.append(f"`exact` facts by verification strength (milestone OV1; `bind:` lowers onto observation only for "
+             f"`delivery`): delivery {ev['delivery']}, weak {ev['weak']}, none {ev['none']}.\n")
+    if s["exact_unverified_groups"]:
+        o += ["`exact` facts without delivery evidence (a passing native-change row), by group (`observe.connect_only` of `metadata/rules/" + tk + ".yaml`):\n",
+              "| Group | Facts | Why no native change |", "| --- | --- | --- |"]
+        o += [f"| {g} | {v['count']} | {v['reason']} |" for g, v in s["exact_unverified_groups"].items()]
+        o.append("")
     if un.get("by_group"):
         o += ["Left without a fact on purpose (absent = unknown for the compiler), by group "
               "(`observe.unreviewed` of `metadata/rules/" + tk + ".yaml`):\n",
