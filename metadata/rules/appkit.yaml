@@ -98,3 +98,7 @@ observe:
     "NSWindow:frame": [{mechanism: notification, name: NSWindowDidResizeNotification}, {mechanism: notification, name: NSWindowDidMoveNotification}]
   # Fallbacks that also report programmatic changes (-[NSWindow setFrame:display:] posts DidResize/DidMove).
   fallback_complete: ["NSWindow:frame"]
+  # The native trigger of the generated observe row (milestone R4) for props KVC cannot set:
+  # crates/svelters-appkit/src/testing.rs `Trig` (set-frame: -[NSWindow setFrame:display:]).
+  verify:
+    "NSWindow:frame": set-frame

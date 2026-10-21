@@ -349,10 +349,13 @@ OBS_NOTE = {
           "mechanism is a QBindable notifier, a QEvent or another signal, and properties the backend does not expose "
           "(no element annotates them, not a non-GUI type), stay inferred. Rows: `observe/<owner>.<prop>` in the "
           "generated verify binary.",
-    "appkit": "Inferred only: the AppKit backend leaves `observe` NULL until R4 (KVO observer, notifications, "
-              "target-action); the evidence is the KVO column of the AppKit probe from the macos-appkit job.",
-    "winui": "Inferred only: the WinUI backend leaves `observe` NULL until R4 (RegisterPropertyChangedCallback, "
-             "events); no probe runs on Linux.",
+    "appkit": "Verified through the backend's `observe` (ABI v2.6, milestone R4: KVO, notifications, target-action) on "
+              "the macos-appkit job: one generated row per fact (`observe_<class>_<prop>` in "
+              "examples/counter-mac/tests/generated.rs, `svelters_appkit::testing::observe_row`), imported with "
+              "`ledger.py import`.",
+    "winui": "Verified through the backend's `observe` (ABI v2.6, milestone R4: DP change callbacks, events) on the "
+             "windows-winui job: one generated row per fact of an exposed prop (`observe_<tag>_<prop>` in "
+             "crates/svelters-winui/tests/generated.rs); facts of props the backend does not expose have no row.",
 }
 
 
@@ -362,8 +365,7 @@ def observe_summary(tk: str) -> dict:
     without a passing result), parked, and inferred without a row (no test can run yet)."""
     import observe as obs
     facts = obs.load(tk)
-    man = (json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.manifest(tk) if tk == "qt"
-           else {"facts": []})
+    man = json.loads(ledger.GTK_FACTS.read_text()) if tk == "gtk" else ledger.manifest(tk)
     rows = {f["fact"]: f for f in man["facts"] if f.get("section") == "observe"}
     verified = ledger.verified_facts(tk) if rows else set()
     parked = [r for r in ledger.load_parked(tk) if r["section"] == "observe"]

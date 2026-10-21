@@ -1281,6 +1281,867 @@ pub static PROP_GET: &[Option<fn(&IInspectable) -> R<Value>>] = &[
     Some(get_prop144_window_visible),
 ];
 
+fn observe_prop0_button_base_click_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase::ClickModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop1_button_base_is_pointer_over(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase::IsPointerOverProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop2_button_base_is_pressed(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase::IsPressedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop3_content_control_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::ContentControl::ContentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop4_control_is_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::IsEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop5_control_font_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::FontSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop6_control_padding(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::PaddingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop7_control_background_sizing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::BackgroundSizingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop8_control_border_thickness(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::BorderThicknessProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop9_control_character_spacing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::CharacterSpacingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop10_control_element_sound_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::ElementSoundModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop11_control_font_stretch(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::FontStretchProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop12_control_font_style(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::FontStyleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop13_control_horizontal_content_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::HorizontalContentAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop14_control_is_focus_engagement_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::IsFocusEngagementEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop15_control_is_text_scale_factor_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::IsTextScaleFactorEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop16_control_requires_pointer(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::RequiresPointerProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop17_control_tab_navigation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::TabNavigationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop18_control_vertical_content_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Control::VerticalContentAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop19_framework_element_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::WidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop20_framework_element_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::HeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop21_framework_element_min_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MinWidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop22_framework_element_min_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MinHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop23_framework_element_margin(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MarginProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop24_framework_element_horizontal_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::HorizontalAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop25_framework_element_vertical_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::VerticalAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop26_framework_element_name(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::NameProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop27_framework_element_actual_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.SizeChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop28_framework_element_actual_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.SizeChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop29_framework_element_actual_theme(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.ActualThemeChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop30_framework_element_allow_focus_on_interaction(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::AllowFocusOnInteractionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop31_framework_element_allow_focus_when_disabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::AllowFocusWhenDisabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop32_framework_element_flow_direction(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FlowDirectionProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop33_framework_element_focus_visual_margin(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FocusVisualMarginProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop34_framework_element_focus_visual_primary_thickness(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FocusVisualPrimaryThicknessProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop35_framework_element_focus_visual_secondary_thickness(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::FocusVisualSecondaryThicknessProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop36_framework_element_is_loaded(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.Loaded(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::FrameworkElement>()?.Unloaded(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop37_framework_element_language(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::LanguageProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop38_framework_element_max_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MaxHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop39_framework_element_max_width(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::MaxWidthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop40_framework_element_requested_theme(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::FrameworkElement::RequestedThemeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop41_grid_row_spacing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::RowSpacingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop42_grid_column_spacing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::ColumnSpacingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop43_grid_padding(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::PaddingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop46_grid_background_sizing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::BackgroundSizingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop47_grid_border_thickness(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Grid::BorderThicknessProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop48_panel_is_items_host(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Panel::IsItemsHostProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop49_range_base_minimum(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::MinimumProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop50_range_base_maximum(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::MaximumProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop51_range_base_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::ValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop52_range_base_small_change(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::SmallChangeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop53_range_base_large_change(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::RangeBase::LargeChangeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop54_slider_step_frequency(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::StepFrequencyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop55_slider_orientation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::OrientationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop56_slider_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop57_slider_intermediate_value(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::IntermediateValueProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop58_slider_is_direction_reversed(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::IsDirectionReversedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop59_slider_is_thumb_tool_tip_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::IsThumbToolTipEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop60_slider_snaps_to(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::SnapsToProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop61_slider_tick_frequency(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::TickFrequencyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop62_slider_tick_placement(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Slider::TickPlacementProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop63_stack_panel_orientation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::OrientationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop64_stack_panel_spacing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::SpacingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop65_stack_panel_padding(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::PaddingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop67_stack_panel_are_scroll_snap_points_regular(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::AreScrollSnapPointsRegularProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop69_stack_panel_background_sizing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::BackgroundSizingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop70_stack_panel_border_thickness(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::StackPanel::BorderThicknessProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop71_text_block_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop72_text_block_font_size(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::FontSizeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop73_text_block_text_wrapping(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextWrappingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop74_text_block_is_text_selection_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::IsTextSelectionEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop75_text_block_max_lines(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::MaxLinesProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop77_text_block_character_spacing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::CharacterSpacingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop78_text_block_font_stretch(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::FontStretchProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop79_text_block_font_style(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::FontStyleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop80_text_block_horizontal_text_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::HorizontalTextAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop81_text_block_is_color_font_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::IsColorFontEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop82_text_block_is_text_scale_factor_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::IsTextScaleFactorEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop83_text_block_is_text_trimmed(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::IsTextTrimmedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop84_text_block_line_height(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::LineHeightProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop85_text_block_line_stacking_strategy(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::LineStackingStrategyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop86_text_block_optical_margin_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::OpticalMarginAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop87_text_block_padding(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::PaddingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop88_text_block_selected_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>()?.SelectionChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop89_text_block_text_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop90_text_block_text_line_bounds(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextLineBoundsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop91_text_block_text_trimming(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::TextTrimmingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop92_text_box_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop93_text_box_placeholder_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::PlaceholderTextProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop94_text_box_is_read_only(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsReadOnlyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop95_text_box_max_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::MaxLengthProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop96_text_box_accepts_return(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::AcceptsReturnProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop97_text_box_text_wrapping(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextWrappingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop98_text_box_header(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::HeaderProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop99_text_box_can_paste_clipboard_content(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::CanPasteClipboardContentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop100_text_box_can_redo(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::CanRedoProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop101_text_box_can_undo(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::CanUndoProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop102_text_box_character_casing(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::CharacterCasingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop103_text_box_desired_candidate_window_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::DesiredCandidateWindowAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop104_text_box_horizontal_text_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::HorizontalTextAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop105_text_box_is_color_font_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsColorFontEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop106_text_box_is_spell_check_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsSpellCheckEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop107_text_box_is_text_prediction_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::IsTextPredictionEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop108_text_box_prevent_keyboard_display_on_programmatic_focus(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::PreventKeyboardDisplayOnProgrammaticFocusProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop109_text_box_selected_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.SelectionChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop110_text_box_selection_length(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.SelectionChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop111_text_box_selection_start(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBox>()?.SelectionChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+fn observe_prop112_text_box_text_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBox::TextAlignmentProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop113_toggle_button_is_checked(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton::IsCheckedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop114_toggle_button_is_three_state(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ToggleButton::IsThreeStateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop115_ui_element_visibility(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::VisibilityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop116_ui_element_opacity(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::OpacityProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop117_ui_element_is_hit_test_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsHitTestVisibleProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop118_ui_element_access_key(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::AccessKeyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop119_ui_element_can_be_scroll_anchor(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::CanBeScrollAnchorProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop120_ui_element_composite_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::CompositeModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop121_ui_element_exit_display_mode_on_access_key_invoked(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::ExitDisplayModeOnAccessKeyInvokedProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop122_ui_element_focus_state(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::FocusStateProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop123_ui_element_is_access_key_scope(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsAccessKeyScopeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop124_ui_element_is_double_tap_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsDoubleTapEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop125_ui_element_is_holding_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsHoldingEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop126_ui_element_is_right_tap_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsRightTapEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop127_ui_element_is_tab_stop(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsTabStopProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop128_ui_element_is_tap_enabled(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::IsTapEnabledProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop129_ui_element_key_tip_horizontal_offset(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyTipHorizontalOffsetProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop130_ui_element_key_tip_placement_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyTipPlacementModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop131_ui_element_key_tip_vertical_offset(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyTipVerticalOffsetProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop132_ui_element_keyboard_accelerator_placement_mode(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::KeyboardAcceleratorPlacementModeProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop134_ui_element_tab_focus_navigation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::TabFocusNavigationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop135_ui_element_tab_index(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::TabIndexProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop136_ui_element_use_layout_rounding(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::UseLayoutRoundingProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop137_ui_element_use_system_focus_visuals(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::UseSystemFocusVisualsProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop138_ui_element_xy_focus_down_navigation_strategy(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusDownNavigationStrategyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop139_ui_element_xy_focus_keyboard_navigation(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusKeyboardNavigationProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop140_ui_element_xy_focus_left_navigation_strategy(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusLeftNavigationStrategyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop141_ui_element_xy_focus_right_navigation_strategy(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusRightNavigationStrategyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop142_ui_element_xy_focus_up_navigation_strategy(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::UIElement::XYFocusUpNavigationStrategyProperty()?, h, prop)?,
+    ])
+}
+fn observe_prop144_window_visible(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
+    Ok(vec![
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::Window>()?.VisibilityChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
+    ])
+}
+
+/// ABI v2.6 `observe`: installs every mechanism of a prop's observe fact (None: no mechanism), parallel to PROPS.
+pub static OBSERVE_CONNECT: &[Option<fn(&IInspectable, u64, u32) -> WinResult<Vec<Registration>>>] = &[
+    Some(observe_prop0_button_base_click_mode),
+    Some(observe_prop1_button_base_is_pointer_over),
+    Some(observe_prop2_button_base_is_pressed),
+    Some(observe_prop3_content_control_content),
+    Some(observe_prop4_control_is_enabled),
+    Some(observe_prop5_control_font_size),
+    Some(observe_prop6_control_padding),
+    Some(observe_prop7_control_background_sizing),
+    Some(observe_prop8_control_border_thickness),
+    Some(observe_prop9_control_character_spacing),
+    Some(observe_prop10_control_element_sound_mode),
+    Some(observe_prop11_control_font_stretch),
+    Some(observe_prop12_control_font_style),
+    Some(observe_prop13_control_horizontal_content_alignment),
+    Some(observe_prop14_control_is_focus_engagement_enabled),
+    Some(observe_prop15_control_is_text_scale_factor_enabled),
+    Some(observe_prop16_control_requires_pointer),
+    Some(observe_prop17_control_tab_navigation),
+    Some(observe_prop18_control_vertical_content_alignment),
+    Some(observe_prop19_framework_element_width),
+    Some(observe_prop20_framework_element_height),
+    Some(observe_prop21_framework_element_min_width),
+    Some(observe_prop22_framework_element_min_height),
+    Some(observe_prop23_framework_element_margin),
+    Some(observe_prop24_framework_element_horizontal_alignment),
+    Some(observe_prop25_framework_element_vertical_alignment),
+    Some(observe_prop26_framework_element_name),
+    Some(observe_prop27_framework_element_actual_width),
+    Some(observe_prop28_framework_element_actual_height),
+    Some(observe_prop29_framework_element_actual_theme),
+    Some(observe_prop30_framework_element_allow_focus_on_interaction),
+    Some(observe_prop31_framework_element_allow_focus_when_disabled),
+    Some(observe_prop32_framework_element_flow_direction),
+    Some(observe_prop33_framework_element_focus_visual_margin),
+    Some(observe_prop34_framework_element_focus_visual_primary_thickness),
+    Some(observe_prop35_framework_element_focus_visual_secondary_thickness),
+    Some(observe_prop36_framework_element_is_loaded),
+    Some(observe_prop37_framework_element_language),
+    Some(observe_prop38_framework_element_max_height),
+    Some(observe_prop39_framework_element_max_width),
+    Some(observe_prop40_framework_element_requested_theme),
+    Some(observe_prop41_grid_row_spacing),
+    Some(observe_prop42_grid_column_spacing),
+    Some(observe_prop43_grid_padding),
+    None,
+    None,
+    Some(observe_prop46_grid_background_sizing),
+    Some(observe_prop47_grid_border_thickness),
+    Some(observe_prop48_panel_is_items_host),
+    Some(observe_prop49_range_base_minimum),
+    Some(observe_prop50_range_base_maximum),
+    Some(observe_prop51_range_base_value),
+    Some(observe_prop52_range_base_small_change),
+    Some(observe_prop53_range_base_large_change),
+    Some(observe_prop54_slider_step_frequency),
+    Some(observe_prop55_slider_orientation),
+    Some(observe_prop56_slider_header),
+    Some(observe_prop57_slider_intermediate_value),
+    Some(observe_prop58_slider_is_direction_reversed),
+    Some(observe_prop59_slider_is_thumb_tool_tip_enabled),
+    Some(observe_prop60_slider_snaps_to),
+    Some(observe_prop61_slider_tick_frequency),
+    Some(observe_prop62_slider_tick_placement),
+    Some(observe_prop63_stack_panel_orientation),
+    Some(observe_prop64_stack_panel_spacing),
+    Some(observe_prop65_stack_panel_padding),
+    None,
+    Some(observe_prop67_stack_panel_are_scroll_snap_points_regular),
+    None,
+    Some(observe_prop69_stack_panel_background_sizing),
+    Some(observe_prop70_stack_panel_border_thickness),
+    Some(observe_prop71_text_block_text),
+    Some(observe_prop72_text_block_font_size),
+    Some(observe_prop73_text_block_text_wrapping),
+    Some(observe_prop74_text_block_is_text_selection_enabled),
+    Some(observe_prop75_text_block_max_lines),
+    None,
+    Some(observe_prop77_text_block_character_spacing),
+    Some(observe_prop78_text_block_font_stretch),
+    Some(observe_prop79_text_block_font_style),
+    Some(observe_prop80_text_block_horizontal_text_alignment),
+    Some(observe_prop81_text_block_is_color_font_enabled),
+    Some(observe_prop82_text_block_is_text_scale_factor_enabled),
+    Some(observe_prop83_text_block_is_text_trimmed),
+    Some(observe_prop84_text_block_line_height),
+    Some(observe_prop85_text_block_line_stacking_strategy),
+    Some(observe_prop86_text_block_optical_margin_alignment),
+    Some(observe_prop87_text_block_padding),
+    Some(observe_prop88_text_block_selected_text),
+    Some(observe_prop89_text_block_text_alignment),
+    Some(observe_prop90_text_block_text_line_bounds),
+    Some(observe_prop91_text_block_text_trimming),
+    Some(observe_prop92_text_box_text),
+    Some(observe_prop93_text_box_placeholder_text),
+    Some(observe_prop94_text_box_is_read_only),
+    Some(observe_prop95_text_box_max_length),
+    Some(observe_prop96_text_box_accepts_return),
+    Some(observe_prop97_text_box_text_wrapping),
+    Some(observe_prop98_text_box_header),
+    Some(observe_prop99_text_box_can_paste_clipboard_content),
+    Some(observe_prop100_text_box_can_redo),
+    Some(observe_prop101_text_box_can_undo),
+    Some(observe_prop102_text_box_character_casing),
+    Some(observe_prop103_text_box_desired_candidate_window_alignment),
+    Some(observe_prop104_text_box_horizontal_text_alignment),
+    Some(observe_prop105_text_box_is_color_font_enabled),
+    Some(observe_prop106_text_box_is_spell_check_enabled),
+    Some(observe_prop107_text_box_is_text_prediction_enabled),
+    Some(observe_prop108_text_box_prevent_keyboard_display_on_programmatic_focus),
+    Some(observe_prop109_text_box_selected_text),
+    Some(observe_prop110_text_box_selection_length),
+    Some(observe_prop111_text_box_selection_start),
+    Some(observe_prop112_text_box_text_alignment),
+    Some(observe_prop113_toggle_button_is_checked),
+    Some(observe_prop114_toggle_button_is_three_state),
+    Some(observe_prop115_ui_element_visibility),
+    Some(observe_prop116_ui_element_opacity),
+    Some(observe_prop117_ui_element_is_hit_test_visible),
+    Some(observe_prop118_ui_element_access_key),
+    Some(observe_prop119_ui_element_can_be_scroll_anchor),
+    Some(observe_prop120_ui_element_composite_mode),
+    Some(observe_prop121_ui_element_exit_display_mode_on_access_key_invoked),
+    Some(observe_prop122_ui_element_focus_state),
+    Some(observe_prop123_ui_element_is_access_key_scope),
+    Some(observe_prop124_ui_element_is_double_tap_enabled),
+    Some(observe_prop125_ui_element_is_holding_enabled),
+    Some(observe_prop126_ui_element_is_right_tap_enabled),
+    Some(observe_prop127_ui_element_is_tab_stop),
+    Some(observe_prop128_ui_element_is_tap_enabled),
+    Some(observe_prop129_ui_element_key_tip_horizontal_offset),
+    Some(observe_prop130_ui_element_key_tip_placement_mode),
+    Some(observe_prop131_ui_element_key_tip_vertical_offset),
+    Some(observe_prop132_ui_element_keyboard_accelerator_placement_mode),
+    None,
+    Some(observe_prop134_ui_element_tab_focus_navigation),
+    Some(observe_prop135_ui_element_tab_index),
+    Some(observe_prop136_ui_element_use_layout_rounding),
+    Some(observe_prop137_ui_element_use_system_focus_visuals),
+    Some(observe_prop138_ui_element_xy_focus_down_navigation_strategy),
+    Some(observe_prop139_ui_element_xy_focus_keyboard_navigation),
+    Some(observe_prop140_ui_element_xy_focus_left_navigation_strategy),
+    Some(observe_prop141_ui_element_xy_focus_right_navigation_strategy),
+    Some(observe_prop142_ui_element_xy_focus_up_navigation_strategy),
+    None,
+    Some(observe_prop144_window_visible),
+];
+
 fn event0_button_base_click(o: &IInspectable, sink: Sink) -> WinResult<Registration> {
     o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase>()?.Click(move |_s, _a| {
         sink.post(vec![]);

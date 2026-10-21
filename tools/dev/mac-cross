@@ -13,7 +13,9 @@
 set -euo pipefail
 
 sdk=${SVELTERS_MACOS_SDK:?set SVELTERS_MACOS_SDK to a MacOSX*.sdk directory}
+# The project's minimum macOS is 11 (plans/research/REACTIVITY.md decision 13.10).
 min=${SVELTERS_MACOS_MIN:-11.0}
+export MACOSX_DEPLOYMENT_TARGET="$min"
 export SDKROOT="$sdk"
 export CC_aarch64_apple_darwin=clang
 export CXX_aarch64_apple_darwin=clang++

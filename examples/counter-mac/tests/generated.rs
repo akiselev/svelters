@@ -9,7 +9,7 @@
 mod cases {
     use svelters_abi::Value as V;
     use svelters_abi::{SVL_T_INSETS, SVL_T_POINT, SVL_T_RECT, SVL_T_SIZE};
-    use svelters_appkit::testing::{Harness, S};
+    use svelters_appkit::testing::{Harness, ObsCheck, ObserveRow, S, Trig, User};
 
     /// kind NSBox: <box> creates an NSBox
     pub fn kind_nsbox() {
@@ -1304,6 +1304,702 @@ mod cases {
         h.destroy(o);
     }
 
+    pub static OBSERVE_ROWS: &[ObserveRow] = &[
+        // observe_nsbox_border_color: observe NSBox.border-color: set_only
+        ObserveRow { tag: "box", prop: "border-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "borderColor" },
+        // observe_nsbox_border_rect: observe NSBox.border-rect: none
+        ObserveRow { tag: "box", prop: "border-rect", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "borderRect" },
+        // observe_nsbox_border_width: observe NSBox.border-width: exact
+        ObserveRow { tag: "box", prop: "border-width", kvo: "borderWidth", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setBorderWidth:" },
+        // observe_nsbox_box_type: observe NSBox.box-type: exact
+        ObserveRow { tag: "box", prop: "box-type", kvo: "boxType", check: ObsCheck::Change, sample: Some(S::Str("custom")), user: User::None, requires: "setBoxType:" },
+        // observe_nsbox_content_view: observe NSBox.content-view: set_only
+        ObserveRow { tag: "box", prop: "content-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentView" },
+        // observe_nsbox_content_view_margins: observe NSBox.content-view-margins: exact
+        ObserveRow { tag: "box", prop: "content-view-margins", kvo: "contentViewMargins", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setContentViewMargins:" },
+        // observe_nsbox_corner_radius: observe NSBox.corner-radius: exact
+        ObserveRow { tag: "box", prop: "corner-radius", kvo: "cornerRadius", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setCornerRadius:" },
+        // observe_nsbox_fill_color: observe NSBox.fill-color: set_only
+        ObserveRow { tag: "box", prop: "fill-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "fillColor" },
+        // observe_nsbox_title: observe NSBox.title: exact
+        ObserveRow { tag: "box", prop: "title", kvo: "title", check: ObsCheck::Change, sample: Some(S::Str("Group")), user: User::None, requires: "setTitle:" },
+        // observe_nsbox_title_cell: observe NSBox.title-cell: none
+        ObserveRow { tag: "box", prop: "title-cell", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "titleCell" },
+        // observe_nsbox_title_font: observe NSBox.title-font: set_only
+        ObserveRow { tag: "box", prop: "title-font", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "titleFont" },
+        // observe_nsbox_title_position: observe NSBox.title-position: exact
+        ObserveRow { tag: "box", prop: "title-position", kvo: "titlePosition", check: ObsCheck::Change, sample: Some(S::Str("no-title")), user: User::None, requires: "setTitlePosition:" },
+        // observe_nsbox_title_rect: observe NSBox.title-rect: none
+        ObserveRow { tag: "box", prop: "title-rect", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "titleRect" },
+        // observe_nsbox_transparent: observe NSBox.transparent: exact
+        ObserveRow { tag: "box", prop: "transparent", kvo: "transparent", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setTransparent:" },
+        // observe_nsbutton_active_compression_options: observe NSButton.active-compression-options: none
+        ObserveRow { tag: "button", prop: "active-compression-options", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "activeCompressionOptions" },
+        // observe_nsbutton_allows_mixed_state: observe NSButton.allows-mixed-state: exact
+        ObserveRow { tag: "button", prop: "allows-mixed-state", kvo: "allowsMixedState", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsMixedState:" },
+        // observe_nsbutton_alternate_image: observe NSButton.alternate-image: set_only
+        ObserveRow { tag: "button", prop: "alternate-image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "alternateImage" },
+        // observe_nsbutton_alternate_title: observe NSButton.alternate-title: exact
+        ObserveRow { tag: "button", prop: "alternate-title", kvo: "alternateTitle", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::None, requires: "setAlternateTitle:" },
+        // observe_nsbutton_attributed_alternate_title: observe NSButton.attributed-alternate-title: exact
+        ObserveRow { tag: "button", prop: "attributed-alternate-title", kvo: "attributedAlternateTitle", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::None, requires: "setAttributedAlternateTitle:" },
+        // observe_nsbutton_attributed_title: observe NSButton.attributed-title: exact
+        ObserveRow { tag: "button", prop: "attributed-title", kvo: "attributedTitle", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::None, requires: "setAttributedTitle:" },
+        // observe_nsbutton_bezel_color: observe NSButton.bezel-color: set_only
+        ObserveRow { tag: "button", prop: "bezel-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "bezelColor" },
+        // observe_nsbutton_bezel_style: observe NSButton.bezel-style: exact
+        ObserveRow { tag: "button", prop: "bezel-style", kvo: "bezelStyle", check: ObsCheck::Change, sample: Some(S::Str("circular")), user: User::None, requires: "setBezelStyle:" },
+        // observe_nsbutton_border_shape: observe NSButton.border-shape: exact
+        ObserveRow { tag: "button", prop: "border-shape", kvo: "borderShape", check: ObsCheck::Change, sample: Some(S::Str("capsule")), user: User::None, requires: "setBorderShape:" },
+        // observe_nsbutton_bordered: observe NSButton.bordered: exact
+        ObserveRow { tag: "button", prop: "bordered", kvo: "bordered", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setBordered:" },
+        // observe_nsbutton_content_tint_color: observe NSButton.content-tint-color: set_only
+        ObserveRow { tag: "button", prop: "content-tint-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentTintColor" },
+        // observe_nsbutton_has_destructive_action: observe NSButton.has-destructive-action: exact
+        ObserveRow { tag: "button", prop: "has-destructive-action", kvo: "hasDestructiveAction", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHasDestructiveAction:" },
+        // observe_nsbutton_image: observe NSButton.image: set_only
+        ObserveRow { tag: "button", prop: "image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "image" },
+        // observe_nsbutton_image_hugs_title: observe NSButton.image-hugs-title: exact
+        ObserveRow { tag: "button", prop: "image-hugs-title", kvo: "imageHugsTitle", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setImageHugsTitle:" },
+        // observe_nsbutton_image_position: observe NSButton.image-position: exact
+        ObserveRow { tag: "button", prop: "image-position", kvo: "imagePosition", check: ObsCheck::Change, sample: Some(S::Str("image-only")), user: User::None, requires: "setImagePosition:" },
+        // observe_nsbutton_image_scaling: observe NSButton.image-scaling: exact
+        ObserveRow { tag: "button", prop: "image-scaling", kvo: "imageScaling", check: ObsCheck::Change, sample: Some(S::Str("image-scale-proportionally-down")), user: User::None, requires: "setImageScaling:" },
+        // observe_nsbutton_key_equivalent: observe NSButton.key-equivalent: exact
+        ObserveRow { tag: "button", prop: "key-equivalent", kvo: "keyEquivalent", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::None, requires: "setKeyEquivalent:" },
+        // observe_nsbutton_key_equivalent_modifier_mask: observe NSButton.key-equivalent-modifier-mask: exact
+        ObserveRow { tag: "button", prop: "key-equivalent-modifier-mask", kvo: "keyEquivalentModifierMask", check: ObsCheck::Change, sample: Some(S::Names(&["caps-lock"])), user: User::None, requires: "setKeyEquivalentModifierMask:" },
+        // observe_nsbutton_max_accelerator_level: observe NSButton.max-accelerator-level: set_only
+        ObserveRow { tag: "button", prop: "max-accelerator-level", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maxAcceleratorLevel" },
+        // observe_nsbutton_shows_border_only_while_mouse_inside: observe NSButton.shows-border-only-while-mouse-inside: exact
+        ObserveRow { tag: "button", prop: "shows-border-only-while-mouse-inside", kvo: "showsBorderOnlyWhileMouseInside", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setShowsBorderOnlyWhileMouseInside:" },
+        // observe_nsbutton_sound: observe NSButton.sound: set_only
+        ObserveRow { tag: "button", prop: "sound", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "sound" },
+        // observe_nsbutton_spring_loaded: observe NSButton.spring-loaded: exact
+        ObserveRow { tag: "button", prop: "spring-loaded", kvo: "springLoaded", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setSpringLoaded:" },
+        // observe_nsbutton_state: observe NSButton.state: exact
+        ObserveRow { tag: "button", prop: "state", kvo: "state", check: ObsCheck::Change, sample: Some(S::Str("on")), user: User::Click, requires: "setState:" },
+        // observe_nsbutton_symbol_configuration: observe NSButton.symbol-configuration: set_only
+        ObserveRow { tag: "button", prop: "symbol-configuration", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "symbolConfiguration" },
+        // observe_nsbutton_tint_prominence: observe NSButton.tint-prominence: exact
+        ObserveRow { tag: "button", prop: "tint-prominence", kvo: "tintProminence", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setTintProminence:" },
+        // observe_nsbutton_title: observe NSButton.title: exact
+        ObserveRow { tag: "button", prop: "title", kvo: "title", check: ObsCheck::Change, sample: Some(S::Str("Increment")), user: User::None, requires: "setTitle:" },
+        // observe_nsbutton_transparent: observe NSButton.transparent: exact
+        ObserveRow { tag: "button", prop: "transparent", kvo: "transparent", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setTransparent:" },
+        // observe_nscontrol_action: observe NSControl.action: set_only
+        ObserveRow { tag: "button", prop: "action", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "action" },
+        // observe_nscontrol_alignment: observe NSControl.alignment: exact
+        ObserveRow { tag: "button", prop: "alignment", kvo: "alignment", check: ObsCheck::Change, sample: Some(S::Str("left")), user: User::None, requires: "setAlignment:" },
+        // observe_nscontrol_allows_expansion_tool_tips: observe NSControl.allows-expansion-tool-tips: exact
+        ObserveRow { tag: "button", prop: "allows-expansion-tool-tips", kvo: "allowsExpansionToolTips", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsExpansionToolTips:" },
+        // observe_nscontrol_attributed_string_value: observe NSControl.attributed-string-value: set_only
+        ObserveRow { tag: "button", prop: "attributed-string-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "attributedStringValue" },
+        // observe_nscontrol_base_writing_direction: observe NSControl.base-writing-direction: exact
+        ObserveRow { tag: "button", prop: "base-writing-direction", kvo: "baseWritingDirection", check: ObsCheck::Change, sample: Some(S::Str("left-to-right")), user: User::None, requires: "setBaseWritingDirection:" },
+        // observe_nscontrol_cell: observe NSControl.cell: set_only
+        ObserveRow { tag: "button", prop: "cell", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "cell" },
+        // observe_nscontrol_continuous: observe NSControl.continuous: exact
+        ObserveRow { tag: "button", prop: "continuous", kvo: "continuous", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setContinuous:" },
+        // observe_nscontrol_control_size: observe NSControl.control-size: exact
+        ObserveRow { tag: "button", prop: "control-size", kvo: "controlSize", check: ObsCheck::Change, sample: Some(S::Str("small")), user: User::None, requires: "setControlSize:" },
+        // observe_nscontrol_double_value: observe NSControl.double-value: partial
+        ObserveRow { tag: "button", prop: "double-value", kvo: "doubleValue", check: ObsCheck::Connect, sample: None, user: User::None, requires: "doubleValue" },
+        // observe_nscontrol_enabled: observe NSControl.enabled: exact
+        ObserveRow { tag: "button", prop: "enabled", kvo: "enabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setEnabled:" },
+        // observe_nscontrol_float_value: observe NSControl.float-value: partial
+        ObserveRow { tag: "button", prop: "float-value", kvo: "floatValue", check: ObsCheck::Connect, sample: None, user: User::None, requires: "floatValue" },
+        // observe_nscontrol_font: observe NSControl.font: set_only
+        ObserveRow { tag: "button", prop: "font", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "font" },
+        // observe_nscontrol_formatter: observe NSControl.formatter: set_only
+        ObserveRow { tag: "button", prop: "formatter", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "formatter" },
+        // observe_nscontrol_highlighted: observe NSControl.highlighted: exact
+        ObserveRow { tag: "button", prop: "highlighted", kvo: "highlighted", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHighlighted:" },
+        // observe_nscontrol_ignores_multi_click: observe NSControl.ignores-multi-click: exact
+        ObserveRow { tag: "button", prop: "ignores-multi-click", kvo: "ignoresMultiClick", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setIgnoresMultiClick:" },
+        // observe_nscontrol_int_value: observe NSControl.int-value: partial
+        ObserveRow { tag: "button", prop: "int-value", kvo: "intValue", check: ObsCheck::Change, sample: Some(S::I64(1)), user: User::None, requires: "setIntValue:" },
+        // observe_nscontrol_integer_value: observe NSControl.integer-value: partial
+        ObserveRow { tag: "button", prop: "integer-value", kvo: "integerValue", check: ObsCheck::Change, sample: Some(S::I64(1)), user: User::None, requires: "setIntegerValue:" },
+        // observe_nscontrol_line_break_mode: observe NSControl.line-break-mode: exact
+        ObserveRow { tag: "button", prop: "line-break-mode", kvo: "lineBreakMode", check: ObsCheck::Change, sample: Some(S::Str("char-wrapping")), user: User::None, requires: "setLineBreakMode:" },
+        // observe_nscontrol_object_value: observe NSControl.object-value: set_only
+        ObserveRow { tag: "button", prop: "object-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "objectValue" },
+        // observe_nscontrol_refuses_first_responder: observe NSControl.refuses-first-responder: exact
+        ObserveRow { tag: "button", prop: "refuses-first-responder", kvo: "refusesFirstResponder", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setRefusesFirstResponder:" },
+        // observe_nscontrol_string_value: observe NSControl.string-value: partial
+        ObserveRow { tag: "button", prop: "string-value", kvo: "stringValue", check: ObsCheck::Connect, sample: None, user: User::None, requires: "stringValue" },
+        // observe_nscontrol_tag: observe NSControl.tag: exact
+        ObserveRow { tag: "button", prop: "tag", kvo: "tag", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setTag:" },
+        // observe_nscontrol_target: observe NSControl.target: set_only
+        ObserveRow { tag: "button", prop: "target", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "target" },
+        // observe_nscontrol_uses_single_line_mode: observe NSControl.uses-single-line-mode: exact
+        ObserveRow { tag: "button", prop: "uses-single-line-mode", kvo: "usesSingleLineMode", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setUsesSingleLineMode:" },
+        // observe_nsprogressindicator_control_size: observe NSProgressIndicator.control-size: exact
+        ObserveRow { tag: "progress-indicator", prop: "control-size", kvo: "controlSize", check: ObsCheck::Change, sample: Some(S::Str("small")), user: User::None, requires: "setControlSize:" },
+        // observe_nsprogressindicator_displayed_when_stopped: observe NSProgressIndicator.displayed-when-stopped: exact
+        ObserveRow { tag: "progress-indicator", prop: "displayed-when-stopped", kvo: "displayedWhenStopped", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDisplayedWhenStopped:" },
+        // observe_nsprogressindicator_double_value: observe NSProgressIndicator.double-value: exact
+        ObserveRow { tag: "progress-indicator", prop: "double-value", kvo: "doubleValue", check: ObsCheck::Change, sample: Some(S::F64(40.0)), user: User::None, requires: "setDoubleValue:" },
+        // observe_nsprogressindicator_indeterminate: observe NSProgressIndicator.indeterminate: exact
+        ObserveRow { tag: "progress-indicator", prop: "indeterminate", kvo: "indeterminate", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setIndeterminate:" },
+        // observe_nsprogressindicator_max_value: observe NSProgressIndicator.max-value: exact
+        ObserveRow { tag: "progress-indicator", prop: "max-value", kvo: "maxValue", check: ObsCheck::Change, sample: Some(S::F64(200.0)), user: User::None, requires: "setMaxValue:" },
+        // observe_nsprogressindicator_min_value: observe NSProgressIndicator.min-value: exact
+        ObserveRow { tag: "progress-indicator", prop: "min-value", kvo: "minValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setMinValue:" },
+        // observe_nsprogressindicator_observed_progress: observe NSProgressIndicator.observed-progress: set_only
+        ObserveRow { tag: "progress-indicator", prop: "observed-progress", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "observedProgress" },
+        // observe_nsprogressindicator_style: observe NSProgressIndicator.style: exact
+        ObserveRow { tag: "progress-indicator", prop: "style", kvo: "style", check: ObsCheck::Change, sample: Some(S::Str("spinning")), user: User::None, requires: "setStyle:" },
+        // observe_nsprogressindicator_uses_threaded_animation: observe NSProgressIndicator.uses-threaded-animation: exact
+        ObserveRow { tag: "progress-indicator", prop: "uses-threaded-animation", kvo: "usesThreadedAnimation", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesThreadedAnimation:" },
+        // observe_nsslider_allows_tick_mark_values_only: observe NSSlider.allows-tick-mark-values-only: exact
+        ObserveRow { tag: "slider", prop: "allows-tick-mark-values-only", kvo: "allowsTickMarkValuesOnly", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsTickMarkValuesOnly:" },
+        // observe_nsslider_alt_increment_value: observe NSSlider.alt-increment-value: exact
+        ObserveRow { tag: "slider", prop: "alt-increment-value", kvo: "altIncrementValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setAltIncrementValue:" },
+        // observe_nsslider_double_value: observe NSSlider.double-value: exact
+        ObserveRow { tag: "slider", prop: "double-value", kvo: "doubleValue", check: ObsCheck::Change, sample: Some(S::F64(0.25)), user: User::Key, requires: "setDoubleValue:" },
+        // observe_nsslider_float_value: observe NSSlider.float-value: exact
+        ObserveRow { tag: "slider", prop: "float-value", kvo: "floatValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::Key, requires: "setFloatValue:" },
+        // observe_nsslider_int_value: observe NSSlider.int-value: exact
+        ObserveRow { tag: "slider", prop: "int-value", kvo: "intValue", check: ObsCheck::Change, sample: Some(S::I64(1)), user: User::Key, requires: "setIntValue:" },
+        // observe_nsslider_integer_value: observe NSSlider.integer-value: exact
+        ObserveRow { tag: "slider", prop: "integer-value", kvo: "integerValue", check: ObsCheck::Change, sample: Some(S::I64(1)), user: User::Key, requires: "setIntegerValue:" },
+        // observe_nsslider_knob_thickness: observe NSSlider.knob-thickness: none
+        ObserveRow { tag: "slider", prop: "knob-thickness", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "knobThickness" },
+        // observe_nsslider_max_value: observe NSSlider.max-value: exact
+        ObserveRow { tag: "slider", prop: "max-value", kvo: "maxValue", check: ObsCheck::Change, sample: Some(S::F64(100.0)), user: User::None, requires: "setMaxValue:" },
+        // observe_nsslider_min_value: observe NSSlider.min-value: exact
+        ObserveRow { tag: "slider", prop: "min-value", kvo: "minValue", check: ObsCheck::Change, sample: Some(S::F64(0.0)), user: User::None, requires: "setMinValue:" },
+        // observe_nsslider_neutral_value: observe NSSlider.neutral-value: exact
+        ObserveRow { tag: "slider", prop: "neutral-value", kvo: "neutralValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setNeutralValue:" },
+        // observe_nsslider_number_of_tick_marks: observe NSSlider.number-of-tick-marks: exact
+        ObserveRow { tag: "slider", prop: "number-of-tick-marks", kvo: "numberOfTickMarks", check: ObsCheck::Change, sample: Some(S::I64(5)), user: User::None, requires: "setNumberOfTickMarks:" },
+        // observe_nsslider_object_value: observe NSSlider.object-value: partial
+        ObserveRow { tag: "slider", prop: "object-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::Key, requires: "objectValue" },
+        // observe_nsslider_slider_type: observe NSSlider.slider-type: exact
+        ObserveRow { tag: "slider", prop: "slider-type", kvo: "sliderType", check: ObsCheck::Change, sample: Some(S::Str("circular")), user: User::None, requires: "setSliderType:" },
+        // observe_nsslider_tick_mark_position: observe NSSlider.tick-mark-position: exact
+        ObserveRow { tag: "slider", prop: "tick-mark-position", kvo: "tickMarkPosition", check: ObsCheck::Change, sample: Some(S::Str("above")), user: User::None, requires: "setTickMarkPosition:" },
+        // observe_nsslider_tint_prominence: observe NSSlider.tint-prominence: exact
+        ObserveRow { tag: "slider", prop: "tint-prominence", kvo: "tintProminence", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setTintProminence:" },
+        // observe_nsslider_track_fill_color: observe NSSlider.track-fill-color: set_only
+        ObserveRow { tag: "slider", prop: "track-fill-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "trackFillColor" },
+        // observe_nsslider_vertical: observe NSSlider.vertical: exact
+        ObserveRow { tag: "slider", prop: "vertical", kvo: "vertical", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setVertical:" },
+        // observe_nsstackview_alignment: observe NSStackView.alignment: exact
+        ObserveRow { tag: "stack-view", prop: "alignment", kvo: "alignment", check: ObsCheck::Change, sample: Some(S::Str("center-x")), user: User::None, requires: "setAlignment:" },
+        // observe_nsstackview_arranged_subviews: observe NSStackView.arranged-subviews: none
+        ObserveRow { tag: "stack-view", prop: "arranged-subviews", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "arrangedSubviews" },
+        // observe_nsstackview_delegate: observe NSStackView.delegate: set_only
+        ObserveRow { tag: "stack-view", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
+        // observe_nsstackview_detached_views: observe NSStackView.detached-views: none
+        ObserveRow { tag: "stack-view", prop: "detached-views", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "detachedViews" },
+        // observe_nsstackview_detaches_hidden_views: observe NSStackView.detaches-hidden-views: exact
+        ObserveRow { tag: "stack-view", prop: "detaches-hidden-views", kvo: "detachesHiddenViews", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDetachesHiddenViews:" },
+        // observe_nsstackview_distribution: observe NSStackView.distribution: exact
+        ObserveRow { tag: "stack-view", prop: "distribution", kvo: "distribution", check: ObsCheck::Change, sample: Some(S::Str("fill-equally")), user: User::None, requires: "setDistribution:" },
+        // observe_nsstackview_edge_insets: observe NSStackView.edge-insets: exact
+        ObserveRow { tag: "stack-view", prop: "edge-insets", kvo: "edgeInsets", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_INSETS, &[10.0, 20.0, 30.0, 40.0])), user: User::None, requires: "setEdgeInsets:" },
+        // observe_nsstackview_orientation: observe NSStackView.orientation: exact
+        ObserveRow { tag: "stack-view", prop: "orientation", kvo: "orientation", check: ObsCheck::Change, sample: Some(S::Str("vertical")), user: User::None, requires: "setOrientation:" },
+        // observe_nsstackview_spacing: observe NSStackView.spacing: exact
+        ObserveRow { tag: "stack-view", prop: "spacing", kvo: "spacing", check: ObsCheck::Change, sample: Some(S::F64(12.0)), user: User::None, requires: "setSpacing:" },
+        // observe_nsstackview_views: observe NSStackView.views: none
+        ObserveRow { tag: "stack-view", prop: "views", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "views" },
+        // observe_nstextfield_accepts_first_responder: observe NSTextField.accepts-first-responder: none
+        ObserveRow { tag: "text-field", prop: "accepts-first-responder", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "acceptsFirstResponder" },
+        // observe_nstextfield_allows_character_picker_touch_bar_item: observe NSTextField.allows-character-picker-touch-bar-item: exact
+        ObserveRow { tag: "text-field", prop: "allows-character-picker-touch-bar-item", kvo: "allowsCharacterPickerTouchBarItem", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsCharacterPickerTouchBarItem:" },
+        // observe_nstextfield_allows_default_tightening_for_truncation: observe NSTextField.allows-default-tightening-for-truncation: exact
+        ObserveRow { tag: "text-field", prop: "allows-default-tightening-for-truncation", kvo: "allowsDefaultTighteningForTruncation", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsDefaultTighteningForTruncation:" },
+        // observe_nstextfield_allows_editing_text_attributes: observe NSTextField.allows-editing-text-attributes: exact
+        ObserveRow { tag: "text-field", prop: "allows-editing-text-attributes", kvo: "allowsEditingTextAttributes", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsEditingTextAttributes:" },
+        // observe_nstextfield_allows_writing_tools: observe NSTextField.allows-writing-tools: exact
+        ObserveRow { tag: "text-field", prop: "allows-writing-tools", kvo: "allowsWritingTools", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAllowsWritingTools:" },
+        // observe_nstextfield_allows_writing_tools_affordance: observe NSTextField.allows-writing-tools-affordance: exact
+        ObserveRow { tag: "text-field", prop: "allows-writing-tools-affordance", kvo: "allowsWritingToolsAffordance", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsWritingToolsAffordance:" },
+        // observe_nstextfield_attributed_string_value: observe NSTextField.attributed-string-value: partial
+        ObserveRow { tag: "text-field", prop: "attributed-string-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::Type, requires: "attributedStringValue" },
+        // observe_nstextfield_automatic_text_completion_enabled: observe NSTextField.automatic-text-completion-enabled: exact
+        ObserveRow { tag: "text-field", prop: "automatic-text-completion-enabled", kvo: "automaticTextCompletionEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticTextCompletionEnabled:" },
+        // observe_nstextfield_background_color: observe NSTextField.background-color: set_only
+        ObserveRow { tag: "text-field", prop: "background-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backgroundColor" },
+        // observe_nstextfield_bezel_style: observe NSTextField.bezel-style: exact
+        ObserveRow { tag: "text-field", prop: "bezel-style", kvo: "bezelStyle", check: ObsCheck::Change, sample: Some(S::Str("rounded-bezel")), user: User::None, requires: "setBezelStyle:" },
+        // observe_nstextfield_bezeled: observe NSTextField.bezeled: exact
+        ObserveRow { tag: "text-field", prop: "bezeled", kvo: "bezeled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setBezeled:" },
+        // observe_nstextfield_bordered: observe NSTextField.bordered: exact
+        ObserveRow { tag: "text-field", prop: "bordered", kvo: "bordered", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setBordered:" },
+        // observe_nstextfield_delegate: observe NSTextField.delegate: set_only
+        ObserveRow { tag: "text-field", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
+        // observe_nstextfield_draws_background: observe NSTextField.draws-background: exact
+        ObserveRow { tag: "text-field", prop: "draws-background", kvo: "drawsBackground", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDrawsBackground:" },
+        // observe_nstextfield_editable: observe NSTextField.editable: exact
+        ObserveRow { tag: "text-field", prop: "editable", kvo: "editable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setEditable:" },
+        // observe_nstextfield_imports_graphics: observe NSTextField.imports-graphics: exact
+        ObserveRow { tag: "text-field", prop: "imports-graphics", kvo: "importsGraphics", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setImportsGraphics:" },
+        // observe_nstextfield_line_break_strategy: observe NSTextField.line-break-strategy: exact
+        ObserveRow { tag: "text-field", prop: "line-break-strategy", kvo: "lineBreakStrategy", check: ObsCheck::Change, sample: Some(S::Names(&["push-out"])), user: User::None, requires: "setLineBreakStrategy:" },
+        // observe_nstextfield_maximum_number_of_lines: observe NSTextField.maximum-number-of-lines: exact
+        ObserveRow { tag: "text-field", prop: "maximum-number-of-lines", kvo: "maximumNumberOfLines", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setMaximumNumberOfLines:" },
+        // observe_nstextfield_object_value: observe NSTextField.object-value: partial
+        ObserveRow { tag: "text-field", prop: "object-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::Type, requires: "objectValue" },
+        // observe_nstextfield_placeholder_attributed_string: observe NSTextField.placeholder-attributed-string: set_only
+        ObserveRow { tag: "text-field", prop: "placeholder-attributed-string", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "placeholderAttributedString" },
+        // observe_nstextfield_placeholder_attributed_strings: observe NSTextField.placeholder-attributed-strings: set_only
+        ObserveRow { tag: "text-field", prop: "placeholder-attributed-strings", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "placeholderAttributedStrings" },
+        // observe_nstextfield_placeholder_string: observe NSTextField.placeholder-string: exact
+        ObserveRow { tag: "text-field", prop: "placeholder-string", kvo: "placeholderString", check: ObsCheck::Change, sample: Some(S::Str("type here")), user: User::None, requires: "setPlaceholderString:" },
+        // observe_nstextfield_placeholder_strings: observe NSTextField.placeholder-strings: set_only
+        ObserveRow { tag: "text-field", prop: "placeholder-strings", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "placeholderStrings" },
+        // observe_nstextfield_preferred_max_layout_width: observe NSTextField.preferred-max-layout-width: exact
+        ObserveRow { tag: "text-field", prop: "preferred-max-layout-width", kvo: "preferredMaxLayoutWidth", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setPreferredMaxLayoutWidth:" },
+        // observe_nstextfield_resolves_natural_alignment_with_base_writing_direction: observe NSTextField.resolves-natural-alignment-with-base-writing-direction: exact
+        ObserveRow { tag: "text-field", prop: "resolves-natural-alignment-with-base-writing-direction", kvo: "resolvesNaturalAlignmentWithBaseWritingDirection", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setResolvesNaturalAlignmentWithBaseWritingDirection:" },
+        // observe_nstextfield_selectable: observe NSTextField.selectable: exact
+        ObserveRow { tag: "text-field", prop: "selectable", kvo: "selectable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setSelectable:" },
+        // observe_nstextfield_string_value: observe NSTextField.string-value: exact
+        ObserveRow { tag: "text-field", prop: "string-value", kvo: "stringValue", check: ObsCheck::Change, sample: Some(S::Str("hello")), user: User::Type, requires: "setStringValue:" },
+        // observe_nstextfield_text_color: observe NSTextField.text-color: set_only
+        ObserveRow { tag: "text-field", prop: "text-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textColor" },
+        // observe_nsview_additional_safe_area_insets: observe NSView.additional-safe-area-insets: exact
+        ObserveRow { tag: "view", prop: "additional-safe-area-insets", kvo: "additionalSafeAreaInsets", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0])), user: User::None, requires: "setAdditionalSafeAreaInsets:" },
+        // observe_nsview_alignment_rect_insets: observe NSView.alignment-rect-insets: none
+        ObserveRow { tag: "view", prop: "alignment-rect-insets", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "alignmentRectInsets" },
+        // observe_nsview_allowed_touch_types: observe NSView.allowed-touch-types: exact
+        ObserveRow { tag: "view", prop: "allowed-touch-types", kvo: "allowedTouchTypes", check: ObsCheck::Change, sample: Some(S::Names(&["indirect"])), user: User::None, requires: "setAllowedTouchTypes:" },
+        // observe_nsview_allows_vibrancy: observe NSView.allows-vibrancy: none
+        ObserveRow { tag: "view", prop: "allows-vibrancy", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsVibrancy" },
+        // observe_nsview_alpha_value: observe NSView.alpha-value: exact
+        ObserveRow { tag: "view", prop: "alpha-value", kvo: "alphaValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setAlphaValue:" },
+        // observe_nsview_autoresizes_subviews: observe NSView.autoresizes-subviews: exact
+        ObserveRow { tag: "view", prop: "autoresizes-subviews", kvo: "autoresizesSubviews", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutoresizesSubviews:" },
+        // observe_nsview_autoresizing_mask: observe NSView.autoresizing-mask: exact
+        ObserveRow { tag: "view", prop: "autoresizing-mask", kvo: "autoresizingMask", check: ObsCheck::Change, sample: Some(S::Names(&["min-x-margin"])), user: User::None, requires: "setAutoresizingMask:" },
+        // observe_nsview_background_filters: observe NSView.background-filters: set_only
+        ObserveRow { tag: "view", prop: "background-filters", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backgroundFilters" },
+        // observe_nsview_baseline_offset_from_bottom: observe NSView.baseline-offset-from-bottom: none
+        ObserveRow { tag: "view", prop: "baseline-offset-from-bottom", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "baselineOffsetFromBottom" },
+        // observe_nsview_bottom_anchor: observe NSView.bottom-anchor: none
+        ObserveRow { tag: "view", prop: "bottom-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "bottomAnchor" },
+        // observe_nsview_bounds: observe NSView.bounds: set_only
+        ObserveRow { tag: "view", prop: "bounds", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "bounds" },
+        // observe_nsview_bounds_rotation: observe NSView.bounds-rotation: exact
+        ObserveRow { tag: "view", prop: "bounds-rotation", kvo: "boundsRotation", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setBoundsRotation:" },
+        // observe_nsview_can_become_key_view: observe NSView.can-become-key-view: none
+        ObserveRow { tag: "view", prop: "can-become-key-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "canBecomeKeyView" },
+        // observe_nsview_can_draw_concurrently: observe NSView.can-draw-concurrently: exact
+        ObserveRow { tag: "view", prop: "can-draw-concurrently", kvo: "canDrawConcurrently", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setCanDrawConcurrently:" },
+        // observe_nsview_can_draw_subviews_into_layer: observe NSView.can-draw-subviews-into-layer: exact
+        ObserveRow { tag: "view", prop: "can-draw-subviews-into-layer", kvo: "canDrawSubviewsIntoLayer", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setCanDrawSubviewsIntoLayer:" },
+        // observe_nsview_candidate_list_touch_bar_item: observe NSView.candidate-list-touch-bar-item: none
+        ObserveRow { tag: "view", prop: "candidate-list-touch-bar-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "candidateListTouchBarItem" },
+        // observe_nsview_center_x_anchor: observe NSView.center-x-anchor: none
+        ObserveRow { tag: "view", prop: "center-x-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "centerXAnchor" },
+        // observe_nsview_center_y_anchor: observe NSView.center-y-anchor: none
+        ObserveRow { tag: "view", prop: "center-y-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "centerYAnchor" },
+        // observe_nsview_clips_to_bounds: observe NSView.clips-to-bounds: exact
+        ObserveRow { tag: "view", prop: "clips-to-bounds", kvo: "clipsToBounds", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setClipsToBounds:" },
+        // observe_nsview_compositing_filter: observe NSView.compositing-filter: set_only
+        ObserveRow { tag: "view", prop: "compositing-filter", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "compositingFilter" },
+        // observe_nsview_constraints: observe NSView.constraints: none
+        ObserveRow { tag: "view", prop: "constraints", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "constraints" },
+        // observe_nsview_content_filters: observe NSView.content-filters: set_only
+        ObserveRow { tag: "view", prop: "content-filters", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentFilters" },
+        // observe_nsview_drawing_find_indicator: observe NSView.drawing-find-indicator: none
+        ObserveRow { tag: "view", prop: "drawing-find-indicator", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isDrawingFindIndicator" },
+        // observe_nsview_enclosing_menu_item: observe NSView.enclosing-menu-item: none
+        ObserveRow { tag: "view", prop: "enclosing-menu-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "enclosingMenuItem" },
+        // observe_nsview_enclosing_scroll_view: observe NSView.enclosing-scroll-view: none
+        ObserveRow { tag: "view", prop: "enclosing-scroll-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "enclosingScrollView" },
+        // observe_nsview_first_baseline_anchor: observe NSView.first-baseline-anchor: none
+        ObserveRow { tag: "view", prop: "first-baseline-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "firstBaselineAnchor" },
+        // observe_nsview_first_baseline_offset_from_top: observe NSView.first-baseline-offset-from-top: none
+        ObserveRow { tag: "view", prop: "first-baseline-offset-from-top", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "firstBaselineOffsetFromTop" },
+        // observe_nsview_fitting_size: observe NSView.fitting-size: none
+        ObserveRow { tag: "view", prop: "fitting-size", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "fittingSize" },
+        // observe_nsview_flipped: observe NSView.flipped: none
+        ObserveRow { tag: "view", prop: "flipped", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isFlipped" },
+        // observe_nsview_focus_ring_mask_bounds: observe NSView.focus-ring-mask-bounds: none
+        ObserveRow { tag: "view", prop: "focus-ring-mask-bounds", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "focusRingMaskBounds" },
+        // observe_nsview_focus_ring_type: observe NSView.focus-ring-type: exact
+        ObserveRow { tag: "view", prop: "focus-ring-type", kvo: "focusRingType", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setFocusRingType:" },
+        // observe_nsview_frame: observe NSView.frame: exact
+        ObserveRow { tag: "view", prop: "frame", kvo: "frame", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_RECT, &[0.0, 0.0, 120.0, 40.0])), user: User::None, requires: "setFrame:" },
+        // observe_nsview_frame_center_rotation: observe NSView.frame-center-rotation: exact
+        ObserveRow { tag: "view", prop: "frame-center-rotation", kvo: "frameCenterRotation", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setFrameCenterRotation:" },
+        // observe_nsview_frame_rotation: observe NSView.frame-rotation: exact
+        ObserveRow { tag: "view", prop: "frame-rotation", kvo: "frameRotation", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setFrameRotation:" },
+        // observe_nsview_gesture_recognizers: observe NSView.gesture-recognizers: set_only
+        ObserveRow { tag: "view", prop: "gesture-recognizers", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "gestureRecognizers" },
+        // observe_nsview_has_ambiguous_layout: observe NSView.has-ambiguous-layout: none
+        ObserveRow { tag: "view", prop: "has-ambiguous-layout", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasAmbiguousLayout" },
+        // observe_nsview_height_adjust_limit: observe NSView.height-adjust-limit: none
+        ObserveRow { tag: "view", prop: "height-adjust-limit", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "heightAdjustLimit" },
+        // observe_nsview_height_anchor: observe NSView.height-anchor: none
+        ObserveRow { tag: "view", prop: "height-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "heightAnchor" },
+        // observe_nsview_hidden: observe NSView.hidden: exact
+        ObserveRow { tag: "view", prop: "hidden", kvo: "hidden", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHidden:" },
+        // observe_nsview_hidden_or_has_hidden_ancestor: observe NSView.hidden-or-has-hidden-ancestor: none
+        ObserveRow { tag: "view", prop: "hidden-or-has-hidden-ancestor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isHiddenOrHasHiddenAncestor" },
+        // observe_nsview_horizontal_content_size_constraint_active: observe NSView.horizontal-content-size-constraint-active: exact
+        ObserveRow { tag: "view", prop: "horizontal-content-size-constraint-active", kvo: "horizontalContentSizeConstraintActive", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setHorizontalContentSizeConstraintActive:" },
+        // observe_nsview_in_full_screen_mode: observe NSView.in-full-screen-mode: none
+        ObserveRow { tag: "view", prop: "in-full-screen-mode", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isInFullScreenMode" },
+        // observe_nsview_in_live_resize: observe NSView.in-live-resize: none
+        ObserveRow { tag: "view", prop: "in-live-resize", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "inLiveResize" },
+        // observe_nsview_input_context: observe NSView.input-context: none
+        ObserveRow { tag: "view", prop: "input-context", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "inputContext" },
+        // observe_nsview_intrinsic_content_size: observe NSView.intrinsic-content-size: none
+        ObserveRow { tag: "view", prop: "intrinsic-content-size", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "intrinsicContentSize" },
+        // observe_nsview_last_baseline_anchor: observe NSView.last-baseline-anchor: none
+        ObserveRow { tag: "view", prop: "last-baseline-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "lastBaselineAnchor" },
+        // observe_nsview_last_baseline_offset_from_bottom: observe NSView.last-baseline-offset-from-bottom: none
+        ObserveRow { tag: "view", prop: "last-baseline-offset-from-bottom", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "lastBaselineOffsetFromBottom" },
+        // observe_nsview_layer: observe NSView.layer: set_only
+        ObserveRow { tag: "view", prop: "layer", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "layer" },
+        // observe_nsview_layer_contents_placement: observe NSView.layer-contents-placement: exact
+        ObserveRow { tag: "view", prop: "layer-contents-placement", kvo: "layerContentsPlacement", check: ObsCheck::Change, sample: Some(S::Str("scale-proportionally-to-fit")), user: User::None, requires: "setLayerContentsPlacement:" },
+        // observe_nsview_layer_contents_redraw_policy: observe NSView.layer-contents-redraw-policy: exact
+        ObserveRow { tag: "view", prop: "layer-contents-redraw-policy", kvo: "layerContentsRedrawPolicy", check: ObsCheck::Change, sample: Some(S::Str("never")), user: User::None, requires: "setLayerContentsRedrawPolicy:" },
+        // observe_nsview_layer_uses_core_image_filters: observe NSView.layer-uses-core-image-filters: exact
+        ObserveRow { tag: "view", prop: "layer-uses-core-image-filters", kvo: "layerUsesCoreImageFilters", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setLayerUsesCoreImageFilters:" },
+        // observe_nsview_layout_guides: observe NSView.layout-guides: none
+        ObserveRow { tag: "view", prop: "layout-guides", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "layoutGuides" },
+        // observe_nsview_layout_margins_guide: observe NSView.layout-margins-guide: none
+        ObserveRow { tag: "view", prop: "layout-margins-guide", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "layoutMarginsGuide" },
+        // observe_nsview_leading_anchor: observe NSView.leading-anchor: none
+        ObserveRow { tag: "view", prop: "leading-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "leadingAnchor" },
+        // observe_nsview_left_anchor: observe NSView.left-anchor: none
+        ObserveRow { tag: "view", prop: "left-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "leftAnchor" },
+        // observe_nsview_mouse_down_can_move_window: observe NSView.mouse-down-can-move-window: none
+        ObserveRow { tag: "view", prop: "mouse-down-can-move-window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "mouseDownCanMoveWindow" },
+        // observe_nsview_needs_display: observe NSView.needs-display: set_only
+        ObserveRow { tag: "view", prop: "needs-display", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "needsDisplay" },
+        // observe_nsview_needs_layout: observe NSView.needs-layout: set_only
+        ObserveRow { tag: "view", prop: "needs-layout", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "needsLayout" },
+        // observe_nsview_needs_panel_to_become_key: observe NSView.needs-panel-to-become-key: none
+        ObserveRow { tag: "view", prop: "needs-panel-to-become-key", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "needsPanelToBecomeKey" },
+        // observe_nsview_needs_update_constraints: observe NSView.needs-update-constraints: set_only
+        ObserveRow { tag: "view", prop: "needs-update-constraints", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "needsUpdateConstraints" },
+        // observe_nsview_next_key_view: observe NSView.next-key-view: set_only
+        ObserveRow { tag: "view", prop: "next-key-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "nextKeyView" },
+        // observe_nsview_next_valid_key_view: observe NSView.next-valid-key-view: none
+        ObserveRow { tag: "view", prop: "next-valid-key-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "nextValidKeyView" },
+        // observe_nsview_opaque: observe NSView.opaque: none
+        ObserveRow { tag: "view", prop: "opaque", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isOpaque" },
+        // observe_nsview_opaque_ancestor: observe NSView.opaque-ancestor: none
+        ObserveRow { tag: "view", prop: "opaque-ancestor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "opaqueAncestor" },
+        // observe_nsview_page_footer: observe NSView.page-footer: none
+        ObserveRow { tag: "view", prop: "page-footer", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pageFooter" },
+        // observe_nsview_page_header: observe NSView.page-header: none
+        ObserveRow { tag: "view", prop: "page-header", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pageHeader" },
+        // observe_nsview_posts_bounds_changed_notifications: observe NSView.posts-bounds-changed-notifications: exact
+        ObserveRow { tag: "view", prop: "posts-bounds-changed-notifications", kvo: "postsBoundsChangedNotifications", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setPostsBoundsChangedNotifications:" },
+        // observe_nsview_posts_frame_changed_notifications: observe NSView.posts-frame-changed-notifications: exact
+        ObserveRow { tag: "view", prop: "posts-frame-changed-notifications", kvo: "postsFrameChangedNotifications", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setPostsFrameChangedNotifications:" },
+        // observe_nsview_prefers_compact_control_size_metrics: observe NSView.prefers-compact-control-size-metrics: exact
+        ObserveRow { tag: "view", prop: "prefers-compact-control-size-metrics", kvo: "prefersCompactControlSizeMetrics", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setPrefersCompactControlSizeMetrics:" },
+        // observe_nsview_prepared_content_rect: observe NSView.prepared-content-rect: exact
+        ObserveRow { tag: "view", prop: "prepared-content-rect", kvo: "preparedContentRect", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_RECT, &[10.0, 20.0, 120.0, 40.0])), user: User::None, requires: "setPreparedContentRect:" },
+        // observe_nsview_preserves_content_during_live_resize: observe NSView.preserves-content-during-live-resize: none
+        ObserveRow { tag: "view", prop: "preserves-content-during-live-resize", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "preservesContentDuringLiveResize" },
+        // observe_nsview_pressure_configuration: observe NSView.pressure-configuration: set_only
+        ObserveRow { tag: "view", prop: "pressure-configuration", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pressureConfiguration" },
+        // observe_nsview_previous_key_view: observe NSView.previous-key-view: none
+        ObserveRow { tag: "view", prop: "previous-key-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "previousKeyView" },
+        // observe_nsview_previous_valid_key_view: observe NSView.previous-valid-key-view: none
+        ObserveRow { tag: "view", prop: "previous-valid-key-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "previousValidKeyView" },
+        // observe_nsview_print_job_title: observe NSView.print-job-title: none
+        ObserveRow { tag: "view", prop: "print-job-title", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "printJobTitle" },
+        // observe_nsview_rect_preserved_during_live_resize: observe NSView.rect-preserved-during-live-resize: none
+        ObserveRow { tag: "view", prop: "rect-preserved-during-live-resize", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "rectPreservedDuringLiveResize" },
+        // observe_nsview_registered_dragged_types: observe NSView.registered-dragged-types: none
+        ObserveRow { tag: "view", prop: "registered-dragged-types", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "registeredDraggedTypes" },
+        // observe_nsview_right_anchor: observe NSView.right-anchor: none
+        ObserveRow { tag: "view", prop: "right-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "rightAnchor" },
+        // observe_nsview_rotated_from_base: observe NSView.rotated-from-base: none
+        ObserveRow { tag: "view", prop: "rotated-from-base", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isRotatedFromBase" },
+        // observe_nsview_rotated_or_scaled_from_base: observe NSView.rotated-or-scaled-from-base: none
+        ObserveRow { tag: "view", prop: "rotated-or-scaled-from-base", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isRotatedOrScaledFromBase" },
+        // observe_nsview_safe_area_insets: observe NSView.safe-area-insets: none
+        ObserveRow { tag: "view", prop: "safe-area-insets", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "safeAreaInsets" },
+        // observe_nsview_safe_area_layout_guide: observe NSView.safe-area-layout-guide: none
+        ObserveRow { tag: "view", prop: "safe-area-layout-guide", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "safeAreaLayoutGuide" },
+        // observe_nsview_safe_area_rect: observe NSView.safe-area-rect: none
+        ObserveRow { tag: "view", prop: "safe-area-rect", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "safeAreaRect" },
+        // observe_nsview_shadow: observe NSView.shadow: set_only
+        ObserveRow { tag: "view", prop: "shadow", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "shadow" },
+        // observe_nsview_subviews: observe NSView.subviews: set_only
+        ObserveRow { tag: "view", prop: "subviews", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "subviews" },
+        // observe_nsview_superview: observe NSView.superview: none
+        ObserveRow { tag: "view", prop: "superview", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "superview" },
+        // observe_nsview_tag: observe NSView.tag: exact
+        ObserveRow { tag: "view", prop: "tag", kvo: "tag", check: ObsCheck::Connect, sample: None, user: User::None, requires: "tag" },
+        // observe_nsview_tool_tip: observe NSView.tool-tip: exact
+        ObserveRow { tag: "view", prop: "tool-tip", kvo: "toolTip", check: ObsCheck::Change, sample: Some(S::Str("tip")), user: User::None, requires: "setToolTip:" },
+        // observe_nsview_top_anchor: observe NSView.top-anchor: none
+        ObserveRow { tag: "view", prop: "top-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "topAnchor" },
+        // observe_nsview_tracking_areas: observe NSView.tracking-areas: none
+        ObserveRow { tag: "view", prop: "tracking-areas", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "trackingAreas" },
+        // observe_nsview_trailing_anchor: observe NSView.trailing-anchor: none
+        ObserveRow { tag: "view", prop: "trailing-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "trailingAnchor" },
+        // observe_nsview_translates_autoresizing_mask_into_constraints: observe NSView.translates-autoresizing-mask-into-constraints: exact
+        ObserveRow { tag: "view", prop: "translates-autoresizing-mask-into-constraints", kvo: "translatesAutoresizingMaskIntoConstraints", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setTranslatesAutoresizingMaskIntoConstraints:" },
+        // observe_nsview_user_interface_layout_direction: observe NSView.user-interface-layout-direction: exact
+        ObserveRow { tag: "view", prop: "user-interface-layout-direction", kvo: "userInterfaceLayoutDirection", check: ObsCheck::Change, sample: Some(S::Str("right-to-left")), user: User::None, requires: "setUserInterfaceLayoutDirection:" },
+        // observe_nsview_vertical_content_size_constraint_active: observe NSView.vertical-content-size-constraint-active: exact
+        ObserveRow { tag: "view", prop: "vertical-content-size-constraint-active", kvo: "verticalContentSizeConstraintActive", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setVerticalContentSizeConstraintActive:" },
+        // observe_nsview_visible_rect: observe NSView.visible-rect: none
+        ObserveRow { tag: "view", prop: "visible-rect", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "visibleRect" },
+        // observe_nsview_wants_default_clipping: observe NSView.wants-default-clipping: none
+        ObserveRow { tag: "view", prop: "wants-default-clipping", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "wantsDefaultClipping" },
+        // observe_nsview_wants_layer: observe NSView.wants-layer: exact
+        ObserveRow { tag: "view", prop: "wants-layer", kvo: "wantsLayer", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setWantsLayer:" },
+        // observe_nsview_wants_resting_touches: observe NSView.wants-resting-touches: exact
+        ObserveRow { tag: "view", prop: "wants-resting-touches", kvo: "wantsRestingTouches", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setWantsRestingTouches:" },
+        // observe_nsview_wants_update_layer: observe NSView.wants-update-layer: none
+        ObserveRow { tag: "view", prop: "wants-update-layer", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "wantsUpdateLayer" },
+        // observe_nsview_width_adjust_limit: observe NSView.width-adjust-limit: none
+        ObserveRow { tag: "view", prop: "width-adjust-limit", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "widthAdjustLimit" },
+        // observe_nsview_width_anchor: observe NSView.width-anchor: none
+        ObserveRow { tag: "view", prop: "width-anchor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "widthAnchor" },
+        // observe_nsview_window: observe NSView.window: none
+        ObserveRow { tag: "view", prop: "window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "window" },
+        // observe_nsview_writing_tools_coordinator: observe NSView.writing-tools-coordinator: set_only
+        ObserveRow { tag: "view", prop: "writing-tools-coordinator", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "writingToolsCoordinator" },
+        // observe_nswindow_accepts_mouse_moved_events: observe NSWindow.accepts-mouse-moved-events: exact
+        ObserveRow { tag: "window", prop: "accepts-mouse-moved-events", kvo: "acceptsMouseMovedEvents", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAcceptsMouseMovedEvents:" },
+        // observe_nswindow_allows_concurrent_view_drawing: observe NSWindow.allows-concurrent-view-drawing: set_only
+        ObserveRow { tag: "window", prop: "allows-concurrent-view-drawing", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsConcurrentViewDrawing" },
+        // observe_nswindow_allows_tool_tips_when_application_is_inactive: observe NSWindow.allows-tool-tips-when-application-is-inactive: exact
+        ObserveRow { tag: "window", prop: "allows-tool-tips-when-application-is-inactive", kvo: "allowsToolTipsWhenApplicationIsInactive", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsToolTipsWhenApplicationIsInactive:" },
+        // observe_nswindow_alpha_value: observe NSWindow.alpha-value: exact
+        ObserveRow { tag: "window", prop: "alpha-value", kvo: "alphaValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setAlphaValue:" },
+        // observe_nswindow_animation_behavior: observe NSWindow.animation-behavior: set_only
+        ObserveRow { tag: "window", prop: "animation-behavior", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "animationBehavior" },
+        // observe_nswindow_appearance_source: observe NSWindow.appearance-source: set_only
+        ObserveRow { tag: "window", prop: "appearance-source", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "appearanceSource" },
+        // observe_nswindow_are_cursor_rects_enabled: observe NSWindow.are-cursor-rects-enabled: none
+        ObserveRow { tag: "window", prop: "are-cursor-rects-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "areCursorRectsEnabled" },
+        // observe_nswindow_aspect_ratio: observe NSWindow.aspect-ratio: exact
+        ObserveRow { tag: "window", prop: "aspect-ratio", kvo: "aspectRatio", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setAspectRatio:" },
+        // observe_nswindow_attached_sheet: observe NSWindow.attached-sheet: none
+        ObserveRow { tag: "window", prop: "attached-sheet", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "attachedSheet" },
+        // observe_nswindow_autorecalculates_key_view_loop: observe NSWindow.autorecalculates-key-view-loop: exact
+        ObserveRow { tag: "window", prop: "autorecalculates-key-view-loop", kvo: "autorecalculatesKeyViewLoop", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAutorecalculatesKeyViewLoop:" },
+        // observe_nswindow_background_color: observe NSWindow.background-color: set_only
+        ObserveRow { tag: "window", prop: "background-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backgroundColor" },
+        // observe_nswindow_backing_scale_factor: observe NSWindow.backing-scale-factor: none
+        ObserveRow { tag: "window", prop: "backing-scale-factor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backingScaleFactor" },
+        // observe_nswindow_backing_type: observe NSWindow.backing-type: set_only
+        ObserveRow { tag: "window", prop: "backing-type", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backingType" },
+        // observe_nswindow_can_become_key_window: observe NSWindow.can-become-key-window: none
+        ObserveRow { tag: "window", prop: "can-become-key-window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "canBecomeKeyWindow" },
+        // observe_nswindow_can_become_main_window: observe NSWindow.can-become-main-window: none
+        ObserveRow { tag: "window", prop: "can-become-main-window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "canBecomeMainWindow" },
+        // observe_nswindow_can_become_visible_without_login: observe NSWindow.can-become-visible-without-login: exact
+        ObserveRow { tag: "window", prop: "can-become-visible-without-login", kvo: "canBecomeVisibleWithoutLogin", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setCanBecomeVisibleWithoutLogin:" },
+        // observe_nswindow_can_hide: observe NSWindow.can-hide: exact
+        ObserveRow { tag: "window", prop: "can-hide", kvo: "canHide", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setCanHide:" },
+        // observe_nswindow_cascading_reference_frame: observe NSWindow.cascading-reference-frame: none
+        ObserveRow { tag: "window", prop: "cascading-reference-frame", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "cascadingReferenceFrame" },
+        // observe_nswindow_child_windows: observe NSWindow.child-windows: none
+        ObserveRow { tag: "window", prop: "child-windows", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "childWindows" },
+        // observe_nswindow_collection_behavior: observe NSWindow.collection-behavior: set_only
+        ObserveRow { tag: "window", prop: "collection-behavior", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "collectionBehavior" },
+        // observe_nswindow_color_space: observe NSWindow.color-space: set_only
+        ObserveRow { tag: "window", prop: "color-space", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "colorSpace" },
+        // observe_nswindow_content_aspect_ratio: observe NSWindow.content-aspect-ratio: exact
+        ObserveRow { tag: "window", prop: "content-aspect-ratio", kvo: "contentAspectRatio", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setContentAspectRatio:" },
+        // observe_nswindow_content_layout_guide: observe NSWindow.content-layout-guide: none
+        ObserveRow { tag: "window", prop: "content-layout-guide", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentLayoutGuide" },
+        // observe_nswindow_content_layout_rect: observe NSWindow.content-layout-rect: none
+        ObserveRow { tag: "window", prop: "content-layout-rect", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentLayoutRect" },
+        // observe_nswindow_content_max_size: observe NSWindow.content-max-size: exact
+        ObserveRow { tag: "window", prop: "content-max-size", kvo: "contentMaxSize", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setContentMaxSize:" },
+        // observe_nswindow_content_min_size: observe NSWindow.content-min-size: exact
+        ObserveRow { tag: "window", prop: "content-min-size", kvo: "contentMinSize", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setContentMinSize:" },
+        // observe_nswindow_content_resize_increments: observe NSWindow.content-resize-increments: exact
+        ObserveRow { tag: "window", prop: "content-resize-increments", kvo: "contentResizeIncrements", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setContentResizeIncrements:" },
+        // observe_nswindow_content_view: observe NSWindow.content-view: set_only
+        ObserveRow { tag: "window", prop: "content-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentView" },
+        // observe_nswindow_content_view_controller: observe NSWindow.content-view-controller: set_only
+        ObserveRow { tag: "window", prop: "content-view-controller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentViewController" },
+        // observe_nswindow_current_event: observe NSWindow.current-event: none
+        ObserveRow { tag: "window", prop: "current-event", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "currentEvent" },
+        // observe_nswindow_deepest_screen: observe NSWindow.deepest-screen: none
+        ObserveRow { tag: "window", prop: "deepest-screen", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "deepestScreen" },
+        // observe_nswindow_default_button_cell: observe NSWindow.default-button-cell: set_only
+        ObserveRow { tag: "window", prop: "default-button-cell", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "defaultButtonCell" },
+        // observe_nswindow_delegate: observe NSWindow.delegate: set_only
+        ObserveRow { tag: "window", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
+        // observe_nswindow_depth_limit: observe NSWindow.depth-limit: set_only
+        ObserveRow { tag: "window", prop: "depth-limit", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "depthLimit" },
+        // observe_nswindow_device_description: observe NSWindow.device-description: none
+        ObserveRow { tag: "window", prop: "device-description", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "deviceDescription" },
+        // observe_nswindow_displays_when_screen_profile_changes: observe NSWindow.displays-when-screen-profile-changes: exact
+        ObserveRow { tag: "window", prop: "displays-when-screen-profile-changes", kvo: "displaysWhenScreenProfileChanges", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDisplaysWhenScreenProfileChanges:" },
+        // observe_nswindow_dock_tile: observe NSWindow.dock-tile: none
+        ObserveRow { tag: "window", prop: "dock-tile", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "dockTile" },
+        // observe_nswindow_document_edited: observe NSWindow.document-edited: exact
+        ObserveRow { tag: "window", prop: "document-edited", kvo: "documentEdited", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setDocumentEdited:" },
+        // observe_nswindow_drawers: observe NSWindow.drawers: none
+        ObserveRow { tag: "window", prop: "drawers", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "drawers" },
+        // observe_nswindow_excluded_from_windows_menu: observe NSWindow.excluded-from-windows-menu: exact
+        ObserveRow { tag: "window", prop: "excluded-from-windows-menu", kvo: "excludedFromWindowsMenu", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setExcludedFromWindowsMenu:" },
+        // observe_nswindow_first_responder: observe NSWindow.first-responder: none
+        ObserveRow { tag: "window", prop: "first-responder", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "firstResponder" },
+        // observe_nswindow_floating_panel: observe NSWindow.floating-panel: none
+        ObserveRow { tag: "window", prop: "floating-panel", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isFloatingPanel" },
+        // observe_nswindow_frame: observe NSWindow.frame: exact
+        ObserveRow { tag: "window", prop: "frame", kvo: "", check: ObsCheck::Cross(Trig::SetFrame), sample: None, user: User::None, requires: "frame" },
+        // observe_nswindow_frame_autosave_name: observe NSWindow.frame-autosave-name: none
+        ObserveRow { tag: "window", prop: "frame-autosave-name", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "frameAutosaveName" },
+        // observe_nswindow_has_active_window_sharing_session: observe NSWindow.has-active-window-sharing-session: none
+        ObserveRow { tag: "window", prop: "has-active-window-sharing-session", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasActiveWindowSharingSession" },
+        // observe_nswindow_has_close_box: observe NSWindow.has-close-box: none
+        ObserveRow { tag: "window", prop: "has-close-box", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasCloseBox" },
+        // observe_nswindow_has_dynamic_depth_limit: observe NSWindow.has-dynamic-depth-limit: none
+        ObserveRow { tag: "window", prop: "has-dynamic-depth-limit", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasDynamicDepthLimit" },
+        // observe_nswindow_has_shadow: observe NSWindow.has-shadow: exact
+        ObserveRow { tag: "window", prop: "has-shadow", kvo: "hasShadow", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setHasShadow:" },
+        // observe_nswindow_has_title_bar: observe NSWindow.has-title-bar: none
+        ObserveRow { tag: "window", prop: "has-title-bar", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasTitleBar" },
+        // observe_nswindow_hides_on_deactivate: observe NSWindow.hides-on-deactivate: exact
+        ObserveRow { tag: "window", prop: "hides-on-deactivate", kvo: "hidesOnDeactivate", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHidesOnDeactivate:" },
+        // observe_nswindow_ignores_mouse_events: observe NSWindow.ignores-mouse-events: set_only
+        ObserveRow { tag: "window", prop: "ignores-mouse-events", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "ignoresMouseEvents" },
+        // observe_nswindow_in_live_resize: observe NSWindow.in-live-resize: none
+        ObserveRow { tag: "window", prop: "in-live-resize", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "inLiveResize" },
+        // observe_nswindow_initial_first_responder: observe NSWindow.initial-first-responder: set_only
+        ObserveRow { tag: "window", prop: "initial-first-responder", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "initialFirstResponder" },
+        // observe_nswindow_key_view_selection_direction: observe NSWindow.key-view-selection-direction: none
+        ObserveRow { tag: "window", prop: "key-view-selection-direction", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "keyViewSelectionDirection" },
+        // observe_nswindow_key_window: observe NSWindow.key-window: none
+        ObserveRow { tag: "window", prop: "key-window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isKeyWindow" },
+        // observe_nswindow_level: observe NSWindow.level: set_only
+        ObserveRow { tag: "window", prop: "level", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "level" },
+        // observe_nswindow_main_window: observe NSWindow.main-window: none
+        ObserveRow { tag: "window", prop: "main-window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isMainWindow" },
+        // observe_nswindow_max_full_screen_content_size: observe NSWindow.max-full-screen-content-size: exact
+        ObserveRow { tag: "window", prop: "max-full-screen-content-size", kvo: "maxFullScreenContentSize", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setMaxFullScreenContentSize:" },
+        // observe_nswindow_max_size: observe NSWindow.max-size: exact
+        ObserveRow { tag: "window", prop: "max-size", kvo: "maxSize", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setMaxSize:" },
+        // observe_nswindow_min_full_screen_content_size: observe NSWindow.min-full-screen-content-size: exact
+        ObserveRow { tag: "window", prop: "min-full-screen-content-size", kvo: "minFullScreenContentSize", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setMinFullScreenContentSize:" },
+        // observe_nswindow_min_size: observe NSWindow.min-size: exact
+        ObserveRow { tag: "window", prop: "min-size", kvo: "minSize", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setMinSize:" },
+        // observe_nswindow_miniaturizable: observe NSWindow.miniaturizable: none
+        ObserveRow { tag: "window", prop: "miniaturizable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isMiniaturizable" },
+        // observe_nswindow_miniaturized: observe NSWindow.miniaturized: none
+        ObserveRow { tag: "window", prop: "miniaturized", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isMiniaturized" },
+        // observe_nswindow_miniwindow_image: observe NSWindow.miniwindow-image: set_only
+        ObserveRow { tag: "window", prop: "miniwindow-image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "miniwindowImage" },
+        // observe_nswindow_miniwindow_title: observe NSWindow.miniwindow-title: exact
+        ObserveRow { tag: "window", prop: "miniwindow-title", kvo: "miniwindowTitle", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::None, requires: "setMiniwindowTitle:" },
+        // observe_nswindow_modal_panel: observe NSWindow.modal-panel: none
+        ObserveRow { tag: "window", prop: "modal-panel", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isModalPanel" },
+        // observe_nswindow_mouse_location_outside_of_event_stream: observe NSWindow.mouse-location-outside-of-event-stream: none
+        ObserveRow { tag: "window", prop: "mouse-location-outside-of-event-stream", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "mouseLocationOutsideOfEventStream" },
+        // observe_nswindow_movable: observe NSWindow.movable: exact
+        ObserveRow { tag: "window", prop: "movable", kvo: "movable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setMovable:" },
+        // observe_nswindow_movable_by_window_background: observe NSWindow.movable-by-window-background: exact
+        ObserveRow { tag: "window", prop: "movable-by-window-background", kvo: "movableByWindowBackground", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setMovableByWindowBackground:" },
+        // observe_nswindow_occlusion_state: observe NSWindow.occlusion-state: none
+        ObserveRow { tag: "window", prop: "occlusion-state", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "occlusionState" },
+        // observe_nswindow_on_active_space: observe NSWindow.on-active-space: none
+        ObserveRow { tag: "window", prop: "on-active-space", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isOnActiveSpace" },
+        // observe_nswindow_opaque: observe NSWindow.opaque: exact
+        ObserveRow { tag: "window", prop: "opaque", kvo: "opaque", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setOpaque:" },
+        // observe_nswindow_ordered_index: observe NSWindow.ordered-index: exact
+        ObserveRow { tag: "window", prop: "ordered-index", kvo: "orderedIndex", check: ObsCheck::Change, sample: Some(S::I64(1)), user: User::None, requires: "setOrderedIndex:" },
+        // observe_nswindow_parent_window: observe NSWindow.parent-window: set_only
+        ObserveRow { tag: "window", prop: "parent-window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "parentWindow" },
+        // observe_nswindow_preserves_content_during_live_resize: observe NSWindow.preserves-content-during-live-resize: exact
+        ObserveRow { tag: "window", prop: "preserves-content-during-live-resize", kvo: "preservesContentDuringLiveResize", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setPreservesContentDuringLiveResize:" },
+        // observe_nswindow_prevents_application_termination_when_modal: observe NSWindow.prevents-application-termination-when-modal: exact
+        ObserveRow { tag: "window", prop: "prevents-application-termination-when-modal", kvo: "preventsApplicationTerminationWhenModal", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setPreventsApplicationTerminationWhenModal:" },
+        // observe_nswindow_released_when_closed: observe NSWindow.released-when-closed: set_only
+        ObserveRow { tag: "window", prop: "released-when-closed", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isReleasedWhenClosed" },
+        // observe_nswindow_represented_filename: observe NSWindow.represented-filename: set_only
+        ObserveRow { tag: "window", prop: "represented-filename", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "representedFilename" },
+        // observe_nswindow_represented_url: observe NSWindow.represented-url: set_only
+        ObserveRow { tag: "window", prop: "represented-url", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "representedURL" },
+        // observe_nswindow_resizable: observe NSWindow.resizable: none
+        ObserveRow { tag: "window", prop: "resizable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isResizable" },
+        // observe_nswindow_resize_flags: observe NSWindow.resize-flags: none
+        ObserveRow { tag: "window", prop: "resize-flags", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "resizeFlags" },
+        // observe_nswindow_resize_increments: observe NSWindow.resize-increments: exact
+        ObserveRow { tag: "window", prop: "resize-increments", kvo: "resizeIncrements", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setResizeIncrements:" },
+        // observe_nswindow_restorable: observe NSWindow.restorable: set_only
+        ObserveRow { tag: "window", prop: "restorable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isRestorable" },
+        // observe_nswindow_restoration_class: observe NSWindow.restoration-class: set_only
+        ObserveRow { tag: "window", prop: "restoration-class", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "restorationClass" },
+        // observe_nswindow_screen: observe NSWindow.screen: none
+        ObserveRow { tag: "window", prop: "screen", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "screen" },
+        // observe_nswindow_sharing_type: observe NSWindow.sharing-type: set_only
+        ObserveRow { tag: "window", prop: "sharing-type", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "sharingType" },
+        // observe_nswindow_sheet: observe NSWindow.sheet: none
+        ObserveRow { tag: "window", prop: "sheet", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isSheet" },
+        // observe_nswindow_sheet_parent: observe NSWindow.sheet-parent: none
+        ObserveRow { tag: "window", prop: "sheet-parent", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "sheetParent" },
+        // observe_nswindow_sheets: observe NSWindow.sheets: none
+        ObserveRow { tag: "window", prop: "sheets", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "sheets" },
+        // observe_nswindow_string_with_saved_frame: observe NSWindow.string-with-saved-frame: none
+        ObserveRow { tag: "window", prop: "string-with-saved-frame", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "stringWithSavedFrame" },
+        // observe_nswindow_style_mask: observe NSWindow.style-mask: set_only
+        ObserveRow { tag: "window", prop: "style-mask", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "styleMask" },
+        // observe_nswindow_subtitle: observe NSWindow.subtitle: exact
+        ObserveRow { tag: "window", prop: "subtitle", kvo: "subtitle", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::None, requires: "setSubtitle:" },
+        // observe_nswindow_tab: observe NSWindow.tab: none
+        ObserveRow { tag: "window", prop: "tab", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tab" },
+        // observe_nswindow_tab_group: observe NSWindow.tab-group: none
+        ObserveRow { tag: "window", prop: "tab-group", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabGroup" },
+        // observe_nswindow_tabbed_windows: observe NSWindow.tabbed-windows: none
+        ObserveRow { tag: "window", prop: "tabbed-windows", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabbedWindows" },
+        // observe_nswindow_tabbing_identifier: observe NSWindow.tabbing-identifier: set_only
+        ObserveRow { tag: "window", prop: "tabbing-identifier", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabbingIdentifier" },
+        // observe_nswindow_tabbing_mode: observe NSWindow.tabbing-mode: set_only
+        ObserveRow { tag: "window", prop: "tabbing-mode", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabbingMode" },
+        // observe_nswindow_title: observe NSWindow.title: exact
+        ObserveRow { tag: "window", prop: "title", kvo: "title", check: ObsCheck::Change, sample: Some(S::Str("Counter")), user: User::None, requires: "setTitle:" },
+        // observe_nswindow_title_visibility: observe NSWindow.title-visibility: exact
+        ObserveRow { tag: "window", prop: "title-visibility", kvo: "titleVisibility", check: ObsCheck::Change, sample: Some(S::Str("hidden")), user: User::None, requires: "setTitleVisibility:" },
+        // observe_nswindow_titlebar_accessory_view_controllers: observe NSWindow.titlebar-accessory-view-controllers: set_only
+        ObserveRow { tag: "window", prop: "titlebar-accessory-view-controllers", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "titlebarAccessoryViewControllers" },
+        // observe_nswindow_titlebar_appears_transparent: observe NSWindow.titlebar-appears-transparent: exact
+        ObserveRow { tag: "window", prop: "titlebar-appears-transparent", kvo: "titlebarAppearsTransparent", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setTitlebarAppearsTransparent:" },
+        // observe_nswindow_titlebar_separator_style: observe NSWindow.titlebar-separator-style: exact
+        ObserveRow { tag: "window", prop: "titlebar-separator-style", kvo: "titlebarSeparatorStyle", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setTitlebarSeparatorStyle:" },
+        // observe_nswindow_toolbar: observe NSWindow.toolbar: set_only
+        ObserveRow { tag: "window", prop: "toolbar", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "toolbar" },
+        // observe_nswindow_toolbar_style: observe NSWindow.toolbar-style: exact
+        ObserveRow { tag: "window", prop: "toolbar-style", kvo: "toolbarStyle", check: ObsCheck::Change, sample: Some(S::Str("expanded")), user: User::None, requires: "setToolbarStyle:" },
+        // observe_nswindow_views_need_display: observe NSWindow.views-need-display: exact
+        ObserveRow { tag: "window", prop: "views-need-display", kvo: "viewsNeedDisplay", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setViewsNeedDisplay:" },
+        // observe_nswindow_visible: observe NSWindow.visible: none
+        ObserveRow { tag: "window", prop: "visible", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isVisible" },
+        // observe_nswindow_window_controller: observe NSWindow.window-controller: set_only
+        ObserveRow { tag: "window", prop: "window-controller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "windowController" },
+        // observe_nswindow_window_number: observe NSWindow.window-number: none
+        ObserveRow { tag: "window", prop: "window-number", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "windowNumber" },
+        // observe_nswindow_window_titlebar_layout_direction: observe NSWindow.window-titlebar-layout-direction: none
+        ObserveRow { tag: "window", prop: "window-titlebar-layout-direction", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "windowTitlebarLayoutDirection" },
+        // observe_nswindow_works_when_modal: observe NSWindow.works-when-modal: none
+        ObserveRow { tag: "window", prop: "works-when-modal", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "worksWhenModal" },
+        // observe_nswindow_zoomable: observe NSWindow.zoomable: none
+        ObserveRow { tag: "window", prop: "zoomable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isZoomable" },
+        // observe_nswindow_zoomed: observe NSWindow.zoomed: none
+        ObserveRow { tag: "window", prop: "zoomed", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isZoomed" },
+    ];
+
+    /// Table-driven observe facts: `svelters_appkit::testing::observe_row` (REACTIVITY.md 4.5).
+    pub fn observe_row(i: usize) {
+        svelters_appkit::testing::observe_row(&OBSERVE_ROWS[i]);
+    }
+
     pub static ROWS: &[(&str, fn(usize), usize)] = &[
         ("prop_nsbox_border_width", prop_row, 0),
         ("prop_nsbox_content_view_margins", prop_row, 1),
@@ -1455,6 +2151,350 @@ mod cases {
         ("bind_nstextfield_float_value", bind_row, 9),
         ("bind_nstextfield_int_value", bind_row, 10),
         ("bind_nstextfield_integer_value", bind_row, 11),
+        ("observe_nsbox_border_color", observe_row, 0),
+        ("observe_nsbox_border_rect", observe_row, 1),
+        ("observe_nsbox_border_width", observe_row, 2),
+        ("observe_nsbox_box_type", observe_row, 3),
+        ("observe_nsbox_content_view", observe_row, 4),
+        ("observe_nsbox_content_view_margins", observe_row, 5),
+        ("observe_nsbox_corner_radius", observe_row, 6),
+        ("observe_nsbox_fill_color", observe_row, 7),
+        ("observe_nsbox_title", observe_row, 8),
+        ("observe_nsbox_title_cell", observe_row, 9),
+        ("observe_nsbox_title_font", observe_row, 10),
+        ("observe_nsbox_title_position", observe_row, 11),
+        ("observe_nsbox_title_rect", observe_row, 12),
+        ("observe_nsbox_transparent", observe_row, 13),
+        ("observe_nsbutton_active_compression_options", observe_row, 14),
+        ("observe_nsbutton_allows_mixed_state", observe_row, 15),
+        ("observe_nsbutton_alternate_image", observe_row, 16),
+        ("observe_nsbutton_alternate_title", observe_row, 17),
+        ("observe_nsbutton_attributed_alternate_title", observe_row, 18),
+        ("observe_nsbutton_attributed_title", observe_row, 19),
+        ("observe_nsbutton_bezel_color", observe_row, 20),
+        ("observe_nsbutton_bezel_style", observe_row, 21),
+        ("observe_nsbutton_border_shape", observe_row, 22),
+        ("observe_nsbutton_bordered", observe_row, 23),
+        ("observe_nsbutton_content_tint_color", observe_row, 24),
+        ("observe_nsbutton_has_destructive_action", observe_row, 25),
+        ("observe_nsbutton_image", observe_row, 26),
+        ("observe_nsbutton_image_hugs_title", observe_row, 27),
+        ("observe_nsbutton_image_position", observe_row, 28),
+        ("observe_nsbutton_image_scaling", observe_row, 29),
+        ("observe_nsbutton_key_equivalent", observe_row, 30),
+        ("observe_nsbutton_key_equivalent_modifier_mask", observe_row, 31),
+        ("observe_nsbutton_max_accelerator_level", observe_row, 32),
+        ("observe_nsbutton_shows_border_only_while_mouse_inside", observe_row, 33),
+        ("observe_nsbutton_sound", observe_row, 34),
+        ("observe_nsbutton_spring_loaded", observe_row, 35),
+        ("observe_nsbutton_state", observe_row, 36),
+        ("observe_nsbutton_symbol_configuration", observe_row, 37),
+        ("observe_nsbutton_tint_prominence", observe_row, 38),
+        ("observe_nsbutton_title", observe_row, 39),
+        ("observe_nsbutton_transparent", observe_row, 40),
+        ("observe_nscontrol_action", observe_row, 41),
+        ("observe_nscontrol_alignment", observe_row, 42),
+        ("observe_nscontrol_allows_expansion_tool_tips", observe_row, 43),
+        ("observe_nscontrol_attributed_string_value", observe_row, 44),
+        ("observe_nscontrol_base_writing_direction", observe_row, 45),
+        ("observe_nscontrol_cell", observe_row, 46),
+        ("observe_nscontrol_continuous", observe_row, 47),
+        ("observe_nscontrol_control_size", observe_row, 48),
+        ("observe_nscontrol_double_value", observe_row, 49),
+        ("observe_nscontrol_enabled", observe_row, 50),
+        ("observe_nscontrol_float_value", observe_row, 51),
+        ("observe_nscontrol_font", observe_row, 52),
+        ("observe_nscontrol_formatter", observe_row, 53),
+        ("observe_nscontrol_highlighted", observe_row, 54),
+        ("observe_nscontrol_ignores_multi_click", observe_row, 55),
+        ("observe_nscontrol_int_value", observe_row, 56),
+        ("observe_nscontrol_integer_value", observe_row, 57),
+        ("observe_nscontrol_line_break_mode", observe_row, 58),
+        ("observe_nscontrol_object_value", observe_row, 59),
+        ("observe_nscontrol_refuses_first_responder", observe_row, 60),
+        ("observe_nscontrol_string_value", observe_row, 61),
+        ("observe_nscontrol_tag", observe_row, 62),
+        ("observe_nscontrol_target", observe_row, 63),
+        ("observe_nscontrol_uses_single_line_mode", observe_row, 64),
+        ("observe_nsprogressindicator_control_size", observe_row, 65),
+        ("observe_nsprogressindicator_displayed_when_stopped", observe_row, 66),
+        ("observe_nsprogressindicator_double_value", observe_row, 67),
+        ("observe_nsprogressindicator_indeterminate", observe_row, 68),
+        ("observe_nsprogressindicator_max_value", observe_row, 69),
+        ("observe_nsprogressindicator_min_value", observe_row, 70),
+        ("observe_nsprogressindicator_observed_progress", observe_row, 71),
+        ("observe_nsprogressindicator_style", observe_row, 72),
+        ("observe_nsprogressindicator_uses_threaded_animation", observe_row, 73),
+        ("observe_nsslider_allows_tick_mark_values_only", observe_row, 74),
+        ("observe_nsslider_alt_increment_value", observe_row, 75),
+        ("observe_nsslider_double_value", observe_row, 76),
+        ("observe_nsslider_float_value", observe_row, 77),
+        ("observe_nsslider_int_value", observe_row, 78),
+        ("observe_nsslider_integer_value", observe_row, 79),
+        ("observe_nsslider_knob_thickness", observe_row, 80),
+        ("observe_nsslider_max_value", observe_row, 81),
+        ("observe_nsslider_min_value", observe_row, 82),
+        ("observe_nsslider_neutral_value", observe_row, 83),
+        ("observe_nsslider_number_of_tick_marks", observe_row, 84),
+        ("observe_nsslider_object_value", observe_row, 85),
+        ("observe_nsslider_slider_type", observe_row, 86),
+        ("observe_nsslider_tick_mark_position", observe_row, 87),
+        ("observe_nsslider_tint_prominence", observe_row, 88),
+        ("observe_nsslider_track_fill_color", observe_row, 89),
+        ("observe_nsslider_vertical", observe_row, 90),
+        ("observe_nsstackview_alignment", observe_row, 91),
+        ("observe_nsstackview_arranged_subviews", observe_row, 92),
+        ("observe_nsstackview_delegate", observe_row, 93),
+        ("observe_nsstackview_detached_views", observe_row, 94),
+        ("observe_nsstackview_detaches_hidden_views", observe_row, 95),
+        ("observe_nsstackview_distribution", observe_row, 96),
+        ("observe_nsstackview_edge_insets", observe_row, 97),
+        ("observe_nsstackview_orientation", observe_row, 98),
+        ("observe_nsstackview_spacing", observe_row, 99),
+        ("observe_nsstackview_views", observe_row, 100),
+        ("observe_nstextfield_accepts_first_responder", observe_row, 101),
+        ("observe_nstextfield_allows_character_picker_touch_bar_item", observe_row, 102),
+        ("observe_nstextfield_allows_default_tightening_for_truncation", observe_row, 103),
+        ("observe_nstextfield_allows_editing_text_attributes", observe_row, 104),
+        ("observe_nstextfield_allows_writing_tools", observe_row, 105),
+        ("observe_nstextfield_allows_writing_tools_affordance", observe_row, 106),
+        ("observe_nstextfield_attributed_string_value", observe_row, 107),
+        ("observe_nstextfield_automatic_text_completion_enabled", observe_row, 108),
+        ("observe_nstextfield_background_color", observe_row, 109),
+        ("observe_nstextfield_bezel_style", observe_row, 110),
+        ("observe_nstextfield_bezeled", observe_row, 111),
+        ("observe_nstextfield_bordered", observe_row, 112),
+        ("observe_nstextfield_delegate", observe_row, 113),
+        ("observe_nstextfield_draws_background", observe_row, 114),
+        ("observe_nstextfield_editable", observe_row, 115),
+        ("observe_nstextfield_imports_graphics", observe_row, 116),
+        ("observe_nstextfield_line_break_strategy", observe_row, 117),
+        ("observe_nstextfield_maximum_number_of_lines", observe_row, 118),
+        ("observe_nstextfield_object_value", observe_row, 119),
+        ("observe_nstextfield_placeholder_attributed_string", observe_row, 120),
+        ("observe_nstextfield_placeholder_attributed_strings", observe_row, 121),
+        ("observe_nstextfield_placeholder_string", observe_row, 122),
+        ("observe_nstextfield_placeholder_strings", observe_row, 123),
+        ("observe_nstextfield_preferred_max_layout_width", observe_row, 124),
+        ("observe_nstextfield_resolves_natural_alignment_with_base_writing_direction", observe_row, 125),
+        ("observe_nstextfield_selectable", observe_row, 126),
+        ("observe_nstextfield_string_value", observe_row, 127),
+        ("observe_nstextfield_text_color", observe_row, 128),
+        ("observe_nsview_additional_safe_area_insets", observe_row, 129),
+        ("observe_nsview_alignment_rect_insets", observe_row, 130),
+        ("observe_nsview_allowed_touch_types", observe_row, 131),
+        ("observe_nsview_allows_vibrancy", observe_row, 132),
+        ("observe_nsview_alpha_value", observe_row, 133),
+        ("observe_nsview_autoresizes_subviews", observe_row, 134),
+        ("observe_nsview_autoresizing_mask", observe_row, 135),
+        ("observe_nsview_background_filters", observe_row, 136),
+        ("observe_nsview_baseline_offset_from_bottom", observe_row, 137),
+        ("observe_nsview_bottom_anchor", observe_row, 138),
+        ("observe_nsview_bounds", observe_row, 139),
+        ("observe_nsview_bounds_rotation", observe_row, 140),
+        ("observe_nsview_can_become_key_view", observe_row, 141),
+        ("observe_nsview_can_draw_concurrently", observe_row, 142),
+        ("observe_nsview_can_draw_subviews_into_layer", observe_row, 143),
+        ("observe_nsview_candidate_list_touch_bar_item", observe_row, 144),
+        ("observe_nsview_center_x_anchor", observe_row, 145),
+        ("observe_nsview_center_y_anchor", observe_row, 146),
+        ("observe_nsview_clips_to_bounds", observe_row, 147),
+        ("observe_nsview_compositing_filter", observe_row, 148),
+        ("observe_nsview_constraints", observe_row, 149),
+        ("observe_nsview_content_filters", observe_row, 150),
+        ("observe_nsview_drawing_find_indicator", observe_row, 151),
+        ("observe_nsview_enclosing_menu_item", observe_row, 152),
+        ("observe_nsview_enclosing_scroll_view", observe_row, 153),
+        ("observe_nsview_first_baseline_anchor", observe_row, 154),
+        ("observe_nsview_first_baseline_offset_from_top", observe_row, 155),
+        ("observe_nsview_fitting_size", observe_row, 156),
+        ("observe_nsview_flipped", observe_row, 157),
+        ("observe_nsview_focus_ring_mask_bounds", observe_row, 158),
+        ("observe_nsview_focus_ring_type", observe_row, 159),
+        ("observe_nsview_frame", observe_row, 160),
+        ("observe_nsview_frame_center_rotation", observe_row, 161),
+        ("observe_nsview_frame_rotation", observe_row, 162),
+        ("observe_nsview_gesture_recognizers", observe_row, 163),
+        ("observe_nsview_has_ambiguous_layout", observe_row, 164),
+        ("observe_nsview_height_adjust_limit", observe_row, 165),
+        ("observe_nsview_height_anchor", observe_row, 166),
+        ("observe_nsview_hidden", observe_row, 167),
+        ("observe_nsview_hidden_or_has_hidden_ancestor", observe_row, 168),
+        ("observe_nsview_horizontal_content_size_constraint_active", observe_row, 169),
+        ("observe_nsview_in_full_screen_mode", observe_row, 170),
+        ("observe_nsview_in_live_resize", observe_row, 171),
+        ("observe_nsview_input_context", observe_row, 172),
+        ("observe_nsview_intrinsic_content_size", observe_row, 173),
+        ("observe_nsview_last_baseline_anchor", observe_row, 174),
+        ("observe_nsview_last_baseline_offset_from_bottom", observe_row, 175),
+        ("observe_nsview_layer", observe_row, 176),
+        ("observe_nsview_layer_contents_placement", observe_row, 177),
+        ("observe_nsview_layer_contents_redraw_policy", observe_row, 178),
+        ("observe_nsview_layer_uses_core_image_filters", observe_row, 179),
+        ("observe_nsview_layout_guides", observe_row, 180),
+        ("observe_nsview_layout_margins_guide", observe_row, 181),
+        ("observe_nsview_leading_anchor", observe_row, 182),
+        ("observe_nsview_left_anchor", observe_row, 183),
+        ("observe_nsview_mouse_down_can_move_window", observe_row, 184),
+        ("observe_nsview_needs_display", observe_row, 185),
+        ("observe_nsview_needs_layout", observe_row, 186),
+        ("observe_nsview_needs_panel_to_become_key", observe_row, 187),
+        ("observe_nsview_needs_update_constraints", observe_row, 188),
+        ("observe_nsview_next_key_view", observe_row, 189),
+        ("observe_nsview_next_valid_key_view", observe_row, 190),
+        ("observe_nsview_opaque", observe_row, 191),
+        ("observe_nsview_opaque_ancestor", observe_row, 192),
+        ("observe_nsview_page_footer", observe_row, 193),
+        ("observe_nsview_page_header", observe_row, 194),
+        ("observe_nsview_posts_bounds_changed_notifications", observe_row, 195),
+        ("observe_nsview_posts_frame_changed_notifications", observe_row, 196),
+        ("observe_nsview_prefers_compact_control_size_metrics", observe_row, 197),
+        ("observe_nsview_prepared_content_rect", observe_row, 198),
+        ("observe_nsview_preserves_content_during_live_resize", observe_row, 199),
+        ("observe_nsview_pressure_configuration", observe_row, 200),
+        ("observe_nsview_previous_key_view", observe_row, 201),
+        ("observe_nsview_previous_valid_key_view", observe_row, 202),
+        ("observe_nsview_print_job_title", observe_row, 203),
+        ("observe_nsview_rect_preserved_during_live_resize", observe_row, 204),
+        ("observe_nsview_registered_dragged_types", observe_row, 205),
+        ("observe_nsview_right_anchor", observe_row, 206),
+        ("observe_nsview_rotated_from_base", observe_row, 207),
+        ("observe_nsview_rotated_or_scaled_from_base", observe_row, 208),
+        ("observe_nsview_safe_area_insets", observe_row, 209),
+        ("observe_nsview_safe_area_layout_guide", observe_row, 210),
+        ("observe_nsview_safe_area_rect", observe_row, 211),
+        ("observe_nsview_shadow", observe_row, 212),
+        ("observe_nsview_subviews", observe_row, 213),
+        ("observe_nsview_superview", observe_row, 214),
+        ("observe_nsview_tag", observe_row, 215),
+        ("observe_nsview_tool_tip", observe_row, 216),
+        ("observe_nsview_top_anchor", observe_row, 217),
+        ("observe_nsview_tracking_areas", observe_row, 218),
+        ("observe_nsview_trailing_anchor", observe_row, 219),
+        ("observe_nsview_translates_autoresizing_mask_into_constraints", observe_row, 220),
+        ("observe_nsview_user_interface_layout_direction", observe_row, 221),
+        ("observe_nsview_vertical_content_size_constraint_active", observe_row, 222),
+        ("observe_nsview_visible_rect", observe_row, 223),
+        ("observe_nsview_wants_default_clipping", observe_row, 224),
+        ("observe_nsview_wants_layer", observe_row, 225),
+        ("observe_nsview_wants_resting_touches", observe_row, 226),
+        ("observe_nsview_wants_update_layer", observe_row, 227),
+        ("observe_nsview_width_adjust_limit", observe_row, 228),
+        ("observe_nsview_width_anchor", observe_row, 229),
+        ("observe_nsview_window", observe_row, 230),
+        ("observe_nsview_writing_tools_coordinator", observe_row, 231),
+        ("observe_nswindow_accepts_mouse_moved_events", observe_row, 232),
+        ("observe_nswindow_allows_concurrent_view_drawing", observe_row, 233),
+        ("observe_nswindow_allows_tool_tips_when_application_is_inactive", observe_row, 234),
+        ("observe_nswindow_alpha_value", observe_row, 235),
+        ("observe_nswindow_animation_behavior", observe_row, 236),
+        ("observe_nswindow_appearance_source", observe_row, 237),
+        ("observe_nswindow_are_cursor_rects_enabled", observe_row, 238),
+        ("observe_nswindow_aspect_ratio", observe_row, 239),
+        ("observe_nswindow_attached_sheet", observe_row, 240),
+        ("observe_nswindow_autorecalculates_key_view_loop", observe_row, 241),
+        ("observe_nswindow_background_color", observe_row, 242),
+        ("observe_nswindow_backing_scale_factor", observe_row, 243),
+        ("observe_nswindow_backing_type", observe_row, 244),
+        ("observe_nswindow_can_become_key_window", observe_row, 245),
+        ("observe_nswindow_can_become_main_window", observe_row, 246),
+        ("observe_nswindow_can_become_visible_without_login", observe_row, 247),
+        ("observe_nswindow_can_hide", observe_row, 248),
+        ("observe_nswindow_cascading_reference_frame", observe_row, 249),
+        ("observe_nswindow_child_windows", observe_row, 250),
+        ("observe_nswindow_collection_behavior", observe_row, 251),
+        ("observe_nswindow_color_space", observe_row, 252),
+        ("observe_nswindow_content_aspect_ratio", observe_row, 253),
+        ("observe_nswindow_content_layout_guide", observe_row, 254),
+        ("observe_nswindow_content_layout_rect", observe_row, 255),
+        ("observe_nswindow_content_max_size", observe_row, 256),
+        ("observe_nswindow_content_min_size", observe_row, 257),
+        ("observe_nswindow_content_resize_increments", observe_row, 258),
+        ("observe_nswindow_content_view", observe_row, 259),
+        ("observe_nswindow_content_view_controller", observe_row, 260),
+        ("observe_nswindow_current_event", observe_row, 261),
+        ("observe_nswindow_deepest_screen", observe_row, 262),
+        ("observe_nswindow_default_button_cell", observe_row, 263),
+        ("observe_nswindow_delegate", observe_row, 264),
+        ("observe_nswindow_depth_limit", observe_row, 265),
+        ("observe_nswindow_device_description", observe_row, 266),
+        ("observe_nswindow_displays_when_screen_profile_changes", observe_row, 267),
+        ("observe_nswindow_dock_tile", observe_row, 268),
+        ("observe_nswindow_document_edited", observe_row, 269),
+        ("observe_nswindow_drawers", observe_row, 270),
+        ("observe_nswindow_excluded_from_windows_menu", observe_row, 271),
+        ("observe_nswindow_first_responder", observe_row, 272),
+        ("observe_nswindow_floating_panel", observe_row, 273),
+        ("observe_nswindow_frame", observe_row, 274),
+        ("observe_nswindow_frame_autosave_name", observe_row, 275),
+        ("observe_nswindow_has_active_window_sharing_session", observe_row, 276),
+        ("observe_nswindow_has_close_box", observe_row, 277),
+        ("observe_nswindow_has_dynamic_depth_limit", observe_row, 278),
+        ("observe_nswindow_has_shadow", observe_row, 279),
+        ("observe_nswindow_has_title_bar", observe_row, 280),
+        ("observe_nswindow_hides_on_deactivate", observe_row, 281),
+        ("observe_nswindow_ignores_mouse_events", observe_row, 282),
+        ("observe_nswindow_in_live_resize", observe_row, 283),
+        ("observe_nswindow_initial_first_responder", observe_row, 284),
+        ("observe_nswindow_key_view_selection_direction", observe_row, 285),
+        ("observe_nswindow_key_window", observe_row, 286),
+        ("observe_nswindow_level", observe_row, 287),
+        ("observe_nswindow_main_window", observe_row, 288),
+        ("observe_nswindow_max_full_screen_content_size", observe_row, 289),
+        ("observe_nswindow_max_size", observe_row, 290),
+        ("observe_nswindow_min_full_screen_content_size", observe_row, 291),
+        ("observe_nswindow_min_size", observe_row, 292),
+        ("observe_nswindow_miniaturizable", observe_row, 293),
+        ("observe_nswindow_miniaturized", observe_row, 294),
+        ("observe_nswindow_miniwindow_image", observe_row, 295),
+        ("observe_nswindow_miniwindow_title", observe_row, 296),
+        ("observe_nswindow_modal_panel", observe_row, 297),
+        ("observe_nswindow_mouse_location_outside_of_event_stream", observe_row, 298),
+        ("observe_nswindow_movable", observe_row, 299),
+        ("observe_nswindow_movable_by_window_background", observe_row, 300),
+        ("observe_nswindow_occlusion_state", observe_row, 301),
+        ("observe_nswindow_on_active_space", observe_row, 302),
+        ("observe_nswindow_opaque", observe_row, 303),
+        ("observe_nswindow_ordered_index", observe_row, 304),
+        ("observe_nswindow_parent_window", observe_row, 305),
+        ("observe_nswindow_preserves_content_during_live_resize", observe_row, 306),
+        ("observe_nswindow_prevents_application_termination_when_modal", observe_row, 307),
+        ("observe_nswindow_released_when_closed", observe_row, 308),
+        ("observe_nswindow_represented_filename", observe_row, 309),
+        ("observe_nswindow_represented_url", observe_row, 310),
+        ("observe_nswindow_resizable", observe_row, 311),
+        ("observe_nswindow_resize_flags", observe_row, 312),
+        ("observe_nswindow_resize_increments", observe_row, 313),
+        ("observe_nswindow_restorable", observe_row, 314),
+        ("observe_nswindow_restoration_class", observe_row, 315),
+        ("observe_nswindow_screen", observe_row, 316),
+        ("observe_nswindow_sharing_type", observe_row, 317),
+        ("observe_nswindow_sheet", observe_row, 318),
+        ("observe_nswindow_sheet_parent", observe_row, 319),
+        ("observe_nswindow_sheets", observe_row, 320),
+        ("observe_nswindow_string_with_saved_frame", observe_row, 321),
+        ("observe_nswindow_style_mask", observe_row, 322),
+        ("observe_nswindow_subtitle", observe_row, 323),
+        ("observe_nswindow_tab", observe_row, 324),
+        ("observe_nswindow_tab_group", observe_row, 325),
+        ("observe_nswindow_tabbed_windows", observe_row, 326),
+        ("observe_nswindow_tabbing_identifier", observe_row, 327),
+        ("observe_nswindow_tabbing_mode", observe_row, 328),
+        ("observe_nswindow_title", observe_row, 329),
+        ("observe_nswindow_title_visibility", observe_row, 330),
+        ("observe_nswindow_titlebar_accessory_view_controllers", observe_row, 331),
+        ("observe_nswindow_titlebar_appears_transparent", observe_row, 332),
+        ("observe_nswindow_titlebar_separator_style", observe_row, 333),
+        ("observe_nswindow_toolbar", observe_row, 334),
+        ("observe_nswindow_toolbar_style", observe_row, 335),
+        ("observe_nswindow_views_need_display", observe_row, 336),
+        ("observe_nswindow_visible", observe_row, 337),
+        ("observe_nswindow_window_controller", observe_row, 338),
+        ("observe_nswindow_window_number", observe_row, 339),
+        ("observe_nswindow_window_titlebar_layout_direction", observe_row, 340),
+        ("observe_nswindow_works_when_modal", observe_row, 341),
+        ("observe_nswindow_zoomable", observe_row, 342),
+        ("observe_nswindow_zoomed", observe_row, 343),
     ];
 }
 

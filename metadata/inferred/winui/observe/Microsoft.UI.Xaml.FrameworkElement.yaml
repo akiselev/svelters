@@ -11,6 +11,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O6 deny list: "do not raise property change notifications" (FrameworkElement.ActualHeight docs); use SizeChanged'
+  verify:
+    'on': Microsoft.UI.Xaml:FrameworkElement
+    check: cross
+    trigger: resize
   confidence: 0.9
 - prop: ActualTheme
   class: exact
@@ -21,6 +25,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O6 deny list: computed from RequestedTheme up the tree; ActualThemeChanged reports it'
+  verify:
+    'on': Microsoft.UI.Xaml:FrameworkElement
+    check: cross
+    trigger: theme
   confidence: 0.9
 - prop: ActualWidth
   class: exact
@@ -31,6 +39,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O6 deny list: "do not raise property change notifications" (FrameworkElement.ActualWidth docs); use SizeChanged'
+  verify:
+    'on': Microsoft.UI.Xaml:FrameworkElement
+    check: cross
+    trigger: resize
   confidence: 0.9
 - prop: AllowFocusOnInteraction
   class: exact
@@ -158,6 +170,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O5: event Loaded, Unloaded'
+  verify:
+    'on': Microsoft.UI.Xaml:FrameworkElement
+    check: cross
+    trigger: mount
   confidence: 0.9
 - prop: Language
   class: exact

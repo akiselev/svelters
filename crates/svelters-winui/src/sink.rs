@@ -42,6 +42,19 @@ pub fn notify(o: &IInspectable, dp: &DependencyProperty, sink: Sink) -> windows_
     Ok(Registration::Property { obj, dp: dp.clone(), token })
 }
 
+/// ABI v2.6 `observe` of a DependencyProperty: `host.prop_changed(h, prop)` on every change callback. The delegate
+/// captures the two ids only; the backend is reached through its thread-local weak reference, so an observation keeps
+/// neither the backend nor the element alive (the registration holds the element, which the handle table already does).
+pub fn observe_dp(o: &IInspectable, dp: &DependencyProperty, h: u64, prop: u32) -> windows_core::Result<Registration> {
+    let obj = o.cast::<DependencyObject>()?;
+    let cb = DependencyPropertyChangedCallback::new(move |_, _| {
+        crate::backend::emit_changed(h, prop);
+        Ok(())
+    });
+    let token = obj.RegisterPropertyChangedCallback(dp, &cb)?;
+    Ok(Registration::Property { obj, dp: dp.clone(), token })
+}
+
 #[derive(Clone, Copy, Debug)]
 pub struct Sink {
     pub h: u64,

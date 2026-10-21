@@ -11,35 +11,35 @@
    },
    "exact": {
     "manual": 0,
-    "no_test": 150,
+    "no_test": 0,
     "pending": 0,
     "total": 150,
-    "verified": 0,
-    "verified_weak": 0
+    "verified": 149,
+    "verified_weak": 1
    },
    "none": {
     "manual": 0,
-    "no_test": 116,
+    "no_test": 0,
     "pending": 0,
     "total": 116,
     "verified": 0,
-    "verified_weak": 0
+    "verified_weak": 116
    },
    "partial": {
     "manual": 0,
-    "no_test": 8,
+    "no_test": 0,
     "pending": 0,
     "total": 8,
-    "verified": 0,
-    "verified_weak": 0
+    "verified": 5,
+    "verified_weak": 3
    },
    "set_only": {
     "manual": 0,
-    "no_test": 70,
+    "no_test": 0,
     "pending": 0,
     "total": 70,
     "verified": 0,
-    "verified_weak": 0
+    "verified_weak": 70
    }
   },
   "parked": 0,
@@ -203,19 +203,19 @@
    },
    "exact": {
     "manual": 0,
-    "no_test": 207,
+    "no_test": 69,
     "pending": 0,
     "total": 207,
-    "verified": 0,
-    "verified_weak": 0
+    "verified": 130,
+    "verified_weak": 8
    },
    "none": {
     "manual": 0,
-    "no_test": 26,
+    "no_test": 21,
     "pending": 0,
     "total": 26,
     "verified": 0,
-    "verified_weak": 0
+    "verified_weak": 5
    },
    "partial": {
     "manual": 0,
@@ -227,11 +227,11 @@
    },
    "set_only": {
     "manual": 0,
-    "no_test": 18,
+    "no_test": 16,
     "pending": 0,
     "total": 18,
     "verified": 0,
-    "verified_weak": 0
+    "verified_weak": 2
    }
   },
   "parked": 0,
