@@ -1,0 +1,4880 @@
+{
+ "namespace": "Microsoft.UI.Xaml.Documents",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Microsoft.UI.Xaml.Documents.Block": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Documents.IBlockFactory",
+      "CompositionType.1",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.IBlockStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.TextElement",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IBlock",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Block",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Documents.BlockCollection": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Documents.Block>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Microsoft.UI.Xaml.Documents.Block>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.BlockCollection",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.Bold": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Span",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IBold",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Bold",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.Glyphs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.IGlyphsStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.FrameworkElement",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IGlyphs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Glyphs",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.Hyperlink": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.IHyperlinkStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Span",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IHyperlink",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Hyperlink",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IHyperlinkClickEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.IBlock": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Block"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8149d507-672f-5fd5-a10a-351389ba9659",
+   "methods": [
+    {
+     "name": "get_TextAlignment",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.TextAlignment",
+     "special": true
+    },
+    {
+     "name": "put_TextAlignment",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.TextAlignment"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_HorizontalTextAlignment",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.TextAlignment",
+     "special": true
+    },
+    {
+     "name": "put_HorizontalTextAlignment",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.TextAlignment"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_LineHeight",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_LineHeight",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_LineStackingStrategy",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.LineStackingStrategy",
+     "special": true
+    },
+    {
+     "name": "put_LineStackingStrategy",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.LineStackingStrategy"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Margin",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Thickness",
+     "special": true
+    },
+    {
+     "name": "put_Margin",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Thickness"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IBlock",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IBlockFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Block"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "21bd671c-33e2-56ef-be37-a128e898452c",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Documents.Block"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IBlockFactory",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IBlockStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Block"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "830feedf-9aa6-56cd-983e-055500171b45",
+   "methods": [
+    {
+     "name": "get_TextAlignmentProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_HorizontalTextAlignmentProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_LineHeightProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_LineStackingStrategyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_MarginProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IBlockStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IBold": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Bold"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "241a5f5a-c164-597f-b0db-fac7431297f2",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.IBold",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IGlyphs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Glyphs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "0fbf8cfe-18e7-5e45-9fa3-d2d0927958f4",
+   "methods": [
+    {
+     "name": "get_UnicodeString",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_UnicodeString",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Indices",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Indices",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FontUri",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "put_FontUri",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_StyleSimulations",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.StyleSimulations",
+     "special": true
+    },
+    {
+     "name": "put_StyleSimulations",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.StyleSimulations"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FontRenderingEmSize",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_FontRenderingEmSize",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_OriginX",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_OriginX",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_OriginY",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_OriginY",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Fill",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.Brush",
+     "special": true
+    },
+    {
+     "name": "put_Fill",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.Brush"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsColorFontEnabled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsColorFontEnabled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ColorFontPaletteIndex",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "put_ColorFontPaletteIndex",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IGlyphs",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IGlyphsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Glyphs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8d9e241a-3e0e-5100-8ede-e008034ff8ae",
+   "methods": [
+    {
+     "name": "get_UnicodeStringProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IndicesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FontUriProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_StyleSimulationsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FontRenderingEmSizeProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_OriginXProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_OriginYProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FillProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsColorFontEnabledProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ColorFontPaletteIndexProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IGlyphsStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IHyperlink": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Hyperlink"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "ac09bd16-cdfa-54c2-8d03-a474181545b1",
+   "methods": [
+    {
+     "name": "get_NavigateUri",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "put_NavigateUri",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_UnderlineStyle",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.UnderlineStyle",
+     "special": true
+    },
+    {
+     "name": "put_UnderlineStyle",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Documents.UnderlineStyle"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusLeft",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusLeft",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusRight",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusRight",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusUp",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusUp",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusDown",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusDown",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ElementSoundMode",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.ElementSoundMode",
+     "special": true
+    },
+    {
+     "name": "put_ElementSoundMode",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.ElementSoundMode"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FocusState",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.FocusState",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusUpNavigationStrategy",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusUpNavigationStrategy",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusDownNavigationStrategy",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusDownNavigationStrategy",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusLeftNavigationStrategy",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusLeftNavigationStrategy",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusRightNavigationStrategy",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusRightNavigationStrategy",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsTabStop",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsTabStop",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_TabIndex",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "put_TabIndex",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Click",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Documents.Hyperlink, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Click",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_GotFocus",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.RoutedEventHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_GotFocus",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_LostFocus",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.RoutedEventHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_LostFocus",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "Focus",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FocusState"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IHyperlink",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IHyperlinkClickEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "f8f89552-873d-5ef5-82bf-c79a9509b07c",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.IHyperlinkClickEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IHyperlinkStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Hyperlink"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e13598f4-7bc7-5ab9-885b-70f32f8c9531",
+   "methods": [
+    {
+     "name": "get_NavigateUriProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_UnderlineStyleProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusLeftProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusRightProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusUpProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusDownProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ElementSoundModeProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FocusStateProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusUpNavigationStrategyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusDownNavigationStrategyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusLeftNavigationStrategyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusRightNavigationStrategyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsTabStopProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_TabIndexProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IHyperlinkStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IInline": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Inline"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "813d427a-8980-5a79-a8fa-f27919cfb24f",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.IInline",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IInlineFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Inline"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "fd253a36-fa2b-5b30-89a8-9f577871ec07",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Documents.Inline"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IInlineFactory",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IInlineUIContainer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.InlineUIContainer"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d529bef6-c05a-5bad-85e8-640127cf86f5",
+   "methods": [
+    {
+     "name": "get_Child",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.UIElement",
+     "special": true
+    },
+    {
+     "name": "put_Child",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IInlineUIContainer",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IItalic": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Italic"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "ca3cbebd-7a8d-5d7a-8fdf-538e8a680f6c",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.IItalic",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ILineBreak": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.LineBreak"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "09307599-7cc2-5f54-b106-728620c16f76",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.ILineBreak",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IParagraph": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Paragraph"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "9ed64c77-329d-502f-a257-f58398edab51",
+   "methods": [
+    {
+     "name": "get_Inlines",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.InlineCollection",
+     "special": true
+    },
+    {
+     "name": "get_TextIndent",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_TextIndent",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IParagraph",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IParagraphStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Paragraph"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "4eb89ab1-66c8-5fc0-aa5f-48c8092ceb5f",
+   "methods": [
+    {
+     "name": "get_TextIndentProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IParagraphStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IRun": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Run"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "1f905239-37cb-590b-9132-3ffb7741906e",
+   "methods": [
+    {
+     "name": "get_Text",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Text",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FlowDirection",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.FlowDirection",
+     "special": true
+    },
+    {
+     "name": "put_FlowDirection",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FlowDirection"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IRun",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IRunStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Run"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "051b3c5b-7600-51a5-80c5-93eb50fd684f",
+   "methods": [
+    {
+     "name": "get_FlowDirectionProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.IRunStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ISpan": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Span"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "91b93d4d-4e28-57b9-bffb-3566c2a3c2a1",
+   "methods": [
+    {
+     "name": "get_Inlines",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.InlineCollection",
+     "special": true
+    },
+    {
+     "name": "put_Inlines",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Documents.InlineCollection"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ISpan",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ISpanFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Span"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a6e87c16-c175-55c8-bbd3-ce40f9d0a680",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Documents.Span"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ISpanFactory",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElement": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextElement"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a122ba22-833f-5220-a47e-6cd507531abe",
+   "methods": [
+    {
+     "name": "get_Name",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_FontSize",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_FontSize",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FontFamily",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.FontFamily",
+     "special": true
+    },
+    {
+     "name": "put_FontFamily",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.FontFamily"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FontWeight",
+     "params": [],
+     "ret": "Windows.UI.Text.FontWeight",
+     "special": true
+    },
+    {
+     "name": "put_FontWeight",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.UI.Text.FontWeight"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FontStyle",
+     "params": [],
+     "ret": "Windows.UI.Text.FontStyle",
+     "special": true
+    },
+    {
+     "name": "put_FontStyle",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.UI.Text.FontStyle"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FontStretch",
+     "params": [],
+     "ret": "Windows.UI.Text.FontStretch",
+     "special": true
+    },
+    {
+     "name": "put_FontStretch",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.UI.Text.FontStretch"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_CharacterSpacing",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "put_CharacterSpacing",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Foreground",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.Brush",
+     "special": true
+    },
+    {
+     "name": "put_Foreground",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.Brush"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Language",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Language",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsTextScaleFactorEnabled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsTextScaleFactorEnabled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_TextDecorations",
+     "params": [],
+     "ret": "Windows.UI.Text.TextDecorations",
+     "special": true
+    },
+    {
+     "name": "put_TextDecorations",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.UI.Text.TextDecorations"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ContentStart",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.TextPointer",
+     "special": true
+    },
+    {
+     "name": "get_ContentEnd",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.TextPointer",
+     "special": true
+    },
+    {
+     "name": "get_ElementStart",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.TextPointer",
+     "special": true
+    },
+    {
+     "name": "get_ElementEnd",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.TextPointer",
+     "special": true
+    },
+    {
+     "name": "get_AllowFocusOnInteraction",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_AllowFocusOnInteraction",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_AccessKey",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_AccessKey",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ExitDisplayModeOnAccessKeyInvoked",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_ExitDisplayModeOnAccessKeyInvoked",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsAccessKeyScope",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsAccessKeyScope",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_AccessKeyScopeOwner",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_AccessKeyScopeOwner",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_KeyTipPlacementMode",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.KeyTipPlacementMode",
+     "special": true
+    },
+    {
+     "name": "put_KeyTipPlacementMode",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.KeyTipPlacementMode"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_KeyTipHorizontalOffset",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_KeyTipHorizontalOffset",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_KeyTipVerticalOffset",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_KeyTipVerticalOffset",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XamlRoot",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.XamlRoot",
+     "special": true
+    },
+    {
+     "name": "put_XamlRoot",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.XamlRoot"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_AccessKeyDisplayRequested",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Documents.TextElement, Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_AccessKeyDisplayRequested",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_AccessKeyDisplayDismissed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Documents.TextElement, Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_AccessKeyDisplayDismissed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_AccessKeyInvoked",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Documents.TextElement, Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_AccessKeyInvoked",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "FindName",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "object"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITextElement",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElementFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextElement"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "df51fb95-a5e6-5b16-8e88-9f7cbfa234b1",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.ITextElementFactory",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElementOverrides": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextElement"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "41b01380-e49f-5fda-8c72-acc1ac1e91df",
+   "methods": [
+    {
+     "name": "OnDisconnectVisualChildren",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITextElementOverrides",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElementStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextElement"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "c9b55919-e1fe-5acd-bac7-c9d7f413b35c",
+   "methods": [
+    {
+     "name": "get_FontSizeProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FontFamilyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FontWeightProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FontStyleProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_FontStretchProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_CharacterSpacingProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ForegroundProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_LanguageProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsTextScaleFactorEnabledProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_TextDecorationsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_AllowFocusOnInteractionProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_AccessKeyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ExitDisplayModeOnAccessKeyInvokedProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsAccessKeyScopeProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_AccessKeyScopeOwnerProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_KeyTipPlacementModeProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_KeyTipHorizontalOffsetProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_KeyTipVerticalOffsetProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITextElementStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextHighlighter"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "b756e861-1d2b-5f6f-81fd-c51a5bc068ff",
+   "methods": [
+    {
+     "name": "get_Ranges",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Documents.TextRange>",
+     "special": true
+    },
+    {
+     "name": "get_Foreground",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.Brush",
+     "special": true
+    },
+    {
+     "name": "put_Foreground",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.Brush"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Background",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.Brush",
+     "special": true
+    },
+    {
+     "name": "put_Background",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.Brush"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITextHighlighter",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterBase": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextHighlighterBase"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "5c21aaf0-3a17-5468-8aac-be14db0ed8c1",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.ITextHighlighterBase",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterBaseFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextHighlighterBase"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e091e461-53ab-599e-aaea-800adc72da4f",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.ITextHighlighterBaseFactory",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextHighlighter"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "69c7311f-c019-5b93-b511-81418543bab7",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Documents.TextHighlighter"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITextHighlighterFactory",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextHighlighter"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "4975047a-87ad-51a2-977c-e771de4f4035",
+   "methods": [
+    {
+     "name": "get_ForegroundProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_BackgroundProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITextHighlighterStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITextPointer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.TextPointer"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "842eb385-ee41-5930-979b-438fa7525a51",
+   "methods": [
+    {
+     "name": "get_Parent",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "get_VisualParent",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.FrameworkElement",
+     "special": true
+    },
+    {
+     "name": "get_LogicalDirection",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Documents.LogicalDirection",
+     "special": true
+    },
+    {
+     "name": "get_Offset",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "GetCharacterRect",
+     "params": [
+      {
+       "name": "direction",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Documents.LogicalDirection"
+      }
+     ],
+     "ret": "Windows.Foundation.Rect"
+    },
+    {
+     "name": "GetPositionAtOffset",
+     "params": [
+      {
+       "name": "offset",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "direction",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Documents.LogicalDirection"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Documents.TextPointer"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITextPointer",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITypography": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Typography"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "fa27e2e3-be5e-5d21-9a5e-90cf102af828",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.ITypography",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.ITypographyStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Typography"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "55fe4535-2125-533a-ada8-27be2b9e1193",
+   "methods": [
+    {
+     "name": "get_AnnotationAlternatesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetAnnotationAlternates",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "i32"
+    },
+    {
+     "name": "SetAnnotationAlternates",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_EastAsianExpertFormsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetEastAsianExpertForms",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetEastAsianExpertForms",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_EastAsianLanguageProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetEastAsianLanguage",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.FontEastAsianLanguage"
+    },
+    {
+     "name": "SetEastAsianLanguage",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FontEastAsianLanguage"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_EastAsianWidthsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetEastAsianWidths",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.FontEastAsianWidths"
+    },
+    {
+     "name": "SetEastAsianWidths",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FontEastAsianWidths"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StandardLigaturesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStandardLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStandardLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_ContextualLigaturesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetContextualLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetContextualLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_DiscretionaryLigaturesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetDiscretionaryLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetDiscretionaryLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_HistoricalLigaturesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetHistoricalLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetHistoricalLigatures",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StandardSwashesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStandardSwashes",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "i32"
+    },
+    {
+     "name": "SetStandardSwashes",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_ContextualSwashesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetContextualSwashes",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "i32"
+    },
+    {
+     "name": "SetContextualSwashes",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_ContextualAlternatesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetContextualAlternates",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetContextualAlternates",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticAlternatesProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticAlternates",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "i32"
+    },
+    {
+     "name": "SetStylisticAlternates",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet1Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet1",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet1",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet2Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet2",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet2",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet3Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet3",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet3",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet4Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet4",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet4",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet5Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet5",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet5",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet6Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet6",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet6",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet7Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet7",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet7",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet8Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet8",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet8",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet9Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet9",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet9",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet10Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet10",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet10",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet11Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet11",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet11",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet12Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet12",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet12",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet13Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet13",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet13",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet14Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet14",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet14",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet15Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet15",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet15",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet16Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet16",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet16",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet17Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet17",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet17",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet18Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet18",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet18",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet19Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet19",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet19",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_StylisticSet20Property",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetStylisticSet20",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetStylisticSet20",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_CapitalsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetCapitals",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.FontCapitals"
+    },
+    {
+     "name": "SetCapitals",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FontCapitals"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_CapitalSpacingProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetCapitalSpacing",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetCapitalSpacing",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_KerningProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetKerning",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetKerning",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_CaseSensitiveFormsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetCaseSensitiveForms",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetCaseSensitiveForms",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_HistoricalFormsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetHistoricalForms",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetHistoricalForms",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_FractionProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetFraction",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.FontFraction"
+    },
+    {
+     "name": "SetFraction",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FontFraction"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_NumeralStyleProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetNumeralStyle",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.FontNumeralStyle"
+    },
+    {
+     "name": "SetNumeralStyle",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FontNumeralStyle"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_NumeralAlignmentProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetNumeralAlignment",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.FontNumeralAlignment"
+    },
+    {
+     "name": "SetNumeralAlignment",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FontNumeralAlignment"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_SlashedZeroProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetSlashedZero",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetSlashedZero",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_MathematicalGreekProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetMathematicalGreek",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetMathematicalGreek",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_VariantsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "GetVariants",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.FontVariants"
+    },
+    {
+     "name": "SetVariants",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FontVariants"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.ITypographyStatics",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.IUnderline": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Documents.Underline"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "68aaec6e-ea71-5ed2-b83e-91684b25efb9",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Documents.IUnderline",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Documents.Inline": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Documents.IInlineFactory",
+      "CompositionType.1",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.TextElement",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IInline",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Inline",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Documents.InlineCollection": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Documents.Inline>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Microsoft.UI.Xaml.Documents.Inline>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.InlineCollection",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.InlineUIContainer": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Inline",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IInlineUIContainer",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.InlineUIContainer",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.Italic": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Span",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IItalic",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Italic",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.LineBreak": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Inline",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.ILineBreak",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.LineBreak",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.LogicalDirection": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Backward",
+     0
+    ],
+    [
+     "Forward",
+     1
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.LogicalDirection",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Documents.Paragraph": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.IParagraphStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Block",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IParagraph",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Paragraph",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.Run": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.IRunStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Inline",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IRun",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Run",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.Span": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Documents.ISpanFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Inline",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.ISpan",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Span",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Documents.TextElement": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Documents.ITextElementFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.ITextElementStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.ITextElement",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Xaml.Documents.ITextElementOverrides",
+     "overridable": true,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.TextElement",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Documents.TextHighlighter": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Documents.ITextHighlighterFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.ITextHighlighterStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.ITextHighlighter",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.TextHighlighter",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Documents.TextHighlighterBase": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Documents.ITextHighlighterBaseFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.ITextHighlighterBase",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.TextHighlighterBase",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Documents.TextPointer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.ITextPointer",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.TextPointer",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.TextRange": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "StartIndex",
+     "type": "i32"
+    },
+    {
+     "name": "Length",
+     "type": "i32"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.TextRange",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Documents.Typography": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Documents.ITypographyStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.ITypography",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Typography",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.Underline": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Documents.Span",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Documents.IUnderline",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.Underline",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Documents.UnderlineStyle": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Single",
+     1
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Documents.UnderlineStyle",
+   "namespace": "Microsoft.UI.Xaml.Documents",
+   "origin": "winmd",
+   "underlying": "i32"
+  }
+ }
+}

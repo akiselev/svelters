@@ -1,0 +1,2314 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/windows.ui",
+ "namespace": "Windows.UI",
+ "schema": "svelters-winui-types/v1",
+ "structs": {
+  "Windows.UI.Color": {
+   "fields": [
+    {
+     "name": "a",
+     "native": "A",
+     "type": "u8"
+    },
+    {
+     "name": "r",
+     "native": "R",
+     "type": "u8"
+    },
+    {
+     "name": "g",
+     "native": "G",
+     "type": "u8"
+    },
+    {
+     "name": "b",
+     "native": "B",
+     "type": "u8"
+    }
+   ]
+  }
+ },
+ "types": {
+  "Windows.UI.Color": {
+   "category": "record"
+  },
+  "Windows.UI.ColorHelper": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "statics",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.UI.IColorHelper",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.UI.ColorHelper",
+   "hidden": [],
+   "iid": "193cfbe7-65c7-4540-ad08-6283ba76879a",
+   "implements": [],
+   "js_module": "svelters:winui/windows.ui",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "ColorHelper",
+   "namespace": "Windows.UI",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.UI.Color"
+   ],
+   "root": true,
+   "statics": {
+    "fromArgb": [
+     {
+      "iface": "Windows.UI.IColorHelperStatics",
+      "native": "FromArgb",
+      "outs": [],
+      "params": [
+       {
+        "name": "a",
+        "slot": {
+         "k": "int",
+         "t": "u8"
+        },
+        "type": "u8"
+       },
+       {
+        "name": "r",
+        "slot": {
+         "k": "int",
+         "t": "u8"
+        },
+        "type": "u8"
+       },
+       {
+        "name": "g",
+        "slot": {
+         "k": "int",
+         "t": "u8"
+        },
+        "type": "u8"
+       },
+       {
+        "name": "b",
+        "slot": {
+         "k": "int",
+         "t": "u8"
+        },
+        "type": "u8"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 6
+     }
+    ],
+    "toDisplayName": [
+     {
+      "iface": "Windows.UI.IColorHelperStatics2",
+      "native": "ToDisplayName",
+      "outs": [],
+      "params": [
+       {
+        "name": "color",
+        "slot": {
+         "k": "record",
+         "t": "Windows.UI.Color"
+        },
+        "type": "Windows.UI.Color"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.UI.Colors": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "statics",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.UI.IColors",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.UI.Colors",
+   "hidden": [],
+   "iid": "9b8c9326-4ca6-4ce5-8994-9eff65cabdcc",
+   "implements": [],
+   "js_module": "svelters:winui/windows.ui",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "Colors",
+   "namespace": "Windows.UI",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.UI.Color"
+   ],
+   "root": true,
+   "statics": {
+    "aliceBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_AliceBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 6
+     }
+    ],
+    "antiqueWhite": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_AntiqueWhite",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 7
+     }
+    ],
+    "aqua": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Aqua",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 8
+     }
+    ],
+    "aquamarine": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Aquamarine",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 9
+     }
+    ],
+    "azure": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Azure",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 10
+     }
+    ],
+    "beige": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Beige",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 11
+     }
+    ],
+    "bisque": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Bisque",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 12
+     }
+    ],
+    "black": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Black",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 13
+     }
+    ],
+    "blanchedAlmond": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_BlanchedAlmond",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 14
+     }
+    ],
+    "blue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Blue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 15
+     }
+    ],
+    "blueViolet": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_BlueViolet",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 16
+     }
+    ],
+    "brown": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Brown",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 17
+     }
+    ],
+    "burlyWood": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_BurlyWood",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 18
+     }
+    ],
+    "cadetBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_CadetBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 19
+     }
+    ],
+    "chartreuse": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Chartreuse",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 20
+     }
+    ],
+    "chocolate": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Chocolate",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 21
+     }
+    ],
+    "coral": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Coral",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 22
+     }
+    ],
+    "cornflowerBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_CornflowerBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 23
+     }
+    ],
+    "cornsilk": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Cornsilk",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 24
+     }
+    ],
+    "crimson": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Crimson",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 25
+     }
+    ],
+    "cyan": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Cyan",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 26
+     }
+    ],
+    "darkBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 27
+     }
+    ],
+    "darkCyan": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkCyan",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 28
+     }
+    ],
+    "darkGoldenrod": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkGoldenrod",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 29
+     }
+    ],
+    "darkGray": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkGray",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 30
+     }
+    ],
+    "darkGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 31
+     }
+    ],
+    "darkKhaki": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkKhaki",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 32
+     }
+    ],
+    "darkMagenta": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkMagenta",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 33
+     }
+    ],
+    "darkOliveGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkOliveGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 34
+     }
+    ],
+    "darkOrange": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkOrange",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 35
+     }
+    ],
+    "darkOrchid": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkOrchid",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 36
+     }
+    ],
+    "darkRed": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkRed",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 37
+     }
+    ],
+    "darkSalmon": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkSalmon",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 38
+     }
+    ],
+    "darkSeaGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkSeaGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 39
+     }
+    ],
+    "darkSlateBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkSlateBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 40
+     }
+    ],
+    "darkSlateGray": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkSlateGray",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 41
+     }
+    ],
+    "darkTurquoise": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkTurquoise",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 42
+     }
+    ],
+    "darkViolet": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DarkViolet",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 43
+     }
+    ],
+    "deepPink": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DeepPink",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 44
+     }
+    ],
+    "deepSkyBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DeepSkyBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 45
+     }
+    ],
+    "dimGray": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DimGray",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 46
+     }
+    ],
+    "dodgerBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_DodgerBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 47
+     }
+    ],
+    "firebrick": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Firebrick",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 48
+     }
+    ],
+    "floralWhite": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_FloralWhite",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 49
+     }
+    ],
+    "forestGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_ForestGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 50
+     }
+    ],
+    "fuchsia": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Fuchsia",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 51
+     }
+    ],
+    "gainsboro": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Gainsboro",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 52
+     }
+    ],
+    "ghostWhite": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_GhostWhite",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 53
+     }
+    ],
+    "gold": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Gold",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 54
+     }
+    ],
+    "goldenrod": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Goldenrod",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 55
+     }
+    ],
+    "gray": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Gray",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 56
+     }
+    ],
+    "green": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Green",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 57
+     }
+    ],
+    "greenYellow": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_GreenYellow",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 58
+     }
+    ],
+    "honeydew": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Honeydew",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 59
+     }
+    ],
+    "hotPink": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_HotPink",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 60
+     }
+    ],
+    "indianRed": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_IndianRed",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 61
+     }
+    ],
+    "indigo": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Indigo",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 62
+     }
+    ],
+    "ivory": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Ivory",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 63
+     }
+    ],
+    "khaki": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Khaki",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 64
+     }
+    ],
+    "lavender": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Lavender",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 65
+     }
+    ],
+    "lavenderBlush": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LavenderBlush",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 66
+     }
+    ],
+    "lawnGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LawnGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 67
+     }
+    ],
+    "lemonChiffon": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LemonChiffon",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 68
+     }
+    ],
+    "lightBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 69
+     }
+    ],
+    "lightCoral": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightCoral",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 70
+     }
+    ],
+    "lightCyan": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightCyan",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 71
+     }
+    ],
+    "lightGoldenrodYellow": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightGoldenrodYellow",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 72
+     }
+    ],
+    "lightGray": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightGray",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 74
+     }
+    ],
+    "lightGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 73
+     }
+    ],
+    "lightPink": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightPink",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 75
+     }
+    ],
+    "lightSalmon": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightSalmon",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 76
+     }
+    ],
+    "lightSeaGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightSeaGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 77
+     }
+    ],
+    "lightSkyBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightSkyBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 78
+     }
+    ],
+    "lightSlateGray": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightSlateGray",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 79
+     }
+    ],
+    "lightSteelBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightSteelBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 80
+     }
+    ],
+    "lightYellow": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LightYellow",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 81
+     }
+    ],
+    "lime": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Lime",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 82
+     }
+    ],
+    "limeGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_LimeGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 83
+     }
+    ],
+    "linen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Linen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 84
+     }
+    ],
+    "magenta": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Magenta",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 85
+     }
+    ],
+    "maroon": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Maroon",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 86
+     }
+    ],
+    "mediumAquamarine": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumAquamarine",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 87
+     }
+    ],
+    "mediumBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 88
+     }
+    ],
+    "mediumOrchid": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumOrchid",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 89
+     }
+    ],
+    "mediumPurple": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumPurple",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 90
+     }
+    ],
+    "mediumSeaGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumSeaGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 91
+     }
+    ],
+    "mediumSlateBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumSlateBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 92
+     }
+    ],
+    "mediumSpringGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumSpringGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 93
+     }
+    ],
+    "mediumTurquoise": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumTurquoise",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 94
+     }
+    ],
+    "mediumVioletRed": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MediumVioletRed",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 95
+     }
+    ],
+    "midnightBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MidnightBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 96
+     }
+    ],
+    "mintCream": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MintCream",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 97
+     }
+    ],
+    "mistyRose": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_MistyRose",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 98
+     }
+    ],
+    "moccasin": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Moccasin",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 99
+     }
+    ],
+    "navajoWhite": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_NavajoWhite",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 100
+     }
+    ],
+    "navy": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Navy",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 101
+     }
+    ],
+    "oldLace": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_OldLace",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 102
+     }
+    ],
+    "olive": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Olive",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 103
+     }
+    ],
+    "oliveDrab": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_OliveDrab",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 104
+     }
+    ],
+    "orange": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Orange",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 105
+     }
+    ],
+    "orangeRed": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_OrangeRed",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 106
+     }
+    ],
+    "orchid": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Orchid",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 107
+     }
+    ],
+    "paleGoldenrod": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_PaleGoldenrod",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 108
+     }
+    ],
+    "paleGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_PaleGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 109
+     }
+    ],
+    "paleTurquoise": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_PaleTurquoise",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 110
+     }
+    ],
+    "paleVioletRed": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_PaleVioletRed",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 111
+     }
+    ],
+    "papayaWhip": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_PapayaWhip",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 112
+     }
+    ],
+    "peachPuff": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_PeachPuff",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 113
+     }
+    ],
+    "peru": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Peru",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 114
+     }
+    ],
+    "pink": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Pink",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 115
+     }
+    ],
+    "plum": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Plum",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 116
+     }
+    ],
+    "powderBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_PowderBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 117
+     }
+    ],
+    "purple": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Purple",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 118
+     }
+    ],
+    "red": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Red",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 119
+     }
+    ],
+    "rosyBrown": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_RosyBrown",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 120
+     }
+    ],
+    "royalBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_RoyalBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 121
+     }
+    ],
+    "saddleBrown": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SaddleBrown",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 122
+     }
+    ],
+    "salmon": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Salmon",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 123
+     }
+    ],
+    "sandyBrown": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SandyBrown",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 124
+     }
+    ],
+    "seaGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SeaGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 125
+     }
+    ],
+    "seaShell": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SeaShell",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 126
+     }
+    ],
+    "sienna": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Sienna",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 127
+     }
+    ],
+    "silver": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Silver",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 128
+     }
+    ],
+    "skyBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SkyBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 129
+     }
+    ],
+    "slateBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SlateBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 130
+     }
+    ],
+    "slateGray": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SlateGray",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 131
+     }
+    ],
+    "snow": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Snow",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 132
+     }
+    ],
+    "springGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SpringGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 133
+     }
+    ],
+    "steelBlue": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_SteelBlue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 134
+     }
+    ],
+    "tan": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Tan",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 135
+     }
+    ],
+    "teal": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Teal",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 136
+     }
+    ],
+    "thistle": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Thistle",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 137
+     }
+    ],
+    "tomato": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Tomato",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 138
+     }
+    ],
+    "transparent": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Transparent",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 139
+     }
+    ],
+    "turquoise": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Turquoise",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 140
+     }
+    ],
+    "violet": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Violet",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 141
+     }
+    ],
+    "wheat": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Wheat",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 142
+     }
+    ],
+    "white": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_White",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 143
+     }
+    ],
+    "whiteSmoke": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_WhiteSmoke",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 144
+     }
+    ],
+    "yellow": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_Yellow",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 145
+     }
+    ],
+    "yellowGreen": [
+     {
+      "iface": "Windows.UI.IColorsStatics",
+      "native": "get_YellowGreen",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Windows.UI.Color"
+      },
+      "ret_native": "Windows.UI.Color",
+      "slot": 146
+     }
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.UI.IColorHelper": {
+   "category": "class-interface"
+  },
+  "Windows.UI.IColorHelperStatics": {
+   "category": "class-interface"
+  },
+  "Windows.UI.IColorHelperStatics2": {
+   "category": "class-interface"
+  },
+  "Windows.UI.IColors": {
+   "category": "class-interface"
+  },
+  "Windows.UI.IColorsStatics": {
+   "category": "class-interface"
+  },
+  "Windows.UI.IUIContentRoot": {
+   "category": "class-interface"
+  },
+  "Windows.UI.IUIContext": {
+   "category": "class-interface"
+  },
+  "Windows.UI.UIContentRoot": {
+   "category": "object"
+  },
+  "Windows.UI.UIContext": {
+   "category": "statics"
+  },
+  "Windows.UI.WindowId": {
+   "category": "record"
+  }
+ }
+}

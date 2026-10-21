@@ -1,0 +1,148 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.windowing",
+ "namespace": "Microsoft.UI.Windowing",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Windowing.AppWindow": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.AppWindowChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Windowing.AppWindowClosingEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Windowing.AppWindowPresenter": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.AppWindowPresenterKind": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Windowing.AppWindowTitleBar": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.CompactOverlayPresenter": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.CompactOverlaySize": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Windowing.DisplayArea": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.DisplayAreaFallback": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Windowing.DisplayAreaWatcher": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.DisplayAreaWatcherStatus": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Windowing.FullScreenPresenter": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.IAppWindow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindow2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindow3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindow4": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowChangedEventArgs2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowClosingEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowPresenter": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowPresenterFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowStatics2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBar": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBar2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBar3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBarStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.ICompactOverlayPresenter": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.ICompactOverlayPresenterStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IDisplayArea": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IDisplayAreaStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IDisplayAreaStatics2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IDisplayAreaWatcher": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IFullScreenPresenter": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IFullScreenPresenterStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenter": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenter2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenter3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenterStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenterStatics2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Windowing.IconShowOptions": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Windowing.OverlappedPresenter": {
+   "category": "object"
+  },
+  "Microsoft.UI.Windowing.OverlappedPresenterState": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Windowing.TitleBarHeightOption": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Windowing.TitleBarTheme": {
+   "category": "enum"
+  }
+ }
+}

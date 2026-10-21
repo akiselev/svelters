@@ -1,0 +1,957 @@
+{
+ "namespace": "Windows.Foundation.Collections",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.Foundation.Collections.CollectionChange": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Reset",
+     0
+    ],
+    [
+     "ItemInserted",
+     1
+    ],
+    [
+     "ItemRemoved",
+     2
+    ],
+    [
+     "ItemChanged",
+     3
+    ]
+   ],
+   "name": "Windows.Foundation.Collections.CollectionChange",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Foundation.Collections.IIterable": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "T"
+   ],
+   "guid": "faa585ea-6214-4217-afda-7f46de5869b3",
+   "methods": [
+    {
+     "name": "First",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IIterator<T>"
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IIterable",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.Collections.IIterator": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "T"
+   ],
+   "guid": "6a79e863-4300-459a-9966-cbb660963ee1",
+   "methods": [
+    {
+     "name": "get_Current",
+     "params": [],
+     "ret": "T",
+     "special": true
+    },
+    {
+     "name": "get_HasCurrent",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "MoveNext",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "GetMany",
+     "params": [
+      {
+       "name": "items",
+       "out": true,
+       "type": "T[]"
+      }
+     ],
+     "ret": "u32"
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IIterator",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.Collections.IKeyValuePair": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "K",
+    "V"
+   ],
+   "guid": "02b51929-c1c4-4a7e-8940-0312b5c18500",
+   "methods": [
+    {
+     "name": "get_Key",
+     "params": [],
+     "ret": "K",
+     "special": true
+    },
+    {
+     "name": "get_Value",
+     "params": [],
+     "ret": "V",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IKeyValuePair",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.Collections.IMap": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "K",
+    "V"
+   ],
+   "guid": "3c2925fe-8519-45c1-aa79-197b6718c1c1",
+   "methods": [
+    {
+     "name": "Lookup",
+     "params": [
+      {
+       "name": "key",
+       "out": false,
+       "type": "K"
+      }
+     ],
+     "ret": "V"
+    },
+    {
+     "name": "get_Size",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "HasKey",
+     "params": [
+      {
+       "name": "key",
+       "out": false,
+       "type": "K"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "GetView",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IMapView<K, V>"
+    },
+    {
+     "name": "Insert",
+     "params": [
+      {
+       "name": "key",
+       "out": false,
+       "type": "K"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "V"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "Remove",
+     "params": [
+      {
+       "name": "key",
+       "out": false,
+       "type": "K"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "Clear",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IMap",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<K, V>>"
+   ]
+  },
+  "Windows.Foundation.Collections.IMapChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "K"
+   ],
+   "guid": "9939f4df-050a-4c0f-aa60-77075f9c4777",
+   "methods": [
+    {
+     "name": "get_CollectionChange",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.CollectionChange",
+     "special": true
+    },
+    {
+     "name": "get_Key",
+     "params": [],
+     "ret": "K",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IMapChangedEventArgs",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.Collections.IMapView": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "K",
+    "V"
+   ],
+   "guid": "e480ce40-a338-4ada-adcf-272272e48cb9",
+   "methods": [
+    {
+     "name": "Lookup",
+     "params": [
+      {
+       "name": "key",
+       "out": false,
+       "type": "K"
+      }
+     ],
+     "ret": "V"
+    },
+    {
+     "name": "get_Size",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "HasKey",
+     "params": [
+      {
+       "name": "key",
+       "out": false,
+       "type": "K"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "Split",
+     "params": [
+      {
+       "name": "first",
+       "out": true,
+       "type": "out Windows.Foundation.Collections.IMapView<K, V>"
+      },
+      {
+       "name": "second",
+       "out": true,
+       "type": "out Windows.Foundation.Collections.IMapView<K, V>"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IMapView",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<K, V>>"
+   ]
+  },
+  "Windows.Foundation.Collections.IObservableMap": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "K",
+    "V"
+   ],
+   "guid": "65df2bf5-bf39-41b5-aebc-5a9d865e472b",
+   "methods": [
+    {
+     "name": "add_MapChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.Collections.MapChangedEventHandler<K, V>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_MapChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IObservableMap",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IMap<K, V>"
+   ]
+  },
+  "Windows.Foundation.Collections.IObservableVector": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "T"
+   ],
+   "guid": "5917eb53-50b4-4a0d-b309-65862b3f1dbc",
+   "methods": [
+    {
+     "name": "add_VectorChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.Collections.VectorChangedEventHandler<T>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_VectorChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IObservableVector",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IVector<T>"
+   ]
+  },
+  "Windows.Foundation.Collections.IPropertySet": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "8a43ed9f-f4e6-4421-acf9-1dab2986820c",
+   "methods": [],
+   "name": "Windows.Foundation.Collections.IPropertySet",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IObservableMap<string, object>",
+    "Windows.Foundation.Collections.IMap<string, object>",
+    "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>"
+   ]
+  },
+  "Windows.Foundation.Collections.IVector": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "T"
+   ],
+   "guid": "913337e9-11a1-4345-a3a2-4e7f956e222d",
+   "methods": [
+    {
+     "name": "GetAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "T"
+    },
+    {
+     "name": "get_Size",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "GetView",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVectorView<T>"
+    },
+    {
+     "name": "IndexOf",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "T"
+      },
+      {
+       "name": "index",
+       "out": true,
+       "type": "out u32"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "T"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "InsertAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "T"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "RemoveAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "Append",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "T"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "RemoveAtEnd",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Clear",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "GetMany",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "items",
+       "out": true,
+       "type": "T[]"
+      }
+     ],
+     "ret": "u32"
+    },
+    {
+     "name": "ReplaceAll",
+     "params": [
+      {
+       "name": "items",
+       "out": false,
+       "type": "T[]"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IVector",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IIterable<T>"
+   ]
+  },
+  "Windows.Foundation.Collections.IVectorChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "575933df-34fe-4480-af15-07691f3d5d9b",
+   "methods": [
+    {
+     "name": "get_CollectionChange",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.CollectionChange",
+     "special": true
+    },
+    {
+     "name": "get_Index",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IVectorChangedEventArgs",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.Collections.IVectorView": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "T"
+   ],
+   "guid": "bbe1fa4c-b0e3-4583-baef-1f1b2e483e56",
+   "methods": [
+    {
+     "name": "GetAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "T"
+    },
+    {
+     "name": "get_Size",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "IndexOf",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "T"
+      },
+      {
+       "name": "index",
+       "out": true,
+       "type": "out u32"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "GetMany",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "items",
+       "out": true,
+       "type": "T[]"
+      }
+     ],
+     "ret": "u32"
+    }
+   ],
+   "name": "Windows.Foundation.Collections.IVectorView",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IIterable<T>"
+   ]
+  },
+  "Windows.Foundation.Collections.MapChangedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "K",
+    "V"
+   ],
+   "guid": "179517f3-94ee-41f8-bddc-768a895544f3",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "Windows.Foundation.Collections.IObservableMap<K, V>"
+     },
+     {
+      "name": "event",
+      "out": false,
+      "type": "Windows.Foundation.Collections.IMapChangedEventArgs<K>"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.Collections.MapChangedEventHandler",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Collections.PropertySet": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.FoundationContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IPropertySet",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IObservableMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.Collections.PropertySet",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.Collections.StringMap": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.FoundationContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IMap<string, string>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, string>>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IObservableMap<string, string>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.Collections.StringMap",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.Collections.ValueSet": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.FoundationContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IPropertySet",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IObservableMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.Collections.ValueSet",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.Collections.VectorChangedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "T"
+   ],
+   "guid": "0c051752-9fbf-4c70-aa0c-0e4c82d9a761",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "Windows.Foundation.Collections.IObservableVector<T>"
+     },
+     {
+      "name": "event",
+      "out": false,
+      "type": "Windows.Foundation.Collections.IVectorChangedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.Collections.VectorChangedEventHandler",
+   "namespace": "Windows.Foundation.Collections",
+   "origin": "winmd"
+  }
+ }
+}

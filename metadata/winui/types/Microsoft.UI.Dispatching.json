@@ -1,0 +1,431 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.dispatching",
+ "namespace": "Microsoft.UI.Dispatching",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Dispatching.DispatcherExitDeferral": {
+   "category": "object"
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueue": {
+   "abstract": true,
+   "blocked": {
+    "TryEnqueue/1": "delegate-parameter",
+    "TryEnqueue/2": "delegate-parameter"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Dispatching.IDispatcherQueue",
+   "events": [
+    {
+     "add": 12,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Dispatching.DispatcherQueue"
+       },
+       "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+      },
+      {
+       "name": "args",
+       "slot": {
+        "k": "variant"
+       },
+       "type": "object"
+      }
+     ],
+     "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, object>",
+     "iface": "Microsoft.UI.Dispatching.IDispatcherQueue3",
+     "name": "framework-shutdown-completed",
+     "native": "FrameworkShutdownCompleted",
+     "remove": 13
+    },
+    {
+     "add": 10,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Dispatching.DispatcherQueue"
+       },
+       "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+      },
+      {
+       "name": "args",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs"
+       },
+       "type": "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs"
+      }
+     ],
+     "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs>",
+     "iface": "Microsoft.UI.Dispatching.IDispatcherQueue3",
+     "name": "framework-shutdown-starting",
+     "native": "FrameworkShutdownStarting",
+     "remove": 11
+    },
+    {
+     "add": 11,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Dispatching.DispatcherQueue"
+       },
+       "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+      },
+      {
+       "name": "args",
+       "slot": {
+        "k": "variant"
+       },
+       "type": "object"
+      }
+     ],
+     "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, object>",
+     "iface": "Microsoft.UI.Dispatching.IDispatcherQueue",
+     "name": "shutdown-completed",
+     "native": "ShutdownCompleted",
+     "remove": 12
+    },
+    {
+     "add": 9,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Dispatching.DispatcherQueue"
+       },
+       "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+      },
+      {
+       "name": "args",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs"
+       },
+       "type": "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs"
+      }
+     ],
+     "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs>",
+     "iface": "Microsoft.UI.Dispatching.IDispatcherQueue",
+     "name": "shutdown-starting",
+     "native": "ShutdownStarting",
+     "remove": 10
+    }
+   ],
+   "excluded": {
+    "EnqueueEventLoopExit": "override",
+    "RunEventLoop": "override"
+   },
+   "full": "Microsoft.UI.Dispatching.DispatcherQueue",
+   "hidden": [],
+   "iid": "f6ebf8fa-be1c-5bf6-a467-73da28738ae8",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.dispatching",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "createTimer": [
+     {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueue",
+      "native": "CreateTimer",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Microsoft.UI.Dispatching.DispatcherQueueTimer"
+      },
+      "ret_native": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+      "slot": 6
+     }
+    ],
+    "ensureSystemDispatcherQueue": [
+     {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueue3",
+      "native": "EnsureSystemDispatcherQueue",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 7
+     }
+    ]
+   },
+   "name": "DispatcherQueue",
+   "namespace": "Microsoft.UI.Dispatching",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueue2",
+      "slot": 6
+     },
+     "name": "hasThreadAccess",
+     "native": "HasThreadAccess",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs",
+    "Microsoft.UI.Dispatching.DispatcherQueueTimer"
+   ],
+   "root": true,
+   "statics": {
+    "getForCurrentThread": [
+     {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueStatics",
+      "native": "GetForCurrentThread",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Microsoft.UI.Dispatching.DispatcherQueue"
+      },
+      "ret_native": "Microsoft.UI.Dispatching.DispatcherQueue",
+      "slot": 6
+     }
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueController": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueuePriority": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "args",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Dispatching.IDispatcherQueueShutdownStartingEventArgs",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs",
+   "hidden": [],
+   "iid": "32519be5-072b-5660-a70e-8835c9b8157d",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.dispatching",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "getDeferral": [
+     {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueShutdownStartingEventArgs",
+      "native": "GetDeferral",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Foundation.Deferral"
+      },
+      "ret_native": "Windows.Foundation.Deferral",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "DispatcherQueueShutdownStartingEventArgs",
+   "namespace": "Microsoft.UI.Dispatching",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.Foundation.Deferral"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueTimer": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": true,
+   "default_interface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+   "events": [
+    {
+     "add": 13,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Dispatching.DispatcherQueueTimer"
+       },
+       "type": "Microsoft.UI.Dispatching.DispatcherQueueTimer"
+      },
+      {
+       "name": "args",
+       "slot": {
+        "k": "variant"
+       },
+       "type": "object"
+      }
+     ],
+     "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueueTimer, object>",
+     "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+     "name": "tick",
+     "native": "Tick",
+     "remove": 14
+    }
+   ],
+   "excluded": {},
+   "full": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+   "hidden": [],
+   "iid": "ad4d63fd-88fe-541f-ac11-bf2dc1ed2ce5",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.dispatching",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "start": [
+     {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+      "native": "Start",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "stop": [
+     {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+      "native": "Stop",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ]
+   },
+   "name": "DispatcherQueueTimer",
+   "namespace": "Microsoft.UI.Dispatching",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+      "slot": 6
+     },
+     "name": "interval",
+     "native": "Interval",
+     "set": {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+      "slot": 7
+     },
+     "slot": {
+      "k": "timespan"
+     },
+     "type": "Windows.Foundation.TimeSpan"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+      "slot": 9
+     },
+     "name": "isRepeating",
+     "native": "IsRepeating",
+     "set": {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+      "slot": 10
+     },
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+      "slot": 8
+     },
+     "name": "isRunning",
+     "native": "IsRunning",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    }
+   ],
+   "refs": [],
+   "root": true,
+   "statics": {},
+   "subject": {
+    "queue": "createTimer"
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Dispatching.DispatcherRunOptions": {
+   "category": "flags"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherExitDeferral": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueue": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueue2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueue3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueController": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueController2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueControllerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueShutdownStartingEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueTimer": {
+   "category": "class-interface"
+  }
+ }
+}

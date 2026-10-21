@@ -1,0 +1,33 @@
+{
+ "enums": {
+  "Windows.Security.EnterpriseData.ProtectionPolicyEvaluationResult": {
+   "flags": false,
+   "members": [
+    [
+     "allowed",
+     0
+    ],
+    [
+     "blocked",
+     1
+    ],
+    [
+     "consentRequired",
+     2
+    ]
+   ],
+   "native": [
+    "Allowed",
+    "Blocked",
+    "ConsentRequired"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "namespace": null,
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {}
+}

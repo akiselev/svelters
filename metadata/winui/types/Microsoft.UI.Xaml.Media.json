@@ -1,0 +1,1696 @@
+{
+ "enums": {
+  "Microsoft.UI.Xaml.Media.BrushMappingMode": {
+   "flags": false,
+   "members": [
+    [
+     "absolute",
+     0
+    ],
+    [
+     "relativeToBoundingBox",
+     1
+    ]
+   ],
+   "native": [
+    "Absolute",
+    "RelativeToBoundingBox"
+   ],
+   "unsigned": false,
+   "used": true
+  },
+  "Microsoft.UI.Xaml.Media.ColorInterpolationMode": {
+   "flags": false,
+   "members": [
+    [
+     "scRgbLinearInterpolation",
+     0
+    ],
+    [
+     "sRgbLinearInterpolation",
+     1
+    ]
+   ],
+   "native": [
+    "ScRgbLinearInterpolation",
+    "SRgbLinearInterpolation"
+   ],
+   "unsigned": false,
+   "used": true
+  },
+  "Microsoft.UI.Xaml.Media.GradientSpreadMethod": {
+   "flags": false,
+   "members": [
+    [
+     "pad",
+     0
+    ],
+    [
+     "reflect",
+     1
+    ],
+    [
+     "repeat",
+     2
+    ]
+   ],
+   "native": [
+    "Pad",
+    "Reflect",
+    "Repeat"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.xaml.media",
+ "namespace": "Microsoft.UI.Xaml.Media",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Xaml.Media.AcrylicBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.AlignmentX": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.AlignmentY": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.ArcSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.BezierSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.BitmapCache": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Brush": {
+   "abstract": true,
+   "blocked": {
+    "PopulatePropertyInfo/2": "out-of-scope:Microsoft.UI.Composition.AnimationPropertyInfo"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.IBrush",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.Brush",
+   "hidden": [
+    "OpacityProperty",
+    "TransformProperty",
+    "RelativeTransformProperty"
+   ],
+   "iid": "2de3cb83-1329-5679-88f8-c822bc5442cb",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "Brush",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.DependencyObject",
+   "props": [
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrushStatics",
+      "slot": 6
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrush",
+      "slot": 6
+     },
+     "name": "opacity",
+     "native": "Opacity",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrush",
+      "slot": 7
+     },
+     "slot": {
+      "k": "float",
+      "t": "f64"
+     },
+     "type": "f64"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrushStatics",
+      "slot": 8
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrush",
+      "slot": 10
+     },
+     "name": "relativeTransform",
+     "native": "RelativeTransform",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrush",
+      "slot": 11
+     },
+     "slot": {
+      "k": "object",
+      "t": "Microsoft.UI.Xaml.Media.Transform"
+     },
+     "type": "Microsoft.UI.Xaml.Media.Transform"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrushStatics",
+      "slot": 7
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrush",
+      "slot": 8
+     },
+     "name": "transform",
+     "native": "Transform",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IBrush",
+      "slot": 9
+     },
+     "slot": {
+      "k": "object",
+      "t": "Microsoft.UI.Xaml.Media.Transform"
+     },
+     "type": "Microsoft.UI.Xaml.Media.Transform"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Xaml.Media.Transform"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.BrushCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.BrushMappingMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.CacheMode": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.ColorInterpolationMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.CompositeTransform": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.CompositionTarget": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.Media.DesktopAcrylicBackdrop": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.DoubleCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.ElementCompositeMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.EllipseGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.FastPlayFallbackBehaviour": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.FillRule": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.FontFamily": {
+   "abstract": false,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": true,
+     "iface": "Microsoft.UI.Xaml.Media.IFontFamilyFactory",
+     "native": "CreateInstanceWithName",
+     "params": [
+      {
+       "name": "familyName",
+       "slot": {
+        "k": "string"
+       },
+       "type": "string"
+      }
+     ],
+     "slot": 6
+    }
+   ],
+   "curated": true,
+   "default_interface": "Microsoft.UI.Xaml.Media.IFontFamily",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.FontFamily",
+   "hidden": [],
+   "iid": "18fa5bc1-7294-527c-bb02-b213e0b3a2a3",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "FontFamily",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IFontFamily",
+      "slot": 6
+     },
+     "name": "source",
+     "native": "Source",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    }
+   ],
+   "refs": [],
+   "root": true,
+   "statics": {
+    "xamlAutoFontFamily": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.IFontFamilyStatics",
+      "native": "get_XamlAutoFontFamily",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "object",
+       "t": "Microsoft.UI.Xaml.Media.FontFamily"
+      },
+      "ret_native": "Microsoft.UI.Xaml.Media.FontFamily",
+      "slot": 6
+     }
+    ]
+   },
+   "subject": {
+    "new": [
+     "Segoe UI"
+    ]
+   },
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.Media.GeneralTransform": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.IGeneralTransform",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.GeneralTransform",
+   "hidden": [],
+   "iid": "04eedeeb-31e5-54c0-ae3f-8bd06645d339",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "transformBounds": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.IGeneralTransform",
+      "native": "TransformBounds",
+      "outs": [],
+      "params": [
+       {
+        "name": "rect",
+        "slot": {
+         "k": "record",
+         "t": "Windows.Foundation.Rect"
+        },
+        "type": "Windows.Foundation.Rect"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Windows.Foundation.Rect"
+      },
+      "ret_native": "Windows.Foundation.Rect",
+      "slot": 9
+     }
+    ],
+    "transformPoint": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.IGeneralTransform",
+      "native": "TransformPoint",
+      "outs": [],
+      "params": [
+       {
+        "name": "point",
+        "slot": {
+         "k": "record",
+         "t": "Windows.Foundation.Point"
+        },
+        "type": "Windows.Foundation.Point"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Windows.Foundation.Point"
+      },
+      "ret_native": "Windows.Foundation.Point",
+      "slot": 7
+     }
+    ],
+    "tryTransform": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.IGeneralTransform",
+      "native": "TryTransform",
+      "outs": [
+       {
+        "name": "outPoint",
+        "slot": {
+         "k": "record",
+         "t": "Windows.Foundation.Point"
+        },
+        "type": "Windows.Foundation.Point"
+       }
+      ],
+      "params": [
+       {
+        "name": "inPoint",
+        "slot": {
+         "k": "record",
+         "t": "Windows.Foundation.Point"
+        },
+        "type": "Windows.Foundation.Point"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "GeneralTransform",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.DependencyObject",
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IGeneralTransform",
+      "slot": 6
+     },
+     "name": "inverse",
+     "native": "Inverse",
+     "set": null,
+     "slot": {
+      "k": "object",
+      "t": "Microsoft.UI.Xaml.Media.GeneralTransform"
+     },
+     "type": "Microsoft.UI.Xaml.Media.GeneralTransform"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Point",
+    "Windows.Foundation.Rect"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.Geometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.GeometryCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.GeometryGroup": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.GradientBrush": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.GradientBrush",
+   "hidden": [
+    "SpreadMethodProperty",
+    "MappingModeProperty",
+    "ColorInterpolationModeProperty",
+    "GradientStopsProperty"
+   ],
+   "iid": "77c347fa-c4c4-5174-a945-65cab3aa1c75",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "GradientBrush",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.Media.Brush",
+   "props": [
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrushStatics",
+      "slot": 8
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 10
+     },
+     "name": "colorInterpolationMode",
+     "native": "ColorInterpolationMode",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 11
+     },
+     "slot": {
+      "k": "enum",
+      "t": "Microsoft.UI.Xaml.Media.ColorInterpolationMode"
+     },
+     "type": "Microsoft.UI.Xaml.Media.ColorInterpolationMode"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrushStatics",
+      "slot": 9
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 12
+     },
+     "name": "gradientStops",
+     "native": "GradientStops",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 13
+     },
+     "slot": {
+      "k": "object",
+      "t": "Microsoft.UI.Xaml.Media.GradientStopCollection"
+     },
+     "type": "Microsoft.UI.Xaml.Media.GradientStopCollection"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrushStatics",
+      "slot": 7
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 8
+     },
+     "name": "mappingMode",
+     "native": "MappingMode",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 9
+     },
+     "slot": {
+      "k": "enum",
+      "t": "Microsoft.UI.Xaml.Media.BrushMappingMode"
+     },
+     "type": "Microsoft.UI.Xaml.Media.BrushMappingMode"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrushStatics",
+      "slot": 6
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 6
+     },
+     "name": "spreadMethod",
+     "native": "SpreadMethod",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientBrush",
+      "slot": 7
+     },
+     "slot": {
+      "k": "enum",
+      "t": "Microsoft.UI.Xaml.Media.GradientSpreadMethod"
+     },
+     "type": "Microsoft.UI.Xaml.Media.GradientSpreadMethod"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Xaml.Media.BrushMappingMode",
+    "Microsoft.UI.Xaml.Media.ColorInterpolationMode",
+    "Microsoft.UI.Xaml.Media.GradientSpreadMethod",
+    "Microsoft.UI.Xaml.Media.GradientStopCollection"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.GradientSpreadMethod": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.GradientStop": {
+   "abstract": false,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.IGradientStop",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.GradientStop",
+   "hidden": [
+    "ColorProperty",
+    "OffsetProperty"
+   ],
+   "iid": "48bcb039-e8e1-5743-94c3-f766011d3b5d",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "GradientStop",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.DependencyObject",
+   "props": [
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientStopStatics",
+      "slot": 6
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientStop",
+      "slot": 6
+     },
+     "name": "color",
+     "native": "Color",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientStop",
+      "slot": 7
+     },
+     "slot": {
+      "k": "record",
+      "t": "Windows.UI.Color"
+     },
+     "type": "Windows.UI.Color"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientStopStatics",
+      "slot": 7
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientStop",
+      "slot": 8
+     },
+     "name": "offset",
+     "native": "Offset",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.IGradientStop",
+      "slot": 9
+     },
+     "slot": {
+      "k": "float",
+      "t": "f64"
+     },
+     "type": "f64"
+    }
+   ],
+   "refs": [
+    "Windows.UI.Color"
+   ],
+   "root": true,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.GradientStopCollection": {
+   "abstract": false,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator",
+    "GetMany/2": "array",
+    "ReplaceAll/1": "array"
+   },
+   "bound": true,
+   "category": "model",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.GradientStopCollection",
+   "hidden": [],
+   "iid": "a367363d-deaf-5d2c-909c-41b0f259ba7c",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "append": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "Append",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.Media.GradientStop"
+        },
+        "type": "Microsoft.UI.Xaml.Media.GradientStop"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 13
+     }
+    ],
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 15
+     }
+    ],
+    "getAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "GetAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Microsoft.UI.Xaml.Media.GradientStop"
+      },
+      "ret_native": "Microsoft.UI.Xaml.Media.GradientStop",
+      "slot": 6
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "list",
+       "of": {
+        "k": "object",
+        "t": "Microsoft.UI.Xaml.Media.GradientStop"
+       },
+       "t": "Windows.Foundation.Collections.IVectorView<Microsoft.UI.Xaml.Media.GradientStop>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IVectorView<Microsoft.UI.Xaml.Media.GradientStop>",
+      "slot": 8
+     }
+    ],
+    "indexOf": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "IndexOf",
+      "outs": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.Media.GradientStop"
+        },
+        "type": "Microsoft.UI.Xaml.Media.GradientStop"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 9
+     }
+    ],
+    "insertAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "InsertAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.Media.GradientStop"
+        },
+        "type": "Microsoft.UI.Xaml.Media.GradientStop"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "removeAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "RemoveAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "removeAtEnd": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "RemoveAtEnd",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 14
+     }
+    ],
+    "setAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "native": "SetAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.Media.GradientStop"
+        },
+        "type": "Microsoft.UI.Xaml.Media.GradientStop"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 10
+     }
+    ]
+   },
+   "name": "GradientStopCollection",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Media.GradientStop>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Xaml.Media.GradientStop"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.Media.IAcrylicBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IAcrylicBrush2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IAcrylicBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IAcrylicBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IAcrylicBrushStatics2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IArcSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IArcSegmentStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IBezierSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IBezierSegmentStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IBitmapCache": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IBrushOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ICacheMode": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ICacheModeFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ICompositeTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ICompositeTransformStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ICompositionTarget": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ICompositionTargetStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IDesktopAcrylicBackdrop": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IDesktopAcrylicBackdropFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IEllipseGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IEllipseGeometryStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IFontFamily": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IFontFamilyFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IFontFamilyStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeneralTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeneralTransformFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeneralTransformOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeometryFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeometryGroup": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeometryGroupStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGeometryStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGradientBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGradientBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGradientBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGradientStop": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IGradientStopStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IImageBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IImageBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IImageSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IImageSourceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILineGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILineGeometryStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILineSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILineSegmentStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILinearGradientBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILinearGradientBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILinearGradientBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILoadedImageSourceLoadCompletedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILoadedImageSurface": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ILoadedImageSurfaceStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMatrix3DProjection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMatrix3DProjectionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMatrixHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMatrixHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMatrixTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMatrixTransformStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMediaTransportControlsThumbnailRequestedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMicaBackdrop": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMicaBackdropFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IMicaBackdropStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPathFigure": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPathFigureStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPathGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPathGeometryStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPathSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPathSegmentFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPlaneProjection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPlaneProjectionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPolyBezierSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPolyBezierSegmentStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPolyLineSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPolyLineSegmentStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPolyQuadraticBezierSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IPolyQuadraticBezierSegmentStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IProjection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IProjectionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IQuadraticBezierSegment": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IQuadraticBezierSegmentStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRadialGradientBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRadialGradientBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRadialGradientBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRectangleGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRectangleGeometryStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRenderedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRenderingEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRotateTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IRotateTransformStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IScaleTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IScaleTransformStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IShadow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IShadowFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISkewTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISkewTransformStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISolidColorBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISolidColorBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISolidColorBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISystemBackdrop": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISystemBackdropFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ISystemBackdropOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IThemeShadow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IThemeShadowFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITileBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITileBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITileBrushStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITransformFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITransformGroup": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITransformGroupStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITranslateTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ITranslateTransformStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IVisualTreeHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IVisualTreeHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlCompositionBrushBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlCompositionBrushBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlCompositionBrushBaseOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlCompositionBrushBaseProtected": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlCompositionBrushBaseStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlLight": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlLightFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlLightOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlLightProtected": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.IXamlLightStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.ImageBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.ImageSource": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.IImageSource",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.ImageSource",
+   "hidden": [],
+   "iid": "6c2038f6-d6d5-55e9-9b9e-082f12dbff60",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "ImageSource",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.DependencyObject",
+   "props": [],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.LineGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.LineSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.LinearGradientBrush": {
+   "abstract": false,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    },
+    {
+     "composable": false,
+     "iface": "Microsoft.UI.Xaml.Media.ILinearGradientBrushFactory",
+     "native": "CreateInstanceWithGradientStopCollectionAndAngle",
+     "params": [
+      {
+       "name": "gradientStopCollection",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Xaml.Media.GradientStopCollection"
+       },
+       "type": "Microsoft.UI.Xaml.Media.GradientStopCollection"
+      },
+      {
+       "name": "angle",
+       "slot": {
+        "k": "float",
+        "t": "f64"
+       },
+       "type": "f64"
+      }
+     ],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.ILinearGradientBrush",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.LinearGradientBrush",
+   "hidden": [
+    "StartPointProperty",
+    "EndPointProperty"
+   ],
+   "iid": "c0ab9638-1bd9-5fa4-9649-48cfa12f0d1e",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "LinearGradientBrush",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.Media.GradientBrush",
+   "props": [
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.ILinearGradientBrushStatics",
+      "slot": 7
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.ILinearGradientBrush",
+      "slot": 8
+     },
+     "name": "endPoint",
+     "native": "EndPoint",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.ILinearGradientBrush",
+      "slot": 9
+     },
+     "slot": {
+      "k": "record",
+      "t": "Windows.Foundation.Point"
+     },
+     "type": "Windows.Foundation.Point"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.ILinearGradientBrushStatics",
+      "slot": 6
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.ILinearGradientBrush",
+      "slot": 6
+     },
+     "name": "startPoint",
+     "native": "StartPoint",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.ILinearGradientBrush",
+      "slot": 7
+     },
+     "slot": {
+      "k": "record",
+      "t": "Windows.Foundation.Point"
+     },
+     "type": "Windows.Foundation.Point"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Xaml.Media.GradientStopCollection",
+    "Windows.Foundation.Point"
+   ],
+   "root": true,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.LoadedImageSourceLoadCompletedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Media.LoadedImageSourceLoadStatus": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.LoadedImageSurface": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Matrix": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.Media.Matrix3DProjection": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.MatrixHelper": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Media.MatrixTransform": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.MediaTransportControlsThumbnailRequestedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Media.MicaBackdrop": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.PathFigure": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.PathFigureCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.PathGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.PathSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.PathSegmentCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.PenLineCap": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.PenLineJoin": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.PlaneProjection": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.PointCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.PolyBezierSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.PolyLineSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.PolyQuadraticBezierSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Projection": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.QuadraticBezierSegment": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.RadialGradientBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.RectangleGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.RenderedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Media.RenderingEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Media.RotateTransform": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.ScaleTransform": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Shadow": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.SkewTransform": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.SolidColorBrush": {
+   "abstract": false,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    },
+    {
+     "composable": false,
+     "iface": "Microsoft.UI.Xaml.Media.ISolidColorBrushFactory",
+     "native": "CreateInstanceWithColor",
+     "params": [
+      {
+       "name": "color",
+       "slot": {
+        "k": "record",
+        "t": "Windows.UI.Color"
+       },
+       "type": "Windows.UI.Color"
+      }
+     ],
+     "slot": 6
+    }
+   ],
+   "curated": true,
+   "default_interface": "Microsoft.UI.Xaml.Media.ISolidColorBrush",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+   "hidden": [
+    "ColorProperty"
+   ],
+   "iid": "b3865c31-37c8-55c1-8a72-d41c67642e2a",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "SolidColorBrush",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.Media.Brush",
+   "props": [
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.ISolidColorBrushStatics",
+      "slot": 6
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.ISolidColorBrush",
+      "slot": 6
+     },
+     "name": "color",
+     "native": "Color",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.ISolidColorBrush",
+      "slot": 7
+     },
+     "slot": {
+      "k": "record",
+      "t": "Windows.UI.Color"
+     },
+     "type": "Windows.UI.Color"
+    }
+   ],
+   "refs": [
+    "Windows.UI.Color"
+   ],
+   "root": true,
+   "statics": {},
+   "subject": {
+    "construct": {
+     "opacity": 0.5
+    }
+   },
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.Stretch": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.StyleSimulations": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.SweepDirection": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.SystemBackdrop": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.ThemeShadow": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.TileBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Transform": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.ITransform",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.Transform",
+   "hidden": [],
+   "iid": "92a8dee5-1413-56b9-8cca-3c46918fde1b",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "Transform",
+   "namespace": "Microsoft.UI.Xaml.Media",
+   "parent": "Microsoft.UI.Xaml.Media.GeneralTransform",
+   "props": [],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.TransformCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.TransformGroup": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.TranslateTransform": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.VisualTreeHelper": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.Media.XamlCompositionBrushBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.XamlLight": {
+   "category": "object"
+  }
+ }
+}

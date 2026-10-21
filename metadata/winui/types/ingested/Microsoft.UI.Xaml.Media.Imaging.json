@@ -1,0 +1,2081 @@
+{
+ "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "Flags": [
+     []
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "IgnoreImageCache",
+     8
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.BitmapImage": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageFactory",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ],
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.BitmapImage",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.BitmapSource": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceFactory",
+      "CompositionType.1",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.ImageSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Physical",
+     0
+    ],
+    [
+     "Logical",
+     1
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IDownloadProgressEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "9a8e4af5-b124-5205-8ae9-3496e063c569",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.BitmapImage"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "5cc29916-a411-5bc2-a3c5-a00d99a59da8",
+   "methods": [
+    {
+     "name": "get_CreateOptions",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions",
+     "special": true
+    },
+    {
+     "name": "put_CreateOptions",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_UriSource",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "put_UriSource",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_DecodePixelWidth",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "put_DecodePixelWidth",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_DecodePixelHeight",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "put_DecodePixelHeight",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_DecodePixelType",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType",
+     "special": true
+    },
+    {
+     "name": "put_DecodePixelType",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsAnimatedBitmap",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_IsPlaying",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_AutoPlay",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_AutoPlay",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_DownloadProgress",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_DownloadProgress",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_ImageOpened",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.RoutedEventHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ImageOpened",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_ImageFailed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.ExceptionRoutedEventHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ImageFailed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "Play",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Stop",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.BitmapImage"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "f037e0e9-f229-522e-95c9-da2211a14b05",
+   "methods": [
+    {
+     "name": "CreateInstanceWithUriSource",
+     "params": [
+      {
+       "name": "uriSource",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.BitmapImage"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageFactory",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.BitmapImage"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "4bcf71a9-1897-51dc-8e3f-2c5c796d1cd9",
+   "methods": [
+    {
+     "name": "get_CreateOptionsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_UriSourceProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_DecodePixelWidthProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_DecodePixelHeightProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_DecodePixelTypeProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsAnimatedBitmapProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsPlayingProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_AutoPlayProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.BitmapSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8424269d-9b82-534f-8fea-af5b5ef96bf2",
+   "methods": [
+    {
+     "name": "get_PixelWidth",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "get_PixelHeight",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "SetSource",
+     "params": [
+      {
+       "name": "streamSource",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStream"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "SetSourceAsync",
+     "params": [
+      {
+       "name": "streamSource",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStream"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.BitmapSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "0392f025-1868-5876-ad67-12e94a8da5bf",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceFactory",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.BitmapSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "efa3745e-4400-5f0b-bdc7-3f2911a3d719",
+   "methods": [
+    {
+     "name": "get_PixelWidthProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_PixelHeightProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceStatics",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IDownloadProgressEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "9a0ea80b-1a17-50d5-83f3-377738212619",
+   "methods": [
+    {
+     "name": "get_Progress",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "put_Progress",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IDownloadProgressEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmap": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.RenderTargetBitmap"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "cf10407d-fa8b-57a3-9574-710529ae0b04",
+   "methods": [
+    {
+     "name": "get_PixelWidth",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "get_PixelHeight",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RenderAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "RenderAsync",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RenderToSizeAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "RenderAsync",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      },
+      {
+       "name": "scaledWidth",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "scaledHeight",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetPixelsAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IBuffer>"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmap",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmapStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.RenderTargetBitmap"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "83e822e4-9f84-5986-93b0-e4f7019c367d",
+   "methods": [
+    {
+     "name": "get_PixelWidthProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_PixelHeightProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmapStatics",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISoftwareBitmapSource": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SoftwareBitmapSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a6aca802-1f24-5a1e-bf08-781a85ed5511",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "SetBitmapAsync",
+     "params": [
+      {
+       "name": "softwareBitmap",
+       "out": false,
+       "type": "Windows.Graphics.Imaging.SoftwareBitmap"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISoftwareBitmapSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSource": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "ac078d9c-d0e0-5ff9-b73e-98e82e4c8d36",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSourceFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "09a26ed2-11b3-5ef1-ac56-20d064ccca34",
+   "methods": [
+    {
+     "name": "CreateInstanceWithDimensions",
+     "params": [
+      {
+       "name": "pixelWidth",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "pixelHeight",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource"
+    },
+    {
+     "name": "CreateInstanceWithDimensionsAndOpacity",
+     "params": [
+      {
+       "name": "pixelWidth",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "pixelHeight",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "isOpaque",
+       "out": false,
+       "type": "bool"
+      },
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSourceFactory",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSource": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d5b61d3c-b68d-53a2-b07b-ba6adfdd5887",
+   "methods": [
+    {
+     "name": "get_UriSource",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "put_UriSource",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_RasterizePixelWidth",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_RasterizePixelWidth",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_RasterizePixelHeight",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_RasterizePixelHeight",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Opened",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Media.Imaging.SvgImageSource, Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceOpenedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Opened",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_OpenFailed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Media.Imaging.SvgImageSource, Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceFailedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_OpenFailed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "SetSourceAsync",
+     "params": [
+      {
+       "name": "streamSource",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStream"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceLoadStatus>"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "2f85673f-ac64-570d-9bda-94fa082eead9",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource"
+    },
+    {
+     "name": "CreateInstanceWithUriSource",
+     "params": [
+      {
+       "name": "uriSource",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      },
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFactory",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFailedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceFailedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "76e66278-7804-5439-a50d-14c5ba896714",
+   "methods": [
+    {
+     "name": "get_Status",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceLoadStatus",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFailedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceOpenedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceOpenedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "1c9860d5-38d0-5b21-8d48-072f1e254e39",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceOpenedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e3ad1068-f4c6-5513-a777-2980f0ba41bd",
+   "methods": [
+    {
+     "name": "get_UriSourceProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_RasterizePixelWidthProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_RasterizePixelHeightProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceStatics",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSource": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e4ff96a6-fede-589c-a007-4178b53b6739",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSourceFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "08490f2c-04a8-5031-b9c7-707060d7cd48",
+   "methods": [
+    {
+     "name": "CreateInstanceWithDimensions",
+     "params": [
+      {
+       "name": "pixelWidth",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "pixelHeight",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource"
+    },
+    {
+     "name": "CreateInstanceWithDimensionsAndOpacity",
+     "params": [
+      {
+       "name": "pixelWidth",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "pixelHeight",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "isOpaque",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSourceFactory",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmap": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "78c824a9-0e43-5f1e-93bc-d046cca82b7e",
+   "methods": [
+    {
+     "name": "get_PixelBuffer",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IBuffer",
+     "special": true
+    },
+    {
+     "name": "Invalidate",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmap",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmapFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "26e861d9-b080-512b-96c4-80050e7e08d1",
+   "methods": [
+    {
+     "name": "CreateInstanceWithDimensions",
+     "params": [
+      {
+       "name": "pixelWidth",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "pixelHeight",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmapFactory",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTask": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.XamlRenderingBackgroundTask"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "7807000c-a050-5121-ac74-3322d5358e39",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTask",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.XamlRenderingBackgroundTask"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "205247a3-9ffe-599a-a21a-7181442a9d75",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Media.Imaging.XamlRenderingBackgroundTask"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskFactory",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskOverrides": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.XamlRenderingBackgroundTask"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "18733237-324b-57c0-89b2-5875472acc80",
+   "methods": [
+    {
+     "name": "OnRun",
+     "params": [
+      {
+       "name": "taskInstance",
+       "out": false,
+       "type": "Windows.ApplicationModel.Background.IBackgroundTaskInstance"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskOverrides",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.RenderTargetBitmap": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmapStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.ImageSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmap",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.RenderTargetBitmap",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SoftwareBitmapSource": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.ImageSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.ISoftwareBitmapSource",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.SoftwareBitmapSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSourceFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.ImageSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSource",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.ImageSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSource",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceFailedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFailedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceFailedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceLoadStatus": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Success",
+     0
+    ],
+    [
+     "NetworkError",
+     1
+    ],
+    [
+     "InvalidFormat",
+     2
+    ],
+    [
+     "Other",
+     3
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceLoadStatus",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceOpenedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceOpenedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceOpenedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSourceFactory",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSource",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmapFactory",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmap",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.XamlRenderingBackgroundTask": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskFactory",
+      "CompositionType.1",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTask",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskOverrides",
+     "overridable": true,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Media.Imaging.XamlRenderingBackgroundTask",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "origin": "winmd",
+   "sealed": false
+  }
+ }
+}

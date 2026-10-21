@@ -1,0 +1,2857 @@
+{
+ "namespace": "Microsoft.UI.Windowing",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Microsoft.UI.Windowing.AppWindow": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Windowing.IAppWindowStatics2",
+      65540,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ],
+     [
+      "Microsoft.UI.Windowing.IAppWindowStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IAppWindow",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IAppWindow2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IAppWindow3",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IAppWindow4",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.AppWindow",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.AppWindowChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IAppWindowChangedEventArgs",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IAppWindowChangedEventArgs2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.AppWindowChangedEventArgs",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.AppWindowClosingEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IAppWindowClosingEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.AppWindowClosingEventArgs",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.AppWindowPresenter": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Windowing.IAppWindowPresenterFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IAppWindowPresenter",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.AppWindowPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Windowing.AppWindowPresenterKind": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Default",
+     0
+    ],
+    [
+     "CompactOverlay",
+     1
+    ],
+    [
+     "FullScreen",
+     2
+    ],
+    [
+     "Overlapped",
+     3
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.AppWindowPresenterKind",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Windowing.AppWindowTitleBar": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Windowing.IAppWindowTitleBarStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IAppWindowTitleBar",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IAppWindowTitleBar2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IAppWindowTitleBar3",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.AppWindowTitleBar",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.CompactOverlayPresenter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Windowing.ICompactOverlayPresenterStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Windowing.AppWindowPresenter",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.ICompactOverlayPresenter",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.CompactOverlayPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.CompactOverlaySize": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Small",
+     0
+    ],
+    [
+     "Medium",
+     1
+    ],
+    [
+     "Large",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.CompactOverlaySize",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Windowing.DisplayArea": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Windowing.IDisplayAreaStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ],
+     [
+      "Microsoft.UI.Windowing.IDisplayAreaStatics2",
+      65538,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IDisplayArea",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.DisplayArea",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.DisplayAreaFallback": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Primary",
+     1
+    ],
+    [
+     "Nearest",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.DisplayAreaFallback",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Windowing.DisplayAreaWatcher": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IDisplayAreaWatcher",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.DisplayAreaWatcher",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.DisplayAreaWatcherStatus": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Created",
+     0
+    ],
+    [
+     "Started",
+     1
+    ],
+    [
+     "EnumerationCompleted",
+     2
+    ],
+    [
+     "Stopping",
+     3
+    ],
+    [
+     "Stopped",
+     4
+    ],
+    [
+     "Aborted",
+     5
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.DisplayAreaWatcherStatus",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Windowing.FullScreenPresenter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Windowing.IFullScreenPresenterStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Windowing.AppWindowPresenter",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IFullScreenPresenter",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.FullScreenPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.IAppWindow": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindow"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cfa788b3-643b-5c5e-ad4e-321d48a82acd",
+   "methods": [
+    {
+     "name": "get_Id",
+     "params": [],
+     "ret": "Microsoft.UI.WindowId",
+     "special": true
+    },
+    {
+     "name": "get_IsShownInSwitchers",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsShownInSwitchers",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsVisible",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_OwnerWindowId",
+     "params": [],
+     "ret": "Microsoft.UI.WindowId",
+     "special": true
+    },
+    {
+     "name": "get_Position",
+     "params": [],
+     "ret": "Windows.Graphics.PointInt32",
+     "special": true
+    },
+    {
+     "name": "get_Presenter",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.AppWindowPresenter",
+     "special": true
+    },
+    {
+     "name": "get_Size",
+     "params": [],
+     "ret": "Windows.Graphics.SizeInt32",
+     "special": true
+    },
+    {
+     "name": "get_Title",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Title",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_TitleBar",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.AppWindowTitleBar",
+     "special": true
+    },
+    {
+     "name": "Destroy",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Hide",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Move",
+     "params": [
+      {
+       "name": "position",
+       "out": false,
+       "type": "Windows.Graphics.PointInt32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "MoveAndResize"
+       ]
+      ]
+     },
+     "name": "MoveAndResize",
+     "params": [
+      {
+       "name": "rect",
+       "out": false,
+       "type": "Windows.Graphics.RectInt32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "MoveAndResizeRelativeToDisplayArea"
+       ]
+      ]
+     },
+     "name": "MoveAndResize",
+     "params": [
+      {
+       "name": "rect",
+       "out": false,
+       "type": "Windows.Graphics.RectInt32"
+      },
+      {
+       "name": "displayarea",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.DisplayArea"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "Resize",
+     "params": [
+      {
+       "name": "size",
+       "out": false,
+       "type": "Windows.Graphics.SizeInt32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "DefaultOverload": [
+       []
+      ],
+      "Overload": [
+       [
+        "SetIcon"
+       ]
+      ]
+     },
+     "name": "SetIcon",
+     "params": [
+      {
+       "name": "iconPath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "SetIconWithIconId"
+       ]
+      ]
+     },
+     "name": "SetIcon",
+     "params": [
+      {
+       "name": "iconId",
+       "out": false,
+       "type": "Microsoft.UI.IconId"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "DefaultOverload": [
+       []
+      ],
+      "Overload": [
+       [
+        "SetPresenter"
+       ]
+      ]
+     },
+     "name": "SetPresenter",
+     "params": [
+      {
+       "name": "appWindowPresenter",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.AppWindowPresenter"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "SetPresenterByKind"
+       ]
+      ]
+     },
+     "name": "SetPresenter",
+     "params": [
+      {
+       "name": "appWindowPresenterKind",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.AppWindowPresenterKind"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "Show"
+       ]
+      ]
+     },
+     "name": "Show",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ShowWithActivation"
+       ]
+      ]
+     },
+     "name": "Show",
+     "params": [
+      {
+       "name": "activateWindow",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "add_Changed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.AppWindow, Microsoft.UI.Windowing.AppWindowChangedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Changed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Closing",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.AppWindow, Microsoft.UI.Windowing.AppWindowClosingEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Closing",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Destroying",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.AppWindow, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Destroying",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindow",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindow2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65537
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindow"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "6cd41292-794c-5cac-8961-210d012c6ebc",
+   "methods": [
+    {
+     "name": "get_ClientSize",
+     "params": [],
+     "ret": "Windows.Graphics.SizeInt32",
+     "special": true
+    },
+    {
+     "name": "MoveInZOrderAtBottom",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "MoveInZOrderAtTop",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "MoveInZOrderBelow",
+     "params": [
+      {
+       "name": "windowId",
+       "out": false,
+       "type": "Microsoft.UI.WindowId"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "ResizeClient",
+     "params": [
+      {
+       "name": "size",
+       "out": false,
+       "type": "Windows.Graphics.SizeInt32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "ShowOnceWithRequestedStartupState",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindow2",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindow3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindow"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2f260cea-193d-5dd6-a904-d7649a608d2f",
+   "methods": [
+    {
+     "name": "AssociateWithDispatcherQueue",
+     "params": [
+      {
+       "name": "dispatcherQueue",
+       "out": false,
+       "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_DispatcherQueue",
+     "params": [],
+     "ret": "Microsoft.UI.Dispatching.DispatcherQueue",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindow3",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindow4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65543
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindow"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "383bfb91-ea29-5414-80cd-6c76d981eb31",
+   "methods": [
+    {
+     "attributes": {
+      "DefaultOverload": [
+       []
+      ],
+      "Overload": [
+       [
+        "SetTaskbarIcon"
+       ]
+      ]
+     },
+     "name": "SetTaskbarIcon",
+     "params": [
+      {
+       "name": "iconPath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "SetTaskbarIconWithIconId"
+       ]
+      ]
+     },
+     "name": "SetTaskbarIcon",
+     "params": [
+      {
+       "name": "iconId",
+       "out": false,
+       "type": "Microsoft.UI.IconId"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "DefaultOverload": [
+       []
+      ],
+      "Overload": [
+       [
+        "SetTitleBarIcon"
+       ]
+      ]
+     },
+     "name": "SetTitleBarIcon",
+     "params": [
+      {
+       "name": "iconPath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "SetTitleBarIconWithIconId"
+       ]
+      ]
+     },
+     "name": "SetTitleBarIcon",
+     "params": [
+      {
+       "name": "iconId",
+       "out": false,
+       "type": "Microsoft.UI.IconId"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindow4",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowChangedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2182bc5d-fdac-5c3e-bf37-7d8d684e9d1d",
+   "methods": [
+    {
+     "name": "get_DidPositionChange",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_DidPresenterChange",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_DidSizeChange",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_DidVisibilityChange",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowChangedEventArgs",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowChangedEventArgs2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65537
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowChangedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "a773ab4c-a5ec-50e8-98ac-247fe6cd4227",
+   "methods": [
+    {
+     "name": "get_DidZOrderChange",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_IsZOrderAtBottom",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_IsZOrderAtTop",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_ZOrderBelowWindowId",
+     "params": [],
+     "ret": "Microsoft.UI.WindowId",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowChangedEventArgs2",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowClosingEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowClosingEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "0e09d90b-2261-590b-9ad1-8504991d8754",
+   "methods": [
+    {
+     "name": "get_Cancel",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Cancel",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowClosingEventArgs",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowPresenter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "bc3042c2-c6c6-5632-8989-ff0ec6d3b40d",
+   "methods": [
+    {
+     "name": "get_Kind",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.AppWindowPresenterKind",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowPresenterFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "62082e3c-1368-5238-90d1-e932dc718a82",
+   "methods": [],
+   "name": "Microsoft.UI.Windowing.IAppWindowPresenterFactory",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindow"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "3c315c24-d540-5d72-b518-b226b83627cb",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "Create"
+       ]
+      ]
+     },
+     "name": "Create",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.AppWindow"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateWithPresenter"
+       ]
+      ]
+     },
+     "name": "Create",
+     "params": [
+      {
+       "name": "appWindowPresenter",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.AppWindowPresenter"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.AppWindow"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateWithPresenterAndOwner"
+       ]
+      ]
+     },
+     "name": "Create",
+     "params": [
+      {
+       "name": "appWindowPresenter",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.AppWindowPresenter"
+      },
+      {
+       "name": "ownerWindowId",
+       "out": false,
+       "type": "Microsoft.UI.WindowId"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.AppWindow"
+    },
+    {
+     "name": "GetFromWindowId",
+     "params": [
+      {
+       "name": "windowId",
+       "out": false,
+       "type": "Microsoft.UI.WindowId"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.AppWindow"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowStatics",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindow"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cabc23db-4606-5d6e-89a5-06de1d8bd3e2",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateWithDispatcherQueue"
+       ]
+      ]
+     },
+     "name": "Create",
+     "params": [
+      {
+       "name": "appWindowPresenter",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.AppWindowPresenter"
+      },
+      {
+       "name": "ownerWindowId",
+       "out": false,
+       "type": "Microsoft.UI.WindowId"
+      },
+      {
+       "name": "DispatcherQueue",
+       "out": false,
+       "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.AppWindow"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowStatics2",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBar": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowTitleBar"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5574efa2-c91c-5700-a363-539c71a7aaf4",
+   "methods": [
+    {
+     "name": "get_BackgroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_BackgroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonBackgroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonBackgroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonForegroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonForegroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonHoverBackgroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonHoverBackgroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonHoverForegroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonHoverForegroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonInactiveBackgroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonInactiveBackgroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonInactiveForegroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonInactiveForegroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonPressedBackgroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonPressedBackgroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ButtonPressedForegroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ButtonPressedForegroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ExtendsContentIntoTitleBar",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_ExtendsContentIntoTitleBar",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ForegroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_ForegroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Height",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "get_IconShowOptions",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.IconShowOptions",
+     "special": true
+    },
+    {
+     "name": "put_IconShowOptions",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.IconShowOptions"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_InactiveBackgroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_InactiveBackgroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_InactiveForegroundColor",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.UI.Color>",
+     "special": true
+    },
+    {
+     "name": "put_InactiveForegroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.UI.Color>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_LeftInset",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "get_RightInset",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "ResetToDefault",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Deprecated": [
+       [
+        "Use Microsoft.UI.Input.InputNonClientPointerSource.ConfigureRegion instead of SetDragRectangles.  For more info, see MSDN.",
+        "DeprecationType.0",
+        65540,
+        "Microsoft.Foundation.WindowsAppSDKContract"
+       ]
+      ]
+     },
+     "name": "SetDragRectangles",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Graphics.RectInt32[]"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowTitleBar",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBar2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65537
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowTitleBar"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "86faed38-748a-5b4b-9ccf-3ba0496c9041",
+   "methods": [
+    {
+     "name": "get_PreferredHeightOption",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.TitleBarHeightOption",
+     "special": true
+    },
+    {
+     "name": "put_PreferredHeightOption",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.TitleBarHeightOption"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowTitleBar2",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBar3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65543
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowTitleBar"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "07146e74-0410-5597-aba7-1af276d2ae07",
+   "methods": [
+    {
+     "name": "get_PreferredTheme",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.TitleBarTheme",
+     "special": true
+    },
+    {
+     "name": "put_PreferredTheme",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.TitleBarTheme"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowTitleBar3",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IAppWindowTitleBarStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.AppWindowTitleBar"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "9e1da52e-8b15-54d6-a886-f7b9f9d930b2",
+   "methods": [
+    {
+     "name": "IsCustomizationSupported",
+     "params": [],
+     "ret": "bool"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IAppWindowTitleBarStatics",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.ICompactOverlayPresenter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.CompactOverlayPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "efeb0812-6fc7-5b7d-bd92-cc8f9a6454c9",
+   "methods": [
+    {
+     "name": "get_InitialSize",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.CompactOverlaySize",
+     "special": true
+    },
+    {
+     "name": "put_InitialSize",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.CompactOverlaySize"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.ICompactOverlayPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.ICompactOverlayPresenterStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.CompactOverlayPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "eab93186-4f6a-52f9-8c03-da57a1522f6e",
+   "methods": [
+    {
+     "name": "Create",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.CompactOverlayPresenter"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.ICompactOverlayPresenterStatics",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IDisplayArea": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.DisplayArea"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5c7e0537-b621-5579-bcae-a84aa8746167",
+   "methods": [
+    {
+     "name": "get_DisplayId",
+     "params": [],
+     "ret": "Microsoft.UI.DisplayId",
+     "special": true
+    },
+    {
+     "name": "get_IsPrimary",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_OuterBounds",
+     "params": [],
+     "ret": "Windows.Graphics.RectInt32",
+     "special": true
+    },
+    {
+     "name": "get_WorkArea",
+     "params": [],
+     "ret": "Windows.Graphics.RectInt32",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IDisplayArea",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IDisplayAreaStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.DisplayArea"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "02ab4926-211e-5d49-8e4b-2af193daed09",
+   "methods": [
+    {
+     "name": "get_Primary",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.DisplayArea",
+     "special": true
+    },
+    {
+     "name": "CreateWatcher",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.DisplayAreaWatcher"
+    },
+    {
+     "name": "FindAll",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVectorView<Microsoft.UI.Windowing.DisplayArea>"
+    },
+    {
+     "name": "GetFromWindowId",
+     "params": [
+      {
+       "name": "windowId",
+       "out": false,
+       "type": "Microsoft.UI.WindowId"
+      },
+      {
+       "name": "displayAreaFallback",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.DisplayAreaFallback"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.DisplayArea"
+    },
+    {
+     "name": "GetFromPoint",
+     "params": [
+      {
+       "name": "point",
+       "out": false,
+       "type": "Windows.Graphics.PointInt32"
+      },
+      {
+       "name": "displayAreaFallback",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.DisplayAreaFallback"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.DisplayArea"
+    },
+    {
+     "name": "GetFromRect",
+     "params": [
+      {
+       "name": "rect",
+       "out": false,
+       "type": "Windows.Graphics.RectInt32"
+      },
+      {
+       "name": "displayAreaFallback",
+       "out": false,
+       "type": "Microsoft.UI.Windowing.DisplayAreaFallback"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.DisplayArea"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IDisplayAreaStatics",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IDisplayAreaStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65538
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.DisplayArea"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "7207ad4b-890d-5dd7-bc18-78ffd9544d8f",
+   "methods": [
+    {
+     "name": "GetFromDisplayId",
+     "params": [
+      {
+       "name": "displayId",
+       "out": false,
+       "type": "Microsoft.UI.DisplayId"
+      }
+     ],
+     "ret": "Microsoft.UI.Windowing.DisplayArea"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IDisplayAreaStatics2",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IDisplayAreaWatcher": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.DisplayAreaWatcher"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "83f6562f-d3a0-548b-8e4f-a99be3d95c9c",
+   "methods": [
+    {
+     "name": "get_Status",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.DisplayAreaWatcherStatus",
+     "special": true
+    },
+    {
+     "name": "Start",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Stop",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "add_Added",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.DisplayAreaWatcher, Microsoft.UI.Windowing.DisplayArea>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Added",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_EnumerationCompleted",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.DisplayAreaWatcher, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_EnumerationCompleted",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Removed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.DisplayAreaWatcher, Microsoft.UI.Windowing.DisplayArea>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Removed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Stopped",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.DisplayAreaWatcher, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Stopped",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Updated",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Windowing.DisplayAreaWatcher, Microsoft.UI.Windowing.DisplayArea>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Updated",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IDisplayAreaWatcher",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IFullScreenPresenter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.FullScreenPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "fa9141fd-b8dd-5da1-8b2b-7cdadb76f593",
+   "methods": [],
+   "name": "Microsoft.UI.Windowing.IFullScreenPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IFullScreenPresenterStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.FullScreenPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2ec0d2c1-e086-55bb-a3b2-44942e231c67",
+   "methods": [
+    {
+     "name": "Create",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.FullScreenPresenter"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IFullScreenPresenterStatics",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.OverlappedPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "21693970-4f4c-5172-9e9d-682a2d174884",
+   "methods": [
+    {
+     "name": "get_HasBorder",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_HasTitleBar",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_IsAlwaysOnTop",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsAlwaysOnTop",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsMaximizable",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsMaximizable",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsMinimizable",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsMinimizable",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsModal",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsModal",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsResizable",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsResizable",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_State",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.OverlappedPresenterState",
+     "special": true
+    },
+    {
+     "name": "Maximize",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Minimize",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Restore",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "SetBorderAndTitleBar",
+     "params": [
+      {
+       "name": "hasBorder",
+       "out": false,
+       "type": "bool"
+      },
+      {
+       "name": "hasTitleBar",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IOverlappedPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenter2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65537
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.OverlappedPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5c6ccd93-4244-5cd2-b355-ed5ea34df730",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "MinimizeWithActivation"
+       ]
+      ]
+     },
+     "name": "Minimize",
+     "params": [
+      {
+       "name": "activateWindow",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RestoreWithActivation"
+       ]
+      ]
+     },
+     "name": "Restore",
+     "params": [
+      {
+       "name": "activateWindow",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IOverlappedPresenter2",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenter3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65543
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.OverlappedPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "55d26138-4c38-57e7-a0c1-d467b774db8c",
+   "methods": [
+    {
+     "name": "get_PreferredMinimumHeight",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<i32>",
+     "special": true
+    },
+    {
+     "name": "put_PreferredMinimumHeight",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<i32>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PreferredMinimumWidth",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<i32>",
+     "special": true
+    },
+    {
+     "name": "put_PreferredMinimumWidth",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<i32>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PreferredMaximumWidth",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<i32>",
+     "special": true
+    },
+    {
+     "name": "put_PreferredMaximumWidth",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<i32>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PreferredMaximumHeight",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<i32>",
+     "special": true
+    },
+    {
+     "name": "put_PreferredMaximumHeight",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<i32>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IOverlappedPresenter3",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenterStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.OverlappedPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "997225e4-7b00-5aee-a4be-d4068d1999e2",
+   "methods": [
+    {
+     "name": "Create",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.OverlappedPresenter"
+    },
+    {
+     "name": "CreateForContextMenu",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.OverlappedPresenter"
+    },
+    {
+     "name": "CreateForDialog",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.OverlappedPresenter"
+    },
+    {
+     "name": "CreateForToolWindow",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.OverlappedPresenter"
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IOverlappedPresenterStatics",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IOverlappedPresenterStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65537
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Windowing.OverlappedPresenter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "ed5c4f92-32f4-5d15-80d0-b2a5efa04d39",
+   "methods": [
+    {
+     "name": "get_RequestedStartupState",
+     "params": [],
+     "ret": "Microsoft.UI.Windowing.OverlappedPresenterState",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.IOverlappedPresenterStatics2",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Windowing.IconShowOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "ShowIconAndSystemMenu",
+     0
+    ],
+    [
+     "HideIconAndSystemMenu",
+     1
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.IconShowOptions",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Windowing.OverlappedPresenter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Windowing.IOverlappedPresenterStatics2",
+      65537,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ],
+     [
+      "Microsoft.UI.Windowing.IOverlappedPresenterStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Windowing.AppWindowPresenter",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Windowing.IOverlappedPresenter",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IOverlappedPresenter2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Windowing.IOverlappedPresenter3",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Windowing.OverlappedPresenter",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Windowing.OverlappedPresenterState": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Maximized",
+     0
+    ],
+    [
+     "Minimized",
+     1
+    ],
+    [
+     "Restored",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.OverlappedPresenterState",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Windowing.TitleBarHeightOption": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65537
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Standard",
+     0
+    ],
+    [
+     "Tall",
+     1
+    ],
+    [
+     "Collapsed",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.TitleBarHeightOption",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Windowing.TitleBarTheme": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65543
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Legacy",
+     0
+    ],
+    [
+     "UseDefaultAppMode",
+     1
+    ],
+    [
+     "Light",
+     2
+    ],
+    [
+     "Dark",
+     3
+    ]
+   ],
+   "name": "Microsoft.UI.Windowing.TitleBarTheme",
+   "namespace": "Microsoft.UI.Windowing",
+   "origin": "winmd",
+   "underlying": "i32"
+  }
+ }
+}

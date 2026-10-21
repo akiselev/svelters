@@ -1,0 +1,160 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.xaml.data",
+ "namespace": "Microsoft.UI.Xaml.Data",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Xaml.Data.Binding": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Data.BindingBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Data.BindingExpression": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Data.BindingExpressionBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Data.BindingMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Data.BindingOperations": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Data.CollectionViewSource": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Data.CurrentChangingEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Data.DataErrorsChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Data.IBinding": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpression": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpressionBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpressionBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpressionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingOperations": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IBindingOperationsStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionView": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewFactory": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewGroup": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewSourceStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICustomProperty": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.ICustomPropertyProvider": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IItemIndexRange": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IItemIndexRangeFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IItemsRangeInfo": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.INotifyDataErrorInfo": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.INotifyPropertyChanged": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IRelativeSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.IRelativeSourceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Data.ISelectionInfo": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.ISupportIncrementalLoading": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.IValueConverter": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Data.ItemIndexRange": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Data.LoadMoreItemsResult": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.Data.PropertyChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Data.PropertyChangedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Data.RelativeSource": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Data.RelativeSourceMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Data.UpdateSourceTrigger": {
+   "category": "enum"
+  }
+ }
+}

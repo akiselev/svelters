@@ -1,0 +1,2538 @@
+{
+ "namespace": "Microsoft.UI.Xaml.Data",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Microsoft.UI.Xaml.Data.Binding": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.IBindingFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Data.BindingBase",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IBinding",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.Binding",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.BindingBase": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.IBindingBaseFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IBindingBase",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.BindingBase",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.BindingExpression": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.IBindingExpressionFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Data.BindingExpressionBase",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IBindingExpression",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.BindingExpression",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.BindingExpressionBase": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.IBindingExpressionBaseFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IBindingExpressionBase",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.BindingExpressionBase",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.BindingMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "OneWay",
+     1
+    ],
+    [
+     "OneTime",
+     2
+    ],
+    [
+     "TwoWay",
+     3
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Data.BindingMode",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Data.BindingOperations": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Data.IBindingOperationsStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IBindingOperations",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.BindingOperations",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Data.CollectionViewSource": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Data.ICollectionViewSourceStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.ICollectionViewSource",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.CollectionViewSource",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgsFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.CurrentChangingEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "3d2a98dd-95b3-5fd5-93b4-a1a2599f225c",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Data.CurrentChangingEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Data.DataErrorsChangedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgsFactory",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.DataErrorsChangedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Data.IBinding": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.Binding"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "501ea0e8-edd4-59de-8845-76af2eabbe00",
+   "methods": [
+    {
+     "name": "get_Path",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.PropertyPath",
+     "special": true
+    },
+    {
+     "name": "put_Path",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.PropertyPath"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Mode",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.BindingMode",
+     "special": true
+    },
+    {
+     "name": "put_Mode",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.BindingMode"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Source",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "put_Source",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_RelativeSource",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.RelativeSource",
+     "special": true
+    },
+    {
+     "name": "put_RelativeSource",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.RelativeSource"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ElementName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_ElementName",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Converter",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.IValueConverter",
+     "special": true
+    },
+    {
+     "name": "put_Converter",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.IValueConverter"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ConverterParameter",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "put_ConverterParameter",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ConverterLanguage",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_ConverterLanguage",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FallbackValue",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "put_FallbackValue",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_TargetNullValue",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "put_TargetNullValue",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_UpdateSourceTrigger",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.UpdateSourceTrigger",
+     "special": true
+    },
+    {
+     "name": "put_UpdateSourceTrigger",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.UpdateSourceTrigger"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IBinding",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingBase": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingBase"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "91ddd141-5944-50ef-b85e-218e463f7a73",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Data.IBindingBase",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingBaseFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingBase"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "c8a866c5-f6f3-5f7a-9592-d385af48bd8f",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.BindingBase"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IBindingBaseFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpression": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingExpression"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "4c023916-37bc-5b07-bc9d-15c547bd9b26",
+   "methods": [
+    {
+     "name": "get_DataItem",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "get_ParentBinding",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.Binding",
+     "special": true
+    },
+    {
+     "name": "UpdateSource",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IBindingExpression",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpressionBase": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingExpressionBase"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8825e5a9-d9a3-5e87-bcd8-c63133d29029",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Data.IBindingExpressionBase",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpressionBaseFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingExpressionBase"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "41d643b9-2629-5451-a716-596c0848b5dc",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Data.IBindingExpressionBaseFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingExpressionFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingExpression"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "086cae14-81a1-588b-b619-05ee84c0f089",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Data.IBindingExpressionFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.Binding"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "cb2de749-b115-5f67-b64a-797d54885d5c",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.Binding"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IBindingFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingOperations": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingOperations"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "9a319b95-aabe-5075-b227-8eb07e443d8b",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Data.IBindingOperations",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IBindingOperationsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.BindingOperations"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "1e1bdbd3-fca5-5c85-b87d-b504cd8fa8ac",
+   "methods": [
+    {
+     "name": "SetBinding",
+     "params": [
+      {
+       "name": "target",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "dp",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyProperty"
+      },
+      {
+       "name": "binding",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.BindingBase"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IBindingOperationsStatics",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionView": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "f8bb90d8-e008-5d65-8c97-7bb790a4230c",
+   "methods": [
+    {
+     "name": "get_CurrentItem",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "get_CurrentPosition",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "get_IsCurrentAfterLast",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_IsCurrentBeforeFirst",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_CollectionGroups",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IObservableVector<object>",
+     "special": true
+    },
+    {
+     "name": "get_HasMoreItems",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "add_CurrentChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_CurrentChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_CurrentChanging",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.CurrentChangingEventHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_CurrentChanging",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "MoveCurrentTo",
+     "params": [
+      {
+       "name": "item",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "MoveCurrentToPosition",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "MoveCurrentToFirst",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "MoveCurrentToLast",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "MoveCurrentToNext",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "MoveCurrentToPrevious",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "LoadMoreItemsAsync",
+     "params": [
+      {
+       "name": "count",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Microsoft.UI.Xaml.Data.LoadMoreItemsResult>"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICollectionView",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IObservableVector<object>",
+    "Windows.Foundation.Collections.IVector<object>",
+    "Windows.Foundation.Collections.IIterable<object>"
+   ]
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d971f795-5728-5bef-9602-43f2c4250e56",
+   "methods": [
+    {
+     "name": "CreateView",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.ICollectionView"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICollectionViewFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewGroup": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "96a08da8-be38-5ae0-903d-6fb6111e61f5",
+   "methods": [
+    {
+     "name": "get_Group",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "get_GroupItems",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IObservableVector<object>",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICollectionViewGroup",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewSource": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.CollectionViewSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a45e3b3a-f31e-5bbb-8a7c-70cf5c64bc3f",
+   "methods": [
+    {
+     "name": "get_Source",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "put_Source",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_View",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.ICollectionView",
+     "special": true
+    },
+    {
+     "name": "get_IsSourceGrouped",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsSourceGrouped",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ItemsPath",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.PropertyPath",
+     "special": true
+    },
+    {
+     "name": "put_ItemsPath",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.PropertyPath"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICollectionViewSource",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICollectionViewSourceStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.CollectionViewSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e282f10f-d4b1-5769-8a11-30f739e6113b",
+   "methods": [
+    {
+     "name": "get_SourceProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ViewProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsSourceGroupedProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ItemsPathProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICollectionViewSourceStatics",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "63e42ed6-e14a-51ea-9cb1-72f9c907dc80",
+   "methods": [
+    {
+     "name": "get_Cancel",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Cancel",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsCancelable",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgsFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "3670f48a-ac2c-5352-8a4b-6b977a08e5f8",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs"
+    },
+    {
+     "name": "CreateWithCancelableParameter",
+     "params": [
+      {
+       "name": "isCancelable",
+       "out": false,
+       "type": "bool"
+      },
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.CurrentChangingEventArgs"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICurrentChangingEventArgsFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICustomProperty": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "30da92c0-23e8-42a0-ae7c-734a0e5d2782",
+   "methods": [
+    {
+     "name": "get_Type",
+     "params": [],
+     "ret": "Windows.UI.Xaml.Interop.TypeName",
+     "special": true
+    },
+    {
+     "name": "get_Name",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "GetValue",
+     "params": [
+      {
+       "name": "target",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "SetValue",
+     "params": [
+      {
+       "name": "target",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetIndexedValue",
+     "params": [
+      {
+       "name": "target",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "index",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "SetIndexedValue",
+     "params": [
+      {
+       "name": "target",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "index",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_CanWrite",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_CanRead",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICustomProperty",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ICustomPropertyProvider": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "7c925755-3e48-42b4-8677-76372267033f",
+   "methods": [
+    {
+     "name": "GetCustomProperty",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.ICustomProperty"
+    },
+    {
+     "name": "GetIndexedProperty",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "type",
+       "out": false,
+       "type": "Windows.UI.Xaml.Interop.TypeName"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.ICustomProperty"
+    },
+    {
+     "name": "GetStringRepresentation",
+     "params": [],
+     "ret": "string"
+    },
+    {
+     "name": "get_Type",
+     "params": [],
+     "ret": "Windows.UI.Xaml.Interop.TypeName",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ICustomPropertyProvider",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.DataErrorsChangedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d026dd64-5f26-5f15-a86a-0dec8a431796",
+   "methods": [
+    {
+     "name": "get_PropertyName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_PropertyName",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgsFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.DataErrorsChangedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "62d0bd1e-b85f-5fcc-842a-7cb0dda37fe5",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.DataErrorsChangedEventArgs"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IDataErrorsChangedEventArgsFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IItemIndexRange": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.ItemIndexRange"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "eba09846-2554-5b86-ac17-614f05105fa2",
+   "methods": [
+    {
+     "name": "get_FirstIndex",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "get_Length",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "get_LastIndex",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IItemIndexRange",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IItemIndexRangeFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.ItemIndexRange"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "9fc73213-eda0-5238-aa2c-401c9921f0f9",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "firstIndex",
+       "out": false,
+       "type": "i32"
+      },
+      {
+       "name": "length",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.ItemIndexRange"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IItemIndexRangeFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IItemsRangeInfo": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "b8376d08-85fb-563b-8273-39ef2d138256",
+   "methods": [
+    {
+     "name": "RangesChanged",
+     "params": [
+      {
+       "name": "visibleRange",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.ItemIndexRange"
+      },
+      {
+       "name": "trackedItems",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IVectorView<Microsoft.UI.Xaml.Data.ItemIndexRange>"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IItemsRangeInfo",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable"
+   ]
+  },
+  "Microsoft.UI.Xaml.Data.INotifyDataErrorInfo": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "0ee6c2cc-273e-567d-bc0a-1dd87ee51eba",
+   "methods": [
+    {
+     "name": "get_HasErrors",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "add_ErrorsChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Data.DataErrorsChangedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ErrorsChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "GetErrors",
+     "params": [
+      {
+       "name": "propertyName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.Collections.IIterable<object>"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.INotifyDataErrorInfo",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.INotifyPropertyChanged": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "90b17601-b065-586e-83d9-9adc3a695284",
+   "methods": [
+    {
+     "name": "add_PropertyChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.PropertyChangedEventHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_PropertyChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.INotifyPropertyChanged",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.PropertyChangedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "63d0c952-396b-54f4-af8c-ba8724a427bf",
+   "methods": [
+    {
+     "name": "get_PropertyName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgsFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.PropertyChangedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "7c0c27a8-0b41-5070-b160-fc9ae960a36c",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.PropertyChangedEventArgs"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgsFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IRelativeSource": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.RelativeSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "7ffc8126-5dd8-58bb-b686-c71eddea07b2",
+   "methods": [
+    {
+     "name": "get_Mode",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Data.RelativeSourceMode",
+     "special": true
+    },
+    {
+     "name": "put_Mode",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.RelativeSourceMode"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IRelativeSource",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IRelativeSourceFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Data.RelativeSource"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8518522c-85e3-5ae1-b9e9-28ea43c2051e",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Data.RelativeSource"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IRelativeSourceFactory",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ISelectionInfo": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "1b84c26b-9532-5803-935b-a03bf7e875dc",
+   "methods": [
+    {
+     "name": "SelectRange",
+     "params": [
+      {
+       "name": "itemIndexRange",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.ItemIndexRange"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "DeselectRange",
+     "params": [
+      {
+       "name": "itemIndexRange",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Data.ItemIndexRange"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "IsSelected",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "GetSelectedRanges",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVectorView<Microsoft.UI.Xaml.Data.ItemIndexRange>"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ISelectionInfo",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ISupportIncrementalLoading": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d8f9b586-a64a-5ff8-868e-204e144f2cf4",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "LoadMoreItemsAsync",
+     "params": [
+      {
+       "name": "count",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Microsoft.UI.Xaml.Data.LoadMoreItemsResult>"
+    },
+    {
+     "name": "get_HasMoreItems",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ISupportIncrementalLoading",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.IValueConverter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "afdd2bff-10f5-5173-b7c0-3590bd96cb35",
+   "methods": [
+    {
+     "name": "Convert",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "targetType",
+       "out": false,
+       "type": "Windows.UI.Xaml.Interop.TypeName"
+      },
+      {
+       "name": "parameter",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "language",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "ConvertBack",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "targetType",
+       "out": false,
+       "type": "Windows.UI.Xaml.Interop.TypeName"
+      },
+      {
+       "name": "parameter",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "language",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "object"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.IValueConverter",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Data.ItemIndexRange": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.IItemIndexRangeFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IItemIndexRange",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.ItemIndexRange",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.LoadMoreItemsResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Count",
+     "type": "u32"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.LoadMoreItemsResult",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Data.PropertyChangedEventArgs": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgsFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IPropertyChangedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.PropertyChangedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.PropertyChangedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "e3de52f6-1e32-5da6-bb2d-b5b6096c962d",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Data.PropertyChangedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Data.PropertyChangedEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Data.RelativeSource": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Data.IRelativeSourceFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Data.IRelativeSource",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Data.RelativeSource",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Data.RelativeSourceMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "TemplatedParent",
+     1
+    ],
+    [
+     "Self",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Data.RelativeSourceMode",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Data.UpdateSourceTrigger": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Default",
+     0
+    ],
+    [
+     "PropertyChanged",
+     1
+    ],
+    [
+     "Explicit",
+     2
+    ],
+    [
+     "LostFocus",
+     3
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Data.UpdateSourceTrigger",
+   "namespace": "Microsoft.UI.Xaml.Data",
+   "origin": "winmd",
+   "underlying": "i32"
+  }
+ }
+}

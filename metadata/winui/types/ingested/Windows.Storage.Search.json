@@ -1,0 +1,2207 @@
+{
+ "namespace": "Windows.Storage.Search",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.Storage.Search.CommonFileQuery": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "DefaultQuery",
+     0
+    ],
+    [
+     "OrderByName",
+     1
+    ],
+    [
+     "OrderByTitle",
+     2
+    ],
+    [
+     "OrderByMusicProperties",
+     3
+    ],
+    [
+     "OrderBySearchRank",
+     4
+    ],
+    [
+     "OrderByDate",
+     5
+    ]
+   ],
+   "name": "Windows.Storage.Search.CommonFileQuery",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Search.CommonFolderQuery": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "DefaultQuery",
+     0
+    ],
+    [
+     "GroupByYear",
+     100
+    ],
+    [
+     "GroupByMonth",
+     101
+    ],
+    [
+     "GroupByArtist",
+     102
+    ],
+    [
+     "GroupByAlbum",
+     103
+    ],
+    [
+     "GroupByAlbumArtist",
+     104
+    ],
+    [
+     "GroupByComposer",
+     105
+    ],
+    [
+     "GroupByGenre",
+     106
+    ],
+    [
+     "GroupByPublishedYear",
+     107
+    ],
+    [
+     "GroupByRating",
+     108
+    ],
+    [
+     "GroupByTag",
+     109
+    ],
+    [
+     "GroupByAuthor",
+     110
+    ],
+    [
+     "GroupByType",
+     111
+    ]
+   ],
+   "name": "Windows.Storage.Search.CommonFolderQuery",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Search.ContentIndexer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.Search.IContentIndexerStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IContentIndexer",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IContentIndexerQueryOperations",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.ContentIndexer",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.ContentIndexerQuery": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IContentIndexerQuery",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.ContentIndexerQuery",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.DateStackOption": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Year",
+     1
+    ],
+    [
+     "Month",
+     2
+    ]
+   ],
+   "name": "Windows.Storage.Search.DateStackOption",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Search.FolderDepth": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Shallow",
+     0
+    ],
+    [
+     "Deep",
+     1
+    ]
+   ],
+   "name": "Windows.Storage.Search.FolderDepth",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Search.IContentIndexer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.ContentIndexer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "b1767f8d-f698-4982-b05f-3a6e8cab01a2",
+   "methods": [
+    {
+     "name": "AddAsync",
+     "params": [
+      {
+       "name": "indexableContent",
+       "out": false,
+       "type": "Windows.Storage.Search.IIndexableContent"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "name": "UpdateAsync",
+     "params": [
+      {
+       "name": "indexableContent",
+       "out": false,
+       "type": "Windows.Storage.Search.IIndexableContent"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "DeleteAsync",
+     "params": [
+      {
+       "name": "contentId",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "name": "DeleteMultipleAsync",
+     "params": [
+      {
+       "name": "contentIds",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "DeleteAllAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "name": "RetrievePropertiesAsync",
+     "params": [
+      {
+       "name": "contentId",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "propertiesToRetrieve",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IMapView<string, object>>"
+    },
+    {
+     "name": "get_Revision",
+     "params": [],
+     "ret": "u64",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Search.IContentIndexer",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IContentIndexerQuery": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.ContentIndexerQuery"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "70e3b0f8-4bfc-428a-8889-cc51da9a7b9d",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetCountAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<u32>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetPropertiesAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetPropertiesAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IMapView<string, object>>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetPropertiesRangeAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetPropertiesAsync",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxItems",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Foundation.Collections.IMapView<string, object>>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.Search.IIndexableContent>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetRangeAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetAsync",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxItems",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.Search.IIndexableContent>>"
+    },
+    {
+     "name": "get_QueryFolder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Search.IContentIndexerQuery",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IContentIndexerQueryOperations": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.ContentIndexer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "28823e10-4786-42f1-9730-792b3566b150",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateQueryWithSortOrderAndLanguage"
+       ]
+      ]
+     },
+     "name": "CreateQuery",
+     "params": [
+      {
+       "name": "searchFilter",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "propertiesToRetrieve",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      },
+      {
+       "name": "sortOrder",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<Windows.Storage.Search.SortEntry>"
+      },
+      {
+       "name": "searchFilterLanguage",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Storage.Search.ContentIndexerQuery"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateQueryWithSortOrder"
+       ]
+      ]
+     },
+     "name": "CreateQuery",
+     "params": [
+      {
+       "name": "searchFilter",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "propertiesToRetrieve",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      },
+      {
+       "name": "sortOrder",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<Windows.Storage.Search.SortEntry>"
+      }
+     ],
+     "ret": "Windows.Storage.Search.ContentIndexerQuery"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateQuery"
+       ]
+      ]
+     },
+     "name": "CreateQuery",
+     "params": [
+      {
+       "name": "searchFilter",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "propertiesToRetrieve",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Storage.Search.ContentIndexerQuery"
+    }
+   ],
+   "name": "Windows.Storage.Search.IContentIndexerQueryOperations",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IContentIndexerStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.ContentIndexer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "8c488375-b37e-4c60-9ba8-b760fda3e59d",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetIndexerWithName"
+       ]
+      ]
+     },
+     "name": "GetIndexer",
+     "params": [
+      {
+       "name": "indexName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Storage.Search.ContentIndexer"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetIndexer"
+       ]
+      ]
+     },
+     "name": "GetIndexer",
+     "params": [],
+     "ret": "Windows.Storage.Search.ContentIndexer"
+    }
+   ],
+   "name": "Windows.Storage.Search.IContentIndexerStatics",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IIndexableContent": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "ccf1a05f-d4b5-483a-b06e-e0db1ec420e4",
+   "methods": [
+    {
+     "name": "get_Id",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Id",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Properties",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IMap<string, object>",
+     "special": true
+    },
+    {
+     "name": "get_Stream",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IRandomAccessStream",
+     "special": true
+    },
+    {
+     "name": "put_Stream",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStream"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_StreamContentType",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_StreamContentType",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Search.IIndexableContent",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IQueryOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.QueryOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "1e5e46ee-0f45-4838-a8e9-d0479d446c30",
+   "methods": [
+    {
+     "name": "get_FileTypeFilter",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<string>",
+     "special": true
+    },
+    {
+     "name": "get_FolderDepth",
+     "params": [],
+     "ret": "Windows.Storage.Search.FolderDepth",
+     "special": true
+    },
+    {
+     "name": "put_FolderDepth",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Search.FolderDepth"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ApplicationSearchFilter",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_ApplicationSearchFilter",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_UserSearchFilter",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_UserSearchFilter",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Language",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Language",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IndexerOption",
+     "params": [],
+     "ret": "Windows.Storage.Search.IndexerOption",
+     "special": true
+    },
+    {
+     "name": "put_IndexerOption",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Search.IndexerOption"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_SortOrder",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<Windows.Storage.Search.SortEntry>",
+     "special": true
+    },
+    {
+     "name": "get_GroupPropertyName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DateStackOption",
+     "params": [],
+     "ret": "Windows.Storage.Search.DateStackOption",
+     "special": true
+    },
+    {
+     "name": "SaveToString",
+     "params": [],
+     "ret": "string"
+    },
+    {
+     "name": "LoadFromString",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "SetThumbnailPrefetch",
+     "params": [
+      {
+       "name": "mode",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailMode"
+      },
+      {
+       "name": "requestedSize",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailOptions"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "SetPropertyPrefetch",
+     "params": [
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.PropertyPrefetchOptions"
+      },
+      {
+       "name": "propertiesToRetrieve",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.Search.IQueryOptions",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IQueryOptionsAdditionalSearchSources": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.QueryOptions"
+     ]
+    ],
+    "Experimental": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8d342d6b-8800-426e-b5cf-4b328f824e7e",
+   "methods": [
+    {
+     "name": "get_IncludeLocalSemanticIndex",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IncludeLocalSemanticIndex",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IncludeCloudProviders",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IncludeCloudProviders",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Search.IQueryOptionsAdditionalSearchSources",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IQueryOptionsFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.QueryOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "032e1f8c-a9c1-4e71-8011-0dee9d4811a3",
+   "methods": [
+    {
+     "name": "CreateCommonFileQuery",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFileQuery"
+      },
+      {
+       "name": "fileTypeFilter",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Storage.Search.QueryOptions"
+    },
+    {
+     "name": "CreateCommonFolderQuery",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFolderQuery"
+      }
+     ],
+     "ret": "Windows.Storage.Search.QueryOptions"
+    }
+   ],
+   "name": "Windows.Storage.Search.IQueryOptionsFactory",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IQueryOptionsWithProviderFilter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.QueryOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5b9d1026-15c4-44dd-b89a-47a59b7d7c4f",
+   "methods": [
+    {
+     "name": "get_StorageProviderIdFilter",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<string>",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Search.IQueryOptionsWithProviderFilter",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IStorageFileQueryResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.StorageFileQueryResult"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "52fda447-2baa-412c-b29f-d4b1778efa1e",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFilesAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFilesAsync",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxNumberOfItems",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFile>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFilesAsyncDefaultStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFilesAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFile>>"
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageFileQueryResult",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.Search.IStorageQueryResultBase"
+   ]
+  },
+  "Windows.Storage.Search.IStorageFileQueryResult2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.StorageFileQueryResult"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4e5db9dd-7141-46c4-8be3-e9dc9e27275c",
+   "methods": [
+    {
+     "name": "GetMatchingPropertiesWithRanges",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.StorageFile"
+      }
+     ],
+     "ret": "Windows.Foundation.Collections.IMap<string, Windows.Foundation.Collections.IVectorView<Windows.Data.Text.TextSegment>>"
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageFileQueryResult2",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.Search.IStorageQueryResultBase"
+   ]
+  },
+  "Windows.Storage.Search.IStorageFolderQueryOperations": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cb43ccc9-446b-4a4f-be97-757771be5203",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetIndexedStateAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Search.IndexedState>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileQueryOverloadDefault"
+       ]
+      ]
+     },
+     "name": "CreateFileQuery",
+     "params": [],
+     "ret": "Windows.Storage.Search.StorageFileQueryResult"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileQuery"
+       ]
+      ]
+     },
+     "name": "CreateFileQuery",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFileQuery"
+      }
+     ],
+     "ret": "Windows.Storage.Search.StorageFileQueryResult"
+    },
+    {
+     "name": "CreateFileQueryWithOptions",
+     "params": [
+      {
+       "name": "queryOptions",
+       "out": false,
+       "type": "Windows.Storage.Search.QueryOptions"
+      }
+     ],
+     "ret": "Windows.Storage.Search.StorageFileQueryResult"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderQueryOverloadDefault"
+       ]
+      ]
+     },
+     "name": "CreateFolderQuery",
+     "params": [],
+     "ret": "Windows.Storage.Search.StorageFolderQueryResult"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderQuery"
+       ]
+      ]
+     },
+     "name": "CreateFolderQuery",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFolderQuery"
+      }
+     ],
+     "ret": "Windows.Storage.Search.StorageFolderQueryResult"
+    },
+    {
+     "name": "CreateFolderQueryWithOptions",
+     "params": [
+      {
+       "name": "queryOptions",
+       "out": false,
+       "type": "Windows.Storage.Search.QueryOptions"
+      }
+     ],
+     "ret": "Windows.Storage.Search.StorageFolderQueryResult"
+    },
+    {
+     "name": "CreateItemQuery",
+     "params": [],
+     "ret": "Windows.Storage.Search.StorageItemQueryResult"
+    },
+    {
+     "name": "CreateItemQueryWithOptions",
+     "params": [
+      {
+       "name": "queryOptions",
+       "out": false,
+       "type": "Windows.Storage.Search.QueryOptions"
+      }
+     ],
+     "ret": "Windows.Storage.Search.StorageItemQueryResult"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFilesAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFilesAsync",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFileQuery"
+      },
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxItemsToRetrieve",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFile>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFilesAsyncOverloadDefaultStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFilesAsync",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFileQuery"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFile>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFoldersAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFoldersAsync",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFolderQuery"
+      },
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxItemsToRetrieve",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFolder>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFoldersAsyncOverloadDefaultStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFoldersAsync",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFolderQuery"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFolder>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetItemsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetItemsAsync",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxItemsToRetrieve",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.IStorageItem>>"
+    },
+    {
+     "name": "AreQueryOptionsSupported",
+     "params": [
+      {
+       "name": "queryOptions",
+       "out": false,
+       "type": "Windows.Storage.Search.QueryOptions"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "IsCommonFolderQuerySupported",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFolderQuery"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "IsCommonFileQuerySupported",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "Windows.Storage.Search.CommonFileQuery"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageFolderQueryOperations",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IStorageFolderQueryResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.StorageFolderQueryResult"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "6654c911-7d66-46fa-aecf-e4a4baa93ab8",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFoldersAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFoldersAsync",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxNumberOfItems",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFolder>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFoldersAsyncDefaultStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFoldersAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFolder>>"
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageFolderQueryResult",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.Search.IStorageQueryResultBase"
+   ]
+  },
+  "Windows.Storage.Search.IStorageItemQueryResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.StorageItemQueryResult"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e8948079-9d58-47b8-b2b2-41b07f4795f9",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetItemsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetItemsAsync",
+     "params": [
+      {
+       "name": "startIndex",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "maxNumberOfItems",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.IStorageItem>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetItemsAsyncDefaultStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetItemsAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.IStorageItem>>"
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageItemQueryResult",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.Search.IStorageQueryResultBase"
+   ]
+  },
+  "Windows.Storage.Search.IStorageLibraryChangeTrackerTriggerDetails": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      393216
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.StorageLibraryChangeTrackerTriggerDetails"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "1dc7a369-b7a3-4df2-9d61-eba85a0343d2",
+   "methods": [
+    {
+     "name": "get_Folder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_ChangeTracker",
+     "params": [],
+     "ret": "Windows.Storage.StorageLibraryChangeTracker",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageLibraryChangeTrackerTriggerDetails",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IStorageLibraryContentChangedTriggerDetails": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.StorageLibraryContentChangedTriggerDetails"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2a371977-abbf-4e1d-8aa5-6385d8884799",
+   "methods": [
+    {
+     "name": "get_Folder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "CreateModifiedSinceQuery",
+     "params": [
+      {
+       "name": "lastQueryTime",
+       "out": false,
+       "type": "Windows.Foundation.DateTime"
+      }
+     ],
+     "ret": "Windows.Storage.Search.StorageItemQueryResult"
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageLibraryContentChangedTriggerDetails",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IStorageQueryResultBase": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c297d70d-7353-47ab-ba58-8c61425dc54b",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetItemCountAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<u32>"
+    },
+    {
+     "name": "get_Folder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "add_ContentsChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.Storage.Search.IStorageQueryResultBase, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ContentsChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_OptionsChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.Storage.Search.IStorageQueryResultBase, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_OptionsChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "FindStartIndexAsync",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<u32>"
+    },
+    {
+     "name": "GetCurrentQueryOptions",
+     "params": [],
+     "ret": "Windows.Storage.Search.QueryOptions"
+    },
+    {
+     "name": "ApplyNewQueryOptions",
+     "params": [
+      {
+       "name": "newQueryOptions",
+       "out": false,
+       "type": "Windows.Storage.Search.QueryOptions"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.Search.IStorageQueryResultBase",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IValueAndLanguage": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Search.ValueAndLanguage"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "b9914881-a1ee-4bc4-92a5-466968e30436",
+   "methods": [
+    {
+     "name": "get_Language",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Language",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Value",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "put_Value",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Search.IValueAndLanguage",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Search.IndexableContent": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IIndexableContent",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.IndexableContent",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.IndexedState": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Unknown",
+     0
+    ],
+    [
+     "NotIndexed",
+     1
+    ],
+    [
+     "PartiallyIndexed",
+     2
+    ],
+    [
+     "FullyIndexed",
+     3
+    ]
+   ],
+   "name": "Windows.Storage.Search.IndexedState",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Search.IndexerOption": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "UseIndexerWhenAvailable",
+     0
+    ],
+    [
+     "OnlyUseIndexer",
+     1
+    ],
+    [
+     "DoNotUseIndexer",
+     2
+    ],
+    [
+     "OnlyUseIndexerAndOptimizeForIndexedProperties",
+     3
+    ]
+   ],
+   "name": "Windows.Storage.Search.IndexerOption",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Search.QueryOptions": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.Search.IQueryOptionsFactory",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IQueryOptions",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IQueryOptionsWithProviderFilter",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IQueryOptionsAdditionalSearchSources",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.QueryOptions",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.SortEntry": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "PropertyName",
+     "type": "string"
+    },
+    {
+     "name": "AscendingOrder",
+     "type": "bool"
+    }
+   ],
+   "name": "Windows.Storage.Search.SortEntry",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd"
+  },
+  "Windows.Storage.Search.SortEntryVector": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IVector<Windows.Storage.Search.SortEntry>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Storage.Search.SortEntry>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.SortEntryVector",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.StorageFileQueryResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IStorageFileQueryResult",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IStorageQueryResultBase",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IStorageFileQueryResult2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.StorageFileQueryResult",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.StorageFolderQueryResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IStorageFolderQueryResult",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IStorageQueryResultBase",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.StorageFolderQueryResult",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.StorageItemQueryResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IStorageItemQueryResult",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IStorageQueryResultBase",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.StorageItemQueryResult",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.StorageLibraryChangeTrackerTriggerDetails": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      393216
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IStorageLibraryChangeTrackerTriggerDetails",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.StorageLibraryChangeTrackerTriggerDetails",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.StorageLibraryContentChangedTriggerDetails": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IStorageLibraryContentChangedTriggerDetails",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.StorageLibraryContentChangedTriggerDetails",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Search.ValueAndLanguage": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Search.IValueAndLanguage",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Search.ValueAndLanguage",
+   "namespace": "Windows.Storage.Search",
+   "origin": "winmd",
+   "sealed": true
+  }
+ }
+}

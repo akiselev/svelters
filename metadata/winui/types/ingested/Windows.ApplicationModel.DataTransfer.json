@@ -1,0 +1,4455 @@
+{
+ "namespace": "Windows.ApplicationModel.DataTransfer",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.ApplicationModel.DataTransfer.Clipboard": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.3"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.ApplicationModel.DataTransfer.IClipboardStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.ApplicationModel.DataTransfer.IClipboardStatics2",
+      458752,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.ApplicationModel.DataTransfer.Clipboard",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ClipboardContentOptions": {
+   "attributes": {
+    "Activatable": [
+     [
+      458752,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IClipboardContentOptions",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ClipboardContentOptions",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ClipboardHistoryChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IClipboardHistoryChangedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryChangedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IClipboardHistoryItem",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IClipboardHistoryItemsResult",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResult",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResultStatus": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Success",
+     0
+    ],
+    [
+     "AccessDenied",
+     1
+    ],
+    [
+     "ClipboardHistoryDisabled",
+     2
+    ]
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResultStatus",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.ApplicationModel.DataTransfer.DataPackage": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackage",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackage2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackage3",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackage4",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataPackage",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataPackageOperation": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Flags": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Copy",
+     1
+    ],
+    [
+     "Move",
+     2
+    ],
+    [
+     "Link",
+     4
+    ],
+    [
+     "NewTarget",
+     1073741824
+    ],
+    [
+     "BackgroundTarget",
+     536870912
+    ]
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet3",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet4",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView3",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView4",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView5",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IMapView<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataPackageView": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView3",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView4",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataProviderDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataProviderDeferral",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataProviderDeferral",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataProviderHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "e7ecd720-f2f4-4a2d-920e-170a2f482a27",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "request",
+      "out": false,
+      "type": "Windows.ApplicationModel.DataTransfer.DataProviderRequest"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.ApplicationModel.DataTransfer.DataProviderHandler",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd"
+  },
+  "Windows.ApplicationModel.DataTransfer.DataProviderRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataProviderRequest",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataProviderRequest",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataRequest",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataRequest",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataRequestDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataRequestDeferral",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataRequestDeferral",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataRequestedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataRequestedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.DataTransferManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.3"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics2",
+      196608,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics3",
+      327680,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataTransferManager",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IDataTransferManager2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.DataTransferManager",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.HtmlFormatHelper": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.ApplicationModel.DataTransfer.IHtmlFormatHelperStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.ApplicationModel.DataTransfer.HtmlFormatHelper",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.IClipboardContentOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ClipboardContentOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e888a98c-ad4b-5447-a056-ab3556276d2b",
+   "methods": [
+    {
+     "name": "get_IsRoamable",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsRoamable",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsAllowedInHistory",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsAllowedInHistory",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_RoamingFormats",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<string>",
+     "special": true
+    },
+    {
+     "name": "get_HistoryFormats",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<string>",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IClipboardContentOptions",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IClipboardHistoryChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryChangedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c0be453f-8ea2-53ce-9aba-8d2212573452",
+   "methods": [],
+   "name": "Windows.ApplicationModel.DataTransfer.IClipboardHistoryChangedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IClipboardHistoryItem": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "0173bd8a-afff-5c50-ab92-3d19f481ec58",
+   "methods": [
+    {
+     "name": "get_Id",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Timestamp",
+     "params": [],
+     "ret": "Windows.Foundation.DateTime",
+     "special": true
+    },
+    {
+     "name": "get_Content",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IClipboardHistoryItem",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IClipboardHistoryItemsResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResult"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e6dfdee6-0ee2-52e3-852b-f295db65939a",
+   "methods": [
+    {
+     "name": "get_Status",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResultStatus",
+     "special": true
+    },
+    {
+     "name": "get_Items",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVectorView<Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem>",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IClipboardHistoryItemsResult",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IClipboardStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.Clipboard"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c627e291-34e2-4963-8eed-93cbb0ea3d70",
+   "methods": [
+    {
+     "name": "GetContent",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageView"
+    },
+    {
+     "name": "SetContent",
+     "params": [
+      {
+       "name": "content",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataPackage"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "Flush",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Clear",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "add_ContentChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ContentChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IClipboardStatics",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IClipboardStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.Clipboard"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "d2ac1b6a-d29f-554b-b303-f0452345fe02",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetHistoryItemsAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.ApplicationModel.DataTransfer.ClipboardHistoryItemsResult>"
+    },
+    {
+     "name": "ClearHistory",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "DeleteItemFromHistory",
+     "params": [
+      {
+       "name": "item",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "SetHistoryItemAsContent",
+     "params": [
+      {
+       "name": "item",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.ClipboardHistoryItem"
+      }
+     ],
+     "ret": "Windows.ApplicationModel.DataTransfer.SetHistoryItemAsContentStatus"
+    },
+    {
+     "name": "IsHistoryEnabled",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "IsRoamingEnabled",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "SetContentWithOptions",
+     "params": [
+      {
+       "name": "content",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataPackage"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.ClipboardContentOptions"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "add_HistoryChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<Windows.ApplicationModel.DataTransfer.ClipboardHistoryChangedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_HistoryChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_RoamingEnabledChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_RoamingEnabledChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_HistoryEnabledChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_HistoryEnabledChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IClipboardStatics2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackage": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackage"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "61ebf5c7-efea-4346-9554-981d7e198ffe",
+   "methods": [
+    {
+     "name": "GetView",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageView"
+    },
+    {
+     "name": "get_Properties",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet",
+     "special": true
+    },
+    {
+     "name": "get_RequestedOperation",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+     "special": true
+    },
+    {
+     "name": "put_RequestedOperation",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_OperationCompleted",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.DataPackage, Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_OperationCompleted",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Destroyed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.DataPackage, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Destroyed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "SetData",
+     "params": [
+      {
+       "name": "formatId",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "SetDataProvider",
+     "params": [
+      {
+       "name": "formatId",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "delayRenderer",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataProviderHandler"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "SetText",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Deprecated": [
+       [
+        "SetUri may be altered or unavailable for releases after Windows Phone 'OSVersion' (TBD).Instead, use SetWebLink or SetApplicationLink.",
+        "DeprecationType.0",
+        65536,
+        "Windows.Foundation.UniversalApiContract"
+       ]
+      ]
+     },
+     "name": "SetUri",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "SetHtmlFormat",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_ResourceMap",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+     "special": true
+    },
+    {
+     "name": "SetRtf",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "SetBitmap",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.RandomAccessStreamReference"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "SetStorageItemsReadOnly"
+       ]
+      ]
+     },
+     "name": "SetStorageItems",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<Windows.Storage.IStorageItem>"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "SetStorageItems"
+       ]
+      ]
+     },
+     "name": "SetStorageItems",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<Windows.Storage.IStorageItem>"
+      },
+      {
+       "name": "readOnly",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackage",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackage2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackage"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "041c1fe9-2409-45e1-a538-4c53eeee04a7",
+   "methods": [
+    {
+     "name": "SetApplicationLink",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "SetWebLink",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackage2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackage3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackage"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "88f31f5d-787b-4d32-965a-a9838105a056",
+   "methods": [
+    {
+     "name": "add_ShareCompleted",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.DataPackage, Windows.ApplicationModel.DataTransfer.ShareCompletedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ShareCompleted",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackage3",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackage4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      655360
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackage"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "13a24ec8-9382-536f-852a-3045e1b29a3b",
+   "methods": [
+    {
+     "name": "add_ShareCanceled",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.DataPackage, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ShareCanceled",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackage4",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cd1c93eb-4c4c-443a-a8d3-f5c241e91689",
+   "methods": [
+    {
+     "name": "get_Title",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Title",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Description",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Description",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Thumbnail",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IRandomAccessStreamReference",
+     "special": true
+    },
+    {
+     "name": "put_Thumbnail",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStreamReference"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FileTypes",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<string>",
+     "special": true
+    },
+    {
+     "name": "get_ApplicationName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_ApplicationName",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ApplicationListingUri",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "put_ApplicationListingUri",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IMap<string, object>",
+    "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>"
+   ]
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "eb505d4a-9800-46aa-b181-7b6f0f2b919a",
+   "methods": [
+    {
+     "name": "get_ContentSourceWebLink",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "put_ContentSourceWebLink",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ContentSourceApplicationLink",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "put_ContentSourceApplicationLink",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PackageFamilyName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_PackageFamilyName",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Square30x30Logo",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IRandomAccessStreamReference",
+     "special": true
+    },
+    {
+     "name": "put_Square30x30Logo",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStreamReference"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_LogoBackgroundColor",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "put_LogoBackgroundColor",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.UI.Color"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "9e87fd9b-5205-401b-874a-455653bd39e8",
+   "methods": [
+    {
+     "name": "get_EnterpriseId",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_EnterpriseId",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet3",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      393216
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySet"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "6390ebf5-1739-4c74-b22f-865fab5e8545",
+   "methods": [
+    {
+     "name": "get_ContentSourceUserActivityJson",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_ContentSourceUserActivityJson",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySet4",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "b94cec01-0c1a-4c57-be55-75d01289735d",
+   "methods": [
+    {
+     "name": "get_Title",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Description",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Thumbnail",
+     "params": [],
+     "ret": "Windows.Storage.Streams.RandomAccessStreamReference",
+     "special": true
+    },
+    {
+     "name": "get_FileTypes",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVectorView<string>",
+     "special": true
+    },
+    {
+     "name": "get_ApplicationName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ApplicationListingUri",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "6054509b-8ebe-4feb-9c1e-75e69de54b84",
+   "methods": [
+    {
+     "name": "get_PackageFamilyName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ContentSourceWebLink",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "get_ContentSourceApplicationLink",
+     "params": [],
+     "ret": "Windows.Foundation.Uri",
+     "special": true
+    },
+    {
+     "name": "get_Square30x30Logo",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IRandomAccessStreamReference",
+     "special": true
+    },
+    {
+     "name": "get_LogoBackgroundColor",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "db764ce5-d174-495c-84fc-1a51f6ab45d7",
+   "methods": [
+    {
+     "name": "get_EnterpriseId",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView3",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      393216
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4474c80d-d16f-40ae-9580-6f8562b94235",
+   "methods": [
+    {
+     "name": "get_ContentSourceUserActivityJson",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView4",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView5": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "6f0a9445-3760-50bb-8523-c4202ded7d78",
+   "methods": [
+    {
+     "name": "get_IsFromRoamingClipboard",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackagePropertySetView5",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackageView": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "7b840471-5900-4d85-a90b-10cb85fe3552",
+   "methods": [
+    {
+     "name": "get_Properties",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackagePropertySetView",
+     "special": true
+    },
+    {
+     "name": "get_RequestedOperation",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+     "special": true
+    },
+    {
+     "name": "ReportOperationCompleted",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "get_AvailableFormats",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVectorView<string>",
+     "special": true
+    },
+    {
+     "name": "Contains",
+     "params": [
+      {
+       "name": "formatId",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetDataAsync",
+     "params": [
+      {
+       "name": "formatId",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<object>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetTextAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetCustomTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetTextAsync",
+     "params": [
+      {
+       "name": "formatId",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "Deprecated": [
+       [
+        "GetUriAsync may be altered or unavailable for releases after Windows 8.1. Instead, use GetWebLinkAsync or GetApplicationLinkAsync.",
+        "DeprecationType.0",
+        65536,
+        "Windows.Foundation.UniversalApiContract"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetUriAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Uri>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetHtmlFormatAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetResourceMapAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IMapView<string, Windows.Storage.Streams.RandomAccessStreamReference>>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetRtfAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetBitmapAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.RandomAccessStreamReference>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetStorageItemsAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.IStorageItem>>"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackageView2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "40ecba95-2450-4c1d-b6b4-ed45463dee9c",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetApplicationLinkAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Uri>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetWebLinkAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Uri>"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackageView3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "d37771a8-ddad-4288-8428-d1cae394128b",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RequestAccessAsync"
+       ]
+      ]
+     },
+     "name": "RequestAccessAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Security.EnterpriseData.ProtectionPolicyEvaluationResult>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RequestAccessWithEnterpriseIdAsync"
+       ]
+      ]
+     },
+     "name": "RequestAccessAsync",
+     "params": [
+      {
+       "name": "enterpriseId",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Security.EnterpriseData.ProtectionPolicyEvaluationResult>"
+    },
+    {
+     "name": "UnlockAndAssumeEnterpriseIdentity",
+     "params": [],
+     "ret": "Windows.Security.EnterpriseData.ProtectionPolicyEvaluationResult"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView3",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataPackageView4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      131072
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataPackageView"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "dfe96f1f-e042-4433-a09f-26d6ffda8b85",
+   "methods": [
+    {
+     "name": "SetAcceptedFormatId",
+     "params": [
+      {
+       "name": "formatId",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataPackageView4",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataProviderDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataProviderDeferral"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c2cf2373-2d26-43d9-b69d-dcb86d03f6da",
+   "methods": [
+    {
+     "name": "Complete",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataProviderDeferral",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataProviderRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataProviderRequest"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "ebbc7157-d3c8-47da-acde-f82388d5f716",
+   "methods": [
+    {
+     "name": "get_FormatId",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Deadline",
+     "params": [],
+     "ret": "Windows.Foundation.DateTime",
+     "special": true
+    },
+    {
+     "name": "GetDeferral",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataProviderDeferral"
+    },
+    {
+     "name": "SetData",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataProviderRequest",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataRequest"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4341ae3b-fc12-4e53-8c02-ac714c415a27",
+   "methods": [
+    {
+     "name": "get_Data",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackage",
+     "special": true
+    },
+    {
+     "name": "put_Data",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataPackage"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Deadline",
+     "params": [],
+     "ret": "Windows.Foundation.DateTime",
+     "special": true
+    },
+    {
+     "name": "FailWithDisplayText",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetDeferral",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataRequestDeferral"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataRequest",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataRequestDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataRequestDeferral"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "6dc4b89f-0386-4263-87c1-ed7dce30890e",
+   "methods": [
+    {
+     "name": "Complete",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataRequestDeferral",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataRequestedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cb8ba807-6ac5-43c9-8ac5-9ba232163182",
+   "methods": [
+    {
+     "name": "get_Request",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataRequest",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataRequestedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataTransferManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataTransferManager"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "a5caee9b-8708-49d1-8d36-67d25a8da00c",
+   "methods": [
+    {
+     "name": "add_DataRequested",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.DataTransferManager, Windows.ApplicationModel.DataTransfer.DataRequestedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_DataRequested",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_TargetApplicationChosen",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.DataTransferManager, Windows.ApplicationModel.DataTransfer.TargetApplicationChosenEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_TargetApplicationChosen",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataTransferManager",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataTransferManager2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataTransferManager"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "30ae7d71-8ba8-4c02-8e3f-ddb23b388715",
+   "methods": [
+    {
+     "name": "add_ShareProvidersRequested",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.DataTransferManager, Windows.ApplicationModel.DataTransfer.ShareProvidersRequestedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ShareProvidersRequested",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataTransferManager2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataTransferManager"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "a9da01aa-e00e-4cfe-aa44-2dd932dca3d8",
+   "methods": [
+    {
+     "name": "ShowShareUI",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "GetForCurrentView",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataTransferManager"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataTransferManager"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c54ec2ec-9f97-4d63-9868-395e271ad8f5",
+   "methods": [
+    {
+     "name": "IsSupported",
+     "params": [],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.DataTransferManager"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "05845473-6c82-4f5c-ac23-62e458361fac",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ShowShareUIWithOptions"
+       ]
+      ]
+     },
+     "name": "ShowShareUI",
+     "params": [
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.ShareUIOptions"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IDataTransferManagerStatics3",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IHtmlFormatHelperStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.HtmlFormatHelper"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e22e7749-dd70-446f-aefc-61cee59f655e",
+   "methods": [
+    {
+     "name": "GetStaticFragment",
+     "params": [
+      {
+       "name": "htmlFormat",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "string"
+    },
+    {
+     "name": "CreateHtmlFormat",
+     "params": [
+      {
+       "name": "htmlFragment",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "string"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IHtmlFormatHelperStatics",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IOperationCompletedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e7af329d-051d-4fab-b1a9-47fd77f70a41",
+   "methods": [
+    {
+     "name": "get_Operation",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IOperationCompletedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IOperationCompletedEventArgs2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      131072
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "858fa073-1e19-4105-b2f7-c8478808d562",
+   "methods": [
+    {
+     "name": "get_AcceptedFormatId",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IOperationCompletedEventArgs2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IShareCompletedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ShareCompletedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4574c442-f913-4f60-9df7-cc4060ab1916",
+   "methods": [
+    {
+     "name": "get_ShareTarget",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.ShareTargetInfo",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IShareCompletedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IShareProvider": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ShareProvider"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2fabe026-443e-4cda-af25-8d81070efd80",
+   "methods": [
+    {
+     "name": "get_Title",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DisplayIcon",
+     "params": [],
+     "ret": "Windows.Storage.Streams.RandomAccessStreamReference",
+     "special": true
+    },
+    {
+     "name": "get_BackgroundColor",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Tag",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "put_Tag",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IShareProvider",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IShareProviderFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ShareProvider"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "172a174c-e79e-4f6d-b07d-128f469e0296",
+   "methods": [
+    {
+     "name": "Create",
+     "params": [
+      {
+       "name": "title",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "displayIcon",
+       "out": false,
+       "type": "Windows.Storage.Streams.RandomAccessStreamReference"
+      },
+      {
+       "name": "backgroundColor",
+       "out": false,
+       "type": "Windows.UI.Color"
+      },
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.ShareProviderHandler"
+      }
+     ],
+     "ret": "Windows.ApplicationModel.DataTransfer.ShareProvider"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IShareProviderFactory",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IShareProviderOperation": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ShareProviderOperation"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "19cef937-d435-4179-b6af-14e0492b69f6",
+   "methods": [
+    {
+     "name": "get_Data",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+     "special": true
+    },
+    {
+     "name": "get_Provider",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.ShareProvider",
+     "special": true
+    },
+    {
+     "name": "ReportCompleted",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IShareProviderOperation",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IShareProvidersRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ShareProvidersRequestedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "f888f356-a3f8-4fce-85e4-8826e63be799",
+   "methods": [
+    {
+     "name": "get_Providers",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<Windows.ApplicationModel.DataTransfer.ShareProvider>",
+     "special": true
+    },
+    {
+     "name": "get_Data",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+     "special": true
+    },
+    {
+     "name": "GetDeferral",
+     "params": [],
+     "ret": "Windows.Foundation.Deferral"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IShareProvidersRequestedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IShareTargetInfo": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ShareTargetInfo"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "385be607-c6e8-4114-b294-28f3bb6f9904",
+   "methods": [
+    {
+     "name": "get_AppUserModelId",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ShareProvider",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.ShareProvider",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IShareTargetInfo",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IShareUIOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ShareUIOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "72fa8a80-342f-4d90-9551-2ae04e37680c",
+   "methods": [
+    {
+     "name": "get_Theme",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.ShareUITheme",
+     "special": true
+    },
+    {
+     "name": "put_Theme",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.ShareUITheme"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_SelectionRect",
+     "params": [],
+     "ret": "Windows.Foundation.IReference<Windows.Foundation.Rect>",
+     "special": true
+    },
+    {
+     "name": "put_SelectionRect",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.IReference<Windows.Foundation.Rect>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IShareUIOptions",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ISharedStorageAccessManagerStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.SharedStorageAccessManager"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c6132ada-34b1-4849-bd5f-d09fee3158c5",
+   "methods": [
+    {
+     "name": "AddFile",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "string"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "RedeemTokenForFileAsync",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "name": "RemoveFile",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ISharedStorageAccessManagerStatics",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.StandardDataFormats"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "7ed681a1-a880-40c9-b4ed-0bee1e15f549",
+   "methods": [
+    {
+     "name": "get_Text",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "attributes": {
+      "Deprecated": [
+       [
+        "Uri may be altered or unavailable for releases after Windows Phone 'OSVersion' (TBD). Instead, use WebLink or ApplicationLink.",
+        "DeprecationType.0",
+        65536,
+        "Windows.Foundation.UniversalApiContract"
+       ]
+      ]
+     },
+     "name": "get_Uri",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Html",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Rtf",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Bitmap",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_StorageItems",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.StandardDataFormats"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "42a254f4-9d76-42e8-861b-47c25dd0cf71",
+   "methods": [
+    {
+     "name": "get_WebLink",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ApplicationLink",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics2",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      393216
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.StandardDataFormats"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "3b57b069-01d4-474c-8b5f-bc8e27f38b21",
+   "methods": [
+    {
+     "name": "get_UserActivityJsonArray",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics3",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITargetApplicationChosenEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TargetApplicationChosenEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "ca6fb8ac-2987-4ee3-9c54-d8afbcb86c1d",
+   "methods": [
+    {
+     "name": "get_ApplicationName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITargetApplicationChosenEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTarget": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTarget"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "897e04e5-60c2-5eae-909f-e6257e32c644",
+   "methods": [
+    {
+     "name": "get_Id",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Label",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DisplayIcon",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IRandomAccessStreamReference",
+     "special": true
+    },
+    {
+     "name": "get_IsEnabled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTarget",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTargetChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTargetChangedEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "d513d198-4174-53cf-a06e-4cd263d0dfef",
+   "methods": [
+    {
+     "name": "get_Target",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.TransferTarget",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetChangedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTargetDiscoveryOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTargetDiscoveryOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "712fe3b5-644f-5f6b-97b6-3a3400999ed7",
+   "methods": [
+    {
+     "name": "get_DataPackage",
+     "params": [],
+     "ret": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+     "special": true
+    },
+    {
+     "name": "get_MaxAppTargets",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "put_MaxAppTargets",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_AllowedTargetAppIds",
+     "params": [],
+     "ret": "string[]",
+     "special": true
+    },
+    {
+     "name": "put_AllowedTargetAppIds",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string[]"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetDiscoveryOptions",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTargetDiscoveryOptionsFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTargetDiscoveryOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "ec4b7ffc-cbc6-5e12-8e9b-d5e892f2c6f8",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "dataPackage",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataPackageView"
+      }
+     ],
+     "ret": "Windows.ApplicationModel.DataTransfer.TransferTargetDiscoveryOptions"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetDiscoveryOptionsFactory",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTargetInvokeResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTargetInvokeResult"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "15f220a6-cffe-56f5-b403-ed44e9c3ad38",
+   "methods": [
+    {
+     "name": "get_Succeeded",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_ExtendedError",
+     "params": [],
+     "ret": "Windows.Foundation.HResult",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetInvokeResult",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTargetStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTarget"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "815b8804-e7f1-5f37-b52f-be1ceba9a59e",
+   "methods": [
+    {
+     "name": "CreateWatcher",
+     "params": [
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.TransferTargetDiscoveryOptions"
+      }
+     ],
+     "ret": "Windows.ApplicationModel.DataTransfer.TransferTargetWatcher"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetStatics",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTargetWatcher": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTargetWatcher"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2f85ca29-0100-5d09-907c-fe554d2fcd1a",
+   "methods": [
+    {
+     "name": "Start",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Stop",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "TransferToAsync",
+     "params": [
+      {
+       "name": "target",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.TransferTarget"
+      },
+      {
+       "name": "parentWindowHandle",
+       "out": false,
+       "type": "Windows.UI.WindowId"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperationWithProgress<Windows.ApplicationModel.DataTransfer.TransferTargetInvokeResult, f64>"
+    },
+    {
+     "name": "add_Added",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.TransferTargetWatcher, Windows.ApplicationModel.DataTransfer.TransferTargetChangedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Added",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Removed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.TransferTargetWatcher, Windows.ApplicationModel.DataTransfer.TransferTargetChangedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Removed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Updated",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.TransferTargetWatcher, Windows.ApplicationModel.DataTransfer.TransferTargetChangedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Updated",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_EnumerationCompleted",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.TransferTargetWatcher, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_EnumerationCompleted",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Stopped",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.ApplicationModel.DataTransfer.TransferTargetWatcher, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Stopped",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetWatcher",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.ITransferTargetWatcherStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.ApplicationModel.DataTransfer.TransferTargetWatcher"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "a24b3528-db4e-5bdd-9d30-dcb192c701f5",
+   "methods": [
+    {
+     "name": "IsSupported",
+     "params": [
+      {
+       "name": "dataPackage",
+       "out": false,
+       "type": "Windows.ApplicationModel.DataTransfer.DataPackageView"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetWatcherStatics",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IOperationCompletedEventArgs",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.ApplicationModel.DataTransfer.IOperationCompletedEventArgs2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.OperationCompletedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.SetHistoryItemAsContentStatus": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Success",
+     0
+    ],
+    [
+     "AccessDenied",
+     1
+    ],
+    [
+     "ItemDeleted",
+     2
+    ]
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.SetHistoryItemAsContentStatus",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareCompletedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IShareCompletedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ShareCompletedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareProvider": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.ApplicationModel.DataTransfer.IShareProviderFactory",
+      262144,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IShareProvider",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ShareProvider",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareProviderHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "e7f9d9ba-e1ba-4e4d-bd65-d43845d3212f",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "operation",
+      "out": false,
+      "type": "Windows.ApplicationModel.DataTransfer.ShareProviderOperation"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.ApplicationModel.DataTransfer.ShareProviderHandler",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd"
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareProviderOperation": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IShareProviderOperation",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ShareProviderOperation",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareProvidersRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IShareProvidersRequestedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ShareProvidersRequestedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareTargetInfo": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      262144
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IShareTargetInfo",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ShareTargetInfo",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareUIOptions": {
+   "attributes": {
+    "Activatable": [
+     [
+      327680,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.IShareUIOptions",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ShareUIOptions",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.ShareUITheme": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Default",
+     0
+    ],
+    [
+     "Light",
+     1
+    ],
+    [
+     "Dark",
+     2
+    ]
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.ShareUITheme",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.ApplicationModel.DataTransfer.SharedStorageAccessManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ISharedStorageAccessManagerStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.ApplicationModel.DataTransfer.SharedStorageAccessManager",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.StandardDataFormats": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics2",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.ApplicationModel.DataTransfer.IStandardDataFormatsStatics3",
+      393216,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.ApplicationModel.DataTransfer.StandardDataFormats",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.TargetApplicationChosenEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.ITargetApplicationChosenEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.TargetApplicationChosenEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.TransferTarget": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ITransferTargetStatics",
+      1245184,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.ITransferTarget",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.TransferTarget",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.TransferTargetChangedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetChangedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.TransferTargetChangedEventArgs",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.TransferTargetDiscoveryOptions": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ITransferTargetDiscoveryOptionsFactory",
+      1245184,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetDiscoveryOptions",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.TransferTargetDiscoveryOptions",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.TransferTargetInvokeResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetInvokeResult",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.TransferTargetInvokeResult",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.ApplicationModel.DataTransfer.TransferTargetWatcher": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      1245184
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.ApplicationModel.DataTransfer.ITransferTargetWatcherStatics",
+      1245184,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.ApplicationModel.DataTransfer.ITransferTargetWatcher",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.ApplicationModel.DataTransfer.TransferTargetWatcher",
+   "namespace": "Windows.ApplicationModel.DataTransfer",
+   "origin": "winmd",
+   "sealed": true
+  }
+ }
+}

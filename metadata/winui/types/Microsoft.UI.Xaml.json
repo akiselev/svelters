@@ -1,0 +1,1668 @@
+{
+ "enums": {
+  "Microsoft.UI.Xaml.GridUnitType": {
+   "flags": false,
+   "members": [
+    [
+     "auto",
+     0
+    ],
+    [
+     "pixel",
+     1
+    ],
+    [
+     "star",
+     2
+    ]
+   ],
+   "native": [
+    "Auto",
+    "Pixel",
+    "Star"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.xaml",
+ "namespace": "Microsoft.UI.Xaml",
+ "schema": "svelters-winui-types/v1",
+ "structs": {
+  "Microsoft.UI.Xaml.CornerRadius": {
+   "fields": [
+    {
+     "name": "topLeft",
+     "native": "TopLeft",
+     "type": "f64"
+    },
+    {
+     "name": "topRight",
+     "native": "TopRight",
+     "type": "f64"
+    },
+    {
+     "name": "bottomRight",
+     "native": "BottomRight",
+     "type": "f64"
+    },
+    {
+     "name": "bottomLeft",
+     "native": "BottomLeft",
+     "type": "f64"
+    }
+   ]
+  },
+  "Microsoft.UI.Xaml.GridLength": {
+   "fields": [
+    {
+     "name": "value",
+     "native": "Value",
+     "type": "f64"
+    },
+    {
+     "name": "gridUnitType",
+     "native": "GridUnitType",
+     "type": "Microsoft.UI.Xaml.GridUnitType"
+    }
+   ]
+  },
+  "Microsoft.UI.Xaml.Thickness": {
+   "fields": [
+    {
+     "name": "left",
+     "native": "Left",
+     "type": "f64"
+    },
+    {
+     "name": "top",
+     "native": "Top",
+     "type": "f64"
+    },
+    {
+     "name": "right",
+     "native": "Right",
+     "type": "f64"
+    },
+    {
+     "name": "bottom",
+     "native": "Bottom",
+     "type": "f64"
+    }
+   ]
+  }
+ },
+ "types": {
+  "Microsoft.UI.Xaml.AdaptiveTrigger": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Application": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.ApplicationHighContrastAdjustment": {
+   "category": "flags"
+  },
+  "Microsoft.UI.Xaml.ApplicationInitializationCallback": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.ApplicationInitializationCallbackParams": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.ApplicationRequiresPointerMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.ApplicationTheme": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.AutomationTextAttributesEnum": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.BindingFailedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.BindingFailedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.BringIntoViewOptions": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.BrushTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.ColorPaletteResources": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.CornerRadius": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.CornerRadiusHelper": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "statics",
+   "constructors": [],
+   "curated": true,
+   "default_interface": "Microsoft.UI.Xaml.ICornerRadiusHelper",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.CornerRadiusHelper",
+   "hidden": [],
+   "iid": "dfcc382d-cfa8-5614-a35a-4091d1a81c9e",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "CornerRadiusHelper",
+   "namespace": "Microsoft.UI.Xaml",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Microsoft.UI.Xaml.CornerRadius"
+   ],
+   "root": true,
+   "statics": {
+    "fromRadii": [
+     {
+      "iface": "Microsoft.UI.Xaml.ICornerRadiusHelperStatics",
+      "native": "FromRadii",
+      "outs": [],
+      "params": [
+       {
+        "name": "topLeft",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       },
+       {
+        "name": "topRight",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       },
+       {
+        "name": "bottomRight",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       },
+       {
+        "name": "bottomLeft",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Microsoft.UI.Xaml.CornerRadius"
+      },
+      "ret_native": "Microsoft.UI.Xaml.CornerRadius",
+      "slot": 6
+     }
+    ],
+    "fromUniformRadius": [
+     {
+      "iface": "Microsoft.UI.Xaml.ICornerRadiusHelperStatics",
+      "native": "FromUniformRadius",
+      "outs": [],
+      "params": [
+       {
+        "name": "uniformRadius",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Microsoft.UI.Xaml.CornerRadius"
+      },
+      "ret_native": "Microsoft.UI.Xaml.CornerRadius",
+      "slot": 7
+     }
+    ]
+   },
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.CreateDefaultValueCallback": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.DataContextChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.DataTemplate": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.DataTemplateKey": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.DebugSettings": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.DependencyObject": {
+   "abstract": true,
+   "blocked": {
+    "RegisterPropertyChangedCallback/2": "delegate-parameter"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.IDependencyObject",
+   "events": [],
+   "excluded": {
+    "get_Dispatcher": "deprecated"
+   },
+   "full": "Microsoft.UI.Xaml.DependencyObject",
+   "hidden": [],
+   "iid": "e7beaee7-160e-50f7-8789-d63463f979fa",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "clearValue": [
+     {
+      "iface": "Microsoft.UI.Xaml.IDependencyObject",
+      "native": "ClearValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "dp",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.DependencyProperty"
+        },
+        "type": "Microsoft.UI.Xaml.DependencyProperty"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 8
+     }
+    ],
+    "getAnimationBaseValue": [
+     {
+      "iface": "Microsoft.UI.Xaml.IDependencyObject",
+      "native": "GetAnimationBaseValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "dp",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.DependencyProperty"
+        },
+        "type": "Microsoft.UI.Xaml.DependencyProperty"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 10
+     }
+    ],
+    "getValue": [
+     {
+      "iface": "Microsoft.UI.Xaml.IDependencyObject",
+      "native": "GetValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "dp",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.DependencyProperty"
+        },
+        "type": "Microsoft.UI.Xaml.DependencyProperty"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 6
+     }
+    ],
+    "readLocalValue": [
+     {
+      "iface": "Microsoft.UI.Xaml.IDependencyObject",
+      "native": "ReadLocalValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "dp",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.DependencyProperty"
+        },
+        "type": "Microsoft.UI.Xaml.DependencyProperty"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 9
+     }
+    ],
+    "setValue": [
+     {
+      "iface": "Microsoft.UI.Xaml.IDependencyObject",
+      "native": "SetValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "dp",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.DependencyProperty"
+        },
+        "type": "Microsoft.UI.Xaml.DependencyProperty"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "variant"
+        },
+        "type": "object"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 7
+     }
+    ],
+    "unregisterPropertyChangedCallback": [
+     {
+      "iface": "Microsoft.UI.Xaml.IDependencyObject",
+      "native": "UnregisterPropertyChangedCallback",
+      "outs": [],
+      "params": [
+       {
+        "name": "dp",
+        "slot": {
+         "k": "object",
+         "t": "Microsoft.UI.Xaml.DependencyProperty"
+        },
+        "type": "Microsoft.UI.Xaml.DependencyProperty"
+       },
+       {
+        "name": "token",
+        "slot": {
+         "k": "int",
+         "t": "i64"
+        },
+        "type": "i64"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ]
+   },
+   "name": "DependencyObject",
+   "namespace": "Microsoft.UI.Xaml",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Xaml.IDependencyObject",
+      "slot": 14
+     },
+     "name": "dispatcherQueue",
+     "native": "DispatcherQueue",
+     "set": null,
+     "slot": {
+      "k": "object",
+      "t": "Microsoft.UI.Dispatching.DispatcherQueue"
+     },
+     "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Dispatching.DispatcherQueue",
+    "Microsoft.UI.Xaml.DependencyProperty"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.DependencyObjectCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.DependencyProperty": {
+   "abstract": true,
+   "blocked": {
+    "GetMetadata/1": "record-field:Windows.UI.Xaml.Interop.TypeName.Name",
+    "static:Register/4": "record-field:Windows.UI.Xaml.Interop.TypeName.Name",
+    "static:RegisterAttached/4": "record-field:Windows.UI.Xaml.Interop.TypeName.Name"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.IDependencyProperty",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.DependencyProperty",
+   "hidden": [],
+   "iid": "960eab49-9672-58a0-995b-3a42e5ea6278",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "DependencyProperty",
+   "namespace": "Microsoft.UI.Xaml",
+   "parent": null,
+   "props": [],
+   "refs": [],
+   "root": false,
+   "statics": {
+    "unsetValue": [
+     {
+      "iface": "Microsoft.UI.Xaml.IDependencyPropertyStatics",
+      "native": "get_UnsetValue",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 6
+     }
+    ]
+   },
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.DependencyPropertyChangedCallback": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.DependencyPropertyChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.DependencyPropertyChangedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.DispatcherShutdownMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.DispatcherTimer": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.DragEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.DragEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.DragOperationDeferral": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.DragStartingEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.DragUI": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.DragUIOverride": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.DropCompletedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Duration": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.DurationHelper": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.DurationType": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.EffectiveViewportChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.ElementFactoryGetArgs": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.ElementFactoryRecycleArgs": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.ElementHighContrastAdjustment": {
+   "category": "flags"
+  },
+  "Microsoft.UI.Xaml.ElementSoundKind": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.ElementSoundMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.ElementSoundPlayer": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.ElementSoundPlayerState": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.ElementSpatialAudioMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.ElementTheme": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.EnteredBackgroundEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.EventTrigger": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.ExceptionRoutedEventArgs": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "args",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.IExceptionRoutedEventArgs",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.ExceptionRoutedEventArgs",
+   "hidden": [],
+   "iid": "e8bcb6d2-d3f5-5393-a84f-dfcd44a2df34",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "ExceptionRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml",
+   "parent": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Xaml.IExceptionRoutedEventArgs",
+      "slot": 6
+     },
+     "name": "errorMessage",
+     "native": "ErrorMessage",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    }
+   ],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.ExceptionRoutedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.FlowDirection": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FocusState": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FocusVisualKind": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FontCapitals": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FontEastAsianLanguage": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FontEastAsianWidths": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FontFraction": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FontNumeralAlignment": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FontNumeralStyle": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FontVariants": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.FrameworkElement": {
+   "category": "widget"
+  },
+  "Microsoft.UI.Xaml.FrameworkTemplate": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.FrameworkView": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.FrameworkViewSource": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.GridLength": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.GridLengthHelper": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "statics",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.IGridLengthHelper",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.GridLengthHelper",
+   "hidden": [],
+   "iid": "592b4fd5-6564-54e0-87d6-1c41939ed499",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "GridLengthHelper",
+   "namespace": "Microsoft.UI.Xaml",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Microsoft.UI.Xaml.GridLength",
+    "Microsoft.UI.Xaml.GridUnitType"
+   ],
+   "root": true,
+   "statics": {
+    "auto": [
+     {
+      "iface": "Microsoft.UI.Xaml.IGridLengthHelperStatics",
+      "native": "get_Auto",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "record",
+       "t": "Microsoft.UI.Xaml.GridLength"
+      },
+      "ret_native": "Microsoft.UI.Xaml.GridLength",
+      "slot": 6
+     }
+    ],
+    "equals": [
+     {
+      "iface": "Microsoft.UI.Xaml.IGridLengthHelperStatics",
+      "native": "Equals",
+      "outs": [],
+      "params": [
+       {
+        "name": "target",
+        "slot": {
+         "k": "record",
+         "t": "Microsoft.UI.Xaml.GridLength"
+        },
+        "type": "Microsoft.UI.Xaml.GridLength"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "record",
+         "t": "Microsoft.UI.Xaml.GridLength"
+        },
+        "type": "Microsoft.UI.Xaml.GridLength"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 12
+     }
+    ],
+    "fromPixels": [
+     {
+      "iface": "Microsoft.UI.Xaml.IGridLengthHelperStatics",
+      "native": "FromPixels",
+      "outs": [],
+      "params": [
+       {
+        "name": "pixels",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Microsoft.UI.Xaml.GridLength"
+      },
+      "ret_native": "Microsoft.UI.Xaml.GridLength",
+      "slot": 7
+     }
+    ],
+    "fromValueAndType": [
+     {
+      "iface": "Microsoft.UI.Xaml.IGridLengthHelperStatics",
+      "native": "FromValueAndType",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       },
+       {
+        "name": "type",
+        "slot": {
+         "k": "enum",
+         "t": "Microsoft.UI.Xaml.GridUnitType"
+        },
+        "type": "Microsoft.UI.Xaml.GridUnitType"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Microsoft.UI.Xaml.GridLength"
+      },
+      "ret_native": "Microsoft.UI.Xaml.GridLength",
+      "slot": 8
+     }
+    ],
+    "getIsAbsolute": [
+     {
+      "iface": "Microsoft.UI.Xaml.IGridLengthHelperStatics",
+      "native": "GetIsAbsolute",
+      "outs": [],
+      "params": [
+       {
+        "name": "target",
+        "slot": {
+         "k": "record",
+         "t": "Microsoft.UI.Xaml.GridLength"
+        },
+        "type": "Microsoft.UI.Xaml.GridLength"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 9
+     }
+    ],
+    "getIsAuto": [
+     {
+      "iface": "Microsoft.UI.Xaml.IGridLengthHelperStatics",
+      "native": "GetIsAuto",
+      "outs": [],
+      "params": [
+       {
+        "name": "target",
+        "slot": {
+         "k": "record",
+         "t": "Microsoft.UI.Xaml.GridLength"
+        },
+        "type": "Microsoft.UI.Xaml.GridLength"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "getIsStar": [
+     {
+      "iface": "Microsoft.UI.Xaml.IGridLengthHelperStatics",
+      "native": "GetIsStar",
+      "outs": [],
+      "params": [
+       {
+        "name": "target",
+        "slot": {
+         "k": "record",
+         "t": "Microsoft.UI.Xaml.GridLength"
+        },
+        "type": "Microsoft.UI.Xaml.GridLength"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 11
+     }
+    ]
+   },
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.GridUnitType": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.HorizontalAlignment": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.IAdaptiveTrigger": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IAdaptiveTriggerFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IAdaptiveTriggerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IApplication": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IApplication2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IApplication3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IApplicationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IApplicationInitializationCallbackParams": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IApplicationOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IApplicationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IBindingFailedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IBringIntoViewOptions": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IBringIntoViewRequestedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IBrushTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IBrushTransitionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IColorPaletteResources": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IColorPaletteResourcesFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ICornerRadiusHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ICornerRadiusHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDataContextChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDataTemplate": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDataTemplateExtension": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.IDataTemplateFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDataTemplateKey": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDataTemplateKeyFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDataTemplateStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDebugSettings": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDebugSettings2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDebugSettings3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDependencyObject": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDependencyObjectCollectionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDependencyObjectFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDependencyProperty": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDependencyPropertyChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDependencyPropertyStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDispatcherTimer": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDispatcherTimerFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDragEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDragOperationDeferral": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDragStartingEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDragUI": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDragUIOverride": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDropCompletedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDurationHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IDurationHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IEffectiveViewportChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IElementFactory": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.IElementFactoryGetArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IElementFactoryGetArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IElementFactoryRecycleArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IElementFactoryRecycleArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IElementSoundPlayer": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IElementSoundPlayerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IEventTrigger": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IExceptionRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IExceptionRoutedEventArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkElement": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkElementFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkElementOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkElementProtected": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkElementStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkTemplate": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkTemplateFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkView": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IFrameworkViewSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IGridLengthHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IGridLengthHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ILaunchActivatedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IMediaFailedRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IPointHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IPointHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IPropertyMetadata": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IPropertyMetadataFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IPropertyMetadataStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IPropertyPath": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IPropertyPathFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IRectHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IRectHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IResourceDictionary": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IResourceDictionaryFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IResourceManagerRequestedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IRoutedEvent": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IRoutedEventArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IScalarTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IScalarTransitionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISetter": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISetterBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISetterBaseCollection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISetterBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISetterFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISetterStatics2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISizeChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISizeHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ISizeHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IStateTrigger": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IStateTriggerBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IStateTriggerBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IStateTriggerBaseProtected": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IStateTriggerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IStyle": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IStyleFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ITargetPropertyPath": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ITargetPropertyPathFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IThicknessHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IThicknessHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ITriggerAction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ITriggerActionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ITriggerBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.ITriggerBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IUIElement": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IUIElementFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IUIElementOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IUIElementProtected": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IUIElementStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IUIElementWeakCollectionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IUnhandledExceptionEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVector3Transition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVector3TransitionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualState": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualStateChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualStateGroup": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualStateManager": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualStateManagerFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualStateManagerOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualStateManagerProtected": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualStateManagerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IVisualTransitionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindow2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindowActivatedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindowEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindowFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindowSizeChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindowStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IWindowVisibilityChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlIsland": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlIslandFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlResourceReferenceFailedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlRoot": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlRoot2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlRoot3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlRoot4": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlRootChangedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.IXamlServiceProvider": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.LaunchActivatedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.LayoutCycleDebugBreakLevel": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.LayoutCycleTracingLevel": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.LeavingBackgroundEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.LineStackingStrategy": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.MediaFailedRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.OpticalMarginAlignment": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.PointHelper": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.PropertyChangedCallback": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.PropertyMetadata": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.PropertyPath": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.RectHelper": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.ResourceDictionary": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.ResourceManagerRequestedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.RoutedEvent": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.RoutedEventArgs": {
+   "abstract": false,
+   "blocked": {},
+   "bound": true,
+   "category": "args",
+   "constructors": [
+    {
+     "composable": true,
+     "iface": "Microsoft.UI.Xaml.IRoutedEventArgsFactory",
+     "native": "CreateInstance",
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.IRoutedEventArgs",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "hidden": [],
+   "iid": "0908c407-1c7d-5de3-9c50-d971c62ec8ec",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "RoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Xaml.IRoutedEventArgs",
+      "slot": 6
+     },
+     "name": "originalSource",
+     "native": "OriginalSource",
+     "set": null,
+     "slot": {
+      "k": "variant"
+     },
+     "type": "object"
+    }
+   ],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.RoutedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.ScalarTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Setter": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.SetterBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.SetterBaseCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.SizeChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.SizeChangedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.SizeHelper": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.StateTrigger": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.StateTriggerBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Style": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.SuspendingEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.TargetPropertyPath": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.TextAlignment": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.TextLineBounds": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.TextReadingOrder": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.TextTrimming": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.TextWrapping": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Thickness": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.ThicknessHelper": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "statics",
+   "constructors": [],
+   "curated": true,
+   "default_interface": "Microsoft.UI.Xaml.IThicknessHelper",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.ThicknessHelper",
+   "hidden": [],
+   "iid": "5e496347-3c49-55ee-b442-530789b42b6f",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "ThicknessHelper",
+   "namespace": "Microsoft.UI.Xaml",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Microsoft.UI.Xaml.Thickness"
+   ],
+   "root": true,
+   "statics": {
+    "fromLengths": [
+     {
+      "iface": "Microsoft.UI.Xaml.IThicknessHelperStatics",
+      "native": "FromLengths",
+      "outs": [],
+      "params": [
+       {
+        "name": "left",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       },
+       {
+        "name": "top",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       },
+       {
+        "name": "right",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       },
+       {
+        "name": "bottom",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Microsoft.UI.Xaml.Thickness"
+      },
+      "ret_native": "Microsoft.UI.Xaml.Thickness",
+      "slot": 6
+     }
+    ],
+    "fromUniformLength": [
+     {
+      "iface": "Microsoft.UI.Xaml.IThicknessHelperStatics",
+      "native": "FromUniformLength",
+      "outs": [],
+      "params": [
+       {
+        "name": "uniformLength",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "record",
+       "t": "Microsoft.UI.Xaml.Thickness"
+      },
+      "ret_native": "Microsoft.UI.Xaml.Thickness",
+      "slot": 7
+     }
+    ]
+   },
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.TriggerAction": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.TriggerActionCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.TriggerBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.TriggerCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.UIElement": {
+   "category": "widget"
+  },
+  "Microsoft.UI.Xaml.UIElementWeakCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.UnhandledExceptionEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.UnhandledExceptionEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Vector3Transition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Vector3TransitionComponents": {
+   "category": "flags"
+  },
+  "Microsoft.UI.Xaml.VerticalAlignment": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Visibility": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.VisualState": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.VisualStateChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.VisualStateChangedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.VisualStateGroup": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.VisualStateManager": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.VisualTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.WinUIContract": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.Window": {
+   "category": "excluded"
+  },
+  "Microsoft.UI.Xaml.WindowActivatedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.WindowActivationState": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.WindowEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.WindowSizeChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.WindowVisibilityChangedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.XamlContract": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.XamlIsland": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.XamlResourceReferenceFailedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.XamlRoot": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.XamlRootChangedEventArgs": {
+   "category": "statics"
+  }
+ }
+}

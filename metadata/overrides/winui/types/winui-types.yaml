@@ -1,0 +1,121 @@
+# Overrides of the WinUI non-GUI type pipeline (tools/metadata/winui/types_winui_classify.py, milestone N4).
+# Everything else is classified by rules from winmd (plans/research/NON-GUI-TYPES.md sections 3.1, 3.4 and 4.1).
+# Strict: every type named here must exist in metadata/winui/types/ingested/ (the classifier fails otherwise).
+
+# The N4 curated set: each has generated, ledger-verified tests on the windows-winui runner.
+curated:
+  - Windows.Foundation.Uri
+  - Windows.Foundation.Collections.PropertySet
+  - Windows.Data.Json.JsonObject
+  - Microsoft.UI.Xaml.Media.SolidColorBrush
+  - Microsoft.UI.Xaml.Media.FontFamily
+  - Microsoft.UI.Xaml.ThicknessHelper
+  - Microsoft.UI.Xaml.CornerRadiusHelper
+  - Microsoft.UI.ColorHelper
+  - Microsoft.UI.Dispatching.DispatcherQueueTimer
+  - Windows.Storage.StorageFolder
+  - Windows.Storage.FileIO
+  - Windows.ApplicationModel.DataTransfer.DataPackage
+
+# Types bound beyond the signature closure of these roots (section 3.4: Windows.Foundation + Microsoft.UI non-XAML roots).
+roots:
+  - Windows.Foundation.Uri
+  - Windows.Foundation.WwwFormUrlDecoder
+  - Windows.Foundation.PropertyValue
+  - Windows.Foundation.Collections.PropertySet
+  - Windows.Foundation.Collections.ValueSet
+  - Windows.Foundation.Collections.StringMap
+  - Windows.Data.Json.JsonObject
+  - Windows.Data.Json.JsonArray
+  - Windows.Data.Json.JsonValue
+  - Windows.UI.Colors
+  - Windows.UI.ColorHelper
+  - Microsoft.UI.Colors
+  - Microsoft.UI.ColorHelper
+  - Microsoft.UI.Dispatching.DispatcherQueue
+  - Microsoft.UI.Dispatching.DispatcherQueueTimer
+  - Microsoft.UI.Xaml.ThicknessHelper
+  - Microsoft.UI.Xaml.CornerRadiusHelper
+  - Microsoft.UI.Xaml.GridLengthHelper
+  - Microsoft.UI.Xaml.Media.SolidColorBrush
+  - Microsoft.UI.Xaml.Media.LinearGradientBrush
+  - Microsoft.UI.Xaml.Media.GradientStop
+  - Microsoft.UI.Xaml.Media.FontFamily
+  - Microsoft.UI.Xaml.Media.Imaging.BitmapImage
+  - Windows.Storage.StorageFile
+  - Windows.Storage.StorageFolder
+  - Windows.Storage.FileIO
+  - Windows.Storage.PathIO
+  - Windows.ApplicationModel.DataTransfer.DataPackage
+  - Windows.ApplicationModel.DataTransfer.Clipboard
+  # Outside the closure scope: bound for the thread-affinity check (its DispatcherQueue) and IClosable (section 4.1 rule 6).
+  - Microsoft.UI.Composition.Compositor
+
+# Namespaces the signature closure may pull classes and interfaces from. A member that mentions a class or interface of
+# another namespace is blocked (`out-of-scope:<Type>`); records and enums of every ingested namespace are allowed.
+scope:
+  - Windows.Foundation
+  - Windows.Foundation.Collections
+  - Windows.UI
+  - Windows.Storage
+  - Windows.Storage.Streams
+  - Windows.Storage.FileProperties
+  - Windows.ApplicationModel.DataTransfer
+  - Windows.Data.Json
+  - Microsoft.UI
+  - Microsoft.UI.Dispatching
+  - Microsoft.UI.Xaml
+  - Microsoft.UI.Xaml.Media
+  - Microsoft.UI.Xaml.Media.Imaging
+
+# Never bound (beyond the rules: deprecated, widgets, class interfaces). JS timers stay authoritative (PLAN rule 6),
+# and the XAML application/window plumbing belongs to the backend.
+exclude:
+  - Microsoft.UI.Xaml.Application
+  - Microsoft.UI.Xaml.Window
+  - Microsoft.UI.Xaml.DispatcherTimer
+  - Microsoft.UI.Dispatching.DispatcherQueueController
+  - Microsoft.UI.Xaml.ResourceDictionary
+  - Microsoft.UI.Xaml.DataTemplate
+  - Microsoft.UI.Xaml.Style
+  - Microsoft.UI.Xaml.Setter
+  - Microsoft.UI.Xaml.TriggerAction
+  - Microsoft.UI.Xaml.VisualStateManager
+  - Microsoft.UI.Xaml.Media.VisualTreeHelper
+  - Microsoft.UI.Xaml.Media.CompositionTarget
+
+# Members never bound (`<Type>.<NativeMember>`): calls that block the UI thread, or that the backend owns.
+exclude_members:
+  - Microsoft.UI.Dispatching.DispatcherQueue.EnqueueEventLoopExit
+  - Microsoft.UI.Dispatching.DispatcherQueue.RunEventLoop
+  - Windows.ApplicationModel.DataTransfer.Clipboard.Flush
+
+# How the generated ledger tests make a subject of a curated type: `new` (constructor arguments), `construct`
+# (props object), `static` ([method, args...]: a static returning the subject; async statics are awaited) or
+# `queue` (DispatcherQueue.GetForCurrentThread() then the named method). `<temp>` is a fresh temporary directory.
+subjects:
+  Windows.Foundation.Uri: {new: ["https://example.com/a/b?x=1#top"]}
+  Windows.Foundation.Collections.PropertySet: {construct: {}}
+  Windows.Data.Json.JsonObject: {static: [parse, '{"a": 1, "b": "two"}']}
+  Microsoft.UI.Xaml.Media.SolidColorBrush: {construct: {opacity: 0.5}}
+  Microsoft.UI.Xaml.Media.FontFamily: {new: ["Segoe UI"]}
+  Microsoft.UI.Dispatching.DispatcherQueueTimer: {queue: createTimer}
+  Windows.Storage.StorageFolder: {static: [getFolderFromPathAsync, "<temp>"]}
+  Windows.ApplicationModel.DataTransfer.DataPackage: {construct: {}}
+
+# Async round trips the tests run per curated type (in order; `$subject` is the subject, `$temp` the temporary
+# directory, `$N` the result of step N). Each step is [receiver or Type, method, args...].
+async_checks:
+  Windows.Storage.StorageFolder:
+    - ["$subject", createFileAsync, "n4.txt", replace-existing]
+    - [Windows.Storage.FileIO, writeTextAsync, "$0", "hello from svelters"]
+    - [Windows.Storage.FileIO, readTextAsync, "$0"]
+  Windows.Storage.FileIO:
+    - [Windows.Storage.StorageFolder, getFolderFromPathAsync, "$temp"]
+    - ["$0", createFileAsync, "io.txt", replace-existing]
+    - [Windows.Storage.FileIO, writeTextAsync, "$1", "line"]
+    - [Windows.Storage.FileIO, readTextAsync, "$1"]
+  Windows.ApplicationModel.DataTransfer.DataPackage:
+    - ["$subject", setText, "copied"]
+    - ["$subject", getView]
+    - ["$1", getTextAsync]

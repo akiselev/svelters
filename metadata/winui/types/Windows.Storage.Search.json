@@ -1,0 +1,261 @@
+{
+ "enums": {
+  "Windows.Storage.Search.CommonFileQuery": {
+   "flags": false,
+   "members": [
+    [
+     "defaultQuery",
+     0
+    ],
+    [
+     "orderByName",
+     1
+    ],
+    [
+     "orderByTitle",
+     2
+    ],
+    [
+     "orderByMusicProperties",
+     3
+    ],
+    [
+     "orderBySearchRank",
+     4
+    ],
+    [
+     "orderByDate",
+     5
+    ]
+   ],
+   "native": [
+    "DefaultQuery",
+    "OrderByName",
+    "OrderByTitle",
+    "OrderByMusicProperties",
+    "OrderBySearchRank",
+    "OrderByDate"
+   ],
+   "unsigned": false,
+   "used": true
+  },
+  "Windows.Storage.Search.CommonFolderQuery": {
+   "flags": false,
+   "members": [
+    [
+     "defaultQuery",
+     0
+    ],
+    [
+     "groupByYear",
+     100
+    ],
+    [
+     "groupByMonth",
+     101
+    ],
+    [
+     "groupByArtist",
+     102
+    ],
+    [
+     "groupByAlbum",
+     103
+    ],
+    [
+     "groupByAlbumArtist",
+     104
+    ],
+    [
+     "groupByComposer",
+     105
+    ],
+    [
+     "groupByGenre",
+     106
+    ],
+    [
+     "groupByPublishedYear",
+     107
+    ],
+    [
+     "groupByRating",
+     108
+    ],
+    [
+     "groupByTag",
+     109
+    ],
+    [
+     "groupByAuthor",
+     110
+    ],
+    [
+     "groupByType",
+     111
+    ]
+   ],
+   "native": [
+    "DefaultQuery",
+    "GroupByYear",
+    "GroupByMonth",
+    "GroupByArtist",
+    "GroupByAlbum",
+    "GroupByAlbumArtist",
+    "GroupByComposer",
+    "GroupByGenre",
+    "GroupByPublishedYear",
+    "GroupByRating",
+    "GroupByTag",
+    "GroupByAuthor",
+    "GroupByType"
+   ],
+   "unsigned": false,
+   "used": true
+  },
+  "Windows.Storage.Search.IndexedState": {
+   "flags": false,
+   "members": [
+    [
+     "unknown",
+     0
+    ],
+    [
+     "notIndexed",
+     1
+    ],
+    [
+     "partiallyIndexed",
+     2
+    ],
+    [
+     "fullyIndexed",
+     3
+    ]
+   ],
+   "native": [
+    "Unknown",
+    "NotIndexed",
+    "PartiallyIndexed",
+    "FullyIndexed"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "js_module": "svelters:winui/windows.storage.search",
+ "namespace": "Windows.Storage.Search",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Windows.Storage.Search.CommonFileQuery": {
+   "category": "enum"
+  },
+  "Windows.Storage.Search.CommonFolderQuery": {
+   "category": "enum"
+  },
+  "Windows.Storage.Search.ContentIndexer": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.ContentIndexerQuery": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.DateStackOption": {
+   "category": "enum"
+  },
+  "Windows.Storage.Search.FolderDepth": {
+   "category": "enum"
+  },
+  "Windows.Storage.Search.IContentIndexer": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IContentIndexerQuery": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IContentIndexerQueryOperations": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IContentIndexerStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IIndexableContent": {
+   "category": "interface"
+  },
+  "Windows.Storage.Search.IQueryOptions": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IQueryOptionsAdditionalSearchSources": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IQueryOptionsFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IQueryOptionsWithProviderFilter": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IStorageFileQueryResult": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IStorageFileQueryResult2": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IStorageFolderQueryOperations": {
+   "category": "interface"
+  },
+  "Windows.Storage.Search.IStorageFolderQueryResult": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IStorageItemQueryResult": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IStorageLibraryChangeTrackerTriggerDetails": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IStorageLibraryContentChangedTriggerDetails": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IStorageQueryResultBase": {
+   "category": "interface"
+  },
+  "Windows.Storage.Search.IValueAndLanguage": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Search.IndexableContent": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.IndexedState": {
+   "category": "enum"
+  },
+  "Windows.Storage.Search.IndexerOption": {
+   "category": "enum"
+  },
+  "Windows.Storage.Search.QueryOptions": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.SortEntry": {
+   "category": "record"
+  },
+  "Windows.Storage.Search.SortEntryVector": {
+   "category": "model"
+  },
+  "Windows.Storage.Search.StorageFileQueryResult": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.StorageFolderQueryResult": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.StorageItemQueryResult": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.StorageLibraryChangeTrackerTriggerDetails": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.StorageLibraryContentChangedTriggerDetails": {
+   "category": "object"
+  },
+  "Windows.Storage.Search.ValueAndLanguage": {
+   "category": "object"
+  }
+ }
+}

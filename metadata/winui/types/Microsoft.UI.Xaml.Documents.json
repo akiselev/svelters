@@ -1,0 +1,178 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.xaml.documents",
+ "namespace": "Microsoft.UI.Xaml.Documents",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Xaml.Documents.Block": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.BlockCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Documents.Bold": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.Glyphs": {
+   "category": "widget"
+  },
+  "Microsoft.UI.Xaml.Documents.Hyperlink": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Documents.IBlock": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IBlockFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IBlockStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IBold": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IGlyphs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IGlyphsStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IHyperlink": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IHyperlinkClickEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IHyperlinkStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IInline": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IInlineFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IInlineUIContainer": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IItalic": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ILineBreak": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IParagraph": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IParagraphStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IRun": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IRunStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ISpan": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ISpanFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElement": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElementFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElementOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextElementStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighter": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextHighlighterStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITextPointer": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITypography": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.ITypographyStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.IUnderline": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Documents.Inline": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.InlineCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Documents.InlineUIContainer": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.Italic": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.LineBreak": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.LogicalDirection": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Documents.Paragraph": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.Run": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.Span": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.TextElement": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.TextHighlighter": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.TextHighlighterBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.TextPointer": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.TextRange": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.Documents.Typography": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Documents.Underline": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Documents.UnderlineStyle": {
+   "category": "enum"
+  }
+ }
+}

@@ -1,0 +1,1352 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/windows.foundation",
+ "namespace": "Windows.Foundation",
+ "schema": "svelters-winui-types/v1",
+ "structs": {
+  "Windows.Foundation.Point": {
+   "fields": [
+    {
+     "name": "x",
+     "native": "X",
+     "type": "f32"
+    },
+    {
+     "name": "y",
+     "native": "Y",
+     "type": "f32"
+    }
+   ]
+  },
+  "Windows.Foundation.Rect": {
+   "fields": [
+    {
+     "name": "x",
+     "native": "X",
+     "type": "f32"
+    },
+    {
+     "name": "y",
+     "native": "Y",
+     "type": "f32"
+    },
+    {
+     "name": "width",
+     "native": "Width",
+     "type": "f32"
+    },
+    {
+     "name": "height",
+     "native": "Height",
+     "type": "f32"
+    }
+   ]
+  },
+  "Windows.Foundation.Size": {
+   "fields": [
+    {
+     "name": "width",
+     "native": "Width",
+     "type": "f32"
+    },
+    {
+     "name": "height",
+     "native": "Height",
+     "type": "f32"
+    }
+   ]
+  }
+ },
+ "types": {
+  "Windows.Foundation.AsyncActionCompletedHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.AsyncActionProgressHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.AsyncActionWithProgressCompletedHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.AsyncOperationCompletedHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.AsyncOperationProgressHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.AsyncOperationWithProgressCompletedHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.AsyncStatus": {
+   "category": "enum"
+  },
+  "Windows.Foundation.DateTime": {
+   "category": "record"
+  },
+  "Windows.Foundation.Deferral": {
+   "abstract": true,
+   "blocked": {
+    "new/Create": "delegate-parameter"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Foundation.IDeferral",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.Deferral",
+   "hidden": [],
+   "iid": "d6269732-3b7f-46a7-b40b-4fdca2a2c693",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "close": [
+     {
+      "iface": "Windows.Foundation.IClosable",
+      "native": "Close",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ],
+    "complete": [
+     {
+      "iface": "Windows.Foundation.IDeferral",
+      "native": "Complete",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "Deferral",
+   "namespace": "Windows.Foundation",
+   "parent": null,
+   "props": [],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.DeferralCompletedHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.EventHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.EventRegistrationToken": {
+   "category": "internal"
+  },
+  "Windows.Foundation.FoundationContract": {
+   "category": "record"
+  },
+  "Windows.Foundation.GuidHelper": {
+   "category": "statics"
+  },
+  "Windows.Foundation.HResult": {
+   "category": "internal"
+  },
+  "Windows.Foundation.IAsyncAction": {
+   "category": "async"
+  },
+  "Windows.Foundation.IAsyncActionWithProgress": {
+   "category": "async"
+  },
+  "Windows.Foundation.IAsyncInfo": {
+   "category": "async"
+  },
+  "Windows.Foundation.IAsyncOperation": {
+   "category": "async"
+  },
+  "Windows.Foundation.IAsyncOperationWithProgress": {
+   "category": "async"
+  },
+  "Windows.Foundation.IClosable": {
+   "category": "interface"
+  },
+  "Windows.Foundation.IDeferral": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IDeferralFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IGetActivationFactory": {
+   "category": "interface"
+  },
+  "Windows.Foundation.IGuidHelperStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IMemoryBuffer": {
+   "category": "interface"
+  },
+  "Windows.Foundation.IMemoryBufferFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IMemoryBufferReference": {
+   "category": "interface"
+  },
+  "Windows.Foundation.IPropertyValue": {
+   "category": "interface"
+  },
+  "Windows.Foundation.IPropertyValueStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IReference": {
+   "category": "reference"
+  },
+  "Windows.Foundation.IReferenceArray": {
+   "category": "reference"
+  },
+  "Windows.Foundation.IStringable": {
+   "category": "interface"
+  },
+  "Windows.Foundation.IUriEscapeStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IUriRuntimeClass": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IUriRuntimeClassFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IUriRuntimeClassWithAbsoluteCanonicalUri": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IWwwFormUrlDecoderEntry": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.IWwwFormUrlDecoderEntry",
+   "hidden": [],
+   "iid": "125e7431-f678-4e8e-b670-20a9b06c512d",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "IWwwFormUrlDecoderEntry",
+   "namespace": "Windows.Foundation",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IWwwFormUrlDecoderEntry",
+      "slot": 6
+     },
+     "name": "name",
+     "native": "Name",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IWwwFormUrlDecoderEntry",
+      "slot": 7
+     },
+     "name": "value",
+     "native": "Value",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    }
+   ],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.IWwwFormUrlDecoderRuntimeClass": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.IWwwFormUrlDecoderRuntimeClassFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Foundation.MemoryBuffer": {
+   "category": "object"
+  },
+  "Windows.Foundation.Point": {
+   "category": "record"
+  },
+  "Windows.Foundation.PropertyType": {
+   "category": "enum"
+  },
+  "Windows.Foundation.PropertyValue": {
+   "abstract": true,
+   "blocked": {
+    "static:CreateBooleanArray/1": "array",
+    "static:CreateChar16Array/1": "array",
+    "static:CreateDateTimeArray/1": "array",
+    "static:CreateDoubleArray/1": "array",
+    "static:CreateGuidArray/1": "array",
+    "static:CreateInspectableArray/1": "array",
+    "static:CreateInt16Array/1": "array",
+    "static:CreateInt32Array/1": "array",
+    "static:CreateInt64Array/1": "array",
+    "static:CreatePointArray/1": "array",
+    "static:CreateRectArray/1": "array",
+    "static:CreateSingleArray/1": "array",
+    "static:CreateSizeArray/1": "array",
+    "static:CreateStringArray/1": "array",
+    "static:CreateTimeSpanArray/1": "array",
+    "static:CreateUInt16Array/1": "array",
+    "static:CreateUInt32Array/1": "array",
+    "static:CreateUInt64Array/1": "array",
+    "static:CreateUInt8Array/1": "array"
+   },
+   "bound": true,
+   "category": "statics",
+   "constructors": [],
+   "curated": false,
+   "default_interface": null,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.PropertyValue",
+   "hidden": [],
+   "iid": null,
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "PropertyValue",
+   "namespace": "Windows.Foundation",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.Foundation.Point",
+    "Windows.Foundation.Rect",
+    "Windows.Foundation.Size"
+   ],
+   "root": true,
+   "statics": {
+    "createBoolean": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateBoolean",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "bool"
+        },
+        "type": "bool"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 17
+     }
+    ],
+    "createChar16": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateChar16",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "char"
+        },
+        "type": "char16"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 16
+     }
+    ],
+    "createDateTime": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateDateTime",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "datetime"
+        },
+        "type": "Windows.Foundation.DateTime"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 21
+     }
+    ],
+    "createDouble": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateDouble",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 15
+     }
+    ],
+    "createEmpty": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateEmpty",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 6
+     }
+    ],
+    "createGuid": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateGuid",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "guid"
+        },
+        "type": "System.Guid"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 20
+     }
+    ],
+    "createInspectable": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateInspectable",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "variant"
+        },
+        "type": "object"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 19
+     }
+    ],
+    "createInt16": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateInt16",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "int",
+         "t": "i16"
+        },
+        "type": "i16"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 8
+     }
+    ],
+    "createInt32": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateInt32",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "int",
+         "t": "i32"
+        },
+        "type": "i32"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 10
+     }
+    ],
+    "createInt64": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateInt64",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "int",
+         "t": "i64"
+        },
+        "type": "i64"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 12
+     }
+    ],
+    "createPoint": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreatePoint",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "record",
+         "t": "Windows.Foundation.Point"
+        },
+        "type": "Windows.Foundation.Point"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 23
+     }
+    ],
+    "createRect": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateRect",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "record",
+         "t": "Windows.Foundation.Rect"
+        },
+        "type": "Windows.Foundation.Rect"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 25
+     }
+    ],
+    "createSingle": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateSingle",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "float",
+         "t": "f32"
+        },
+        "type": "f32"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 14
+     }
+    ],
+    "createSize": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateSize",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "record",
+         "t": "Windows.Foundation.Size"
+        },
+        "type": "Windows.Foundation.Size"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 24
+     }
+    ],
+    "createString": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateString",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 18
+     }
+    ],
+    "createTimeSpan": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateTimeSpan",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "timespan"
+        },
+        "type": "Windows.Foundation.TimeSpan"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 22
+     }
+    ],
+    "createUInt16": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateUInt16",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "int",
+         "t": "u16"
+        },
+        "type": "u16"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 9
+     }
+    ],
+    "createUInt32": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateUInt32",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 11
+     }
+    ],
+    "createUInt64": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateUInt64",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 13
+     }
+    ],
+    "createUInt8": [
+     {
+      "iface": "Windows.Foundation.IPropertyValueStatics",
+      "native": "CreateUInt8",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "int",
+         "t": "u8"
+        },
+        "type": "u8"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 7
+     }
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Rect": {
+   "category": "record"
+  },
+  "Windows.Foundation.Size": {
+   "category": "record"
+  },
+  "Windows.Foundation.TimeSpan": {
+   "category": "record"
+  },
+  "Windows.Foundation.TypedEventHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.UniversalApiContract": {
+   "category": "record"
+  },
+  "Windows.Foundation.Uri": {
+   "abstract": false,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": "Windows.Foundation.IUriRuntimeClassFactory",
+     "native": "CreateUri",
+     "params": [
+      {
+       "name": "uri",
+       "slot": {
+        "k": "string"
+       },
+       "type": "string"
+      }
+     ],
+     "slot": 6
+    },
+    {
+     "composable": false,
+     "iface": "Windows.Foundation.IUriRuntimeClassFactory",
+     "native": "CreateWithRelativeUri",
+     "params": [
+      {
+       "name": "baseUri",
+       "slot": {
+        "k": "string"
+       },
+       "type": "string"
+      },
+      {
+       "name": "relativeUri",
+       "slot": {
+        "k": "string"
+       },
+       "type": "string"
+      }
+     ],
+     "slot": 7
+    }
+   ],
+   "curated": true,
+   "default_interface": "Windows.Foundation.IUriRuntimeClass",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.Uri",
+   "hidden": [],
+   "iid": "9e365e57-48b2-4160-956f-c7385120bbfc",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "combineUri": [
+     {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "native": "CombineUri",
+      "outs": [],
+      "params": [
+       {
+        "name": "relativeUri",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Foundation.Uri"
+      },
+      "ret_native": "Windows.Foundation.Uri",
+      "slot": 22
+     }
+    ],
+    "equals": [
+     {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "native": "Equals",
+      "outs": [],
+      "params": [
+       {
+        "name": "pUri",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Foundation.Uri"
+        },
+        "type": "Windows.Foundation.Uri"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 21
+     }
+    ],
+    "toString": [
+     {
+      "iface": "Windows.Foundation.IStringable",
+      "native": "ToString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "Uri",
+   "namespace": "Windows.Foundation",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClassWithAbsoluteCanonicalUri",
+      "slot": 6
+     },
+     "name": "absoluteCanonicalUri",
+     "native": "AbsoluteCanonicalUri",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 6
+     },
+     "name": "absoluteUri",
+     "native": "AbsoluteUri",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClassWithAbsoluteCanonicalUri",
+      "slot": 7
+     },
+     "name": "displayIri",
+     "native": "DisplayIri",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 7
+     },
+     "name": "displayUri",
+     "native": "DisplayUri",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 8
+     },
+     "name": "domain",
+     "native": "Domain",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 9
+     },
+     "name": "extension",
+     "native": "Extension",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 10
+     },
+     "name": "fragment",
+     "native": "Fragment",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 11
+     },
+     "name": "host",
+     "native": "Host",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 12
+     },
+     "name": "password",
+     "native": "Password",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 13
+     },
+     "name": "path",
+     "native": "Path",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 19
+     },
+     "name": "port",
+     "native": "Port",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "i32"
+     },
+     "type": "i32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 14
+     },
+     "name": "query",
+     "native": "Query",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 15
+     },
+     "name": "queryParsed",
+     "native": "QueryParsed",
+     "set": null,
+     "slot": {
+      "k": "object",
+      "t": "Windows.Foundation.WwwFormUrlDecoder"
+     },
+     "type": "Windows.Foundation.WwwFormUrlDecoder"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 16
+     },
+     "name": "rawUri",
+     "native": "RawUri",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 17
+     },
+     "name": "schemeName",
+     "native": "SchemeName",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 20
+     },
+     "name": "suspicious",
+     "native": "Suspicious",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.IUriRuntimeClass",
+      "slot": 18
+     },
+     "name": "userName",
+     "native": "UserName",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.WwwFormUrlDecoder"
+   ],
+   "root": true,
+   "statics": {
+    "escapeComponent": [
+     {
+      "iface": "Windows.Foundation.IUriEscapeStatics",
+      "native": "EscapeComponent",
+      "outs": [],
+      "params": [
+       {
+        "name": "toEscape",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 7
+     }
+    ],
+    "unescapeComponent": [
+     {
+      "iface": "Windows.Foundation.IUriEscapeStatics",
+      "native": "UnescapeComponent",
+      "outs": [],
+      "params": [
+       {
+        "name": "toUnescape",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ]
+   },
+   "subject": {
+    "new": [
+     "https://example.com/a/b?x=1#top"
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.WwwFormUrlDecoder": {
+   "abstract": false,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator",
+    "GetMany/2": "array"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": "Windows.Foundation.IWwwFormUrlDecoderRuntimeClassFactory",
+     "native": "CreateWwwFormUrlDecoder",
+     "params": [
+      {
+       "name": "query",
+       "slot": {
+        "k": "string"
+       },
+       "type": "string"
+      }
+     ],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Windows.Foundation.IWwwFormUrlDecoderRuntimeClass",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.WwwFormUrlDecoder",
+   "hidden": [],
+   "iid": "d45a0451-f225-4542-9296-0e1df5d254df",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "getAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVectorView<Windows.Foundation.IWwwFormUrlDecoderEntry>",
+      "native": "GetAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Foundation.IWwwFormUrlDecoderEntry"
+      },
+      "ret_native": "Windows.Foundation.IWwwFormUrlDecoderEntry",
+      "slot": 6
+     }
+    ],
+    "getFirstValueByName": [
+     {
+      "iface": "Windows.Foundation.IWwwFormUrlDecoderRuntimeClass",
+      "native": "GetFirstValueByName",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ],
+    "indexOf": [
+     {
+      "iface": "Windows.Foundation.Collections.IVectorView<Windows.Foundation.IWwwFormUrlDecoderEntry>",
+      "native": "IndexOf",
+      "outs": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Foundation.IWwwFormUrlDecoderEntry"
+        },
+        "type": "Windows.Foundation.IWwwFormUrlDecoderEntry"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "WwwFormUrlDecoder",
+   "namespace": "Windows.Foundation",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IVectorView<Windows.Foundation.IWwwFormUrlDecoderEntry>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.IWwwFormUrlDecoderEntry"
+   ],
+   "root": true,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.WwwFormUrlDecoderEntry": {
+   "category": "object"
+  }
+ }
+}
