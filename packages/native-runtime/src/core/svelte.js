@@ -62,6 +62,7 @@ export {
   update_pre_store,
   update_prop,
   update_pre_prop,
+  mark_store_binding,
   // dev
   tag,
   tag_proxy,
@@ -128,6 +129,8 @@ export function subscriber(start) {
     });
   };
 }
+/** A source whose writes always notify for objects (Svelte's `mutable_source`: `safe_equals`). */
+export const mutable_state = (v) => $.mutable_source(v);
 export const get_all_contexts = getAllContexts;
 export const set_context = setContext;
 export const flush = $.flush;

@@ -472,6 +472,29 @@ impl Rewriter for ScopeRewriter<'_> {
         r.found
     }
 
+    fn uses_store(&self, e: &Expression) -> bool {
+        struct S<'x, 'r, 'a> {
+            cx: &'x Ctx<'r, 'a>,
+            found: bool,
+        }
+        impl<'n> Visitor<'n> for S<'_, '_, '_> {
+            type State = ();
+            fn visit(&mut self, node: NodeRef<'n>, state: &(), w: &mut Walker<'n>) {
+                if let NodeRef::Identifier(id) = node
+                    && self.cx.arena.resolve(id).is_some_and(|b| self.cx.arena.binding(b).kind == BindingKind::StoreSub)
+                {
+                    self.found = true;
+                }
+                if !self.found {
+                    w.next(self, node, state);
+                }
+            }
+        }
+        let mut s = S { cx: &self.cx, found: false };
+        Walker::walk(expr_ref(e), &(), &mut s);
+        s.found
+    }
+
     fn has_call(&self, e: &Expression) -> bool {
         // upstream: a CallExpression whose callee is not pure (`is_pure`: literals, globals and
         // members of globals, calls of those with pure arguments) or any call when the expression

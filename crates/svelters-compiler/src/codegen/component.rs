@@ -25,6 +25,10 @@ pub trait Rewriter {
     fn expr(&self, e: &Expression, mode: Mode, edits: &mut Edits);
     /// Whether evaluating `e` can read reactive state (decides `$.template_effect`).
     fn is_reactive(&self, e: &Expression) -> bool;
+    /// Whether `e` reads a store subscription (`$store`): an `{#each}` over it gets mutable items.
+    fn uses_store(&self, _e: &Expression) -> bool {
+        false
+    }
     /// Svelte's `ExpressionMetadata.has_call`: `e` calls something that is not a pure global (or
     /// calls anything while it references bindings), outside nested functions. Such template
     /// expressions are memoized in a derived (`Memoizer`), so they run once per change of what they
@@ -795,6 +799,8 @@ impl Codegen<'_, '_> {
         self.w.dedent();
         self.line();
         self.w.write("}, ");
+        // Svelte's EachBlock: items are immutable sources unless the collection reads a store
+        let flags = if self.rw.uses_store(b.collection) { ", $n.EACH_ITEM_MUTABLE" } else { "" };
         match &b.fallback {
             Some(f) => {
                 self.w.write("($$anchor) => {");
@@ -802,9 +808,9 @@ impl Codegen<'_, '_> {
                 self.fragment(f, "$$anchor");
                 self.w.dedent();
                 self.line();
-                self.w.write("});");
+                self.w.write(&format!("}}{flags});"));
             }
-            None => self.w.write("null);"),
+            None => self.w.write(&format!("null{flags});")),
         }
     }
 
@@ -1101,7 +1107,10 @@ impl Codegen<'_, '_> {
                     self.w.write(")($$value); }");
                 }
                 ComponentProp::Bind { name, target } => {
-                    self.w.write(&format!("get {}() {{ return ", js_key(name)));
+                    // `bind:x={$store}`: the child's `$.prop` learns it is bound to a store, so a
+                    // mutation through it is written back (`store_set`) (Svelte's build_component)
+                    let mark = if matches!(target, Expression::Identifier(_)) && self.rw.uses_store(target) { "$.mark_store_binding(); " } else { "" };
+                    self.w.write(&format!("get {}() {{ {mark}return ", js_key(name)));
                     self.expr_text(target, Mode::Read);
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!("; }}, set {}($$value) {{ {set}; }}", js_key(name)));

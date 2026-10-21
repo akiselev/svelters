@@ -1056,6 +1056,16 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 continue;
             };
             let Some(f) = fields.by_decl(addr(p)).cloned() else {
+                // `count;` declared before the constructor's `this.count = $state(..)`: upstream
+                // drops it (the inserted accessors replace it; an own field would shadow them)
+                if !p.computed
+                    && !p.is_static
+                    && let Some(name) = classes::get_name(&p.key)
+                    && fields.get(&name).is_some_and(|f| f.ctor && f.public)
+                {
+                    self.edits.overwrite(p.start, p.end, String::new());
+                    continue;
+                }
                 w.visit(self, node, el_ref, &scope);
                 continue;
             };

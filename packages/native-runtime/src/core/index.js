@@ -49,6 +49,7 @@ export {
   update_pre_store,
   update_prop,
   update_pre_prop,
+  mark_store_binding,
   // dev
   tag,
   tag_proxy,

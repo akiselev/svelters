@@ -20,6 +20,7 @@ import {
   flush,
   flushing_sync,
   queue_task,
+  mutable_state,
   capture_context,
   release_context,
   reorder,
@@ -862,7 +863,12 @@ export function if_block(container, test, consequent, alternate = null) {
   });
 }
 
-export function each_block(container, collection, key, render, fallback = null) {
+/** `each_block` flag: the collection reads a store, so its items are mutable sources (a store
+ * mutation re-sets the same objects, which must still update the rows; Svelte's
+ * `EACH_ITEM_IMMUTABLE` is unset then). */
+export const EACH_ITEM_MUTABLE = 1;
+
+export function each_block(container, collection, key, render, fallback = null, flags = 0) {
   const r = newRegion(container);
   const owner = scope;
   let items = [];
@@ -876,7 +882,8 @@ export function each_block(container, collection, key, render, fallback = null) 
         close(fb);
         fb = null;
       }
-      items = key ? keyed(r, owner, items, arr, key, render) : indexed(r, owner, items, arr, render);
+      const mutable = (flags & EACH_ITEM_MUTABLE) !== 0;
+      items = key ? keyed(r, owner, items, arr, key, render, mutable) : indexed(r, owner, items, arr, render, mutable);
       if (key) reorder(self, items.map((b) => b.effect));
       if (!arr.length && fallback && !fb) fb = open(r, owner, fallback);
     });
@@ -1144,22 +1151,22 @@ export function classes(value) {
   return new Set(clsx(value).split(/\s+/).filter(Boolean));
 }
 
-function openItem(r, owner, render, b, value, index) {
-  b.item = $.state(value);
+function openItem(r, owner, render, b, value, index, mutable) {
+  b.item = mutable ? mutable_state(value) : $.state(value);
   b.index = $.state(index);
   return open(r, owner, (anchor) => render(anchor, b.item, b.index), b);
 }
 
-function indexed(r, owner, old, arr, render) {
+function indexed(r, owner, old, arr, render, mutable) {
   const n = Math.min(old.length, arr.length);
   for (let i = 0; i < n; i++) $.set(old[i].item, arr[i]);
   for (let i = old.length - 1; i >= arr.length; i--) close(old[i]);
   const out = old.slice(0, n);
-  for (let i = n; i < arr.length; i++) out.push(openItem(r, owner, render, newRegion(r), arr[i], i));
+  for (let i = n; i < arr.length; i++) out.push(openItem(r, owner, render, newRegion(r), arr[i], i, mutable));
   return out;
 }
 
-function keyed(r, owner, old, arr, key, render) {
+function keyed(r, owner, old, arr, key, render, mutable) {
   const keys = arr.map((v, i) => key(v, i));
   if (new Set(keys).size !== keys.length) throw new Error('each_block: duplicate keys');
   const byKey = new Map(old.map((b) => [b.key, b]));
@@ -1184,7 +1191,7 @@ function keyed(r, owner, old, arr, key, render) {
   // have no natives yet and are skipped by nextNative). Then new items front to back: creation
   // order decides handle numbers, which must follow source order.
   for (let i = next.length - 1; i >= 0; i--) if (next[i].effect && !stay.has(i)) move(next[i]);
-  for (let i = 0; i < next.length; i++) if (!next[i].effect) openItem(r, owner, render, next[i], arr[i], i);
+  for (let i = 0; i < next.length; i++) if (!next[i].effect) openItem(r, owner, render, next[i], arr[i], i, mutable);
   return next;
 }
 

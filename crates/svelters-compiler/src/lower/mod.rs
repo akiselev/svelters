@@ -1618,9 +1618,26 @@ fn text_runs<'a>(nodes: &'a [FragmentNode], parent_tag: Option<&str>) -> Vec<Ent
         Expr(&'a Expression, Span),
         Node(&'a FragmentNode),
     }
+    // Svelte's clean_nodes hoists these out of the fragment before trimming whitespace, so the
+    // text around them is adjacent (`A\n{#snippet s()}..{/snippet}\nB` is `A B`)
+    let hoisted = |n: &FragmentNode| {
+        matches!(
+            n,
+            FragmentNode::ConstTag(_)
+                | FragmentNode::DeclarationTag(_)
+                | FragmentNode::DebugTag(_)
+                | FragmentNode::SvelteBody(_)
+                | FragmentNode::SvelteWindow(_)
+                | FragmentNode::SvelteDocument(_)
+                | FragmentNode::SvelteHead(_)
+                | FragmentNode::TitleElement(_)
+                | FragmentNode::SnippetBlock(_)
+        )
+    };
+    let mut out: Vec<Entry<'a>> = nodes.iter().filter(|n| hoisted(n)).map(Entry::Node).collect();
     let mut regular: Vec<Tx<'a>> = nodes
         .iter()
-        .filter(|n| !matches!(n, FragmentNode::Comment(_)))
+        .filter(|n| !matches!(n, FragmentNode::Comment(_)) && !hoisted(n))
         .map(|n| match n {
             FragmentNode::Text(t) => Tx::Text(t.data.clone(), Span::new(t.start, t.end)),
             FragmentNode::ExpressionTag(e) => Tx::Expr(&e.expression, Span::new(e.start, e.end)),
@@ -1663,7 +1680,6 @@ fn text_runs<'a>(nodes: &'a [FragmentNode], parent_tag: Option<&str>) -> Vec<Ent
             Tx::Node(n) => cleaned.push(Tx::Node(n)),
         }
     }
-    let mut out: Vec<Entry<'a>> = Vec::new();
     for tx in cleaned {
         let (part, s) = match tx {
             Tx::Node(n) => {

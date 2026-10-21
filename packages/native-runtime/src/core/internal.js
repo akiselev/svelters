@@ -14,6 +14,7 @@ export {
   current_boundary,
   root_boundary,
   queue_task,
+  mutable_state,
   capture_context,
   release_context,
   flushing_sync,

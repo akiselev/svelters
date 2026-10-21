@@ -73,7 +73,7 @@ the installed Svelte (version pin, these names, the hidden modules, effect flag 
 - component: `push, pop, prop, fallback, rest_props, spread_props, exclude_from_object, props_id,
   bind_this, attach, action, noop`
 - stores: `setup_stores, store_get, store_set, store_mutate, store_unsub, validate_store,
-  update_store, update_pre_store, update_prop, update_pre_prop`
+  update_store, update_pre_store, update_prop, update_pre_prop, mark_store_binding`
 - dev: `tag, tag_proxy, inspect, trace`
 
 Core internals for the block machinery (`src/core/internal.js`, not part of the compiler contract):
