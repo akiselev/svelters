@@ -125,6 +125,8 @@ pub(crate) struct Inner {
     frame_target: Retained<SveltersTarget>,
     /// The handle whose getter/call is running: owner of borrowed handles minted meanwhile.
     cur_owner: Cell<u64>,
+    /// A non-GUI type op is converting values (N4): NSAttributedString results stay handles.
+    in_types: Cell<bool>,
     running: Cell<bool>,
     quit_requested: Cell<bool>,
     /// The one KVO observer of the backend (`observeValueForKeyPath:ofObject:change:context:`).
@@ -254,6 +256,7 @@ impl AppKitBackend {
             display_link: RefCell::new(None),
             frame_target: SveltersTarget::new(mtm, 0),
             cur_owner: Cell::new(0),
+            in_types: Cell::new(false),
             running: Cell::new(false),
             quit_requested: Cell::new(false),
             observer: observe::SveltersObserver::new(),
@@ -489,7 +492,9 @@ impl Inner {
         let obj = self.live(h)?;
         let raw = bridge::kvc_get(&obj, &spec.key)?;
         let prev = self.cur_owner.replace(h);
+        let types = self.in_types.replace(kind >= TYPE_KIND_BASE);
         let v = bridge::unbox_value(raw.as_deref(), &spec.ty, spec.members, spec.flags, self);
+        self.in_types.set(types);
         self.cur_owner.set(prev);
         Ok(v)
     }
@@ -1017,6 +1022,10 @@ unsafe impl Encode for Point {
 impl Objects for Inner {
     fn object(&self, h: u64) -> Option<Retained<AnyObject>> {
         Inner::object(self, h)
+    }
+
+    fn attributed_as_handle(&self) -> bool {
+        self.in_types.get()
     }
 
     fn handle_of(&self, obj: &AnyObject) -> u64 {

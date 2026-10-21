@@ -160,6 +160,11 @@ pub trait Objects {
     fn object(&self, h: u64) -> Option<Retained<AnyObject>>;
     /// The handle of an object read from native code: its existing handle, or a new borrowed one.
     fn handle_of(&self, obj: &AnyObject) -> u64;
+    /// Whether an `NSAttributedString` crosses as a handle (the non-GUI type layer, N4) instead of its
+    /// plain string (element props, where the text is what matters).
+    fn attributed_as_handle(&self) -> bool {
+        false
+    }
 }
 
 /// Boxes a JS value as the object KVC (or an object argument) expects for type `ty`.
@@ -282,7 +287,7 @@ pub fn object_out(obj: Option<&AnyObject>, objs: &dyn Objects) -> Value {
     if let Some(s) = obj.downcast_ref::<NSString>() {
         return Value::Str(s.to_string());
     }
-    if is_kind(obj, class!(NSAttributedString)) {
+    if is_kind(obj, class!(NSAttributedString)) && !objs.attributed_as_handle() {
         let s: Option<Retained<NSString>> = unsafe { msg_send![obj, string] };
         return Value::Str(s.map(|s| s.to_string()).unwrap_or_default());
     }

@@ -10395,7 +10395,7 @@
    "conforms": [
     "NSObjectProtocol"
    ],
-   "constructible": true,
+   "constructible": false,
    "curated": true,
    "enums": [
     "NSPasteboardAccessBehavior",
@@ -16694,15 +16694,20 @@
   "NSTypesetter": {
    "bases": [],
    "blocked": {
+    "boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:": "runtime:missing",
     "characterRangeForGlyphRange:actualGlyphRange:": "pointer",
     "getLineFragmentRect:usedRect:forParagraphSeparatorGlyphRange:atProposedOrigin:": "pointer",
     "getLineFragmentRect:usedRect:remainingRect:forStartingGlyphAtIndex:proposedRect:lineSpacing:paragraphSpacingBefore:paragraphSpacingAfter:": "pointer",
     "glyphRangeForCharacterRange:actualCharacterRange:": "pointer",
+    "hyphenCharacterForGlyphAtIndex:": "runtime:missing",
+    "hyphenationFactorForGlyphAtIndex:": "runtime:missing",
     "layoutGlyphsInLayoutManager:startingAtGlyphIndex:maxNumberOfLineFragments:nextGlyphIndex:": "pointer",
     "layoutParagraphAtPoint:": "pointer",
     "printingAdjustmentInLayoutManager:forNominallySpacedGlyphRange:packedGlyphs:count:": "pointer",
     "setBidiLevels:forGlyphRange:": "pointer",
     "setLocation:withAdvancements:forStartOfGlyphRange:": "pointer",
+    "shouldBreakLineByHyphenatingBeforeCharacterAtIndex:": "runtime:missing",
+    "shouldBreakLineByWordBeforeCharacterAtIndex:": "runtime:missing",
     "willSetLineFragmentRect:forGlyphRange:usedRect:baselineOffset:": "pointer"
    },
    "category": "object",
@@ -16809,51 +16814,6 @@
     },
     {
      "family": "none",
-     "js": "boundingBoxForControlGlyphAtIndexForTextContainerProposedLineFragmentGlyphPositionCharacterIndex",
-     "params": [
-      {
-       "name": "glyphIndex",
-       "type": {
-        "k": "int"
-       }
-      },
-      {
-       "name": "textContainer",
-       "type": {
-        "k": "object",
-        "t": "NSTextContainer"
-       }
-      },
-      {
-       "name": "proposedRect",
-       "type": {
-        "k": "record",
-        "t": "Rect"
-       }
-      },
-      {
-       "name": "glyphPosition",
-       "type": {
-        "k": "record",
-        "t": "Point"
-       }
-      },
-      {
-       "name": "charIndex",
-       "type": {
-        "k": "int"
-       }
-      }
-     ],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "currentParagraphStyle",
      "params": [],
      "ret": {
@@ -16890,40 +16850,6 @@
       "k": "void"
      },
      "sel": "endParagraph",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hyphenCharacterForGlyphAtIndex",
-     "params": [
-      {
-       "name": "glyphIndex",
-       "type": {
-        "k": "int"
-       }
-      }
-     ],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "hyphenCharacterForGlyphAtIndex:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hyphenationFactorForGlyphAtIndex",
-     "params": [
-      {
-       "name": "glyphIndex",
-       "type": {
-        "k": "int"
-       }
-      }
-     ],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "hyphenationFactorForGlyphAtIndex:",
      "static": false
     },
     {
@@ -17232,40 +17158,6 @@
       "k": "void"
      },
      "sel": "setParagraphGlyphRange:separatorGlyphRange:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "shouldBreakLineByHyphenatingBeforeCharacterAtIndex",
-     "params": [
-      {
-       "name": "charIndex",
-       "type": {
-        "k": "int"
-       }
-      }
-     ],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "shouldBreakLineByHyphenatingBeforeCharacterAtIndex:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "shouldBreakLineByWordBeforeCharacterAtIndex",
-     "params": [
-      {
-       "name": "charIndex",
-       "type": {
-        "k": "int"
-       }
-      }
-     ],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "shouldBreakLineByWordBeforeCharacterAtIndex:",
      "static": false
     },
     {

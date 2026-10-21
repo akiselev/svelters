@@ -12,15 +12,15 @@ total               10        67       263         0        18        95       1
 
 == members of bound types: bound / blocked
   Foundation   members   903  bound   828 ( 91%)  blocked   75
-  AppKit       members  1099  bound   963 ( 87%)  blocked  136
+  AppKit       members  1099  bound   958 ( 87%)  blocked  141
   excluded by rule: core 28, deprecated 173, unsafe 13
   VALUE mutators hidden (decision Q3: setters and mutating selectors of value classes): 14
   async members (completion handler -> Promise): 23; block shapes: (e) 7, (oe) 16
-  blocking reasons: pointer 116, callback 24, type:excluded:NSCoder 16, widget 9, type:unknown:UTType 5, type:unknown:CGContext 4, type:unknown:CGImage 3, type:excluded:NSMeasurement 2, type:unknown:NSItemProviderCompletionHandler 2, record-shape:NSOperatingSystemVersion 2, selector 2, type:unknown:CGPath 2, type:unknown:CGColor 2, type:unknown:CGColorSpace 2, type:unknown:libc::pid_t 2, type:excluded:NSOperationQueue 2, block-arg:map-key 2, record-shape:NSAffineTransformStruct 1
+  blocking reasons: pointer 116, callback 24, type:excluded:NSCoder 16, widget 9, type:unknown:UTType 5, runtime:missing 5, type:unknown:CGContext 4, type:unknown:CGImage 3, type:excluded:NSMeasurement 2, type:unknown:NSItemProviderCompletionHandler 2, record-shape:NSOperatingSystemVersion 2, selector 2, type:unknown:CGPath 2, type:unknown:CGColor 2, type:unknown:CGColorSpace 2, type:unknown:libc::pid_t 2, type:excluded:NSOperationQueue 2, block-arg:map-key 2
   props from the macOS probe (read-only getters): 0 (no probe file yet: read-only properties are zero-argument methods)
 
 == naming (selectors joined in camelCase; `error:` and completion pieces dropped; init… -> static new…)
-  JS member names 1462; ambiguous after dropping hidden pieces: 0
+  JS member names 1457; ambiguous after dropping hidden pieces: 0
 
 == curated set
   NSAttributedString     value   bound   42 blocked  15 hidden   0  async 0

@@ -672,7 +672,6 @@
       "NSFont",
       "NSLayoutManager",
       "NSParagraphStyle",
-      "NSTextContainer",
       "NSTextTab",
       "NSTypesetterBehavior",
       "NSTypesetterControlCharacterAction",

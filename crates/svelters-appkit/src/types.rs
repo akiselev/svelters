@@ -229,6 +229,7 @@ impl Inner {
         let sname = s.name().to_string_lossy().into_owned();
         let error_out = sname.ends_with("error:");
         let prev = self.cur_owner.replace(0);
+        let types = self.in_types.replace(true);
         let r = if sname.starts_with("init") {
             {
                 // SAFETY: `+alloc` returns a +1 object, which the initializer consumes (invoke_ex `init`).
@@ -250,6 +251,7 @@ impl Inner {
                 Err(e) => fail(e),
             }
         };
+        self.in_types.set(types);
         self.cur_owner.set(prev);
         r
     }
@@ -263,6 +265,7 @@ impl Inner {
             return Err(format!("{sname}: initializers are called through the class (call_static)"));
         }
         let prev = self.cur_owner.replace(h);
+        let types = self.in_types.replace(true);
         let r = if let Some(a) = Self::async_of(obj.class(), s, false) {
             self.start_async(h, &obj, s, a, args)
         } else {
@@ -271,6 +274,7 @@ impl Inner {
                 Err(e) => fail(e),
             }
         };
+        self.in_types.set(types);
         self.cur_owner.set(prev);
         r
     }
@@ -361,6 +365,7 @@ impl Inner {
             let Some(p) = self.pending.borrow_mut().remove(&id) else { continue };
             let (err_at, res_at) = blocks::roles(p.shape);
             let prev = self.cur_owner.replace(p.owner);
+            let types = self.in_types.replace(true);
             let err = err_at.and_then(|i| match args.0.get(i) {
                 Some(blocks::BlockArg::Obj(Some(e))) => Some(bridge::native_error(e)),
                 _ => None,
@@ -375,6 +380,7 @@ impl Inner {
                     None => Value::Null,
                 },
             };
+            self.in_types.set(types);
             self.cur_owner.set(prev);
             self.complete(id, v);
             drop(args);

@@ -393,7 +393,10 @@ pub fn item_provider_roundtrip(h: &Harness) {
     }
     let id = h.start_async(p, "NSItemProvider", "loadDataRepresentationForTypeIdentifier:completionHandler:", vec![Value::Str("public.utf8-plain-text".into())]).unwrap();
     let cancelled = h.cancel_async(id);
-    if cancelled {
+    if !cancelled {
+        // The block won the race: its completion is queued; deliver it.
+        h.wait_completion(id, 5000).expect("the completion that beat the cancel");
+    } else {
         match h.take_completions().into_iter().find(|(c, _)| *c == id).map(|(_, a)| a) {
             Some(a) => assert!(matches!(a.first(), Some(Value::Error(e)) if e.code == Value::I64(3072)), "cancel rejects: {a:?}"),
             None => panic!("cancel completes at once"),
@@ -402,6 +405,7 @@ pub fn item_provider_roundtrip(h: &Harness) {
         h.backend.run_type_hops();
         assert!(h.take_completions().iter().all(|(c, _)| *c != id), "the late block is ignored");
     }
+    assert_eq!(h.backend.pending_async(), 0, "every operation settled");
     let id = h.start_async(p, "NSItemProvider", "loadDataRepresentationForTypeIdentifier:completionHandler:", vec![Value::Str("public.utf8-plain-text".into())]).unwrap();
     assert_eq!(h.backend.pending_async(), 1);
     h.destroy(p);

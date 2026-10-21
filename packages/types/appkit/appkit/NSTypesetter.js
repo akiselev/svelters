@@ -46,10 +46,6 @@ export class NSTypesetter extends NativeObject {
     call(this, 'beginParagraph', []);
   }
 
-  boundingBoxForControlGlyphAtIndexForTextContainerProposedLineFragmentGlyphPositionCharacterIndex(glyphIndex, textContainer, proposedRect, glyphPosition, charIndex) {
-    return call(this, 'boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:', [glyphIndex, textContainer, proposedRect, glyphPosition, charIndex]);
-  }
-
   currentParagraphStyle() {
     return wrapValue(NSParagraphStyle, call(this, 'currentParagraphStyle', []));
   }
@@ -60,14 +56,6 @@ export class NSTypesetter extends NativeObject {
 
   endParagraph() {
     call(this, 'endParagraph', []);
-  }
-
-  hyphenCharacterForGlyphAtIndex(glyphIndex) {
-    return call(this, 'hyphenCharacterForGlyphAtIndex:', [glyphIndex]);
-  }
-
-  hyphenationFactorForGlyphAtIndex(glyphIndex) {
-    return call(this, 'hyphenationFactorForGlyphAtIndex:', [glyphIndex]);
   }
 
   layoutCharactersInRangeForLayoutManagerMaximumNumberOfLineFragments(characterRange, layoutManager, maxNumLines) {
@@ -124,14 +112,6 @@ export class NSTypesetter extends NativeObject {
 
   setParagraphGlyphRangeSeparatorGlyphRange(paragraphRange, paragraphSeparatorRange) {
     call(this, 'setParagraphGlyphRange:separatorGlyphRange:', [paragraphRange, paragraphSeparatorRange]);
-  }
-
-  shouldBreakLineByHyphenatingBeforeCharacterAtIndex(charIndex) {
-    return call(this, 'shouldBreakLineByHyphenatingBeforeCharacterAtIndex:', [charIndex]);
-  }
-
-  shouldBreakLineByWordBeforeCharacterAtIndex(charIndex) {
-    return call(this, 'shouldBreakLineByWordBeforeCharacterAtIndex:', [charIndex]);
   }
 
   substituteFontForFont(originalFont) {

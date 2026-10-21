@@ -60,6 +60,20 @@ string_ctor:
   NSLocale: "initWithLocaleIdentifier:"
   NSURLComponents: "initWithString:"
 
+# Classes `[[X alloc] init]` cannot make although objc2 lists `init` (seen on the macOS runner): no `new X(props)`.
+no_construct:
+  - NSPasteboard      # +[NSPasteboard alloc]: unrecognized selector (CI run 39571473898)
+
+# Members objc2 declares that the class itself does not implement at run time (abstract classes whose concrete
+# subclass implements them; seen on the macOS runner, CI run 39571473898): blocked with this reason.
+runtime_missing:
+  NSTypesetter:
+    - "boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:"
+    - "hyphenCharacterForGlyphAtIndex:"
+    - "hyphenationFactorForGlyphAtIndex:"
+    - "shouldBreakLineByHyphenatingBeforeCharacterAtIndex:"
+    - "shouldBreakLineByWordBeforeCharacterAtIndex:"
+
 # How the generated ledger tests make a subject of a curated type that `construct` (alloc/init) cannot make
 # usefully: a static selector and its JSON arguments.
 subjects:

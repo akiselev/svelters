@@ -95,8 +95,9 @@ def load_overrides() -> dict:
     ov = yaml.safe_load(OVERRIDES.read_text()) or {}
     for k in ("curated", "roots"):
         ov.setdefault(k, [])
-    for k in ("class", "string_ctor", "subjects", "renames"):
+    for k in ("class", "string_ctor", "subjects", "renames", "runtime_missing"):
         ov.setdefault(k, {})
+    ov.setdefault("no_construct", [])
     return ov
 
 
@@ -463,9 +464,13 @@ def build_members(ing: Ingest, name: str, cat: str, ty: Types, ov: dict, probe: 
         getters_of_props.add(getter)
 
     prop_sels = {p["getter"] for p in rec["props"]} | {p["setter"] for p in rec["props"] if p["setter"]}
+    missing = set(ov["runtime_missing"].get(name, []))
     for m in c["methods"]:
         sel = m["sel"]
         if m.get("inherited") and sel in ("init", "new"):
+            continue
+        if sel in missing:
+            rec["blocked"][sel] = "runtime:missing"
             continue
         if sel in prop_sels or (not m["static"] and m.get("setter_for") in getters_of_props):
             continue
@@ -580,9 +585,13 @@ def build() -> dict:
         for n in ov[k]:
             if n not in ing.classes:
                 raise SystemExit(f"{OVERRIDES.relative_to(ROOT)}: {k}: unknown class {n}")
-    for n in list(ov["class"]) + list(ov["string_ctor"]) + list(ov["subjects"]):
+    for n in list(ov["class"]) + list(ov["string_ctor"]) + list(ov["subjects"]) + list(ov["runtime_missing"]) + list(ov["no_construct"]):
         if n not in ing.classes:
             raise SystemExit(f"{OVERRIDES.relative_to(ROOT)}: unknown class {n}")
+    for n, sels in ov["runtime_missing"].items():
+        for sel in sels:
+            if not any(m["sel"] == sel for m in ing.classes[n]["methods"]):
+                raise SystemExit(f"{OVERRIDES.relative_to(ROOT)}: runtime_missing: {n} has no {sel}")
     for n, sel in ov["string_ctor"].items():
         if not any(m["sel"] == sel for m in ing.classes[n]["methods"]):
             raise SystemExit(f"{OVERRIDES.relative_to(ROOT)}: string_ctor: {n} has no {sel}")
@@ -616,7 +625,7 @@ def build() -> dict:
         rec = mem(n)
         parent = next((a for a in c["super"] if a in bound), None)
         fw = c["framework"]
-        constructible = any(m["sel"] == "init" for m in c["methods"]) and cats[n] != "statics"
+        constructible = any(m["sel"] == "init" for m in c["methods"]) and cats[n] != "statics" and n not in ov["no_construct"]
         enums = sorted(set().union(*[enums_of(s) for s in slot_types(rec)]) if rec["methods"] or rec["props"] else set())
         types[n] = {
             "name": n, "framework": fw, "js_module": f"svelters:appkit/{JS_MODULE[fw]}", "category": cats[n],

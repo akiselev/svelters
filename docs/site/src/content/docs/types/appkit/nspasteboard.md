@@ -17,7 +17,7 @@ Facts: `metadata/appkit/types/AppKit.json`; ledger fact ids `svelters-api:v1:typ
 
 ## Construct
 
-- `new NSPasteboard(props?)`: `[[NSPasteboard alloc] init]`, then the properties by KVC
+Not constructible: instances come from statics or other objects.
 
 ## Statics
 

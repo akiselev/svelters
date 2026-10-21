@@ -662,7 +662,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:construct",
-   "facts_digest": "d9ff58343fc82400",
+   "facts_digest": "e924f0a9304617f9",
    "kind": "NSPasteboard",
    "name": "construct",
    "section": "types",
@@ -672,7 +672,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:props",
-   "facts_digest": "d9ff58343fc82400",
+   "facts_digest": "e924f0a9304617f9",
    "kind": "NSPasteboard",
    "name": "props",
    "section": "types",
@@ -682,7 +682,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:methods",
-   "facts_digest": "d9ff58343fc82400",
+   "facts_digest": "e924f0a9304617f9",
    "kind": "NSPasteboard",
    "name": "methods",
    "section": "types",
@@ -692,7 +692,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:statics",
-   "facts_digest": "d9ff58343fc82400",
+   "facts_digest": "e924f0a9304617f9",
    "kind": "NSPasteboard",
    "name": "statics",
    "section": "types",
@@ -702,7 +702,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:lifetime",
-   "facts_digest": "d9ff58343fc82400",
+   "facts_digest": "e924f0a9304617f9",
    "kind": "NSPasteboard",
    "name": "lifetime",
    "section": "types",
@@ -712,7 +712,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:members",
-   "facts_digest": "d9ff58343fc82400",
+   "facts_digest": "e924f0a9304617f9",
    "kind": "NSPasteboard",
    "name": "members",
    "section": "types",
@@ -722,7 +722,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:async",
-   "facts_digest": "d9ff58343fc82400",
+   "facts_digest": "e924f0a9304617f9",
    "kind": "NSPasteboard",
    "name": "async",
    "section": "types",
@@ -1012,7 +1012,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTypesetter:members",
-   "facts_digest": "fd9dddaaf44bd251",
+   "facts_digest": "5eae6f6944874f0a",
    "kind": "NSTypesetter",
    "name": "members",
    "section": "types",

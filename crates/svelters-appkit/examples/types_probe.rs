@@ -41,6 +41,8 @@ mod mac {
 
     pub fn main() {
         let path = std::env::args().nth(1).expect("usage: types_probe CLASSES_FILE");
+        // Load AppKit (NSApplication and the backend) so its classes are registered with the runtime.
+        let _ = svelters_appkit::testing::Harness::shared();
         let names = std::fs::read_to_string(&path).expect("read the class list");
         let mut classes = serde_json::Map::new();
         let mut missing = Vec::new();

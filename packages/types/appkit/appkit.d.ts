@@ -1249,7 +1249,7 @@ declare module 'svelters:appkit/appkit' {
   /** `NSPasteboard` (AppKit), object, lifetime shared */
   export class NSPasteboard extends NativeObject {
     static readonly native: string;
-    constructor(props?: {});
+    protected constructor();
     /** `+[NSPasteboard generalPasteboard]` */
     static generalPasteboard(): NSPasteboard;
     /** `+[NSPasteboard pasteboardByFilteringData:ofType:]` */
@@ -2039,18 +2039,12 @@ declare module 'svelters:appkit/appkit' {
     beginLineWithGlyphAtIndex(glyphIndex: number): void;
     /** `-[NSTypesetter beginParagraph]` */
     beginParagraph(): void;
-    /** `-[NSTypesetter boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:]` */
-    boundingBoxForControlGlyphAtIndexForTextContainerProposedLineFragmentGlyphPositionCharacterIndex(glyphIndex: number, textContainer: NSTextContainer, proposedRect: Rect, glyphPosition: Point, charIndex: number): Rect;
     /** `-[NSTypesetter currentParagraphStyle]` */
     currentParagraphStyle(): NSParagraphStyle | null;
     /** `-[NSTypesetter endLineWithGlyphRange:]` */
     endLineWithGlyphRange(lineGlyphRange: Range): void;
     /** `-[NSTypesetter endParagraph]` */
     endParagraph(): void;
-    /** `-[NSTypesetter hyphenCharacterForGlyphAtIndex:]` */
-    hyphenCharacterForGlyphAtIndex(glyphIndex: number): number;
-    /** `-[NSTypesetter hyphenationFactorForGlyphAtIndex:]` */
-    hyphenationFactorForGlyphAtIndex(glyphIndex: number): number;
     /** `-[NSTypesetter layoutCharactersInRange:forLayoutManager:maximumNumberOfLineFragments:]` */
     layoutCharactersInRangeForLayoutManagerMaximumNumberOfLineFragments(characterRange: Range, layoutManager: NSLayoutManager, maxNumLines: number): Range;
     /** `-[NSTypesetter lineSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:]` */
@@ -2079,10 +2073,6 @@ declare module 'svelters:appkit/appkit' {
     setNotShownAttributeForGlyphRange(flag: boolean, glyphRange: Range): void;
     /** `-[NSTypesetter setParagraphGlyphRange:separatorGlyphRange:]` */
     setParagraphGlyphRangeSeparatorGlyphRange(paragraphRange: Range, paragraphSeparatorRange: Range): void;
-    /** `-[NSTypesetter shouldBreakLineByHyphenatingBeforeCharacterAtIndex:]` */
-    shouldBreakLineByHyphenatingBeforeCharacterAtIndex(charIndex: number): boolean;
-    /** `-[NSTypesetter shouldBreakLineByWordBeforeCharacterAtIndex:]` */
-    shouldBreakLineByWordBeforeCharacterAtIndex(charIndex: number): boolean;
     /** `-[NSTypesetter substituteFontForFont:]` */
     substituteFontForFont(originalFont: NSFont): NSFont;
     /** `-[NSTypesetter textTabForGlyphLocation:writingDirection:maxLocation:]` */
