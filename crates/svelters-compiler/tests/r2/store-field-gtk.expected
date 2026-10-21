@@ -1,0 +1,8 @@
+== gtk
+$n.bind_prop($$n3, "value", () => telemetry.speed, ($$value) => { telemetry.speed = $$value; }, "value-changed", -1);
+$n.bind_prop($$n4, "value", () => telemetry.speed, ($$value) => { telemetry.speed = $$value; }, "value-changed", -1);
+$n.bind_prop($$n5, "text", () => telemetry.label, ($$value) => { telemetry.label = $$value; }, "changed", 0);
+== gtk --strict-native
+$n.bind_prop($$n3, "value", () => telemetry.speed, ($$value) => { telemetry.speed = $$value; }, "value-changed", -1);
+$n.bind_prop($$n4, "value", () => telemetry.speed, ($$value) => { telemetry.speed = $$value; }, "value-changed", -1);
+$n.bind_prop($$n5, "text", () => telemetry.label, ($$value) => { telemetry.label = $$value; }, "changed", 0);

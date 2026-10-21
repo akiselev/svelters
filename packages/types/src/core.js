@@ -229,6 +229,10 @@ export function callStaticAsync(native, method, args, options, shape) {
 
 const STREAM = Symbol.for('svelters.stream');
 const END = Symbol('svelters.types.stream-end');
+const weakly = (x) => (typeof WeakRef === 'function' ? new WeakRef(x) : { deref: () => x });
+// A stream dropped unread is closed when collected, so its producer is not left blocked on a full buffer.
+// The registry holds only `{ close }`: the host side (the op table) reaches a stream weakly.
+const unread = typeof FinalizationRegistry === 'function' ? new FinalizationRegistry((held) => held.close?.()) : null;
 
 /**
  * The JS side of a Rust stream (a `Sink<T>` parameter or a `Stream<T>` result of an app export): an async
@@ -245,21 +249,28 @@ export class NativeStream {
   #closed = false;
   #ack = null;
   #close = null;
+  #held = { close: null };
   #shape;
 
   constructor(shape) {
     this.#shape = typeof shape === 'function' ? shape : null;
-    const self = this;
+    const ref = weakly(this);
+    const held = this.#held;
     // What the host's op table talks to (the prelude binds the ack and close functions of the call).
     this[STREAM] = {
       bind(ack, close) {
-        self.#ack = ack;
-        self.#close = close;
+        held.close = close;
+        const s = ref.deref();
+        if (s) {
+          s.#ack = ack;
+          s.#close = close;
+        }
       },
       items(vs) {
-        self.#push(vs);
+        ref.deref()?.#push(vs);
       },
     };
+    unread?.register(this, held);
   }
 
   #push(vs) {
@@ -281,6 +292,7 @@ export class NativeStream {
 
   [END](error) {
     if (this.#end) return;
+    this.#held.close = null;
     this.#end = error === undefined ? { done: true } : { error };
     this.#wake();
   }
@@ -348,9 +360,10 @@ function streamCall(self, start, args, options, shape) {
   if (options !== undefined && options !== null && typeof options !== 'object') throw new TypeError('stream options must be an object ({ signal })');
   const s = new NativeStream(shape);
   const opts = { ...(options ?? {}), [STREAM]: s[STREAM] };
+  const ref = weakly(s);
   settle(self, start([...args, opts])).then(
-    () => s[END](),
-    (e) => s[END](e),
+    () => ref.deref()?.[END](),
+    (e) => ref.deref()?.[END](e),
   );
   return s;
 }

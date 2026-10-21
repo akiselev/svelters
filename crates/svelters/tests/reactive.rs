@@ -530,7 +530,7 @@ sensor.on('level', (v) => levels.push(v));
 globalThis.keep = sensor;
 console.log('unheard reset', sensor.reset());
 sensor.burst(300).then((n) => {{
-  console.log('burst', n, seqs.length, seqs.every((x, i) => x === i), levels.join(','));
+  console.log('burst', n, seqs.length, seqs.every((x, i) => x === i), 'levels', levels.length, levels[levels.length - 1]);
   offReading();
   return sensor.burst(5);
 }}).then(() => console.log('after off', seqs.length));
@@ -539,7 +539,12 @@ sensor.burst(300).then((n) => {{
         |r| {
             assert!(r.has("unheard reset 0"), "an event nobody listens to goes nowhere: {:?}", r.lines);
             r.line("after off 300");
-            assert!(r.has("burst 300 300 true 299"), "readings in order, the level coalesced to its last value: {:?}", r.lines);
+            // Readings in order; the `latest` level at most once per checkpoint (the harness may run one
+            // while the worker is still emitting), ending with the last value.
+            let line = r.lines.iter().find(|l| l.starts_with("burst 300 ")).cloned().expect("burst line");
+            assert!(line.starts_with("burst 300 300 true levels ") && line.ends_with(" 299"), "{line}");
+            let levels: u64 = line.split(' ').nth(5).unwrap().parse().unwrap();
+            assert!(levels >= 1 && levels <= r.host.checkpoint_count(), "{levels} level deliveries");
             // The change batch came first: the first handler already saw the store's new count.
             assert!(r.has("first reading sees count 300"), "{:?}", r.lines);
             let first_batch = r.lines.iter().position(|l| l == "changed count=300").expect("count delivered");
@@ -623,6 +628,28 @@ import { countTo } from 'svelters:app/rx';
             r.until("producer closed", |_, _| !records_with("closed 2 at ").is_empty());
             r.until("op done", |h, _| h.ops_in_flight() == 0);
             assert!(!recorded("sent 2 1000"));
+            r.no_errors();
+        },
+    );
+}
+
+#[test]
+fn a_stream_dropped_unread_is_closed_when_collected() {
+    with_host(
+        "dropped",
+        r#"
+import { countTo } from 'svelters:app/rx';
+countTo(1000, 6);
+console.log('started');
+"#,
+        |r| {
+            // The producer fills the buffer and blocks; nothing will ever read it.
+            await_record("sent 6 4");
+            r.until("producer closed", |h, _| {
+                h.collect_garbage();
+                !records_with("closed 6 at ").is_empty()
+            });
+            r.until("op done", |h, _| h.ops_in_flight() == 0);
             r.no_errors();
         },
     );
