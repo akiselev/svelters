@@ -123,7 +123,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     let is_setter = |name: &str| opts.backend.is_setter_property(name);
     let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags, &is_setter));
     let ir = lower(&root, opts.backend, sheet.as_ref(), opts.css_scope.as_deref(), &mut diags);
-    crate::lower::native_reads::check(&root, opts.backend, &mut diags);
+    crate::lower::native_reads::check(&root, &analysis, opts.backend, &mut diags);
     if !opts.portability.is_empty() {
         let mut all: Vec<&dyn PlatformSemantics> = vec![opts.backend];
         all.extend(opts.portability.iter().copied());
