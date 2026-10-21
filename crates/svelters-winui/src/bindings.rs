@@ -4854,27 +4854,6 @@ pub mod Microsoft {
             }
             #[repr(transparent)]
             #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-            pub struct TextReadingOrder(pub i32);
-            impl TextReadingOrder {
-                pub const Default: Self = Self(0);
-                pub const UseFlowDirection: Self = Self(0);
-                pub const DetectFromContent: Self = Self(1);
-            }
-            impl windows_core::imp::TypeKind for TextReadingOrder {
-                type TypeKind = windows_core::imp::CopyType;
-            }
-            impl windows_core::RuntimeType for TextReadingOrder {
-                const SIGNATURE: windows_core::imp::ConstBuffer =
-                    windows_core::imp::ConstBuffer::from_slice(
-                        b"enum(Microsoft.UI.Xaml.TextReadingOrder;i4)",
-                    );
-                const NAME: windows_core::imp::ConstBuffer =
-                    windows_core::imp::ConstBuffer::from_slice(
-                        b"Microsoft.UI.Xaml.TextReadingOrder",
-                    );
-            }
-            #[repr(transparent)]
-            #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
             pub struct TextTrimming(pub i32);
             impl TextTrimming {
                 pub const None: Self = Self(0);
@@ -10580,28 +10559,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn DateFormat(&self) -> windows_core::Result<windows_core::HSTRING> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).DateFormat)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| core::mem::transmute(result__))
-                        }
-                    }
-                    pub fn SetDateFormat(
-                        &self,
-                        value: &windows_core::HSTRING,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetDateFormat)(
-                                windows_core::Interface::as_raw(self),
-                                core::mem::transmute_copy(value),
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn PlaceholderText(&self) -> windows_core::Result<windows_core::HSTRING> {
                         unsafe {
                             let mut result__ = core::mem::zeroed();
@@ -11063,16 +11020,6 @@ pub mod Microsoft {
                         Self::ICalendarDatePickerStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsCalendarOpenProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn DateFormatProperty() -> windows_core::Result<super::DependencyProperty> {
-                        Self::ICalendarDatePickerStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).DateFormatProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -21973,16 +21920,8 @@ pub mod Microsoft {
                         bool,
                     )
                         -> windows_core::HRESULT,
-                    pub DateFormat: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetDateFormat: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    DateFormat: usize,
+                    SetDateFormat: usize,
                     pub PlaceholderText: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
@@ -22229,11 +22168,7 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    pub DateFormatProperty: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    DateFormatProperty: usize,
                     pub PlaceholderTextProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
@@ -27773,8 +27708,7 @@ pub mod Microsoft {
                             i64,
                         ) -> windows_core::HRESULT,
                     ScrollIntoView: usize,
-                    pub SelectAll:
-                        unsafe extern "system" fn(*mut core::ffi::c_void) -> windows_core::HRESULT,
+                    SelectAll: usize,
                     LoadMoreItemsAsync: usize,
                     ScrollIntoViewWithAlignment: usize,
                     SetDesiredContainerUpdateDuration: usize,
@@ -29518,16 +29452,8 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    pub TextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetTextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
+                    TextReadingOrder: usize,
+                    SetTextReadingOrder: usize,
                     pub PreventKeyboardDisplayOnProgrammaticFocus:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -29689,11 +29615,7 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    pub TextReadingOrderProperty:
-                        unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut *mut core::ffi::c_void,
-                        ) -> windows_core::HRESULT,
+                    TextReadingOrderProperty: usize,
                     pub PreventKeyboardDisplayOnProgrammaticFocusProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -29849,16 +29771,8 @@ pub mod Microsoft {
                         *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    pub PasswordChar: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetPasswordChar: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    PasswordChar: usize,
+                    SetPasswordChar: usize,
                     pub IsPasswordRevealButtonEnabled:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -29931,16 +29845,8 @@ pub mod Microsoft {
                         PasswordRevealMode,
                     )
                         -> windows_core::HRESULT,
-                    pub TextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetTextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
+                    TextReadingOrder: usize,
+                    SetTextReadingOrder: usize,
                     InputScope: usize,
                     SetInputScope: usize,
                     pub CanPasteClipboardContent:
@@ -30045,11 +29951,7 @@ pub mod Microsoft {
                         *mut *mut core::ffi::c_void,
                     )
                         -> windows_core::HRESULT,
-                    pub PasswordCharProperty: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    PasswordCharProperty: usize,
                     pub IsPasswordRevealButtonEnabledProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -30086,11 +29988,7 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    pub TextReadingOrderProperty:
-                        unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut *mut core::ffi::c_void,
-                        ) -> windows_core::HRESULT,
+                    TextReadingOrderProperty: usize,
                     InputScopeProperty: usize,
                     pub CanPasteClipboardContentProperty:
                         unsafe extern "system" fn(
@@ -30806,28 +30704,12 @@ pub mod Microsoft {
                         i32,
                     )
                         -> windows_core::HRESULT,
-                    pub PlaceholderValue: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut f64,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetPlaceholderValue: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        f64,
-                    )
-                        -> windows_core::HRESULT,
+                    PlaceholderValue: usize,
+                    SetPlaceholderValue: usize,
                     ItemInfo: usize,
                     SetItemInfo: usize,
-                    pub Value: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut f64,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetValue: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        f64,
-                    )
-                        -> windows_core::HRESULT,
+                    Value: usize,
+                    SetValue: usize,
                     pub ValueChanged: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut core::ffi::c_void,
@@ -30901,17 +30783,6 @@ pub mod Microsoft {
                     )
                         -> windows_core::HRESULT,
                     pub MaxRatingProperty: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
-                    pub PlaceholderValueProperty:
-                        unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut *mut core::ffi::c_void,
-                        ) -> windows_core::HRESULT,
-                    ItemInfoProperty: usize,
-                    pub ValueProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
                     )
@@ -31215,16 +31086,8 @@ pub mod Microsoft {
                     )
                         -> windows_core::HRESULT,
                     GetLinguisticAlternativesAsync: usize,
-                    pub TextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetTextReadingOrder: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        super::TextReadingOrder,
-                    )
-                        -> windows_core::HRESULT,
+                    TextReadingOrder: usize,
+                    SetTextReadingOrder: usize,
                     pub ClipboardCopyFormat: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut RichEditClipboardFormat,
@@ -31427,11 +31290,7 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    pub TextReadingOrderProperty:
-                        unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut *mut core::ffi::c_void,
-                        ) -> windows_core::HRESULT,
+                    TextReadingOrderProperty: usize,
                     pub ClipboardCopyFormatProperty:
                         unsafe extern "system" fn(
                             *mut core::ffi::c_void,
@@ -35524,16 +35383,8 @@ pub mod Microsoft {
                         -> windows_core::HRESULT,
                     HeaderTemplate: usize,
                     SetHeaderTemplate: usize,
-                    pub ClockIdentifier: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
-                    pub SetClockIdentifier: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    ClockIdentifier: usize,
+                    SetClockIdentifier: usize,
                     pub MinuteIncrement: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut i32,
@@ -35660,11 +35511,7 @@ pub mod Microsoft {
                     )
                         -> windows_core::HRESULT,
                     HeaderTemplateProperty: usize,
-                    pub ClockIdentifierProperty: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    ClockIdentifierProperty: usize,
                     pub MinuteIncrementProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
                         *mut *mut core::ffi::c_void,
@@ -37902,14 +37749,6 @@ pub mod Microsoft {
                                 windows_core::Interface::vtable(self)
                                     .RemoveChoosingGroupHeaderContainer,
                             ))
-                        }
-                    }
-                    pub fn SelectAll(&self) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SelectAll)(
-                                windows_core::Interface::as_raw(self),
-                            )
-                            .ok()
                         }
                     }
                     pub fn IsDragSource(&self) -> windows_core::Result<bool> {
@@ -41187,30 +41026,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn TextReadingOrder(
-                        &self,
-                    ) -> windows_core::Result<super::TextReadingOrder> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).TextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetTextReadingOrder(
-                        &self,
-                        value: super::TextReadingOrder,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetTextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn PreventKeyboardDisplayOnProgrammaticFocus(
                         &self,
                     ) -> windows_core::Result<bool> {
@@ -41496,17 +41311,6 @@ pub mod Microsoft {
                         Self::INumberBoxStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).SelectionHighlightColorProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn TextReadingOrderProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::INumberBoxStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).TextReadingOrderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -41865,28 +41669,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn PasswordChar(&self) -> windows_core::Result<windows_core::HSTRING> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).PasswordChar)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| core::mem::transmute(result__))
-                        }
-                    }
-                    pub fn SetPasswordChar(
-                        &self,
-                        value: &windows_core::HSTRING,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetPasswordChar)(
-                                windows_core::Interface::as_raw(self),
-                                core::mem::transmute_copy(value),
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn IsPasswordRevealButtonEnabled(&self) -> windows_core::Result<bool> {
                         unsafe {
                             let mut result__ = core::mem::zeroed();
@@ -42037,30 +41819,6 @@ pub mod Microsoft {
                     ) -> windows_core::Result<()> {
                         unsafe {
                             (windows_core::Interface::vtable(self).SetPasswordRevealMode)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
-                    pub fn TextReadingOrder(
-                        &self,
-                    ) -> windows_core::Result<super::TextReadingOrder> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).TextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetTextReadingOrder(
-                        &self,
-                        value: super::TextReadingOrder,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetTextReadingOrder)(
                                 windows_core::Interface::as_raw(self),
                                 value,
                             )
@@ -42242,17 +42000,6 @@ pub mod Microsoft {
                             .and_then(|| windows_core::imp::Type::from_abi(result__))
                         })
                     }
-                    pub fn PasswordCharProperty() -> windows_core::Result<super::DependencyProperty>
-                    {
-                        Self::IPasswordBoxStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).PasswordCharProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
                     pub fn IsPasswordRevealButtonEnabledProperty()
                     -> windows_core::Result<super::DependencyProperty> {
                         Self::IPasswordBoxStatics(|this| unsafe {
@@ -42324,17 +42071,6 @@ pub mod Microsoft {
                         Self::IPasswordBoxStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).PasswordRevealModeProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn TextReadingOrderProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::IPasswordBoxStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).TextReadingOrderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -43661,44 +43397,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn PlaceholderValue(&self) -> windows_core::Result<f64> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).PlaceholderValue)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetPlaceholderValue(&self, value: f64) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetPlaceholderValue)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
-                    pub fn Value(&self) -> windows_core::Result<f64> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).Value)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetValue(&self, value: f64) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetValue)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn ValueChanged<F>(
                         &self,
                         handler: F,
@@ -43809,27 +43507,6 @@ pub mod Microsoft {
                         Self::IRatingControlStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).MaxRatingProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn PlaceholderValueProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::IRatingControlStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).PlaceholderValueProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn ValueProperty() -> windows_core::Result<super::DependencyProperty> {
-                        Self::IRatingControlStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).ValueProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -44598,30 +44275,6 @@ pub mod Microsoft {
                             ))
                         }
                     }
-                    pub fn TextReadingOrder(
-                        &self,
-                    ) -> windows_core::Result<super::TextReadingOrder> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).TextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| result__)
-                        }
-                    }
-                    pub fn SetTextReadingOrder(
-                        &self,
-                        value: super::TextReadingOrder,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetTextReadingOrder)(
-                                windows_core::Interface::as_raw(self),
-                                value,
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn ClipboardCopyFormat(
                         &self,
                     ) -> windows_core::Result<RichEditClipboardFormat> {
@@ -44952,17 +44605,6 @@ pub mod Microsoft {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this)
                                 .DesiredCandidateWindowAlignmentProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn TextReadingOrderProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::IRichEditBoxStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).TextReadingOrderProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -53861,28 +53503,6 @@ pub mod Microsoft {
                             .ok()
                         }
                     }
-                    pub fn ClockIdentifier(&self) -> windows_core::Result<windows_core::HSTRING> {
-                        unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(self).ClockIdentifier)(
-                                windows_core::Interface::as_raw(self),
-                                &mut result__,
-                            )
-                            .map(|| core::mem::transmute(result__))
-                        }
-                    }
-                    pub fn SetClockIdentifier(
-                        &self,
-                        value: &windows_core::HSTRING,
-                    ) -> windows_core::Result<()> {
-                        unsafe {
-                            (windows_core::Interface::vtable(self).SetClockIdentifier)(
-                                windows_core::Interface::as_raw(self),
-                                core::mem::transmute_copy(value),
-                            )
-                            .ok()
-                        }
-                    }
                     pub fn MinuteIncrement(&self) -> windows_core::Result<i32> {
                         unsafe {
                             let mut result__ = core::mem::zeroed();
@@ -54082,17 +53702,6 @@ pub mod Microsoft {
                         Self::ITimePickerStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).HeaderProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn ClockIdentifierProperty()
-                    -> windows_core::Result<super::DependencyProperty> {
-                        Self::ITimePickerStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).ClockIdentifierProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )
@@ -56126,28 +55735,6 @@ pub mod Microsoft {
                                 .ok()
                             }
                         }
-                        pub fn ShowMode(&self) -> windows_core::Result<FlyoutShowMode> {
-                            unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(self).ShowMode)(
-                                    windows_core::Interface::as_raw(self),
-                                    &mut result__,
-                                )
-                                .map(|| result__)
-                            }
-                        }
-                        pub fn SetShowMode(
-                            &self,
-                            value: FlyoutShowMode,
-                        ) -> windows_core::Result<()> {
-                            unsafe {
-                                (windows_core::Interface::vtable(self).SetShowMode)(
-                                    windows_core::Interface::as_raw(self),
-                                    value,
-                                )
-                                .ok()
-                            }
-                        }
                         pub fn InputDevicePrefersPrimaryCommands(
                             &self,
                         ) -> windows_core::Result<bool> {
@@ -56420,18 +56007,6 @@ pub mod Microsoft {
                                 .and_then(|| windows_core::imp::Type::from_abi(result__))
                             })
                         }
-                        pub fn ShowModeProperty()
-                        -> windows_core::Result<super::super::DependencyProperty>
-                        {
-                            Self::IFlyoutBaseStatics(|this| unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(this).ShowModeProperty)(
-                                    windows_core::Interface::as_raw(this),
-                                    &mut result__,
-                                )
-                                .and_then(|| windows_core::imp::Type::from_abi(result__))
-                            })
-                        }
                         pub fn InputDevicePrefersPrimaryCommandsProperty()
                         -> windows_core::Result<super::super::DependencyProperty>
                         {
@@ -56624,28 +56199,6 @@ pub mod Microsoft {
                                 b"Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode",
                             );
                     }
-                    #[repr(transparent)]
-                    #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-                    pub struct FlyoutShowMode(pub i32);
-                    impl FlyoutShowMode {
-                        pub const Auto: Self = Self(0);
-                        pub const Standard: Self = Self(1);
-                        pub const Transient: Self = Self(2);
-                        pub const TransientWithDismissOnPointerMoveAway: Self = Self(3);
-                    }
-                    impl windows_core::imp::TypeKind for FlyoutShowMode {
-                        type TypeKind = windows_core::imp::CopyType;
-                    }
-                    impl windows_core::RuntimeType for FlyoutShowMode {
-                        const SIGNATURE: windows_core::imp::ConstBuffer =
-                            windows_core::imp::ConstBuffer::from_slice(
-                                b"enum(Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode;i4)",
-                            );
-                        const NAME: windows_core::imp::ConstBuffer =
-                            windows_core::imp::ConstBuffer::from_slice(
-                                b"Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode",
-                            );
-                    }
                     windows_core::imp::define_interface!(
                         IButtonBase,
                         IButtonBase_Vtbl,
@@ -56811,16 +56364,8 @@ pub mod Microsoft {
                                 bool,
                             )
                                 -> windows_core::HRESULT,
-                        pub ShowMode: unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut FlyoutShowMode,
-                        )
-                            -> windows_core::HRESULT,
-                        pub SetShowMode: unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            FlyoutShowMode,
-                        )
-                            -> windows_core::HRESULT,
+                        ShowMode: usize,
+                        SetShowMode: usize,
                         pub InputDevicePrefersPrimaryCommands:
                             unsafe extern "system" fn(
                                 *mut core::ffi::c_void,
@@ -57008,11 +56553,7 @@ pub mod Microsoft {
                                 *mut *mut core::ffi::c_void,
                             )
                                 -> windows_core::HRESULT,
-                        pub ShowModeProperty: unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut *mut core::ffi::c_void,
-                        )
-                            -> windows_core::HRESULT,
+                        ShowModeProperty: usize,
                         pub InputDevicePrefersPrimaryCommandsProperty:
                             unsafe extern "system" fn(
                                 *mut core::ffi::c_void,
@@ -57439,16 +56980,8 @@ pub mod Microsoft {
                     #[repr(C)]
                     pub struct ISelector_Vtbl {
                         pub base__: windows_core::IInspectable_Vtbl,
-                        pub SelectedIndex: unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            *mut i32,
-                        )
-                            -> windows_core::HRESULT,
-                        pub SetSelectedIndex: unsafe extern "system" fn(
-                            *mut core::ffi::c_void,
-                            i32,
-                        )
-                            -> windows_core::HRESULT,
+                        SelectedIndex: usize,
+                        SetSelectedIndex: usize,
                         SelectedItem: usize,
                         SetSelectedItem: usize,
                         SelectedValue: usize,
@@ -57464,18 +56997,8 @@ pub mod Microsoft {
                                 *mut core::ffi::c_void,
                             )
                                 -> windows_core::HRESULT,
-                        pub IsSynchronizedWithCurrentItem:
-                            unsafe extern "system" fn(
-                                *mut core::ffi::c_void,
-                                *mut *mut core::ffi::c_void,
-                            )
-                                -> windows_core::HRESULT,
-                        pub SetIsSynchronizedWithCurrentItem:
-                            unsafe extern "system" fn(
-                                *mut core::ffi::c_void,
-                                *mut core::ffi::c_void,
-                            )
-                                -> windows_core::HRESULT,
+                        IsSynchronizedWithCurrentItem: usize,
+                        SetIsSynchronizedWithCurrentItem: usize,
                         pub SelectionChanged: unsafe extern "system" fn(
                             *mut core::ffi::c_void,
                             *mut core::ffi::c_void,
@@ -57588,21 +57111,10 @@ pub mod Microsoft {
                     #[repr(C)]
                     pub struct ISelectorStatics_Vtbl {
                         pub base__: windows_core::IInspectable_Vtbl,
-                        pub SelectedIndexProperty:
-                            unsafe extern "system" fn(
-                                *mut core::ffi::c_void,
-                                *mut *mut core::ffi::c_void,
-                            )
-                                -> windows_core::HRESULT,
+                        SelectedIndexProperty: usize,
                         SelectedItemProperty: usize,
                         SelectedValueProperty: usize,
                         pub SelectedValuePathProperty:
-                            unsafe extern "system" fn(
-                                *mut core::ffi::c_void,
-                                *mut *mut core::ffi::c_void,
-                            )
-                                -> windows_core::HRESULT,
-                        pub IsSynchronizedWithCurrentItemProperty:
                             unsafe extern "system" fn(
                                 *mut core::ffi::c_void,
                                 *mut *mut core::ffi::c_void,
@@ -61106,25 +60618,6 @@ pub mod Microsoft {
                                 ))
                             }
                         }
-                        pub fn SelectedIndex(&self) -> windows_core::Result<i32> {
-                            unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(self).SelectedIndex)(
-                                    windows_core::Interface::as_raw(self),
-                                    &mut result__,
-                                )
-                                .map(|| result__)
-                            }
-                        }
-                        pub fn SetSelectedIndex(&self, value: i32) -> windows_core::Result<()> {
-                            unsafe {
-                                (windows_core::Interface::vtable(self).SetSelectedIndex)(
-                                    windows_core::Interface::as_raw(self),
-                                    value,
-                                )
-                                .ok()
-                            }
-                        }
                         pub fn SelectedValuePath(
                             &self,
                         ) -> windows_core::Result<windows_core::HSTRING> {
@@ -61145,33 +60638,6 @@ pub mod Microsoft {
                                 (windows_core::Interface::vtable(self).SetSelectedValuePath)(
                                     windows_core::Interface::as_raw(self),
                                     core::mem::transmute_copy(value),
-                                )
-                                .ok()
-                            }
-                        }
-                        pub fn IsSynchronizedWithCurrentItem(&self) -> windows_core::Result<bool> {
-                            unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(self)
-                                    .IsSynchronizedWithCurrentItem)(
-                                    windows_core::Interface::as_raw(self),
-                                    &mut result__,
-                                )
-                                .and_then(|| windows_core::imp::Type::from_abi(result__))
-                                .and_then(|r__: windows_reference::IReference<bool>| r__.Value())
-                            }
-                        }
-                        pub fn SetIsSynchronizedWithCurrentItem(
-                            &self,
-                            value: Option<bool>,
-                        ) -> windows_core::Result<()> {
-                            let value__ =
-                                value.map(<windows_reference::IReference<bool> as From<_>>::from);
-                            unsafe {
-                                (windows_core::Interface::vtable(self)
-                                    .SetIsSynchronizedWithCurrentItem)(
-                                    windows_core::Interface::as_raw(self),
-                                    windows_core::Param::param(value__.as_ref()).abi(),
                                 )
                                 .ok()
                             }
@@ -61208,37 +60674,12 @@ pub mod Microsoft {
                                 ))
                             }
                         }
-                        pub fn SelectedIndexProperty()
-                        -> windows_core::Result<super::super::DependencyProperty>
-                        {
-                            Self::ISelectorStatics(|this| unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(this).SelectedIndexProperty)(
-                                    windows_core::Interface::as_raw(this),
-                                    &mut result__,
-                                )
-                                .and_then(|| windows_core::imp::Type::from_abi(result__))
-                            })
-                        }
                         pub fn SelectedValuePathProperty()
                         -> windows_core::Result<super::super::DependencyProperty>
                         {
                             Self::ISelectorStatics(|this| unsafe {
                                 let mut result__ = core::mem::zeroed();
                                 (windows_core::Interface::vtable(this).SelectedValuePathProperty)(
-                                    windows_core::Interface::as_raw(this),
-                                    &mut result__,
-                                )
-                                .and_then(|| windows_core::imp::Type::from_abi(result__))
-                            })
-                        }
-                        pub fn IsSynchronizedWithCurrentItemProperty()
-                        -> windows_core::Result<super::super::DependencyProperty>
-                        {
-                            Self::ISelectorStatics(|this| unsafe {
-                                let mut result__ = core::mem::zeroed();
-                                (windows_core::Interface::vtable(this)
-                                    .IsSynchronizedWithCurrentItemProperty)(
                                     windows_core::Interface::as_raw(this),
                                     &mut result__,
                                 )

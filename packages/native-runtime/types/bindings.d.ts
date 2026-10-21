@@ -111,7 +111,6 @@ export interface BindableProps {
   };
   "calendar-date-picker": {
     "calendar-identifier": string; // winui
-    "date-format": string; // winui
     "day-of-week-format": string; // winui
     "display-mode": string; // winui
     "first-day-of-week": string; // winui
@@ -451,7 +450,6 @@ export interface BindableProps {
     "small-change": number; // winui
     "spin-button-placement-mode": string; // winui
     text: string; // winui
-    "text-reading-order": string; // winui
     "validation-mode": string; // winui
     value: number; // winui
   };
@@ -468,11 +466,9 @@ export interface BindableProps {
     "is-password-reveal-button-enabled": boolean; // winui
     "max-length": number; // winui
     password: string; // winui
-    "password-char": string; // winui
     "password-reveal-mode": string; // winui
     "placeholder-text": string; // winui
     "prevent-keyboard-display-on-programmatic-focus": boolean; // winui
-    "text-reading-order": string; // winui
   };
   "password-entry": {
     "activates-default": boolean; // gtk
@@ -551,8 +547,6 @@ export interface BindableProps {
     "is-clear-enabled": boolean; // winui
     "is-read-only": boolean; // winui
     "max-rating": number; // winui
-    "placeholder-value": number; // winui
-    value: number; // winui
   };
   "repeat-button": {
     delay: number; // winui
@@ -577,7 +571,6 @@ export interface BindableProps {
     "placeholder-text": string; // winui
     "prevent-keyboard-display-on-programmatic-focus": boolean; // winui
     "text-alignment": string; // winui
-    "text-reading-order": string; // winui
     "text-wrapping": string; // winui
   };
   scale: {
@@ -829,7 +822,6 @@ export interface BindableProps {
     time: { hour: number; minute: number; second: number; ms: number }; // qt
   };
   "time-picker": {
-    "clock-identifier": string; // winui
     "light-dismiss-overlay-mode": string; // winui
     "minute-increment": number; // winui
   };

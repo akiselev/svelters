@@ -112,7 +112,6 @@ export const BINDINGS = {
   },
   "calendar-date-picker": {
     "calendar-identifier": { prop: "calendar-identifier", signal: "notify::calendar-identifier", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
-    "date-format": { prop: "date-format", signal: "notify::date-format", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "day-of-week-format": { prop: "day-of-week-format", signal: "notify::day-of-week-format", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "display-mode": { prop: "display-mode", signal: "notify::display-mode", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "first-day-of-week": { prop: "first-day-of-week", signal: "notify::first-day-of-week", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
@@ -452,7 +451,6 @@ export const BINDINGS = {
     "small-change": { prop: "small-change", signal: "notify::small-change", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
     "spin-button-placement-mode": { prop: "spin-button-placement-mode", signal: "notify::spin-button-placement-mode", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     text: { prop: "text", signal: "notify::text", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
-    "text-reading-order": { prop: "text-reading-order", signal: "notify::text-reading-order", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "validation-mode": { prop: "validation-mode", signal: "notify::validation-mode", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     value: { prop: "value", signal: "notify::value", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
   },
@@ -469,11 +467,9 @@ export const BINDINGS = {
     "is-password-reveal-button-enabled": { prop: "is-password-reveal-button-enabled", signal: "notify::is-password-reveal-button-enabled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "max-length": { prop: "max-length", signal: "notify::max-length", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
     password: { prop: "password", signal: "notify::password", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
-    "password-char": { prop: "password-char", signal: "notify::password-char", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "password-reveal-mode": { prop: "password-reveal-mode", signal: "notify::password-reveal-mode", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "placeholder-text": { prop: "placeholder-text", signal: "notify::placeholder-text", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "prevent-keyboard-display-on-programmatic-focus": { prop: "prevent-keyboard-display-on-programmatic-focus", signal: "notify::prevent-keyboard-display-on-programmatic-focus", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
-    "text-reading-order": { prop: "text-reading-order", signal: "notify::text-reading-order", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
   },
   "password-entry": {
     "activates-default": { prop: "activates-default", signal: "notify::activates-default", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
@@ -552,8 +548,6 @@ export const BINDINGS = {
     "is-clear-enabled": { prop: "is-clear-enabled", signal: "notify::is-clear-enabled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "is-read-only": { prop: "is-read-only", signal: "notify::is-read-only", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "max-rating": { prop: "max-rating", signal: "notify::max-rating", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
-    "placeholder-value": { prop: "placeholder-value", signal: "notify::placeholder-value", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
-    value: { prop: "value", signal: "notify::value", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
   },
   "repeat-button": {
     delay: { prop: "delay", signal: "notify::delay", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
@@ -578,7 +572,6 @@ export const BINDINGS = {
     "placeholder-text": { prop: "placeholder-text", signal: "notify::placeholder-text", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "prevent-keyboard-display-on-programmatic-focus": { prop: "prevent-keyboard-display-on-programmatic-focus", signal: "notify::prevent-keyboard-display-on-programmatic-focus", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "text-alignment": { prop: "text-alignment", signal: "notify::text-alignment", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
-    "text-reading-order": { prop: "text-reading-order", signal: "notify::text-reading-order", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "text-wrapping": { prop: "text-wrapping", signal: "notify::text-wrapping", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
   },
   scale: {
@@ -830,7 +823,6 @@ export const BINDINGS = {
     time: { prop: "time", signal: "time-changed", type: "value", direction: "two_way", compare: false, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
   "time-picker": {
-    "clock-identifier": { prop: "clock-identifier", signal: "notify::clock-identifier", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "light-dismiss-overlay-mode": { prop: "light-dismiss-overlay-mode", signal: "notify::light-dismiss-overlay-mode", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "minute-increment": { prop: "minute-increment", signal: "notify::minute-increment", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
   },

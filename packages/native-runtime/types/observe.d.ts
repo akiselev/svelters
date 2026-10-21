@@ -3234,8 +3234,6 @@ interface WinuiObs_CalendarDatePicker {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:calendar-identifier|nonreactive"?: string | null;
   /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:date"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:date|nonreactive"?: unknown;
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:date-format"?: string | null;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:date-format|nonreactive"?: string | null;
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:day-of-week-format"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:day-of-week-format|nonreactive"?: string | null;
   /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:description"?: string | null;
@@ -3507,23 +3505,23 @@ interface WinuiObs_ContentDialog {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:title|nonreactive"?: string | null;
 }
 interface WinuiObs_Control {
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:background"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:background"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:background-sizing"?: "inner-border-edge" | "outer-border-edge";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-sizing|nonreactive"?: "inner-border-edge" | "outer-border-edge";
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:border-brush"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:border-brush"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-brush|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:border-thickness"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-thickness|nonreactive"?: Insets;
   /** @observable exact on winui (notify) */ "bind:character-spacing"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:character-spacing|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:corner-radius"?: unknown;
+  /** @observable exact on winui (notify) */ "bind:corner-radius"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:corner-radius|nonreactive"?: unknown;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:default-style-resource-uri"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:default-style-resource-uri"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:default-style-resource-uri|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:element-sound-mode"?: "default" | "focus-only" | "off";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:element-sound-mode|nonreactive"?: "default" | "focus-only" | "off";
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:font-family"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:font-family"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-family|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:font-size"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-size|nonreactive"?: number;
@@ -3531,9 +3529,9 @@ interface WinuiObs_Control {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-stretch|nonreactive"?: "undefined" | "ultra-condensed" | "extra-condensed" | "condensed" | "semi-condensed" | "normal" | "semi-expanded" | "expanded" | "extra-expanded" | "ultra-expanded";
   /** @observable exact on winui (notify) */ "bind:font-style"?: "normal" | "oblique" | "italic";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-style|nonreactive"?: "normal" | "oblique" | "italic";
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:font-weight"?: number;
+  /** @observable exact on winui (notify) */ "bind:font-weight"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-weight|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:foreground"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:foreground"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:foreground|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:horizontal-content-alignment"?: "left" | "center" | "right" | "stretch";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontal-content-alignment|nonreactive"?: "left" | "center" | "right" | "stretch";
@@ -3610,8 +3608,6 @@ interface WinuiObs_FlyoutBase {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placement|nonreactive"?: "top" | "bottom" | "left" | "right" | "full" | "top-edge-aligned-left" | "top-edge-aligned-right" | "bottom-edge-aligned-left" | "bottom-edge-aligned-right" | "left-edge-aligned-top" | "left-edge-aligned-bottom" | "right-edge-aligned-top" | "right-edge-aligned-bottom" | "auto";
   /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:should-constrain-to-root-bounds"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:should-constrain-to-root-bounds|nonreactive"?: boolean;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:show-mode"?: "auto" | "standard" | "transient" | "transient-with-dismiss-on-pointer-move-away";
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:show-mode|nonreactive"?: "auto" | "standard" | "transient" | "transient-with-dismiss-on-pointer-move-away";
 }
 interface WinuiObs_FontIcon {
   /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:font-family"?: string | null;
@@ -3645,11 +3641,11 @@ interface WinuiObs_FrameworkElement {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:flow-direction|nonreactive"?: "left-to-right" | "right-to-left";
   /** @observable exact on winui (notify) */ "bind:focus-visual-margin"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:focus-visual-margin|nonreactive"?: Insets;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:focus-visual-primary-brush"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:focus-visual-primary-brush"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:focus-visual-primary-brush|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:focus-visual-primary-thickness"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:focus-visual-primary-thickness|nonreactive"?: Insets;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:focus-visual-secondary-brush"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:focus-visual-secondary-brush"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:focus-visual-secondary-brush|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:focus-visual-secondary-thickness"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:focus-visual-secondary-thickness|nonreactive"?: Insets;
@@ -3683,14 +3679,14 @@ interface WinuiObs_FrameworkElement {
 interface WinuiObs_Grid {
   /** @observable exact on winui (notify) */ "bind:background-sizing"?: "inner-border-edge" | "outer-border-edge";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-sizing|nonreactive"?: "inner-border-edge" | "outer-border-edge";
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:border-brush"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:border-brush"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-brush|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:border-thickness"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-thickness|nonreactive"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on winui */ "bind:column-definitions|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:column-spacing"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:column-spacing|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:corner-radius"?: unknown;
+  /** @observable exact on winui (notify) */ "bind:corner-radius"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:corner-radius|nonreactive"?: unknown;
   /** @observable exact on winui (notify) */ "bind:padding"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:padding|nonreactive"?: Insets;
@@ -3877,15 +3873,13 @@ interface WinuiObs_NumberBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:spin-button-placement-mode|nonreactive"?: "hidden" | "compact" | "inline";
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text|nonreactive"?: string | null;
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:text-reading-order"?: "default" | "use-flow-direction" | "detect-from-content";
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-reading-order|nonreactive"?: "default" | "use-flow-direction" | "detect-from-content";
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:validation-mode"?: "invalid-input-overwritten" | "disabled";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:validation-mode|nonreactive"?: "invalid-input-overwritten" | "disabled";
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:value|nonreactive"?: number;
 }
 interface WinuiObs_Panel {
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:background"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:background"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background|nonreactive"?: string | null;
   /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-items-host"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-items-host|nonreactive"?: boolean;
@@ -3903,8 +3897,6 @@ interface WinuiObs_PasswordBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-length|nonreactive"?: number;
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:password"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:password|nonreactive"?: string | null;
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:password-char"?: string | null;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:password-char|nonreactive"?: string | null;
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:password-reveal-mode"?: "peek" | "hidden" | "visible";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:password-reveal-mode|nonreactive"?: "peek" | "hidden" | "visible";
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:placeholder-text"?: string | null;
@@ -3913,8 +3905,6 @@ interface WinuiObs_PasswordBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:prevent-keyboard-display-on-programmatic-focus|nonreactive"?: boolean;
   /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selection-highlight-color"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-highlight-color|nonreactive"?: string | null;
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:text-reading-order"?: "default" | "use-flow-direction" | "detect-from-content";
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-reading-order|nonreactive"?: "default" | "use-flow-direction" | "detect-from-content";
 }
 interface WinuiObs_PersonPicture {
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:badge-glyph"?: string | null;
@@ -3991,10 +3981,6 @@ interface WinuiObs_RatingControl {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-read-only|nonreactive"?: boolean;
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:max-rating"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-rating|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:placeholder-value"?: number;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-value|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:value"?: number;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:value|nonreactive"?: number;
 }
 interface WinuiObs_RepeatButton {
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:delay"?: number;
@@ -4037,8 +4023,6 @@ interface WinuiObs_RichEditBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-highlight-color-when-not-focused|nonreactive"?: string | null;
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:text-alignment"?: "center" | "left" | "start" | "right" | "end" | "justify" | "detect-from-content";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-alignment|nonreactive"?: "center" | "left" | "start" | "right" | "end" | "justify" | "detect-from-content";
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:text-reading-order"?: "default" | "use-flow-direction" | "detect-from-content";
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-reading-order|nonreactive"?: "default" | "use-flow-direction" | "detect-from-content";
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:text-wrapping"?: "no-wrap" | "wrap" | "wrap-whole-words";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-wrapping|nonreactive"?: "no-wrap" | "wrap" | "wrap-whole-words";
 }
@@ -4117,10 +4101,6 @@ interface WinuiObs_ScrollViewer {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:zoom-snap-points-type|nonreactive"?: "none" | "optional" | "mandatory" | "optional-single" | "mandatory-single";
 }
 interface WinuiObs_Selector {
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:is-synchronized-with-current-item"?: boolean | null;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-synchronized-with-current-item|nonreactive"?: boolean | null;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selected-index"?: number;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-index|nonreactive"?: number;
   /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selected-value-path"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-value-path|nonreactive"?: string | null;
 }
@@ -4177,11 +4157,11 @@ interface WinuiObs_StackPanel {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on winui */ "bind:are-vertical-snap-points-regular|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:background-sizing"?: "inner-border-edge" | "outer-border-edge";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-sizing|nonreactive"?: "inner-border-edge" | "outer-border-edge";
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:border-brush"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:border-brush"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-brush|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:border-thickness"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-thickness|nonreactive"?: Insets;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:corner-radius"?: unknown;
+  /** @observable exact on winui (notify) */ "bind:corner-radius"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:corner-radius|nonreactive"?: unknown;
   /** @observable exact on winui (notify) */ "bind:orientation"?: "vertical" | "horizontal";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:orientation|nonreactive"?: "vertical" | "horizontal";
@@ -4246,7 +4226,7 @@ interface WinuiObs_TextBlock {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on winui */ "bind:baseline-offset|nonreactive"?: number;
   /** @observable exact on winui (notify) */ "bind:character-spacing"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:character-spacing|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:font-family"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:font-family"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-family|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:font-size"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-size|nonreactive"?: number;
@@ -4254,9 +4234,9 @@ interface WinuiObs_TextBlock {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-stretch|nonreactive"?: "undefined" | "ultra-condensed" | "extra-condensed" | "condensed" | "semi-condensed" | "normal" | "semi-expanded" | "expanded" | "extra-expanded" | "ultra-expanded";
   /** @observable exact on winui (notify) */ "bind:font-style"?: "normal" | "oblique" | "italic";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-style|nonreactive"?: "normal" | "oblique" | "italic";
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:font-weight"?: number;
+  /** @observable exact on winui (notify) */ "bind:font-weight"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-weight|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:foreground"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:foreground"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:foreground|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:horizontal-text-alignment"?: "center" | "left" | "start" | "right" | "end" | "justify" | "detect-from-content";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontal-text-alignment|nonreactive"?: "center" | "left" | "start" | "right" | "end" | "justify" | "detect-from-content";
@@ -4280,7 +4260,7 @@ interface WinuiObs_TextBlock {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:padding|nonreactive"?: Insets;
   /** Read-only. @observable exact on winui (event:SelectionChanged) */ "bind:selected-text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:selected-text|nonreactive"?: string | null;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selection-highlight-color"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:selection-highlight-color"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-highlight-color|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text|nonreactive"?: string | null;
@@ -4304,7 +4284,7 @@ interface WinuiObs_TextBox {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:can-undo|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:character-casing"?: "normal" | "lower" | "upper";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:character-casing|nonreactive"?: "normal" | "lower" | "upper";
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:description"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:description"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:description|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:desired-candidate-window-alignment"?: "default" | "bottom-edge";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:desired-candidate-window-alignment|nonreactive"?: "default" | "bottom-edge";
@@ -4322,7 +4302,7 @@ interface WinuiObs_TextBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-text-prediction-enabled|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:max-length"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-length|nonreactive"?: number;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:placeholder-foreground"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:placeholder-foreground"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-foreground|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:placeholder-text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-text|nonreactive"?: string | null;
@@ -4330,9 +4310,9 @@ interface WinuiObs_TextBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:prevent-keyboard-display-on-programmatic-focus|nonreactive"?: boolean;
   /** @observable exact on winui (event:SelectionChanged) */ "bind:selected-text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-text|nonreactive"?: string | null;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selection-highlight-color"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:selection-highlight-color"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-highlight-color|nonreactive"?: string | null;
-  /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selection-highlight-color-when-not-focused"?: string | null;
+  /** @observable exact on winui (notify) */ "bind:selection-highlight-color-when-not-focused"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-highlight-color-when-not-focused|nonreactive"?: string | null;
   /** @observable exact on winui (event:SelectionChanged) */ "bind:selection-length"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-length|nonreactive"?: number;
@@ -4346,8 +4326,6 @@ interface WinuiObs_TextBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-wrapping|nonreactive"?: "no-wrap" | "wrap" | "wrap-whole-words";
 }
 interface WinuiObs_TimePicker {
-  /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:clock-identifier"?: string | null;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:clock-identifier|nonreactive"?: string | null;
   /** @observable exact on winui (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:header"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:header|nonreactive"?: string | null;
   /** @observable exact on winui (notify), delivery not verified (none): bound through its change signal */ "bind:light-dismiss-overlay-mode"?: "auto" | "on" | "off";

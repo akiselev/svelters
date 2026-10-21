@@ -247,18 +247,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:notify:ShowMode",
-   "fingerprint": "3cd2337cd3d95417",
-   "kind": "FlyoutBase",
-   "name": "ShowMode",
-   "origin": "inferred",
-   "record_fp": "078467228c84db9a",
-   "section": "notify",
-   "tests": [
-    "notify_menu_flyout_show_mode"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:AllowFocusOnInteraction",
    "fingerprint": "e70dd223d4e81ffd",
    "kind": "FlyoutBase",
@@ -509,31 +497,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:ShowMode",
-   "fingerprint": "877b804bc6e5794d",
-   "kind": "FlyoutBase",
-   "name": "ShowMode",
-   "origin": "inferred",
-   "record_fp": "28057b538babe3ce",
-   "section": "props",
-   "tests": [
-    "prop_menu_flyout_show_mode"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:ShowMode:observe",
-   "fingerprint": "584fa27408171b28",
-   "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
-   "name": "ShowMode",
-   "origin": "inferred",
-   "record_fp": "67f9bdae9a23497d",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_menu_flyout_show_mode"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:event:ValueChanged",
    "fingerprint": "e3bfe419d5be5d4c",
    "kind": "RangeBase",
@@ -594,7 +557,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:notify:Value",
-   "fingerprint": "c85750463318a53f",
+   "fingerprint": "b54b3edabb0b0d4e",
    "kind": "RangeBase",
    "name": "Value",
    "origin": "inferred",
@@ -702,7 +665,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Value",
-   "fingerprint": "de885a348873b377",
+   "fingerprint": "c334a0b4434b9ecb",
    "kind": "RangeBase",
    "name": "Value",
    "origin": "manual",
@@ -713,7 +676,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Value:observe",
-   "fingerprint": "60da41b0a6a12dfa",
+   "fingerprint": "92a949ff7a8a1482",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RangeBase",
    "name": "Value",
    "origin": "inferred",
@@ -836,30 +799,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:notify:IsSynchronizedWithCurrentItem",
-   "fingerprint": "08368a94f21598a6",
-   "kind": "Selector",
-   "name": "IsSynchronizedWithCurrentItem",
-   "origin": "inferred",
-   "record_fp": "45757a3dcf2ce29c",
-   "section": "notify",
-   "tests": [
-    "notify_combo_box_is_synchronized_with_current_item"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:notify:SelectedIndex",
-   "fingerprint": "655e2b2469ec0ebb",
-   "kind": "Selector",
-   "name": "SelectedIndex",
-   "origin": "inferred",
-   "record_fp": "0b63a0edc72f6580",
-   "section": "notify",
-   "tests": [
-    "notify_combo_box_selected_index"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:notify:SelectedValuePath",
    "fingerprint": "d46988c264045f37",
    "kind": "Selector",
@@ -869,56 +808,6 @@
    "section": "notify",
    "tests": [
     "notify_combo_box_selected_value_path"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:prop:IsSynchronizedWithCurrentItem",
-   "fingerprint": "19b7d8f2dd988d00",
-   "kind": "Selector",
-   "name": "IsSynchronizedWithCurrentItem",
-   "origin": "inferred",
-   "record_fp": "75d1ced5615c59d2",
-   "section": "props",
-   "tests": [
-    "prop_combo_box_is_synchronized_with_current_item"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:prop:IsSynchronizedWithCurrentItem:observe",
-   "fingerprint": "2beb4a711990a014",
-   "kind": "Microsoft.UI.Xaml.Controls.Primitives:Selector",
-   "name": "IsSynchronizedWithCurrentItem",
-   "origin": "inferred",
-   "record_fp": "1ab4066fde2c10f1",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_combo_box_is_synchronized_with_current_item"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:prop:SelectedIndex",
-   "fingerprint": "34fde8aef6032514",
-   "kind": "Selector",
-   "name": "SelectedIndex",
-   "origin": "inferred",
-   "record_fp": "586a272a0e216e1b",
-   "section": "props",
-   "tests": [
-    "prop_combo_box_selected_index"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:prop:SelectedIndex:observe",
-   "fingerprint": "0f374ea1b6bdaf97",
-   "kind": "Microsoft.UI.Xaml.Controls.Primitives:Selector",
-   "name": "SelectedIndex",
-   "origin": "inferred",
-   "record_fp": "7af7bf70e93502b6",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_combo_box_selected_index"
    ]
   },
   {
@@ -2835,18 +2724,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:binding:date-format",
-   "fingerprint": "90378967863b207f",
-   "kind": "CalendarDatePicker",
-   "name": "date-format",
-   "origin": "inferred",
-   "record_fp": "b6ebc7b1260a183b",
-   "section": "bindings",
-   "tests": [
-    "notify_calendar_date_picker_date_format"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:binding:day-of-week-format",
    "fingerprint": "195519541b2eaa1a",
    "kind": "CalendarDatePicker",
@@ -3031,18 +2908,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:notify:DateFormat",
-   "fingerprint": "60cb15e211b8114d",
-   "kind": "CalendarDatePicker",
-   "name": "DateFormat",
-   "origin": "inferred",
-   "record_fp": "fad30443212b5113",
-   "section": "notify",
-   "tests": [
-    "notify_calendar_date_picker_date_format"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:notify:DayOfWeekFormat",
    "fingerprint": "7a6a77a7bff88dd4",
    "kind": "CalendarDatePicker",
@@ -3222,31 +3087,6 @@
    "strength": "change",
    "tests": [
     "observe_calendar_date_picker_date"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:DateFormat",
-   "fingerprint": "d0fc981164121a38",
-   "kind": "CalendarDatePicker",
-   "name": "DateFormat",
-   "origin": "inferred",
-   "record_fp": "f1805bc58fb009f2",
-   "section": "props",
-   "tests": [
-    "prop_calendar_date_picker_date_format"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:DateFormat:observe",
-   "fingerprint": "a4dd995623f9b4fa",
-   "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
-   "name": "DateFormat",
-   "origin": "inferred",
-   "record_fp": "7a0489c769863bdb",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_calendar_date_picker_date_format"
    ]
   },
   {
@@ -11898,18 +11738,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:method:SelectAll",
-   "fingerprint": "d5c3e1fdb69a0c8a",
-   "kind": "ListViewBase",
-   "name": "SelectAll",
-   "origin": "inferred",
-   "record_fp": "eabc9e2bcc4d8560",
-   "section": "methods",
-   "tests": [
-    "method_grid_view_select_all"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:notify:CanDragItems",
    "fingerprint": "c3df6eb96b2eacbe",
    "kind": "ListViewBase",
@@ -14260,18 +14088,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:binding:text-reading-order",
-   "fingerprint": "eec0ccbf7becdfb1",
-   "kind": "NumberBox",
-   "name": "text-reading-order",
-   "origin": "inferred",
-   "record_fp": "e7f129324bb201af",
-   "section": "bindings",
-   "tests": [
-    "notify_number_box_text_reading_order"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:binding:validation-mode",
    "fingerprint": "a84b02e8b98eaedb",
    "kind": "NumberBox",
@@ -14438,18 +14254,6 @@
    "section": "notify",
    "tests": [
     "notify_number_box_text"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:notify:TextReadingOrder",
-   "fingerprint": "051767929f73942f",
-   "kind": "NumberBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "a96c8ee6ebee89d1",
-   "section": "notify",
-   "tests": [
-    "notify_number_box_text_reading_order"
    ]
   },
   {
@@ -14801,31 +14605,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:TextReadingOrder",
-   "fingerprint": "7cc1cb91b7f32bd2",
-   "kind": "NumberBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "71cd54756fffe36e",
-   "section": "props",
-   "tests": [
-    "prop_number_box_text_reading_order"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:TextReadingOrder:observe",
-   "fingerprint": "e0cc4e2a8637bf47",
-   "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "5dc7ee3a1fcd521c",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_number_box_text_reading_order"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:ValidationMode",
    "fingerprint": "ceb1f435a4949291",
    "kind": "NumberBox",
@@ -14985,18 +14764,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:binding:password-char",
-   "fingerprint": "f8d2bbfae48317be",
-   "kind": "PasswordBox",
-   "name": "password-char",
-   "origin": "inferred",
-   "record_fp": "e814003015bc361a",
-   "section": "bindings",
-   "tests": [
-    "notify_password_box_password_char"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:binding:password-reveal-mode",
    "fingerprint": "db6f4649228bd508",
    "kind": "PasswordBox",
@@ -15030,18 +14797,6 @@
    "section": "bindings",
    "tests": [
     "notify_password_box_prevent_keyboard_display_on_programmatic_focus"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:binding:text-reading-order",
-   "fingerprint": "0d5916cded6f4360",
-   "kind": "PasswordBox",
-   "name": "text-reading-order",
-   "origin": "inferred",
-   "record_fp": "3b70bfaa937040b8",
-   "section": "bindings",
-   "tests": [
-    "notify_password_box_text_reading_order"
    ]
   },
   {
@@ -15145,18 +14900,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:notify:PasswordChar",
-   "fingerprint": "b750faa741f18294",
-   "kind": "PasswordBox",
-   "name": "PasswordChar",
-   "origin": "inferred",
-   "record_fp": "0e6b83ea0f5f8be7",
-   "section": "notify",
-   "tests": [
-    "notify_password_box_password_char"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:notify:PasswordRevealMode",
    "fingerprint": "dd22fe5aa1664dda",
    "kind": "PasswordBox",
@@ -15202,18 +14945,6 @@
    "section": "notify",
    "tests": [
     "notify_password_box_selection_highlight_color"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:notify:TextReadingOrder",
-   "fingerprint": "2b7f5349e670421c",
-   "kind": "PasswordBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "4dce36a9df8c9f91",
-   "section": "notify",
-   "tests": [
-    "notify_password_box_text_reading_order"
    ]
   },
   {
@@ -15366,31 +15097,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:PasswordChar",
-   "fingerprint": "f22f329b6ac1fa40",
-   "kind": "PasswordBox",
-   "name": "PasswordChar",
-   "origin": "inferred",
-   "record_fp": "fb73bd770cee7800",
-   "section": "props",
-   "tests": [
-    "prop_password_box_password_char"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:PasswordChar:observe",
-   "fingerprint": "e4a3b3eb654fe772",
-   "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
-   "name": "PasswordChar",
-   "origin": "inferred",
-   "record_fp": "8b3e7f2c0f031b8b",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_password_box_password_char"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:PasswordRevealMode",
    "fingerprint": "6944bf791719f59a",
    "kind": "PasswordBox",
@@ -15488,31 +15194,6 @@
    "strength": "change",
    "tests": [
     "observe_password_box_selection_highlight_color"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:TextReadingOrder",
-   "fingerprint": "3da6e67a0fc8152a",
-   "kind": "PasswordBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "f82361642aff2bf7",
-   "section": "props",
-   "tests": [
-    "prop_password_box_text_reading_order"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:TextReadingOrder:observe",
-   "fingerprint": "8e80eed44a2327d3",
-   "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "5dc7ee3a1fcd521c",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_password_box_text_reading_order"
    ]
   },
   {
@@ -16410,18 +16091,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:notify:SelectedIndex",
-   "fingerprint": "c4f2092b147ee6a6",
-   "kind": "RadioButtons",
-   "name": "SelectedIndex",
-   "origin": "inferred",
-   "record_fp": "17b050b72c4e33ea",
-   "section": "notify",
-   "tests": [
-    "notify_radio_buttons_selected_index"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:Header",
    "fingerprint": "34544a462f2de8f1",
    "kind": "RadioButtons",
@@ -16566,30 +16235,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:binding:placeholder-value",
-   "fingerprint": "c9e26de363dcdb11",
-   "kind": "RatingControl",
-   "name": "placeholder-value",
-   "origin": "inferred",
-   "record_fp": "1d3e85a88378d4dd",
-   "section": "bindings",
-   "tests": [
-    "notify_rating_control_placeholder_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:binding:value",
-   "fingerprint": "e03b787d5f8b0c16",
-   "kind": "RatingControl",
-   "name": "value",
-   "origin": "inferred",
-   "record_fp": "054eb3be92ec4476",
-   "section": "bindings",
-   "tests": [
-    "notify_rating_control_value"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:event:ValueChanged",
    "fingerprint": "3eaac8f04d1be104",
    "kind": "RatingControl",
@@ -16660,30 +16305,6 @@
    "section": "notify",
    "tests": [
     "notify_rating_control_max_rating"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:notify:PlaceholderValue",
-   "fingerprint": "4d97a670dfa00815",
-   "kind": "RatingControl",
-   "name": "PlaceholderValue",
-   "origin": "inferred",
-   "record_fp": "f1c56f5920491b69",
-   "section": "notify",
-   "tests": [
-    "notify_rating_control_placeholder_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:notify:Value",
-   "fingerprint": "63fdb696f74c4f47",
-   "kind": "RatingControl",
-   "name": "Value",
-   "origin": "inferred",
-   "record_fp": "13686e68f9878023",
-   "section": "notify",
-   "tests": [
-    "notify_rating_control_value"
    ]
   },
   {
@@ -16809,56 +16430,6 @@
    "strength": "change",
    "tests": [
     "observe_rating_control_max_rating"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:PlaceholderValue",
-   "fingerprint": "a1bf544dace98c14",
-   "kind": "RatingControl",
-   "name": "PlaceholderValue",
-   "origin": "inferred",
-   "record_fp": "080119101ec89dbf",
-   "section": "props",
-   "tests": [
-    "prop_rating_control_placeholder_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:PlaceholderValue:observe",
-   "fingerprint": "d974ca3ef82c2a93",
-   "kind": "Microsoft.UI.Xaml.Controls:RatingControl",
-   "name": "PlaceholderValue",
-   "origin": "inferred",
-   "record_fp": "57d2f8cc3ef3634f",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_rating_control_placeholder_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:Value",
-   "fingerprint": "af4e46ef15339e40",
-   "kind": "RatingControl",
-   "name": "Value",
-   "origin": "inferred",
-   "record_fp": "adf65ca9a26b1759",
-   "section": "props",
-   "tests": [
-    "prop_rating_control_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:Value:observe",
-   "fingerprint": "4b264a8910c5d7ed",
-   "kind": "Microsoft.UI.Xaml.Controls:RatingControl",
-   "name": "Value",
-   "origin": "inferred",
-   "record_fp": "b9f587ae3670a29a",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_rating_control_value"
    ]
   },
   {
@@ -17015,18 +16586,6 @@
    "section": "bindings",
    "tests": [
     "notify_rich_edit_box_text_alignment"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:binding:text-reading-order",
-   "fingerprint": "4949c93082303481",
-   "kind": "RichEditBox",
-   "name": "text-reading-order",
-   "origin": "inferred",
-   "record_fp": "e71c48d6f78fb06c",
-   "section": "bindings",
-   "tests": [
-    "notify_rich_edit_box_text_reading_order"
    ]
   },
   {
@@ -17375,18 +16934,6 @@
    "section": "notify",
    "tests": [
     "notify_rich_edit_box_text_alignment"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:notify:TextReadingOrder",
-   "fingerprint": "ae97991a4fee2784",
-   "kind": "RichEditBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "d5bd62c0ec4bc63a",
-   "section": "notify",
-   "tests": [
-    "notify_rich_edit_box_text_reading_order"
    ]
   },
   {
@@ -17823,31 +17370,6 @@
    "strength": "change",
    "tests": [
     "observe_rich_edit_box_text_alignment"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:TextReadingOrder",
-   "fingerprint": "3b8a914506d9d02b",
-   "kind": "RichEditBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "eaa44ece177f9812",
-   "section": "props",
-   "tests": [
-    "prop_rich_edit_box_text_reading_order"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:TextReadingOrder:observe",
-   "fingerprint": "86dc3912f7359367",
-   "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
-   "name": "TextReadingOrder",
-   "origin": "inferred",
-   "record_fp": "5dc7ee3a1fcd521c",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_rich_edit_box_text_reading_order"
    ]
   },
   {
@@ -24351,18 +23873,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:binding:clock-identifier",
-   "fingerprint": "b6b4f816586d8042",
-   "kind": "TimePicker",
-   "name": "clock-identifier",
-   "origin": "inferred",
-   "record_fp": "ccd7873256daf422",
-   "section": "bindings",
-   "tests": [
-    "notify_time_picker_clock_identifier"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:binding:light-dismiss-overlay-mode",
    "fingerprint": "6c12fa2bdf3820fa",
    "kind": "TimePicker",
@@ -24413,18 +23923,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:notify:ClockIdentifier",
-   "fingerprint": "d17c38f1a98ce2b9",
-   "kind": "TimePicker",
-   "name": "ClockIdentifier",
-   "origin": "inferred",
-   "record_fp": "827c2a7a1286ecc8",
-   "section": "notify",
-   "tests": [
-    "notify_time_picker_clock_identifier"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:notify:LightDismissOverlayMode",
    "fingerprint": "a478071a5a759262",
    "kind": "TimePicker",
@@ -24470,31 +23968,6 @@
    "section": "notify",
    "tests": [
     "notify_time_picker_time"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:ClockIdentifier",
-   "fingerprint": "b7058746a86ec20a",
-   "kind": "TimePicker",
-   "name": "ClockIdentifier",
-   "origin": "inferred",
-   "record_fp": "50671f22f220561e",
-   "section": "props",
-   "tests": [
-    "prop_time_picker_clock_identifier"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:ClockIdentifier:observe",
-   "fingerprint": "3e156614e95feb15",
-   "kind": "Microsoft.UI.Xaml.Controls:TimePicker",
-   "name": "ClockIdentifier",
-   "origin": "inferred",
-   "record_fp": "609c563b8c539bb1",
-   "section": "observe",
-   "strength": "change",
-   "tests": [
-    "observe_time_picker_clock_identifier"
    ]
   },
   {
