@@ -79,6 +79,36 @@ fn settled_app_requests_no_frames() {
     assert_eq!(s.layouts, after.layouts, "same-size text change must not relayout");
 }
 
+/// D1, embed runner: an existing egui app owns the loop and shows the Svelte app in part of its UI
+/// (`EguiBackend::ui` in a child `Ui`), with the host attached through `Host::start_with`.
+#[test]
+fn embedded_in_a_caller_ui() {
+    use svelters_egui::EguiBackend;
+    let backend = EguiBackend::new();
+    let vt: &'static svelters_abi::BackendVtable = Box::leak(Box::new(backend.vtable()));
+    let host = svelters_host::Host::new(vt.backend_ref(), svelters_host::HostConfig { echo_console: false, ..Default::default() }).unwrap();
+    let path = bundle("counter-egui");
+    host.start_with(move |h| h.load_bundle(&path).unwrap()).unwrap();
+    let b2 = backend.clone();
+    let mut harness = egui_kittest::Harness::builder().with_size(egui::vec2(800.0, 400.0)).build_ui(move |ui| {
+        ui.horizontal(|ui| {
+            ui.label("Host app sidebar");
+            let rect = egui::Rect::from_min_size(ui.cursor().min, egui::vec2(380.0, 300.0));
+            let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect));
+            b2.ui(&mut child);
+        });
+    });
+    harness.run();
+    assert!(harness.query_by_label("Host app sidebar").is_some());
+    harness.get_by_label("Increment").click();
+    harness.run();
+    assert!(harness.query_by_label("Count: 1").is_some());
+    assert!(host.take_errors().is_empty());
+    // the Svelte content stays inside the rect the embedder gave it
+    let inc = harness.get_by_label("Increment").rect();
+    assert!(inc.min.x > 100.0 && inc.max.x <= inc.min.x + 400.0, "{inc:?}");
+}
+
 /// Timers: setTimeout chains run from `schedule_wake` deadlines (`request_repaint_after`).
 #[test]
 fn timers_fire_from_schedule_wake() {
