@@ -165,3 +165,67 @@ pub fn fib(n: u32) -> u64 {
 pub fn noop(x: f64) -> f64 {
     x
 }
+
+// ---- E1: offload ----
+
+/// What a crunch found.
+#[derive(svelters::Record, Clone, Debug)]
+pub struct Crunch {
+    /// Primes found.
+    pub primes: u32,
+    /// Wall time of the computation in milliseconds.
+    pub ms: f64,
+}
+
+/// Counts primes for about `ms` milliseconds of CPU; checks `cx` for cancellation and reports progress.
+fn crunch_for(ms: u32, cx: Option<&svelters::WorkCx<f64>>) -> Result<Crunch, svelters::Cancelled> {
+    let t0 = std::time::Instant::now();
+    let budget = std::time::Duration::from_millis(ms as u64);
+    let (mut n, mut primes) = (2u64, 0u32);
+    while t0.elapsed() < budget {
+        for _ in 0..256 {
+            if (2..).take_while(|d| d * d <= n).all(|d| n % d != 0) {
+                primes += 1;
+            }
+            n += 1;
+        }
+        if let Some(cx) = cx {
+            cx.check()?;
+            cx.progress((t0.elapsed().as_secs_f64() * 1e3 / ms.max(1) as f64).min(1.0));
+        }
+    }
+    Ok(Crunch { primes, ms: t0.elapsed().as_secs_f64() * 1e3 })
+}
+
+/// Counts primes for about `ms` milliseconds on a worker thread: the UI stays responsive.
+/// `options.onProgress` receives the fraction done.
+#[svelters::export(module = "demo")]
+#[js(worker)]
+pub fn crunch(ms: u32, cx: svelters::WorkCx<f64>) -> Result<Crunch, svelters::Cancelled> {
+    crunch_for(ms, Some(&cx))
+}
+
+/// The same computation on the JS thread, synchronously: the UI freezes meanwhile (for comparison).
+#[svelters::export(module = "demo")]
+pub fn crunch_blocking(ms: u32) -> Crunch {
+    crunch_for(ms, None).unwrap_or(Crunch { primes: 0, ms: 0.0 })
+}
+
+/// Counts the words of `text`: an async fn on the JS thread that hands the counting to a worker.
+#[svelters::export(module = "demo")]
+pub async fn word_count(text: String) -> u32 {
+    svelters::exports::worker(move || text.split_whitespace().count() as u32).await
+}
+
+/// A worker no-op, for measuring the settle cost of the offload path.
+#[svelters::export(module = "demo")]
+#[js(worker)]
+pub fn noop_worker(x: f64) -> f64 {
+    x
+}
+
+/// A JS-thread async no-op (ready at once), for measuring the eager path.
+#[svelters::export(module = "demo")]
+pub async fn noop_local(x: f64) -> f64 {
+    x
+}

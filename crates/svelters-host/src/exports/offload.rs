@@ -171,8 +171,9 @@ impl super::ExportError for Cancelled {
     fn message(&self) -> String {
         self.to_string()
     }
+    /// None in the module's domain: a cancellation is `svelters` / `cancelled` (the typings say so).
     fn codes() -> Vec<&'static str> {
-        vec!["cancelled"]
+        Vec::new()
     }
     fn into_native(self, _domain: &str) -> NativeError {
         host_error("cancelled", self.to_string())
