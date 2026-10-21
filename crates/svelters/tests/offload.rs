@@ -31,6 +31,21 @@ fn recorded(s: &str) -> bool {
     RECORD.lock().unwrap().iter().any(|x| x == s)
 }
 
+/// The tests park jobs on gates, so the worker pool must have more threads than jobs parked at once,
+/// whatever the machine's core count (rayon's global pool has one per core).
+fn pool() {
+    let _ = svelters::exports::set_worker_pool(svelters::rayon::ThreadPoolBuilder::new().num_threads(32).build().unwrap());
+}
+
+/// Waits (without running checkpoints) until a job recorded `s`.
+fn await_record(s: &str) {
+    let end = Instant::now() + Duration::from_secs(20);
+    while !recorded(s) {
+        assert!(Instant::now() < end, "timed out waiting for the record {s:?}");
+        std::thread::sleep(Duration::from_millis(1));
+    }
+}
+
 /// Waits for gate `g` (or, with a context, for a cancel). Gives up after 20 s.
 fn wait_gate(g: u32, cx: Option<&WorkCx>) {
     let end = Instant::now() + Duration::from_secs(20);
@@ -77,6 +92,7 @@ pub fn gated(g: u32, cx: WorkCx) -> u32 {
 #[svelters::export(module = "work")]
 #[js(worker)]
 pub fn late_payload(g: u32) -> Arc<Payload> {
+    record(format!("late-start {g}"));
     wait_gate(g, None);
     record(format!("late-done {g}"));
     Arc::new(Payload { n: g })
@@ -183,6 +199,7 @@ pub async fn local_forever(tag: u32) -> u32 {
 #[js(tokio)]
 pub async fn tokio_sleep(ms: u64) -> u64 {
     let _note = DropNote(ms as u32);
+    record(format!("tokio-start {ms}"));
     tokio::time::sleep(Duration::from_millis(ms)).await;
     ms
 }
@@ -212,6 +229,7 @@ impl Engine {
     /// A new call cancels the previous one.
     #[js(worker, supersede)]
     pub fn preview(&self, g: u32, cx: WorkCx) -> u32 {
+        record(format!("preview-start {g}"));
         wait_gate(g, Some(&cx));
         g
     }
@@ -241,6 +259,7 @@ impl Engine {
     /// Holds the object until gate `g` opens or the call is cancelled.
     #[js(worker)]
     pub fn hold(self: Arc<Self>, g: u32, cx: WorkCx) -> u32 {
+        record(format!("hold-start {g}"));
         wait_gate(g, Some(&cx));
         record(format!("hold-done {}", self.tag));
         g
@@ -327,6 +346,7 @@ impl Run<'_, '_> {
 }
 
 fn with_host(name: &str, main: &str, f: impl FnOnce(&mut Run<'_, '_>, &LogBackend)) {
+    pool();
     let dir = stage(name, main);
     let (cfg, _) = fixture_config();
     let log = LogBackend::new(Vec::new());
@@ -378,27 +398,32 @@ fn abort_rejects_at_once_and_drops_the_late_result() {
         r#"
 import { latePayload, untilCancelled, gated, localForever } from 'svelters:app/work';
 const live = () => globalThis.__svelters_internal.opsLive();
+// An abort rejects in the same turn.
 const c = new AbortController();
-latePayload(201, { signal: c.signal }).then(
+gated(200, { signal: c.signal }).then(
   () => console.log('resolved?!'),
   (e) => console.log('rejected', e.name, e.domain, e.code),
 );
 const before = live();
 c.abort();
 console.log('after-abort', before - live());
-const c2 = new AbortController();
-untilCancelled(202, { signal: c2.signal }).catch((e) => console.log('uc', e.code));
-// Aborted once it runs (the test opens gate 205 when the job has started).
-gated(205).then(() => c2.abort());
-const c5 = new AbortController();
-untilCancelled(206, { signal: c5.signal }).catch((e) => console.log('skipped', e.code));
-c5.abort();
+// Already aborted: never starts.
 const c3 = new AbortController();
 c3.abort();
 gated(203, { signal: c3.signal }).catch((e) => console.log('pre', e.code));
+// A JS-thread future is dropped by the abort.
 const c4 = new AbortController();
 localForever(204, { signal: c4.signal }).catch((e) => console.log('local', e.code));
 c4.abort();
+// Running jobs, aborted once they run (the test opens gate 205 when both have started).
+const c2 = new AbortController();
+untilCancelled(202, { signal: c2.signal }).catch((e) => console.log('uc', e.code));
+const c6 = new AbortController();
+latePayload(201, { signal: c6.signal }).then(() => console.log('late resolved?!'), (e) => console.log('late', e.code));
+gated(205).then(() => {
+  c2.abort();
+  c6.abort();
+});
 "#,
         |r, _| {
             // Rejected in the same turn as the abort, before any checkpoint drained a completion.
@@ -406,29 +431,27 @@ c4.abort();
             assert_eq!(r.host.offload_stats().drains, 0);
             let at = |s: &str| r.lines.iter().position(|l| l == s).unwrap_or_else(|| panic!("no {s}: {:?}", r.lines));
             assert!(at("after-abort 1") < at("rejected NativeError svelters cancelled"));
-            assert!(r.has("skipped cancelled") && r.has("pre cancelled") && r.has("local cancelled"), "{:?}", r.lines);
+            assert!(r.has("pre cancelled") && r.has("local cancelled"), "{:?}", r.lines);
             // The JS-thread future was dropped by the abort, on this thread.
             assert!(recorded("future-drop 204"));
-            // A running worker sees the cancel through WorkCx.
-            let end = Instant::now() + Duration::from_secs(20);
-            while !recorded("uc-start 202") && Instant::now() < end {
-                std::thread::sleep(Duration::from_millis(1));
-            }
+            await_record("uc-start 202");
+            await_record("late-start 201");
             open(205);
             r.line("uc cancelled");
+            r.line("late cancelled");
+            // A running worker sees the cancel through WorkCx.
             r.until("worker saw cancel", |_, _| recorded("saw-cancel 202"));
-            // A job cancelled while still queued never runs; an already-aborted call never starts.
-            r.until("zombies done", |h, _| h.ops_in_flight() == 1);
-            assert!(!recorded("uc-start 206") && !recorded("saw-cancel 203"));
+            // The already-aborted call never started.
+            assert!(!recorded("saw-cancel 203"));
             // The late result arrives after its call was settled: dropped, the object freed, no handle minted.
-            assert_eq!(r.host.ops_in_flight(), 1, "the cancelled late_payload job still runs (a zombie)");
+            r.until("only the zombie left", |h, _| h.ops_in_flight() == 1);
             let objects = r.host.live_app_objects();
             open(201);
             r.until("late result dropped", |h, _| h.ops_in_flight() == 0 && recorded("payload-drop 201"));
             assert!(recorded("late-done 201"));
             assert_eq!(r.host.live_app_objects(), objects, "a dropped result mints no handle");
             assert!(r.host.offload_stats().dropped >= 2, "{:?}", r.host.offload_stats());
-            assert!(!r.has("resolved?!"));
+            assert!(!r.lines.iter().any(|l| l.contains("?!")), "{:?}", r.lines);
             r.no_errors();
         },
     );
@@ -489,10 +512,11 @@ fn supersede_and_max_in_flight() {
     with_host(
         "caps",
         r#"
-import { Engine } from 'svelters:app/work';
+import { Engine, gated } from 'svelters:app/work';
 const e = new Engine(1);
 e.preview(401).catch((x) => console.log('first', x.code));
-e.preview(402).then((v) => console.log('second', v));
+// The second call comes once the first one runs (the test opens gate 403 then).
+gated(403).then(() => e.preview(402).then((v) => console.log('second', v)));
 const ps = [411, 412, 413, 414].map((g) => e.limited(g));
 Promise.all(ps).then((v) => console.log('limited', JSON.stringify(v), e.peak, e.started));
 const c = new AbortController();
@@ -500,6 +524,8 @@ e.limited(415, { signal: c.signal }).catch((x) => console.log('queued', x.code))
 c.abort();
 "#,
         |r, _| {
+            await_record("preview-start 401");
+            open(403);
             r.line("first superseded");
             r.until("superseded worker saw the cancel", |_, _| recorded("saw-cancel 401"));
             open(402);
@@ -530,12 +556,15 @@ fn disposing_the_owner_rejects_in_flight_calls() {
     with_host(
         "dispose",
         r#"
-import { Engine } from 'svelters:app/work';
+import { Engine, gated } from 'svelters:app/work';
 const e = new Engine(5);
 e.hold(501).then(() => console.log('resolved?!'), (x) => console.log('hold', x.domain, x.code));
-e.dispose();
+// Disposed while the job runs (the test opens gate 502 once it started).
+gated(502).then(() => e.dispose());
 "#,
         |r, _| {
+            await_record("hold-start 501");
+            open(502);
             r.line("hold svelters disposed");
             // The job saw the cancel and ended; it held the last reference, so the object drops after it.
             r.until("job ended", |h, _| h.ops_in_flight() == 0);
@@ -553,13 +582,16 @@ fn tokio_runs_and_aborts() {
     with_host(
         "tokio",
         r#"
-import { tokioSleep } from 'svelters:app/work';
+import { tokioSleep, gated } from 'svelters:app/work';
 tokioSleep(5).then((v) => console.log('tokio', v));
 const c = new AbortController();
 tokioSleep(60000, { signal: c.signal }).catch((e) => console.log('tokio-abort', e.code));
-c.abort();
+// Aborted once the task runs (the test opens gate 701 then).
+gated(701).then(() => c.abort());
 "#,
         |r, _| {
+            await_record("tokio-start 60000");
+            open(701);
             r.line("tokio-abort cancelled");
             r.line("tokio 5");
             // The aborted task's future is dropped at its next await; its slot is released.
@@ -620,6 +652,7 @@ localSlow().then((v) => console.log('slow again', v));
 
 #[test]
 fn reload_drops_results_of_the_old_runtime() {
+    pool();
     let dir = stage(
         "reload",
         r#"
