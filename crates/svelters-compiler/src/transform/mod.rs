@@ -536,6 +536,22 @@ impl Rewriter for ScopeRewriter<'_> {
         h.impure || (h.calls && h.deps)
     }
 
+    fn destructure(&self, pattern: &Pattern, initial: &str, derived_arrays: bool) -> crate::codegen::component::Destructured {
+        let mut edits = Edits::new();
+        let rw = visit::Rw::new(&self.cx, &mut edits, Mode::Read, true);
+        let (inserts, paths) = rw.extract_paths(pattern, initial.to_string(), self.cx.instance_scope.expect("component"), derived_arrays);
+        crate::codegen::component::Destructured {
+            arrays: inserts.into_iter().map(|i| (i.id, i.value)).collect(),
+            leaves: paths
+                .into_iter()
+                .filter_map(|p| match p.node {
+                    paths::Target::Id(id) => Some((id.name.clone(), p.expression, p.has_default_value)),
+                    paths::Target::Member(_) => None,
+                })
+                .collect(),
+        }
+    }
+
     fn assign(&self, target: &Expression, value: &str) -> String {
         match target {
             Expression::Identifier(id) => {

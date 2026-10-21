@@ -130,6 +130,14 @@ fn sp(s: Span) -> (u32, u32) {
     (s.start, s.end)
 }
 
+/// A snippet parameter / `{:then}` / `{:catch}` binding.
+fn param(p: &Pattern) -> Param<'_> {
+    match p {
+        Pattern::Identifier(id) => Param::Id(id.name.clone()),
+        other => Param::Pattern(other),
+    }
+}
+
 /// Pre-pass: every `{#snippet}` of the component with its root elements (looking through blocks),
 /// so render sites can be checked before or after the declaration (snippets are hoisted).
 fn collect_snippets<'a>(f: &'a AstFragment, out: &mut HashMap<String, Option<Vec<&'a AstElement>>>) {
@@ -310,15 +318,6 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 FragmentNode::EachBlock(b) => {
                     let context = b.context.as_ref();
-                    if let Some(p) = context
-                        && !matches!(p, Pattern::Identifier(_))
-                    {
-                        self.diags.error(
-                            "unsupported_feature",
-                            sp(p.span()),
-                            "destructuring in {#each} is not supported by the native compiler yet; use a plain identifier",
-                        );
-                    }
                     let body = self.branch(&b.body, parent, ancestors, true);
                     let fallback = b.fallback.as_ref().map(|f| self.branch(f, parent, ancestors, true));
                     let slot = self.block_slot((b.start, b.end), [Some(&body), fallback.as_ref()]);
@@ -339,8 +338,8 @@ impl<'a> Lower<'a, '_, '_> {
                     out.items.push(Item::Key(KeyBlock { span: b.span(), slot, key: &b.expression, body }));
                 }
                 FragmentNode::AwaitBlock(b) => {
-                    let value = b.value.as_ref().and_then(|p| self.simple_binding(p, "{:then}"));
-                    let error = b.error.as_ref().and_then(|p| self.simple_binding(p, "{:catch}"));
+                    let value = b.value.as_ref().map(param);
+                    let error = b.error.as_ref().map(param);
                     let pending = b.pending.as_ref().map(|f| self.branch(f, parent, ancestors, false));
                     let then = b.then.as_ref().map(|f| self.branch(f, parent, ancestors, true));
                     let catch = b.catch.as_ref().map(|f| self.branch(f, parent, ancestors, true));
@@ -367,14 +366,10 @@ impl<'a> Lower<'a, '_, '_> {
                     }
                     let d = &c.declaration.declarations[0];
                     match (&d.id, &d.init) {
-                        (Pattern::Identifier(id), Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: id.name.clone(), init }),
-                        _ => {
-                            self.diags.error(
-                                "unsupported_feature",
-                                sp(d.id.span()),
-                                "destructuring in {@const} is not supported by the native compiler yet; declare one {@const} per value",
-                            );
-                        }
+                        (Pattern::Identifier(id), Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: id.name.clone(), init, pattern: None }),
+                        (pattern, Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: String::new(), init, pattern: Some(pattern) }),
+                        // the parser requires an initializer
+                        (_, None) => {}
                     }
                 }
                 other => {
@@ -409,7 +404,6 @@ impl<'a> Lower<'a, '_, '_> {
         Some(Element { id, span, kind: er.tag.clone(), present: None, toplevel: false, show: None, attached: false, slot, class_expr: None, id_expr: None, ops: vec![op], children: Fragment::default() })
     }
 
-    /// `{:then value}` / `{:catch error}`: only plain identifiers.
     /// The modifiers of a native element's `bind:` (REACTIVITY.md section 8.2): `Some(nonreactive)`,
     /// or `None` after reporting `bind_modifier_invalid` for an unknown or repeated modifier (stock
     /// Svelte ignores them silently; the native compiler must not).
@@ -442,16 +436,6 @@ impl<'a> Lower<'a, '_, '_> {
             self.diags
                 .native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), format!("`bind:{}|{}`: `|{m}` {why} on {what}", d.name, d.modifiers.join("|")))
                 .help("`|nonreactive` applies to bindings of native element properties only");
-        }
-    }
-
-    fn simple_binding(&mut self, p: &Pattern, what: &str) -> Option<String> {
-        match p {
-            Pattern::Identifier(id) => Some(id.name.clone()),
-            _ => {
-                self.diags.error("unsupported_feature", sp(p.span()), format!("destructuring in {what} is not supported by the native compiler yet; use a plain identifier"));
-                None
-            }
         }
     }
 
@@ -525,19 +509,7 @@ impl<'a> Lower<'a, '_, '_> {
     }
 
     fn snippet(&mut self, b: &'a SnippetBlock, ancestors: &[StyleSubject<'a>]) -> Snippet<'a> {
-        let mut params = Vec::new();
-        for p in &b.parameters {
-            match p {
-                Pattern::Identifier(id) => params.push(id.name.clone()),
-                other => {
-                    self.diags.error(
-                        "unsupported_feature",
-                        sp(other.span()),
-                        "destructured or defaulted snippet parameters are not supported by the native compiler yet; use plain identifiers",
-                    );
-                }
-            }
-        }
+        let params = b.parameters.iter().map(param).collect();
         let forced = self.forced_slot.take();
         let body = self.branch(&b.body, &Parent::Detached, ancestors, true);
         self.forced_slot = forced;

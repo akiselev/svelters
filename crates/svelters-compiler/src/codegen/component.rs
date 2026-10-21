@@ -34,6 +34,14 @@ pub trait Rewriter {
     }
     /// JS that assigns the JS expression text `value` to the lvalue `target` (bind: setters).
     fn assign(&self, target: &Expression, value: &str) -> String;
+    /// Svelte's `extract_paths(pattern, initial)` for a destructuring template binding (snippet
+    /// parameter, `{#each}` context, `{@const}`, `{:then}`/`{:catch}`), as JS over the JS text
+    /// `initial`: default values and computed keys are rewritten like any template expression.
+    /// `derived_arrays`: the `$$array` intermediates are read as deriveds (`$.get`), else as plain
+    /// variables.
+    fn destructure(&self, _pattern: &Pattern, _initial: &str, _derived_arrays: bool) -> Destructured {
+        Destructured::default()
+    }
     /// Emits the instance script: (hoisted import text, component-body text), both mapped.
     fn script(&self, w: &mut Writer, hoist: bool);
     /// Whether the top-level snippet starting at `start` references nothing of the component
@@ -51,6 +59,24 @@ pub trait Rewriter {
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
     }
+}
+
+/// The result of [`Rewriter::destructure`].
+#[derive(Debug, Default)]
+pub struct Destructured {
+    /// `$$array` intermediates of array patterns: (name, value); declared as deriveds, read `$.get(name)`.
+    pub arrays: Vec<(String, String)>,
+    /// Every leaf: (name, expression, has a default value).
+    pub leaves: Vec<(String, String, bool)>,
+}
+
+/// How [`Codegen::destructure`] declares the leaves of a pattern, matching how the transform reads
+/// the binding kind: snippet parameters are thunks (`a()`), every other template binding a source
+/// (`$.get(a)`).
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Leaf {
+    Thunk,
+    Source,
 }
 
 pub struct Codegen<'a, 's> {
@@ -153,13 +179,7 @@ impl Codegen<'_, '_> {
 
     /// `{@const}` and snippet declarations of a fragment (before its items).
     fn decls(&mut self, f: &Fragment) {
-        for c in &f.consts {
-            self.line();
-            self.w.map(c.span.start);
-            self.w.write(&format!("const {} = $.derived(() => ", c.name));
-            self.paren_expr(c.init, Mode::Read);
-            self.w.write(");");
-        }
+        self.consts(&f.consts);
         for s in &f.snippets {
             self.snippet(s);
         }
@@ -167,13 +187,7 @@ impl Codegen<'_, '_> {
 
     fn fragment(&mut self, f: &Fragment, container: &str) {
         if std::mem::take(&mut self.root_fragment) {
-            for c in &f.consts {
-                self.line();
-                self.w.map(c.span.start);
-                self.w.write(&format!("const {} = $.derived(() => ", c.name));
-                self.paren_expr(c.init, Mode::Read);
-                self.w.write(");");
-            }
+            self.consts(&f.consts);
         } else {
             self.decls(f);
         }
@@ -722,6 +736,7 @@ impl Codegen<'_, '_> {
                 format!("$$item{}", self.tmp)
             }
         };
+        let pattern = b.context.filter(|p| !matches!(p, Pattern::Identifier(_)));
         let index = b.index.clone().unwrap_or_else(|| "$$index".to_string());
         self.line();
         self.w.map(b.span.start);
@@ -730,13 +745,35 @@ impl Codegen<'_, '_> {
         self.w.write(", ");
         match b.key {
             Some(k) => {
-                self.w.write(&format!("({item}, {index}) => "));
-                self.paren_expr(k, Mode::EachKey);
+                // a destructured item is destructured inside the key function (Svelte:
+                // `b.arrow([node.context, index], key)`, the visited pattern as the parameter)
+                match pattern {
+                    Some(p) => {
+                        let d = self.rw.destructure(p, "$$key", false);
+                        self.w.write(&format!("($$key, {index}) => {{ "));
+                        for (id, value) in &d.arrays {
+                            self.w.write(&format!("const {id} = {value}; "));
+                        }
+                        for (name, expr, _) in &d.leaves {
+                            self.w.write(&format!("const {name} = {expr}; "));
+                        }
+                        self.w.write("return ");
+                        self.paren_expr(k, Mode::EachKey);
+                        self.w.write("; }");
+                    }
+                    None => {
+                        self.w.write(&format!("({item}, {index}) => "));
+                        self.paren_expr(k, Mode::EachKey);
+                    }
+                }
             }
             None => self.w.write("null"),
         }
         self.w.write(&format!(", ($$anchor, {item}, {index}) => {{"));
         self.w.indent();
+        if let Some(p) = pattern {
+            self.destructure(p, &format!("$.get({item})"), Leaf::Source);
+        }
         self.fragment(&b.body, "$$anchor");
         self.w.dedent();
         self.line();
@@ -755,17 +792,28 @@ impl Codegen<'_, '_> {
     }
 
 
-    /// `($$anchor, extra) => { body }`, or `null`.
-    fn branch_fn(&mut self, f: Option<&Fragment>, extra: Option<&str>) {
+    /// `($$anchor, extra) => { body }`, or `null`. `extra` is the `{:then}`/`{:catch}` binding
+    /// (`fallback`: the parameter name when there is none or it is destructured).
+    fn branch_fn(&mut self, f: Option<&Fragment>, extra: Option<(Option<&Param>, &str)>) {
         let Some(f) = f else {
             self.w.write("null");
             return;
         };
+        let mut pattern = None;
         match extra {
-            Some(x) => self.w.write(&format!("($$anchor, {x}) => {{")),
+            Some((Some(Param::Id(x)), _)) => self.w.write(&format!("($$anchor, {x}) => {{")),
+            Some((p, fallback)) => {
+                if let Some(Param::Pattern(p)) = p {
+                    pattern = Some(*p);
+                }
+                self.w.write(&format!("($$anchor, {fallback}) => {{"))
+            }
             None => self.w.write("($$anchor) => {"),
         }
         self.w.indent();
+        if let (Some(p), Some((_, fallback))) = (pattern, extra) {
+            self.destructure(p, &format!("$.get({fallback})"), Leaf::Source);
+        }
         self.fragment(f, "$$anchor");
         self.w.dedent();
         self.line();
@@ -790,9 +838,9 @@ impl Codegen<'_, '_> {
         self.w.write(", ");
         self.branch_fn(b.pending.as_ref(), None);
         self.w.write(", ");
-        self.branch_fn(b.then.as_ref(), Some(b.value.as_deref().unwrap_or("$$value")));
+        self.branch_fn(b.then.as_ref(), Some((b.value.as_ref(), "$$value")));
         self.w.write(", ");
-        self.branch_fn(b.catch.as_ref(), Some(b.error.as_deref().unwrap_or("$$error")));
+        self.branch_fn(b.catch.as_ref(), Some((b.error.as_ref(), "$$error")));
         self.w.write(");");
     }
 
@@ -805,9 +853,46 @@ impl Codegen<'_, '_> {
         for k in consts {
             self.line();
             self.w.map(k.span.start);
-            self.w.write(&format!("const {} = $.derived(() => ", k.name));
+            let name = match k.pattern {
+                Some(_) => {
+                    self.tmp += 1;
+                    format!("$$const{}", self.tmp)
+                }
+                None => k.name.clone(),
+            };
+            self.w.write(&format!("const {name} = $.derived(() => "));
             self.paren_expr(k.init, Mode::Read);
             self.w.write(");");
+            if let Some(p) = k.pattern {
+                self.destructure(p, &format!("$.get({name})"), Leaf::Source);
+            }
+        }
+    }
+
+    /// Declares the leaves of a destructuring template binding read from the JS text `initial`
+    /// (Svelte's EachBlock / SnippetBlock / ConstTag / AwaitBlock visitors): `$$array`
+    /// intermediates as deriveds, then each leaf as a thunk (snippet parameters; a leaf with a
+    /// default value goes through `$.derived_safe_equal`, so the default is evaluated once per
+    /// change) or as a `$.derived_safe_equal` source (objects always propagate, like the item).
+    fn destructure(&mut self, pattern: &Pattern, initial: &str, leaf: Leaf) {
+        let d = self.rw.destructure(pattern, initial, true);
+        for (id, value) in &d.arrays {
+            self.line();
+            self.w.write(&format!("const {id} = $.derived(() => {value});"));
+        }
+        for (name, expr, has_default) in &d.leaves {
+            self.line();
+            match leaf {
+                Leaf::Thunk if *has_default => {
+                    self.tmp += 1;
+                    let d = format!("$$d{}", self.tmp);
+                    self.w.write(&format!("const {d} = $.derived_safe_equal(() => {expr});"));
+                    self.line();
+                    self.w.write(&format!("const {name} = () => $.get({d});"));
+                }
+                Leaf::Thunk => self.w.write(&format!("const {name} = () => {expr};")),
+                Leaf::Source => self.w.write(&format!("const {name} = $.derived_safe_equal(() => {expr});")),
+            }
         }
     }
 
@@ -815,9 +900,24 @@ impl Codegen<'_, '_> {
     fn snippet_with(&mut self, s: &Snippet, consts: &[ConstDecl]) {
         self.line();
         self.w.map(s.span.start);
-        let params: String = s.params.iter().map(|p| format!(", {p} = $.noop")).collect();
+        // a destructured or defaulted parameter is `$$argN`, its leaves declared from `$$argN?.()`
+        // (Svelte's SnippetBlock visitor)
+        let mut params = String::new();
+        let mut patterns = Vec::new();
+        for (i, p) in s.params.iter().enumerate() {
+            match p {
+                Param::Id(name) => params.push_str(&format!(", {name} = $.noop")),
+                Param::Pattern(pat) => {
+                    params.push_str(&format!(", $$arg{i} = $.noop"));
+                    patterns.push((*pat, format!("$$arg{i}?.()")));
+                }
+            }
+        }
         self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
         self.w.indent();
+        for (p, initial) in patterns {
+            self.destructure(p, &initial, Leaf::Thunk);
+        }
         self.consts(consts);
         self.fragment(&s.body, "$$anchor");
         self.w.dedent();

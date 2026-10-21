@@ -67,7 +67,7 @@ imports `svelte/internal/*`; `tools/check-svelte-internals.mjs` asserts what the
 the installed Svelte (version pin, these names, the hidden modules, effect flag bits, the
 `Boundary` members Svelte calls on `effect.b`, the effect-tree fields).
 
-- graph: `state, derived, get, set, update, update_pre, safe_get, untrack, eager, pending,
+- graph: `state, derived, derived_safe_equal, get, set, update, update_pre, safe_get, untrack, eager, pending,
   effect_tracking, proxy, snapshot, to_array`
 - effects: `effect_root, user_effect, user_pre_effect, template_effect`
 - component: `push, pop, prop, fallback, rest_props, spread_props, exclude_from_object, props_id,

@@ -208,7 +208,8 @@ pub struct EachBlock<'a> {
     pub span: Span,
     pub slot: Slot,
     pub collection: &'a Expression,
-    /// The item binding (only identifiers are supported by lowering).
+    /// The item binding: an identifier, or a destructuring pattern (its leaves are declared from
+    /// the item at the start of the body, `Codegen::destructure`).
     pub context: Option<&'a Pattern>,
     pub index: Option<String>,
     pub key: Option<&'a Expression>,
@@ -217,12 +218,22 @@ pub struct EachBlock<'a> {
 }
 
 /// `{@const name = init}`: a template-scoped derived (`const name = $.derived(() => init)`),
-/// read as `$.get(name)`.
+/// read as `$.get(name)`. `{@const { a, b } = init}` (`pattern`): one derived of `init`, then a
+/// derived per leaf of the pattern (`name` is unused).
 #[derive(Debug)]
 pub struct ConstDecl<'a> {
     pub span: Span,
     pub name: String,
     pub init: &'a Expression,
+    pub pattern: Option<&'a Pattern>,
+}
+
+/// A binding a template block introduces: a snippet parameter, `{:then v}`, `{:catch e}`.
+#[derive(Debug)]
+pub enum Param<'a> {
+    Id(String),
+    /// Destructuring and/or a default value (`{#snippet s({ a, b = 1 })}`, `{:then [x, y]}`).
+    Pattern(&'a Pattern),
 }
 
 /// `{#snippet name(a, b)}`: a native content factory `(anchor, a = $.noop, b = $.noop) => {...}`
@@ -231,7 +242,7 @@ pub struct ConstDecl<'a> {
 pub struct Snippet<'a> {
     pub span: Span,
     pub name: String,
-    pub params: Vec<String>,
+    pub params: Vec<Param<'a>>,
     pub body: Fragment<'a>,
 }
 
@@ -263,8 +274,8 @@ pub struct AwaitBlock<'a> {
     pub span: Span,
     pub slot: Slot,
     pub expression: &'a Expression,
-    pub value: Option<String>,
-    pub error: Option<String>,
+    pub value: Option<Param<'a>>,
+    pub error: Option<Param<'a>>,
     pub pending: Option<Fragment<'a>>,
     pub then: Option<Fragment<'a>>,
     pub catch: Option<Fragment<'a>>,

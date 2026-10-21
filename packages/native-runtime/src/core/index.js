@@ -7,6 +7,7 @@ export {
   // graph
   state,
   derived,
+  derived_safe_equal,
   get,
   set,
   update,
