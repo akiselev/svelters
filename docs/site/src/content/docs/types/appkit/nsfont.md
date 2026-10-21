@@ -52,36 +52,39 @@ Facts: `metadata/appkit/types/AppKit.json`; ledger fact ids `svelters-api:v1:typ
 
 - `advancementForCGGlyph(glyph)`: `-advancementForCGGlyph:`
 - `advancementForGlyph(glyph)`: `-advancementForGlyph:`
-- `ascender()`: `-ascender`
 - `boundingRectForCGGlyph(glyph)`: `-boundingRectForCGGlyph:`
-- `boundingRectForFont()`: `-boundingRectForFont`
 - `boundingRectForGlyph(glyph)`: `-boundingRectForGlyph:`
-- `capHeight()`: `-capHeight`
-- `coveredCharacterSet()`: `-coveredCharacterSet`
-- `descender()`: `-descender`
-- `displayName()`: `-displayName`
-- `familyName()`: `-familyName`
-- `fontDescriptor()`: `-fontDescriptor`
-- `fontName()`: `-fontName`
 - `fontWithSize(fontSize)`: `-fontWithSize:`
 - `glyphWithName(name)`: `-glyphWithName:`
-- `isFixedPitch()`: `-isFixedPitch`
-- `isVertical()`: `-isVertical`
-- `italicAngle()`: `-italicAngle`
-- `leading()`: `-leading`
-- `maximumAdvancement()`: `-maximumAdvancement`
-- `mostCompatibleStringEncoding()`: `-mostCompatibleStringEncoding`
-- `numberOfGlyphs()`: `-numberOfGlyphs`
-- `pointSize()`: `-pointSize`
 - `printerFont()`: `-printerFont`
 - `renderingMode()`: `-renderingMode`
 - `screenFont()`: `-screenFont`
 - `screenFontWithRenderingMode(renderingMode)`: `-screenFontWithRenderingMode:`
-- `textTransform()`: `-textTransform`
-- `underlinePosition()`: `-underlinePosition`
-- `underlineThickness()`: `-underlineThickness`
-- `verticalFont()`: `-verticalFont`
-- `xHeight()`: `-xHeight`
+
+## Properties
+
+- `ascender` (read-only): KVC `ascender` (probe)
+- `boundingRectForFont` (read-only): KVC `boundingRectForFont` (probe)
+- `capHeight` (read-only): KVC `capHeight` (probe)
+- `coveredCharacterSet` (read-only): KVC `coveredCharacterSet` (probe)
+- `descender` (read-only): KVC `descender` (probe)
+- `displayName` (read-only): KVC `displayName` (probe)
+- `familyName` (read-only): KVC `familyName` (probe)
+- `fixedPitch` (read-only): KVC `fixedPitch` (probe)
+- `fontDescriptor` (read-only): KVC `fontDescriptor` (probe)
+- `fontName` (read-only): KVC `fontName` (probe)
+- `italicAngle` (read-only): KVC `italicAngle` (probe)
+- `leading` (read-only): KVC `leading` (probe)
+- `maximumAdvancement` (read-only): KVC `maximumAdvancement` (probe)
+- `mostCompatibleStringEncoding` (read-only): KVC `mostCompatibleStringEncoding` (probe)
+- `numberOfGlyphs` (read-only): KVC `numberOfGlyphs` (probe)
+- `pointSize` (read-only): KVC `pointSize` (probe)
+- `textTransform` (read-only): KVC `textTransform` (probe)
+- `underlinePosition` (read-only): KVC `underlinePosition` (probe)
+- `underlineThickness` (read-only): KVC `underlineThickness` (probe)
+- `vertical` (read-only): KVC `vertical` (probe)
+- `verticalFont` (read-only): KVC `verticalFont` (probe)
+- `xHeight` (read-only): KVC `xHeight` (probe)
 
 ## Not bound
 

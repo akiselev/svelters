@@ -15,14 +15,6 @@ export class NSUndoManager extends NativeObject {
     call(this, 'beginUndoGrouping', []);
   }
 
-  canRedo() {
-    return call(this, 'canRedo', []);
-  }
-
-  canUndo() {
-    return call(this, 'canUndo', []);
-  }
-
   disableUndoRegistration() {
     call(this, 'disableUndoRegistration', []);
   }
@@ -35,22 +27,6 @@ export class NSUndoManager extends NativeObject {
     call(this, 'endUndoGrouping', []);
   }
 
-  groupingLevel() {
-    return call(this, 'groupingLevel', []);
-  }
-
-  isRedoing() {
-    return call(this, 'isRedoing', []);
-  }
-
-  isUndoRegistrationEnabled() {
-    return call(this, 'isUndoRegistrationEnabled', []);
-  }
-
-  isUndoing() {
-    return call(this, 'isUndoing', []);
-  }
-
   prepareWithInvocationTarget(target) {
     return call(this, 'prepareWithInvocationTarget:', [target]);
   }
@@ -59,24 +35,8 @@ export class NSUndoManager extends NativeObject {
     call(this, 'redo', []);
   }
 
-  redoActionIsDiscardable() {
-    return call(this, 'redoActionIsDiscardable', []);
-  }
-
-  redoActionName() {
-    return call(this, 'redoActionName', []);
-  }
-
   redoActionUserInfoValueForKey(key) {
     return call(this, 'redoActionUserInfoValueForKey:', [key]);
-  }
-
-  redoCount() {
-    return call(this, 'redoCount', []);
-  }
-
-  redoMenuItemTitle() {
-    return call(this, 'redoMenuItemTitle', []);
   }
 
   redoMenuTitleForUndoActionName(actionName) {
@@ -107,24 +67,8 @@ export class NSUndoManager extends NativeObject {
     call(this, 'undo', []);
   }
 
-  undoActionIsDiscardable() {
-    return call(this, 'undoActionIsDiscardable', []);
-  }
-
-  undoActionName() {
-    return call(this, 'undoActionName', []);
-  }
-
   undoActionUserInfoValueForKey(key) {
     return call(this, 'undoActionUserInfoValueForKey:', [key]);
-  }
-
-  undoCount() {
-    return call(this, 'undoCount', []);
-  }
-
-  undoMenuItemTitle() {
-    return call(this, 'undoMenuItemTitle', []);
   }
 
   undoMenuTitleForUndoActionName(actionName) {
@@ -133,6 +77,18 @@ export class NSUndoManager extends NativeObject {
 
   undoNestedGroup() {
     call(this, 'undoNestedGroup', []);
+  }
+
+  get canRedo() {
+    return getProp(this, 'canRedo');
+  }
+
+  get canUndo() {
+    return getProp(this, 'canUndo');
+  }
+
+  get groupingLevel() {
+    return getProp(this, 'groupingLevel');
   }
 
   get groupsByEvent() {
@@ -151,11 +107,55 @@ export class NSUndoManager extends NativeObject {
     setProp(this, 'levelsOfUndo', v);
   }
 
+  get redoActionIsDiscardable() {
+    return getProp(this, 'redoActionIsDiscardable');
+  }
+
+  get redoActionName() {
+    return getProp(this, 'redoActionName');
+  }
+
+  get redoCount() {
+    return getProp(this, 'redoCount');
+  }
+
+  get redoMenuItemTitle() {
+    return getProp(this, 'redoMenuItemTitle');
+  }
+
+  get redoing() {
+    return getProp(this, 'redoing');
+  }
+
   get runLoopModes() {
     return getProp(this, 'runLoopModes');
   }
 
   set runLoopModes(v) {
     setProp(this, 'runLoopModes', v);
+  }
+
+  get undoActionIsDiscardable() {
+    return getProp(this, 'undoActionIsDiscardable');
+  }
+
+  get undoActionName() {
+    return getProp(this, 'undoActionName');
+  }
+
+  get undoCount() {
+    return getProp(this, 'undoCount');
+  }
+
+  get undoMenuItemTitle() {
+    return getProp(this, 'undoMenuItemTitle');
+  }
+
+  get undoRegistrationEnabled() {
+    return getProp(this, 'undoRegistrationEnabled');
+  }
+
+  get undoing() {
+    return getProp(this, 'undoing');
   }
 }

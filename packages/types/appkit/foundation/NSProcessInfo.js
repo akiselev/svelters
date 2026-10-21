@@ -15,14 +15,6 @@ export class NSProcessInfo extends NativeObject {
     return wrapObject(NSProcessInfo, callStatic('NSProcessInfo', 'processInfo', []));
   }
 
-  activeProcessorCount() {
-    return call(this, 'activeProcessorCount', []);
-  }
-
-  arguments_() {
-    return call(this, 'arguments', []);
-  }
-
   beginActivityWithOptionsReason(options, reason) {
     return call(this, 'beginActivityWithOptions:reason:', [options, reason]);
   }
@@ -47,60 +39,20 @@ export class NSProcessInfo extends NativeObject {
     call(this, 'endActivity:', [activity]);
   }
 
-  environment() {
-    return call(this, 'environment', []);
-  }
-
-  fullUserName() {
-    return call(this, 'fullUserName', []);
-  }
-
-  globallyUniqueString() {
-    return call(this, 'globallyUniqueString', []);
-  }
-
-  hostName() {
-    return call(this, 'hostName', []);
-  }
-
   isLowPowerModeEnabled() {
     return call(this, 'isLowPowerModeEnabled', []);
-  }
-
-  isMacCatalystApp() {
-    return call(this, 'isMacCatalystApp', []);
-  }
-
-  isiOSAppOnMac() {
-    return call(this, 'isiOSAppOnMac', []);
-  }
-
-  operatingSystemVersionString() {
-    return call(this, 'operatingSystemVersionString', []);
-  }
-
-  physicalMemory() {
-    return call(this, 'physicalMemory', []);
-  }
-
-  processIdentifier() {
-    return call(this, 'processIdentifier', []);
-  }
-
-  processorCount() {
-    return call(this, 'processorCount', []);
-  }
-
-  systemUptime() {
-    return call(this, 'systemUptime', []);
   }
 
   thermalState() {
     return call(this, 'thermalState', []);
   }
 
-  userName() {
-    return call(this, 'userName', []);
+  get activeProcessorCount() {
+    return getProp(this, 'activeProcessorCount');
+  }
+
+  get arguments_() {
+    return getProp(this, 'arguments');
   }
 
   get automaticTerminationSupportEnabled() {
@@ -111,11 +63,59 @@ export class NSProcessInfo extends NativeObject {
     setProp(this, 'automaticTerminationSupportEnabled', v);
   }
 
+  get environment() {
+    return getProp(this, 'environment');
+  }
+
+  get fullUserName() {
+    return getProp(this, 'fullUserName');
+  }
+
+  get globallyUniqueString() {
+    return getProp(this, 'globallyUniqueString');
+  }
+
+  get hostName() {
+    return getProp(this, 'hostName');
+  }
+
+  get iOSAppOnMac() {
+    return getProp(this, 'iOSAppOnMac');
+  }
+
+  get macCatalystApp() {
+    return getProp(this, 'macCatalystApp');
+  }
+
+  get operatingSystemVersionString() {
+    return getProp(this, 'operatingSystemVersionString');
+  }
+
+  get physicalMemory() {
+    return getProp(this, 'physicalMemory');
+  }
+
+  get processIdentifier() {
+    return getProp(this, 'processIdentifier');
+  }
+
   get processName() {
     return getProp(this, 'processName');
   }
 
   set processName(v) {
     setProp(this, 'processName', v);
+  }
+
+  get processorCount() {
+    return getProp(this, 'processorCount');
+  }
+
+  get systemUptime() {
+    return getProp(this, 'systemUptime');
+  }
+
+  get userName() {
+    return getProp(this, 'userName');
   }
 }

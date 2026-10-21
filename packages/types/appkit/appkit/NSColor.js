@@ -389,40 +389,12 @@ export class NSColor extends NativeValue {
     return wrapValue(NSColor, callStatic('NSColor', 'yellowColor', []));
   }
 
-  alphaComponent() {
-    return call(this, 'alphaComponent', []);
-  }
-
-  blackComponent() {
-    return call(this, 'blackComponent', []);
-  }
-
   blendedColorWithFractionOfColor(fraction, color) {
     return wrapValue(NSColor, call(this, 'blendedColorWithFraction:ofColor:', [fraction, color]));
   }
 
-  blueComponent() {
-    return call(this, 'blueComponent', []);
-  }
-
-  brightnessComponent() {
-    return call(this, 'brightnessComponent', []);
-  }
-
-  catalogNameComponent() {
-    return call(this, 'catalogNameComponent', []);
-  }
-
   colorByApplyingContentHeadroom(contentHeadroom) {
     return wrapValue(NSColor, call(this, 'colorByApplyingContentHeadroom:', [contentHeadroom]));
-  }
-
-  colorNameComponent() {
-    return call(this, 'colorNameComponent', []);
-  }
-
-  colorSpace() {
-    return wrapObject(NSColorSpace, call(this, 'colorSpace', []));
   }
 
   colorUsingColorSpace(space) {
@@ -441,79 +413,107 @@ export class NSColor extends NativeValue {
     return wrapValue(NSColor, call(this, 'colorWithSystemEffect:', [systemEffect]));
   }
 
-  cyanComponent() {
-    return call(this, 'cyanComponent', []);
-  }
-
   drawSwatchInRect(rect) {
     call(this, 'drawSwatchInRect:', [rect]);
-  }
-
-  greenComponent() {
-    return call(this, 'greenComponent', []);
   }
 
   highlightWithLevel(val) {
     return wrapValue(NSColor, call(this, 'highlightWithLevel:', [val]));
   }
 
-  hueComponent() {
-    return call(this, 'hueComponent', []);
-  }
-
-  linearExposure() {
-    return call(this, 'linearExposure', []);
-  }
-
-  localizedCatalogNameComponent() {
-    return call(this, 'localizedCatalogNameComponent', []);
-  }
-
-  localizedColorNameComponent() {
-    return call(this, 'localizedColorNameComponent', []);
-  }
-
-  magentaComponent() {
-    return call(this, 'magentaComponent', []);
-  }
-
-  numberOfComponents() {
-    return call(this, 'numberOfComponents', []);
-  }
-
-  patternImage() {
-    return wrapObject(NSImage, call(this, 'patternImage', []));
-  }
-
-  redComponent() {
-    return call(this, 'redComponent', []);
-  }
-
-  saturationComponent() {
-    return call(this, 'saturationComponent', []);
-  }
-
   shadowWithLevel(val) {
     return wrapValue(NSColor, call(this, 'shadowWithLevel:', [val]));
-  }
-
-  standardDynamicRangeColor() {
-    return wrapValue(NSColor, call(this, 'standardDynamicRangeColor', []));
   }
 
   type(type) {
     return wrapValue(NSColor, call(this, 'type', [type]));
   }
 
-  whiteComponent() {
-    return call(this, 'whiteComponent', []);
-  }
-
   writeToPasteboard(pasteBoard) {
     call(this, 'writeToPasteboard:', [pasteBoard]);
   }
 
-  yellowComponent() {
+  get alphaComponent() {
+    return call(this, 'alphaComponent', []);
+  }
+
+  get blackComponent() {
+    return call(this, 'blackComponent', []);
+  }
+
+  get blueComponent() {
+    return call(this, 'blueComponent', []);
+  }
+
+  get brightnessComponent() {
+    return call(this, 'brightnessComponent', []);
+  }
+
+  get catalogNameComponent() {
+    return call(this, 'catalogNameComponent', []);
+  }
+
+  get colorNameComponent() {
+    return call(this, 'colorNameComponent', []);
+  }
+
+  get colorSpace() {
+    return wrapObject(NSColorSpace, call(this, 'colorSpace', []));
+  }
+
+  get cyanComponent() {
+    return call(this, 'cyanComponent', []);
+  }
+
+  get greenComponent() {
+    return call(this, 'greenComponent', []);
+  }
+
+  get hueComponent() {
+    return call(this, 'hueComponent', []);
+  }
+
+  get linearExposure() {
+    return call(this, 'linearExposure', []);
+  }
+
+  get localizedCatalogNameComponent() {
+    return call(this, 'localizedCatalogNameComponent', []);
+  }
+
+  get localizedColorNameComponent() {
+    return call(this, 'localizedColorNameComponent', []);
+  }
+
+  get magentaComponent() {
+    return call(this, 'magentaComponent', []);
+  }
+
+  get numberOfComponents() {
+    return call(this, 'numberOfComponents', []);
+  }
+
+  get patternImage() {
+    return wrapObject(NSImage, call(this, 'patternImage', []));
+  }
+
+  get redComponent() {
+    return call(this, 'redComponent', []);
+  }
+
+  get saturationComponent() {
+    return call(this, 'saturationComponent', []);
+  }
+
+  get standardDynamicRangeColor() {
+    return wrapValue(NSColor, call(this, 'standardDynamicRangeColor', []));
+  }
+
+  get whiteComponent() {
+    return call(this, 'whiteComponent', []);
+  }
+
+  get yellowComponent() {
     return call(this, 'yellowComponent', []);
   }
 }

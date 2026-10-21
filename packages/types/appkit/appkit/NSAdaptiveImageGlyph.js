@@ -23,15 +23,15 @@ export class NSAdaptiveImageGlyph extends NativeValue {
     return wrapValue(NSAdaptiveImageGlyph, callStatic('NSAdaptiveImageGlyph', 'initWithImageContent:', [imageContent]));
   }
 
-  contentDescription() {
+  get contentDescription() {
     return call(this, 'contentDescription', []);
   }
 
-  contentIdentifier() {
+  get contentIdentifier() {
     return call(this, 'contentIdentifier', []);
   }
 
-  imageContent() {
+  get imageContent() {
     return call(this, 'imageContent', []);
   }
 }

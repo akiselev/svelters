@@ -98,18 +98,6 @@ export class NSLayoutManager extends NativeObject {
     call(this, 'ensureLayoutForTextContainer:', [container]);
   }
 
-  extraLineFragmentRect() {
-    return call(this, 'extraLineFragmentRect', []);
-  }
-
-  extraLineFragmentTextContainer() {
-    return wrapObject(NSTextContainer, call(this, 'extraLineFragmentTextContainer', []));
-  }
-
-  extraLineFragmentUsedRect() {
-    return call(this, 'extraLineFragmentUsedRect', []);
-  }
-
   firstUnlaidCharacterIndex() {
     return call(this, 'firstUnlaidCharacterIndex', []);
   }
@@ -146,10 +134,6 @@ export class NSLayoutManager extends NativeObject {
     return call(this, 'glyphRangeForTextContainer:', [container]);
   }
 
-  hasNonContiguousLayout() {
-    return call(this, 'hasNonContiguousLayout', []);
-  }
-
   insertTextContainerAtIndex(container, index) {
     call(this, 'insertTextContainer:atIndex:', [container, index]);
   }
@@ -176,10 +160,6 @@ export class NSLayoutManager extends NativeObject {
 
   notShownAttributeForGlyphAtIndex(glyphIndex) {
     return call(this, 'notShownAttributeForGlyphAtIndex:', [glyphIndex]);
-  }
-
-  numberOfGlyphs() {
-    return call(this, 'numberOfGlyphs', []);
   }
 
   processEditingForTextStorageEditedRangeChangeInLengthInvalidatedRange(textStorage, editMask, newCharRange, delta, invalidatedCharRange) {
@@ -258,10 +238,6 @@ export class NSLayoutManager extends NativeObject {
     call(this, 'textContainerChangedTextView:', [container]);
   }
 
-  textContainers() {
-    return (call(this, 'textContainers', []))?.map((e) => wrapObject(NSTextContainer, e)) ?? null;
-  }
-
   truncatedGlyphRangeInLineFragmentForGlyphAtIndex(glyphIndex) {
     return call(this, 'truncatedGlyphRangeInLineFragmentForGlyphAtIndex:', [glyphIndex]);
   }
@@ -306,6 +282,18 @@ export class NSLayoutManager extends NativeObject {
     setProp(this, 'delegate', v);
   }
 
+  get extraLineFragmentRect() {
+    return getProp(this, 'extraLineFragmentRect');
+  }
+
+  get extraLineFragmentTextContainer() {
+    return wrapObject(NSTextContainer, getProp(this, 'extraLineFragmentTextContainer'));
+  }
+
+  get extraLineFragmentUsedRect() {
+    return getProp(this, 'extraLineFragmentUsedRect');
+  }
+
   get glyphGenerator() {
     return wrapObject(NSGlyphGenerator, getProp(this, 'glyphGenerator'));
   }
@@ -314,12 +302,20 @@ export class NSLayoutManager extends NativeObject {
     setProp(this, 'glyphGenerator', v);
   }
 
+  get hasNonContiguousLayout() {
+    return getProp(this, 'hasNonContiguousLayout');
+  }
+
   get limitsLayoutForSuspiciousContents() {
     return getProp(this, 'limitsLayoutForSuspiciousContents');
   }
 
   set limitsLayoutForSuspiciousContents(v) {
     setProp(this, 'limitsLayoutForSuspiciousContents', v);
+  }
+
+  get numberOfGlyphs() {
+    return getProp(this, 'numberOfGlyphs');
   }
 
   get showsControlCharacters() {
@@ -336,6 +332,10 @@ export class NSLayoutManager extends NativeObject {
 
   set showsInvisibleCharacters(v) {
     setProp(this, 'showsInvisibleCharacters', v);
+  }
+
+  get textContainers() {
+    return (getProp(this, 'textContainers'))?.map((e) => wrapObject(NSTextContainer, e)) ?? null;
   }
 
   get typesetter() {

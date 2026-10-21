@@ -21,16 +21,16 @@ export class NSTextAttachmentViewProvider extends NativeObject {
     call(this, 'loadView', []);
   }
 
-  location() {
-    return call(this, 'location', []);
+  get location() {
+    return getProp(this, 'location');
   }
 
-  textAttachment() {
-    return wrapObject(NSTextAttachment, call(this, 'textAttachment', []));
+  get textAttachment() {
+    return wrapObject(NSTextAttachment, getProp(this, 'textAttachment'));
   }
 
-  textLayoutManager() {
-    return wrapObject(NSTextLayoutManager, call(this, 'textLayoutManager', []));
+  get textLayoutManager() {
+    return wrapObject(NSTextLayoutManager, getProp(this, 'textLayoutManager'));
   }
 
   get tracksTextAttachmentViewBounds() {

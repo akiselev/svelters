@@ -74,12 +74,9 @@ declare module 'svelters:appkit/appkit' {
     toString(): string;
     /** `-[NSAdaptiveImageGlyph initWithImageContent:]` */
     static newWithImageContent(imageContent: Uint8Array): NSAdaptiveImageGlyph | null;
-    /** `-[NSAdaptiveImageGlyph contentDescription]` */
-    contentDescription(): string;
-    /** `-[NSAdaptiveImageGlyph contentIdentifier]` */
-    contentIdentifier(): string;
-    /** `-[NSAdaptiveImageGlyph imageContent]` */
-    imageContent(): Uint8Array;
+    readonly contentDescription: string;
+    readonly contentIdentifier: string;
+    readonly imageContent: Uint8Array;
   }
 
   /** `NSBezierPath` (AppKit), object, lifetime shared */
@@ -144,32 +141,18 @@ declare module 'svelters:appkit/appkit' {
     appendBezierPathWithRect(rect: Rect): void;
     /** `-[NSBezierPath appendBezierPathWithRoundedRect:xRadius:yRadius:]` */
     appendBezierPathWithRoundedRectXRadiusYRadius(rect: Rect, xRadius: number, yRadius: number): void;
-    /** `-[NSBezierPath bezierPathByFlatteningPath]` */
-    bezierPathByFlatteningPath(): NSBezierPath;
-    /** `-[NSBezierPath bezierPathByReversingPath]` */
-    bezierPathByReversingPath(): NSBezierPath;
-    /** `-[NSBezierPath bounds]` */
-    bounds(): Rect;
     /** `-[NSBezierPath closePath]` */
     closePath(): void;
     /** `-[NSBezierPath containsPoint:]` */
     containsPoint(point: Point): boolean;
-    /** `-[NSBezierPath controlPointBounds]` */
-    controlPointBounds(): Rect;
-    /** `-[NSBezierPath currentPoint]` */
-    currentPoint(): Point;
     /** `-[NSBezierPath curveToPoint:controlPoint:]` */
     curveToPointControlPoint(endPoint: Point, controlPoint: Point): void;
     /** `-[NSBezierPath curveToPoint:controlPoint1:controlPoint2:]` */
     curveToPointControlPoint1ControlPoint2(endPoint: Point, controlPoint1: Point, controlPoint2: Point): void;
     /** `-[NSBezierPath elementAtIndex:]` */
     elementAtIndex(index: number): number;
-    /** `-[NSBezierPath elementCount]` */
-    elementCount(): number;
     /** `-[NSBezierPath fill]` */
     fill(): void;
-    /** `-[NSBezierPath isEmpty]` */
-    isEmpty(): boolean;
     /** `-[NSBezierPath lineToPoint:]` */
     lineToPoint(point: Point): void;
     /** `-[NSBezierPath moveToPoint:]` */
@@ -190,6 +173,13 @@ declare module 'svelters:appkit/appkit' {
     stroke(): void;
     /** `-[NSBezierPath transformUsingAffineTransform:]` */
     transformUsingAffineTransform(transform: NSAffineTransform): void;
+    readonly bezierPathByFlatteningPath: NSBezierPath;
+    readonly bezierPathByReversingPath: NSBezierPath;
+    readonly bounds: Rect;
+    readonly controlPointBounds: Rect;
+    readonly currentPoint: Point;
+    readonly elementCount: number;
+    readonly empty: boolean;
     flatness: number;
     lineCapStyle: number;
     lineJoinStyle: number;
@@ -250,28 +240,16 @@ declare module 'svelters:appkit/appkit' {
     static representationOfImageRepsInArrayUsingTypeProperties(imageReps: Array<NSImageRep>, storageType: number, properties: Record<string, unknown>): Uint8Array | null;
     /** `+[NSBitmapImageRep unregisterImageRepClass:]` */
     static unregisterImageRepClass(imageRepClass: string | { readonly native: string }): void;
-    /** `-[NSBitmapImageRep TIFFRepresentation]` */
-    TIFFRepresentation(): Uint8Array | null;
     /** `-[NSBitmapImageRep TIFFRepresentationUsingCompression:factor:]` */
     TIFFRepresentationUsingCompressionFactor(comp: number, factor: number): Uint8Array | null;
-    /** `-[NSBitmapImageRep bitmapFormat]` */
-    bitmapFormat(): number;
     /** `-[NSBitmapImageRep bitmapImageRepByConvertingToColorSpace:renderingIntent:]` */
     bitmapImageRepByConvertingToColorSpaceRenderingIntent(targetSpace: NSColorSpace, renderingIntent: number): NSBitmapImageRep | null;
     /** `-[NSBitmapImageRep bitmapImageRepByRetaggingWithColorSpace:]` */
     bitmapImageRepByRetaggingWithColorSpace(newSpace: NSColorSpace): NSBitmapImageRep | null;
-    /** `-[NSBitmapImageRep bitsPerPixel]` */
-    bitsPerPixel(): number;
-    /** `-[NSBitmapImageRep bytesPerPlane]` */
-    bytesPerPlane(): number;
-    /** `-[NSBitmapImageRep bytesPerRow]` */
-    bytesPerRow(): number;
     /** `-[NSBitmapImageRep canBeCompressedUsing:]` */
     canBeCompressedUsing(compression: number): boolean;
     /** `-[NSBitmapImageRep colorAtX:y:]` */
     colorAtXY(x: number, y: number): NSColor | null;
-    /** `-[NSBitmapImageRep colorSpace]` */
-    colorSpace(): NSColorSpace;
     /** `-[NSBitmapImageRep colorizeByMappingGray:toColor:blackMapping:whiteMapping:]` */
     colorizeByMappingGrayToColorBlackMappingWhiteMapping(midPoint: number, midPointColor: NSColor | null, shadowColor: NSColor | null, lightColor: NSColor | null): void;
     /** `-[NSBitmapImageRep draw]` */
@@ -284,16 +262,19 @@ declare module 'svelters:appkit/appkit' {
     drawInRectFromRectOperationFractionRespectFlippedHints(dstSpacePortionRect: Rect, srcSpacePortionRect: Rect, op: number, requestedAlpha: number, respectContextIsFlipped: boolean, hints: Record<string, unknown> | null): boolean;
     /** `-[NSBitmapImageRep incrementalLoadFromData:complete:]` */
     incrementalLoadFromDataComplete(data: Uint8Array, complete: boolean): number;
-    /** `-[NSBitmapImageRep isPlanar]` */
-    isPlanar(): boolean;
-    /** `-[NSBitmapImageRep numberOfPlanes]` */
-    numberOfPlanes(): number;
     /** `-[NSBitmapImageRep representationUsingType:properties:]` */
     representationUsingTypeProperties(storageType: number, properties: Record<string, unknown>): Uint8Array | null;
-    /** `-[NSBitmapImageRep samplesPerPixel]` */
-    samplesPerPixel(): number;
     /** `-[NSBitmapImageRep valueForProperty:]` */
     valueForProperty(property: string): unknown;
+    readonly TIFFRepresentation: Uint8Array | null;
+    readonly bitmapFormat: number;
+    readonly bitsPerPixel: number;
+    readonly bytesPerPlane: number;
+    readonly bytesPerRow: number;
+    readonly colorSpace: NSColorSpace;
+    readonly numberOfPlanes: number;
+    readonly planar: boolean;
+    readonly samplesPerPixel: number;
     readonly alpha: boolean;
     readonly bitsPerSample: number;
     readonly colorSpaceName: string;
@@ -494,24 +475,10 @@ declare module 'svelters:appkit/appkit' {
     static windowFrameTextColor(): NSColor;
     /** `+[NSColor yellowColor]` */
     static yellowColor(): NSColor;
-    /** `-[NSColor alphaComponent]` */
-    alphaComponent(): number;
-    /** `-[NSColor blackComponent]` */
-    blackComponent(): number;
     /** `-[NSColor blendedColorWithFraction:ofColor:]` */
     blendedColorWithFractionOfColor(fraction: number, color: NSColor): NSColor | null;
-    /** `-[NSColor blueComponent]` */
-    blueComponent(): number;
-    /** `-[NSColor brightnessComponent]` */
-    brightnessComponent(): number;
-    /** `-[NSColor catalogNameComponent]` */
-    catalogNameComponent(): string;
     /** `-[NSColor colorByApplyingContentHeadroom:]` */
     colorByApplyingContentHeadroom(contentHeadroom: number): NSColor;
-    /** `-[NSColor colorNameComponent]` */
-    colorNameComponent(): string;
-    /** `-[NSColor colorSpace]` */
-    colorSpace(): NSColorSpace;
     /** `-[NSColor colorUsingColorSpace:]` */
     colorUsingColorSpace(space: NSColorSpace): NSColor | null;
     /** `-[NSColor colorUsingType:]` */
@@ -520,44 +487,37 @@ declare module 'svelters:appkit/appkit' {
     colorWithAlphaComponent(alpha: number): NSColor;
     /** `-[NSColor colorWithSystemEffect:]` */
     colorWithSystemEffect(systemEffect: number): NSColor;
-    /** `-[NSColor cyanComponent]` */
-    cyanComponent(): number;
     /** `-[NSColor drawSwatchInRect:]` */
     drawSwatchInRect(rect: Rect): void;
-    /** `-[NSColor greenComponent]` */
-    greenComponent(): number;
     /** `-[NSColor highlightWithLevel:]` */
     highlightWithLevel(val: number): NSColor | null;
-    /** `-[NSColor hueComponent]` */
-    hueComponent(): number;
-    /** `-[NSColor linearExposure]` */
-    linearExposure(): number;
-    /** `-[NSColor localizedCatalogNameComponent]` */
-    localizedCatalogNameComponent(): string;
-    /** `-[NSColor localizedColorNameComponent]` */
-    localizedColorNameComponent(): string;
-    /** `-[NSColor magentaComponent]` */
-    magentaComponent(): number;
-    /** `-[NSColor numberOfComponents]` */
-    numberOfComponents(): number;
-    /** `-[NSColor patternImage]` */
-    patternImage(): NSImage;
-    /** `-[NSColor redComponent]` */
-    redComponent(): number;
-    /** `-[NSColor saturationComponent]` */
-    saturationComponent(): number;
     /** `-[NSColor shadowWithLevel:]` */
     shadowWithLevel(val: number): NSColor | null;
-    /** `-[NSColor standardDynamicRangeColor]` */
-    standardDynamicRangeColor(): NSColor;
     /** `-[NSColor type]` */
     type(type: number): NSColor | null;
-    /** `-[NSColor whiteComponent]` */
-    whiteComponent(): number;
     /** `-[NSColor writeToPasteboard:]` */
     writeToPasteboard(pasteBoard: NSPasteboard): void;
-    /** `-[NSColor yellowComponent]` */
-    yellowComponent(): number;
+    readonly alphaComponent: number;
+    readonly blackComponent: number;
+    readonly blueComponent: number;
+    readonly brightnessComponent: number;
+    readonly catalogNameComponent: string;
+    readonly colorNameComponent: string;
+    readonly colorSpace: NSColorSpace;
+    readonly cyanComponent: number;
+    readonly greenComponent: number;
+    readonly hueComponent: number;
+    readonly linearExposure: number;
+    readonly localizedCatalogNameComponent: string;
+    readonly localizedColorNameComponent: string;
+    readonly magentaComponent: number;
+    readonly numberOfComponents: number;
+    readonly patternImage: NSImage;
+    readonly redComponent: number;
+    readonly saturationComponent: number;
+    readonly standardDynamicRangeColor: NSColor;
+    readonly whiteComponent: number;
+    readonly yellowComponent: number;
   }
 
   /** `NSColorSpace` (AppKit), object, lifetime shared */
@@ -592,14 +552,10 @@ declare module 'svelters:appkit/appkit' {
     static newWithICCProfileData(iccData: Uint8Array): NSColorSpace | null;
     /** `+[NSColorSpace sRGBColorSpace]` */
     static sRGBColorSpace(): NSColorSpace;
-    /** `-[NSColorSpace ICCProfileData]` */
-    ICCProfileData(): Uint8Array | null;
-    /** `-[NSColorSpace colorSpaceModel]` */
-    colorSpaceModel(): number;
-    /** `-[NSColorSpace localizedName]` */
-    localizedName(): string | null;
-    /** `-[NSColorSpace numberOfColorComponents]` */
-    numberOfColorComponents(): number;
+    readonly ICCProfileData: Uint8Array | null;
+    readonly colorSpaceModel: number;
+    readonly localizedName: string | null;
+    readonly numberOfColorComponents: number;
   }
 
   /** `NSFont` (AppKit), value, lifetime shared */
@@ -664,48 +620,14 @@ declare module 'svelters:appkit/appkit' {
     advancementForCGGlyph(glyph: number): Size;
     /** `-[NSFont advancementForGlyph:]` */
     advancementForGlyph(glyph: number): Size;
-    /** `-[NSFont ascender]` */
-    ascender(): number;
     /** `-[NSFont boundingRectForCGGlyph:]` */
     boundingRectForCGGlyph(glyph: number): Rect;
-    /** `-[NSFont boundingRectForFont]` */
-    boundingRectForFont(): Rect;
     /** `-[NSFont boundingRectForGlyph:]` */
     boundingRectForGlyph(glyph: number): Rect;
-    /** `-[NSFont capHeight]` */
-    capHeight(): number;
-    /** `-[NSFont coveredCharacterSet]` */
-    coveredCharacterSet(): NSCharacterSet;
-    /** `-[NSFont descender]` */
-    descender(): number;
-    /** `-[NSFont displayName]` */
-    displayName(): string | null;
-    /** `-[NSFont familyName]` */
-    familyName(): string | null;
-    /** `-[NSFont fontDescriptor]` */
-    fontDescriptor(): NSFontDescriptor;
-    /** `-[NSFont fontName]` */
-    fontName(): string;
     /** `-[NSFont fontWithSize:]` */
     fontWithSize(fontSize: number): NSFont;
     /** `-[NSFont glyphWithName:]` */
     glyphWithName(name: string): number;
-    /** `-[NSFont isFixedPitch]` */
-    isFixedPitch(): boolean;
-    /** `-[NSFont isVertical]` */
-    isVertical(): boolean;
-    /** `-[NSFont italicAngle]` */
-    italicAngle(): number;
-    /** `-[NSFont leading]` */
-    leading(): number;
-    /** `-[NSFont maximumAdvancement]` */
-    maximumAdvancement(): Size;
-    /** `-[NSFont mostCompatibleStringEncoding]` */
-    mostCompatibleStringEncoding(): number;
-    /** `-[NSFont numberOfGlyphs]` */
-    numberOfGlyphs(): number;
-    /** `-[NSFont pointSize]` */
-    pointSize(): number;
     /** `-[NSFont printerFont]` */
     printerFont(): NSFont;
     /** `-[NSFont renderingMode]` */
@@ -714,16 +636,28 @@ declare module 'svelters:appkit/appkit' {
     screenFont(): NSFont;
     /** `-[NSFont screenFontWithRenderingMode:]` */
     screenFontWithRenderingMode(renderingMode: number): NSFont;
-    /** `-[NSFont textTransform]` */
-    textTransform(): NSAffineTransform;
-    /** `-[NSFont underlinePosition]` */
-    underlinePosition(): number;
-    /** `-[NSFont underlineThickness]` */
-    underlineThickness(): number;
-    /** `-[NSFont verticalFont]` */
-    verticalFont(): NSFont;
-    /** `-[NSFont xHeight]` */
-    xHeight(): number;
+    readonly ascender: number;
+    readonly boundingRectForFont: Rect;
+    readonly capHeight: number;
+    readonly coveredCharacterSet: NSCharacterSet;
+    readonly descender: number;
+    readonly displayName: string | null;
+    readonly familyName: string | null;
+    readonly fixedPitch: boolean;
+    readonly fontDescriptor: NSFontDescriptor;
+    readonly fontName: string;
+    readonly italicAngle: number;
+    readonly leading: number;
+    readonly maximumAdvancement: Size;
+    readonly mostCompatibleStringEncoding: number;
+    readonly numberOfGlyphs: number;
+    readonly pointSize: number;
+    readonly textTransform: NSAffineTransform;
+    readonly underlinePosition: number;
+    readonly underlineThickness: number;
+    readonly vertical: boolean;
+    readonly verticalFont: NSFont;
+    readonly xHeight: number;
   }
 
   /** `NSFontDescriptor` (AppKit), value, lifetime shared */
@@ -742,8 +676,6 @@ declare module 'svelters:appkit/appkit' {
     static newWithFontAttributes(attributes: Record<string, unknown> | null): NSFontDescriptor | null;
     /** `+[NSFontDescriptor preferredFontDescriptorForTextStyle:options:]` */
     static preferredFontDescriptorForTextStyleOptions(style: string, options: Record<string, unknown>): NSFontDescriptor;
-    /** `-[NSFontDescriptor fontAttributes]` */
-    fontAttributes(): Record<string, unknown>;
     /** `-[NSFontDescriptor fontDescriptorByAddingAttributes:]` */
     fontDescriptorByAddingAttributes(attributes: Record<string, unknown>): NSFontDescriptor;
     /** `-[NSFontDescriptor fontDescriptorWithDesign:]` */
@@ -762,18 +694,14 @@ declare module 'svelters:appkit/appkit' {
     matchingFontDescriptorWithMandatoryKeys(mandatoryKeys: Array<string> | null): NSFontDescriptor | null;
     /** `-[NSFontDescriptor matchingFontDescriptorsWithMandatoryKeys:]` */
     matchingFontDescriptorsWithMandatoryKeys(mandatoryKeys: Array<string> | null): Array<NSFontDescriptor>;
-    /** `-[NSFontDescriptor matrix]` */
-    matrix(): NSAffineTransform | null;
     /** `-[NSFontDescriptor objectForKey:]` */
     objectForKey(attribute: string): unknown;
-    /** `-[NSFontDescriptor pointSize]` */
-    pointSize(): number;
-    /** `-[NSFontDescriptor postscriptName]` */
-    postscriptName(): string | null;
-    /** `-[NSFontDescriptor requiresFontAssetRequest]` */
-    requiresFontAssetRequest(): boolean;
-    /** `-[NSFontDescriptor symbolicTraits]` */
-    symbolicTraits(): number;
+    readonly fontAttributes: Record<string, unknown>;
+    readonly matrix: NSAffineTransform | null;
+    readonly pointSize: number;
+    readonly postscriptName: string | null;
+    readonly requiresFontAssetRequest: boolean;
+    readonly symbolicTraits: number;
   }
 
   /** `NSGlyphGenerator` (AppKit), object, lifetime shared */
@@ -802,20 +730,17 @@ declare module 'svelters:appkit/appkit' {
     static saveGraphicsState(): void;
     /** `+[NSGraphicsContext setCurrentContext:]` */
     static setCurrentContext(currentContext: NSGraphicsContext | null): void;
-    /** `-[NSGraphicsContext attributes]` */
-    attributes(): Record<string, unknown> | null;
     /** `-[NSGraphicsContext flushGraphics]` */
     flushGraphics(): void;
-    /** `-[NSGraphicsContext isDrawingToScreen]` */
-    isDrawingToScreen(): boolean;
-    /** `-[NSGraphicsContext isFlipped]` */
-    isFlipped(): boolean;
     /** `-[NSGraphicsContext restoreGraphicsState]` */
     restoreGraphicsState(): void;
     /** `-[NSGraphicsContext saveGraphicsState]` */
     saveGraphicsState(): void;
+    readonly attributes: Record<string, unknown> | null;
     colorRenderingIntent: number;
     compositingOperation: number;
+    readonly drawingToScreen: boolean;
+    readonly flipped: boolean;
     imageInterpolation: number;
     patternPhase: Point;
     shouldAntialias: boolean;
@@ -857,8 +782,6 @@ declare module 'svelters:appkit/appkit' {
     static newWithPasteboard(pasteboard: NSPasteboard): NSImage | null;
     /** `-[NSImage initWithSize:]` */
     static newWithSize(size: Size): NSImage | null;
-    /** `-[NSImage TIFFRepresentation]` */
-    TIFFRepresentation(): Uint8Array | null;
     /** `-[NSImage TIFFRepresentationUsingCompression:factor:]` */
     TIFFRepresentationUsingCompressionFactor(comp: number, factor: number): Uint8Array | null;
     /** `-[NSImage addRepresentation:]` */
@@ -883,12 +806,8 @@ declare module 'svelters:appkit/appkit' {
     imageWithLocale(locale: NSLocale | null): NSImage;
     /** `-[NSImage imageWithSymbolConfiguration:]` */
     imageWithSymbolConfiguration(configuration: NSImageSymbolConfiguration): NSImage | null;
-    /** `-[NSImage isValid]` */
-    isValid(): boolean;
     /** `-[NSImage layerContentsForContentsScale:]` */
     layerContentsForContentsScale(layerContentsScale: number): unknown;
-    /** `-[NSImage locale]` */
-    locale(): NSLocale | null;
     /** `-[NSImage name]` */
     name(): string | null;
     /** `-[NSImage recache]` */
@@ -897,25 +816,26 @@ declare module 'svelters:appkit/appkit' {
     recommendedLayerContentsScale(preferredContentsScale: number): number;
     /** `-[NSImage removeRepresentation:]` */
     removeRepresentation(imageRep: NSImageRep): void;
-    /** `-[NSImage representations]` */
-    representations(): Array<NSImageRep>;
     /** `-[NSImage setName:]` */
     setName(string: string | null): boolean;
-    /** `-[NSImage symbolConfiguration]` */
-    symbolConfiguration(): NSImageSymbolConfiguration;
+    readonly TIFFRepresentation: Uint8Array | null;
     accessibilityDescription: string | null;
     alignmentRect: Rect;
     backgroundColor: NSColor;
     cacheMode: number;
     capInsets: Insets;
     delegate: unknown;
+    readonly locale: NSLocale | null;
     matchesOnMultipleResolution: boolean;
     matchesOnlyOnBestFittingAxis: boolean;
     prefersColorMatch: boolean;
+    readonly representations: Array<NSImageRep>;
     resizingMode: number;
     size: Size;
+    readonly symbolConfiguration: NSImageSymbolConfiguration;
     template: boolean;
     usesEPSOnResolutionMismatch: boolean;
+    readonly valid: boolean;
   }
 
   /** `NSImageRep` (AppKit), object, lifetime shared */
@@ -1050,12 +970,6 @@ declare module 'svelters:appkit/appkit' {
     ensureLayoutForGlyphRange(glyphRange: Range): void;
     /** `-[NSLayoutManager ensureLayoutForTextContainer:]` */
     ensureLayoutForTextContainer(container: NSTextContainer): void;
-    /** `-[NSLayoutManager extraLineFragmentRect]` */
-    extraLineFragmentRect(): Rect;
-    /** `-[NSLayoutManager extraLineFragmentTextContainer]` */
-    extraLineFragmentTextContainer(): NSTextContainer | null;
-    /** `-[NSLayoutManager extraLineFragmentUsedRect]` */
-    extraLineFragmentUsedRect(): Rect;
     /** `-[NSLayoutManager firstUnlaidCharacterIndex]` */
     firstUnlaidCharacterIndex(): number;
     /** `-[NSLayoutManager firstUnlaidGlyphIndex]` */
@@ -1074,8 +988,6 @@ declare module 'svelters:appkit/appkit' {
     glyphRangeForBoundingRectWithoutAdditionalLayoutInTextContainer(bounds: Rect, container: NSTextContainer): Range;
     /** `-[NSLayoutManager glyphRangeForTextContainer:]` */
     glyphRangeForTextContainer(container: NSTextContainer): Range;
-    /** `-[NSLayoutManager hasNonContiguousLayout]` */
-    hasNonContiguousLayout(): boolean;
     /** `-[NSLayoutManager insertTextContainer:atIndex:]` */
     insertTextContainerAtIndex(container: NSTextContainer, index: number): void;
     /** `-[NSLayoutManager invalidateDisplayForCharacterRange:]` */
@@ -1090,8 +1002,6 @@ declare module 'svelters:appkit/appkit' {
     locationForGlyphAtIndex(glyphIndex: number): Point;
     /** `-[NSLayoutManager notShownAttributeForGlyphAtIndex:]` */
     notShownAttributeForGlyphAtIndex(glyphIndex: number): boolean;
-    /** `-[NSLayoutManager numberOfGlyphs]` */
-    numberOfGlyphs(): number;
     /** `-[NSLayoutManager processEditingForTextStorage:edited:range:changeInLength:invalidatedRange:]` */
     processEditingForTextStorageEditedRangeChangeInLengthInvalidatedRange(textStorage: NSTextStorage, editMask: number, newCharRange: Range, delta: number, invalidatedCharRange: Range): void;
     /** `-[NSLayoutManager propertyForGlyphAtIndex:]` */
@@ -1130,8 +1040,6 @@ declare module 'svelters:appkit/appkit' {
     textContainerChangedGeometry(container: NSTextContainer): void;
     /** `-[NSLayoutManager textContainerChangedTextView:]` */
     textContainerChangedTextView(container: NSTextContainer): void;
-    /** `-[NSLayoutManager textContainers]` */
-    textContainers(): Array<NSTextContainer>;
     /** `-[NSLayoutManager truncatedGlyphRangeInLineFragmentForGlyphAtIndex:]` */
     truncatedGlyphRangeInLineFragmentForGlyphAtIndex(glyphIndex: number): Range;
     /** `-[NSLayoutManager underlineGlyphRange:underlineType:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:]` */
@@ -1142,10 +1050,16 @@ declare module 'svelters:appkit/appkit' {
     backgroundLayoutEnabled: boolean;
     defaultAttachmentScaling: number;
     delegate: unknown;
+    readonly extraLineFragmentRect: Rect;
+    readonly extraLineFragmentTextContainer: NSTextContainer | null;
+    readonly extraLineFragmentUsedRect: Rect;
     glyphGenerator: NSGlyphGenerator;
+    readonly hasNonContiguousLayout: boolean;
     limitsLayoutForSuspiciousContents: boolean;
+    readonly numberOfGlyphs: number;
     showsControlCharacters: boolean;
     showsInvisibleCharacters: boolean;
+    readonly textContainers: Array<NSTextContainer>;
     typesetter: NSTypesetter;
     typesetterBehavior: number;
     usesDefaultHyphenation: boolean;
@@ -1200,50 +1114,28 @@ declare module 'svelters:appkit/appkit' {
     static defaultParagraphStyle(): NSParagraphStyle;
     /** `+[NSParagraphStyle defaultWritingDirectionForLanguage:]` */
     static defaultWritingDirectionForLanguage(languageName: string | null): number;
-    /** `-[NSParagraphStyle alignment]` */
-    alignment(): number;
-    /** `-[NSParagraphStyle allowsDefaultTighteningForTruncation]` */
-    allowsDefaultTighteningForTruncation(): boolean;
-    /** `-[NSParagraphStyle baseWritingDirection]` */
-    baseWritingDirection(): number;
-    /** `-[NSParagraphStyle defaultTabInterval]` */
-    defaultTabInterval(): number;
-    /** `-[NSParagraphStyle firstLineHeadIndent]` */
-    firstLineHeadIndent(): number;
-    /** `-[NSParagraphStyle headIndent]` */
-    headIndent(): number;
-    /** `-[NSParagraphStyle headerLevel]` */
-    headerLevel(): number;
-    /** `-[NSParagraphStyle hyphenationFactor]` */
-    hyphenationFactor(): number;
-    /** `-[NSParagraphStyle lineBreakMode]` */
-    lineBreakMode(): number;
-    /** `-[NSParagraphStyle lineBreakStrategy]` */
-    lineBreakStrategy(): number;
-    /** `-[NSParagraphStyle lineHeightMultiple]` */
-    lineHeightMultiple(): number;
-    /** `-[NSParagraphStyle lineSpacing]` */
-    lineSpacing(): number;
-    /** `-[NSParagraphStyle maximumLineHeight]` */
-    maximumLineHeight(): number;
-    /** `-[NSParagraphStyle minimumLineHeight]` */
-    minimumLineHeight(): number;
-    /** `-[NSParagraphStyle paragraphSpacing]` */
-    paragraphSpacing(): number;
-    /** `-[NSParagraphStyle paragraphSpacingBefore]` */
-    paragraphSpacingBefore(): number;
-    /** `-[NSParagraphStyle tabStops]` */
-    tabStops(): Array<NSTextTab>;
-    /** `-[NSParagraphStyle tailIndent]` */
-    tailIndent(): number;
-    /** `-[NSParagraphStyle textBlocks]` */
-    textBlocks(): Array<NSTextBlock>;
-    /** `-[NSParagraphStyle textLists]` */
-    textLists(): Array<NSTextList>;
-    /** `-[NSParagraphStyle tighteningFactorForTruncation]` */
-    tighteningFactorForTruncation(): number;
-    /** `-[NSParagraphStyle usesDefaultHyphenation]` */
-    usesDefaultHyphenation(): boolean;
+    readonly alignment: number;
+    readonly allowsDefaultTighteningForTruncation: boolean;
+    readonly baseWritingDirection: number;
+    readonly defaultTabInterval: number;
+    readonly firstLineHeadIndent: number;
+    readonly headIndent: number;
+    readonly headerLevel: number;
+    readonly hyphenationFactor: number;
+    readonly lineBreakMode: number;
+    readonly lineBreakStrategy: number;
+    readonly lineHeightMultiple: number;
+    readonly lineSpacing: number;
+    readonly maximumLineHeight: number;
+    readonly minimumLineHeight: number;
+    readonly paragraphSpacing: number;
+    readonly paragraphSpacingBefore: number;
+    readonly tabStops: Array<NSTextTab>;
+    readonly tailIndent: number;
+    readonly textBlocks: Array<NSTextBlock>;
+    readonly textLists: Array<NSTextList>;
+    readonly tighteningFactorForTruncation: number;
+    readonly usesDefaultHyphenation: boolean;
   }
 
   /** `NSPasteboard` (AppKit), object, lifetime shared */
@@ -1264,8 +1156,6 @@ declare module 'svelters:appkit/appkit' {
     static pasteboardWithUniqueName(): NSPasteboard;
     /** `+[NSPasteboard typesFilterableTo:]` */
     static typesFilterableTo(type: string): Array<string>;
-    /** `-[NSPasteboard accessBehavior]` */
-    accessBehavior(): number;
     /** `-[NSPasteboard addTypes:owner:]` */
     addTypesOwner(newTypes: Array<string>, newOwner: unknown): number;
     /** `-[NSPasteboard availableTypeFromArray:]` */
@@ -1274,8 +1164,6 @@ declare module 'svelters:appkit/appkit' {
     canReadItemWithDataConformingToTypes(types: Array<string>): boolean;
     /** `-[NSPasteboard canReadObjectForClasses:options:]` */
     canReadObjectForClassesOptions(classArray: Array<string | { readonly native: string }>, options: Record<string, unknown> | null): boolean;
-    /** `-[NSPasteboard changeCount]` */
-    changeCount(): number;
     /** `-[NSPasteboard clearContents]` */
     clearContents(): number;
     /** `-[NSPasteboard dataForType:]` */
@@ -1287,10 +1175,6 @@ declare module 'svelters:appkit/appkit' {
     detectValuesForPatterns(patterns: Array<string>, options?: AsyncOptions): Promise<Record<string, unknown>>;
     /** `-[NSPasteboard indexOfPasteboardItem:]` */
     indexOfPasteboardItem(pasteboardItem: NSPasteboardItem): number;
-    /** `-[NSPasteboard name]` */
-    name(): string;
-    /** `-[NSPasteboard pasteboardItems]` */
-    pasteboardItems(): Array<NSPasteboardItem> | null;
     /** `-[NSPasteboard prepareForNewContentsWithOptions:]` */
     prepareForNewContentsWithOptions(options: number): number;
     /** `-[NSPasteboard propertyListForType:]` */
@@ -1309,14 +1193,17 @@ declare module 'svelters:appkit/appkit' {
     setStringForType(string: string, dataType: string): boolean;
     /** `-[NSPasteboard stringForType:]` */
     stringForType(dataType: string): string | null;
-    /** `-[NSPasteboard types]` */
-    types(): Array<string> | null;
     /** `-[NSPasteboard writeFileContents:]` */
     writeFileContents(filename: string): boolean;
     /** `-[NSPasteboard writeFileWrapper:]` */
     writeFileWrapper(wrapper: NSFileWrapper): boolean;
     /** `-[NSPasteboard writeObjects:]` */
     writeObjects(objects: Array<unknown>): boolean;
+    readonly accessBehavior: number;
+    readonly changeCount: number;
+    readonly name: string;
+    readonly pasteboardItems: Array<NSPasteboardItem> | null;
+    readonly types: Array<string> | null;
   }
 
   /** `NSPasteboardItem` (AppKit), object, lifetime shared */
@@ -1342,8 +1229,7 @@ declare module 'svelters:appkit/appkit' {
     setStringForType(string: string, type: string): boolean;
     /** `-[NSPasteboardItem stringForType:]` */
     stringForType(type: string): string | null;
-    /** `-[NSPasteboardItem types]` */
-    types(): Array<string>;
+    readonly types: Array<string>;
   }
 
   /** `NSRunningApplication` (AppKit), object, lifetime shared */
@@ -1360,40 +1246,27 @@ declare module 'svelters:appkit/appkit' {
     activateFromApplicationOptions(application: NSRunningApplication, options: number): boolean;
     /** `-[NSRunningApplication activateWithOptions:]` */
     activateWithOptions(options: number): boolean;
-    /** `-[NSRunningApplication activationPolicy]` */
-    activationPolicy(): number;
-    /** `-[NSRunningApplication bundleIdentifier]` */
-    bundleIdentifier(): string | null;
-    /** `-[NSRunningApplication bundleURL]` */
-    bundleURL(): NSURL | null;
-    /** `-[NSRunningApplication executableArchitecture]` */
-    executableArchitecture(): number;
-    /** `-[NSRunningApplication executableURL]` */
-    executableURL(): NSURL | null;
     /** `-[NSRunningApplication forceTerminate]` */
     forceTerminate(): boolean;
     /** `-[NSRunningApplication hide]` */
     hide(): boolean;
-    /** `-[NSRunningApplication icon]` */
-    icon(): NSImage | null;
-    /** `-[NSRunningApplication isActive]` */
-    isActive(): boolean;
-    /** `-[NSRunningApplication isFinishedLaunching]` */
-    isFinishedLaunching(): boolean;
-    /** `-[NSRunningApplication isHidden]` */
-    isHidden(): boolean;
-    /** `-[NSRunningApplication isTerminated]` */
-    isTerminated(): boolean;
-    /** `-[NSRunningApplication launchDate]` */
-    launchDate(): Date | null;
-    /** `-[NSRunningApplication localizedName]` */
-    localizedName(): string | null;
-    /** `-[NSRunningApplication ownsMenuBar]` */
-    ownsMenuBar(): boolean;
     /** `-[NSRunningApplication terminate]` */
     terminate(): boolean;
     /** `-[NSRunningApplication unhide]` */
     unhide(): boolean;
+    readonly activationPolicy: number;
+    readonly active: boolean;
+    readonly bundleIdentifier: string | null;
+    readonly bundleURL: NSURL | null;
+    readonly executableArchitecture: number;
+    readonly executableURL: NSURL | null;
+    readonly finishedLaunching: boolean;
+    readonly hidden: boolean;
+    readonly icon: NSImage | null;
+    readonly launchDate: Date | null;
+    readonly localizedName: string | null;
+    readonly ownsMenuBar: boolean;
+    readonly terminated: boolean;
   }
 
   /** `NSScreen` (AppKit), object, lifetime shared; main thread only */
@@ -1408,50 +1281,32 @@ declare module 'svelters:appkit/appkit' {
     static screens(): Array<NSScreen>;
     /** `+[NSScreen screensHaveSeparateSpaces]` */
     static screensHaveSeparateSpaces(): boolean;
-    /** `-[NSScreen auxiliaryTopLeftArea]` */
-    auxiliaryTopLeftArea(): Rect;
-    /** `-[NSScreen auxiliaryTopRightArea]` */
-    auxiliaryTopRightArea(): Rect;
     /** `-[NSScreen backingAlignedRect:options:]` */
     backingAlignedRectOptions(rect: Rect, options: number): Rect;
-    /** `-[NSScreen backingScaleFactor]` */
-    backingScaleFactor(): number;
     /** `-[NSScreen canRepresentDisplayGamut:]` */
     canRepresentDisplayGamut(displayGamut: number): boolean;
-    /** `-[NSScreen colorSpace]` */
-    colorSpace(): NSColorSpace | null;
     /** `-[NSScreen convertRectFromBacking:]` */
     convertRectFromBacking(rect: Rect): Rect;
     /** `-[NSScreen convertRectToBacking:]` */
     convertRectToBacking(rect: Rect): Rect;
-    /** `-[NSScreen depth]` */
-    depth(): number;
-    /** `-[NSScreen deviceDescription]` */
-    deviceDescription(): Record<string, unknown>;
-    /** `-[NSScreen displayUpdateGranularity]` */
-    displayUpdateGranularity(): number;
-    /** `-[NSScreen frame]` */
-    frame(): Rect;
-    /** `-[NSScreen lastDisplayUpdateTimestamp]` */
-    lastDisplayUpdateTimestamp(): number;
-    /** `-[NSScreen localizedName]` */
-    localizedName(): string;
-    /** `-[NSScreen maximumExtendedDynamicRangeColorComponentValue]` */
-    maximumExtendedDynamicRangeColorComponentValue(): number;
-    /** `-[NSScreen maximumFramesPerSecond]` */
-    maximumFramesPerSecond(): number;
-    /** `-[NSScreen maximumPotentialExtendedDynamicRangeColorComponentValue]` */
-    maximumPotentialExtendedDynamicRangeColorComponentValue(): number;
-    /** `-[NSScreen maximumReferenceExtendedDynamicRangeColorComponentValue]` */
-    maximumReferenceExtendedDynamicRangeColorComponentValue(): number;
-    /** `-[NSScreen maximumRefreshInterval]` */
-    maximumRefreshInterval(): number;
-    /** `-[NSScreen minimumRefreshInterval]` */
-    minimumRefreshInterval(): number;
-    /** `-[NSScreen safeAreaInsets]` */
-    safeAreaInsets(): Insets;
-    /** `-[NSScreen visibleFrame]` */
-    visibleFrame(): Rect;
+    readonly auxiliaryTopLeftArea: Rect;
+    readonly auxiliaryTopRightArea: Rect;
+    readonly backingScaleFactor: number;
+    readonly colorSpace: NSColorSpace | null;
+    readonly depth: number;
+    readonly deviceDescription: Record<string, unknown>;
+    readonly displayUpdateGranularity: number;
+    readonly frame: Rect;
+    readonly lastDisplayUpdateTimestamp: number;
+    readonly localizedName: string;
+    readonly maximumExtendedDynamicRangeColorComponentValue: number;
+    readonly maximumFramesPerSecond: number;
+    readonly maximumPotentialExtendedDynamicRangeColorComponentValue: number;
+    readonly maximumReferenceExtendedDynamicRangeColorComponentValue: number;
+    readonly maximumRefreshInterval: number;
+    readonly minimumRefreshInterval: number;
+    readonly safeAreaInsets: Insets;
+    readonly visibleFrame: Rect;
   }
 
   /** `NSShadow` (AppKit), object, lifetime shared */
@@ -1483,12 +1338,6 @@ declare module 'svelters:appkit/appkit' {
     static soundNamed(name: string): NSSound | null;
     /** `+[NSSound soundUnfilteredTypes]` */
     static soundUnfilteredTypes(): Array<string>;
-    /** `-[NSSound duration]` */
-    duration(): number;
-    /** `-[NSSound isPlaying]` */
-    isPlaying(): boolean;
-    /** `-[NSSound name]` */
-    name(): string | null;
     /** `-[NSSound pause]` */
     pause(): boolean;
     /** `-[NSSound play]` */
@@ -1503,8 +1352,11 @@ declare module 'svelters:appkit/appkit' {
     writeToPasteboard(pasteboard: NSPasteboard): void;
     currentTime: number;
     delegate: unknown;
+    readonly duration: number;
     loops: boolean;
+    readonly name: string | null;
     playbackDeviceIdentifier: string | null;
+    readonly playing: boolean;
     volume: number;
   }
 
@@ -1512,11 +1364,9 @@ declare module 'svelters:appkit/appkit' {
   export class NSStringDrawingContext extends NativeObject {
     static readonly native: string;
     constructor(props?: { minimumScaleFactor?: number });
-    /** `-[NSStringDrawingContext actualScaleFactor]` */
-    actualScaleFactor(): number;
-    /** `-[NSStringDrawingContext totalBounds]` */
-    totalBounds(): Rect;
+    readonly actualScaleFactor: number;
     minimumScaleFactor: number;
+    readonly totalBounds: Rect;
   }
 
   /** `NSTextAttachment` (AppKit), object, lifetime shared */
@@ -1531,8 +1381,6 @@ declare module 'svelters:appkit/appkit' {
     static registerTextAttachmentViewProviderClassForFileType(textAttachmentViewProviderClass: string | { readonly native: string }, fileType: string): void;
     /** `+[NSTextAttachment textAttachmentViewProviderClassForFileType:]` */
     static textAttachmentViewProviderClassForFileType(fileType: string): string | { readonly native: string } | null;
-    /** `-[NSTextAttachment usesTextAttachmentView]` */
-    usesTextAttachmentView(): boolean;
     allowsTextAttachmentView: boolean;
     attachmentCell: unknown;
     bounds: Rect;
@@ -1541,6 +1389,7 @@ declare module 'svelters:appkit/appkit' {
     fileWrapper: NSFileWrapper | null;
     image: NSImage | null;
     lineLayoutPadding: number;
+    readonly usesTextAttachmentView: boolean;
   }
 
   /** `NSTextAttachmentViewProvider` (AppKit), object, lifetime shared */
@@ -1551,12 +1400,9 @@ declare module 'svelters:appkit/appkit' {
     attachmentBoundsForAttributesLocationTextContainerProposedLineFragmentPosition(attributes: Record<string, unknown>, location: unknown, textContainer: NSTextContainer | null, proposedLineFragment: Rect, position: Point): Rect;
     /** `-[NSTextAttachmentViewProvider loadView]` */
     loadView(): void;
-    /** `-[NSTextAttachmentViewProvider location]` */
-    location(): unknown;
-    /** `-[NSTextAttachmentViewProvider textAttachment]` */
-    textAttachment(): NSTextAttachment | null;
-    /** `-[NSTextAttachmentViewProvider textLayoutManager]` */
-    textLayoutManager(): NSTextLayoutManager | null;
+    readonly location: unknown;
+    readonly textAttachment: NSTextAttachment | null;
+    readonly textLayoutManager: NSTextLayoutManager | null;
     tracksTextAttachmentViewBounds: boolean;
   }
 
@@ -1568,10 +1414,6 @@ declare module 'svelters:appkit/appkit' {
     borderColorForEdge(edge: number): NSColor | null;
     /** `-[NSTextBlock boundsRectForContentRect:inRect:textContainer:characterRange:]` */
     boundsRectForContentRectInRectTextContainerCharacterRange(contentRect: Rect, rect: Rect, textContainer: NSTextContainer, charRange: Range): Rect;
-    /** `-[NSTextBlock contentWidth]` */
-    contentWidth(): number;
-    /** `-[NSTextBlock contentWidthValueType]` */
-    contentWidthValueType(): number;
     /** `-[NSTextBlock rectForLayoutAtPoint:inRect:textContainer:characterRange:]` */
     rectForLayoutAtPointInRectTextContainerCharacterRange(startingPoint: Point, rect: Rect, textContainer: NSTextContainer, charRange: Range): Rect;
     /** `-[NSTextBlock setBorderColor:]` */
@@ -1595,6 +1437,8 @@ declare module 'svelters:appkit/appkit' {
     /** `-[NSTextBlock widthValueTypeForLayer:edge:]` */
     widthValueTypeForLayerEdge(layer: number, edge: number): number;
     backgroundColor: NSColor | null;
+    readonly contentWidth: number;
+    readonly contentWidthValueType: number;
     verticalAlignment: number;
   }
 
@@ -1606,19 +1450,17 @@ declare module 'svelters:appkit/appkit' {
     static newWithContainerSize(aContainerSize: Size): NSTextContainer | null;
     /** `-[NSTextContainer initWithSize:]` */
     static newWithSize(size: Size): NSTextContainer | null;
-    /** `-[NSTextContainer isSimpleRectangularTextContainer]` */
-    isSimpleRectangularTextContainer(): boolean;
     /** `-[NSTextContainer replaceLayoutManager:]` */
     replaceLayoutManager(newLayoutManager: NSLayoutManager): void;
-    /** `-[NSTextContainer textLayoutManager]` */
-    textLayoutManager(): NSTextLayoutManager | null;
     containerSize: Size;
     exclusionPaths: Array<NSBezierPath>;
     heightTracksTextView: boolean;
     lineBreakMode: number;
     lineFragmentPadding: number;
     maximumNumberOfLines: number;
+    readonly simpleRectangularTextContainer: boolean;
     size: Size;
+    readonly textLayoutManager: NSTextLayoutManager | null;
     widthTracksTextView: boolean;
   }
 
@@ -1628,8 +1470,6 @@ declare module 'svelters:appkit/appkit' {
     constructor(props?: { automaticallySynchronizesTextLayoutManagers?: boolean; automaticallySynchronizesToBackingStore?: boolean; delegate?: unknown; primaryTextLayoutManager?: NSTextLayoutManager | null });
     /** `-[NSTextContentManager addTextLayoutManager:]` */
     addTextLayoutManager(textLayoutManager: NSTextLayoutManager): void;
-    /** `-[NSTextContentManager hasEditingTransaction]` */
-    hasEditingTransaction(): boolean;
     /** `-[NSTextContentManager recordEditActionInRange:newTextRange:]` */
     recordEditActionInRangeNewTextRange(originalTextRange: NSTextRange, newTextRange: NSTextRange): void;
     /** `-[NSTextContentManager removeTextLayoutManager:]` */
@@ -1637,12 +1477,12 @@ declare module 'svelters:appkit/appkit' {
     synchronizeTextLayoutManagers(options?: AsyncOptions): Promise<void>;
     /** `-[NSTextContentManager textElementsForRange:]` */
     textElementsForRange(range: NSTextRange): Array<NSTextElement>;
-    /** `-[NSTextContentManager textLayoutManagers]` */
-    textLayoutManagers(): Array<NSTextLayoutManager>;
     automaticallySynchronizesTextLayoutManagers: boolean;
     automaticallySynchronizesToBackingStore: boolean;
     delegate: unknown;
+    readonly hasEditingTransaction: boolean;
     primaryTextLayoutManager: NSTextLayoutManager | null;
+    readonly textLayoutManagers: Array<NSTextLayoutManager>;
   }
 
   /** `NSTextElement` (AppKit), object, lifetime shared */
@@ -1651,13 +1491,10 @@ declare module 'svelters:appkit/appkit' {
     constructor(props?: { elementRange?: NSTextRange | null; textContentManager?: NSTextContentManager | null });
     /** `-[NSTextElement initWithTextContentManager:]` */
     static newWithTextContentManager(textContentManager: NSTextContentManager | null): NSTextElement | null;
-    /** `-[NSTextElement childElements]` */
-    childElements(): Array<NSTextElement>;
-    /** `-[NSTextElement isRepresentedElement]` */
-    isRepresentedElement(): boolean;
-    /** `-[NSTextElement parentElement]` */
-    parentElement(): NSTextElement | null;
+    readonly childElements: Array<NSTextElement>;
     elementRange: NSTextRange | null;
+    readonly isRepresentedElement: boolean;
+    readonly parentElement: NSTextElement | null;
     textContentManager: NSTextContentManager | null;
   }
 
@@ -1667,38 +1504,26 @@ declare module 'svelters:appkit/appkit' {
     constructor(props?: {});
     /** `-[NSTextLayoutFragment initWithTextElement:range:]` */
     static newWithTextElementRange(textElement: NSTextElement, rangeInElement: NSTextRange | null): NSTextLayoutFragment | null;
-    /** `-[NSTextLayoutFragment bottomMargin]` */
-    bottomMargin(): number;
     /** `-[NSTextLayoutFragment frameForTextAttachmentAtLocation:]` */
     frameForTextAttachmentAtLocation(location: unknown): Rect;
     /** `-[NSTextLayoutFragment invalidateLayout]` */
     invalidateLayout(): void;
-    /** `-[NSTextLayoutFragment layoutFragmentFrame]` */
-    layoutFragmentFrame(): Rect;
-    /** `-[NSTextLayoutFragment leadingPadding]` */
-    leadingPadding(): number;
-    /** `-[NSTextLayoutFragment rangeInElement]` */
-    rangeInElement(): NSTextRange;
-    /** `-[NSTextLayoutFragment renderingSurfaceBounds]` */
-    renderingSurfaceBounds(): Rect;
-    /** `-[NSTextLayoutFragment state]` */
-    state(): number;
-    /** `-[NSTextLayoutFragment textAttachmentViewProviders]` */
-    textAttachmentViewProviders(): Array<NSTextAttachmentViewProvider>;
-    /** `-[NSTextLayoutFragment textElement]` */
-    textElement(): NSTextElement | null;
-    /** `-[NSTextLayoutFragment textLayoutManager]` */
-    textLayoutManager(): NSTextLayoutManager | null;
     /** `-[NSTextLayoutFragment textLineFragmentForTextLocation:isUpstreamAffinity:]` */
     textLineFragmentForTextLocationIsUpstreamAffinity(textLocation: unknown, isUpstreamAffinity: boolean): NSTextLineFragment | null;
     /** `-[NSTextLayoutFragment textLineFragmentForVerticalOffset:requiresExactMatch:]` */
     textLineFragmentForVerticalOffsetRequiresExactMatch(verticalOffset: number, requiresExactMatch: boolean): NSTextLineFragment | null;
-    /** `-[NSTextLayoutFragment textLineFragments]` */
-    textLineFragments(): Array<NSTextLineFragment>;
-    /** `-[NSTextLayoutFragment topMargin]` */
-    topMargin(): number;
-    /** `-[NSTextLayoutFragment trailingPadding]` */
-    trailingPadding(): number;
+    readonly bottomMargin: number;
+    readonly layoutFragmentFrame: Rect;
+    readonly leadingPadding: number;
+    readonly rangeInElement: NSTextRange;
+    readonly renderingSurfaceBounds: Rect;
+    readonly state: number;
+    readonly textAttachmentViewProviders: Array<NSTextAttachmentViewProvider>;
+    readonly textElement: NSTextElement | null;
+    readonly textLayoutManager: NSTextLayoutManager | null;
+    readonly textLineFragments: Array<NSTextLineFragment>;
+    readonly topMargin: number;
+    readonly trailingPadding: number;
   }
 
   /** `NSTextLayoutManager` (AppKit), object, lifetime shared */
@@ -1729,22 +1554,19 @@ declare module 'svelters:appkit/appkit' {
     replaceTextContentManager(textContentManager: NSTextContentManager): void;
     /** `-[NSTextLayoutManager setRenderingAttributes:forTextRange:]` */
     setRenderingAttributesForTextRange(renderingAttributes: Record<string, unknown>, textRange: NSTextRange): void;
-    /** `-[NSTextLayoutManager textContentManager]` */
-    textContentManager(): NSTextContentManager | null;
     /** `-[NSTextLayoutManager textLayoutFragmentForLocation:]` */
     textLayoutFragmentForLocation(location: unknown): NSTextLayoutFragment | null;
     /** `-[NSTextLayoutManager textLayoutFragmentForPosition:]` */
     textLayoutFragmentForPosition(position: Point): NSTextLayoutFragment | null;
-    /** `-[NSTextLayoutManager textViewportLayoutController]` */
-    textViewportLayoutController(): NSTextViewportLayoutController;
-    /** `-[NSTextLayoutManager usageBoundsForTextContainer]` */
-    usageBoundsForTextContainer(): Rect;
     delegate: unknown;
     limitsLayoutForSuspiciousContents: boolean;
     resolvesNaturalAlignmentWithBaseWritingDirection: boolean;
     textContainer: NSTextContainer | null;
+    readonly textContentManager: NSTextContentManager | null;
     textSelectionNavigation: NSTextSelectionNavigation;
     textSelections: Array<NSTextSelection>;
+    readonly textViewportLayoutController: NSTextViewportLayoutController;
+    readonly usageBoundsForTextContainer: Rect;
     usesFontLeading: boolean;
     usesHyphenation: boolean;
   }
@@ -1757,20 +1579,16 @@ declare module 'svelters:appkit/appkit' {
     static newWithAttributedStringRange(attributedString: NSAttributedString, range: Range): NSTextLineFragment | null;
     /** `-[NSTextLineFragment initWithString:attributes:range:]` */
     static newWithStringAttributesRange(string: string, attributes: Record<string, unknown>, range: Range): NSTextLineFragment | null;
-    /** `-[NSTextLineFragment attributedString]` */
-    attributedString(): NSAttributedString;
     /** `-[NSTextLineFragment characterIndexForPoint:]` */
     characterIndexForPoint(point: Point): number;
-    /** `-[NSTextLineFragment characterRange]` */
-    characterRange(): Range;
     /** `-[NSTextLineFragment fractionOfDistanceThroughGlyphForPoint:]` */
     fractionOfDistanceThroughGlyphForPoint(point: Point): number;
-    /** `-[NSTextLineFragment glyphOrigin]` */
-    glyphOrigin(): Point;
     /** `-[NSTextLineFragment locationForCharacterAtIndex:]` */
     locationForCharacterAtIndex(index: number): Point;
-    /** `-[NSTextLineFragment typographicBounds]` */
-    typographicBounds(): Rect;
+    readonly attributedString: NSAttributedString;
+    readonly characterRange: Range;
+    readonly glyphOrigin: Point;
+    readonly typographicBounds: Rect;
   }
 
   /** `NSTextList` (AppKit), object, lifetime shared */
@@ -1783,14 +1601,11 @@ declare module 'svelters:appkit/appkit' {
     static newWithMarkerFormatOptions(markerFormat: string, options: number): NSTextList | null;
     /** `-[NSTextList initWithMarkerFormat:options:startingItemNumber:]` */
     static newWithMarkerFormatOptionsStartingItemNumber(markerFormat: string, options: number, startingItemNumber: number): NSTextList | null;
-    /** `-[NSTextList isOrdered]` */
-    isOrdered(): boolean;
-    /** `-[NSTextList listOptions]` */
-    listOptions(): number;
     /** `-[NSTextList markerForItemNumber:]` */
     markerForItemNumber(itemNumber: number): string;
-    /** `-[NSTextList markerFormat]` */
-    markerFormat(): string;
+    readonly listOptions: number;
+    readonly markerFormat: string;
+    readonly ordered: boolean;
     startingItemNumber: number;
   }
 
@@ -1806,20 +1621,17 @@ declare module 'svelters:appkit/appkit' {
     containsLocation(location: unknown): boolean;
     /** `-[NSTextRange containsRange:]` */
     containsRange(textRange: NSTextRange): boolean;
-    /** `-[NSTextRange endLocation]` */
-    endLocation(): unknown;
     /** `-[NSTextRange intersectsWithTextRange:]` */
     intersectsWithTextRange(textRange: NSTextRange): boolean;
-    /** `-[NSTextRange isEmpty]` */
-    isEmpty(): boolean;
     /** `-[NSTextRange isEqualToTextRange:]` */
     isEqualToTextRange(textRange: NSTextRange): boolean;
-    /** `-[NSTextRange location]` */
-    location(): unknown;
     /** `-[NSTextRange textRangeByFormingUnionWithTextRange:]` */
     textRangeByFormingUnionWithTextRange(textRange: NSTextRange): NSTextRange;
     /** `-[NSTextRange textRangeByIntersectingWithTextRange:]` */
     textRangeByIntersectingWithTextRange(textRange: NSTextRange): NSTextRange | null;
+    readonly empty: boolean;
+    readonly endLocation: unknown;
+    readonly location: unknown;
   }
 
   /** `NSTextSelection` (AppKit), object, lifetime shared */
@@ -1832,19 +1644,15 @@ declare module 'svelters:appkit/appkit' {
     static newWithRangeAffinityGranularity(range: NSTextRange, affinity: number, granularity: number): NSTextSelection | null;
     /** `-[NSTextSelection initWithRanges:affinity:granularity:]` */
     static newWithRangesAffinityGranularity(textRanges: Array<NSTextRange>, affinity: number, granularity: number): NSTextSelection | null;
-    /** `-[NSTextSelection affinity]` */
-    affinity(): number;
-    /** `-[NSTextSelection granularity]` */
-    granularity(): number;
-    /** `-[NSTextSelection isTransient]` */
-    isTransient(): boolean;
-    /** `-[NSTextSelection textRanges]` */
-    textRanges(): Array<NSTextRange>;
     /** `-[NSTextSelection textSelectionWithTextRanges:]` */
     textSelectionWithTextRanges(textRanges: Array<NSTextRange>): NSTextSelection;
+    readonly affinity: number;
     anchorPositionOffset: number;
+    readonly granularity: number;
     logical: boolean;
     secondarySelectionLocation: unknown;
+    readonly textRanges: Array<NSTextRange>;
+    readonly transient: boolean;
     typingAttributes: Record<string, unknown>;
   }
 
@@ -1862,8 +1670,6 @@ declare module 'svelters:appkit/appkit' {
     flushLayoutCache(): void;
     /** `-[NSTextSelectionNavigation resolvedInsertionLocationForTextSelection:writingDirection:]` */
     resolvedInsertionLocationForTextSelectionWritingDirection(textSelection: NSTextSelection, writingDirection: number): unknown;
-    /** `-[NSTextSelectionNavigation textSelectionDataSource]` */
-    textSelectionDataSource(): unknown;
     /** `-[NSTextSelectionNavigation textSelectionForSelectionGranularity:enclosingPoint:inContainerAtLocation:]` */
     textSelectionForSelectionGranularityEnclosingPointInContainerAtLocation(selectionGranularity: number, point: Point, location: unknown): NSTextSelection | null;
     /** `-[NSTextSelectionNavigation textSelectionForSelectionGranularity:enclosingTextSelection:]` */
@@ -1872,6 +1678,7 @@ declare module 'svelters:appkit/appkit' {
     textSelectionsInteractingAtPointInContainerAtLocationAnchorsModifiersSelectingBounds(point: Point, containerLocation: unknown, anchors: Array<NSTextSelection>, modifiers: number, selecting: boolean, bounds: Rect): Array<NSTextSelection>;
     allowsNonContiguousRanges: boolean;
     rotatesCoordinateSystemForLayoutOrientation: boolean;
+    readonly textSelectionDataSource: unknown;
   }
 
   /** `NSTextStorage` (AppKit), object, lifetime shared */
@@ -1880,31 +1687,26 @@ declare module 'svelters:appkit/appkit' {
     constructor(props?: { attributeRuns?: Array<NSTextStorage>; characters?: Array<NSTextStorage>; delegate?: unknown; font?: NSFont | null; foregroundColor?: NSColor | null; paragraphs?: Array<NSTextStorage>; textStorageObserver?: unknown; words?: Array<NSTextStorage> });
     /** `-[NSTextStorage addLayoutManager:]` */
     addLayoutManager(aLayoutManager: NSLayoutManager): void;
-    /** `-[NSTextStorage changeInLength]` */
-    changeInLength(): number;
-    /** `-[NSTextStorage editedMask]` */
-    editedMask(): number;
-    /** `-[NSTextStorage editedRange]` */
-    editedRange(): Range;
     /** `-[NSTextStorage edited:range:changeInLength:]` */
     editedRangeChangeInLength(editedMask: number, editedRange: Range, delta: number): void;
     /** `-[NSTextStorage ensureAttributesAreFixedInRange:]` */
     ensureAttributesAreFixedInRange(range: Range): void;
-    /** `-[NSTextStorage fixesAttributesLazily]` */
-    fixesAttributesLazily(): boolean;
     /** `-[NSTextStorage invalidateAttributesInRange:]` */
     invalidateAttributesInRange(range: Range): void;
-    /** `-[NSTextStorage layoutManagers]` */
-    layoutManagers(): Array<NSLayoutManager>;
     /** `-[NSTextStorage processEditing]` */
     processEditing(): void;
     /** `-[NSTextStorage removeLayoutManager:]` */
     removeLayoutManager(aLayoutManager: NSLayoutManager): void;
     attributeRuns: Array<NSTextStorage>;
+    readonly changeInLength: number;
     characters: Array<NSTextStorage>;
     delegate: unknown;
+    readonly editedMask: number;
+    readonly editedRange: Range;
+    readonly fixesAttributesLazily: boolean;
     font: NSFont | null;
     foregroundColor: NSColor | null;
+    readonly layoutManagers: Array<NSLayoutManager>;
     paragraphs: Array<NSTextStorage>;
     textStorageObserver: unknown;
     words: Array<NSTextStorage>;
@@ -1922,14 +1724,11 @@ declare module 'svelters:appkit/appkit' {
     static newWithTextAlignmentLocationOptions(alignment: number, loc: number, options: Record<string, unknown>): NSTextTab | null;
     /** `-[NSTextTab initWithType:location:]` */
     static newWithTypeLocation(type: number, loc: number): NSTextTab | null;
-    /** `-[NSTextTab alignment]` */
-    alignment(): number;
-    /** `-[NSTextTab location]` */
-    location(): number;
-    /** `-[NSTextTab options]` */
-    options(): Record<string, unknown>;
     /** `-[NSTextTab tabStopType]` */
     tabStopType(): number;
+    readonly alignment: number;
+    readonly location: number;
+    readonly options: Record<string, unknown>;
   }
 
   /** `NSTextTable` (AppKit), object, lifetime shared */
@@ -1958,16 +1757,8 @@ declare module 'svelters:appkit/appkit' {
     borderColorForEdge(edge: number): NSColor | null;
     /** `-[NSTextTableBlock boundsRectForContentRect:inRect:textContainer:characterRange:]` */
     boundsRectForContentRectInRectTextContainerCharacterRange(contentRect: Rect, rect: Rect, textContainer: NSTextContainer, charRange: Range): Rect;
-    /** `-[NSTextTableBlock columnSpan]` */
-    columnSpan(): number;
-    /** `-[NSTextTableBlock contentWidth]` */
-    contentWidth(): number;
-    /** `-[NSTextTableBlock contentWidthValueType]` */
-    contentWidthValueType(): number;
     /** `-[NSTextTableBlock rectForLayoutAtPoint:inRect:textContainer:characterRange:]` */
     rectForLayoutAtPointInRectTextContainerCharacterRange(startingPoint: Point, rect: Rect, textContainer: NSTextContainer, charRange: Range): Rect;
-    /** `-[NSTextTableBlock rowSpan]` */
-    rowSpan(): number;
     /** `-[NSTextTableBlock setBorderColor:]` */
     setBorderColor(color: NSColor | null): void;
     /** `-[NSTextTableBlock setBorderColor:forEdge:]` */
@@ -1980,12 +1771,6 @@ declare module 'svelters:appkit/appkit' {
     setWidthTypeForLayer(val: number, type: number, layer: number): void;
     /** `-[NSTextTableBlock setWidth:type:forLayer:edge:]` */
     setWidthTypeForLayerEdge(val: number, type: number, layer: number, edge: number): void;
-    /** `-[NSTextTableBlock startingColumn]` */
-    startingColumn(): number;
-    /** `-[NSTextTableBlock startingRow]` */
-    startingRow(): number;
-    /** `-[NSTextTableBlock table]` */
-    table(): NSTextTable;
     /** `-[NSTextTableBlock valueForDimension:]` */
     valueForDimension(dimension: number): number;
     /** `-[NSTextTableBlock valueTypeForDimension:]` */
@@ -1994,7 +1779,14 @@ declare module 'svelters:appkit/appkit' {
     widthForLayerEdge(layer: number, edge: number): number;
     /** `-[NSTextTableBlock widthValueTypeForLayer:edge:]` */
     widthValueTypeForLayerEdge(layer: number, edge: number): number;
+    readonly columnSpan: number;
+    readonly rowSpan: number;
+    readonly startingColumn: number;
+    readonly startingRow: number;
+    readonly table: NSTextTable;
     readonly backgroundColor: NSColor | null;
+    readonly contentWidth: number;
+    readonly contentWidthValueType: number;
     readonly verticalAlignment: number;
   }
 
@@ -2010,13 +1802,10 @@ declare module 'svelters:appkit/appkit' {
     layoutViewport(): void;
     /** `-[NSTextViewportLayoutController relocateViewportToTextLocation:]` */
     relocateViewportToTextLocation(textLocation: unknown): number;
-    /** `-[NSTextViewportLayoutController textLayoutManager]` */
-    textLayoutManager(): NSTextLayoutManager | null;
-    /** `-[NSTextViewportLayoutController viewportBounds]` */
-    viewportBounds(): Rect;
-    /** `-[NSTextViewportLayoutController viewportRange]` */
-    viewportRange(): NSTextRange | null;
     delegate: unknown;
+    readonly textLayoutManager: NSTextLayoutManager | null;
+    readonly viewportBounds: Rect;
+    readonly viewportRange: NSTextRange | null;
   }
 
   /** `NSTypesetter` (AppKit), object, lifetime shared */
@@ -2031,16 +1820,12 @@ declare module 'svelters:appkit/appkit' {
     static sharedSystemTypesetterForBehavior(behavior: number): unknown;
     /** `-[NSTypesetter actionForControlCharacterAtIndex:]` */
     actionForControlCharacterAtIndex(charIndex: number): number;
-    /** `-[NSTypesetter attributesForExtraLineFragment]` */
-    attributesForExtraLineFragment(): Record<string, unknown>;
     /** `-[NSTypesetter baselineOffsetInLayoutManager:glyphIndex:]` */
     baselineOffsetInLayoutManagerGlyphIndex(layoutMgr: NSLayoutManager, glyphIndex: number): number;
     /** `-[NSTypesetter beginLineWithGlyphAtIndex:]` */
     beginLineWithGlyphAtIndex(glyphIndex: number): void;
     /** `-[NSTypesetter beginParagraph]` */
     beginParagraph(): void;
-    /** `-[NSTypesetter currentParagraphStyle]` */
-    currentParagraphStyle(): NSParagraphStyle | null;
     /** `-[NSTypesetter endLineWithGlyphRange:]` */
     endLineWithGlyphRange(lineGlyphRange: Range): void;
     /** `-[NSTypesetter endParagraph]` */
@@ -2049,14 +1834,6 @@ declare module 'svelters:appkit/appkit' {
     layoutCharactersInRangeForLayoutManagerMaximumNumberOfLineFragments(characterRange: Range, layoutManager: NSLayoutManager, maxNumLines: number): Range;
     /** `-[NSTypesetter lineSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:]` */
     lineSpacingAfterGlyphAtIndexWithProposedLineFragmentRect(glyphIndex: number, rect: Rect): number;
-    /** `-[NSTypesetter paragraphCharacterRange]` */
-    paragraphCharacterRange(): Range;
-    /** `-[NSTypesetter paragraphGlyphRange]` */
-    paragraphGlyphRange(): Range;
-    /** `-[NSTypesetter paragraphSeparatorCharacterRange]` */
-    paragraphSeparatorCharacterRange(): Range;
-    /** `-[NSTypesetter paragraphSeparatorGlyphRange]` */
-    paragraphSeparatorGlyphRange(): Range;
     /** `-[NSTypesetter paragraphSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:]` */
     paragraphSpacingAfterGlyphAtIndexWithProposedLineFragmentRect(glyphIndex: number, rect: Rect): number;
     /** `-[NSTypesetter paragraphSpacingBeforeGlyphAtIndex:withProposedLineFragmentRect:]` */
@@ -2077,9 +1854,15 @@ declare module 'svelters:appkit/appkit' {
     substituteFontForFont(originalFont: NSFont): NSFont;
     /** `-[NSTypesetter textTabForGlyphLocation:writingDirection:maxLocation:]` */
     textTabForGlyphLocationWritingDirectionMaxLocation(glyphLocation: number, direction: number, maxLocation: number): NSTextTab | null;
+    readonly attributesForExtraLineFragment: Record<string, unknown>;
     bidiProcessingEnabled: boolean;
+    readonly currentParagraphStyle: NSParagraphStyle | null;
     hyphenationFactor: number;
     lineFragmentPadding: number;
+    readonly paragraphCharacterRange: Range;
+    readonly paragraphGlyphRange: Range;
+    readonly paragraphSeparatorCharacterRange: Range;
+    readonly paragraphSeparatorGlyphRange: Range;
     typesetterBehavior: number;
     usesFontLeading: boolean;
   }
@@ -2098,16 +1881,6 @@ declare module 'svelters:appkit/appkit' {
     URLsForApplicationsToOpenURL(url: NSURL): Array<NSURL>;
     /** `-[NSWorkspace URLsForApplicationsWithBundleIdentifier:]` */
     URLsForApplicationsWithBundleIdentifier(bundleIdentifier: string): Array<NSURL>;
-    /** `-[NSWorkspace accessibilityDisplayShouldDifferentiateWithoutColor]` */
-    accessibilityDisplayShouldDifferentiateWithoutColor(): boolean;
-    /** `-[NSWorkspace accessibilityDisplayShouldIncreaseContrast]` */
-    accessibilityDisplayShouldIncreaseContrast(): boolean;
-    /** `-[NSWorkspace accessibilityDisplayShouldInvertColors]` */
-    accessibilityDisplayShouldInvertColors(): boolean;
-    /** `-[NSWorkspace accessibilityDisplayShouldReduceMotion]` */
-    accessibilityDisplayShouldReduceMotion(): boolean;
-    /** `-[NSWorkspace accessibilityDisplayShouldReduceTransparency]` */
-    accessibilityDisplayShouldReduceTransparency(): boolean;
     /** `-[NSWorkspace activateFileViewerSelectingURLs:]` */
     activateFileViewerSelectingURLs(fileUrLs: Array<NSURL>): void;
     /** `-[NSWorkspace desktopImageOptionsForScreen:]` */
@@ -2116,12 +1889,6 @@ declare module 'svelters:appkit/appkit' {
     desktopImageURLForScreen(screen: NSScreen): NSURL | null;
     /** `-[NSWorkspace extendPowerOffBy:]` */
     extendPowerOffBy(requested: number): number;
-    /** `-[NSWorkspace fileLabelColors]` */
-    fileLabelColors(): Array<NSColor>;
-    /** `-[NSWorkspace fileLabels]` */
-    fileLabels(): Array<string>;
-    /** `-[NSWorkspace frontmostApplication]` */
-    frontmostApplication(): NSRunningApplication | null;
     /** `-[NSWorkspace hideOtherApplications]` */
     hideOtherApplications(): void;
     /** `-[NSWorkspace iconForFile:]` */
@@ -2130,12 +1897,6 @@ declare module 'svelters:appkit/appkit' {
     iconForFiles(fullPaths: Array<string>): NSImage | null;
     /** `-[NSWorkspace isFilePackageAtPath:]` */
     isFilePackageAtPath(fullPath: string): boolean;
-    /** `-[NSWorkspace isSwitchControlEnabled]` */
-    isSwitchControlEnabled(): boolean;
-    /** `-[NSWorkspace isVoiceOverEnabled]` */
-    isVoiceOverEnabled(): boolean;
-    /** `-[NSWorkspace menuBarOwningApplication]` */
-    menuBarOwningApplication(): NSRunningApplication | null;
     /** `-[NSWorkspace noteFileSystemChanged:]` */
     noteFileSystemChanged(path: string): void;
     openApplicationAtURLConfiguration(applicationUrl: NSURL, configuration: NSWorkspaceOpenConfiguration, options?: AsyncOptions): Promise<NSRunningApplication>;
@@ -2161,6 +1922,17 @@ declare module 'svelters:appkit/appkit' {
     unmountAndEjectDeviceAtPath(path: string): boolean;
     /** `-[NSWorkspace unmountAndEjectDeviceAtURL:error:]` @throws NativeError (the method's NSError) */
     unmountAndEjectDeviceAtURL(url: NSURL): void;
+    readonly accessibilityDisplayShouldDifferentiateWithoutColor: boolean;
+    readonly accessibilityDisplayShouldIncreaseContrast: boolean;
+    readonly accessibilityDisplayShouldInvertColors: boolean;
+    readonly accessibilityDisplayShouldReduceMotion: boolean;
+    readonly accessibilityDisplayShouldReduceTransparency: boolean;
+    readonly fileLabelColors: Array<NSColor>;
+    readonly fileLabels: Array<string>;
+    readonly frontmostApplication: NSRunningApplication | null;
+    readonly menuBarOwningApplication: NSRunningApplication | null;
+    readonly switchControlEnabled: boolean;
+    readonly voiceOverEnabled: boolean;
   }
 
   /** `NSWorkspaceAuthorization` (AppKit), object, lifetime shared */

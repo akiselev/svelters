@@ -87,10 +87,6 @@ export class NSTimeZone extends NativeValue {
     return call(this, 'abbreviationForDate:', [aDate]);
   }
 
-  data() {
-    return call(this, 'data', []);
-  }
-
   daylightSavingTimeOffset() {
     return call(this, 'daylightSavingTimeOffset', []);
   }
@@ -115,10 +111,6 @@ export class NSTimeZone extends NativeValue {
     return call(this, 'localizedName:locale:', [style, locale]);
   }
 
-  name() {
-    return call(this, 'name', []);
-  }
-
   nextDaylightSavingTimeTransition() {
     return call(this, 'nextDaylightSavingTimeTransition', []);
   }
@@ -133,5 +125,13 @@ export class NSTimeZone extends NativeValue {
 
   secondsFromGMTForDate(aDate) {
     return call(this, 'secondsFromGMTForDate:', [aDate]);
+  }
+
+  get data() {
+    return call(this, 'data', []);
+  }
+
+  get name() {
+    return call(this, 'name', []);
   }
 }

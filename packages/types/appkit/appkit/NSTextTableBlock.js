@@ -33,24 +33,8 @@ export class NSTextTableBlock extends NativeValue {
     return call(this, 'boundsRectForContentRect:inRect:textContainer:characterRange:', [contentRect, rect, textContainer, charRange]);
   }
 
-  columnSpan() {
-    return call(this, 'columnSpan', []);
-  }
-
-  contentWidth() {
-    return call(this, 'contentWidth', []);
-  }
-
-  contentWidthValueType() {
-    return call(this, 'contentWidthValueType', []);
-  }
-
   rectForLayoutAtPointInRectTextContainerCharacterRange(startingPoint, rect, textContainer, charRange) {
     return call(this, 'rectForLayoutAtPoint:inRect:textContainer:characterRange:', [startingPoint, rect, textContainer, charRange]);
-  }
-
-  rowSpan() {
-    return call(this, 'rowSpan', []);
   }
 
   setBorderColor(color) {
@@ -77,18 +61,6 @@ export class NSTextTableBlock extends NativeValue {
     call(this, 'setWidth:type:forLayer:edge:', [val, type, layer, edge]);
   }
 
-  startingColumn() {
-    return call(this, 'startingColumn', []);
-  }
-
-  startingRow() {
-    return call(this, 'startingRow', []);
-  }
-
-  table() {
-    return wrapObject(NSTextTable, call(this, 'table', []));
-  }
-
   valueForDimension(dimension) {
     return call(this, 'valueForDimension:', [dimension]);
   }
@@ -105,8 +77,36 @@ export class NSTextTableBlock extends NativeValue {
     return call(this, 'widthValueTypeForLayer:edge:', [layer, edge]);
   }
 
+  get columnSpan() {
+    return call(this, 'columnSpan', []);
+  }
+
+  get rowSpan() {
+    return call(this, 'rowSpan', []);
+  }
+
+  get startingColumn() {
+    return call(this, 'startingColumn', []);
+  }
+
+  get startingRow() {
+    return call(this, 'startingRow', []);
+  }
+
+  get table() {
+    return wrapObject(NSTextTable, call(this, 'table', []));
+  }
+
   get backgroundColor() {
     return wrapValue(NSColor, call(this, 'backgroundColor', []));
+  }
+
+  get contentWidth() {
+    return call(this, 'contentWidth', []);
+  }
+
+  get contentWidthValueType() {
+    return call(this, 'contentWidthValueType', []);
   }
 
   get verticalAlignment() {

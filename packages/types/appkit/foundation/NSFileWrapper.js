@@ -41,22 +41,6 @@ export class NSFileWrapper extends NativeObject {
     return call(this, 'addRegularFileWithContents:preferredFilename:', [data, fileName]);
   }
 
-  fileWrappers() {
-    return ((m) => m && Object.fromEntries(Object.entries(m).map(([k, e]) => [k, wrapObject(NSFileWrapper, e)])))(call(this, 'fileWrappers', []));
-  }
-
-  isDirectory() {
-    return call(this, 'isDirectory', []);
-  }
-
-  isRegularFile() {
-    return call(this, 'isRegularFile', []);
-  }
-
-  isSymbolicLink() {
-    return call(this, 'isSymbolicLink', []);
-  }
-
   keyForFileWrapper(child) {
     return call(this, 'keyForFileWrapper:', [child]);
   }
@@ -69,24 +53,16 @@ export class NSFileWrapper extends NativeObject {
     call(this, 'readFromURL:options:error:', [url, options]);
   }
 
-  regularFileContents() {
-    return call(this, 'regularFileContents', []);
-  }
-
   removeFileWrapper(child) {
     call(this, 'removeFileWrapper:', [child]);
   }
 
-  serializedRepresentation() {
-    return call(this, 'serializedRepresentation', []);
-  }
-
-  symbolicLinkDestinationURL() {
-    return wrapValue(NSURL, call(this, 'symbolicLinkDestinationURL', []));
-  }
-
   writeToURLOptionsOriginalContentsURL(url, options, originalContentsUrl) {
     call(this, 'writeToURL:options:originalContentsURL:error:', [url, options, originalContentsUrl]);
+  }
+
+  get directory() {
+    return getProp(this, 'directory');
   }
 
   get fileAttributes() {
@@ -95,6 +71,10 @@ export class NSFileWrapper extends NativeObject {
 
   set fileAttributes(v) {
     setProp(this, 'fileAttributes', v);
+  }
+
+  get fileWrappers() {
+    return ((m) => m && Object.fromEntries(Object.entries(m).map(([k, e]) => [k, wrapObject(NSFileWrapper, e)])))(getProp(this, 'fileWrappers'));
   }
 
   get filename() {
@@ -119,5 +99,25 @@ export class NSFileWrapper extends NativeObject {
 
   set preferredFilename(v) {
     setProp(this, 'preferredFilename', v);
+  }
+
+  get regularFile() {
+    return getProp(this, 'regularFile');
+  }
+
+  get regularFileContents() {
+    return getProp(this, 'regularFileContents');
+  }
+
+  get serializedRepresentation() {
+    return getProp(this, 'serializedRepresentation');
+  }
+
+  get symbolicLink() {
+    return getProp(this, 'symbolicLink');
+  }
+
+  get symbolicLinkDestinationURL() {
+    return wrapValue(NSURL, getProp(this, 'symbolicLinkDestinationURL'));
   }
 }

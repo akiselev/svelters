@@ -2,7 +2,7 @@
  "facts": [
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSAdaptiveImageGlyph:members",
-   "facts_digest": "4e8f2a5999a248a1",
+   "facts_digest": "c10af12698e45133",
    "kind": "NSAdaptiveImageGlyph",
    "name": "members",
    "section": "types",
@@ -22,7 +22,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:construct",
-   "facts_digest": "c5536b4496d59213",
+   "facts_digest": "ebd4297143911f34",
    "kind": "NSAttributedString",
    "name": "construct",
    "section": "types",
@@ -32,7 +32,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:props",
-   "facts_digest": "c5536b4496d59213",
+   "facts_digest": "ebd4297143911f34",
    "kind": "NSAttributedString",
    "name": "props",
    "section": "types",
@@ -42,7 +42,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:methods",
-   "facts_digest": "c5536b4496d59213",
+   "facts_digest": "ebd4297143911f34",
    "kind": "NSAttributedString",
    "name": "methods",
    "section": "types",
@@ -52,7 +52,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:statics",
-   "facts_digest": "c5536b4496d59213",
+   "facts_digest": "ebd4297143911f34",
    "kind": "NSAttributedString",
    "name": "statics",
    "section": "types",
@@ -62,7 +62,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:lifetime",
-   "facts_digest": "c5536b4496d59213",
+   "facts_digest": "ebd4297143911f34",
    "kind": "NSAttributedString",
    "name": "lifetime",
    "section": "types",
@@ -72,7 +72,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSAttributedString:members",
-   "facts_digest": "c5536b4496d59213",
+   "facts_digest": "ebd4297143911f34",
    "kind": "NSAttributedString",
    "name": "members",
    "section": "types",
@@ -92,7 +92,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBezierPath:members",
-   "facts_digest": "5bf3746736d74e3a",
+   "facts_digest": "e476938e68451d02",
    "kind": "NSBezierPath",
    "name": "members",
    "section": "types",
@@ -102,7 +102,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBitmapImageRep:members",
-   "facts_digest": "8f90b8dfe9ad6c1d",
+   "facts_digest": "dbae9bfbc37f2f59",
    "kind": "NSBitmapImageRep",
    "name": "members",
    "section": "types",
@@ -112,7 +112,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSBundle:members",
-   "facts_digest": "2318d8f495f6134d",
+   "facts_digest": "72014dba9983dea0",
    "kind": "NSBundle",
    "name": "members",
    "section": "types",
@@ -132,7 +132,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSCalendar:members",
-   "facts_digest": "13bec896c722bc2a",
+   "facts_digest": "861fb519503299af",
    "kind": "NSCalendar",
    "name": "members",
    "section": "types",
@@ -142,7 +142,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSCharacterSet:members",
-   "facts_digest": "488ea090b1cee3ae",
+   "facts_digest": "e24a0af1e85021d8",
    "kind": "NSCharacterSet",
    "name": "members",
    "section": "types",
@@ -152,7 +152,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:construct",
-   "facts_digest": "9798dce594afc7d9",
+   "facts_digest": "17d858eca503c406",
    "kind": "NSColor",
    "name": "construct",
    "section": "types",
@@ -162,7 +162,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:props",
-   "facts_digest": "9798dce594afc7d9",
+   "facts_digest": "17d858eca503c406",
    "kind": "NSColor",
    "name": "props",
    "section": "types",
@@ -172,7 +172,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:methods",
-   "facts_digest": "9798dce594afc7d9",
+   "facts_digest": "17d858eca503c406",
    "kind": "NSColor",
    "name": "methods",
    "section": "types",
@@ -182,7 +182,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:statics",
-   "facts_digest": "9798dce594afc7d9",
+   "facts_digest": "17d858eca503c406",
    "kind": "NSColor",
    "name": "statics",
    "section": "types",
@@ -192,7 +192,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:lifetime",
-   "facts_digest": "9798dce594afc7d9",
+   "facts_digest": "17d858eca503c406",
    "kind": "NSColor",
    "name": "lifetime",
    "section": "types",
@@ -202,7 +202,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColor:members",
-   "facts_digest": "9798dce594afc7d9",
+   "facts_digest": "17d858eca503c406",
    "kind": "NSColor",
    "name": "members",
    "section": "types",
@@ -212,7 +212,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColorSpace:members",
-   "facts_digest": "eebd90f8ce14b013",
+   "facts_digest": "8eed8959709d1776",
    "kind": "NSColorSpace",
    "name": "members",
    "section": "types",
@@ -222,7 +222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSDateComponents:members",
-   "facts_digest": "2d245e6b558edbfd",
+   "facts_digest": "cdb9131b82ca9032",
    "kind": "NSDateComponents",
    "name": "members",
    "section": "types",
@@ -252,7 +252,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:construct",
-   "facts_digest": "df24e813a166a6e7",
+   "facts_digest": "7027822a3b9dac66",
    "kind": "NSFileManager",
    "name": "construct",
    "section": "types",
@@ -262,7 +262,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:props",
-   "facts_digest": "df24e813a166a6e7",
+   "facts_digest": "7027822a3b9dac66",
    "kind": "NSFileManager",
    "name": "props",
    "section": "types",
@@ -272,7 +272,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:methods",
-   "facts_digest": "df24e813a166a6e7",
+   "facts_digest": "7027822a3b9dac66",
    "kind": "NSFileManager",
    "name": "methods",
    "section": "types",
@@ -282,7 +282,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:statics",
-   "facts_digest": "df24e813a166a6e7",
+   "facts_digest": "7027822a3b9dac66",
    "kind": "NSFileManager",
    "name": "statics",
    "section": "types",
@@ -292,7 +292,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:lifetime",
-   "facts_digest": "df24e813a166a6e7",
+   "facts_digest": "7027822a3b9dac66",
    "kind": "NSFileManager",
    "name": "lifetime",
    "section": "types",
@@ -302,7 +302,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:members",
-   "facts_digest": "df24e813a166a6e7",
+   "facts_digest": "7027822a3b9dac66",
    "kind": "NSFileManager",
    "name": "members",
    "section": "types",
@@ -312,7 +312,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileManager:async",
-   "facts_digest": "df24e813a166a6e7",
+   "facts_digest": "7027822a3b9dac66",
    "kind": "NSFileManager",
    "name": "async",
    "section": "types",
@@ -322,7 +322,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileProviderService:members",
-   "facts_digest": "d6a68aa3239325b4",
+   "facts_digest": "7ebf2a34cf2ec9eb",
    "kind": "NSFileProviderService",
    "name": "members",
    "section": "types",
@@ -332,7 +332,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileVersion:members",
-   "facts_digest": "b79b6cdda927d2a6",
+   "facts_digest": "7630ab0f526a6953",
    "kind": "NSFileVersion",
    "name": "members",
    "section": "types",
@@ -342,7 +342,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSFileWrapper:members",
-   "facts_digest": "8b1240dc01a6269e",
+   "facts_digest": "4ec09474d39b4c88",
    "kind": "NSFileWrapper",
    "name": "members",
    "section": "types",
@@ -352,7 +352,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:construct",
-   "facts_digest": "d0f7840dd0332bb5",
+   "facts_digest": "d90907b592ba29b0",
    "kind": "NSFont",
    "name": "construct",
    "section": "types",
@@ -362,7 +362,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:props",
-   "facts_digest": "d0f7840dd0332bb5",
+   "facts_digest": "d90907b592ba29b0",
    "kind": "NSFont",
    "name": "props",
    "section": "types",
@@ -372,7 +372,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:methods",
-   "facts_digest": "d0f7840dd0332bb5",
+   "facts_digest": "d90907b592ba29b0",
    "kind": "NSFont",
    "name": "methods",
    "section": "types",
@@ -382,7 +382,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:statics",
-   "facts_digest": "d0f7840dd0332bb5",
+   "facts_digest": "d90907b592ba29b0",
    "kind": "NSFont",
    "name": "statics",
    "section": "types",
@@ -392,7 +392,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:lifetime",
-   "facts_digest": "d0f7840dd0332bb5",
+   "facts_digest": "d90907b592ba29b0",
    "kind": "NSFont",
    "name": "lifetime",
    "section": "types",
@@ -402,7 +402,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSFont:members",
-   "facts_digest": "d0f7840dd0332bb5",
+   "facts_digest": "d90907b592ba29b0",
    "kind": "NSFont",
    "name": "members",
    "section": "types",
@@ -412,7 +412,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSFontDescriptor:members",
-   "facts_digest": "2f63a268358d741c",
+   "facts_digest": "fd4eafcfb1018951",
    "kind": "NSFontDescriptor",
    "name": "members",
    "section": "types",
@@ -442,7 +442,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSGraphicsContext:members",
-   "facts_digest": "ecd824dadfdcc00e",
+   "facts_digest": "8fa440658b3ebeb2",
    "kind": "NSGraphicsContext",
    "name": "members",
    "section": "types",
@@ -452,7 +452,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:construct",
-   "facts_digest": "08ca43535065afbe",
+   "facts_digest": "c208027303374e3a",
    "kind": "NSImage",
    "name": "construct",
    "section": "types",
@@ -462,7 +462,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:props",
-   "facts_digest": "08ca43535065afbe",
+   "facts_digest": "c208027303374e3a",
    "kind": "NSImage",
    "name": "props",
    "section": "types",
@@ -472,7 +472,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:methods",
-   "facts_digest": "08ca43535065afbe",
+   "facts_digest": "c208027303374e3a",
    "kind": "NSImage",
    "name": "methods",
    "section": "types",
@@ -482,7 +482,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:statics",
-   "facts_digest": "08ca43535065afbe",
+   "facts_digest": "c208027303374e3a",
    "kind": "NSImage",
    "name": "statics",
    "section": "types",
@@ -492,7 +492,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:lifetime",
-   "facts_digest": "08ca43535065afbe",
+   "facts_digest": "c208027303374e3a",
    "kind": "NSImage",
    "name": "lifetime",
    "section": "types",
@@ -502,7 +502,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSImage:members",
-   "facts_digest": "08ca43535065afbe",
+   "facts_digest": "c208027303374e3a",
    "kind": "NSImage",
    "name": "members",
    "section": "types",
@@ -532,7 +532,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:construct",
-   "facts_digest": "817bce3fdf5b3017",
+   "facts_digest": "cdc019c04edd50a2",
    "kind": "NSItemProvider",
    "name": "construct",
    "section": "types",
@@ -542,7 +542,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:props",
-   "facts_digest": "817bce3fdf5b3017",
+   "facts_digest": "cdc019c04edd50a2",
    "kind": "NSItemProvider",
    "name": "props",
    "section": "types",
@@ -552,7 +552,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:methods",
-   "facts_digest": "817bce3fdf5b3017",
+   "facts_digest": "cdc019c04edd50a2",
    "kind": "NSItemProvider",
    "name": "methods",
    "section": "types",
@@ -562,7 +562,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:statics",
-   "facts_digest": "817bce3fdf5b3017",
+   "facts_digest": "cdc019c04edd50a2",
    "kind": "NSItemProvider",
    "name": "statics",
    "section": "types",
@@ -572,7 +572,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:lifetime",
-   "facts_digest": "817bce3fdf5b3017",
+   "facts_digest": "cdc019c04edd50a2",
    "kind": "NSItemProvider",
    "name": "lifetime",
    "section": "types",
@@ -582,7 +582,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:members",
-   "facts_digest": "817bce3fdf5b3017",
+   "facts_digest": "cdc019c04edd50a2",
    "kind": "NSItemProvider",
    "name": "members",
    "section": "types",
@@ -592,7 +592,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSItemProvider:async",
-   "facts_digest": "817bce3fdf5b3017",
+   "facts_digest": "cdc019c04edd50a2",
    "kind": "NSItemProvider",
    "name": "async",
    "section": "types",
@@ -602,7 +602,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSLayoutManager:members",
-   "facts_digest": "e93d8a2c5c15550f",
+   "facts_digest": "1f3c2c088b8213df",
    "kind": "NSLayoutManager",
    "name": "members",
    "section": "types",
@@ -652,7 +652,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSParagraphStyle:members",
-   "facts_digest": "b993680806e49f43",
+   "facts_digest": "35bde443aeab6b74",
    "kind": "NSParagraphStyle",
    "name": "members",
    "section": "types",
@@ -662,7 +662,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:construct",
-   "facts_digest": "e924f0a9304617f9",
+   "facts_digest": "c2449e07aad6f65b",
    "kind": "NSPasteboard",
    "name": "construct",
    "section": "types",
@@ -672,7 +672,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:props",
-   "facts_digest": "e924f0a9304617f9",
+   "facts_digest": "c2449e07aad6f65b",
    "kind": "NSPasteboard",
    "name": "props",
    "section": "types",
@@ -682,7 +682,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:methods",
-   "facts_digest": "e924f0a9304617f9",
+   "facts_digest": "c2449e07aad6f65b",
    "kind": "NSPasteboard",
    "name": "methods",
    "section": "types",
@@ -692,7 +692,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:statics",
-   "facts_digest": "e924f0a9304617f9",
+   "facts_digest": "c2449e07aad6f65b",
    "kind": "NSPasteboard",
    "name": "statics",
    "section": "types",
@@ -702,7 +702,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:lifetime",
-   "facts_digest": "e924f0a9304617f9",
+   "facts_digest": "c2449e07aad6f65b",
    "kind": "NSPasteboard",
    "name": "lifetime",
    "section": "types",
@@ -712,7 +712,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:members",
-   "facts_digest": "e924f0a9304617f9",
+   "facts_digest": "c2449e07aad6f65b",
    "kind": "NSPasteboard",
    "name": "members",
    "section": "types",
@@ -722,7 +722,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboard:async",
-   "facts_digest": "e924f0a9304617f9",
+   "facts_digest": "c2449e07aad6f65b",
    "kind": "NSPasteboard",
    "name": "async",
    "section": "types",
@@ -732,7 +732,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPasteboardItem:members",
-   "facts_digest": "d80b097f305a4cbd",
+   "facts_digest": "7f5b38c8159cc006",
    "kind": "NSPasteboardItem",
    "name": "members",
    "section": "types",
@@ -752,7 +752,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSProcessInfo:members",
-   "facts_digest": "c25eb3c6a44ce173",
+   "facts_digest": "42d141d43e7a06a3",
    "kind": "NSProcessInfo",
    "name": "members",
    "section": "types",
@@ -762,7 +762,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSProgress:members",
-   "facts_digest": "e3db0d33a5ac3dc4",
+   "facts_digest": "104996a75445f807",
    "kind": "NSProgress",
    "name": "members",
    "section": "types",
@@ -772,7 +772,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSRunningApplication:members",
-   "facts_digest": "45da9e781b7794ca",
+   "facts_digest": "7435c9d370fee3ff",
    "kind": "NSRunningApplication",
    "name": "members",
    "section": "types",
@@ -782,7 +782,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSScreen:members",
-   "facts_digest": "e053da518186ee70",
+   "facts_digest": "615844377286df90",
    "kind": "NSScreen",
    "name": "members",
    "section": "types",
@@ -802,7 +802,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSound:members",
-   "facts_digest": "149bf49f0297967d",
+   "facts_digest": "a335cb512f624a46",
    "kind": "NSSound",
    "name": "members",
    "section": "types",
@@ -812,7 +812,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStringDrawingContext:members",
-   "facts_digest": "141672ff67894374",
+   "facts_digest": "a164720e0d3f6375",
    "kind": "NSStringDrawingContext",
    "name": "members",
    "section": "types",
@@ -822,7 +822,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextAttachment:members",
-   "facts_digest": "1565f242d493b956",
+   "facts_digest": "1111be458426159c",
    "kind": "NSTextAttachment",
    "name": "members",
    "section": "types",
@@ -832,7 +832,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextAttachmentViewProvider:members",
-   "facts_digest": "0f23a3a09150b12a",
+   "facts_digest": "c830d2a3ea6f3b12",
    "kind": "NSTextAttachmentViewProvider",
    "name": "members",
    "section": "types",
@@ -842,7 +842,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextBlock:members",
-   "facts_digest": "1839c2c783954a67",
+   "facts_digest": "53242d6eaaec9611",
    "kind": "NSTextBlock",
    "name": "members",
    "section": "types",
@@ -852,7 +852,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextContainer:members",
-   "facts_digest": "f5aeb38c280bab6d",
+   "facts_digest": "e13bf8507cdc865f",
    "kind": "NSTextContainer",
    "name": "members",
    "section": "types",
@@ -862,7 +862,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextContentManager:members",
-   "facts_digest": "5fdc080f60478614",
+   "facts_digest": "36e701465ef8e2b0",
    "kind": "NSTextContentManager",
    "name": "members",
    "section": "types",
@@ -872,7 +872,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextElement:members",
-   "facts_digest": "58fdea1b6b7ac3da",
+   "facts_digest": "ac8bccecf3a16959",
    "kind": "NSTextElement",
    "name": "members",
    "section": "types",
@@ -882,7 +882,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextLayoutFragment:members",
-   "facts_digest": "d08b4c8b4c0a808a",
+   "facts_digest": "920322b3123981f7",
    "kind": "NSTextLayoutFragment",
    "name": "members",
    "section": "types",
@@ -892,7 +892,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextLayoutManager:members",
-   "facts_digest": "6f0b7583fd897a86",
+   "facts_digest": "d9bc6d26d46a493a",
    "kind": "NSTextLayoutManager",
    "name": "members",
    "section": "types",
@@ -902,7 +902,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextLineFragment:members",
-   "facts_digest": "23140bcb570b52f5",
+   "facts_digest": "36803bafbea2d15f",
    "kind": "NSTextLineFragment",
    "name": "members",
    "section": "types",
@@ -912,7 +912,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextList:members",
-   "facts_digest": "966531d99a932b7f",
+   "facts_digest": "11a020b7efa96c32",
    "kind": "NSTextList",
    "name": "members",
    "section": "types",
@@ -922,7 +922,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextRange:members",
-   "facts_digest": "19863a7e4faaff3f",
+   "facts_digest": "0aab8e34e36e36eb",
    "kind": "NSTextRange",
    "name": "members",
    "section": "types",
@@ -932,7 +932,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextSelection:members",
-   "facts_digest": "1d7cc7bb4e6abeee",
+   "facts_digest": "6f95e2223d922544",
    "kind": "NSTextSelection",
    "name": "members",
    "section": "types",
@@ -942,7 +942,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextSelectionNavigation:members",
-   "facts_digest": "5eef23fbaa82782b",
+   "facts_digest": "2ac717991baa94ba",
    "kind": "NSTextSelectionNavigation",
    "name": "members",
    "section": "types",
@@ -952,7 +952,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextStorage:members",
-   "facts_digest": "c2f807847a7ba962",
+   "facts_digest": "f52a4d5dd9d33d62",
    "kind": "NSTextStorage",
    "name": "members",
    "section": "types",
@@ -962,7 +962,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextTab:members",
-   "facts_digest": "74c09322e7b73570",
+   "facts_digest": "38599a6d1a33fa63",
    "kind": "NSTextTab",
    "name": "members",
    "section": "types",
@@ -982,7 +982,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextTableBlock:members",
-   "facts_digest": "e1e8e4ddec9352bc",
+   "facts_digest": "a8803cb4499cc966",
    "kind": "NSTextTableBlock",
    "name": "members",
    "section": "types",
@@ -992,7 +992,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextViewportLayoutController:members",
-   "facts_digest": "65a19a9c0f219bd3",
+   "facts_digest": "3205eb0d72a5d2e2",
    "kind": "NSTextViewportLayoutController",
    "name": "members",
    "section": "types",
@@ -1002,7 +1002,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSTimeZone:members",
-   "facts_digest": "baead3f0947680bc",
+   "facts_digest": "da4c47d65b75f44a",
    "kind": "NSTimeZone",
    "name": "members",
    "section": "types",
@@ -1012,7 +1012,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTypesetter:members",
-   "facts_digest": "5eae6f6944874f0a",
+   "facts_digest": "e02bee14c216f02a",
    "kind": "NSTypesetter",
    "name": "members",
    "section": "types",
@@ -1022,7 +1022,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:construct",
-   "facts_digest": "fe50b7f4cca35212",
+   "facts_digest": "03f876db533b33a4",
    "kind": "NSURL",
    "name": "construct",
    "section": "types",
@@ -1032,7 +1032,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:props",
-   "facts_digest": "fe50b7f4cca35212",
+   "facts_digest": "03f876db533b33a4",
    "kind": "NSURL",
    "name": "props",
    "section": "types",
@@ -1042,7 +1042,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:methods",
-   "facts_digest": "fe50b7f4cca35212",
+   "facts_digest": "03f876db533b33a4",
    "kind": "NSURL",
    "name": "methods",
    "section": "types",
@@ -1052,7 +1052,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:statics",
-   "facts_digest": "fe50b7f4cca35212",
+   "facts_digest": "03f876db533b33a4",
    "kind": "NSURL",
    "name": "statics",
    "section": "types",
@@ -1062,7 +1062,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:lifetime",
-   "facts_digest": "fe50b7f4cca35212",
+   "facts_digest": "03f876db533b33a4",
    "kind": "NSURL",
    "name": "lifetime",
    "section": "types",
@@ -1072,7 +1072,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURL:members",
-   "facts_digest": "fe50b7f4cca35212",
+   "facts_digest": "03f876db533b33a4",
    "kind": "NSURL",
    "name": "members",
    "section": "types",
@@ -1082,7 +1082,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURLComponents:members",
-   "facts_digest": "e3025890fa186ddb",
+   "facts_digest": "c2ddc74e64317ca8",
    "kind": "NSURLComponents",
    "name": "members",
    "section": "types",
@@ -1092,7 +1092,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSURLQueryItem:members",
-   "facts_digest": "4624b0e712a73e91",
+   "facts_digest": "dad9db9ddb26e859",
    "kind": "NSURLQueryItem",
    "name": "members",
    "section": "types",
@@ -1102,7 +1102,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUUID:members",
-   "facts_digest": "8af49c1651d0c9fb",
+   "facts_digest": "5763563652f3014d",
    "kind": "NSUUID",
    "name": "members",
    "section": "types",
@@ -1112,7 +1112,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:construct",
-   "facts_digest": "dc243509030735a5",
+   "facts_digest": "9ed79c5d029fa070",
    "kind": "NSUndoManager",
    "name": "construct",
    "section": "types",
@@ -1122,7 +1122,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:props",
-   "facts_digest": "dc243509030735a5",
+   "facts_digest": "9ed79c5d029fa070",
    "kind": "NSUndoManager",
    "name": "props",
    "section": "types",
@@ -1132,7 +1132,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:methods",
-   "facts_digest": "dc243509030735a5",
+   "facts_digest": "9ed79c5d029fa070",
    "kind": "NSUndoManager",
    "name": "methods",
    "section": "types",
@@ -1142,7 +1142,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:statics",
-   "facts_digest": "dc243509030735a5",
+   "facts_digest": "9ed79c5d029fa070",
    "kind": "NSUndoManager",
    "name": "statics",
    "section": "types",
@@ -1152,7 +1152,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:lifetime",
-   "facts_digest": "dc243509030735a5",
+   "facts_digest": "9ed79c5d029fa070",
    "kind": "NSUndoManager",
    "name": "lifetime",
    "section": "types",
@@ -1162,7 +1162,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUndoManager:members",
-   "facts_digest": "dc243509030735a5",
+   "facts_digest": "9ed79c5d029fa070",
    "kind": "NSUndoManager",
    "name": "members",
    "section": "types",
@@ -1172,7 +1172,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:construct",
-   "facts_digest": "227f199382bb90c1",
+   "facts_digest": "d2bf5e147466a015",
    "kind": "NSUserDefaults",
    "name": "construct",
    "section": "types",
@@ -1182,7 +1182,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:props",
-   "facts_digest": "227f199382bb90c1",
+   "facts_digest": "d2bf5e147466a015",
    "kind": "NSUserDefaults",
    "name": "props",
    "section": "types",
@@ -1192,7 +1192,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:methods",
-   "facts_digest": "227f199382bb90c1",
+   "facts_digest": "d2bf5e147466a015",
    "kind": "NSUserDefaults",
    "name": "methods",
    "section": "types",
@@ -1202,7 +1202,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:statics",
-   "facts_digest": "227f199382bb90c1",
+   "facts_digest": "d2bf5e147466a015",
    "kind": "NSUserDefaults",
    "name": "statics",
    "section": "types",
@@ -1212,7 +1212,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:lifetime",
-   "facts_digest": "227f199382bb90c1",
+   "facts_digest": "d2bf5e147466a015",
    "kind": "NSUserDefaults",
    "name": "lifetime",
    "section": "types",
@@ -1222,7 +1222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:Foundation:NSUserDefaults:members",
-   "facts_digest": "227f199382bb90c1",
+   "facts_digest": "d2bf5e147466a015",
    "kind": "NSUserDefaults",
    "name": "members",
    "section": "types",
@@ -1232,7 +1232,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWorkspace:members",
-   "facts_digest": "eb8f6e392baa7363",
+   "facts_digest": "58b996449f9328f5",
    "kind": "NSWorkspace",
    "name": "members",
    "section": "types",

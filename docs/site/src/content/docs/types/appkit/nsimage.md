@@ -40,7 +40,6 @@ Facts: `metadata/appkit/types/AppKit.json`; ledger fact ids `svelters-api:v1:typ
 
 ## Methods
 
-- `TIFFRepresentation()`: `-TIFFRepresentation`
 - `TIFFRepresentationUsingCompressionFactor(comp, factor)`: `-TIFFRepresentationUsingCompression:factor:`
 - `addRepresentation(imageRep)`: `-addRepresentation:`
 - `addRepresentations(imageReps)`: `-addRepresentations:`
@@ -53,32 +52,33 @@ Facts: `metadata/appkit/types/AppKit.json`; ledger fact ids `svelters-api:v1:typ
 - `hitTestRectWithImageDestinationRectContextHintsFlipped(testRectDestSpace, imageRectDestSpace, context, hints, flipped)`: `-hitTestRect:withImageDestinationRect:context:hints:flipped:`
 - `imageWithLocale(locale)`: `-imageWithLocale:`
 - `imageWithSymbolConfiguration(configuration)`: `-imageWithSymbolConfiguration:`
-- `isValid()`: `-isValid`
 - `layerContentsForContentsScale(layerContentsScale)`: `-layerContentsForContentsScale:`
-- `locale()`: `-locale`
 - `name()`: `-name`
 - `recache()`: `-recache`
 - `recommendedLayerContentsScale(preferredContentsScale)`: `-recommendedLayerContentsScale:`
 - `removeRepresentation(imageRep)`: `-removeRepresentation:`
-- `representations()`: `-representations`
 - `setName(string)`: `-setName:`
-- `symbolConfiguration()`: `-symbolConfiguration`
 
 ## Properties
 
+- `TIFFRepresentation` (read-only): KVC `TIFFRepresentation` (probe)
 - `accessibilityDescription`: KVC `accessibilityDescription` (objc2)
 - `alignmentRect`: KVC `alignmentRect` (objc2)
 - `backgroundColor`: KVC `backgroundColor` (objc2)
 - `cacheMode`: KVC `cacheMode` (objc2)
 - `capInsets`: KVC `capInsets` (objc2)
 - `delegate`: KVC `delegate` (objc2)
+- `locale` (read-only): KVC `locale` (probe)
 - `matchesOnMultipleResolution`: KVC `matchesOnMultipleResolution` (objc2)
 - `matchesOnlyOnBestFittingAxis`: KVC `matchesOnlyOnBestFittingAxis` (objc2)
 - `prefersColorMatch`: KVC `prefersColorMatch` (objc2)
+- `representations` (read-only): KVC `representations` (probe)
 - `resizingMode`: KVC `resizingMode` (objc2)
 - `size`: KVC `size` (objc2)
+- `symbolConfiguration` (read-only): KVC `symbolConfiguration` (probe)
 - `template`: KVC `template` (objc2)
 - `usesEPSOnResolutionMismatch`: KVC `usesEPSOnResolutionMismatch` (objc2)
+- `valid` (read-only): KVC `valid` (probe)
 
 ## Not bound
 

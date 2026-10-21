@@ -66,7 +66,10 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 - `rangeOfTextTableAtIndex(table, location)`: `-rangeOfTextTable:atIndex:`
 - `rulerAttributesInRange(range)`: `-rulerAttributesInRange:`
 - `size()`: `-size`
-- `string()`: `-string`
+
+## Properties
+
+- `string` (read-only): KVC `string` (probe)
 
 ## Not bound
 

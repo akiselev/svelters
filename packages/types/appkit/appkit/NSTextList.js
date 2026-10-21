@@ -23,20 +23,20 @@ export class NSTextList extends NativeObject {
     return wrapObject(NSTextList, callStatic('NSTextList', 'initWithMarkerFormat:options:startingItemNumber:', [markerFormat, options, startingItemNumber]));
   }
 
-  isOrdered() {
-    return call(this, 'isOrdered', []);
-  }
-
-  listOptions() {
-    return call(this, 'listOptions', []);
-  }
-
   markerForItemNumber(itemNumber) {
     return call(this, 'markerForItemNumber:', [itemNumber]);
   }
 
-  markerFormat() {
-    return call(this, 'markerFormat', []);
+  get listOptions() {
+    return getProp(this, 'listOptions');
+  }
+
+  get markerFormat() {
+    return getProp(this, 'markerFormat');
+  }
+
+  get ordered() {
+    return getProp(this, 'ordered');
   }
 
   get startingItemNumber() {

@@ -29,23 +29,23 @@ export class NSTextViewportLayoutController extends NativeObject {
     return call(this, 'relocateViewportToTextLocation:', [textLocation]);
   }
 
-  textLayoutManager() {
-    return wrapObject(NSTextLayoutManager, call(this, 'textLayoutManager', []));
-  }
-
-  viewportBounds() {
-    return call(this, 'viewportBounds', []);
-  }
-
-  viewportRange() {
-    return wrapObject(NSTextRange, call(this, 'viewportRange', []));
-  }
-
   get delegate() {
     return getProp(this, 'delegate');
   }
 
   set delegate(v) {
     setProp(this, 'delegate', v);
+  }
+
+  get textLayoutManager() {
+    return wrapObject(NSTextLayoutManager, getProp(this, 'textLayoutManager'));
+  }
+
+  get viewportBounds() {
+    return getProp(this, 'viewportBounds');
+  }
+
+  get viewportRange() {
+    return wrapObject(NSTextRange, getProp(this, 'viewportRange'));
   }
 }

@@ -39,20 +39,8 @@ export class NSGraphicsContext extends NativeObject {
     callStatic('NSGraphicsContext', 'setCurrentContext:', [currentContext]);
   }
 
-  attributes() {
-    return call(this, 'attributes', []);
-  }
-
   flushGraphics() {
     call(this, 'flushGraphics', []);
-  }
-
-  isDrawingToScreen() {
-    return call(this, 'isDrawingToScreen', []);
-  }
-
-  isFlipped() {
-    return call(this, 'isFlipped', []);
   }
 
   restoreGraphicsState() {
@@ -61,6 +49,10 @@ export class NSGraphicsContext extends NativeObject {
 
   saveGraphicsState() {
     call(this, 'saveGraphicsState', []);
+  }
+
+  get attributes() {
+    return getProp(this, 'attributes');
   }
 
   get colorRenderingIntent() {
@@ -77,6 +69,14 @@ export class NSGraphicsContext extends NativeObject {
 
   set compositingOperation(v) {
     setProp(this, 'compositingOperation', v);
+  }
+
+  get drawingToScreen() {
+    return getProp(this, 'drawingToScreen');
+  }
+
+  get flipped() {
+    return getProp(this, 'flipped');
   }
 
   get imageInterpolation() {

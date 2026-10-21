@@ -132,34 +132,6 @@ export class NSURL extends NativeValue {
     return wrapValue(NSURL, call(this, 'URLByAppendingPathExtension:', [pathExtension]));
   }
 
-  URLByDeletingLastPathComponent() {
-    return wrapValue(NSURL, call(this, 'URLByDeletingLastPathComponent', []));
-  }
-
-  URLByDeletingPathExtension() {
-    return wrapValue(NSURL, call(this, 'URLByDeletingPathExtension', []));
-  }
-
-  URLByResolvingSymlinksInPath() {
-    return wrapValue(NSURL, call(this, 'URLByResolvingSymlinksInPath', []));
-  }
-
-  URLByStandardizingPath() {
-    return wrapValue(NSURL, call(this, 'URLByStandardizingPath', []));
-  }
-
-  absoluteString() {
-    return call(this, 'absoluteString', []);
-  }
-
-  absoluteURL() {
-    return wrapValue(NSURL, call(this, 'absoluteURL', []));
-  }
-
-  baseURL() {
-    return wrapValue(NSURL, call(this, 'baseURL', []));
-  }
-
   bookmarkDataWithOptionsIncludingResourceValuesForKeysRelativeToURL(options, keys, relativeUrl) {
     return call(this, 'bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:', [options, keys, relativeUrl]);
   }
@@ -172,92 +144,20 @@ export class NSURL extends NativeValue {
     call(this, 'checkResourceIsReachableAndReturnError:', []);
   }
 
-  dataRepresentation() {
-    return call(this, 'dataRepresentation', []);
-  }
-
-  filePathURL() {
-    return wrapValue(NSURL, call(this, 'filePathURL', []));
-  }
-
   fileReferenceURL() {
     return wrapValue(NSURL, call(this, 'fileReferenceURL', []));
-  }
-
-  fragment() {
-    return call(this, 'fragment', []);
-  }
-
-  hasDirectoryPath() {
-    return call(this, 'hasDirectoryPath', []);
-  }
-
-  host() {
-    return call(this, 'host', []);
   }
 
   isFileReferenceURL() {
     return call(this, 'isFileReferenceURL', []);
   }
 
-  isFileURL() {
-    return call(this, 'isFileURL', []);
-  }
-
-  lastPathComponent() {
-    return call(this, 'lastPathComponent', []);
-  }
-
-  password() {
-    return call(this, 'password', []);
-  }
-
-  path() {
-    return call(this, 'path', []);
-  }
-
-  pathComponents() {
-    return call(this, 'pathComponents', []);
-  }
-
-  pathExtension() {
-    return call(this, 'pathExtension', []);
-  }
-
-  port() {
-    return call(this, 'port', []);
-  }
-
   promisedItemResourceValuesForKeys(keys) {
     return call(this, 'promisedItemResourceValuesForKeys:error:', [keys]);
   }
 
-  query() {
-    return call(this, 'query', []);
-  }
-
-  relativePath() {
-    return call(this, 'relativePath', []);
-  }
-
-  relativeString() {
-    return call(this, 'relativeString', []);
-  }
-
-  resourceSpecifier() {
-    return call(this, 'resourceSpecifier', []);
-  }
-
   resourceValuesForKeys(keys) {
     return call(this, 'resourceValuesForKeys:error:', [keys]);
-  }
-
-  scheme() {
-    return call(this, 'scheme', []);
-  }
-
-  standardizedURL() {
-    return wrapValue(NSURL, call(this, 'standardizedURL', []));
   }
 
   startAccessingSecurityScopedResource() {
@@ -268,11 +168,111 @@ export class NSURL extends NativeValue {
     call(this, 'stopAccessingSecurityScopedResource', []);
   }
 
-  user() {
-    return call(this, 'user', []);
-  }
-
   writeToPasteboard(pasteBoard) {
     call(this, 'writeToPasteboard:', [pasteBoard]);
+  }
+
+  get URLByDeletingLastPathComponent() {
+    return wrapValue(NSURL, call(this, 'URLByDeletingLastPathComponent', []));
+  }
+
+  get URLByDeletingPathExtension() {
+    return wrapValue(NSURL, call(this, 'URLByDeletingPathExtension', []));
+  }
+
+  get URLByResolvingSymlinksInPath() {
+    return wrapValue(NSURL, call(this, 'URLByResolvingSymlinksInPath', []));
+  }
+
+  get URLByStandardizingPath() {
+    return wrapValue(NSURL, call(this, 'URLByStandardizingPath', []));
+  }
+
+  get absoluteString() {
+    return call(this, 'absoluteString', []);
+  }
+
+  get absoluteURL() {
+    return wrapValue(NSURL, call(this, 'absoluteURL', []));
+  }
+
+  get baseURL() {
+    return wrapValue(NSURL, call(this, 'baseURL', []));
+  }
+
+  get dataRepresentation() {
+    return call(this, 'dataRepresentation', []);
+  }
+
+  get filePathURL() {
+    return wrapValue(NSURL, call(this, 'filePathURL', []));
+  }
+
+  get fileURL() {
+    return call(this, 'isFileURL', []);
+  }
+
+  get fragment() {
+    return call(this, 'fragment', []);
+  }
+
+  get hasDirectoryPath() {
+    return call(this, 'hasDirectoryPath', []);
+  }
+
+  get host() {
+    return call(this, 'host', []);
+  }
+
+  get lastPathComponent() {
+    return call(this, 'lastPathComponent', []);
+  }
+
+  get password() {
+    return call(this, 'password', []);
+  }
+
+  get path() {
+    return call(this, 'path', []);
+  }
+
+  get pathComponents() {
+    return call(this, 'pathComponents', []);
+  }
+
+  get pathExtension() {
+    return call(this, 'pathExtension', []);
+  }
+
+  get port() {
+    return call(this, 'port', []);
+  }
+
+  get query() {
+    return call(this, 'query', []);
+  }
+
+  get relativePath() {
+    return call(this, 'relativePath', []);
+  }
+
+  get relativeString() {
+    return call(this, 'relativeString', []);
+  }
+
+  get resourceSpecifier() {
+    return call(this, 'resourceSpecifier', []);
+  }
+
+  get scheme() {
+    return call(this, 'scheme', []);
+  }
+
+  get standardizedURL() {
+    return wrapValue(NSURL, call(this, 'standardizedURL', []));
+  }
+
+  get user() {
+    return call(this, 'user', []);
   }
 }

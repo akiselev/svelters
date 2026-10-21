@@ -27,11 +27,11 @@ export class NSURLQueryItem extends NativeValue {
     return wrapValue(NSURLQueryItem, callStatic('NSURLQueryItem', 'queryItemWithName:value:', [name, value]));
   }
 
-  name() {
+  get name() {
     return call(this, 'name', []);
   }
 
-  value() {
+  get value() {
     return call(this, 'value', []);
   }
 }

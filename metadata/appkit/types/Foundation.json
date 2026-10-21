@@ -461,7 +461,7 @@
  "js_module": "svelters:appkit/foundation",
  "module": "Foundation",
  "schema": "svelters-types/v1",
- "source": "objc2 0.3.2 (objc2-foundation, objc2-app-kit)",
+ "source": "objc2 0.3.2 (objc2-foundation, objc2-app-kit) + macOS CI probe",
  "toolkit": "appkit",
  "types": {
   "NSAffineTransform": {
@@ -1519,16 +1519,6 @@
      "static": false
     },
     {
-     "family": "none",
-     "js": "string",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "string",
-     "static": false
-    },
-    {
      "category": "NSAttributedStringAdaptiveImageGlyphConveniences",
      "family": "none",
      "framework": "AppKit",
@@ -1825,7 +1815,19 @@
    ],
    "name": "NSAttributedString",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "string",
+     "key": "string",
+     "name": "string",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    }
+   ],
    "root": true,
    "send": false,
    "string_ctor": "initWithString:",
@@ -2156,73 +2158,6 @@
     },
     {
      "family": "none",
-     "js": "appStoreReceiptURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "appStoreReceiptURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "builtInPlugInsPath",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "builtInPlugInsPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "builtInPlugInsURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "builtInPlugInsURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bundleIdentifier",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "bundleIdentifier",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bundlePath",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "bundlePath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bundleURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSURL"
-     },
-     "sel": "bundleURL",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "classNamed",
      "params": [
       {
@@ -2261,54 +2196,6 @@
      "static": false
     },
     {
-     "family": "none",
-     "js": "developmentLocalization",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "developmentLocalization",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "executableArchitectures",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "nullable": true,
-      "of": {
-       "k": "number"
-      }
-     },
-     "sel": "executableArchitectures",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "executablePath",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "executablePath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "executableURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "executableURL",
-     "static": false
-    },
-    {
      "category": "NSBundleImageExtension",
      "family": "none",
      "framework": "AppKit",
@@ -2331,30 +2218,6 @@
     },
     {
      "family": "none",
-     "js": "infoDictionary",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "nullable": true,
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "infoDictionary",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isLoaded",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isLoaded",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "loadAndReturnError",
      "params": [],
      "ret": {
@@ -2363,33 +2226,6 @@
      "sel": "loadAndReturnError:",
      "static": false,
      "throws": true
-    },
-    {
-     "family": "none",
-     "js": "localizations",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "localizations",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedInfoDictionary",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "nullable": true,
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "localizedInfoDictionary",
-     "static": false
     },
     {
      "family": "none",
@@ -2702,19 +2538,6 @@
     },
     {
      "family": "none",
-     "js": "preferredLocalizations",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "preferredLocalizations",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "preflightAndReturnError",
      "params": [],
      "ret": {
@@ -2743,63 +2566,6 @@
     },
     {
      "family": "none",
-     "js": "principalClass",
-     "params": [],
-     "ret": {
-      "k": "type",
-      "nullable": true
-     },
-     "sel": "principalClass",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "privateFrameworksPath",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "privateFrameworksPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "privateFrameworksURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "privateFrameworksURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "resourcePath",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "resourcePath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "resourceURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "resourceURL",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "setPreservationPriorityForTags",
      "params": [
       {
@@ -2822,52 +2588,6 @@
       "k": "void"
      },
      "sel": "setPreservationPriority:forTags:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "sharedFrameworksPath",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "sharedFrameworksPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "sharedFrameworksURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "sharedFrameworksURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "sharedSupportPath",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "sharedSupportPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "sharedSupportURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "sharedSupportURL",
      "static": false
     },
     {
@@ -3232,7 +2952,314 @@
    ],
    "name": "NSBundle",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "appStoreReceiptURL",
+     "key": "appStoreReceiptURL",
+     "name": "appStoreReceiptURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "builtInPlugInsPath",
+     "key": "builtInPlugInsPath",
+     "name": "builtInPlugInsPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "builtInPlugInsURL",
+     "key": "builtInPlugInsURL",
+     "name": "builtInPlugInsURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "bundleIdentifier",
+     "key": "bundleIdentifier",
+     "name": "bundleIdentifier",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "bundlePath",
+     "key": "bundlePath",
+     "name": "bundlePath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "bundleURL",
+     "key": "bundleURL",
+     "name": "bundleURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "developmentLocalization",
+     "key": "developmentLocalization",
+     "name": "developmentLocalization",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "executableArchitectures",
+     "key": "executableArchitectures",
+     "name": "executableArchitectures",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "nullable": true,
+      "of": {
+       "k": "number"
+      }
+     }
+    },
+    {
+     "getter": "executablePath",
+     "key": "executablePath",
+     "name": "executablePath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "executableURL",
+     "key": "executableURL",
+     "name": "executableURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "infoDictionary",
+     "key": "infoDictionary",
+     "name": "infoDictionary",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "nullable": true,
+      "of": {
+       "k": "any"
+      }
+     }
+    },
+    {
+     "getter": "isLoaded",
+     "key": "loaded",
+     "name": "loaded",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "localizations",
+     "key": "localizations",
+     "name": "localizations",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "localizedInfoDictionary",
+     "key": "localizedInfoDictionary",
+     "name": "localizedInfoDictionary",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "nullable": true,
+      "of": {
+       "k": "any"
+      }
+     }
+    },
+    {
+     "getter": "preferredLocalizations",
+     "key": "preferredLocalizations",
+     "name": "preferredLocalizations",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "principalClass",
+     "key": "principalClass",
+     "name": "principalClass",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "type",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "privateFrameworksPath",
+     "key": "privateFrameworksPath",
+     "name": "privateFrameworksPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "privateFrameworksURL",
+     "key": "privateFrameworksURL",
+     "name": "privateFrameworksURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "resourcePath",
+     "key": "resourcePath",
+     "name": "resourcePath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "resourceURL",
+     "key": "resourceURL",
+     "name": "resourceURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "sharedFrameworksPath",
+     "key": "sharedFrameworksPath",
+     "name": "sharedFrameworksPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "sharedFrameworksURL",
+     "key": "sharedFrameworksURL",
+     "name": "sharedFrameworksURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "sharedSupportPath",
+     "key": "sharedSupportPath",
+     "name": "sharedSupportPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "sharedSupportURL",
+     "key": "sharedSupportURL",
+     "name": "sharedSupportURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    }
+   ],
    "root": true,
    "send": true,
    "string_ctor": null,
@@ -3471,36 +3498,6 @@
    "js_module": "svelters:appkit/foundation",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "AMSymbol",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "AMSymbol",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "PMSymbol",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "PMSymbol",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "calendarIdentifier",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "calendarIdentifier",
-     "static": false
-    },
     {
      "family": "none",
      "js": "compareDateToDateToUnitGranularity",
@@ -3999,19 +3996,6 @@
     },
     {
      "family": "none",
-     "js": "eraSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "eraSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "isDateEqualToDateToUnitGranularity",
      "params": [
       {
@@ -4133,19 +4117,6 @@
     },
     {
      "family": "none",
-     "js": "longEraSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "longEraSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "maximumRangeOfUnit",
      "params": [
       {
@@ -4180,19 +4151,6 @@
       "t": "Range"
      },
      "sel": "minimumRangeOfUnit:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "monthSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "monthSymbols",
      "static": false
     },
     {
@@ -4341,19 +4299,6 @@
     },
     {
      "family": "none",
-     "js": "quarterSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "quarterSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "rangeOfUnitInUnitForDate",
      "params": [
       {
@@ -4386,123 +4331,6 @@
     },
     {
      "family": "none",
-     "js": "shortMonthSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "shortMonthSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "shortQuarterSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "shortQuarterSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "shortStandaloneMonthSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "shortStandaloneMonthSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "shortStandaloneQuarterSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "shortStandaloneQuarterSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "shortStandaloneWeekdaySymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "shortStandaloneWeekdaySymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "shortWeekdaySymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "shortWeekdaySymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "standaloneMonthSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "standaloneMonthSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "standaloneQuarterSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "standaloneQuarterSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "standaloneWeekdaySymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "standaloneWeekdaySymbols",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "startOfDayForDate",
      "params": [
       {
@@ -4516,71 +4344,6 @@
       "k": "date"
      },
      "sel": "startOfDayForDate:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "veryShortMonthSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "veryShortMonthSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "veryShortStandaloneMonthSymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "veryShortStandaloneMonthSymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "veryShortStandaloneWeekdaySymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "veryShortStandaloneWeekdaySymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "veryShortWeekdaySymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "veryShortWeekdaySymbols",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "weekdaySymbols",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "weekdaySymbols",
      "static": false
     },
     {
@@ -4649,6 +4412,53 @@
    "parent": null,
    "props": [
     {
+     "getter": "AMSymbol",
+     "key": "AMSymbol",
+     "name": "AMSymbol",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "PMSymbol",
+     "key": "PMSymbol",
+     "name": "PMSymbol",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "calendarIdentifier",
+     "key": "calendarIdentifier",
+     "name": "calendarIdentifier",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "eraSymbols",
+     "key": "eraSymbols",
+     "name": "eraSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
      "getter": "firstWeekday",
      "key": "firstWeekday",
      "name": "firstWeekday",
@@ -4673,6 +4483,20 @@
      }
     },
     {
+     "getter": "longEraSymbols",
+     "key": "longEraSymbols",
+     "name": "longEraSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
      "getter": "minimumDaysInFirstWeek",
      "key": "minimumDaysInFirstWeek",
      "name": "minimumDaysInFirstWeek",
@@ -4681,6 +4505,160 @@
      "setter": "setMinimumDaysInFirstWeek:",
      "type": {
       "k": "int"
+     }
+    },
+    {
+     "getter": "monthSymbols",
+     "key": "monthSymbols",
+     "name": "monthSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "quarterSymbols",
+     "key": "quarterSymbols",
+     "name": "quarterSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "shortMonthSymbols",
+     "key": "shortMonthSymbols",
+     "name": "shortMonthSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "shortQuarterSymbols",
+     "key": "shortQuarterSymbols",
+     "name": "shortQuarterSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "shortStandaloneMonthSymbols",
+     "key": "shortStandaloneMonthSymbols",
+     "name": "shortStandaloneMonthSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "shortStandaloneQuarterSymbols",
+     "key": "shortStandaloneQuarterSymbols",
+     "name": "shortStandaloneQuarterSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "shortStandaloneWeekdaySymbols",
+     "key": "shortStandaloneWeekdaySymbols",
+     "name": "shortStandaloneWeekdaySymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "shortWeekdaySymbols",
+     "key": "shortWeekdaySymbols",
+     "name": "shortWeekdaySymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "standaloneMonthSymbols",
+     "key": "standaloneMonthSymbols",
+     "name": "standaloneMonthSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "standaloneQuarterSymbols",
+     "key": "standaloneQuarterSymbols",
+     "name": "standaloneQuarterSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "standaloneWeekdaySymbols",
+     "key": "standaloneWeekdaySymbols",
+     "name": "standaloneWeekdaySymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
      }
     },
     {
@@ -4693,6 +4671,76 @@
      "type": {
       "k": "value",
       "t": "NSTimeZone"
+     }
+    },
+    {
+     "getter": "veryShortMonthSymbols",
+     "key": "veryShortMonthSymbols",
+     "name": "veryShortMonthSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "veryShortStandaloneMonthSymbols",
+     "key": "veryShortStandaloneMonthSymbols",
+     "name": "veryShortStandaloneMonthSymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "veryShortStandaloneWeekdaySymbols",
+     "key": "veryShortStandaloneWeekdaySymbols",
+     "name": "veryShortStandaloneWeekdaySymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "veryShortWeekdaySymbols",
+     "key": "veryShortWeekdaySymbols",
+     "name": "veryShortWeekdaySymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "weekdaySymbols",
+     "key": "weekdaySymbols",
+     "name": "weekdaySymbols",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
      }
     }
    ],
@@ -4726,16 +4774,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "bitmapRepresentation",
-     "params": [],
-     "ret": {
-      "k": "bytes"
-     },
-     "sel": "bitmapRepresentation",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "characterIsMember",
      "params": [
       {
@@ -4766,17 +4804,6 @@
       "k": "bool"
      },
      "sel": "hasMemberInPlane:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "invertedSet",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSCharacterSet"
-     },
-     "sel": "invertedSet",
      "static": false
     },
     {
@@ -5122,7 +5149,31 @@
    ],
    "name": "NSCharacterSet",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "bitmapRepresentation",
+     "key": "bitmapRepresentation",
+     "name": "bitmapRepresentation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes"
+     }
+    },
+    {
+     "getter": "invertedSet",
+     "key": "invertedSet",
+     "name": "invertedSet",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSCharacterSet"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -5152,27 +5203,6 @@
    "js_module": "svelters:appkit/foundation",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "date",
-     "params": [],
-     "ret": {
-      "k": "date",
-      "nullable": true
-     },
-     "sel": "date",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isValidDate",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isValidDate",
-     "static": false
-    },
     {
      "family": "none",
      "js": "isValidDateInCalendar",
@@ -5248,6 +5278,18 @@
       "k": "object",
       "nullable": true,
       "t": "NSCalendar"
+     }
+    },
+    {
+     "getter": "date",
+     "key": "date",
+     "name": "date",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "date",
+      "nullable": true
      }
     },
     {
@@ -5382,6 +5424,17 @@
       "k": "value",
       "nullable": true,
       "t": "NSTimeZone"
+     }
+    },
+    {
+     "getter": "isValidDate",
+     "key": "validDate",
+     "name": "validDate",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
      }
     },
     {
@@ -6754,16 +6807,6 @@
     },
     {
      "family": "none",
-     "js": "currentDirectoryPath",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "currentDirectoryPath",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "destinationOfSymbolicLinkAtPath",
      "params": [
       {
@@ -6884,17 +6927,6 @@
       "k": "void"
      },
      "sel": "getFileProviderServicesForItemAtURL:completionHandler:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "homeDirectoryForCurrentUser",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSURL"
-     },
-     "sel": "homeDirectoryForCurrentUser",
      "static": false
     },
     {
@@ -7348,17 +7380,6 @@
      "throws": true
     },
     {
-     "family": "none",
-     "js": "temporaryDirectory",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSURL"
-     },
-     "sel": "temporaryDirectory",
-     "static": false
-    },
-    {
      "async": {
       "result": {
        "k": "void"
@@ -7456,7 +7477,43 @@
    ],
    "name": "NSFileManager",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "currentDirectoryPath",
+     "key": "currentDirectoryPath",
+     "name": "currentDirectoryPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "homeDirectoryForCurrentUser",
+     "key": "homeDirectoryForCurrentUser",
+     "name": "homeDirectoryForCurrentUser",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "temporaryDirectory",
+     "key": "temporaryDirectory",
+     "name": "temporaryDirectory",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSURL"
+     }
+    }
+   ],
    "root": true,
    "send": false,
    "string_ctor": null,
@@ -7483,21 +7540,22 @@
    "hidden": [],
    "js_module": "svelters:appkit/foundation",
    "lifetime": "shared",
-   "methods": [
-    {
-     "family": "none",
-     "js": "name",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "name",
-     "static": false
-    }
-   ],
+   "methods": [],
    "name": "NSFileProviderService",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "name",
+     "key": "name",
+     "name": "name",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -7523,102 +7581,6 @@
    "js_module": "svelters:appkit/foundation",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "URL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSURL"
-     },
-     "sel": "URL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hasLocalContents",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "hasLocalContents",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hasThumbnail",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "hasThumbnail",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isConflict",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isConflict",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedName",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "localizedName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedNameOfSavingComputer",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "localizedNameOfSavingComputer",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "modificationDate",
-     "params": [],
-     "ret": {
-      "k": "date",
-      "nullable": true
-     },
-     "sel": "modificationDate",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "originatorNameComponents",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSPersonNameComponents"
-     },
-     "sel": "originatorNameComponents",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "persistentIdentifier",
-     "params": [],
-     "ret": {
-      "k": "any"
-     },
-     "sel": "persistentIdentifier",
-     "static": false
-    },
     {
      "family": "none",
      "js": "removeAndReturnError",
@@ -7854,6 +7816,29 @@
    "parent": null,
    "props": [
     {
+     "getter": "URL",
+     "key": "URL",
+     "name": "URL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "isConflict",
+     "key": "conflict",
+     "name": "conflict",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "isDiscardable",
      "key": "discardable",
      "name": "discardable",
@@ -7862,6 +7847,88 @@
      "setter": "setDiscardable:",
      "type": {
       "k": "bool"
+     }
+    },
+    {
+     "getter": "hasLocalContents",
+     "key": "hasLocalContents",
+     "name": "hasLocalContents",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "hasThumbnail",
+     "key": "hasThumbnail",
+     "name": "hasThumbnail",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "localizedName",
+     "key": "localizedName",
+     "name": "localizedName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "localizedNameOfSavingComputer",
+     "key": "localizedNameOfSavingComputer",
+     "name": "localizedNameOfSavingComputer",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "modificationDate",
+     "key": "modificationDate",
+     "name": "modificationDate",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "date",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "originatorNameComponents",
+     "key": "originatorNameComponents",
+     "name": "originatorNameComponents",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSPersonNameComponents"
+     }
+    },
+    {
+     "getter": "persistentIdentifier",
+     "key": "persistentIdentifier",
+     "name": "persistentIdentifier",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "any"
      }
     },
     {
@@ -7950,51 +8017,6 @@
     },
     {
      "family": "none",
-     "js": "fileWrappers",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "nullable": true,
-      "of": {
-       "k": "object",
-       "t": "NSFileWrapper"
-      }
-     },
-     "sel": "fileWrappers",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isDirectory",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isDirectory",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isRegularFile",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isRegularFile",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isSymbolicLink",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isSymbolicLink",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "keyForFileWrapper",
      "params": [
       {
@@ -8058,17 +8080,6 @@
     },
     {
      "family": "none",
-     "js": "regularFileContents",
-     "params": [],
-     "ret": {
-      "k": "bytes",
-      "nullable": true
-     },
-     "sel": "regularFileContents",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "removeFileWrapper",
      "params": [
       {
@@ -8083,29 +8094,6 @@
       "k": "void"
      },
      "sel": "removeFileWrapper:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "serializedRepresentation",
-     "params": [],
-     "ret": {
-      "k": "bytes",
-      "nullable": true
-     },
-     "sel": "serializedRepresentation",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "symbolicLinkDestinationURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "symbolicLinkDestinationURL",
      "static": false
     },
     {
@@ -8261,6 +8249,17 @@
    "parent": null,
    "props": [
     {
+     "getter": "isDirectory",
+     "key": "directory",
+     "name": "directory",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "fileAttributes",
      "key": "fileAttributes",
      "name": "fileAttributes",
@@ -8271,6 +8270,22 @@
       "k": "map",
       "of": {
        "k": "any"
+      }
+     }
+    },
+    {
+     "getter": "fileWrappers",
+     "key": "fileWrappers",
+     "name": "fileWrappers",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "nullable": true,
+      "of": {
+       "k": "object",
+       "t": "NSFileWrapper"
       }
      }
     },
@@ -8309,6 +8324,65 @@
      "type": {
       "k": "string",
       "nullable": true
+     }
+    },
+    {
+     "getter": "isRegularFile",
+     "key": "regularFile",
+     "name": "regularFile",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "regularFileContents",
+     "key": "regularFileContents",
+     "name": "regularFileContents",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "serializedRepresentation",
+     "key": "serializedRepresentation",
+     "name": "serializedRepresentation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "isSymbolicLink",
+     "key": "symbolicLink",
+     "name": "symbolicLink",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "symbolicLinkDestinationURL",
+     "key": "symbolicLinkDestinationURL",
+     "name": "symbolicLinkDestinationURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
      }
     }
    ],
@@ -8590,19 +8664,6 @@
     },
     {
      "family": "none",
-     "js": "registeredTypeIdentifiers",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "registeredTypeIdentifiers",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "registeredTypeIdentifiersWithFileOptions",
      "params": [
       {
@@ -8709,6 +8770,20 @@
    "name": "NSItemProvider",
    "parent": null,
    "props": [
+    {
+     "getter": "registeredTypeIdentifiers",
+     "key": "registeredTypeIdentifiers",
+     "name": "registeredTypeIdentifiers",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
     {
      "getter": "suggestedName",
      "key": "suggestedName",
@@ -11225,29 +11300,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "activeProcessorCount",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "activeProcessorCount",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "arguments",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "arguments",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "beginActivityWithOptionsReason",
      "params": [
       {
@@ -11343,125 +11395,12 @@
     },
     {
      "family": "none",
-     "js": "environment",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "environment",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "fullUserName",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "fullUserName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "globallyUniqueString",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "globallyUniqueString",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hostName",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "hostName",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "isLowPowerModeEnabled",
      "params": [],
      "ret": {
       "k": "bool"
      },
      "sel": "isLowPowerModeEnabled",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isMacCatalystApp",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isMacCatalystApp",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isiOSAppOnMac",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isiOSAppOnMac",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "operatingSystemVersionString",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "operatingSystemVersionString",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "physicalMemory",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "physicalMemory",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "processIdentifier",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "processIdentifier",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "processorCount",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "processorCount",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "systemUptime",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "systemUptime",
      "static": false
     },
     {
@@ -11473,16 +11412,6 @@
       "t": "NSProcessInfoThermalState"
      },
      "sel": "thermalState",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "userName",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "userName",
      "static": false
     },
     {
@@ -11501,6 +11430,31 @@
    "parent": null,
    "props": [
     {
+     "getter": "activeProcessorCount",
+     "key": "activeProcessorCount",
+     "name": "activeProcessorCount",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "arguments",
+     "key": "arguments",
+     "name": "arguments",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
      "getter": "automaticTerminationSupportEnabled",
      "key": "automaticTerminationSupportEnabled",
      "name": "automaticTerminationSupportEnabled",
@@ -11512,12 +11466,147 @@
      }
     },
     {
+     "getter": "environment",
+     "key": "environment",
+     "name": "environment",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "fullUserName",
+     "key": "fullUserName",
+     "name": "fullUserName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "globallyUniqueString",
+     "key": "globallyUniqueString",
+     "name": "globallyUniqueString",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "hostName",
+     "key": "hostName",
+     "name": "hostName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "isiOSAppOnMac",
+     "key": "iOSAppOnMac",
+     "name": "iOSAppOnMac",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isMacCatalystApp",
+     "key": "macCatalystApp",
+     "name": "macCatalystApp",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "operatingSystemVersionString",
+     "key": "operatingSystemVersionString",
+     "name": "operatingSystemVersionString",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "physicalMemory",
+     "key": "physicalMemory",
+     "name": "physicalMemory",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "processIdentifier",
+     "key": "processIdentifier",
+     "name": "processIdentifier",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
      "getter": "processName",
      "key": "processName",
      "name": "processName",
      "origin": "objc2",
      "readonly": false,
      "setter": "setProcessName:",
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "processorCount",
+     "key": "processorCount",
+     "name": "processorCount",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "systemUptime",
+     "key": "systemUptime",
+     "name": "systemUptime",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "userName",
+     "key": "userName",
+     "name": "userName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
      "type": {
       "k": "string"
      }
@@ -11604,66 +11693,6 @@
     },
     {
      "family": "none",
-     "js": "fractionCompleted",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "fractionCompleted",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isCancelled",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isCancelled",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isFinished",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isFinished",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isIndeterminate",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isIndeterminate",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isOld",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isOld",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isPaused",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isPaused",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "pause",
      "params": [],
      "ret": {
@@ -11734,19 +11763,6 @@
       "k": "void"
      },
      "sel": "unpublish",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "userInfo",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "userInfo",
      "static": false
     },
     {
@@ -11893,6 +11909,17 @@
      }
     },
     {
+     "getter": "isCancelled",
+     "key": "cancelled",
+     "name": "cancelled",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "completedUnitCount",
      "key": "completedUnitCount",
      "name": "completedUnitCount",
@@ -11965,6 +11992,39 @@
      }
     },
     {
+     "getter": "isFinished",
+     "key": "finished",
+     "name": "finished",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "fractionCompleted",
+     "key": "fractionCompleted",
+     "name": "fractionCompleted",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "isIndeterminate",
+     "key": "indeterminate",
+     "name": "indeterminate",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "kind",
      "key": "kind",
      "name": "kind",
@@ -11999,12 +12059,34 @@
      }
     },
     {
+     "getter": "isOld",
+     "key": "old",
+     "name": "old",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "isPausable",
      "key": "pausable",
      "name": "pausable",
      "origin": "objc2",
      "readonly": false,
      "setter": "setPausable:",
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isPaused",
+     "key": "paused",
+     "name": "paused",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
      "type": {
       "k": "bool"
      }
@@ -12030,6 +12112,20 @@
      "setter": "setTotalUnitCount:",
      "type": {
       "k": "int"
+     }
+    },
+    {
+     "getter": "userInfo",
+     "key": "userInfo",
+     "name": "userInfo",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "of": {
+       "k": "any"
+      }
      }
     }
    ],
@@ -12089,16 +12185,6 @@
       "nullable": true
      },
      "sel": "abbreviationForDate:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "data",
-     "params": [],
-     "ret": {
-      "k": "bytes"
-     },
-     "sel": "data",
      "static": false
     },
     {
@@ -12198,16 +12284,6 @@
       "nullable": true
      },
      "sel": "localizedName:locale:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "name",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "name",
      "static": false
     },
     {
@@ -12515,7 +12591,30 @@
    ],
    "name": "NSTimeZone",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "data",
+     "key": "data",
+     "name": "data",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes"
+     }
+    },
+    {
+     "getter": "name",
+     "key": "name",
+     "name": "name",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    }
+   ],
    "root": false,
    "send": true,
    "string_ctor": null,
@@ -12630,89 +12729,6 @@
     },
     {
      "family": "none",
-     "js": "URLByDeletingLastPathComponent",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "URLByDeletingLastPathComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "URLByDeletingPathExtension",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "URLByDeletingPathExtension",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "URLByResolvingSymlinksInPath",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "URLByResolvingSymlinksInPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "URLByStandardizingPath",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "URLByStandardizingPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "absoluteString",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "absoluteString",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "absoluteURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "absoluteURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "baseURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "baseURL",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "bookmarkDataWithOptionsIncludingResourceValuesForKeysRelativeToURL",
      "params": [
       {
@@ -12772,28 +12788,6 @@
     },
     {
      "family": "none",
-     "js": "dataRepresentation",
-     "params": [],
-     "ret": {
-      "k": "bytes"
-     },
-     "sel": "dataRepresentation",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "filePathURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "filePathURL",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "fileReferenceURL",
      "params": [],
      "ret": {
@@ -12806,123 +12800,12 @@
     },
     {
      "family": "none",
-     "js": "fragment",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "fragment",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hasDirectoryPath",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "hasDirectoryPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "host",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "host",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "isFileReferenceURL",
      "params": [],
      "ret": {
       "k": "bool"
      },
      "sel": "isFileReferenceURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isFileURL",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isFileURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "lastPathComponent",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "lastPathComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "password",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "password",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "path",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "path",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "pathComponents",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "nullable": true,
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "pathComponents",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "pathExtension",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "pathExtension",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "port",
-     "params": [],
-     "ret": {
-      "k": "number",
-      "nullable": true
-     },
-     "sel": "port",
      "static": false
     },
     {
@@ -12951,49 +12834,6 @@
     },
     {
      "family": "none",
-     "js": "query",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "query",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "relativePath",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "relativePath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "relativeString",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "relativeString",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "resourceSpecifier",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "resourceSpecifier",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "resourceValuesForKeys",
      "params": [
       {
@@ -13018,29 +12858,6 @@
     },
     {
      "family": "none",
-     "js": "scheme",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "scheme",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "standardizedURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "standardizedURL",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "startAccessingSecurityScopedResource",
      "params": [],
      "ret": {
@@ -13057,17 +12874,6 @@
       "k": "void"
      },
      "sel": "stopAccessingSecurityScopedResource",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "user",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "user",
      "static": false
     },
     {
@@ -13705,7 +13511,327 @@
    ],
    "name": "NSURL",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "URLByDeletingLastPathComponent",
+     "key": "URLByDeletingLastPathComponent",
+     "name": "URLByDeletingLastPathComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "URLByDeletingPathExtension",
+     "key": "URLByDeletingPathExtension",
+     "name": "URLByDeletingPathExtension",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "URLByResolvingSymlinksInPath",
+     "key": "URLByResolvingSymlinksInPath",
+     "name": "URLByResolvingSymlinksInPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "URLByStandardizingPath",
+     "key": "URLByStandardizingPath",
+     "name": "URLByStandardizingPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "absoluteString",
+     "key": "absoluteString",
+     "name": "absoluteString",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "absoluteURL",
+     "key": "absoluteURL",
+     "name": "absoluteURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "baseURL",
+     "key": "baseURL",
+     "name": "baseURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "dataRepresentation",
+     "key": "dataRepresentation",
+     "name": "dataRepresentation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes"
+     }
+    },
+    {
+     "getter": "filePathURL",
+     "key": "filePathURL",
+     "name": "filePathURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "isFileURL",
+     "key": "fileURL",
+     "name": "fileURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "fragment",
+     "key": "fragment",
+     "name": "fragment",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "hasDirectoryPath",
+     "key": "hasDirectoryPath",
+     "name": "hasDirectoryPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "host",
+     "key": "host",
+     "name": "host",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "lastPathComponent",
+     "key": "lastPathComponent",
+     "name": "lastPathComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "password",
+     "key": "password",
+     "name": "password",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "path",
+     "key": "path",
+     "name": "path",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "pathComponents",
+     "key": "pathComponents",
+     "name": "pathComponents",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "nullable": true,
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "pathExtension",
+     "key": "pathExtension",
+     "name": "pathExtension",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "port",
+     "key": "port",
+     "name": "port",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "number",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "query",
+     "key": "query",
+     "name": "query",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "relativePath",
+     "key": "relativePath",
+     "name": "relativePath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "relativeString",
+     "key": "relativeString",
+     "name": "relativeString",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "resourceSpecifier",
+     "key": "resourceSpecifier",
+     "name": "resourceSpecifier",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "scheme",
+     "key": "scheme",
+     "name": "scheme",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "standardizedURL",
+     "key": "standardizedURL",
+     "name": "standardizedURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "user",
+     "key": "user",
+     "name": "user",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    }
+   ],
    "root": true,
    "send": true,
    "string_ctor": "initWithString:",
@@ -13739,18 +13865,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "URL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "URL",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "URLRelativeToURL",
      "params": [
       {
@@ -13768,105 +13882,6 @@
       "t": "NSURL"
      },
      "sel": "URLRelativeToURL:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfFragment",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfFragment",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfHost",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfHost",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfPassword",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfPassword",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfPath",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfPort",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfPort",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfQuery",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfQuery",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfScheme",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfScheme",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeOfUser",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "rangeOfUser",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "string",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "string",
      "static": false
     },
     {
@@ -14016,6 +14031,19 @@
    "name": "NSURLComponents",
    "parent": null,
    "props": [
+    {
+     "getter": "URL",
+     "key": "URL",
+     "name": "URL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
     {
      "getter": "encodedHost",
      "key": "encodedHost",
@@ -14193,12 +14221,120 @@
      }
     },
     {
+     "getter": "rangeOfFragment",
+     "key": "rangeOfFragment",
+     "name": "rangeOfFragment",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "rangeOfHost",
+     "key": "rangeOfHost",
+     "name": "rangeOfHost",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "rangeOfPassword",
+     "key": "rangeOfPassword",
+     "name": "rangeOfPassword",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "rangeOfPath",
+     "key": "rangeOfPath",
+     "name": "rangeOfPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "rangeOfPort",
+     "key": "rangeOfPort",
+     "name": "rangeOfPort",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "rangeOfQuery",
+     "key": "rangeOfQuery",
+     "name": "rangeOfQuery",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "rangeOfScheme",
+     "key": "rangeOfScheme",
+     "name": "rangeOfScheme",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "rangeOfUser",
+     "key": "rangeOfUser",
+     "name": "rangeOfUser",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
      "getter": "scheme",
      "key": "scheme",
      "name": "scheme",
      "origin": "objc2",
      "readonly": false,
      "setter": "setScheme:",
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "string",
+     "key": "string",
+     "name": "string",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
      "type": {
       "k": "string",
       "nullable": true
@@ -14242,27 +14378,6 @@
    "js_module": "svelters:appkit/foundation",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "name",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "name",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "value",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "value",
-     "static": false
-    },
     {
      "ctor": true,
      "family": "init",
@@ -14318,7 +14433,31 @@
    ],
    "name": "NSURLQueryItem",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "name",
+     "key": "name",
+     "name": "name",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "value",
+     "key": "value",
+     "name": "value",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    }
+   ],
    "root": false,
    "send": true,
    "string_ctor": null,
@@ -14346,16 +14485,6 @@
    "js_module": "svelters:appkit/foundation",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "UUIDString",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "UUIDString",
-     "static": false
-    },
     {
      "family": "none",
      "js": "compare",
@@ -14408,7 +14537,19 @@
    ],
    "name": "NSUUID",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "UUIDString",
+     "key": "UUIDString",
+     "name": "UUIDString",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    }
+   ],
    "root": true,
    "send": true,
    "string_ctor": "initWithUUIDString:",
@@ -14446,26 +14587,6 @@
     },
     {
      "family": "none",
-     "js": "canRedo",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "canRedo",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "canUndo",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "canUndo",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "disableUndoRegistration",
      "params": [],
      "ret": {
@@ -14492,46 +14613,6 @@
       "k": "void"
      },
      "sel": "endUndoGrouping",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "groupingLevel",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "groupingLevel",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isRedoing",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isRedoing",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isUndoRegistrationEnabled",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isUndoRegistrationEnabled",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isUndoing",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isUndoing",
      "static": false
     },
     {
@@ -14563,26 +14644,6 @@
     },
     {
      "family": "none",
-     "js": "redoActionIsDiscardable",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "redoActionIsDiscardable",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "redoActionName",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "redoActionName",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "redoActionUserInfoValueForKey",
      "params": [
       {
@@ -14597,26 +14658,6 @@
       "nullable": true
      },
      "sel": "redoActionUserInfoValueForKey:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "redoCount",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "redoCount",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "redoMenuItemTitle",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "redoMenuItemTitle",
      "static": false
     },
     {
@@ -14733,26 +14774,6 @@
     },
     {
      "family": "none",
-     "js": "undoActionIsDiscardable",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "undoActionIsDiscardable",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "undoActionName",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "undoActionName",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "undoActionUserInfoValueForKey",
      "params": [
       {
@@ -14767,26 +14788,6 @@
       "nullable": true
      },
      "sel": "undoActionUserInfoValueForKey:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "undoCount",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "undoCount",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "undoMenuItemTitle",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "undoMenuItemTitle",
      "static": false
     },
     {
@@ -14821,6 +14822,39 @@
    "parent": null,
    "props": [
     {
+     "getter": "canRedo",
+     "key": "canRedo",
+     "name": "canRedo",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "canUndo",
+     "key": "canUndo",
+     "name": "canUndo",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "groupingLevel",
+     "key": "groupingLevel",
+     "name": "groupingLevel",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
      "getter": "groupsByEvent",
      "key": "groupsByEvent",
      "name": "groupsByEvent",
@@ -14843,6 +14877,61 @@
      }
     },
     {
+     "getter": "redoActionIsDiscardable",
+     "key": "redoActionIsDiscardable",
+     "name": "redoActionIsDiscardable",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "redoActionName",
+     "key": "redoActionName",
+     "name": "redoActionName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "redoCount",
+     "key": "redoCount",
+     "name": "redoCount",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "redoMenuItemTitle",
+     "key": "redoMenuItemTitle",
+     "name": "redoMenuItemTitle",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "isRedoing",
+     "key": "redoing",
+     "name": "redoing",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "runLoopModes",
      "key": "runLoopModes",
      "name": "runLoopModes",
@@ -14854,6 +14943,72 @@
       "of": {
        "k": "string"
       }
+     }
+    },
+    {
+     "getter": "undoActionIsDiscardable",
+     "key": "undoActionIsDiscardable",
+     "name": "undoActionIsDiscardable",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "undoActionName",
+     "key": "undoActionName",
+     "name": "undoActionName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "undoCount",
+     "key": "undoCount",
+     "name": "undoCount",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "undoMenuItemTitle",
+     "key": "undoMenuItemTitle",
+     "name": "undoMenuItemTitle",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "isUndoRegistrationEnabled",
+     "key": "undoRegistrationEnabled",
+     "name": "undoRegistrationEnabled",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isUndoing",
+     "key": "undoing",
+     "name": "undoing",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
      }
     }
    ],
@@ -15489,19 +15644,6 @@
      "static": false
     },
     {
-     "family": "none",
-     "js": "volatileDomainNames",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "volatileDomainNames",
-     "static": false
-    },
-    {
      "ctor": true,
      "family": "init",
      "js": "newWithSuiteName",
@@ -15546,7 +15688,22 @@
    ],
    "name": "NSUserDefaults",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "volatileDomainNames",
+     "key": "volatileDomainNames",
+     "name": "volatileDomainNames",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    }
+   ],
    "root": true,
    "send": false,
    "string_ctor": null,

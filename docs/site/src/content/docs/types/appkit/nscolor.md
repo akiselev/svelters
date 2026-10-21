@@ -116,38 +116,41 @@ Facts: `metadata/appkit/types/AppKit.json`; ledger fact ids `svelters-api:v1:typ
 
 ## Methods
 
-- `alphaComponent()`: `-alphaComponent`
-- `blackComponent()`: `-blackComponent`
 - `blendedColorWithFractionOfColor(fraction, color)`: `-blendedColorWithFraction:ofColor:`
-- `blueComponent()`: `-blueComponent`
-- `brightnessComponent()`: `-brightnessComponent`
-- `catalogNameComponent()`: `-catalogNameComponent`
 - `colorByApplyingContentHeadroom(contentHeadroom)`: `-colorByApplyingContentHeadroom:`
-- `colorNameComponent()`: `-colorNameComponent`
-- `colorSpace()`: `-colorSpace`
 - `colorUsingColorSpace(space)`: `-colorUsingColorSpace:`
 - `colorUsingType(type)`: `-colorUsingType:`
 - `colorWithAlphaComponent(alpha)`: `-colorWithAlphaComponent:`
 - `colorWithSystemEffect(systemEffect)`: `-colorWithSystemEffect:`
-- `cyanComponent()`: `-cyanComponent`
 - `drawSwatchInRect(rect)`: `-drawSwatchInRect:`
-- `greenComponent()`: `-greenComponent`
 - `highlightWithLevel(val)`: `-highlightWithLevel:`
-- `hueComponent()`: `-hueComponent`
-- `linearExposure()`: `-linearExposure`
-- `localizedCatalogNameComponent()`: `-localizedCatalogNameComponent`
-- `localizedColorNameComponent()`: `-localizedColorNameComponent`
-- `magentaComponent()`: `-magentaComponent`
-- `numberOfComponents()`: `-numberOfComponents`
-- `patternImage()`: `-patternImage`
-- `redComponent()`: `-redComponent`
-- `saturationComponent()`: `-saturationComponent`
 - `shadowWithLevel(val)`: `-shadowWithLevel:`
-- `standardDynamicRangeColor()`: `-standardDynamicRangeColor`
 - `type(type)`: `-type`
-- `whiteComponent()`: `-whiteComponent`
 - `writeToPasteboard(pasteBoard)`: `-writeToPasteboard:`
-- `yellowComponent()`: `-yellowComponent`
+
+## Properties
+
+- `alphaComponent` (read-only): KVC `alphaComponent` (probe)
+- `blackComponent` (read-only): KVC `blackComponent` (probe)
+- `blueComponent` (read-only): KVC `blueComponent` (probe)
+- `brightnessComponent` (read-only): KVC `brightnessComponent` (probe)
+- `catalogNameComponent` (read-only): KVC `catalogNameComponent` (probe)
+- `colorNameComponent` (read-only): KVC `colorNameComponent` (probe)
+- `colorSpace` (read-only): KVC `colorSpace` (probe)
+- `cyanComponent` (read-only): KVC `cyanComponent` (probe)
+- `greenComponent` (read-only): KVC `greenComponent` (probe)
+- `hueComponent` (read-only): KVC `hueComponent` (probe)
+- `linearExposure` (read-only): KVC `linearExposure` (probe)
+- `localizedCatalogNameComponent` (read-only): KVC `localizedCatalogNameComponent` (probe)
+- `localizedColorNameComponent` (read-only): KVC `localizedColorNameComponent` (probe)
+- `magentaComponent` (read-only): KVC `magentaComponent` (probe)
+- `numberOfComponents` (read-only): KVC `numberOfComponents` (probe)
+- `patternImage` (read-only): KVC `patternImage` (probe)
+- `redComponent` (read-only): KVC `redComponent` (probe)
+- `saturationComponent` (read-only): KVC `saturationComponent` (probe)
+- `standardDynamicRangeColor` (read-only): KVC `standardDynamicRangeColor` (probe)
+- `whiteComponent` (read-only): KVC `whiteComponent` (probe)
+- `yellowComponent` (read-only): KVC `yellowComponent` (probe)
 
 ## Not bound
 

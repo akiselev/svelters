@@ -114,16 +114,8 @@ export class NSBitmapImageRep extends NativeValue {
     callStatic('NSBitmapImageRep', 'unregisterImageRepClass:', [typeArg(imageRepClass)]);
   }
 
-  TIFFRepresentation() {
-    return call(this, 'TIFFRepresentation', []);
-  }
-
   TIFFRepresentationUsingCompressionFactor(comp, factor) {
     return call(this, 'TIFFRepresentationUsingCompression:factor:', [comp, factor]);
-  }
-
-  bitmapFormat() {
-    return call(this, 'bitmapFormat', []);
   }
 
   bitmapImageRepByConvertingToColorSpaceRenderingIntent(targetSpace, renderingIntent) {
@@ -134,28 +126,12 @@ export class NSBitmapImageRep extends NativeValue {
     return wrapValue(NSBitmapImageRep, call(this, 'bitmapImageRepByRetaggingWithColorSpace:', [newSpace]));
   }
 
-  bitsPerPixel() {
-    return call(this, 'bitsPerPixel', []);
-  }
-
-  bytesPerPlane() {
-    return call(this, 'bytesPerPlane', []);
-  }
-
-  bytesPerRow() {
-    return call(this, 'bytesPerRow', []);
-  }
-
   canBeCompressedUsing(compression) {
     return call(this, 'canBeCompressedUsing:', [compression]);
   }
 
   colorAtXY(x, y) {
     return wrapValue(NSColor, call(this, 'colorAtX:y:', [x, y]));
-  }
-
-  colorSpace() {
-    return wrapObject(NSColorSpace, call(this, 'colorSpace', []));
   }
 
   colorizeByMappingGrayToColorBlackMappingWhiteMapping(midPoint, midPointColor, shadowColor, lightColor) {
@@ -182,24 +158,48 @@ export class NSBitmapImageRep extends NativeValue {
     return call(this, 'incrementalLoadFromData:complete:', [data, complete]);
   }
 
-  isPlanar() {
-    return call(this, 'isPlanar', []);
-  }
-
-  numberOfPlanes() {
-    return call(this, 'numberOfPlanes', []);
-  }
-
   representationUsingTypeProperties(storageType, properties) {
     return call(this, 'representationUsingType:properties:', [storageType, properties]);
   }
 
-  samplesPerPixel() {
-    return call(this, 'samplesPerPixel', []);
-  }
-
   valueForProperty(property) {
     return call(this, 'valueForProperty:', [property]);
+  }
+
+  get TIFFRepresentation() {
+    return call(this, 'TIFFRepresentation', []);
+  }
+
+  get bitmapFormat() {
+    return call(this, 'bitmapFormat', []);
+  }
+
+  get bitsPerPixel() {
+    return call(this, 'bitsPerPixel', []);
+  }
+
+  get bytesPerPlane() {
+    return call(this, 'bytesPerPlane', []);
+  }
+
+  get bytesPerRow() {
+    return call(this, 'bytesPerRow', []);
+  }
+
+  get colorSpace() {
+    return wrapObject(NSColorSpace, call(this, 'colorSpace', []));
+  }
+
+  get numberOfPlanes() {
+    return call(this, 'numberOfPlanes', []);
+  }
+
+  get planar() {
+    return call(this, 'isPlanar', []);
+  }
+
+  get samplesPerPixel() {
+    return call(this, 'samplesPerPixel', []);
   }
 
   get alpha() {

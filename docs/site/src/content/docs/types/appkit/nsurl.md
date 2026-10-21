@@ -52,42 +52,45 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 - `URLByAppendingPathComponent(pathComponent)`: `-URLByAppendingPathComponent:`
 - `URLByAppendingPathComponentIsDirectory(pathComponent, isDirectory)`: `-URLByAppendingPathComponent:isDirectory:`
 - `URLByAppendingPathExtension(pathExtension)`: `-URLByAppendingPathExtension:`
-- `URLByDeletingLastPathComponent()`: `-URLByDeletingLastPathComponent`
-- `URLByDeletingPathExtension()`: `-URLByDeletingPathExtension`
-- `URLByResolvingSymlinksInPath()`: `-URLByResolvingSymlinksInPath`
-- `URLByStandardizingPath()`: `-URLByStandardizingPath`
-- `absoluteString()`: `-absoluteString`
-- `absoluteURL()`: `-absoluteURL`
-- `baseURL()`: `-baseURL`
 - `bookmarkDataWithOptionsIncludingResourceValuesForKeysRelativeToURL(options, keys, relativeUrl)`: `-bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:` (throws a NativeError)
 - `checkPromisedItemIsReachableAndReturnError()`: `-checkPromisedItemIsReachableAndReturnError:` (throws a NativeError)
 - `checkResourceIsReachableAndReturnError()`: `-checkResourceIsReachableAndReturnError:` (throws a NativeError)
-- `dataRepresentation()`: `-dataRepresentation`
-- `filePathURL()`: `-filePathURL`
 - `fileReferenceURL()`: `-fileReferenceURL`
-- `fragment()`: `-fragment`
-- `hasDirectoryPath()`: `-hasDirectoryPath`
-- `host()`: `-host`
 - `isFileReferenceURL()`: `-isFileReferenceURL`
-- `isFileURL()`: `-isFileURL`
-- `lastPathComponent()`: `-lastPathComponent`
-- `password()`: `-password`
-- `path()`: `-path`
-- `pathComponents()`: `-pathComponents`
-- `pathExtension()`: `-pathExtension`
-- `port()`: `-port`
 - `promisedItemResourceValuesForKeys(keys)`: `-promisedItemResourceValuesForKeys:error:` (throws a NativeError)
-- `query()`: `-query`
-- `relativePath()`: `-relativePath`
-- `relativeString()`: `-relativeString`
-- `resourceSpecifier()`: `-resourceSpecifier`
 - `resourceValuesForKeys(keys)`: `-resourceValuesForKeys:error:` (throws a NativeError)
-- `scheme()`: `-scheme`
-- `standardizedURL()`: `-standardizedURL`
 - `startAccessingSecurityScopedResource()`: `-startAccessingSecurityScopedResource`
 - `stopAccessingSecurityScopedResource()`: `-stopAccessingSecurityScopedResource`
-- `user()`: `-user`
 - `writeToPasteboard(pasteBoard)`: `-writeToPasteboard:`
+
+## Properties
+
+- `URLByDeletingLastPathComponent` (read-only): KVC `URLByDeletingLastPathComponent` (probe)
+- `URLByDeletingPathExtension` (read-only): KVC `URLByDeletingPathExtension` (probe)
+- `URLByResolvingSymlinksInPath` (read-only): KVC `URLByResolvingSymlinksInPath` (probe)
+- `URLByStandardizingPath` (read-only): KVC `URLByStandardizingPath` (probe)
+- `absoluteString` (read-only): KVC `absoluteString` (probe)
+- `absoluteURL` (read-only): KVC `absoluteURL` (probe)
+- `baseURL` (read-only): KVC `baseURL` (probe)
+- `dataRepresentation` (read-only): KVC `dataRepresentation` (probe)
+- `filePathURL` (read-only): KVC `filePathURL` (probe)
+- `fileURL` (read-only): KVC `fileURL` (probe)
+- `fragment` (read-only): KVC `fragment` (probe)
+- `hasDirectoryPath` (read-only): KVC `hasDirectoryPath` (probe)
+- `host` (read-only): KVC `host` (probe)
+- `lastPathComponent` (read-only): KVC `lastPathComponent` (probe)
+- `password` (read-only): KVC `password` (probe)
+- `path` (read-only): KVC `path` (probe)
+- `pathComponents` (read-only): KVC `pathComponents` (probe)
+- `pathExtension` (read-only): KVC `pathExtension` (probe)
+- `port` (read-only): KVC `port` (probe)
+- `query` (read-only): KVC `query` (probe)
+- `relativePath` (read-only): KVC `relativePath` (probe)
+- `relativeString` (read-only): KVC `relativeString` (probe)
+- `resourceSpecifier` (read-only): KVC `resourceSpecifier` (probe)
+- `scheme` (read-only): KVC `scheme` (probe)
+- `standardizedURL` (read-only): KVC `standardizedURL` (probe)
+- `user` (read-only): KVC `user` (probe)
 
 ## Not bound
 

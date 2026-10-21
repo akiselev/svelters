@@ -32,11 +32,11 @@ export class NSUUID extends NativeValue {
     return wrapValue(NSUUID, callStatic('NSUUID', 'initWithUUIDString:', [string]));
   }
 
-  UUIDString() {
-    return call(this, 'UUIDString', []);
-  }
-
   compare(otherUuid) {
     return call(this, 'compare:', [otherUuid]);
+  }
+
+  get UUIDString() {
+    return call(this, 'UUIDString', []);
   }
 }

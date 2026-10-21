@@ -32,19 +32,19 @@ export class NSTextTab extends NativeValue {
     return wrapValue(NSTextTab, callStatic('NSTextTab', 'initWithType:location:', [type, loc]));
   }
 
-  alignment() {
+  tabStopType() {
+    return call(this, 'tabStopType', []);
+  }
+
+  get alignment() {
     return call(this, 'alignment', []);
   }
 
-  location() {
+  get location() {
     return call(this, 'location', []);
   }
 
-  options() {
+  get options() {
     return call(this, 'options', []);
-  }
-
-  tabStopType() {
-    return call(this, 'tabStopType', []);
   }
 }

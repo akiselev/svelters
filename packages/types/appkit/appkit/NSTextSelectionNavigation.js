@@ -33,10 +33,6 @@ export class NSTextSelectionNavigation extends NativeObject {
     return call(this, 'resolvedInsertionLocationForTextSelection:writingDirection:', [textSelection, writingDirection]);
   }
 
-  textSelectionDataSource() {
-    return call(this, 'textSelectionDataSource', []);
-  }
-
   textSelectionForSelectionGranularityEnclosingPointInContainerAtLocation(selectionGranularity, point, location) {
     return wrapObject(NSTextSelection, call(this, 'textSelectionForSelectionGranularity:enclosingPoint:inContainerAtLocation:', [selectionGranularity, point, location]));
   }
@@ -63,5 +59,9 @@ export class NSTextSelectionNavigation extends NativeObject {
 
   set rotatesCoordinateSystemForLayoutOrientation(v) {
     setProp(this, 'rotatesCoordinateSystemForLayoutOrientation', v);
+  }
+
+  get textSelectionDataSource() {
+    return getProp(this, 'textSelectionDataSource');
   }
 }

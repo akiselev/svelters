@@ -40,10 +40,6 @@ export class NSFontDescriptor extends NativeValue {
     return wrapValue(NSFontDescriptor, callStatic('NSFontDescriptor', 'preferredFontDescriptorForTextStyle:options:', [style, options]));
   }
 
-  fontAttributes() {
-    return call(this, 'fontAttributes', []);
-  }
-
   fontDescriptorByAddingAttributes(attributes) {
     return wrapValue(NSFontDescriptor, call(this, 'fontDescriptorByAddingAttributes:', [attributes]));
   }
@@ -80,27 +76,31 @@ export class NSFontDescriptor extends NativeValue {
     return (call(this, 'matchingFontDescriptorsWithMandatoryKeys:', [mandatoryKeys]))?.map((e) => wrapValue(NSFontDescriptor, e)) ?? null;
   }
 
-  matrix() {
-    return wrapObject(NSAffineTransform, call(this, 'matrix', []));
-  }
-
   objectForKey(attribute) {
     return call(this, 'objectForKey:', [attribute]);
   }
 
-  pointSize() {
+  get fontAttributes() {
+    return call(this, 'fontAttributes', []);
+  }
+
+  get matrix() {
+    return wrapObject(NSAffineTransform, call(this, 'matrix', []));
+  }
+
+  get pointSize() {
     return call(this, 'pointSize', []);
   }
 
-  postscriptName() {
+  get postscriptName() {
     return call(this, 'postscriptName', []);
   }
 
-  requiresFontAssetRequest() {
+  get requiresFontAssetRequest() {
     return call(this, 'requiresFontAssetRequest', []);
   }
 
-  symbolicTraits() {
+  get symbolicTraits() {
     return call(this, 'symbolicTraits', []);
   }
 }

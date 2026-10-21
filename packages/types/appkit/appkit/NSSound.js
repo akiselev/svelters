@@ -39,18 +39,6 @@ export class NSSound extends NativeObject {
     return callStatic('NSSound', 'soundUnfilteredTypes', []);
   }
 
-  duration() {
-    return call(this, 'duration', []);
-  }
-
-  isPlaying() {
-    return call(this, 'isPlaying', []);
-  }
-
-  name() {
-    return call(this, 'name', []);
-  }
-
   pause() {
     return call(this, 'pause', []);
   }
@@ -91,6 +79,10 @@ export class NSSound extends NativeObject {
     setProp(this, 'delegate', v);
   }
 
+  get duration() {
+    return getProp(this, 'duration');
+  }
+
   get loops() {
     return getProp(this, 'loops');
   }
@@ -99,12 +91,20 @@ export class NSSound extends NativeObject {
     setProp(this, 'loops', v);
   }
 
+  get name() {
+    return getProp(this, 'name');
+  }
+
   get playbackDeviceIdentifier() {
     return getProp(this, 'playbackDeviceIdentifier');
   }
 
   set playbackDeviceIdentifier(v) {
     setProp(this, 'playbackDeviceIdentifier', v);
+  }
+
+  get playing() {
+    return getProp(this, 'playing');
   }
 
   get volume() {

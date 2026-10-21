@@ -53,16 +53,16 @@ export class NSItemProvider extends NativeObject {
     call(this, 'registerObject:visibility:', [object, visibility]);
   }
 
-  registeredTypeIdentifiers() {
-    return call(this, 'registeredTypeIdentifiers', []);
-  }
-
   registeredTypeIdentifiersWithFileOptions(fileOptions) {
     return call(this, 'registeredTypeIdentifiersWithFileOptions:', [fileOptions]);
   }
 
   sourceFrame() {
     return call(this, 'sourceFrame', []);
+  }
+
+  get registeredTypeIdentifiers() {
+    return getProp(this, 'registeredTypeIdentifiers');
   }
 
   get suggestedName() {

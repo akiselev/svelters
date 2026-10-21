@@ -127,32 +127,12 @@ export class NSBezierPath extends NativeObject {
     call(this, 'appendBezierPathWithRoundedRect:xRadius:yRadius:', [rect, xRadius, yRadius]);
   }
 
-  bezierPathByFlatteningPath() {
-    return wrapObject(NSBezierPath, call(this, 'bezierPathByFlatteningPath', []));
-  }
-
-  bezierPathByReversingPath() {
-    return wrapObject(NSBezierPath, call(this, 'bezierPathByReversingPath', []));
-  }
-
-  bounds() {
-    return call(this, 'bounds', []);
-  }
-
   closePath() {
     call(this, 'closePath', []);
   }
 
   containsPoint(point) {
     return call(this, 'containsPoint:', [point]);
-  }
-
-  controlPointBounds() {
-    return call(this, 'controlPointBounds', []);
-  }
-
-  currentPoint() {
-    return call(this, 'currentPoint', []);
   }
 
   curveToPointControlPoint(endPoint, controlPoint) {
@@ -167,16 +147,8 @@ export class NSBezierPath extends NativeObject {
     return call(this, 'elementAtIndex:', [index]);
   }
 
-  elementCount() {
-    return call(this, 'elementCount', []);
-  }
-
   fill() {
     call(this, 'fill', []);
-  }
-
-  isEmpty() {
-    return call(this, 'isEmpty', []);
   }
 
   lineToPoint(point) {
@@ -217,6 +189,34 @@ export class NSBezierPath extends NativeObject {
 
   transformUsingAffineTransform(transform) {
     call(this, 'transformUsingAffineTransform:', [transform]);
+  }
+
+  get bezierPathByFlatteningPath() {
+    return wrapObject(NSBezierPath, getProp(this, 'bezierPathByFlatteningPath'));
+  }
+
+  get bezierPathByReversingPath() {
+    return wrapObject(NSBezierPath, getProp(this, 'bezierPathByReversingPath'));
+  }
+
+  get bounds() {
+    return getProp(this, 'bounds');
+  }
+
+  get controlPointBounds() {
+    return getProp(this, 'controlPointBounds');
+  }
+
+  get currentPoint() {
+    return getProp(this, 'currentPoint');
+  }
+
+  get elementCount() {
+    return getProp(this, 'elementCount');
+  }
+
+  get empty() {
+    return getProp(this, 'empty');
   }
 
   get flatness() {

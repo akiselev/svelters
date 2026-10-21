@@ -134,48 +134,12 @@ export class NSFont extends NativeValue {
     return call(this, 'advancementForGlyph:', [glyph]);
   }
 
-  ascender() {
-    return call(this, 'ascender', []);
-  }
-
   boundingRectForCGGlyph(glyph) {
     return call(this, 'boundingRectForCGGlyph:', [glyph]);
   }
 
-  boundingRectForFont() {
-    return call(this, 'boundingRectForFont', []);
-  }
-
   boundingRectForGlyph(glyph) {
     return call(this, 'boundingRectForGlyph:', [glyph]);
-  }
-
-  capHeight() {
-    return call(this, 'capHeight', []);
-  }
-
-  coveredCharacterSet() {
-    return wrapValue(NSCharacterSet, call(this, 'coveredCharacterSet', []));
-  }
-
-  descender() {
-    return call(this, 'descender', []);
-  }
-
-  displayName() {
-    return call(this, 'displayName', []);
-  }
-
-  familyName() {
-    return call(this, 'familyName', []);
-  }
-
-  fontDescriptor() {
-    return wrapValue(NSFontDescriptor, call(this, 'fontDescriptor', []));
-  }
-
-  fontName() {
-    return call(this, 'fontName', []);
   }
 
   fontWithSize(fontSize) {
@@ -184,38 +148,6 @@ export class NSFont extends NativeValue {
 
   glyphWithName(name) {
     return call(this, 'glyphWithName:', [name]);
-  }
-
-  isFixedPitch() {
-    return call(this, 'isFixedPitch', []);
-  }
-
-  isVertical() {
-    return call(this, 'isVertical', []);
-  }
-
-  italicAngle() {
-    return call(this, 'italicAngle', []);
-  }
-
-  leading() {
-    return call(this, 'leading', []);
-  }
-
-  maximumAdvancement() {
-    return call(this, 'maximumAdvancement', []);
-  }
-
-  mostCompatibleStringEncoding() {
-    return call(this, 'mostCompatibleStringEncoding', []);
-  }
-
-  numberOfGlyphs() {
-    return call(this, 'numberOfGlyphs', []);
-  }
-
-  pointSize() {
-    return call(this, 'pointSize', []);
   }
 
   printerFont() {
@@ -234,23 +166,91 @@ export class NSFont extends NativeValue {
     return wrapValue(NSFont, call(this, 'screenFontWithRenderingMode:', [renderingMode]));
   }
 
-  textTransform() {
+  get ascender() {
+    return call(this, 'ascender', []);
+  }
+
+  get boundingRectForFont() {
+    return call(this, 'boundingRectForFont', []);
+  }
+
+  get capHeight() {
+    return call(this, 'capHeight', []);
+  }
+
+  get coveredCharacterSet() {
+    return wrapValue(NSCharacterSet, call(this, 'coveredCharacterSet', []));
+  }
+
+  get descender() {
+    return call(this, 'descender', []);
+  }
+
+  get displayName() {
+    return call(this, 'displayName', []);
+  }
+
+  get familyName() {
+    return call(this, 'familyName', []);
+  }
+
+  get fixedPitch() {
+    return call(this, 'isFixedPitch', []);
+  }
+
+  get fontDescriptor() {
+    return wrapValue(NSFontDescriptor, call(this, 'fontDescriptor', []));
+  }
+
+  get fontName() {
+    return call(this, 'fontName', []);
+  }
+
+  get italicAngle() {
+    return call(this, 'italicAngle', []);
+  }
+
+  get leading() {
+    return call(this, 'leading', []);
+  }
+
+  get maximumAdvancement() {
+    return call(this, 'maximumAdvancement', []);
+  }
+
+  get mostCompatibleStringEncoding() {
+    return call(this, 'mostCompatibleStringEncoding', []);
+  }
+
+  get numberOfGlyphs() {
+    return call(this, 'numberOfGlyphs', []);
+  }
+
+  get pointSize() {
+    return call(this, 'pointSize', []);
+  }
+
+  get textTransform() {
     return wrapObject(NSAffineTransform, call(this, 'textTransform', []));
   }
 
-  underlinePosition() {
+  get underlinePosition() {
     return call(this, 'underlinePosition', []);
   }
 
-  underlineThickness() {
+  get underlineThickness() {
     return call(this, 'underlineThickness', []);
   }
 
-  verticalFont() {
+  get vertical() {
+    return call(this, 'isVertical', []);
+  }
+
+  get verticalFont() {
     return wrapValue(NSFont, call(this, 'verticalFont', []));
   }
 
-  xHeight() {
+  get xHeight() {
     return call(this, 'xHeight', []);
   }
 }

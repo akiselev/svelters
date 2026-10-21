@@ -31,12 +31,12 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 - `loadFileRepresentationForTypeIdentifier(typeIdentifier)`: `-loadFileRepresentationForTypeIdentifier:completionHandler:` (async: returns a Promise; `{ signal }` cancels)
 - `preferredPresentationSize()`: `-preferredPresentationSize`
 - `registerObjectVisibility(object, visibility)`: `-registerObject:visibility:`
-- `registeredTypeIdentifiers()`: `-registeredTypeIdentifiers`
 - `registeredTypeIdentifiersWithFileOptions(fileOptions)`: `-registeredTypeIdentifiersWithFileOptions:`
 - `sourceFrame()`: `-sourceFrame`
 
 ## Properties
 
+- `registeredTypeIdentifiers` (read-only): KVC `registeredTypeIdentifiers` (probe)
 - `suggestedName`: KVC `suggestedName` (objc2)
 
 ## Not bound

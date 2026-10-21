@@ -65,24 +65,12 @@ export class NSTextLayoutManager extends NativeObject {
     call(this, 'setRenderingAttributes:forTextRange:', [renderingAttributes, textRange]);
   }
 
-  textContentManager() {
-    return wrapObject(NSTextContentManager, call(this, 'textContentManager', []));
-  }
-
   textLayoutFragmentForLocation(location) {
     return wrapObject(NSTextLayoutFragment, call(this, 'textLayoutFragmentForLocation:', [location]));
   }
 
   textLayoutFragmentForPosition(position) {
     return wrapObject(NSTextLayoutFragment, call(this, 'textLayoutFragmentForPosition:', [position]));
-  }
-
-  textViewportLayoutController() {
-    return wrapObject(NSTextViewportLayoutController, call(this, 'textViewportLayoutController', []));
-  }
-
-  usageBoundsForTextContainer() {
-    return call(this, 'usageBoundsForTextContainer', []);
   }
 
   get delegate() {
@@ -117,6 +105,10 @@ export class NSTextLayoutManager extends NativeObject {
     setProp(this, 'textContainer', v);
   }
 
+  get textContentManager() {
+    return wrapObject(NSTextContentManager, getProp(this, 'textContentManager'));
+  }
+
   get textSelectionNavigation() {
     return wrapObject(NSTextSelectionNavigation, getProp(this, 'textSelectionNavigation'));
   }
@@ -131,6 +123,14 @@ export class NSTextLayoutManager extends NativeObject {
 
   set textSelections(v) {
     setProp(this, 'textSelections', v);
+  }
+
+  get textViewportLayoutController() {
+    return wrapObject(NSTextViewportLayoutController, getProp(this, 'textViewportLayoutController'));
+  }
+
+  get usageBoundsForTextContainer() {
+    return getProp(this, 'usageBoundsForTextContainer');
   }
 
   get usesFontLeading() {

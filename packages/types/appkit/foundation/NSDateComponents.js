@@ -13,14 +13,6 @@ export class NSDateComponents extends NativeObject {
     throw new TypeError('NSDateComponents has no such constructor: use a static (new…, …With…)');
   }
 
-  date() {
-    return call(this, 'date', []);
-  }
-
-  isValidDate() {
-    return call(this, 'isValidDate', []);
-  }
-
   isValidDateInCalendar(calendar) {
     return call(this, 'isValidDateInCalendar:', [calendar]);
   }
@@ -39,6 +31,10 @@ export class NSDateComponents extends NativeObject {
 
   set calendar(v) {
     setProp(this, 'calendar', v);
+  }
+
+  get date() {
+    return getProp(this, 'date');
   }
 
   get day() {
@@ -135,6 +131,10 @@ export class NSDateComponents extends NativeObject {
 
   set timeZone(v) {
     setProp(this, 'timeZone', v);
+  }
+
+  get validDate() {
+    return getProp(this, 'validDate');
   }
 
   get weekOfMonth() {

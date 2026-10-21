@@ -21,16 +21,8 @@ export class NSTextContainer extends NativeObject {
     return wrapObject(NSTextContainer, callStatic('NSTextContainer', 'initWithSize:', [size]));
   }
 
-  isSimpleRectangularTextContainer() {
-    return call(this, 'isSimpleRectangularTextContainer', []);
-  }
-
   replaceLayoutManager(newLayoutManager) {
     call(this, 'replaceLayoutManager:', [newLayoutManager]);
-  }
-
-  textLayoutManager() {
-    return wrapObject(NSTextLayoutManager, call(this, 'textLayoutManager', []));
   }
 
   get containerSize() {
@@ -81,12 +73,20 @@ export class NSTextContainer extends NativeObject {
     setProp(this, 'maximumNumberOfLines', v);
   }
 
+  get simpleRectangularTextContainer() {
+    return getProp(this, 'simpleRectangularTextContainer');
+  }
+
   get size() {
     return getProp(this, 'size');
   }
 
   set size(v) {
     setProp(this, 'size', v);
+  }
+
+  get textLayoutManager() {
+    return wrapObject(NSTextLayoutManager, getProp(this, 'textLayoutManager'));
   }
 
   get widthTracksTextView() {

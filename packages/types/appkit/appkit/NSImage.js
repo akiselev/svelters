@@ -79,10 +79,6 @@ export class NSImage extends NativeObject {
     return wrapObject(NSImage, callStatic('NSImage', 'initWithSize:', [size]));
   }
 
-  TIFFRepresentation() {
-    return call(this, 'TIFFRepresentation', []);
-  }
-
   TIFFRepresentationUsingCompressionFactor(comp, factor) {
     return call(this, 'TIFFRepresentationUsingCompression:factor:', [comp, factor]);
   }
@@ -131,16 +127,8 @@ export class NSImage extends NativeObject {
     return wrapObject(NSImage, call(this, 'imageWithSymbolConfiguration:', [configuration]));
   }
 
-  isValid() {
-    return call(this, 'isValid', []);
-  }
-
   layerContentsForContentsScale(layerContentsScale) {
     return call(this, 'layerContentsForContentsScale:', [layerContentsScale]);
-  }
-
-  locale() {
-    return wrapValue(NSLocale, call(this, 'locale', []));
   }
 
   name() {
@@ -159,16 +147,12 @@ export class NSImage extends NativeObject {
     call(this, 'removeRepresentation:', [imageRep]);
   }
 
-  representations() {
-    return (call(this, 'representations', []))?.map((e) => wrapObject(NSImageRep, e)) ?? null;
-  }
-
   setName(string) {
     return call(this, 'setName:', [string]);
   }
 
-  symbolConfiguration() {
-    return wrapValue(NSImageSymbolConfiguration, call(this, 'symbolConfiguration', []));
+  get TIFFRepresentation() {
+    return getProp(this, 'TIFFRepresentation');
   }
 
   get accessibilityDescription() {
@@ -219,6 +203,10 @@ export class NSImage extends NativeObject {
     setProp(this, 'delegate', v);
   }
 
+  get locale() {
+    return wrapValue(NSLocale, getProp(this, 'locale'));
+  }
+
   get matchesOnMultipleResolution() {
     return getProp(this, 'matchesOnMultipleResolution');
   }
@@ -243,6 +231,10 @@ export class NSImage extends NativeObject {
     setProp(this, 'prefersColorMatch', v);
   }
 
+  get representations() {
+    return (getProp(this, 'representations'))?.map((e) => wrapObject(NSImageRep, e)) ?? null;
+  }
+
   get resizingMode() {
     return getProp(this, 'resizingMode');
   }
@@ -259,6 +251,10 @@ export class NSImage extends NativeObject {
     setProp(this, 'size', v);
   }
 
+  get symbolConfiguration() {
+    return wrapValue(NSImageSymbolConfiguration, getProp(this, 'symbolConfiguration'));
+  }
+
   get template() {
     return getProp(this, 'template');
   }
@@ -273,5 +269,9 @@ export class NSImage extends NativeObject {
 
   set usesEPSOnResolutionMismatch(v) {
     setProp(this, 'usesEPSOnResolutionMismatch', v);
+  }
+
+  get valid() {
+    return getProp(this, 'valid');
   }
 }

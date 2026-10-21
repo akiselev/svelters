@@ -29,7 +29,7 @@
 
 <window title="Types">
   <stack-view orientation="vertical" spacing="6">
-    <text-field string-value={home.host()} text-color={color} font={font} editable={false} />
+    <text-field string-value={home.host} text-color={color} font={font} editable={false} />
     <text-field string-value={`undo levels ${undo.levelsOfUndo}`} editable={false} />
     <text-field string-value={loaded} editable={false} />
   </stack-view>

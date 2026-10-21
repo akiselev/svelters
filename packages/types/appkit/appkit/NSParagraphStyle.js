@@ -30,91 +30,91 @@ export class NSParagraphStyle extends NativeValue {
     return callStatic('NSParagraphStyle', 'defaultWritingDirectionForLanguage:', [languageName]);
   }
 
-  alignment() {
+  get alignment() {
     return call(this, 'alignment', []);
   }
 
-  allowsDefaultTighteningForTruncation() {
+  get allowsDefaultTighteningForTruncation() {
     return call(this, 'allowsDefaultTighteningForTruncation', []);
   }
 
-  baseWritingDirection() {
+  get baseWritingDirection() {
     return call(this, 'baseWritingDirection', []);
   }
 
-  defaultTabInterval() {
+  get defaultTabInterval() {
     return call(this, 'defaultTabInterval', []);
   }
 
-  firstLineHeadIndent() {
+  get firstLineHeadIndent() {
     return call(this, 'firstLineHeadIndent', []);
   }
 
-  headIndent() {
+  get headIndent() {
     return call(this, 'headIndent', []);
   }
 
-  headerLevel() {
+  get headerLevel() {
     return call(this, 'headerLevel', []);
   }
 
-  hyphenationFactor() {
+  get hyphenationFactor() {
     return call(this, 'hyphenationFactor', []);
   }
 
-  lineBreakMode() {
+  get lineBreakMode() {
     return call(this, 'lineBreakMode', []);
   }
 
-  lineBreakStrategy() {
+  get lineBreakStrategy() {
     return call(this, 'lineBreakStrategy', []);
   }
 
-  lineHeightMultiple() {
+  get lineHeightMultiple() {
     return call(this, 'lineHeightMultiple', []);
   }
 
-  lineSpacing() {
+  get lineSpacing() {
     return call(this, 'lineSpacing', []);
   }
 
-  maximumLineHeight() {
+  get maximumLineHeight() {
     return call(this, 'maximumLineHeight', []);
   }
 
-  minimumLineHeight() {
+  get minimumLineHeight() {
     return call(this, 'minimumLineHeight', []);
   }
 
-  paragraphSpacing() {
+  get paragraphSpacing() {
     return call(this, 'paragraphSpacing', []);
   }
 
-  paragraphSpacingBefore() {
+  get paragraphSpacingBefore() {
     return call(this, 'paragraphSpacingBefore', []);
   }
 
-  tabStops() {
+  get tabStops() {
     return (call(this, 'tabStops', []))?.map((e) => wrapValue(NSTextTab, e)) ?? null;
   }
 
-  tailIndent() {
+  get tailIndent() {
     return call(this, 'tailIndent', []);
   }
 
-  textBlocks() {
+  get textBlocks() {
     return (call(this, 'textBlocks', []))?.map((e) => wrapObject(NSTextBlock, e)) ?? null;
   }
 
-  textLists() {
+  get textLists() {
     return (call(this, 'textLists', []))?.map((e) => wrapObject(NSTextList, e)) ?? null;
   }
 
-  tighteningFactorForTruncation() {
+  get tighteningFactorForTruncation() {
     return call(this, 'tighteningFactorForTruncation', []);
   }
 
-  usesDefaultHyphenation() {
+  get usesDefaultHyphenation() {
     return call(this, 'usesDefaultHyphenation', []);
   }
 }

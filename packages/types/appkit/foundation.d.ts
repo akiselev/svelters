@@ -168,8 +168,7 @@ declare module 'svelters:appkit/foundation' {
     rulerAttributesInRange(range: Range): Record<string, unknown>;
     /** `-[NSAttributedString size]` */
     size(): Size;
-    /** `-[NSAttributedString string]` */
-    string(): string;
+    readonly string: string;
   }
 
   /** `NSAttributedStringMarkdownParsingOptions` (Foundation), object, lifetime shared */
@@ -231,42 +230,14 @@ declare module 'svelters:appkit/foundation' {
     URLsForResourcesWithExtensionSubdirectory(ext: string | null, subpath: string | null): Array<NSURL> | null;
     /** `-[NSBundle URLsForResourcesWithExtension:subdirectory:localization:]` */
     URLsForResourcesWithExtensionSubdirectoryLocalization(ext: string | null, subpath: string | null, localizationName: string | null): Array<NSURL> | null;
-    /** `-[NSBundle appStoreReceiptURL]` */
-    appStoreReceiptURL(): NSURL | null;
-    /** `-[NSBundle builtInPlugInsPath]` */
-    builtInPlugInsPath(): string | null;
-    /** `-[NSBundle builtInPlugInsURL]` */
-    builtInPlugInsURL(): NSURL | null;
-    /** `-[NSBundle bundleIdentifier]` */
-    bundleIdentifier(): string | null;
-    /** `-[NSBundle bundlePath]` */
-    bundlePath(): string;
-    /** `-[NSBundle bundleURL]` */
-    bundleURL(): NSURL;
     /** `-[NSBundle classNamed:]` */
     classNamed(className: string): string | { readonly native: string } | null;
     /** `-[NSBundle contextHelpForKey:]` */
     contextHelpForKey(key: string): NSAttributedString | null;
-    /** `-[NSBundle developmentLocalization]` */
-    developmentLocalization(): string | null;
-    /** `-[NSBundle executableArchitectures]` */
-    executableArchitectures(): Array<number> | null;
-    /** `-[NSBundle executablePath]` */
-    executablePath(): string | null;
-    /** `-[NSBundle executableURL]` */
-    executableURL(): NSURL | null;
     /** `-[NSBundle imageForResource:]` */
     imageForResource(name: string): NSImage | null;
-    /** `-[NSBundle infoDictionary]` */
-    infoDictionary(): Record<string, unknown> | null;
-    /** `-[NSBundle isLoaded]` */
-    isLoaded(): boolean;
     /** `-[NSBundle loadAndReturnError:]` @throws NativeError (the method's NSError) */
     loadAndReturnError(): void;
-    /** `-[NSBundle localizations]` */
-    localizations(): Array<string>;
-    /** `-[NSBundle localizedInfoDictionary]` */
-    localizedInfoDictionary(): Record<string, unknown> | null;
     /** `-[NSBundle localizedStringForKey:value:table:]` */
     localizedStringForKeyValueTable(key: string, value: string | null, tableName: string | null): string;
     /** `-[NSBundle localizedStringForKey:value:table:localizations:]` */
@@ -289,34 +260,38 @@ declare module 'svelters:appkit/foundation' {
     pathsForResourcesOfTypeInDirectory(ext: string | null, subpath: string | null): Array<string>;
     /** `-[NSBundle pathsForResourcesOfType:inDirectory:forLocalization:]` */
     pathsForResourcesOfTypeInDirectoryForLocalization(ext: string | null, subpath: string | null, localizationName: string | null): Array<string>;
-    /** `-[NSBundle preferredLocalizations]` */
-    preferredLocalizations(): Array<string>;
     /** `-[NSBundle preflightAndReturnError:]` @throws NativeError (the method's NSError) */
     preflightAndReturnError(): void;
     /** `-[NSBundle preservationPriorityForTag:]` */
     preservationPriorityForTag(tag: string): number;
-    /** `-[NSBundle principalClass]` */
-    principalClass(): string | { readonly native: string } | null;
-    /** `-[NSBundle privateFrameworksPath]` */
-    privateFrameworksPath(): string | null;
-    /** `-[NSBundle privateFrameworksURL]` */
-    privateFrameworksURL(): NSURL | null;
-    /** `-[NSBundle resourcePath]` */
-    resourcePath(): string | null;
-    /** `-[NSBundle resourceURL]` */
-    resourceURL(): NSURL | null;
     /** `-[NSBundle setPreservationPriority:forTags:]` */
     setPreservationPriorityForTags(priority: number, tags: Array<string>): void;
-    /** `-[NSBundle sharedFrameworksPath]` */
-    sharedFrameworksPath(): string | null;
-    /** `-[NSBundle sharedFrameworksURL]` */
-    sharedFrameworksURL(): NSURL | null;
-    /** `-[NSBundle sharedSupportPath]` */
-    sharedSupportPath(): string | null;
-    /** `-[NSBundle sharedSupportURL]` */
-    sharedSupportURL(): NSURL | null;
     /** `-[NSBundle unload]` */
     unload(): boolean;
+    readonly appStoreReceiptURL: NSURL | null;
+    readonly builtInPlugInsPath: string | null;
+    readonly builtInPlugInsURL: NSURL | null;
+    readonly bundleIdentifier: string | null;
+    readonly bundlePath: string;
+    readonly bundleURL: NSURL;
+    readonly developmentLocalization: string | null;
+    readonly executableArchitectures: Array<number> | null;
+    readonly executablePath: string | null;
+    readonly executableURL: NSURL | null;
+    readonly infoDictionary: Record<string, unknown> | null;
+    readonly loaded: boolean;
+    readonly localizations: Array<string>;
+    readonly localizedInfoDictionary: Record<string, unknown> | null;
+    readonly preferredLocalizations: Array<string>;
+    readonly principalClass: string | { readonly native: string } | null;
+    readonly privateFrameworksPath: string | null;
+    readonly privateFrameworksURL: NSURL | null;
+    readonly resourcePath: string | null;
+    readonly resourceURL: NSURL | null;
+    readonly sharedFrameworksPath: string | null;
+    readonly sharedFrameworksURL: NSURL | null;
+    readonly sharedSupportPath: string | null;
+    readonly sharedSupportURL: NSURL | null;
   }
 
   /** `NSByteCountFormatter` (Foundation), object, lifetime shared */
@@ -356,12 +331,6 @@ declare module 'svelters:appkit/foundation' {
     static currentCalendar(): NSCalendar;
     /** `-[NSCalendar initWithCalendarIdentifier:]` */
     static newWithCalendarIdentifier(ident: string): NSCalendar | null;
-    /** `-[NSCalendar AMSymbol]` */
-    AMSymbol(): string;
-    /** `-[NSCalendar PMSymbol]` */
-    PMSymbol(): string;
-    /** `-[NSCalendar calendarIdentifier]` */
-    calendarIdentifier(): string;
     /** `-[NSCalendar compareDate:toDate:toUnitGranularity:]` */
     compareDateToDateToUnitGranularity(date1: Date, date2: Date, unit: number): number;
     /** `-[NSCalendar component:fromDate:]` */
@@ -390,8 +359,6 @@ declare module 'svelters:appkit/foundation' {
     dateWithEraYearForWeekOfYearWeekOfYearWeekdayHourMinuteSecondNanosecond(eraValue: number, yearValue: number, weekValue: number, weekdayValue: number, hourValue: number, minuteValue: number, secondValue: number, nanosecondValue: number): Date | null;
     /** `-[NSCalendar dateWithEra:year:month:day:hour:minute:second:nanosecond:]` */
     dateWithEraYearMonthDayHourMinuteSecondNanosecond(eraValue: number, yearValue: number, monthValue: number, dayValue: number, hourValue: number, minuteValue: number, secondValue: number, nanosecondValue: number): Date | null;
-    /** `-[NSCalendar eraSymbols]` */
-    eraSymbols(): Array<string>;
     /** `-[NSCalendar isDate:equalToDate:toUnitGranularity:]` */
     isDateEqualToDateToUnitGranularity(date1: Date, date2: Date, unit: number): boolean;
     /** `-[NSCalendar isDate:inSameDayAsDate:]` */
@@ -404,14 +371,10 @@ declare module 'svelters:appkit/foundation' {
     isDateInWeekend(date: Date): boolean;
     /** `-[NSCalendar isDateInYesterday:]` */
     isDateInYesterday(date: Date): boolean;
-    /** `-[NSCalendar longEraSymbols]` */
-    longEraSymbols(): Array<string>;
     /** `-[NSCalendar maximumRangeOfUnit:]` */
     maximumRangeOfUnit(unit: number): Range;
     /** `-[NSCalendar minimumRangeOfUnit:]` */
     minimumRangeOfUnit(unit: number): Range;
-    /** `-[NSCalendar monthSymbols]` */
-    monthSymbols(): Array<string>;
     /** `-[NSCalendar nextDateAfterDate:matchingComponents:options:]` */
     nextDateAfterDateMatchingComponentsOptions(date: Date, comps: NSDateComponents, options: number): Date | null;
     /** `-[NSCalendar nextDateAfterDate:matchingHour:minute:second:options:]` */
@@ -420,44 +383,35 @@ declare module 'svelters:appkit/foundation' {
     nextDateAfterDateMatchingUnitValueOptions(date: Date, unit: number, value: number, options: number): Date | null;
     /** `-[NSCalendar ordinalityOfUnit:inUnit:forDate:]` */
     ordinalityOfUnitInUnitForDate(smaller: number, larger: number, date: Date): number;
-    /** `-[NSCalendar quarterSymbols]` */
-    quarterSymbols(): Array<string>;
     /** `-[NSCalendar rangeOfUnit:inUnit:forDate:]` */
     rangeOfUnitInUnitForDate(smaller: number, larger: number, date: Date): Range;
-    /** `-[NSCalendar shortMonthSymbols]` */
-    shortMonthSymbols(): Array<string>;
-    /** `-[NSCalendar shortQuarterSymbols]` */
-    shortQuarterSymbols(): Array<string>;
-    /** `-[NSCalendar shortStandaloneMonthSymbols]` */
-    shortStandaloneMonthSymbols(): Array<string>;
-    /** `-[NSCalendar shortStandaloneQuarterSymbols]` */
-    shortStandaloneQuarterSymbols(): Array<string>;
-    /** `-[NSCalendar shortStandaloneWeekdaySymbols]` */
-    shortStandaloneWeekdaySymbols(): Array<string>;
-    /** `-[NSCalendar shortWeekdaySymbols]` */
-    shortWeekdaySymbols(): Array<string>;
-    /** `-[NSCalendar standaloneMonthSymbols]` */
-    standaloneMonthSymbols(): Array<string>;
-    /** `-[NSCalendar standaloneQuarterSymbols]` */
-    standaloneQuarterSymbols(): Array<string>;
-    /** `-[NSCalendar standaloneWeekdaySymbols]` */
-    standaloneWeekdaySymbols(): Array<string>;
     /** `-[NSCalendar startOfDayForDate:]` */
     startOfDayForDate(date: Date): Date;
-    /** `-[NSCalendar veryShortMonthSymbols]` */
-    veryShortMonthSymbols(): Array<string>;
-    /** `-[NSCalendar veryShortStandaloneMonthSymbols]` */
-    veryShortStandaloneMonthSymbols(): Array<string>;
-    /** `-[NSCalendar veryShortStandaloneWeekdaySymbols]` */
-    veryShortStandaloneWeekdaySymbols(): Array<string>;
-    /** `-[NSCalendar veryShortWeekdaySymbols]` */
-    veryShortWeekdaySymbols(): Array<string>;
-    /** `-[NSCalendar weekdaySymbols]` */
-    weekdaySymbols(): Array<string>;
+    readonly AMSymbol: string;
+    readonly PMSymbol: string;
+    readonly calendarIdentifier: string;
+    readonly eraSymbols: Array<string>;
     firstWeekday: number;
     locale: NSLocale | null;
+    readonly longEraSymbols: Array<string>;
     minimumDaysInFirstWeek: number;
+    readonly monthSymbols: Array<string>;
+    readonly quarterSymbols: Array<string>;
+    readonly shortMonthSymbols: Array<string>;
+    readonly shortQuarterSymbols: Array<string>;
+    readonly shortStandaloneMonthSymbols: Array<string>;
+    readonly shortStandaloneQuarterSymbols: Array<string>;
+    readonly shortStandaloneWeekdaySymbols: Array<string>;
+    readonly shortWeekdaySymbols: Array<string>;
+    readonly standaloneMonthSymbols: Array<string>;
+    readonly standaloneQuarterSymbols: Array<string>;
+    readonly standaloneWeekdaySymbols: Array<string>;
     timeZone: NSTimeZone;
+    readonly veryShortMonthSymbols: Array<string>;
+    readonly veryShortStandaloneMonthSymbols: Array<string>;
+    readonly veryShortStandaloneWeekdaySymbols: Array<string>;
+    readonly veryShortWeekdaySymbols: Array<string>;
+    readonly weekdaySymbols: Array<string>;
   }
 
   /** `NSCharacterSet` (Foundation), value, lifetime shared */
@@ -516,28 +470,22 @@ declare module 'svelters:appkit/foundation' {
     static whitespaceAndNewlineCharacterSet(): NSCharacterSet;
     /** `+[NSCharacterSet whitespaceCharacterSet]` */
     static whitespaceCharacterSet(): NSCharacterSet;
-    /** `-[NSCharacterSet bitmapRepresentation]` */
-    bitmapRepresentation(): Uint8Array;
     /** `-[NSCharacterSet characterIsMember:]` */
     characterIsMember(aCharacter: number): boolean;
     /** `-[NSCharacterSet hasMemberInPlane:]` */
     hasMemberInPlane(thePlane: number): boolean;
-    /** `-[NSCharacterSet invertedSet]` */
-    invertedSet(): NSCharacterSet;
     /** `-[NSCharacterSet isSupersetOfSet:]` */
     isSupersetOfSet(theOtherSet: NSCharacterSet): boolean;
     /** `-[NSCharacterSet longCharacterIsMember:]` */
     longCharacterIsMember(theLongChar: number): boolean;
+    readonly bitmapRepresentation: Uint8Array;
+    readonly invertedSet: NSCharacterSet;
   }
 
   /** `NSDateComponents` (Foundation), object, lifetime shared */
   export class NSDateComponents extends NativeObject {
     static readonly native: string;
     constructor(props?: { calendar?: NSCalendar | null; day?: number; dayOfYear?: number; era?: number; hour?: number; leapMonth?: boolean; minute?: number; month?: number; nanosecond?: number; quarter?: number; repeatedDay?: boolean; second?: number; timeZone?: NSTimeZone | null; weekOfMonth?: number; weekOfYear?: number; weekday?: number; weekdayOrdinal?: number; year?: number; yearForWeekOfYear?: number });
-    /** `-[NSDateComponents date]` */
-    date(): Date | null;
-    /** `-[NSDateComponents isValidDate]` */
-    isValidDate(): boolean;
     /** `-[NSDateComponents isValidDateInCalendar:]` */
     isValidDateInCalendar(calendar: NSCalendar): boolean;
     /** `-[NSDateComponents setValue:forComponent:]` */
@@ -545,6 +493,7 @@ declare module 'svelters:appkit/foundation' {
     /** `-[NSDateComponents valueForComponent:]` */
     valueForComponent(unit: number): number;
     calendar: NSCalendar | null;
+    readonly date: Date | null;
     day: number;
     dayOfYear: number;
     era: number;
@@ -557,6 +506,7 @@ declare module 'svelters:appkit/foundation' {
     repeatedDay: boolean;
     second: number;
     timeZone: NSTimeZone | null;
+    readonly validDate: boolean;
     weekOfMonth: number;
     weekOfYear: number;
     weekday: number;
@@ -683,8 +633,6 @@ declare module 'svelters:appkit/foundation' {
     createSymbolicLinkAtPathWithDestinationPath(path: string, destPath: string): void;
     /** `-[NSFileManager createSymbolicLinkAtURL:withDestinationURL:error:]` @throws NativeError (the method's NSError) */
     createSymbolicLinkAtURLWithDestinationURL(url: NSURL, destUrl: NSURL): void;
-    /** `-[NSFileManager currentDirectoryPath]` */
-    currentDirectoryPath(): string;
     /** `-[NSFileManager destinationOfSymbolicLinkAtPath:error:]` @throws NativeError (the method's NSError) */
     destinationOfSymbolicLinkAtPath(path: string): string;
     /** `-[NSFileManager displayNameAtPath:]` */
@@ -695,8 +643,6 @@ declare module 'svelters:appkit/foundation' {
     /** `-[NSFileManager fileExistsAtPath:]` */
     fileExistsAtPath(path: string): boolean;
     getFileProviderServicesForItemAtURL(url: NSURL, options?: AsyncOptions): Promise<Record<string, NSFileProviderService>>;
-    /** `-[NSFileManager homeDirectoryForCurrentUser]` */
-    homeDirectoryForCurrentUser(): NSURL;
     /** `-[NSFileManager homeDirectoryForUser:]` */
     homeDirectoryForUser(userName: string): NSURL | null;
     /** `-[NSFileManager isDeletableFileAtPath:]` */
@@ -735,18 +681,18 @@ declare module 'svelters:appkit/foundation' {
     subpathsAtPath(path: string): Array<string> | null;
     /** `-[NSFileManager subpathsOfDirectoryAtPath:error:]` @throws NativeError (the method's NSError) */
     subpathsOfDirectoryAtPath(path: string): Array<string>;
-    /** `-[NSFileManager temporaryDirectory]` */
-    temporaryDirectory(): NSURL;
     unmountVolumeAtURLOptions(url: NSURL, mask: number, options?: AsyncOptions): Promise<void>;
     uploadLocalVersionOfUbiquitousItemAtURLWithConflictResolutionPolicy(url: NSURL, conflictResolutionPolicy: number, options?: AsyncOptions): Promise<NSFileVersion>;
+    readonly currentDirectoryPath: string;
+    readonly homeDirectoryForCurrentUser: NSURL;
+    readonly temporaryDirectory: NSURL;
   }
 
   /** `NSFileProviderService` (Foundation), object, lifetime shared */
   export class NSFileProviderService extends NativeObject {
     static readonly native: string;
     constructor(props?: {});
-    /** `-[NSFileProviderService name]` */
-    name(): string;
+    readonly name: string;
   }
 
   /** `NSFileVersion` (Foundation), object, lifetime shared */
@@ -768,29 +714,20 @@ declare module 'svelters:appkit/foundation' {
     static unresolvedConflictVersionsOfItemAtURL(url: NSURL): Array<NSFileVersion> | null;
     /** `+[NSFileVersion versionOfItemAtURL:forPersistentIdentifier:]` */
     static versionOfItemAtURLForPersistentIdentifier(url: NSURL, persistentIdentifier: unknown): NSFileVersion | null;
-    /** `-[NSFileVersion URL]` */
-    URL(): NSURL;
-    /** `-[NSFileVersion hasLocalContents]` */
-    hasLocalContents(): boolean;
-    /** `-[NSFileVersion hasThumbnail]` */
-    hasThumbnail(): boolean;
-    /** `-[NSFileVersion isConflict]` */
-    isConflict(): boolean;
-    /** `-[NSFileVersion localizedName]` */
-    localizedName(): string | null;
-    /** `-[NSFileVersion localizedNameOfSavingComputer]` */
-    localizedNameOfSavingComputer(): string | null;
-    /** `-[NSFileVersion modificationDate]` */
-    modificationDate(): Date | null;
-    /** `-[NSFileVersion originatorNameComponents]` */
-    originatorNameComponents(): NSPersonNameComponents | null;
-    /** `-[NSFileVersion persistentIdentifier]` */
-    persistentIdentifier(): unknown;
     /** `-[NSFileVersion removeAndReturnError:]` @throws NativeError (the method's NSError) */
     removeAndReturnError(): void;
     /** `-[NSFileVersion replaceItemAtURL:options:error:]` @throws NativeError (the method's NSError) */
     replaceItemAtURLOptions(url: NSURL, options: number): NSURL;
+    readonly URL: NSURL;
+    readonly conflict: boolean;
     discardable: boolean;
+    readonly hasLocalContents: boolean;
+    readonly hasThumbnail: boolean;
+    readonly localizedName: string | null;
+    readonly localizedNameOfSavingComputer: string | null;
+    readonly modificationDate: Date | null;
+    readonly originatorNameComponents: NSPersonNameComponents | null;
+    readonly persistentIdentifier: unknown;
     resolved: boolean;
   }
 
@@ -812,34 +749,27 @@ declare module 'svelters:appkit/foundation' {
     addFileWrapper(child: NSFileWrapper): string;
     /** `-[NSFileWrapper addRegularFileWithContents:preferredFilename:]` */
     addRegularFileWithContentsPreferredFilename(data: Uint8Array, fileName: string): string;
-    /** `-[NSFileWrapper fileWrappers]` */
-    fileWrappers(): Record<string, NSFileWrapper> | null;
-    /** `-[NSFileWrapper isDirectory]` */
-    isDirectory(): boolean;
-    /** `-[NSFileWrapper isRegularFile]` */
-    isRegularFile(): boolean;
-    /** `-[NSFileWrapper isSymbolicLink]` */
-    isSymbolicLink(): boolean;
     /** `-[NSFileWrapper keyForFileWrapper:]` */
     keyForFileWrapper(child: NSFileWrapper): string | null;
     /** `-[NSFileWrapper matchesContentsOfURL:]` */
     matchesContentsOfURL(url: NSURL): boolean;
     /** `-[NSFileWrapper readFromURL:options:error:]` @throws NativeError (the method's NSError) */
     readFromURLOptions(url: NSURL, options: number): void;
-    /** `-[NSFileWrapper regularFileContents]` */
-    regularFileContents(): Uint8Array | null;
     /** `-[NSFileWrapper removeFileWrapper:]` */
     removeFileWrapper(child: NSFileWrapper): void;
-    /** `-[NSFileWrapper serializedRepresentation]` */
-    serializedRepresentation(): Uint8Array | null;
-    /** `-[NSFileWrapper symbolicLinkDestinationURL]` */
-    symbolicLinkDestinationURL(): NSURL | null;
     /** `-[NSFileWrapper writeToURL:options:originalContentsURL:error:]` @throws NativeError (the method's NSError) */
     writeToURLOptionsOriginalContentsURL(url: NSURL, options: number, originalContentsUrl: NSURL | null): void;
+    readonly directory: boolean;
     fileAttributes: Record<string, unknown>;
+    readonly fileWrappers: Record<string, NSFileWrapper> | null;
     filename: string | null;
     icon: NSImage | null;
     preferredFilename: string | null;
+    readonly regularFile: boolean;
+    readonly regularFileContents: Uint8Array | null;
+    readonly serializedRepresentation: Uint8Array | null;
+    readonly symbolicLink: boolean;
+    readonly symbolicLinkDestinationURL: NSURL | null;
   }
 
   /** `NSFormatter` (Foundation), value, lifetime shared */
@@ -878,12 +808,11 @@ declare module 'svelters:appkit/foundation' {
     preferredPresentationSize(): Size;
     /** `-[NSItemProvider registerObject:visibility:]` */
     registerObjectVisibility(object: unknown, visibility: number): void;
-    /** `-[NSItemProvider registeredTypeIdentifiers]` */
-    registeredTypeIdentifiers(): Array<string>;
     /** `-[NSItemProvider registeredTypeIdentifiersWithFileOptions:]` */
     registeredTypeIdentifiersWithFileOptions(fileOptions: number): Array<string>;
     /** `-[NSItemProvider sourceFrame]` */
     sourceFrame(): Rect;
+    readonly registeredTypeIdentifiers: Array<string>;
     suggestedName: string | null;
   }
 
@@ -1120,8 +1049,6 @@ declare module 'svelters:appkit/foundation' {
     setBaseWritingDirectionRange(writingDirection: number, range: Range): void;
     /** `-[NSMutableAttributedString size]` */
     size(): Size;
-    /** `-[NSMutableAttributedString string]` */
-    string(): string;
     /** `-[NSMutableAttributedString subscriptRange:]` */
     subscriptRange(range: Range): void;
     /** `-[NSMutableAttributedString superscriptRange:]` */
@@ -1130,6 +1057,7 @@ declare module 'svelters:appkit/foundation' {
     unscriptRange(range: Range): void;
     /** `-[NSMutableAttributedString updateAttachmentsFromPath:]` */
     updateAttachmentsFromPath(path: string): void;
+    readonly string: string;
   }
 
   /** `NSNumberFormatter` (Foundation), object, lifetime shared */
@@ -1239,10 +1167,6 @@ declare module 'svelters:appkit/foundation' {
     constructor(props?: { automaticTerminationSupportEnabled?: boolean; processName?: string });
     /** `+[NSProcessInfo processInfo]` */
     static processInfo(): NSProcessInfo;
-    /** `-[NSProcessInfo activeProcessorCount]` */
-    activeProcessorCount(): number;
-    /** `-[NSProcessInfo arguments]` */
-    arguments_(): Array<string>;
     /** `-[NSProcessInfo beginActivityWithOptions:reason:]` */
     beginActivityWithOptionsReason(options: number, reason: string): unknown;
     /** `-[NSProcessInfo disableAutomaticTermination:]` */
@@ -1255,36 +1179,26 @@ declare module 'svelters:appkit/foundation' {
     enableSuddenTermination(): void;
     /** `-[NSProcessInfo endActivity:]` */
     endActivity(activity: unknown): void;
-    /** `-[NSProcessInfo environment]` */
-    environment(): Record<string, string>;
-    /** `-[NSProcessInfo fullUserName]` */
-    fullUserName(): string;
-    /** `-[NSProcessInfo globallyUniqueString]` */
-    globallyUniqueString(): string;
-    /** `-[NSProcessInfo hostName]` */
-    hostName(): string;
     /** `-[NSProcessInfo isLowPowerModeEnabled]` */
     isLowPowerModeEnabled(): boolean;
-    /** `-[NSProcessInfo isMacCatalystApp]` */
-    isMacCatalystApp(): boolean;
-    /** `-[NSProcessInfo isiOSAppOnMac]` */
-    isiOSAppOnMac(): boolean;
-    /** `-[NSProcessInfo operatingSystemVersionString]` */
-    operatingSystemVersionString(): string;
-    /** `-[NSProcessInfo physicalMemory]` */
-    physicalMemory(): number;
-    /** `-[NSProcessInfo processIdentifier]` */
-    processIdentifier(): number;
-    /** `-[NSProcessInfo processorCount]` */
-    processorCount(): number;
-    /** `-[NSProcessInfo systemUptime]` */
-    systemUptime(): number;
     /** `-[NSProcessInfo thermalState]` */
     thermalState(): number;
-    /** `-[NSProcessInfo userName]` */
-    userName(): string;
+    readonly activeProcessorCount: number;
+    readonly arguments_: Array<string>;
     automaticTerminationSupportEnabled: boolean;
+    readonly environment: Record<string, string>;
+    readonly fullUserName: string;
+    readonly globallyUniqueString: string;
+    readonly hostName: string;
+    readonly iOSAppOnMac: boolean;
+    readonly macCatalystApp: boolean;
+    readonly operatingSystemVersionString: string;
+    readonly physicalMemory: number;
+    readonly processIdentifier: number;
     processName: string;
+    readonly processorCount: number;
+    readonly systemUptime: number;
+    readonly userName: string;
   }
 
   /** `NSProgress` (Foundation), object, lifetime shared */
@@ -1309,18 +1223,6 @@ declare module 'svelters:appkit/foundation' {
     becomeCurrentWithPendingUnitCount(unitCount: number): void;
     /** `-[NSProgress cancel]` */
     cancel(): void;
-    /** `-[NSProgress fractionCompleted]` */
-    fractionCompleted(): number;
-    /** `-[NSProgress isCancelled]` */
-    isCancelled(): boolean;
-    /** `-[NSProgress isFinished]` */
-    isFinished(): boolean;
-    /** `-[NSProgress isIndeterminate]` */
-    isIndeterminate(): boolean;
-    /** `-[NSProgress isOld]` */
-    isOld(): boolean;
-    /** `-[NSProgress isPaused]` */
-    isPaused(): boolean;
     /** `-[NSProgress pause]` */
     pause(): void;
     /** `-[NSProgress publish]` */
@@ -1333,21 +1235,26 @@ declare module 'svelters:appkit/foundation' {
     setUserInfoObjectForKey(objectOrNil: unknown, key: string): void;
     /** `-[NSProgress unpublish]` */
     unpublish(): void;
-    /** `-[NSProgress userInfo]` */
-    userInfo(): Record<string, unknown>;
     cancellable: boolean;
+    readonly cancelled: boolean;
     completedUnitCount: number;
     estimatedTimeRemaining: number | null;
     fileCompletedCount: number | null;
     fileOperationKind: string | null;
     fileTotalCount: number | null;
     fileURL: NSURL | null;
+    readonly finished: boolean;
+    readonly fractionCompleted: number;
+    readonly indeterminate: boolean;
     kind: string | null;
     localizedAdditionalDescription: string;
     localizedDescription: string;
+    readonly old: boolean;
     pausable: boolean;
+    readonly paused: boolean;
     throughput: number | null;
     totalUnitCount: number;
+    readonly userInfo: Record<string, unknown>;
   }
 
   /** `NSTimeZone` (Foundation), value, lifetime shared */
@@ -1390,8 +1297,6 @@ declare module 'svelters:appkit/foundation' {
     abbreviation(): string | null;
     /** `-[NSTimeZone abbreviationForDate:]` */
     abbreviationForDate(aDate: Date): string | null;
-    /** `-[NSTimeZone data]` */
-    data(): Uint8Array;
     /** `-[NSTimeZone daylightSavingTimeOffset]` */
     daylightSavingTimeOffset(): number;
     /** `-[NSTimeZone daylightSavingTimeOffsetForDate:]` */
@@ -1404,8 +1309,6 @@ declare module 'svelters:appkit/foundation' {
     isEqualToTimeZone(aTimeZone: NSTimeZone): boolean;
     /** `-[NSTimeZone localizedName:locale:]` */
     localizedNameLocale(style: number, locale: NSLocale | null): string | null;
-    /** `-[NSTimeZone name]` */
-    name(): string;
     /** `-[NSTimeZone nextDaylightSavingTimeTransition]` */
     nextDaylightSavingTimeTransition(): Date | null;
     /** `-[NSTimeZone nextDaylightSavingTimeTransitionAfterDate:]` */
@@ -1414,6 +1317,8 @@ declare module 'svelters:appkit/foundation' {
     secondsFromGMT(): number;
     /** `-[NSTimeZone secondsFromGMTForDate:]` */
     secondsFromGMTForDate(aDate: Date): number;
+    readonly data: Uint8Array;
+    readonly name: string;
   }
 
   /** `NSURL` (Foundation), value, lifetime shared */
@@ -1477,78 +1382,52 @@ declare module 'svelters:appkit/foundation' {
     URLByAppendingPathComponentIsDirectory(pathComponent: string, isDirectory: boolean): NSURL | null;
     /** `-[NSURL URLByAppendingPathExtension:]` */
     URLByAppendingPathExtension(pathExtension: string): NSURL | null;
-    /** `-[NSURL URLByDeletingLastPathComponent]` */
-    URLByDeletingLastPathComponent(): NSURL | null;
-    /** `-[NSURL URLByDeletingPathExtension]` */
-    URLByDeletingPathExtension(): NSURL | null;
-    /** `-[NSURL URLByResolvingSymlinksInPath]` */
-    URLByResolvingSymlinksInPath(): NSURL | null;
-    /** `-[NSURL URLByStandardizingPath]` */
-    URLByStandardizingPath(): NSURL | null;
-    /** `-[NSURL absoluteString]` */
-    absoluteString(): string | null;
-    /** `-[NSURL absoluteURL]` */
-    absoluteURL(): NSURL | null;
-    /** `-[NSURL baseURL]` */
-    baseURL(): NSURL | null;
     /** `-[NSURL bookmarkDataWithOptions:includingResourceValuesForKeys:relativeToURL:error:]` @throws NativeError (the method's NSError) */
     bookmarkDataWithOptionsIncludingResourceValuesForKeysRelativeToURL(options: number, keys: Array<string> | null, relativeUrl: NSURL | null): Uint8Array;
     /** `-[NSURL checkPromisedItemIsReachableAndReturnError:]` @throws NativeError (the method's NSError) */
     checkPromisedItemIsReachableAndReturnError(): void;
     /** `-[NSURL checkResourceIsReachableAndReturnError:]` @throws NativeError (the method's NSError) */
     checkResourceIsReachableAndReturnError(): void;
-    /** `-[NSURL dataRepresentation]` */
-    dataRepresentation(): Uint8Array;
-    /** `-[NSURL filePathURL]` */
-    filePathURL(): NSURL | null;
     /** `-[NSURL fileReferenceURL]` */
     fileReferenceURL(): NSURL | null;
-    /** `-[NSURL fragment]` */
-    fragment(): string | null;
-    /** `-[NSURL hasDirectoryPath]` */
-    hasDirectoryPath(): boolean;
-    /** `-[NSURL host]` */
-    host(): string | null;
     /** `-[NSURL isFileReferenceURL]` */
     isFileReferenceURL(): boolean;
-    /** `-[NSURL isFileURL]` */
-    isFileURL(): boolean;
-    /** `-[NSURL lastPathComponent]` */
-    lastPathComponent(): string | null;
-    /** `-[NSURL password]` */
-    password(): string | null;
-    /** `-[NSURL path]` */
-    path(): string | null;
-    /** `-[NSURL pathComponents]` */
-    pathComponents(): Array<string> | null;
-    /** `-[NSURL pathExtension]` */
-    pathExtension(): string | null;
-    /** `-[NSURL port]` */
-    port(): number | null;
     /** `-[NSURL promisedItemResourceValuesForKeys:error:]` @throws NativeError (the method's NSError) */
     promisedItemResourceValuesForKeys(keys: Array<string>): Record<string, unknown>;
-    /** `-[NSURL query]` */
-    query(): string | null;
-    /** `-[NSURL relativePath]` */
-    relativePath(): string | null;
-    /** `-[NSURL relativeString]` */
-    relativeString(): string;
-    /** `-[NSURL resourceSpecifier]` */
-    resourceSpecifier(): string | null;
     /** `-[NSURL resourceValuesForKeys:error:]` @throws NativeError (the method's NSError) */
     resourceValuesForKeys(keys: Array<string>): Record<string, unknown>;
-    /** `-[NSURL scheme]` */
-    scheme(): string | null;
-    /** `-[NSURL standardizedURL]` */
-    standardizedURL(): NSURL | null;
     /** `-[NSURL startAccessingSecurityScopedResource]` */
     startAccessingSecurityScopedResource(): boolean;
     /** `-[NSURL stopAccessingSecurityScopedResource]` */
     stopAccessingSecurityScopedResource(): void;
-    /** `-[NSURL user]` */
-    user(): string | null;
     /** `-[NSURL writeToPasteboard:]` */
     writeToPasteboard(pasteBoard: NSPasteboard): void;
+    readonly URLByDeletingLastPathComponent: NSURL | null;
+    readonly URLByDeletingPathExtension: NSURL | null;
+    readonly URLByResolvingSymlinksInPath: NSURL | null;
+    readonly URLByStandardizingPath: NSURL | null;
+    readonly absoluteString: string | null;
+    readonly absoluteURL: NSURL | null;
+    readonly baseURL: NSURL | null;
+    readonly dataRepresentation: Uint8Array;
+    readonly filePathURL: NSURL | null;
+    readonly fileURL: boolean;
+    readonly fragment: string | null;
+    readonly hasDirectoryPath: boolean;
+    readonly host: string | null;
+    readonly lastPathComponent: string | null;
+    readonly password: string | null;
+    readonly path: string | null;
+    readonly pathComponents: Array<string> | null;
+    readonly pathExtension: string | null;
+    readonly port: number | null;
+    readonly query: string | null;
+    readonly relativePath: string | null;
+    readonly relativeString: string;
+    readonly resourceSpecifier: string | null;
+    readonly scheme: string | null;
+    readonly standardizedURL: NSURL | null;
+    readonly user: string | null;
   }
 
   /** `NSURLComponents` (Foundation), object, lifetime shared */
@@ -1568,28 +1447,9 @@ declare module 'svelters:appkit/foundation' {
     static newWithStringEncodingInvalidCharacters(urlString: string, encodingInvalidCharacters: boolean): NSURLComponents | null;
     /** `-[NSURLComponents initWithURL:resolvingAgainstBaseURL:]` */
     static newWithURLResolvingAgainstBaseURL(url: NSURL, resolve: boolean): NSURLComponents | null;
-    /** `-[NSURLComponents URL]` */
-    URL(): NSURL | null;
     /** `-[NSURLComponents URLRelativeToURL:]` */
     URLRelativeToURL(baseUrl: NSURL | null): NSURL | null;
-    /** `-[NSURLComponents rangeOfFragment]` */
-    rangeOfFragment(): Range;
-    /** `-[NSURLComponents rangeOfHost]` */
-    rangeOfHost(): Range;
-    /** `-[NSURLComponents rangeOfPassword]` */
-    rangeOfPassword(): Range;
-    /** `-[NSURLComponents rangeOfPath]` */
-    rangeOfPath(): Range;
-    /** `-[NSURLComponents rangeOfPort]` */
-    rangeOfPort(): Range;
-    /** `-[NSURLComponents rangeOfQuery]` */
-    rangeOfQuery(): Range;
-    /** `-[NSURLComponents rangeOfScheme]` */
-    rangeOfScheme(): Range;
-    /** `-[NSURLComponents rangeOfUser]` */
-    rangeOfUser(): Range;
-    /** `-[NSURLComponents string]` */
-    string(): string | null;
+    readonly URL: NSURL | null;
     encodedHost: string | null;
     fragment: string | null;
     host: string | null;
@@ -1604,7 +1464,16 @@ declare module 'svelters:appkit/foundation' {
     port: number | null;
     query: string | null;
     queryItems: Array<NSURLQueryItem> | null;
+    readonly rangeOfFragment: Range;
+    readonly rangeOfHost: Range;
+    readonly rangeOfPassword: Range;
+    readonly rangeOfPath: Range;
+    readonly rangeOfPort: Range;
+    readonly rangeOfQuery: Range;
+    readonly rangeOfScheme: Range;
+    readonly rangeOfUser: Range;
     scheme: string | null;
+    readonly string: string | null;
     user: string | null;
   }
 
@@ -1618,10 +1487,8 @@ declare module 'svelters:appkit/foundation' {
     static newWithNameValue(name: string, value: string | null): NSURLQueryItem | null;
     /** `+[NSURLQueryItem queryItemWithName:value:]` */
     static queryItemWithNameValue(name: string, value: string | null): NSURLQueryItem;
-    /** `-[NSURLQueryItem name]` */
-    name(): string;
-    /** `-[NSURLQueryItem value]` */
-    value(): string | null;
+    readonly name: string;
+    readonly value: string | null;
   }
 
   /** `NSUUID` (Foundation), value, lifetime shared */
@@ -1635,10 +1502,9 @@ declare module 'svelters:appkit/foundation' {
     static UUID(): NSUUID;
     /** `-[NSUUID initWithUUIDString:]` */
     static newWithUUIDString(string: string): NSUUID | null;
-    /** `-[NSUUID UUIDString]` */
-    UUIDString(): string;
     /** `-[NSUUID compare:]` */
     compare(otherUuid: NSUUID): number;
+    readonly UUIDString: string;
   }
 
   /** `NSUndoManager` (Foundation), object, lifetime shared; main thread only */
@@ -1647,38 +1513,18 @@ declare module 'svelters:appkit/foundation' {
     constructor(props?: { groupsByEvent?: boolean; levelsOfUndo?: number; runLoopModes?: Array<string> });
     /** `-[NSUndoManager beginUndoGrouping]` */
     beginUndoGrouping(): void;
-    /** `-[NSUndoManager canRedo]` */
-    canRedo(): boolean;
-    /** `-[NSUndoManager canUndo]` */
-    canUndo(): boolean;
     /** `-[NSUndoManager disableUndoRegistration]` */
     disableUndoRegistration(): void;
     /** `-[NSUndoManager enableUndoRegistration]` */
     enableUndoRegistration(): void;
     /** `-[NSUndoManager endUndoGrouping]` */
     endUndoGrouping(): void;
-    /** `-[NSUndoManager groupingLevel]` */
-    groupingLevel(): number;
-    /** `-[NSUndoManager isRedoing]` */
-    isRedoing(): boolean;
-    /** `-[NSUndoManager isUndoRegistrationEnabled]` */
-    isUndoRegistrationEnabled(): boolean;
-    /** `-[NSUndoManager isUndoing]` */
-    isUndoing(): boolean;
     /** `-[NSUndoManager prepareWithInvocationTarget:]` */
     prepareWithInvocationTarget(target: unknown): unknown;
     /** `-[NSUndoManager redo]` */
     redo(): void;
-    /** `-[NSUndoManager redoActionIsDiscardable]` */
-    redoActionIsDiscardable(): boolean;
-    /** `-[NSUndoManager redoActionName]` */
-    redoActionName(): string;
     /** `-[NSUndoManager redoActionUserInfoValueForKey:]` */
     redoActionUserInfoValueForKey(key: string): unknown;
-    /** `-[NSUndoManager redoCount]` */
-    redoCount(): number;
-    /** `-[NSUndoManager redoMenuItemTitle]` */
-    redoMenuItemTitle(): string;
     /** `-[NSUndoManager redoMenuTitleForUndoActionName:]` */
     redoMenuTitleForUndoActionName(actionName: string): string;
     /** `-[NSUndoManager removeAllActions]` */
@@ -1693,23 +1539,29 @@ declare module 'svelters:appkit/foundation' {
     setActionUserInfoValueForKey(info: unknown, key: string): void;
     /** `-[NSUndoManager undo]` */
     undo(): void;
-    /** `-[NSUndoManager undoActionIsDiscardable]` */
-    undoActionIsDiscardable(): boolean;
-    /** `-[NSUndoManager undoActionName]` */
-    undoActionName(): string;
     /** `-[NSUndoManager undoActionUserInfoValueForKey:]` */
     undoActionUserInfoValueForKey(key: string): unknown;
-    /** `-[NSUndoManager undoCount]` */
-    undoCount(): number;
-    /** `-[NSUndoManager undoMenuItemTitle]` */
-    undoMenuItemTitle(): string;
     /** `-[NSUndoManager undoMenuTitleForUndoActionName:]` */
     undoMenuTitleForUndoActionName(actionName: string): string;
     /** `-[NSUndoManager undoNestedGroup]` */
     undoNestedGroup(): void;
+    readonly canRedo: boolean;
+    readonly canUndo: boolean;
+    readonly groupingLevel: number;
     groupsByEvent: boolean;
     levelsOfUndo: number;
+    readonly redoActionIsDiscardable: boolean;
+    readonly redoActionName: string;
+    readonly redoCount: number;
+    readonly redoMenuItemTitle: string;
+    readonly redoing: boolean;
     runLoopModes: Array<string>;
+    readonly undoActionIsDiscardable: boolean;
+    readonly undoActionName: string;
+    readonly undoCount: number;
+    readonly undoMenuItemTitle: string;
+    readonly undoRegistrationEnabled: boolean;
+    readonly undoing: boolean;
   }
 
   /** `NSUserDefaults` (Foundation), object, lifetime shared */
@@ -1784,7 +1636,6 @@ declare module 'svelters:appkit/foundation' {
     synchronize(): boolean;
     /** `-[NSUserDefaults volatileDomainForName:]` */
     volatileDomainForName(domainName: string): Record<string, unknown>;
-    /** `-[NSUserDefaults volatileDomainNames]` */
-    volatileDomainNames(): Array<string>;
+    readonly volatileDomainNames: Array<string>;
   }
 }

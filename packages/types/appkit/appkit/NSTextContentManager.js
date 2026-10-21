@@ -17,10 +17,6 @@ export class NSTextContentManager extends NativeObject {
     call(this, 'addTextLayoutManager:', [textLayoutManager]);
   }
 
-  hasEditingTransaction() {
-    return call(this, 'hasEditingTransaction', []);
-  }
-
   recordEditActionInRangeNewTextRange(originalTextRange, newTextRange) {
     call(this, 'recordEditActionInRange:newTextRange:', [originalTextRange, newTextRange]);
   }
@@ -35,10 +31,6 @@ export class NSTextContentManager extends NativeObject {
 
   textElementsForRange(range) {
     return (call(this, 'textElementsForRange:', [range]))?.map((e) => wrapObject(NSTextElement, e)) ?? null;
-  }
-
-  textLayoutManagers() {
-    return (call(this, 'textLayoutManagers', []))?.map((e) => wrapObject(NSTextLayoutManager, e)) ?? null;
   }
 
   get automaticallySynchronizesTextLayoutManagers() {
@@ -65,11 +57,19 @@ export class NSTextContentManager extends NativeObject {
     setProp(this, 'delegate', v);
   }
 
+  get hasEditingTransaction() {
+    return getProp(this, 'hasEditingTransaction');
+  }
+
   get primaryTextLayoutManager() {
     return wrapObject(NSTextLayoutManager, getProp(this, 'primaryTextLayoutManager'));
   }
 
   set primaryTextLayoutManager(v) {
     setProp(this, 'primaryTextLayoutManager', v);
+  }
+
+  get textLayoutManagers() {
+    return (getProp(this, 'textLayoutManagers'))?.map((e) => wrapObject(NSTextLayoutManager, e)) ?? null;
   }
 }

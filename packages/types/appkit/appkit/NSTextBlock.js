@@ -20,14 +20,6 @@ export class NSTextBlock extends NativeObject {
     return call(this, 'boundsRectForContentRect:inRect:textContainer:characterRange:', [contentRect, rect, textContainer, charRange]);
   }
 
-  contentWidth() {
-    return call(this, 'contentWidth', []);
-  }
-
-  contentWidthValueType() {
-    return call(this, 'contentWidthValueType', []);
-  }
-
   rectForLayoutAtPointInRectTextContainerCharacterRange(startingPoint, rect, textContainer, charRange) {
     return call(this, 'rectForLayoutAtPoint:inRect:textContainer:characterRange:', [startingPoint, rect, textContainer, charRange]);
   }
@@ -78,6 +70,14 @@ export class NSTextBlock extends NativeObject {
 
   set backgroundColor(v) {
     setProp(this, 'backgroundColor', v);
+  }
+
+  get contentWidth() {
+    return getProp(this, 'contentWidth');
+  }
+
+  get contentWidthValueType() {
+    return getProp(this, 'contentWidthValueType');
   }
 
   get verticalAlignment() {

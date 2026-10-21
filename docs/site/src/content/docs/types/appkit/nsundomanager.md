@@ -22,22 +22,12 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 ## Methods
 
 - `beginUndoGrouping()`: `-beginUndoGrouping`
-- `canRedo()`: `-canRedo`
-- `canUndo()`: `-canUndo`
 - `disableUndoRegistration()`: `-disableUndoRegistration`
 - `enableUndoRegistration()`: `-enableUndoRegistration`
 - `endUndoGrouping()`: `-endUndoGrouping`
-- `groupingLevel()`: `-groupingLevel`
-- `isRedoing()`: `-isRedoing`
-- `isUndoRegistrationEnabled()`: `-isUndoRegistrationEnabled`
-- `isUndoing()`: `-isUndoing`
 - `prepareWithInvocationTarget(target)`: `-prepareWithInvocationTarget:`
 - `redo()`: `-redo`
-- `redoActionIsDiscardable()`: `-redoActionIsDiscardable`
-- `redoActionName()`: `-redoActionName`
 - `redoActionUserInfoValueForKey(key)`: `-redoActionUserInfoValueForKey:`
-- `redoCount()`: `-redoCount`
-- `redoMenuItemTitle()`: `-redoMenuItemTitle`
 - `redoMenuTitleForUndoActionName(actionName)`: `-redoMenuTitleForUndoActionName:`
 - `removeAllActions()`: `-removeAllActions`
 - `removeAllActionsWithTarget(target)`: `-removeAllActionsWithTarget:`
@@ -45,19 +35,29 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 - `setActionName(actionName)`: `-setActionName:`
 - `setActionUserInfoValueForKey(info, key)`: `-setActionUserInfoValue:forKey:`
 - `undo()`: `-undo`
-- `undoActionIsDiscardable()`: `-undoActionIsDiscardable`
-- `undoActionName()`: `-undoActionName`
 - `undoActionUserInfoValueForKey(key)`: `-undoActionUserInfoValueForKey:`
-- `undoCount()`: `-undoCount`
-- `undoMenuItemTitle()`: `-undoMenuItemTitle`
 - `undoMenuTitleForUndoActionName(actionName)`: `-undoMenuTitleForUndoActionName:`
 - `undoNestedGroup()`: `-undoNestedGroup`
 
 ## Properties
 
+- `canRedo` (read-only): KVC `canRedo` (probe)
+- `canUndo` (read-only): KVC `canUndo` (probe)
+- `groupingLevel` (read-only): KVC `groupingLevel` (probe)
 - `groupsByEvent`: KVC `groupsByEvent` (objc2)
 - `levelsOfUndo`: KVC `levelsOfUndo` (objc2)
+- `redoActionIsDiscardable` (read-only): KVC `redoActionIsDiscardable` (probe)
+- `redoActionName` (read-only): KVC `redoActionName` (probe)
+- `redoCount` (read-only): KVC `redoCount` (probe)
+- `redoMenuItemTitle` (read-only): KVC `redoMenuItemTitle` (probe)
+- `redoing` (read-only): KVC `redoing` (probe)
 - `runLoopModes`: KVC `runLoopModes` (objc2)
+- `undoActionIsDiscardable` (read-only): KVC `undoActionIsDiscardable` (probe)
+- `undoActionName` (read-only): KVC `undoActionName` (probe)
+- `undoCount` (read-only): KVC `undoCount` (probe)
+- `undoMenuItemTitle` (read-only): KVC `undoMenuItemTitle` (probe)
+- `undoRegistrationEnabled` (read-only): KVC `undoRegistrationEnabled` (probe)
+- `undoing` (read-only): KVC `undoing` (probe)
 
 ## Not bound
 

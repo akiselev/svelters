@@ -31,12 +31,10 @@ Not constructible: instances come from statics or other objects.
 
 ## Methods
 
-- `accessBehavior()`: `-accessBehavior`
 - `addTypesOwner(newTypes, newOwner)`: `-addTypes:owner:`
 - `availableTypeFromArray(types)`: `-availableTypeFromArray:`
 - `canReadItemWithDataConformingToTypes(types)`: `-canReadItemWithDataConformingToTypes:`
 - `canReadObjectForClassesOptions(classArray, options)`: `-canReadObjectForClasses:options:`
-- `changeCount()`: `-changeCount`
 - `clearContents()`: `-clearContents`
 - `dataForType(dataType)`: `-dataForType:`
 - `declareTypesOwner(newTypes, newOwner)`: `-declareTypes:owner:`
@@ -44,8 +42,6 @@ Not constructible: instances come from statics or other objects.
 - `detectPatternsForPatterns(patterns)`: `-detectPatternsForPatterns:completionHandler:` (async: returns a Promise; `{ signal }` cancels)
 - `detectValuesForPatterns(patterns)`: `-detectValuesForPatterns:completionHandler:` (async: returns a Promise; `{ signal }` cancels)
 - `indexOfPasteboardItem(pasteboardItem)`: `-indexOfPasteboardItem:`
-- `name()`: `-name`
-- `pasteboardItems()`: `-pasteboardItems`
 - `prepareForNewContentsWithOptions(options)`: `-prepareForNewContentsWithOptions:`
 - `propertyListForType(dataType)`: `-propertyListForType:`
 - `readFileContentsTypeToFile(type, filename)`: `-readFileContentsType:toFile:`
@@ -55,7 +51,14 @@ Not constructible: instances come from statics or other objects.
 - `setPropertyListForType(plist, dataType)`: `-setPropertyList:forType:`
 - `setStringForType(string, dataType)`: `-setString:forType:`
 - `stringForType(dataType)`: `-stringForType:`
-- `types()`: `-types`
 - `writeFileContents(filename)`: `-writeFileContents:`
 - `writeFileWrapper(wrapper)`: `-writeFileWrapper:`
 - `writeObjects(objects)`: `-writeObjects:`
+
+## Properties
+
+- `accessBehavior` (read-only): KVC `accessBehavior` (probe)
+- `changeCount` (read-only): KVC `changeCount` (probe)
+- `name` (read-only): KVC `name` (probe)
+- `pasteboardItems` (read-only): KVC `pasteboardItems` (probe)
+- `types` (read-only): KVC `types` (probe)

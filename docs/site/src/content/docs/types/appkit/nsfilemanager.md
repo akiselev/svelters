@@ -45,14 +45,12 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 - `createFileAtPathContentsAttributes(path, data, attr)`: `-createFileAtPath:contents:attributes:`
 - `createSymbolicLinkAtPathWithDestinationPath(path, destPath)`: `-createSymbolicLinkAtPath:withDestinationPath:error:` (throws a NativeError)
 - `createSymbolicLinkAtURLWithDestinationURL(url, destUrl)`: `-createSymbolicLinkAtURL:withDestinationURL:error:` (throws a NativeError)
-- `currentDirectoryPath()`: `-currentDirectoryPath`
 - `destinationOfSymbolicLinkAtPath(path)`: `-destinationOfSymbolicLinkAtPath:error:` (throws a NativeError)
 - `displayNameAtPath(path)`: `-displayNameAtPath:`
 - `evictUbiquitousItemAtURL(url)`: `-evictUbiquitousItemAtURL:error:` (throws a NativeError)
 - `fetchLatestRemoteVersionOfItemAtURL(url)`: `-fetchLatestRemoteVersionOfItemAtURL:completionHandler:` (async: returns a Promise; `{ signal }` cancels)
 - `fileExistsAtPath(path)`: `-fileExistsAtPath:`
 - `getFileProviderServicesForItemAtURL(url)`: `-getFileProviderServicesForItemAtURL:completionHandler:` (async: returns a Promise; `{ signal }` cancels)
-- `homeDirectoryForCurrentUser()`: `-homeDirectoryForCurrentUser`
 - `homeDirectoryForUser(userName)`: `-homeDirectoryForUser:`
 - `isDeletableFileAtPath(path)`: `-isDeletableFileAtPath:`
 - `isExecutableFileAtPath(path)`: `-isExecutableFileAtPath:`
@@ -73,9 +71,14 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 - `startDownloadingUbiquitousItemAtURL(url)`: `-startDownloadingUbiquitousItemAtURL:error:` (throws a NativeError)
 - `subpathsAtPath(path)`: `-subpathsAtPath:`
 - `subpathsOfDirectoryAtPath(path)`: `-subpathsOfDirectoryAtPath:error:` (throws a NativeError)
-- `temporaryDirectory()`: `-temporaryDirectory`
 - `unmountVolumeAtURLOptions(url, mask)`: `-unmountVolumeAtURL:options:completionHandler:` (async: returns a Promise; `{ signal }` cancels)
 - `uploadLocalVersionOfUbiquitousItemAtURLWithConflictResolutionPolicy(url, conflictResolutionPolicy)`: `-uploadLocalVersionOfUbiquitousItemAtURL:withConflictResolutionPolicy:completionHandler:` (async: returns a Promise; `{ signal }` cancels)
+
+## Properties
+
+- `currentDirectoryPath` (read-only): KVC `currentDirectoryPath` (probe)
+- `homeDirectoryForCurrentUser` (read-only): KVC `homeDirectoryForCurrentUser` (probe)
+- `temporaryDirectory` (read-only): KVC `temporaryDirectory` (probe)
 
 ## Not bound
 

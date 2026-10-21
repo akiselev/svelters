@@ -30,18 +30,6 @@ export class NSCalendar extends NativeObject {
     return wrapObject(NSCalendar, callStatic('NSCalendar', 'initWithCalendarIdentifier:', [ident]));
   }
 
-  AMSymbol() {
-    return call(this, 'AMSymbol', []);
-  }
-
-  PMSymbol() {
-    return call(this, 'PMSymbol', []);
-  }
-
-  calendarIdentifier() {
-    return call(this, 'calendarIdentifier', []);
-  }
-
   compareDateToDateToUnitGranularity(date1, date2, unit) {
     return call(this, 'compareDate:toDate:toUnitGranularity:', [date1, date2, unit]);
   }
@@ -98,10 +86,6 @@ export class NSCalendar extends NativeObject {
     return call(this, 'dateWithEra:year:month:day:hour:minute:second:nanosecond:', [eraValue, yearValue, monthValue, dayValue, hourValue, minuteValue, secondValue, nanosecondValue]);
   }
 
-  eraSymbols() {
-    return call(this, 'eraSymbols', []);
-  }
-
   isDateEqualToDateToUnitGranularity(date1, date2, unit) {
     return call(this, 'isDate:equalToDate:toUnitGranularity:', [date1, date2, unit]);
   }
@@ -126,20 +110,12 @@ export class NSCalendar extends NativeObject {
     return call(this, 'isDateInYesterday:', [date]);
   }
 
-  longEraSymbols() {
-    return call(this, 'longEraSymbols', []);
-  }
-
   maximumRangeOfUnit(unit) {
     return call(this, 'maximumRangeOfUnit:', [unit]);
   }
 
   minimumRangeOfUnit(unit) {
     return call(this, 'minimumRangeOfUnit:', [unit]);
-  }
-
-  monthSymbols() {
-    return call(this, 'monthSymbols', []);
   }
 
   nextDateAfterDateMatchingComponentsOptions(date, comps, options) {
@@ -158,72 +134,28 @@ export class NSCalendar extends NativeObject {
     return call(this, 'ordinalityOfUnit:inUnit:forDate:', [smaller, larger, date]);
   }
 
-  quarterSymbols() {
-    return call(this, 'quarterSymbols', []);
-  }
-
   rangeOfUnitInUnitForDate(smaller, larger, date) {
     return call(this, 'rangeOfUnit:inUnit:forDate:', [smaller, larger, date]);
-  }
-
-  shortMonthSymbols() {
-    return call(this, 'shortMonthSymbols', []);
-  }
-
-  shortQuarterSymbols() {
-    return call(this, 'shortQuarterSymbols', []);
-  }
-
-  shortStandaloneMonthSymbols() {
-    return call(this, 'shortStandaloneMonthSymbols', []);
-  }
-
-  shortStandaloneQuarterSymbols() {
-    return call(this, 'shortStandaloneQuarterSymbols', []);
-  }
-
-  shortStandaloneWeekdaySymbols() {
-    return call(this, 'shortStandaloneWeekdaySymbols', []);
-  }
-
-  shortWeekdaySymbols() {
-    return call(this, 'shortWeekdaySymbols', []);
-  }
-
-  standaloneMonthSymbols() {
-    return call(this, 'standaloneMonthSymbols', []);
-  }
-
-  standaloneQuarterSymbols() {
-    return call(this, 'standaloneQuarterSymbols', []);
-  }
-
-  standaloneWeekdaySymbols() {
-    return call(this, 'standaloneWeekdaySymbols', []);
   }
 
   startOfDayForDate(date) {
     return call(this, 'startOfDayForDate:', [date]);
   }
 
-  veryShortMonthSymbols() {
-    return call(this, 'veryShortMonthSymbols', []);
+  get AMSymbol() {
+    return getProp(this, 'AMSymbol');
   }
 
-  veryShortStandaloneMonthSymbols() {
-    return call(this, 'veryShortStandaloneMonthSymbols', []);
+  get PMSymbol() {
+    return getProp(this, 'PMSymbol');
   }
 
-  veryShortStandaloneWeekdaySymbols() {
-    return call(this, 'veryShortStandaloneWeekdaySymbols', []);
+  get calendarIdentifier() {
+    return getProp(this, 'calendarIdentifier');
   }
 
-  veryShortWeekdaySymbols() {
-    return call(this, 'veryShortWeekdaySymbols', []);
-  }
-
-  weekdaySymbols() {
-    return call(this, 'weekdaySymbols', []);
+  get eraSymbols() {
+    return getProp(this, 'eraSymbols');
   }
 
   get firstWeekday() {
@@ -242,6 +174,10 @@ export class NSCalendar extends NativeObject {
     setProp(this, 'locale', v);
   }
 
+  get longEraSymbols() {
+    return getProp(this, 'longEraSymbols');
+  }
+
   get minimumDaysInFirstWeek() {
     return getProp(this, 'minimumDaysInFirstWeek');
   }
@@ -250,11 +186,75 @@ export class NSCalendar extends NativeObject {
     setProp(this, 'minimumDaysInFirstWeek', v);
   }
 
+  get monthSymbols() {
+    return getProp(this, 'monthSymbols');
+  }
+
+  get quarterSymbols() {
+    return getProp(this, 'quarterSymbols');
+  }
+
+  get shortMonthSymbols() {
+    return getProp(this, 'shortMonthSymbols');
+  }
+
+  get shortQuarterSymbols() {
+    return getProp(this, 'shortQuarterSymbols');
+  }
+
+  get shortStandaloneMonthSymbols() {
+    return getProp(this, 'shortStandaloneMonthSymbols');
+  }
+
+  get shortStandaloneQuarterSymbols() {
+    return getProp(this, 'shortStandaloneQuarterSymbols');
+  }
+
+  get shortStandaloneWeekdaySymbols() {
+    return getProp(this, 'shortStandaloneWeekdaySymbols');
+  }
+
+  get shortWeekdaySymbols() {
+    return getProp(this, 'shortWeekdaySymbols');
+  }
+
+  get standaloneMonthSymbols() {
+    return getProp(this, 'standaloneMonthSymbols');
+  }
+
+  get standaloneQuarterSymbols() {
+    return getProp(this, 'standaloneQuarterSymbols');
+  }
+
+  get standaloneWeekdaySymbols() {
+    return getProp(this, 'standaloneWeekdaySymbols');
+  }
+
   get timeZone() {
     return wrapValue(NSTimeZone, getProp(this, 'timeZone'));
   }
 
   set timeZone(v) {
     setProp(this, 'timeZone', v);
+  }
+
+  get veryShortMonthSymbols() {
+    return getProp(this, 'veryShortMonthSymbols');
+  }
+
+  get veryShortStandaloneMonthSymbols() {
+    return getProp(this, 'veryShortStandaloneMonthSymbols');
+  }
+
+  get veryShortStandaloneWeekdaySymbols() {
+    return getProp(this, 'veryShortStandaloneWeekdaySymbols');
+  }
+
+  get veryShortWeekdaySymbols() {
+    return getProp(this, 'veryShortWeekdaySymbols');
+  }
+
+  get weekdaySymbols() {
+    return getProp(this, 'weekdaySymbols');
   }
 }

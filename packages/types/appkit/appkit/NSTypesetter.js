@@ -30,10 +30,6 @@ export class NSTypesetter extends NativeObject {
     return call(this, 'actionForControlCharacterAtIndex:', [charIndex]);
   }
 
-  attributesForExtraLineFragment() {
-    return call(this, 'attributesForExtraLineFragment', []);
-  }
-
   baselineOffsetInLayoutManagerGlyphIndex(layoutMgr, glyphIndex) {
     return call(this, 'baselineOffsetInLayoutManager:glyphIndex:', [layoutMgr, glyphIndex]);
   }
@@ -44,10 +40,6 @@ export class NSTypesetter extends NativeObject {
 
   beginParagraph() {
     call(this, 'beginParagraph', []);
-  }
-
-  currentParagraphStyle() {
-    return wrapValue(NSParagraphStyle, call(this, 'currentParagraphStyle', []));
   }
 
   endLineWithGlyphRange(lineGlyphRange) {
@@ -64,22 +56,6 @@ export class NSTypesetter extends NativeObject {
 
   lineSpacingAfterGlyphAtIndexWithProposedLineFragmentRect(glyphIndex, rect) {
     return call(this, 'lineSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:', [glyphIndex, rect]);
-  }
-
-  paragraphCharacterRange() {
-    return call(this, 'paragraphCharacterRange', []);
-  }
-
-  paragraphGlyphRange() {
-    return call(this, 'paragraphGlyphRange', []);
-  }
-
-  paragraphSeparatorCharacterRange() {
-    return call(this, 'paragraphSeparatorCharacterRange', []);
-  }
-
-  paragraphSeparatorGlyphRange() {
-    return call(this, 'paragraphSeparatorGlyphRange', []);
   }
 
   paragraphSpacingAfterGlyphAtIndexWithProposedLineFragmentRect(glyphIndex, rect) {
@@ -122,12 +98,20 @@ export class NSTypesetter extends NativeObject {
     return wrapValue(NSTextTab, call(this, 'textTabForGlyphLocation:writingDirection:maxLocation:', [glyphLocation, direction, maxLocation]));
   }
 
+  get attributesForExtraLineFragment() {
+    return getProp(this, 'attributesForExtraLineFragment');
+  }
+
   get bidiProcessingEnabled() {
     return getProp(this, 'bidiProcessingEnabled');
   }
 
   set bidiProcessingEnabled(v) {
     setProp(this, 'bidiProcessingEnabled', v);
+  }
+
+  get currentParagraphStyle() {
+    return wrapValue(NSParagraphStyle, getProp(this, 'currentParagraphStyle'));
   }
 
   get hyphenationFactor() {
@@ -144,6 +128,22 @@ export class NSTypesetter extends NativeObject {
 
   set lineFragmentPadding(v) {
     setProp(this, 'lineFragmentPadding', v);
+  }
+
+  get paragraphCharacterRange() {
+    return getProp(this, 'paragraphCharacterRange');
+  }
+
+  get paragraphGlyphRange() {
+    return getProp(this, 'paragraphGlyphRange');
+  }
+
+  get paragraphSeparatorCharacterRange() {
+    return getProp(this, 'paragraphSeparatorCharacterRange');
+  }
+
+  get paragraphSeparatorGlyphRange() {
+    return getProp(this, 'paragraphSeparatorGlyphRange');
   }
 
   get typesetterBehavior() {

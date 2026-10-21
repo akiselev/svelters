@@ -189,7 +189,7 @@ export class NSAttributedString extends NativeValue {
     return call(this, 'size', []);
   }
 
-  string() {
+  get string() {
     return call(this, 'string', []);
   }
 }

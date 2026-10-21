@@ -19,18 +19,6 @@ export class NSTextStorage extends NSMutableAttributedString {
     call(this, 'addLayoutManager:', [aLayoutManager]);
   }
 
-  changeInLength() {
-    return call(this, 'changeInLength', []);
-  }
-
-  editedMask() {
-    return call(this, 'editedMask', []);
-  }
-
-  editedRange() {
-    return call(this, 'editedRange', []);
-  }
-
   editedRangeChangeInLength(editedMask, editedRange, delta) {
     call(this, 'edited:range:changeInLength:', [editedMask, editedRange, delta]);
   }
@@ -39,16 +27,8 @@ export class NSTextStorage extends NSMutableAttributedString {
     call(this, 'ensureAttributesAreFixedInRange:', [range]);
   }
 
-  fixesAttributesLazily() {
-    return call(this, 'fixesAttributesLazily', []);
-  }
-
   invalidateAttributesInRange(range) {
     call(this, 'invalidateAttributesInRange:', [range]);
-  }
-
-  layoutManagers() {
-    return (call(this, 'layoutManagers', []))?.map((e) => wrapObject(NSLayoutManager, e)) ?? null;
   }
 
   processEditing() {
@@ -67,6 +47,10 @@ export class NSTextStorage extends NSMutableAttributedString {
     setProp(this, 'attributeRuns', v);
   }
 
+  get changeInLength() {
+    return getProp(this, 'changeInLength');
+  }
+
   get characters() {
     return (getProp(this, 'characters'))?.map((e) => wrapObject(NSTextStorage, e)) ?? null;
   }
@@ -83,6 +67,18 @@ export class NSTextStorage extends NSMutableAttributedString {
     setProp(this, 'delegate', v);
   }
 
+  get editedMask() {
+    return getProp(this, 'editedMask');
+  }
+
+  get editedRange() {
+    return getProp(this, 'editedRange');
+  }
+
+  get fixesAttributesLazily() {
+    return getProp(this, 'fixesAttributesLazily');
+  }
+
   get font() {
     return wrapValue(NSFont, getProp(this, 'font'));
   }
@@ -97,6 +93,10 @@ export class NSTextStorage extends NSMutableAttributedString {
 
   set foregroundColor(v) {
     setProp(this, 'foregroundColor', v);
+  }
+
+  get layoutManagers() {
+    return (getProp(this, 'layoutManagers'))?.map((e) => wrapObject(NSLayoutManager, e)) ?? null;
   }
 
   get paragraphs() {

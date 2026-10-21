@@ -42,48 +42,12 @@ export class NSURLComponents extends NativeObject {
     return wrapObject(NSURLComponents, callStatic('NSURLComponents', 'initWithURL:resolvingAgainstBaseURL:', [url, resolve]));
   }
 
-  URL() {
-    return wrapValue(NSURL, call(this, 'URL', []));
-  }
-
   URLRelativeToURL(baseUrl) {
     return wrapValue(NSURL, call(this, 'URLRelativeToURL:', [baseUrl]));
   }
 
-  rangeOfFragment() {
-    return call(this, 'rangeOfFragment', []);
-  }
-
-  rangeOfHost() {
-    return call(this, 'rangeOfHost', []);
-  }
-
-  rangeOfPassword() {
-    return call(this, 'rangeOfPassword', []);
-  }
-
-  rangeOfPath() {
-    return call(this, 'rangeOfPath', []);
-  }
-
-  rangeOfPort() {
-    return call(this, 'rangeOfPort', []);
-  }
-
-  rangeOfQuery() {
-    return call(this, 'rangeOfQuery', []);
-  }
-
-  rangeOfScheme() {
-    return call(this, 'rangeOfScheme', []);
-  }
-
-  rangeOfUser() {
-    return call(this, 'rangeOfUser', []);
-  }
-
-  string() {
-    return call(this, 'string', []);
+  get URL() {
+    return wrapValue(NSURL, getProp(this, 'URL'));
   }
 
   get encodedHost() {
@@ -198,12 +162,48 @@ export class NSURLComponents extends NativeObject {
     setProp(this, 'queryItems', v);
   }
 
+  get rangeOfFragment() {
+    return getProp(this, 'rangeOfFragment');
+  }
+
+  get rangeOfHost() {
+    return getProp(this, 'rangeOfHost');
+  }
+
+  get rangeOfPassword() {
+    return getProp(this, 'rangeOfPassword');
+  }
+
+  get rangeOfPath() {
+    return getProp(this, 'rangeOfPath');
+  }
+
+  get rangeOfPort() {
+    return getProp(this, 'rangeOfPort');
+  }
+
+  get rangeOfQuery() {
+    return getProp(this, 'rangeOfQuery');
+  }
+
+  get rangeOfScheme() {
+    return getProp(this, 'rangeOfScheme');
+  }
+
+  get rangeOfUser() {
+    return getProp(this, 'rangeOfUser');
+  }
+
   get scheme() {
     return getProp(this, 'scheme');
   }
 
   set scheme(v) {
     setProp(this, 'scheme', v);
+  }
+
+  get string() {
+    return getProp(this, 'string');
   }
 
   get user() {

@@ -684,7 +684,7 @@
  "js_module": "svelters:appkit/appkit",
  "module": "AppKit",
  "schema": "svelters-types/v1",
- "source": "objc2 0.3.2 (objc2-foundation, objc2-app-kit)",
+ "source": "objc2 0.3.2 (objc2-foundation, objc2-app-kit) + macOS CI probe",
  "toolkit": "appkit",
  "types": {
   "NSAdaptiveImageGlyph": {
@@ -712,36 +712,6 @@
    "lifetime": "shared",
    "methods": [
     {
-     "family": "none",
-     "js": "contentDescription",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "contentDescription",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "contentIdentifier",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "contentIdentifier",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "imageContent",
-     "params": [],
-     "ret": {
-      "k": "bytes"
-     },
-     "sel": "imageContent",
-     "static": false
-    },
-    {
      "ctor": true,
      "family": "init",
      "js": "newWithImageContent",
@@ -764,7 +734,41 @@
    ],
    "name": "NSAdaptiveImageGlyph",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "contentDescription",
+     "key": "contentDescription",
+     "name": "contentDescription",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "contentIdentifier",
+     "key": "contentIdentifier",
+     "name": "contentIdentifier",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "imageContent",
+     "key": "imageContent",
+     "name": "imageContent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes"
+     }
+    }
+   ],
    "root": false,
    "send": true,
    "string_ctor": null,
@@ -1036,39 +1040,6 @@
     },
     {
      "family": "none",
-     "js": "bezierPathByFlatteningPath",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSBezierPath"
-     },
-     "sel": "bezierPathByFlatteningPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bezierPathByReversingPath",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSBezierPath"
-     },
-     "sel": "bezierPathByReversingPath",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bounds",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "bounds",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "closePath",
      "params": [],
      "ret": {
@@ -1093,28 +1064,6 @@
       "k": "bool"
      },
      "sel": "containsPoint:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "controlPointBounds",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "controlPointBounds",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "currentPoint",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Point"
-     },
-     "sel": "currentPoint",
      "static": false
     },
     {
@@ -1194,32 +1143,12 @@
     },
     {
      "family": "none",
-     "js": "elementCount",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "elementCount",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "fill",
      "params": [],
      "ret": {
       "k": "void"
      },
      "sel": "fill",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isEmpty",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isEmpty",
      "static": false
     },
     {
@@ -1731,6 +1660,88 @@
    "parent": null,
    "props": [
     {
+     "getter": "bezierPathByFlatteningPath",
+     "key": "bezierPathByFlatteningPath",
+     "name": "bezierPathByFlatteningPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSBezierPath"
+     }
+    },
+    {
+     "getter": "bezierPathByReversingPath",
+     "key": "bezierPathByReversingPath",
+     "name": "bezierPathByReversingPath",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSBezierPath"
+     }
+    },
+    {
+     "getter": "bounds",
+     "key": "bounds",
+     "name": "bounds",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "controlPointBounds",
+     "key": "controlPointBounds",
+     "name": "controlPointBounds",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "currentPoint",
+     "key": "currentPoint",
+     "name": "currentPoint",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Point"
+     }
+    },
+    {
+     "getter": "elementCount",
+     "key": "elementCount",
+     "name": "elementCount",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "isEmpty",
+     "key": "empty",
+     "name": "empty",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "flatness",
      "key": "flatness",
      "name": "flatness",
@@ -1853,17 +1864,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "TIFFRepresentation",
-     "params": [],
-     "ret": {
-      "k": "bytes",
-      "nullable": true
-     },
-     "sel": "TIFFRepresentation",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "TIFFRepresentationUsingCompressionFactor",
      "params": [
       {
@@ -1885,17 +1885,6 @@
       "nullable": true
      },
      "sel": "TIFFRepresentationUsingCompression:factor:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bitmapFormat",
-     "params": [],
-     "ret": {
-      "k": "flags",
-      "t": "NSBitmapFormat"
-     },
-     "sel": "bitmapFormat",
      "static": false
     },
     {
@@ -1947,36 +1936,6 @@
     },
     {
      "family": "none",
-     "js": "bitsPerPixel",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "bitsPerPixel",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bytesPerPlane",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "bytesPerPlane",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bytesPerRow",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "bytesPerRow",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "canBeCompressedUsing",
      "params": [
       {
@@ -2016,17 +1975,6 @@
       "t": "NSColor"
      },
      "sel": "colorAtX:y:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "colorSpace",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSColorSpace"
-     },
-     "sel": "colorSpace",
      "static": false
     },
     {
@@ -2095,26 +2043,6 @@
     },
     {
      "family": "none",
-     "js": "isPlanar",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isPlanar",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "numberOfPlanes",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "numberOfPlanes",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "representationUsingTypeProperties",
      "params": [
       {
@@ -2139,16 +2067,6 @@
       "nullable": true
      },
      "sel": "representationUsingType:properties:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "samplesPerPixel",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "samplesPerPixel",
      "static": false
     },
     {
@@ -2359,7 +2277,110 @@
    ],
    "name": "NSBitmapImageRep",
    "parent": "NSImageRep",
-   "props": [],
+   "props": [
+    {
+     "getter": "TIFFRepresentation",
+     "key": "TIFFRepresentation",
+     "name": "TIFFRepresentation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "bitmapFormat",
+     "key": "bitmapFormat",
+     "name": "bitmapFormat",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "flags",
+      "t": "NSBitmapFormat"
+     }
+    },
+    {
+     "getter": "bitsPerPixel",
+     "key": "bitsPerPixel",
+     "name": "bitsPerPixel",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "bytesPerPlane",
+     "key": "bytesPerPlane",
+     "name": "bytesPerPlane",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "bytesPerRow",
+     "key": "bytesPerRow",
+     "name": "bytesPerRow",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "colorSpace",
+     "key": "colorSpace",
+     "name": "colorSpace",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSColorSpace"
+     }
+    },
+    {
+     "getter": "numberOfPlanes",
+     "key": "numberOfPlanes",
+     "name": "numberOfPlanes",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "isPlanar",
+     "key": "planar",
+     "name": "planar",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "samplesPerPixel",
+     "key": "samplesPerPixel",
+     "name": "samplesPerPixel",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -2413,26 +2434,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "alphaComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "alphaComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "blackComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "blackComponent",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "blendedColorWithFractionOfColor",
      "params": [
       {
@@ -2459,36 +2460,6 @@
     },
     {
      "family": "none",
-     "js": "blueComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "blueComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "brightnessComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "brightnessComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "catalogNameComponent",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "catalogNameComponent",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "colorByApplyingContentHeadroom",
      "params": [
       {
@@ -2503,27 +2474,6 @@
       "t": "NSColor"
      },
      "sel": "colorByApplyingContentHeadroom:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "colorNameComponent",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "colorNameComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "colorSpace",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSColorSpace"
-     },
-     "sel": "colorSpace",
      "static": false
     },
     {
@@ -2605,16 +2555,6 @@
     },
     {
      "family": "none",
-     "js": "cyanComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "cyanComponent",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "drawSwatchInRect",
      "params": [
       {
@@ -2629,16 +2569,6 @@
       "k": "void"
      },
      "sel": "drawSwatchInRect:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "greenComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "greenComponent",
      "static": false
     },
     {
@@ -2662,97 +2592,6 @@
     },
     {
      "family": "none",
-     "js": "hueComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "hueComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "linearExposure",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "linearExposure",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedCatalogNameComponent",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "localizedCatalogNameComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedColorNameComponent",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "localizedColorNameComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "magentaComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "magentaComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "numberOfComponents",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "numberOfComponents",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "patternImage",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSImage"
-     },
-     "sel": "patternImage",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "redComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "redComponent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "saturationComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "saturationComponent",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "shadowWithLevel",
      "params": [
       {
@@ -2768,17 +2607,6 @@
       "t": "NSColor"
      },
      "sel": "shadowWithLevel:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "standardDynamicRangeColor",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSColor"
-     },
-     "sel": "standardDynamicRangeColor",
      "static": false
     },
     {
@@ -2803,16 +2631,6 @@
     },
     {
      "family": "none",
-     "js": "whiteComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "whiteComponent",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "writeToPasteboard",
      "params": [
       {
@@ -2827,16 +2645,6 @@
       "k": "void"
      },
      "sel": "writeToPasteboard:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "yellowComponent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "yellowComponent",
      "static": false
     },
     {
@@ -4289,7 +4097,242 @@
    ],
    "name": "NSColor",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "alphaComponent",
+     "key": "alphaComponent",
+     "name": "alphaComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "blackComponent",
+     "key": "blackComponent",
+     "name": "blackComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "blueComponent",
+     "key": "blueComponent",
+     "name": "blueComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "brightnessComponent",
+     "key": "brightnessComponent",
+     "name": "brightnessComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "catalogNameComponent",
+     "key": "catalogNameComponent",
+     "name": "catalogNameComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "colorNameComponent",
+     "key": "colorNameComponent",
+     "name": "colorNameComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "colorSpace",
+     "key": "colorSpace",
+     "name": "colorSpace",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSColorSpace"
+     }
+    },
+    {
+     "getter": "cyanComponent",
+     "key": "cyanComponent",
+     "name": "cyanComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "greenComponent",
+     "key": "greenComponent",
+     "name": "greenComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "hueComponent",
+     "key": "hueComponent",
+     "name": "hueComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "linearExposure",
+     "key": "linearExposure",
+     "name": "linearExposure",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "localizedCatalogNameComponent",
+     "key": "localizedCatalogNameComponent",
+     "name": "localizedCatalogNameComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "localizedColorNameComponent",
+     "key": "localizedColorNameComponent",
+     "name": "localizedColorNameComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "magentaComponent",
+     "key": "magentaComponent",
+     "name": "magentaComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "numberOfComponents",
+     "key": "numberOfComponents",
+     "name": "numberOfComponents",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "patternImage",
+     "key": "patternImage",
+     "name": "patternImage",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSImage"
+     }
+    },
+    {
+     "getter": "redComponent",
+     "key": "redComponent",
+     "name": "redComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "saturationComponent",
+     "key": "saturationComponent",
+     "name": "saturationComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "standardDynamicRangeColor",
+     "key": "standardDynamicRangeColor",
+     "name": "standardDynamicRangeColor",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSColor"
+     }
+    },
+    {
+     "getter": "whiteComponent",
+     "key": "whiteComponent",
+     "name": "whiteComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "yellowComponent",
+     "key": "yellowComponent",
+     "name": "yellowComponent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    }
+   ],
    "root": true,
    "send": true,
    "string_ctor": null,
@@ -4329,49 +4372,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "ICCProfileData",
-     "params": [],
-     "ret": {
-      "k": "bytes",
-      "nullable": true
-     },
-     "sel": "ICCProfileData",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "colorSpaceModel",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSColorSpaceModel"
-     },
-     "sel": "colorSpaceModel",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedName",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "localizedName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "numberOfColorComponents",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "numberOfColorComponents",
-     "static": false
-    },
     {
      "family": "none",
      "js": "adobeRGB1998ColorSpace",
@@ -4549,7 +4549,55 @@
    ],
    "name": "NSColorSpace",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "ICCProfileData",
+     "key": "ICCProfileData",
+     "name": "ICCProfileData",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "colorSpaceModel",
+     "key": "colorSpaceModel",
+     "name": "colorSpaceModel",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSColorSpaceModel"
+     }
+    },
+    {
+     "getter": "localizedName",
+     "key": "localizedName",
+     "name": "localizedName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "numberOfColorComponents",
+     "key": "numberOfColorComponents",
+     "name": "numberOfColorComponents",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    }
+   ],
    "root": false,
    "send": true,
    "string_ctor": null,
@@ -4627,16 +4675,6 @@
     },
     {
      "family": "none",
-     "js": "ascender",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "ascender",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "boundingRectForCGGlyph",
      "params": [
       {
@@ -4655,17 +4693,6 @@
     },
     {
      "family": "none",
-     "js": "boundingRectForFont",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "boundingRectForFont",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "boundingRectForGlyph",
      "params": [
       {
@@ -4680,80 +4707,6 @@
       "t": "Rect"
      },
      "sel": "boundingRectForGlyph:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "capHeight",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "capHeight",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "coveredCharacterSet",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSCharacterSet"
-     },
-     "sel": "coveredCharacterSet",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "descender",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "descender",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "displayName",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "displayName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "familyName",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "familyName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "fontDescriptor",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSFontDescriptor"
-     },
-     "sel": "fontDescriptor",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "fontName",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "fontName",
      "static": false
     },
     {
@@ -4789,87 +4742,6 @@
       "k": "int"
      },
      "sel": "glyphWithName:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isFixedPitch",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isFixedPitch",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isVertical",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isVertical",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "italicAngle",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "italicAngle",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "leading",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "leading",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "maximumAdvancement",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Size"
-     },
-     "sel": "maximumAdvancement",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "mostCompatibleStringEncoding",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "mostCompatibleStringEncoding",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "numberOfGlyphs",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "numberOfGlyphs",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "pointSize",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "pointSize",
      "static": false
     },
     {
@@ -4922,58 +4794,6 @@
       "t": "NSFont"
      },
      "sel": "screenFontWithRenderingMode:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textTransform",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSAffineTransform"
-     },
-     "sel": "textTransform",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "underlinePosition",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "underlinePosition",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "underlineThickness",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "underlineThickness",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "verticalFont",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSFont"
-     },
-     "sel": "verticalFont",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "xHeight",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "xHeight",
      "static": false
     },
     {
@@ -5491,7 +5311,258 @@
    ],
    "name": "NSFont",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "ascender",
+     "key": "ascender",
+     "name": "ascender",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "boundingRectForFont",
+     "key": "boundingRectForFont",
+     "name": "boundingRectForFont",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "capHeight",
+     "key": "capHeight",
+     "name": "capHeight",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "coveredCharacterSet",
+     "key": "coveredCharacterSet",
+     "name": "coveredCharacterSet",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSCharacterSet"
+     }
+    },
+    {
+     "getter": "descender",
+     "key": "descender",
+     "name": "descender",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "displayName",
+     "key": "displayName",
+     "name": "displayName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "familyName",
+     "key": "familyName",
+     "name": "familyName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "isFixedPitch",
+     "key": "fixedPitch",
+     "name": "fixedPitch",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "fontDescriptor",
+     "key": "fontDescriptor",
+     "name": "fontDescriptor",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSFontDescriptor"
+     }
+    },
+    {
+     "getter": "fontName",
+     "key": "fontName",
+     "name": "fontName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "italicAngle",
+     "key": "italicAngle",
+     "name": "italicAngle",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "leading",
+     "key": "leading",
+     "name": "leading",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "maximumAdvancement",
+     "key": "maximumAdvancement",
+     "name": "maximumAdvancement",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Size"
+     }
+    },
+    {
+     "getter": "mostCompatibleStringEncoding",
+     "key": "mostCompatibleStringEncoding",
+     "name": "mostCompatibleStringEncoding",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "numberOfGlyphs",
+     "key": "numberOfGlyphs",
+     "name": "numberOfGlyphs",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "pointSize",
+     "key": "pointSize",
+     "name": "pointSize",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "textTransform",
+     "key": "textTransform",
+     "name": "textTransform",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSAffineTransform"
+     }
+    },
+    {
+     "getter": "underlinePosition",
+     "key": "underlinePosition",
+     "name": "underlinePosition",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "underlineThickness",
+     "key": "underlineThickness",
+     "name": "underlineThickness",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "isVertical",
+     "key": "vertical",
+     "name": "vertical",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "verticalFont",
+     "key": "verticalFont",
+     "name": "verticalFont",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSFont"
+     }
+    },
+    {
+     "getter": "xHeight",
+     "key": "xHeight",
+     "name": "xHeight",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    }
+   ],
    "root": true,
    "send": false,
    "string_ctor": null,
@@ -5524,19 +5595,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "fontAttributes",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "fontAttributes",
-     "static": false
-    },
     {
      "family": "none",
      "js": "fontDescriptorByAddingAttributes",
@@ -5719,18 +5777,6 @@
     },
     {
      "family": "none",
-     "js": "matrix",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSAffineTransform"
-     },
-     "sel": "matrix",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "objectForKey",
      "params": [
       {
@@ -5745,48 +5791,6 @@
       "nullable": true
      },
      "sel": "objectForKey:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "pointSize",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "pointSize",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "postscriptName",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "postscriptName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "requiresFontAssetRequest",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "requiresFontAssetRequest",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "symbolicTraits",
-     "params": [],
-     "ret": {
-      "k": "flags",
-      "t": "NSFontDescriptorSymbolicTraits"
-     },
-     "sel": "symbolicTraits",
      "static": false
     },
     {
@@ -5914,7 +5918,81 @@
    ],
    "name": "NSFontDescriptor",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "fontAttributes",
+     "key": "fontAttributes",
+     "name": "fontAttributes",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "of": {
+       "k": "any"
+      }
+     }
+    },
+    {
+     "getter": "matrix",
+     "key": "matrix",
+     "name": "matrix",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSAffineTransform"
+     }
+    },
+    {
+     "getter": "pointSize",
+     "key": "pointSize",
+     "name": "pointSize",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "postscriptName",
+     "key": "postscriptName",
+     "name": "postscriptName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "requiresFontAssetRequest",
+     "key": "requiresFontAssetRequest",
+     "name": "requiresFontAssetRequest",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "symbolicTraits",
+     "key": "symbolicTraits",
+     "name": "symbolicTraits",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "flags",
+      "t": "NSFontDescriptorSymbolicTraits"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -5988,46 +6066,12 @@
    "methods": [
     {
      "family": "none",
-     "js": "attributes",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "nullable": true,
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "attributes",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "flushGraphics",
      "params": [],
      "ret": {
       "k": "void"
      },
      "sel": "flushGraphics",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isDrawingToScreen",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isDrawingToScreen",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isFlipped",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isFlipped",
      "static": false
     },
     {
@@ -6158,6 +6202,21 @@
    "parent": null,
    "props": [
     {
+     "getter": "attributes",
+     "key": "attributes",
+     "name": "attributes",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "nullable": true,
+      "of": {
+       "k": "any"
+      }
+     }
+    },
+    {
      "getter": "colorRenderingIntent",
      "key": "colorRenderingIntent",
      "name": "colorRenderingIntent",
@@ -6179,6 +6238,28 @@
      "type": {
       "k": "enum",
       "t": "NSCompositingOperation"
+     }
+    },
+    {
+     "getter": "isDrawingToScreen",
+     "key": "drawingToScreen",
+     "name": "drawingToScreen",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isFlipped",
+     "key": "flipped",
+     "name": "flipped",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
      }
     },
     {
@@ -6257,17 +6338,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "TIFFRepresentation",
-     "params": [],
-     "ret": {
-      "k": "bytes",
-      "nullable": true
-     },
-     "sel": "TIFFRepresentation",
-     "static": false
-    },
     {
      "family": "none",
      "js": "TIFFRepresentationUsingCompressionFactor",
@@ -6634,16 +6704,6 @@
     },
     {
      "family": "none",
-     "js": "isValid",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isValid",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "layerContentsForContentsScale",
      "params": [
       {
@@ -6657,18 +6717,6 @@
       "k": "any"
      },
      "sel": "layerContentsForContentsScale:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "locale",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSLocale"
-     },
-     "sel": "locale",
      "static": false
     },
     {
@@ -6729,20 +6777,6 @@
     },
     {
      "family": "none",
-     "js": "representations",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSImageRep"
-      }
-     },
-     "sel": "representations",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "setName",
      "params": [
       {
@@ -6757,17 +6791,6 @@
       "k": "bool"
      },
      "sel": "setName:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "symbolConfiguration",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSImageSymbolConfiguration"
-     },
-     "sel": "symbolConfiguration",
      "static": false
     },
     {
@@ -7118,6 +7141,18 @@
    "parent": null,
    "props": [
     {
+     "getter": "TIFFRepresentation",
+     "key": "TIFFRepresentation",
+     "name": "TIFFRepresentation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bytes",
+      "nullable": true
+     }
+    },
+    {
      "getter": "accessibilityDescription",
      "key": "accessibilityDescription",
      "name": "accessibilityDescription",
@@ -7190,6 +7225,19 @@
      }
     },
     {
+     "getter": "locale",
+     "key": "locale",
+     "name": "locale",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSLocale"
+     }
+    },
+    {
      "getter": "matchesOnMultipleResolution",
      "key": "matchesOnMultipleResolution",
      "name": "matchesOnMultipleResolution",
@@ -7223,6 +7271,21 @@
      }
     },
     {
+     "getter": "representations",
+     "key": "representations",
+     "name": "representations",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSImageRep"
+      }
+     }
+    },
+    {
      "getter": "resizingMode",
      "key": "resizingMode",
      "name": "resizingMode",
@@ -7247,6 +7310,18 @@
      }
     },
     {
+     "getter": "symbolConfiguration",
+     "key": "symbolConfiguration",
+     "name": "symbolConfiguration",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSImageSymbolConfiguration"
+     }
+    },
+    {
      "getter": "isTemplate",
      "key": "template",
      "name": "template",
@@ -7264,6 +7339,17 @@
      "origin": "objc2",
      "readonly": false,
      "setter": "setUsesEPSOnResolutionMismatch:",
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isValid",
+     "key": "valid",
+     "name": "valid",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
      "type": {
       "k": "bool"
      }
@@ -8629,40 +8715,6 @@
     },
     {
      "family": "none",
-     "js": "extraLineFragmentRect",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "extraLineFragmentRect",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "extraLineFragmentTextContainer",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextContainer"
-     },
-     "sel": "extraLineFragmentTextContainer",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "extraLineFragmentUsedRect",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "extraLineFragmentUsedRect",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "firstUnlaidCharacterIndex",
      "params": [],
      "ret": {
@@ -8838,16 +8890,6 @@
     },
     {
      "family": "none",
-     "js": "hasNonContiguousLayout",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "hasNonContiguousLayout",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "insertTextContainerAtIndex",
      "params": [
       {
@@ -8982,16 +9024,6 @@
       "k": "bool"
      },
      "sel": "notShownAttributeForGlyphAtIndex:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "numberOfGlyphs",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "numberOfGlyphs",
      "static": false
     },
     {
@@ -9494,20 +9526,6 @@
     },
     {
      "family": "none",
-     "js": "textContainers",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextContainer"
-      }
-     },
-     "sel": "textContainers",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "truncatedGlyphRangeInLineFragmentForGlyphAtIndex",
      "params": [
       {
@@ -9640,6 +9658,43 @@
      }
     },
     {
+     "getter": "extraLineFragmentRect",
+     "key": "extraLineFragmentRect",
+     "name": "extraLineFragmentRect",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "extraLineFragmentTextContainer",
+     "key": "extraLineFragmentTextContainer",
+     "name": "extraLineFragmentTextContainer",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextContainer"
+     }
+    },
+    {
+     "getter": "extraLineFragmentUsedRect",
+     "key": "extraLineFragmentUsedRect",
+     "name": "extraLineFragmentUsedRect",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
      "getter": "glyphGenerator",
      "key": "glyphGenerator",
      "name": "glyphGenerator",
@@ -9652,6 +9707,17 @@
      }
     },
     {
+     "getter": "hasNonContiguousLayout",
+     "key": "hasNonContiguousLayout",
+     "name": "hasNonContiguousLayout",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "limitsLayoutForSuspiciousContents",
      "key": "limitsLayoutForSuspiciousContents",
      "name": "limitsLayoutForSuspiciousContents",
@@ -9660,6 +9726,17 @@
      "setter": "setLimitsLayoutForSuspiciousContents:",
      "type": {
       "k": "bool"
+     }
+    },
+    {
+     "getter": "numberOfGlyphs",
+     "key": "numberOfGlyphs",
+     "name": "numberOfGlyphs",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
      }
     },
     {
@@ -9682,6 +9759,21 @@
      "setter": "setShowsInvisibleCharacters:",
      "type": {
       "k": "bool"
+     }
+    },
+    {
+     "getter": "textContainers",
+     "key": "textContainers",
+     "name": "textContainers",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextContainer"
+      }
      }
     },
     {
@@ -10114,242 +10206,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "alignment",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSTextAlignment"
-     },
-     "sel": "alignment",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "allowsDefaultTighteningForTruncation",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "allowsDefaultTighteningForTruncation",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "baseWritingDirection",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSWritingDirection"
-     },
-     "sel": "baseWritingDirection",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "defaultTabInterval",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "defaultTabInterval",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "firstLineHeadIndent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "firstLineHeadIndent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "headIndent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "headIndent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "headerLevel",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "headerLevel",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hyphenationFactor",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "hyphenationFactor",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "lineBreakMode",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSLineBreakMode"
-     },
-     "sel": "lineBreakMode",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "lineBreakStrategy",
-     "params": [],
-     "ret": {
-      "k": "flags",
-      "t": "NSLineBreakStrategy"
-     },
-     "sel": "lineBreakStrategy",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "lineHeightMultiple",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "lineHeightMultiple",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "lineSpacing",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "lineSpacing",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "maximumLineHeight",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "maximumLineHeight",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "minimumLineHeight",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "minimumLineHeight",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "paragraphSpacing",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "paragraphSpacing",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "paragraphSpacingBefore",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "paragraphSpacingBefore",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "tabStops",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "value",
-       "t": "NSTextTab"
-      }
-     },
-     "sel": "tabStops",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "tailIndent",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "tailIndent",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textBlocks",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextBlock"
-      }
-     },
-     "sel": "textBlocks",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textLists",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextList"
-      }
-     },
-     "sel": "textLists",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "tighteningFactorForTruncation",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "tighteningFactorForTruncation",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "usesDefaultHyphenation",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "usesDefaultHyphenation",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "defaultParagraphStyle",
      "params": [],
      "ret": {
@@ -10381,7 +10237,266 @@
    ],
    "name": "NSParagraphStyle",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "alignment",
+     "key": "alignment",
+     "name": "alignment",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSTextAlignment"
+     }
+    },
+    {
+     "getter": "allowsDefaultTighteningForTruncation",
+     "key": "allowsDefaultTighteningForTruncation",
+     "name": "allowsDefaultTighteningForTruncation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "baseWritingDirection",
+     "key": "baseWritingDirection",
+     "name": "baseWritingDirection",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSWritingDirection"
+     }
+    },
+    {
+     "getter": "defaultTabInterval",
+     "key": "defaultTabInterval",
+     "name": "defaultTabInterval",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "firstLineHeadIndent",
+     "key": "firstLineHeadIndent",
+     "name": "firstLineHeadIndent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "headIndent",
+     "key": "headIndent",
+     "name": "headIndent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "headerLevel",
+     "key": "headerLevel",
+     "name": "headerLevel",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "hyphenationFactor",
+     "key": "hyphenationFactor",
+     "name": "hyphenationFactor",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "lineBreakMode",
+     "key": "lineBreakMode",
+     "name": "lineBreakMode",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSLineBreakMode"
+     }
+    },
+    {
+     "getter": "lineBreakStrategy",
+     "key": "lineBreakStrategy",
+     "name": "lineBreakStrategy",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "flags",
+      "t": "NSLineBreakStrategy"
+     }
+    },
+    {
+     "getter": "lineHeightMultiple",
+     "key": "lineHeightMultiple",
+     "name": "lineHeightMultiple",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "lineSpacing",
+     "key": "lineSpacing",
+     "name": "lineSpacing",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "maximumLineHeight",
+     "key": "maximumLineHeight",
+     "name": "maximumLineHeight",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "minimumLineHeight",
+     "key": "minimumLineHeight",
+     "name": "minimumLineHeight",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "paragraphSpacing",
+     "key": "paragraphSpacing",
+     "name": "paragraphSpacing",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "paragraphSpacingBefore",
+     "key": "paragraphSpacingBefore",
+     "name": "paragraphSpacingBefore",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "tabStops",
+     "key": "tabStops",
+     "name": "tabStops",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "value",
+       "t": "NSTextTab"
+      }
+     }
+    },
+    {
+     "getter": "tailIndent",
+     "key": "tailIndent",
+     "name": "tailIndent",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "textBlocks",
+     "key": "textBlocks",
+     "name": "textBlocks",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextBlock"
+      }
+     }
+    },
+    {
+     "getter": "textLists",
+     "key": "textLists",
+     "name": "textLists",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextList"
+      }
+     }
+    },
+    {
+     "getter": "tighteningFactorForTruncation",
+     "key": "tighteningFactorForTruncation",
+     "name": "tighteningFactorForTruncation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "usesDefaultHyphenation",
+     "key": "usesDefaultHyphenation",
+     "name": "usesDefaultHyphenation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    }
+   ],
    "root": true,
    "send": false,
    "string_ctor": null,
@@ -10407,17 +10522,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "accessBehavior",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSPasteboardAccessBehavior"
-     },
-     "sel": "accessBehavior",
-     "static": false
-    },
     {
      "family": "none",
      "js": "addTypesOwner",
@@ -10514,16 +10618,6 @@
       "k": "bool"
      },
      "sel": "canReadObjectForClasses:options:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "changeCount",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "changeCount",
      "static": false
     },
     {
@@ -10684,31 +10778,6 @@
       "k": "int"
      },
      "sel": "indexOfPasteboardItem:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "name",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "name",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "pasteboardItems",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "nullable": true,
-      "of": {
-       "k": "object",
-       "t": "NSPasteboardItem"
-      }
-     },
-     "sel": "pasteboardItems",
      "static": false
     },
     {
@@ -10905,20 +10974,6 @@
     },
     {
      "family": "none",
-     "js": "types",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "nullable": true,
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "types",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "writeFileContents",
      "params": [
       {
@@ -11096,7 +11151,73 @@
    ],
    "name": "NSPasteboard",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "accessBehavior",
+     "key": "accessBehavior",
+     "name": "accessBehavior",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSPasteboardAccessBehavior"
+     }
+    },
+    {
+     "getter": "changeCount",
+     "key": "changeCount",
+     "name": "changeCount",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "name",
+     "key": "name",
+     "name": "name",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "pasteboardItems",
+     "key": "pasteboardItems",
+     "name": "pasteboardItems",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "nullable": true,
+      "of": {
+       "k": "object",
+       "t": "NSPasteboardItem"
+      }
+     }
+    },
+    {
+     "getter": "types",
+     "key": "types",
+     "name": "types",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "nullable": true,
+      "of": {
+       "k": "string"
+      }
+     }
+    }
+   ],
    "root": true,
    "send": false,
    "string_ctor": null,
@@ -11380,24 +11501,26 @@
      },
      "sel": "stringForType:",
      "static": false
-    },
-    {
-     "family": "none",
-     "js": "types",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "types",
-     "static": false
     }
    ],
    "name": "NSPasteboardItem",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "types",
+     "key": "types",
+     "name": "types",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -11471,62 +11594,6 @@
     },
     {
      "family": "none",
-     "js": "activationPolicy",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSApplicationActivationPolicy"
-     },
-     "sel": "activationPolicy",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bundleIdentifier",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "bundleIdentifier",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "bundleURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "bundleURL",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "executableArchitecture",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "executableArchitecture",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "executableURL",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSURL"
-     },
-     "sel": "executableURL",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "forceTerminate",
      "params": [],
      "ret": {
@@ -11543,90 +11610,6 @@
       "k": "bool"
      },
      "sel": "hide",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "icon",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSImage"
-     },
-     "sel": "icon",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isActive",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isActive",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isFinishedLaunching",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isFinishedLaunching",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isHidden",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isHidden",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isTerminated",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isTerminated",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "launchDate",
-     "params": [],
-     "ret": {
-      "k": "date",
-      "nullable": true
-     },
-     "sel": "launchDate",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedName",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "localizedName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "ownsMenuBar",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "ownsMenuBar",
      "static": false
     },
     {
@@ -11694,7 +11677,161 @@
    ],
    "name": "NSRunningApplication",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "activationPolicy",
+     "key": "activationPolicy",
+     "name": "activationPolicy",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSApplicationActivationPolicy"
+     }
+    },
+    {
+     "getter": "isActive",
+     "key": "active",
+     "name": "active",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "bundleIdentifier",
+     "key": "bundleIdentifier",
+     "name": "bundleIdentifier",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "bundleURL",
+     "key": "bundleURL",
+     "name": "bundleURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "executableArchitecture",
+     "key": "executableArchitecture",
+     "name": "executableArchitecture",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "executableURL",
+     "key": "executableURL",
+     "name": "executableURL",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSURL"
+     }
+    },
+    {
+     "getter": "isFinishedLaunching",
+     "key": "finishedLaunching",
+     "name": "finishedLaunching",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isHidden",
+     "key": "hidden",
+     "name": "hidden",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "icon",
+     "key": "icon",
+     "name": "icon",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSImage"
+     }
+    },
+    {
+     "getter": "launchDate",
+     "key": "launchDate",
+     "name": "launchDate",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "date",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "localizedName",
+     "key": "localizedName",
+     "name": "localizedName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
+     }
+    },
+    {
+     "getter": "ownsMenuBar",
+     "key": "ownsMenuBar",
+     "name": "ownsMenuBar",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isTerminated",
+     "key": "terminated",
+     "name": "terminated",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    }
+   ],
    "root": false,
    "send": true,
    "string_ctor": null,
@@ -11729,28 +11866,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "auxiliaryTopLeftArea",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "auxiliaryTopLeftArea",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "auxiliaryTopRightArea",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "auxiliaryTopRightArea",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "backingAlignedRectOptions",
      "params": [
       {
@@ -11777,16 +11892,6 @@
     },
     {
      "family": "none",
-     "js": "backingScaleFactor",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "backingScaleFactor",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "canRepresentDisplayGamut",
      "params": [
       {
@@ -11801,18 +11906,6 @@
       "k": "bool"
      },
      "sel": "canRepresentDisplayGamut:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "colorSpace",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSColorSpace"
-     },
-     "sel": "colorSpace",
      "static": false
     },
     {
@@ -11851,153 +11944,6 @@
       "t": "Rect"
      },
      "sel": "convertRectToBacking:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "depth",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSWindowDepth"
-     },
-     "sel": "depth",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "deviceDescription",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "deviceDescription",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "displayUpdateGranularity",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "displayUpdateGranularity",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "frame",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "frame",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "lastDisplayUpdateTimestamp",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "lastDisplayUpdateTimestamp",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "localizedName",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "localizedName",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "maximumExtendedDynamicRangeColorComponentValue",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "maximumExtendedDynamicRangeColorComponentValue",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "maximumFramesPerSecond",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "maximumFramesPerSecond",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "maximumPotentialExtendedDynamicRangeColorComponentValue",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "maximumPotentialExtendedDynamicRangeColorComponentValue",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "maximumReferenceExtendedDynamicRangeColorComponentValue",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "maximumReferenceExtendedDynamicRangeColorComponentValue",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "maximumRefreshInterval",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "maximumRefreshInterval",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "minimumRefreshInterval",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "minimumRefreshInterval",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "safeAreaInsets",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Insets"
-     },
-     "sel": "safeAreaInsets",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "visibleFrame",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "visibleFrame",
      "static": false
     },
     {
@@ -12051,7 +11997,217 @@
    ],
    "name": "NSScreen",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "auxiliaryTopLeftArea",
+     "key": "auxiliaryTopLeftArea",
+     "name": "auxiliaryTopLeftArea",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "auxiliaryTopRightArea",
+     "key": "auxiliaryTopRightArea",
+     "name": "auxiliaryTopRightArea",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "backingScaleFactor",
+     "key": "backingScaleFactor",
+     "name": "backingScaleFactor",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "colorSpace",
+     "key": "colorSpace",
+     "name": "colorSpace",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSColorSpace"
+     }
+    },
+    {
+     "getter": "depth",
+     "key": "depth",
+     "name": "depth",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSWindowDepth"
+     }
+    },
+    {
+     "getter": "deviceDescription",
+     "key": "deviceDescription",
+     "name": "deviceDescription",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "of": {
+       "k": "any"
+      }
+     }
+    },
+    {
+     "getter": "displayUpdateGranularity",
+     "key": "displayUpdateGranularity",
+     "name": "displayUpdateGranularity",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "frame",
+     "key": "frame",
+     "name": "frame",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "lastDisplayUpdateTimestamp",
+     "key": "lastDisplayUpdateTimestamp",
+     "name": "lastDisplayUpdateTimestamp",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "localizedName",
+     "key": "localizedName",
+     "name": "localizedName",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "maximumExtendedDynamicRangeColorComponentValue",
+     "key": "maximumExtendedDynamicRangeColorComponentValue",
+     "name": "maximumExtendedDynamicRangeColorComponentValue",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "maximumFramesPerSecond",
+     "key": "maximumFramesPerSecond",
+     "name": "maximumFramesPerSecond",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "maximumPotentialExtendedDynamicRangeColorComponentValue",
+     "key": "maximumPotentialExtendedDynamicRangeColorComponentValue",
+     "name": "maximumPotentialExtendedDynamicRangeColorComponentValue",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "maximumReferenceExtendedDynamicRangeColorComponentValue",
+     "key": "maximumReferenceExtendedDynamicRangeColorComponentValue",
+     "name": "maximumReferenceExtendedDynamicRangeColorComponentValue",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "maximumRefreshInterval",
+     "key": "maximumRefreshInterval",
+     "name": "maximumRefreshInterval",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "minimumRefreshInterval",
+     "key": "minimumRefreshInterval",
+     "name": "minimumRefreshInterval",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "safeAreaInsets",
+     "key": "safeAreaInsets",
+     "name": "safeAreaInsets",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Insets"
+     }
+    },
+    {
+     "getter": "visibleFrame",
+     "key": "visibleFrame",
+     "name": "visibleFrame",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -12159,37 +12315,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "duration",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "duration",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isPlaying",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isPlaying",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "name",
-     "params": [],
-     "ret": {
-      "k": "string",
-      "nullable": true
-     },
-     "sel": "name",
-     "static": false
-    },
     {
      "family": "none",
      "js": "pause",
@@ -12438,6 +12563,17 @@
      }
     },
     {
+     "getter": "duration",
+     "key": "duration",
+     "name": "duration",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
      "getter": "loops",
      "key": "loops",
      "name": "loops",
@@ -12446,6 +12582,18 @@
      "setter": "setLoops:",
      "type": {
       "k": "bool"
+     }
+    },
+    {
+     "getter": "name",
+     "key": "name",
+     "name": "name",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string",
+      "nullable": true
      }
     },
     {
@@ -12458,6 +12606,17 @@
      "type": {
       "k": "string",
       "nullable": true
+     }
+    },
+    {
+     "getter": "isPlaying",
+     "key": "playing",
+     "name": "playing",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
      }
     },
     {
@@ -12493,32 +12652,21 @@
    "hidden": [],
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
-   "methods": [
-    {
-     "family": "none",
-     "js": "actualScaleFactor",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "actualScaleFactor",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "totalBounds",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "totalBounds",
-     "static": false
-    }
-   ],
+   "methods": [],
    "name": "NSStringDrawingContext",
    "parent": null,
    "props": [
+    {
+     "getter": "actualScaleFactor",
+     "key": "actualScaleFactor",
+     "name": "actualScaleFactor",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
     {
      "getter": "minimumScaleFactor",
      "key": "minimumScaleFactor",
@@ -12528,6 +12676,18 @@
      "setter": "setMinimumScaleFactor:",
      "type": {
       "k": "float"
+     }
+    },
+    {
+     "getter": "totalBounds",
+     "key": "totalBounds",
+     "name": "totalBounds",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
      }
     }
    ],
@@ -12557,16 +12717,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "usesTextAttachmentView",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "usesTextAttachmentView",
-     "static": false
-    },
     {
      "ctor": true,
      "family": "init",
@@ -12757,6 +12907,17 @@
      "type": {
       "k": "float"
      }
+    },
+    {
+     "getter": "usesTextAttachmentView",
+     "key": "usesTextAttachmentView",
+     "name": "usesTextAttachmentView",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
     }
    ],
    "root": false,
@@ -12844,45 +13005,48 @@
      },
      "sel": "loadView",
      "static": false
-    },
-    {
-     "family": "none",
-     "js": "location",
-     "params": [],
-     "ret": {
-      "k": "any"
-     },
-     "sel": "location",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textAttachment",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextAttachment"
-     },
-     "sel": "textAttachment",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textLayoutManager",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextLayoutManager"
-     },
-     "sel": "textLayoutManager",
-     "static": false
     }
    ],
    "name": "NSTextAttachmentViewProvider",
    "parent": null,
    "props": [
+    {
+     "getter": "location",
+     "key": "location",
+     "name": "location",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "any"
+     }
+    },
+    {
+     "getter": "textAttachment",
+     "key": "textAttachment",
+     "name": "textAttachment",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextAttachment"
+     }
+    },
+    {
+     "getter": "textLayoutManager",
+     "key": "textLayoutManager",
+     "name": "textLayoutManager",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextLayoutManager"
+     }
+    },
     {
      "getter": "tracksTextAttachmentViewBounds",
      "key": "tracksTextAttachmentViewBounds",
@@ -12986,27 +13150,6 @@
       "t": "Rect"
      },
      "sel": "boundsRectForContentRect:inRect:textContainer:characterRange:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "contentWidth",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "contentWidth",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "contentWidthValueType",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSTextBlockValueType"
-     },
-     "sel": "contentWidthValueType",
      "static": false
     },
     {
@@ -13320,6 +13463,29 @@
      }
     },
     {
+     "getter": "contentWidth",
+     "key": "contentWidth",
+     "name": "contentWidth",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "contentWidthValueType",
+     "key": "contentWidthValueType",
+     "name": "contentWidthValueType",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSTextBlockValueType"
+     }
+    },
+    {
      "getter": "verticalAlignment",
      "key": "verticalAlignment",
      "name": "verticalAlignment",
@@ -13369,16 +13535,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "isSimpleRectangularTextContainer",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isSimpleRectangularTextContainer",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "replaceLayoutManager",
      "params": [
       {
@@ -13393,18 +13549,6 @@
       "k": "void"
      },
      "sel": "replaceLayoutManager:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textLayoutManager",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextLayoutManager"
-     },
-     "sel": "textLayoutManager",
      "static": false
     },
     {
@@ -13526,6 +13670,17 @@
      }
     },
     {
+     "getter": "isSimpleRectangularTextContainer",
+     "key": "simpleRectangularTextContainer",
+     "name": "simpleRectangularTextContainer",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "size",
      "key": "size",
      "name": "size",
@@ -13535,6 +13690,19 @@
      "type": {
       "k": "record",
       "t": "Size"
+     }
+    },
+    {
+     "getter": "textLayoutManager",
+     "key": "textLayoutManager",
+     "name": "textLayoutManager",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextLayoutManager"
      }
     },
     {
@@ -13595,16 +13763,6 @@
       "k": "void"
      },
      "sel": "addTextLayoutManager:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "hasEditingTransaction",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "hasEditingTransaction",
      "static": false
     },
     {
@@ -13687,20 +13845,6 @@
      },
      "sel": "textElementsForRange:",
      "static": false
-    },
-    {
-     "family": "none",
-     "js": "textLayoutManagers",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextLayoutManager"
-      }
-     },
-     "sel": "textLayoutManagers",
-     "static": false
     }
    ],
    "name": "NSTextContentManager",
@@ -13741,6 +13885,17 @@
      }
     },
     {
+     "getter": "hasEditingTransaction",
+     "key": "hasEditingTransaction",
+     "name": "hasEditingTransaction",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "primaryTextLayoutManager",
      "key": "primaryTextLayoutManager",
      "name": "primaryTextLayoutManager",
@@ -13751,6 +13906,21 @@
       "k": "object",
       "nullable": true,
       "t": "NSTextLayoutManager"
+     }
+    },
+    {
+     "getter": "textLayoutManagers",
+     "key": "textLayoutManagers",
+     "name": "textLayoutManagers",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextLayoutManager"
+      }
      }
     }
    ],
@@ -13776,42 +13946,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "childElements",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextElement"
-      }
-     },
-     "sel": "childElements",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isRepresentedElement",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isRepresentedElement",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "parentElement",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextElement"
-     },
-     "sel": "parentElement",
-     "static": false
-    },
     {
      "ctor": true,
      "family": "init",
@@ -13839,6 +13973,21 @@
    "parent": null,
    "props": [
     {
+     "getter": "childElements",
+     "key": "childElements",
+     "name": "childElements",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextElement"
+      }
+     }
+    },
+    {
      "getter": "elementRange",
      "key": "elementRange",
      "name": "elementRange",
@@ -13849,6 +13998,30 @@
       "k": "object",
       "nullable": true,
       "t": "NSTextRange"
+     }
+    },
+    {
+     "getter": "isRepresentedElement",
+     "key": "isRepresentedElement",
+     "name": "isRepresentedElement",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "parentElement",
+     "key": "parentElement",
+     "name": "parentElement",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextElement"
      }
     },
     {
@@ -13899,16 +14072,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "bottomMargin",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "bottomMargin",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "frameForTextAttachmentAtLocation",
      "params": [
       {
@@ -13933,98 +14096,6 @@
       "k": "void"
      },
      "sel": "invalidateLayout",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "layoutFragmentFrame",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "layoutFragmentFrame",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "leadingPadding",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "leadingPadding",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rangeInElement",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSTextRange"
-     },
-     "sel": "rangeInElement",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "renderingSurfaceBounds",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "renderingSurfaceBounds",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "state",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSTextLayoutFragmentState"
-     },
-     "sel": "state",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textAttachmentViewProviders",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextAttachmentViewProvider"
-      }
-     },
-     "sel": "textAttachmentViewProviders",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textElement",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextElement"
-     },
-     "sel": "textElement",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textLayoutManager",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextLayoutManager"
-     },
-     "sel": "textLayoutManager",
      "static": false
     },
     {
@@ -14078,40 +14149,6 @@
      "static": false
     },
     {
-     "family": "none",
-     "js": "textLineFragments",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextLineFragment"
-      }
-     },
-     "sel": "textLineFragments",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "topMargin",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "topMargin",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "trailingPadding",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "trailingPadding",
-     "static": false
-    },
-    {
      "ctor": true,
      "family": "init",
      "js": "newWithTextElementRange",
@@ -14143,7 +14180,156 @@
    ],
    "name": "NSTextLayoutFragment",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "bottomMargin",
+     "key": "bottomMargin",
+     "name": "bottomMargin",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "layoutFragmentFrame",
+     "key": "layoutFragmentFrame",
+     "name": "layoutFragmentFrame",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "leadingPadding",
+     "key": "leadingPadding",
+     "name": "leadingPadding",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "rangeInElement",
+     "key": "rangeInElement",
+     "name": "rangeInElement",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSTextRange"
+     }
+    },
+    {
+     "getter": "renderingSurfaceBounds",
+     "key": "renderingSurfaceBounds",
+     "name": "renderingSurfaceBounds",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "state",
+     "key": "state",
+     "name": "state",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSTextLayoutFragmentState"
+     }
+    },
+    {
+     "getter": "textAttachmentViewProviders",
+     "key": "textAttachmentViewProviders",
+     "name": "textAttachmentViewProviders",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextAttachmentViewProvider"
+      }
+     }
+    },
+    {
+     "getter": "textElement",
+     "key": "textElement",
+     "name": "textElement",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextElement"
+     }
+    },
+    {
+     "getter": "textLayoutManager",
+     "key": "textLayoutManager",
+     "name": "textLayoutManager",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextLayoutManager"
+     }
+    },
+    {
+     "getter": "textLineFragments",
+     "key": "textLineFragments",
+     "name": "textLineFragments",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextLineFragment"
+      }
+     }
+    },
+    {
+     "getter": "topMargin",
+     "key": "topMargin",
+     "name": "topMargin",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "trailingPadding",
+     "key": "trailingPadding",
+     "name": "trailingPadding",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -14431,18 +14617,6 @@
     },
     {
      "family": "none",
-     "js": "textContentManager",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextContentManager"
-     },
-     "sel": "textContentManager",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "textLayoutFragmentForLocation",
      "params": [
       {
@@ -14478,28 +14652,6 @@
       "t": "NSTextLayoutFragment"
      },
      "sel": "textLayoutFragmentForPosition:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textViewportLayoutController",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSTextViewportLayoutController"
-     },
-     "sel": "textViewportLayoutController",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "usageBoundsForTextContainer",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "usageBoundsForTextContainer",
      "static": false
     },
     {
@@ -14567,6 +14719,19 @@
      }
     },
     {
+     "getter": "textContentManager",
+     "key": "textContentManager",
+     "name": "textContentManager",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextContentManager"
+     }
+    },
+    {
      "getter": "textSelectionNavigation",
      "key": "textSelectionNavigation",
      "name": "textSelectionNavigation",
@@ -14591,6 +14756,30 @@
        "k": "object",
        "t": "NSTextSelection"
       }
+     }
+    },
+    {
+     "getter": "textViewportLayoutController",
+     "key": "textViewportLayoutController",
+     "name": "textViewportLayoutController",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSTextViewportLayoutController"
+     }
+    },
+    {
+     "getter": "usageBoundsForTextContainer",
+     "key": "usageBoundsForTextContainer",
+     "name": "usageBoundsForTextContainer",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
      }
     },
     {
@@ -14647,17 +14836,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "attributedString",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "t": "NSAttributedString"
-     },
-     "sel": "attributedString",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "characterIndexForPoint",
      "params": [
       {
@@ -14672,17 +14850,6 @@
       "k": "int"
      },
      "sel": "characterIndexForPoint:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "characterRange",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "characterRange",
      "static": false
     },
     {
@@ -14705,17 +14872,6 @@
     },
     {
      "family": "none",
-     "js": "glyphOrigin",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Point"
-     },
-     "sel": "glyphOrigin",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "locationForCharacterAtIndex",
      "params": [
       {
@@ -14730,17 +14886,6 @@
       "t": "Point"
      },
      "sel": "locationForCharacterAtIndex:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "typographicBounds",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "typographicBounds",
      "static": false
     },
     {
@@ -14810,7 +14955,56 @@
    ],
    "name": "NSTextLineFragment",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "attributedString",
+     "key": "attributedString",
+     "name": "attributedString",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "t": "NSAttributedString"
+     }
+    },
+    {
+     "getter": "characterRange",
+     "key": "characterRange",
+     "name": "characterRange",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "glyphOrigin",
+     "key": "glyphOrigin",
+     "name": "glyphOrigin",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Point"
+     }
+    },
+    {
+     "getter": "typographicBounds",
+     "key": "typographicBounds",
+     "name": "typographicBounds",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -14842,27 +15036,6 @@
    "methods": [
     {
      "family": "none",
-     "js": "isOrdered",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isOrdered",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "listOptions",
-     "params": [],
-     "ret": {
-      "k": "flags",
-      "t": "NSTextListOptions"
-     },
-     "sel": "listOptions",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "markerForItemNumber",
      "params": [
       {
@@ -14876,16 +15049,6 @@
       "k": "string"
      },
      "sel": "markerForItemNumber:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "markerFormat",
-     "params": [],
-     "ret": {
-      "k": "string"
-     },
-     "sel": "markerFormat",
      "static": false
     },
     {
@@ -14962,6 +15125,40 @@
    "parent": null,
    "props": [
     {
+     "getter": "listOptions",
+     "key": "listOptions",
+     "name": "listOptions",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "flags",
+      "t": "NSTextListOptions"
+     }
+    },
+    {
+     "getter": "markerFormat",
+     "key": "markerFormat",
+     "name": "markerFormat",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "string"
+     }
+    },
+    {
+     "getter": "isOrdered",
+     "key": "ordered",
+     "name": "ordered",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "startingItemNumber",
      "key": "startingItemNumber",
      "name": "startingItemNumber",
@@ -15034,16 +15231,6 @@
     },
     {
      "family": "none",
-     "js": "endLocation",
-     "params": [],
-     "ret": {
-      "k": "any"
-     },
-     "sel": "endLocation",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "intersectsWithTextRange",
      "params": [
       {
@@ -15062,16 +15249,6 @@
     },
     {
      "family": "none",
-     "js": "isEmpty",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isEmpty",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "isEqualToTextRange",
      "params": [
       {
@@ -15086,16 +15263,6 @@
       "k": "bool"
      },
      "sel": "isEqualToTextRange:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "location",
-     "params": [],
-     "ret": {
-      "k": "any"
-     },
-     "sel": "location",
      "static": false
     },
     {
@@ -15187,7 +15354,41 @@
    ],
    "name": "NSTextRange",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "isEmpty",
+     "key": "empty",
+     "name": "empty",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "endLocation",
+     "key": "endLocation",
+     "name": "endLocation",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "any"
+     }
+    },
+    {
+     "getter": "location",
+     "key": "location",
+     "name": "location",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "any"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -15219,52 +15420,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "affinity",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSTextSelectionAffinity"
-     },
-     "sel": "affinity",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "granularity",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSTextSelectionGranularity"
-     },
-     "sel": "granularity",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isTransient",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isTransient",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "textRanges",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSTextRange"
-      }
-     },
-     "sel": "textRanges",
-     "static": false
-    },
     {
      "family": "none",
      "js": "textSelectionWithTextRanges",
@@ -15392,6 +15547,18 @@
    "parent": null,
    "props": [
     {
+     "getter": "affinity",
+     "key": "affinity",
+     "name": "affinity",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSTextSelectionAffinity"
+     }
+    },
+    {
      "getter": "anchorPositionOffset",
      "key": "anchorPositionOffset",
      "name": "anchorPositionOffset",
@@ -15400,6 +15567,18 @@
      "setter": "setAnchorPositionOffset:",
      "type": {
       "k": "float"
+     }
+    },
+    {
+     "getter": "granularity",
+     "key": "granularity",
+     "name": "granularity",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSTextSelectionGranularity"
      }
     },
     {
@@ -15423,6 +15602,32 @@
      "type": {
       "k": "any",
       "nullable": true
+     }
+    },
+    {
+     "getter": "textRanges",
+     "key": "textRanges",
+     "name": "textRanges",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSTextRange"
+      }
+     }
+    },
+    {
+     "getter": "isTransient",
+     "key": "transient",
+     "name": "transient",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
      }
     },
     {
@@ -15596,17 +15801,6 @@
     },
     {
      "family": "none",
-     "js": "textSelectionDataSource",
-     "params": [],
-     "ret": {
-      "k": "any",
-      "nullable": true
-     },
-     "sel": "textSelectionDataSource",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "textSelectionForSelectionGranularityEnclosingPointInContainerAtLocation",
      "params": [
       {
@@ -15767,6 +15961,18 @@
      "type": {
       "k": "bool"
      }
+    },
+    {
+     "getter": "textSelectionDataSource",
+     "key": "textSelectionDataSource",
+     "name": "textSelectionDataSource",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "any",
+      "nullable": true
+     }
     }
    ],
    "root": false,
@@ -15814,38 +16020,6 @@
       "k": "void"
      },
      "sel": "addLayoutManager:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "changeInLength",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "changeInLength",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "editedMask",
-     "params": [],
-     "ret": {
-      "k": "flags",
-      "t": "NSTextStorageEditActions"
-     },
-     "sel": "editedMask",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "editedRange",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "editedRange",
      "static": false
     },
     {
@@ -15899,16 +16073,6 @@
     },
     {
      "family": "none",
-     "js": "fixesAttributesLazily",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "fixesAttributesLazily",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "invalidateAttributesInRange",
      "params": [
       {
@@ -15923,20 +16087,6 @@
       "k": "void"
      },
      "sel": "invalidateAttributesInRange:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "layoutManagers",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "object",
-       "t": "NSLayoutManager"
-      }
-     },
-     "sel": "layoutManagers",
      "static": false
     },
     {
@@ -15987,6 +16137,17 @@
      }
     },
     {
+     "getter": "changeInLength",
+     "key": "changeInLength",
+     "name": "changeInLength",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
      "getter": "characters",
      "key": "characters",
      "name": "characters",
@@ -16014,6 +16175,41 @@
      }
     },
     {
+     "getter": "editedMask",
+     "key": "editedMask",
+     "name": "editedMask",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "flags",
+      "t": "NSTextStorageEditActions"
+     }
+    },
+    {
+     "getter": "editedRange",
+     "key": "editedRange",
+     "name": "editedRange",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "fixesAttributesLazily",
+     "key": "fixesAttributesLazily",
+     "name": "fixesAttributesLazily",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
      "getter": "font",
      "key": "font",
      "name": "font",
@@ -16037,6 +16233,21 @@
       "k": "value",
       "nullable": true,
       "t": "NSColor"
+     }
+    },
+    {
+     "getter": "layoutManagers",
+     "key": "layoutManagers",
+     "name": "layoutManagers",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "object",
+       "t": "NSLayoutManager"
+      }
      }
     },
     {
@@ -16110,40 +16321,6 @@
    "js_module": "svelters:appkit/appkit",
    "lifetime": "shared",
    "methods": [
-    {
-     "family": "none",
-     "js": "alignment",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "NSTextAlignment"
-     },
-     "sel": "alignment",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "location",
-     "params": [],
-     "ret": {
-      "k": "float"
-     },
-     "sel": "location",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "options",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "options",
-     "static": false
-    },
     {
      "family": "none",
      "js": "tabStopType",
@@ -16241,7 +16418,45 @@
    ],
    "name": "NSTextTab",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "alignment",
+     "key": "alignment",
+     "name": "alignment",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "enum",
+      "t": "NSTextAlignment"
+     }
+    },
+    {
+     "getter": "location",
+     "key": "location",
+     "name": "location",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "float"
+     }
+    },
+    {
+     "getter": "options",
+     "key": "options",
+     "name": "options",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "of": {
+       "k": "any"
+      }
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -16445,57 +16660,6 @@
    "lifetime": "shared",
    "methods": [
     {
-     "family": "none",
-     "js": "columnSpan",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "columnSpan",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "rowSpan",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "rowSpan",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "startingColumn",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "startingColumn",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "startingRow",
-     "params": [],
-     "ret": {
-      "k": "int"
-     },
-     "sel": "startingRow",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "table",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "t": "NSTextTable"
-     },
-     "sel": "table",
-     "static": false
-    },
-    {
      "ctor": true,
      "family": "init",
      "js": "newWithTableStartingRowRowSpanStartingColumnColumnSpan",
@@ -16543,7 +16707,64 @@
    ],
    "name": "NSTextTableBlock",
    "parent": "NSTextBlock",
-   "props": [],
+   "props": [
+    {
+     "getter": "columnSpan",
+     "key": "columnSpan",
+     "name": "columnSpan",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "rowSpan",
+     "key": "rowSpan",
+     "name": "rowSpan",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "startingColumn",
+     "key": "startingColumn",
+     "name": "startingColumn",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "startingRow",
+     "key": "startingRow",
+     "name": "startingRow",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "int"
+     }
+    },
+    {
+     "getter": "table",
+     "key": "table",
+     "name": "table",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "t": "NSTextTable"
+     }
+    }
+   ],
    "root": false,
    "send": false,
    "string_ctor": null,
@@ -16613,41 +16834,6 @@
      "static": false
     },
     {
-     "family": "none",
-     "js": "textLayoutManager",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextLayoutManager"
-     },
-     "sel": "textLayoutManager",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "viewportBounds",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Rect"
-     },
-     "sel": "viewportBounds",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "viewportRange",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSTextRange"
-     },
-     "sel": "viewportRange",
-     "static": false
-    },
-    {
      "ctor": true,
      "family": "init",
      "js": "newWithTextLayoutManager",
@@ -16682,6 +16868,44 @@
      "type": {
       "k": "any",
       "nullable": true
+     }
+    },
+    {
+     "getter": "textLayoutManager",
+     "key": "textLayoutManager",
+     "name": "textLayoutManager",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextLayoutManager"
+     }
+    },
+    {
+     "getter": "viewportBounds",
+     "key": "viewportBounds",
+     "name": "viewportBounds",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Rect"
+     }
+    },
+    {
+     "getter": "viewportRange",
+     "key": "viewportRange",
+     "name": "viewportRange",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSTextRange"
      }
     }
    ],
@@ -16750,19 +16974,6 @@
     },
     {
      "family": "none",
-     "js": "attributesForExtraLineFragment",
-     "params": [],
-     "ret": {
-      "k": "map",
-      "of": {
-       "k": "any"
-      }
-     },
-     "sel": "attributesForExtraLineFragment",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "baselineOffsetInLayoutManagerGlyphIndex",
      "params": [
       {
@@ -16810,18 +17021,6 @@
       "k": "void"
      },
      "sel": "beginParagraph",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "currentParagraphStyle",
-     "params": [],
-     "ret": {
-      "k": "value",
-      "nullable": true,
-      "t": "NSParagraphStyle"
-     },
-     "sel": "currentParagraphStyle",
      "static": false
     },
     {
@@ -16906,50 +17105,6 @@
       "k": "float"
      },
      "sel": "lineSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "paragraphCharacterRange",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "paragraphCharacterRange",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "paragraphGlyphRange",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "paragraphGlyphRange",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "paragraphSeparatorCharacterRange",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "paragraphSeparatorCharacterRange",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "paragraphSeparatorGlyphRange",
-     "params": [],
-     "ret": {
-      "k": "record",
-      "t": "Range"
-     },
-     "sel": "paragraphSeparatorGlyphRange",
      "static": false
     },
     {
@@ -17256,6 +17411,20 @@
    "parent": null,
    "props": [
     {
+     "getter": "attributesForExtraLineFragment",
+     "key": "attributesForExtraLineFragment",
+     "name": "attributesForExtraLineFragment",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "map",
+      "of": {
+       "k": "any"
+      }
+     }
+    },
+    {
      "getter": "bidiProcessingEnabled",
      "key": "bidiProcessingEnabled",
      "name": "bidiProcessingEnabled",
@@ -17264,6 +17433,19 @@
      "setter": "setBidiProcessingEnabled:",
      "type": {
       "k": "bool"
+     }
+    },
+    {
+     "getter": "currentParagraphStyle",
+     "key": "currentParagraphStyle",
+     "name": "currentParagraphStyle",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "value",
+      "nullable": true,
+      "t": "NSParagraphStyle"
      }
     },
     {
@@ -17286,6 +17468,54 @@
      "setter": "setLineFragmentPadding:",
      "type": {
       "k": "float"
+     }
+    },
+    {
+     "getter": "paragraphCharacterRange",
+     "key": "paragraphCharacterRange",
+     "name": "paragraphCharacterRange",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "paragraphGlyphRange",
+     "key": "paragraphGlyphRange",
+     "name": "paragraphGlyphRange",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "paragraphSeparatorCharacterRange",
+     "key": "paragraphSeparatorCharacterRange",
+     "name": "paragraphSeparatorCharacterRange",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
+     }
+    },
+    {
+     "getter": "paragraphSeparatorGlyphRange",
+     "key": "paragraphSeparatorGlyphRange",
+     "name": "paragraphSeparatorGlyphRange",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "record",
+      "t": "Range"
      }
     },
     {
@@ -17432,56 +17662,6 @@
     },
     {
      "family": "none",
-     "js": "accessibilityDisplayShouldDifferentiateWithoutColor",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "accessibilityDisplayShouldDifferentiateWithoutColor",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "accessibilityDisplayShouldIncreaseContrast",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "accessibilityDisplayShouldIncreaseContrast",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "accessibilityDisplayShouldInvertColors",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "accessibilityDisplayShouldInvertColors",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "accessibilityDisplayShouldReduceMotion",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "accessibilityDisplayShouldReduceMotion",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "accessibilityDisplayShouldReduceTransparency",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "accessibilityDisplayShouldReduceTransparency",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "activateFileViewerSelectingURLs",
      "params": [
       {
@@ -17562,45 +17742,6 @@
     },
     {
      "family": "none",
-     "js": "fileLabelColors",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "value",
-       "t": "NSColor"
-      }
-     },
-     "sel": "fileLabelColors",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "fileLabels",
-     "params": [],
-     "ret": {
-      "k": "list",
-      "of": {
-       "k": "string"
-      }
-     },
-     "sel": "fileLabels",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "frontmostApplication",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSRunningApplication"
-     },
-     "sel": "frontmostApplication",
-     "static": false
-    },
-    {
-     "family": "none",
      "js": "hideOtherApplications",
      "params": [],
      "ret": {
@@ -17664,38 +17805,6 @@
       "k": "bool"
      },
      "sel": "isFilePackageAtPath:",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isSwitchControlEnabled",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isSwitchControlEnabled",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "isVoiceOverEnabled",
-     "params": [],
-     "ret": {
-      "k": "bool"
-     },
-     "sel": "isVoiceOverEnabled",
-     "static": false
-    },
-    {
-     "family": "none",
-     "js": "menuBarOwningApplication",
-     "params": [],
-     "ret": {
-      "k": "object",
-      "nullable": true,
-      "t": "NSRunningApplication"
-     },
-     "sel": "menuBarOwningApplication",
      "static": false
     },
     {
@@ -18128,7 +18237,140 @@
    ],
    "name": "NSWorkspace",
    "parent": null,
-   "props": [],
+   "props": [
+    {
+     "getter": "accessibilityDisplayShouldDifferentiateWithoutColor",
+     "key": "accessibilityDisplayShouldDifferentiateWithoutColor",
+     "name": "accessibilityDisplayShouldDifferentiateWithoutColor",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "accessibilityDisplayShouldIncreaseContrast",
+     "key": "accessibilityDisplayShouldIncreaseContrast",
+     "name": "accessibilityDisplayShouldIncreaseContrast",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "accessibilityDisplayShouldInvertColors",
+     "key": "accessibilityDisplayShouldInvertColors",
+     "name": "accessibilityDisplayShouldInvertColors",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "accessibilityDisplayShouldReduceMotion",
+     "key": "accessibilityDisplayShouldReduceMotion",
+     "name": "accessibilityDisplayShouldReduceMotion",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "accessibilityDisplayShouldReduceTransparency",
+     "key": "accessibilityDisplayShouldReduceTransparency",
+     "name": "accessibilityDisplayShouldReduceTransparency",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "fileLabelColors",
+     "key": "fileLabelColors",
+     "name": "fileLabelColors",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "value",
+       "t": "NSColor"
+      }
+     }
+    },
+    {
+     "getter": "fileLabels",
+     "key": "fileLabels",
+     "name": "fileLabels",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      }
+     }
+    },
+    {
+     "getter": "frontmostApplication",
+     "key": "frontmostApplication",
+     "name": "frontmostApplication",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSRunningApplication"
+     }
+    },
+    {
+     "getter": "menuBarOwningApplication",
+     "key": "menuBarOwningApplication",
+     "name": "menuBarOwningApplication",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "object",
+      "nullable": true,
+      "t": "NSRunningApplication"
+     }
+    },
+    {
+     "getter": "isSwitchControlEnabled",
+     "key": "switchControlEnabled",
+     "name": "switchControlEnabled",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    },
+    {
+     "getter": "isVoiceOverEnabled",
+     "key": "voiceOverEnabled",
+     "name": "voiceOverEnabled",
+     "origin": "probe",
+     "readonly": true,
+     "setter": null,
+     "type": {
+      "k": "bool"
+     }
+    }
+   ],
    "root": true,
    "send": false,
    "string_ctor": null,

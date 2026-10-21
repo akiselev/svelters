@@ -58,4 +58,7 @@ Facts: `metadata/appkit/types/Foundation.json`; ledger fact ids `svelters-api:v1
 - `stringForKey(defaultName)`: `-stringForKey:`
 - `synchronize()`: `-synchronize`
 - `volatileDomainForName(domainName)`: `-volatileDomainForName:`
-- `volatileDomainNames()`: `-volatileDomainNames`
+
+## Properties
+
+- `volatileDomainNames` (read-only): KVC `volatileDomainNames` (probe)

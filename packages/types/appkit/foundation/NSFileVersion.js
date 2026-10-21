@@ -45,42 +45,6 @@ export class NSFileVersion extends NativeObject {
     return wrapObject(NSFileVersion, callStatic('NSFileVersion', 'versionOfItemAtURL:forPersistentIdentifier:', [url, persistentIdentifier]));
   }
 
-  URL() {
-    return wrapValue(NSURL, call(this, 'URL', []));
-  }
-
-  hasLocalContents() {
-    return call(this, 'hasLocalContents', []);
-  }
-
-  hasThumbnail() {
-    return call(this, 'hasThumbnail', []);
-  }
-
-  isConflict() {
-    return call(this, 'isConflict', []);
-  }
-
-  localizedName() {
-    return call(this, 'localizedName', []);
-  }
-
-  localizedNameOfSavingComputer() {
-    return call(this, 'localizedNameOfSavingComputer', []);
-  }
-
-  modificationDate() {
-    return call(this, 'modificationDate', []);
-  }
-
-  originatorNameComponents() {
-    return wrapObject(NSPersonNameComponents, call(this, 'originatorNameComponents', []));
-  }
-
-  persistentIdentifier() {
-    return call(this, 'persistentIdentifier', []);
-  }
-
   removeAndReturnError() {
     call(this, 'removeAndReturnError:', []);
   }
@@ -89,12 +53,48 @@ export class NSFileVersion extends NativeObject {
     return wrapValue(NSURL, call(this, 'replaceItemAtURL:options:error:', [url, options]));
   }
 
+  get URL() {
+    return wrapValue(NSURL, getProp(this, 'URL'));
+  }
+
+  get conflict() {
+    return getProp(this, 'conflict');
+  }
+
   get discardable() {
     return getProp(this, 'discardable');
   }
 
   set discardable(v) {
     setProp(this, 'discardable', v);
+  }
+
+  get hasLocalContents() {
+    return getProp(this, 'hasLocalContents');
+  }
+
+  get hasThumbnail() {
+    return getProp(this, 'hasThumbnail');
+  }
+
+  get localizedName() {
+    return getProp(this, 'localizedName');
+  }
+
+  get localizedNameOfSavingComputer() {
+    return getProp(this, 'localizedNameOfSavingComputer');
+  }
+
+  get modificationDate() {
+    return getProp(this, 'modificationDate');
+  }
+
+  get originatorNameComponents() {
+    return wrapObject(NSPersonNameComponents, getProp(this, 'originatorNameComponents'));
+  }
+
+  get persistentIdentifier() {
+    return getProp(this, 'persistentIdentifier');
   }
 
   get resolved() {

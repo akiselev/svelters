@@ -48,30 +48,6 @@ export class NSProgress extends NativeObject {
     call(this, 'cancel', []);
   }
 
-  fractionCompleted() {
-    return call(this, 'fractionCompleted', []);
-  }
-
-  isCancelled() {
-    return call(this, 'isCancelled', []);
-  }
-
-  isFinished() {
-    return call(this, 'isFinished', []);
-  }
-
-  isIndeterminate() {
-    return call(this, 'isIndeterminate', []);
-  }
-
-  isOld() {
-    return call(this, 'isOld', []);
-  }
-
-  isPaused() {
-    return call(this, 'isPaused', []);
-  }
-
   pause() {
     call(this, 'pause', []);
   }
@@ -96,16 +72,16 @@ export class NSProgress extends NativeObject {
     call(this, 'unpublish', []);
   }
 
-  userInfo() {
-    return call(this, 'userInfo', []);
-  }
-
   get cancellable() {
     return getProp(this, 'cancellable');
   }
 
   set cancellable(v) {
     setProp(this, 'cancellable', v);
+  }
+
+  get cancelled() {
+    return getProp(this, 'cancelled');
   }
 
   get completedUnitCount() {
@@ -156,6 +132,18 @@ export class NSProgress extends NativeObject {
     setProp(this, 'fileURL', v);
   }
 
+  get finished() {
+    return getProp(this, 'finished');
+  }
+
+  get fractionCompleted() {
+    return getProp(this, 'fractionCompleted');
+  }
+
+  get indeterminate() {
+    return getProp(this, 'indeterminate');
+  }
+
   get kind() {
     return getProp(this, 'kind');
   }
@@ -180,12 +168,20 @@ export class NSProgress extends NativeObject {
     setProp(this, 'localizedDescription', v);
   }
 
+  get old() {
+    return getProp(this, 'old');
+  }
+
   get pausable() {
     return getProp(this, 'pausable');
   }
 
   set pausable(v) {
     setProp(this, 'pausable', v);
+  }
+
+  get paused() {
+    return getProp(this, 'paused');
   }
 
   get throughput() {
@@ -202,5 +198,9 @@ export class NSProgress extends NativeObject {
 
   set totalUnitCount(v) {
     setProp(this, 'totalUnitCount', v);
+  }
+
+  get userInfo() {
+    return getProp(this, 'userInfo');
   }
 }

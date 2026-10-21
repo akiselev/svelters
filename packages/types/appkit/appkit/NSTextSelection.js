@@ -24,24 +24,12 @@ export class NSTextSelection extends NativeObject {
     return wrapObject(NSTextSelection, callStatic('NSTextSelection', 'initWithRanges:affinity:granularity:', [textRanges, affinity, granularity]));
   }
 
-  affinity() {
-    return call(this, 'affinity', []);
-  }
-
-  granularity() {
-    return call(this, 'granularity', []);
-  }
-
-  isTransient() {
-    return call(this, 'isTransient', []);
-  }
-
-  textRanges() {
-    return (call(this, 'textRanges', []))?.map((e) => wrapObject(NSTextRange, e)) ?? null;
-  }
-
   textSelectionWithTextRanges(textRanges) {
     return wrapObject(NSTextSelection, call(this, 'textSelectionWithTextRanges:', [textRanges]));
+  }
+
+  get affinity() {
+    return getProp(this, 'affinity');
   }
 
   get anchorPositionOffset() {
@@ -50,6 +38,10 @@ export class NSTextSelection extends NativeObject {
 
   set anchorPositionOffset(v) {
     setProp(this, 'anchorPositionOffset', v);
+  }
+
+  get granularity() {
+    return getProp(this, 'granularity');
   }
 
   get logical() {
@@ -66,6 +58,14 @@ export class NSTextSelection extends NativeObject {
 
   set secondarySelectionLocation(v) {
     setProp(this, 'secondarySelectionLocation', v);
+  }
+
+  get textRanges() {
+    return (getProp(this, 'textRanges'))?.map((e) => wrapObject(NSTextRange, e)) ?? null;
+  }
+
+  get transient() {
+    return getProp(this, 'transient');
   }
 
   get typingAttributes() {

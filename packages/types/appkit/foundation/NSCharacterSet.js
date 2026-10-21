@@ -119,10 +119,6 @@ export class NSCharacterSet extends NativeValue {
     return wrapValue(NSCharacterSet, callStatic('NSCharacterSet', 'whitespaceCharacterSet', []));
   }
 
-  bitmapRepresentation() {
-    return call(this, 'bitmapRepresentation', []);
-  }
-
   characterIsMember(aCharacter) {
     return call(this, 'characterIsMember:', [aCharacter]);
   }
@@ -131,15 +127,19 @@ export class NSCharacterSet extends NativeValue {
     return call(this, 'hasMemberInPlane:', [thePlane]);
   }
 
-  invertedSet() {
-    return wrapValue(NSCharacterSet, call(this, 'invertedSet', []));
-  }
-
   isSupersetOfSet(theOtherSet) {
     return call(this, 'isSupersetOfSet:', [theOtherSet]);
   }
 
   longCharacterIsMember(theLongChar) {
     return call(this, 'longCharacterIsMember:', [theLongChar]);
+  }
+
+  get bitmapRepresentation() {
+    return call(this, 'bitmapRepresentation', []);
+  }
+
+  get invertedSet() {
+    return wrapValue(NSCharacterSet, call(this, 'invertedSet', []));
   }
 }
