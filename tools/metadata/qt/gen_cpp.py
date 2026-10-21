@@ -1106,14 +1106,16 @@ def async_type_expr(m: Model, me: dict) -> str:
             f'return t; }})()')
 
 
-def observable_props(m: Model) -> set[tuple[str, str]]:
+def observable_props(m: Model, proportional: bool = False) -> set[tuple[str, str]]:
     """(element tag, js prop) pairs b_observe can watch: the Q_PROPERTY (the JS name in camelCase, as b_observe finds
     it) has an exact or partial observe fact with a mechanism (the kObsVia rows) on the element's class or a base.
-    Their descriptors carry SVL_M_OBSERVABLE (ABI v2.6)."""
+    Their descriptors carry SVL_M_OBSERVABLE (ABI v2.6). With `proportional`, only those whose fact is
+    `value_cost: proportional` (SVL_M_PROPORTIONAL, R1)."""
     path = m.meta_dir.parent / "observe" / "qt.json"
     facts = json.loads(path.read_text())["facts"] if path.exists() else {}
     obs = {(o.split(":", 1)[1], p) for o, props in facts.items() for p, r in props.items()
-           if r["class"] in ("exact", "partial") and any(v["mechanism"] in OV_BITS for v in r.get("via") or [])}
+           if r["class"] in ("exact", "partial") and any(v["mechanism"] in OV_BITS for v in r.get("via") or [])
+           and (not proportional or r.get("value_cost") == "proportional")}
     out = set()
     for e in m.elements:
         chain = m.chain(e["cls"])
@@ -1129,6 +1131,7 @@ def observable_props(m: Model) -> set[tuple[str, str]]:
 def emit_describe(m: Model) -> str:
     """describe(): one static descriptor per prop and method, built on first request from Conv<T>::slot."""
     observable = observable_props(m)
+    proportional = observable_props(m, proportional=True)
     out = ["const svl_member_desc *gen_describe(uint32_t what, svl_id kind, svl_id member) {", "  switch (what) {"]
     for what, key in (("SVL_PROP", "props"), ("SVL_METHOD", "methods")):
         out.append(f"    case {what}:\n      switch (kind) {{")
@@ -1143,7 +1146,9 @@ def emit_describe(m: Model) -> str:
                     pid = f"P_{t}_{cident(it['js'])}"
                     cls = e["layout_cls"] if it.get("target") == "layout" else e["cls"]
                     out.append(f"            case {pid}: {{")
-                    of = "SVL_M_OBSERVABLE" if (e["tag"], it["js"]) in observable else "0"
+                    flags = [f for f, on in (("SVL_M_OBSERVABLE", (e["tag"], it["js"]) in observable),
+                                             ("SVL_M_PROPORTIONAL", (e["tag"], it["js"]) in proportional)) if on]
+                    of = " | ".join(flags) or "0"
                     if it["direct"]:
                         out.append(f"              using T = Plain<decltype(std::declval<{cls} *>()->{it['getter']}())>;")
                         out.append(f'              static svl_slot_desc ps[1] = {{Conv<T>::slot("{it["js"]}")}};')
