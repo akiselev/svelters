@@ -19,7 +19,7 @@
 use super::*;
 use crate::convert::{self, Arena, Cx, JsPromises, JsReader, JsWriter};
 use crate::engine::{OpOutcome, OpSettle};
-use crate::exports::offload::{self, Completions, Job, LocalFuture, LocalSettle, LocalWake, OpShared, Outcome};
+use crate::exports::offload::{self, Completions, Job, Label, LocalFuture, LocalSettle, LocalWake, OpShared, Outcome};
 use crate::exports::{self, CallCx, MemberSchema, schema};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use std::task::{Poll, Waker};
@@ -48,6 +48,9 @@ pub struct OffloadStats {
     /// Drains that had work, and the time they took (conversion + one engine entry each).
     pub drains: u64,
     pub drain_ns: u64,
+    /// The part of `drain_ns` spent in the engine entry (`JsEngine::settle_ops`: JS values built and
+    /// promises settled); the rest is the queue, the op table and the Rust-side conversion.
+    pub engine_ns: u64,
 }
 
 type Key = (svl_id, &'static str, svl_handle);
@@ -121,9 +124,11 @@ fn cancelled() -> NativeError {
     exports::host_error("cancelled", "The operation was aborted")
 }
 
-fn what(m: &MemberSchema, kind: svl_id) -> String {
-    format!("{}.{}", schema().kind_name(kind).unwrap_or_default(), m.name)
+fn what(m: &'static MemberSchema, kind: svl_id) -> Label {
+    Label(kind, m.name.as_str())
 }
+
+static NULL_SLOT: std::sync::LazyLock<SlotDesc> = std::sync::LazyLock::new(|| SlotDesc::new(SVL_NULL));
 
 impl Core {
     pub(crate) fn offload_stats(&self) -> OffloadStats {
@@ -211,10 +216,10 @@ impl Core {
         let id = t.next.get() + 1;
         t.next.set(id);
         let promise = e.new_op(id, options.as_ref())?;
-        let soon = |r: Result<Value, NativeError>, slot: &SlotDesc| {
+        let soon = |r: Result<Value, NativeError>, slot: &'static SlotDesc| {
             t.stat(|s| s.settled_eagerly += 1);
             let outcome = match r {
-                Ok(v) => OpOutcome::Resolve(v, slot.clone()),
+                Ok(v) => OpOutcome::Resolve(v, slot),
                 Err(n) => OpOutcome::Reject(n),
             };
             e.settle_op_soon(&OpSettle { id, outcome }).map_err(OpError::from)
@@ -318,9 +323,9 @@ impl Core {
             }
         };
         let t0 = Instant::now();
-        let r = offload::poll_local(&mut fut, &waker, &label);
+        let r = offload::poll_local(&mut fut, &waker, label);
         let took = t0.elapsed();
-        if cfg!(debug_assertions) && took > LONG_POLL && self.ops.warned.borrow_mut().insert(label.clone()) {
+        if cfg!(debug_assertions) && took > LONG_POLL && self.ops.warned.borrow_mut().insert(label.to_string()) {
             self.console(
                 "warn",
                 format!(
@@ -374,7 +379,7 @@ impl Core {
             Done::Send(Err(e)) | Done::Local(Err(e)) => Err(e),
         };
         let outcome = match r {
-            Ok(v) => OpOutcome::Resolve(v, op.member.desc.ret.clone()),
+            Ok(v) => OpOutcome::Resolve(v, &op.member.desc.ret),
             Err(n) => OpOutcome::Reject(n),
         };
         Some(OpSettle { id, outcome })
@@ -390,7 +395,7 @@ impl Core {
         let module = schema().module_of(kind).map(|x| x.name.as_str()).unwrap_or("");
         let cx = CallCx { objects: &self.apps, schema: schema(), this: owner, module };
         let v = catch_unwind(AssertUnwindSafe(|| f(&cx))).ok()?.ok()?;
-        let slot = member.sig.progress.as_ref().map(|t| t.slot.clone()).unwrap_or_else(|| SlotDesc::new(SVL_NULL));
+        let slot: &'static SlotDesc = member.sig.progress.as_ref().map_or(&*NULL_SLOT, |t| &t.slot);
         self.ops.stat(|s| s.progress += 1);
         Some(OpSettle { id, outcome: OpOutcome::Progress(v, slot) })
     }
@@ -597,10 +602,13 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
     if t.kick.replace(false) {
         core.op_start_waiting(&mut out);
     }
+    let mut engine_ns = 0;
     if !out.is_empty() {
+        let t1 = Instant::now();
         if let Err(e) = eng.settle_ops(&out) {
             core.report(e);
         }
+        engine_ns = t1.elapsed().as_nanos() as u64;
         core.report_all(eng.take_errors());
     }
     let ns = t0.elapsed().as_nanos() as u64;
@@ -608,5 +616,6 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
         s.settled += settled;
         s.drains += 1;
         s.drain_ns += ns;
+        s.engine_ns += engine_ns;
     });
 }

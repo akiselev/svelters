@@ -247,10 +247,11 @@ fn offload_settle_cost() {
             let s = host.offload_stats();
             let settled = (s.settled - s0.settled).max(1);
             println!(
-                "{} us/call (JS wall) | drains {} | settle {:.2} us per completion (drain time / settled) | eager {}",
+                "{} us/call (JS wall) | drains {} | settle {:.2} us per completion (drain time / settled), of which engine {:.2} | eager {}",
                 line.unwrap_or_else(|| format!("{name} timed out")),
                 s.drains - s0.drains,
                 (s.drain_ns - s0.drain_ns) as f64 / 1e3 / settled as f64,
+                (s.engine_ns - s0.engine_ns) as f64 / 1e3 / settled as f64,
                 s.settled_eagerly - s0.settled_eagerly
             );
         }

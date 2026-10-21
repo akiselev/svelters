@@ -79,11 +79,11 @@ pub struct ChangedProp {
 #[derive(Clone, Debug)]
 pub enum OpOutcome {
     /// Resolve the call's Promise with the value, converted as the slot says.
-    Resolve(Value, SlotDesc),
+    Resolve(Value, &'static SlotDesc),
     /// Reject it with a `NativeError`.
     Reject(NativeError),
     /// Call its `options.onProgress` with the value (the Promise stays pending).
-    Progress(Value, SlotDesc),
+    Progress(Value, &'static SlotDesc),
 }
 
 /// One entry of an [`JsEngine::settle_ops`] batch.

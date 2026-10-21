@@ -403,7 +403,17 @@ fn panic_message(p: &(dyn std::any::Any + Send)) -> Option<String> {
 
 /// A caught panic as the error JS sees (`svelters` / `panic`); a [`WorkCx::abort_if_cancelled`]
 /// unwind is a cancellation.
-pub(crate) fn panic_error(p: Box<dyn std::any::Any + Send>, what: &str) -> NativeError {
+/// Names an offloaded member in messages (`app:<module>.<member>`), formatted only when needed.
+#[derive(Clone, Copy)]
+pub(crate) struct Label(pub svelters_abi::svl_id, pub &'static str);
+
+impl std::fmt::Display for Label {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}.{}", super::schema().kind_name(self.0).unwrap_or_default(), self.1)
+    }
+}
+
+pub(crate) fn panic_error(p: Box<dyn std::any::Any + Send>, what: &dyn std::fmt::Display) -> NativeError {
     match panic_message(&*p) {
         Some(m) => host_error("panic", format!("{what}: Rust panic: {m}")),
         None => Cancelled.into(),
@@ -493,7 +503,7 @@ fn blocking_loop() {
 }
 
 /// Starts a pool job: skipped if cancelled while queued; a panic becomes `NativeError` (`panic`).
-pub(crate) fn spawn_pool(exec: Exec, f: Box<dyn FnOnce() -> SendSettle + Send>, op: Arc<OpShared>, what: String) {
+pub(crate) fn spawn_pool(exec: Exec, f: Box<dyn FnOnce() -> SendSettle + Send>, op: Arc<OpShared>, what: Label) {
     let run = move || {
         let outcome = if op.is_cancelled() {
             Err(Cancelled.into())
@@ -539,11 +549,11 @@ impl Wake for LocalWake {
 }
 
 /// Polls a JS-thread future once with panics caught.
-pub(crate) fn poll_local(fut: &mut LocalFuture, waker: &Waker, what: &str) -> Poll<Result<LocalSettle, NativeError>> {
+pub(crate) fn poll_local(fut: &mut LocalFuture, waker: &Waker, what: Label) -> Poll<Result<LocalSettle, NativeError>> {
     let mut cx = Context::from_waker(waker);
     match catch_unwind(AssertUnwindSafe(|| fut.as_mut().poll(&mut cx))) {
         Ok(p) => p,
-        Err(p) => Poll::Ready(Err(panic_error(p, what))),
+        Err(p) => Poll::Ready(Err(panic_error(p, &what))),
     }
 }
 
@@ -596,7 +606,7 @@ mod tokio_rt {
 pub use tokio_rt::set_tokio_handle;
 
 /// Spawns a tokio task; an abort drops the future at its next `.await`.
-pub(crate) fn spawn_tokio(fut: SendFuture, op: Arc<OpShared>, what: String) {
+pub(crate) fn spawn_tokio(fut: SendFuture, op: Arc<OpShared>, what: Label) {
     #[cfg(feature = "tokio")]
     {
         let o = op.clone();
