@@ -5,7 +5,8 @@
   //   entry B  bind:text|nonreactive          -> $n.bind_once: read once, then write-only
   //            bind:cursor-position|nonreactive -> one snapshot after the first layout pass
   // "native" writes both entries behind the runtime's back (bind:this + setProp), as the toolkit would;
-  // the script then announces the changes (`changed` steps). Only A follows them.
+  // the script then announces the changes (`changed` steps). Only A follows them. It also selects a
+  // region of A, which moves its cursor natively (the real toolkits announce `cursor-position`).
   let name = $state('Ann');
   let draft = $state('Ann');
   let pos = $state(-1);
@@ -18,7 +19,7 @@
   <box orientation="vertical" spacing="6">
     <entry bind:this={a} bind:text={name} bind:cursor-position={pos} />
     <entry bind:this={b} bind:text|nonreactive={draft} bind:cursor-position|nonreactive={pos0} />
-    <button onclicked={() => { a.setProp('text', 'Zed'); b.setProp('text', 'Zed'); }}>native</button>
+    <button onclicked={() => { a.setProp('text', 'Zed'); b.setProp('text', 'Zed'); a.call('selectRegion', 1, 2); }}>native</button>
     <button onclicked={() => { name = 'Bob'; draft = 'Bob'; }}>state</button>
     <label>name {name}</label>
     <label>draft {draft}</label>

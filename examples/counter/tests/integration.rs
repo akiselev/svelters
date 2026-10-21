@@ -340,7 +340,14 @@ fn bind_observe(backend: &str) {
     assert_eq!(labels[1], "draft Ann", "bind_once: native edits never reach state");
     assert_eq!(entries(&r), ["Zed", "Zed"], "nothing is written back over the native edits");
     if backend == "gtk" {
-        assert_eq!(labels[2], "pos 3", "bind_readonly: the observed cursor position");
+        // typing through `insert_text` does not move the cursor: the value read at creation
+        assert_eq!(labels[2], "pos 0", "bind_readonly: the cursor position at creation");
+        // "native" selects a region of A from JS (`call('selectRegion', 1, 2)`): GTK moves the cursor
+        // and announces `cursor-position`, which the read-only binding observes
+        let select = write_script("gtk-bind-observe-select.json", r#"[{"checkpoint":true},{"event":[5,"clicked",[]]},{"checkpoint":true}]"#);
+        let r = run_script(backend, "bind-observe", &select, &[]);
+        r.assert_clean();
+        assert_eq!(r.labels()[2], "pos 2", "bind_readonly: the observed cursor position");
     } else {
         let size = labels[2].strip_prefix("size ").expect("size label");
         let (w, h) = size.split_once('x').unwrap_or_else(|| panic!("bind_readonly: no size read: {size}"));
