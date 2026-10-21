@@ -408,8 +408,6 @@ export interface BindableProps {
   "segmented-control": {
     "double-value": number; // appkit
     "float-value": number; // appkit
-    "int-value": number; // appkit
-    "integer-value": number; // appkit
     "selected-segment": number; // appkit
   };
   slider: {

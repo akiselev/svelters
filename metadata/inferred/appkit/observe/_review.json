@@ -1,10 +1,10 @@
 {
  "inferred": {
   "constant": 0,
-  "exact": 339,
+  "exact": 338,
   "none": 178,
   "partial": 13,
-  "set_only": 161
+  "set_only": 162
  },
  "rows": [],
  "schema": "svelters-observe-review/v1",

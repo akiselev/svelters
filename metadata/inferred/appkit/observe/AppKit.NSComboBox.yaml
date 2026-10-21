@@ -92,10 +92,8 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: uses-data-source
-  class: exact
-  via:
-  - mechanism: notify
+  class: set_only
   provenance:
-  - origin: probe
-    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesDataSource` fired on a programmatic set'
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9

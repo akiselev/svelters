@@ -1000,22 +1000,17 @@
     "record_fp": "7b7a68bf5e80c2d8"
    },
    "uses-data-source": {
-    "class": "exact",
+    "class": "set_only",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:uses-data-source:observe",
     "layer": "inferred",
     "prop": "uses-data-source",
     "provenance": [
      {
-      "origin": "probe",
-      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesDataSource` fired on a programmatic set"
+      "origin": "rule",
+      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
      }
     ],
-    "record_fp": "d65cd000562739f1",
-    "via": [
-     {
-      "mechanism": "notify"
-     }
-    ]
+    "record_fp": "c84594e249645198"
    }
   },
   "AppKit:NSControl": {

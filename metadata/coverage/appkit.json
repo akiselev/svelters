@@ -5,13 +5,13 @@
   "dangerous": 2,
   "delivery": 0,
   "element": "box",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSBox",
   "lifetime": "owned",
   "methods": [
    0,
-   1
+   2
   ],
   "native": "NSBox",
   "ownership": true,
@@ -43,13 +43,13 @@
   "dangerous": 0,
   "delivery": 0,
   "element": "button",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSButton",
   "lifetime": "owned",
   "methods": [
-   1,
-   1
+   3,
+   3
   ],
   "native": "NSButton",
   "ownership": false,
@@ -67,12 +67,88 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   28,
-   28
+   30,
+   30
   ],
   "verified_inferred": [
    18,
    18
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 5,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "color-well",
+  "gallery": "03-values",
+  "inherited": 0,
+  "kind": "NSColorWell",
+  "lifetime": "owned",
+  "methods": [
+   2,
+   2
+  ],
+  "native": "NSColorWell",
+  "ownership": false,
+  "props": [
+   7,
+   8
+  ],
+  "props_annotated": 8,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   16,
+   16
+  ],
+  "verified_inferred": [
+   12,
+   12
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 2,
+  "delivery": 0,
+  "element": "combo-box",
+  "gallery": "02-text",
+  "inherited": 0,
+  "kind": "NSComboBox",
+  "lifetime": "owned",
+  "methods": [
+   9,
+   11
+  ],
+  "native": "NSComboBox",
+  "ownership": false,
+  "props": [
+   13,
+   13
+  ],
+  "props_annotated": 13,
+  "signal_results": 0,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   22,
+   22
+  ],
+  "verified_inferred": [
+   8,
+   8
   ]
  },
  {
@@ -86,8 +162,8 @@
   "kind": "NSControl",
   "lifetime": null,
   "methods": [
-   0,
-   1
+   3,
+   4
   ],
   "native": "NSControl",
   "ownership": false,
@@ -105,8 +181,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   15,
-   15
+   18,
+   18
   ],
   "verified_inferred": [
    12,
@@ -118,14 +194,318 @@
   "bindings": 0,
   "dangerous": 0,
   "delivery": 0,
-  "element": "progress-indicator",
+  "element": "date-picker",
+  "gallery": "03-values",
+  "inherited": 0,
+  "kind": "NSDatePicker",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSDatePicker",
+  "ownership": false,
+  "props": [
+   17,
+   17
+  ],
+  "props_annotated": 8,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   10,
+   10
+  ],
+  "verified_inferred": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "image-view",
+  "gallery": "03-values",
+  "inherited": 0,
+  "kind": "NSImageView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSImageView",
+  "ownership": false,
+  "props": [
+   11,
+   11
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ],
+  "verified_inferred": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 4,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "level-indicator",
+  "gallery": "03-values",
+  "inherited": 0,
+  "kind": "NSLevelIndicator",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSLevelIndicator",
+  "ownership": false,
+  "props": [
+   16,
+   16
+  ],
+  "props_annotated": 15,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   21,
+   21
+  ],
+  "verified_inferred": [
+   13,
+   13
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 1,
+  "delivery": 0,
+  "element": "menu",
+  "gallery": "05-menus",
+  "inherited": 0,
+  "kind": "NSMenu",
+  "lifetime": "owned",
+  "methods": [
+   3,
+   10
+  ],
+  "native": "NSMenu",
+  "ownership": true,
+  "props": [
+   19,
+   19
+  ],
+  "props_annotated": 9,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   17,
+   17
+  ],
+  "verified_inferred": [
+   5,
+   5
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 2,
+  "delivery": 0,
+  "element": "menu-item",
+  "gallery": "05-menus",
+  "inherited": 0,
+  "kind": "NSMenuItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   3
+  ],
+  "native": "NSMenuItem",
+  "ownership": true,
+  "props": [
+   32,
+   33
+  ],
+  "props_annotated": 14,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 2,
+  "slots_own": 2,
+  "unexposed": null,
+  "verified": [
+   19,
+   19
+  ],
+  "verified_inferred": [
+   5,
+   5
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "panel",
   "gallery": null,
+  "inherited": 0,
+  "kind": "NSPanel",
+  "lifetime": "toplevel",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSPanel",
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   5,
+   5
+  ],
+  "verified_inferred": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "path-control",
+  "gallery": "03-values",
+  "inherited": 0,
+  "kind": "NSPathControl",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "NSPathControl",
+  "ownership": false,
+  "props": [
+   11,
+   12
+  ],
+  "props_annotated": 4,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   7,
+   7
+  ],
+  "verified_inferred": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 1,
+  "delivery": 0,
+  "element": "pop-up-button",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "NSPopUpButton",
+  "lifetime": "owned",
+  "methods": [
+   9,
+   12
+  ],
+  "native": "NSPopUpButton",
+  "ownership": true,
+  "props": [
+   14,
+   14
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   14,
+   14
+  ],
+  "verified_inferred": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "progress-indicator",
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSProgressIndicator",
   "lifetime": "owned",
   "methods": [
-   2,
-   2
+   3,
+   4
   ],
   "native": "NSProgressIndicator",
   "ownership": false,
@@ -143,8 +523,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   12,
-   12
+   13,
+   13
   ],
   "verified_inferred": [
    4,
@@ -156,8 +536,84 @@
   "bindings": 0,
   "dangerous": 0,
   "delivery": 0,
+  "element": "scroll-view",
+  "gallery": "02-text",
+  "inherited": 0,
+  "kind": "NSScrollView",
+  "lifetime": "owned",
+  "methods": [
+   2,
+   4
+  ],
+  "native": "NSScrollView",
+  "ownership": true,
+  "props": [
+   38,
+   38
+  ],
+  "props_annotated": 28,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   33,
+   33
+  ],
+  "verified_inferred": [
+   25,
+   25
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "search-field",
+  "gallery": "02-text",
+  "inherited": 0,
+  "kind": "NSSearchField",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSSearchField",
+  "ownership": false,
+  "props": [
+   9,
+   10
+  ],
+  "props_annotated": 8,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   10,
+   10
+  ],
+  "verified_inferred": [
+   5,
+   5
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
   "element": "secure-text-field",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSSecureTextField",
   "lifetime": "owned",
@@ -191,11 +647,49 @@
  },
  {
   "abstract": false,
+  "bindings": 3,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "segmented-control",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "NSSegmentedControl",
+  "lifetime": "owned",
+  "methods": [
+   10,
+   11
+  ],
+  "native": "NSSegmentedControl",
+  "ownership": false,
+  "props": [
+   11,
+   11
+  ],
+  "props_annotated": 9,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   15,
+   15
+  ],
+  "verified_inferred": [
+   7,
+   7
+  ]
+ },
+ {
+  "abstract": false,
   "bindings": 4,
   "dangerous": 0,
   "delivery": 0,
   "element": "slider",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSSlider",
   "lifetime": "owned",
@@ -230,10 +724,48 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "split-view",
+  "gallery": "04-containers",
+  "inherited": 0,
+  "kind": "NSSplitView",
+  "lifetime": "owned",
+  "methods": [
+   5,
+   8
+  ],
+  "native": "NSSplitView",
+  "ownership": true,
+  "props": [
+   7,
+   8
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ],
+  "verified_inferred": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
   "dangerous": 3,
   "delivery": 0,
   "element": "stack-view",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSStackView",
   "lifetime": "owned",
@@ -267,11 +799,201 @@
  },
  {
   "abstract": false,
+  "bindings": 4,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "stepper",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "NSStepper",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSStepper",
+  "ownership": false,
+  "props": [
+   5,
+   5
+  ],
+  "props_annotated": 9,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   15,
+   15
+  ],
+  "verified_inferred": [
+   7,
+   7
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 6,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "switch",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "NSSwitch",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSSwitch",
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 6,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   15,
+   15
+  ],
+  "verified_inferred": [
+   10,
+   10
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 1,
+  "delivery": 0,
+  "element": "tab-view",
+  "gallery": "04-containers",
+  "inherited": 0,
+  "kind": "NSTabView",
+  "lifetime": "owned",
+  "methods": [
+   8,
+   12
+  ],
+  "native": "NSTabView",
+  "ownership": true,
+  "props": [
+   13,
+   13
+  ],
+  "props_annotated": 6,
+  "signal_results": 1,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   17,
+   17
+  ],
+  "verified_inferred": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "tab-view-item",
+  "gallery": "04-containers",
+  "inherited": 0,
+  "kind": "NSTabViewItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "NSTabViewItem",
+  "ownership": true,
+  "props": [
+   10,
+   10
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   6,
+   6
+  ],
+  "verified_inferred": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NSText",
+  "lifetime": null,
+  "methods": [
+   0,
+   3
+  ],
+  "native": "NSText",
+  "ownership": false,
+  "props": [
+   20,
+   20
+  ],
+  "props_annotated": 13,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   13,
+   13
+  ],
+  "verified_inferred": [
+   13,
+   13
+  ]
+ },
+ {
+  "abstract": false,
   "bindings": 5,
   "dangerous": 0,
   "delivery": 1,
   "element": "text-field",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSTextField",
   "lifetime": "owned",
@@ -305,17 +1027,93 @@
  },
  {
   "abstract": false,
+  "bindings": 1,
+  "dangerous": 1,
+  "delivery": 0,
+  "element": "text-view",
+  "gallery": "02-text",
+  "inherited": 0,
+  "kind": "NSTextView",
+  "lifetime": "owned",
+  "methods": [
+   3,
+   1
+  ],
+  "native": "NSTextView",
+  "ownership": false,
+  "props": [
+   66,
+   71
+  ],
+  "props_annotated": 40,
+  "signal_results": 0,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   49,
+   49
+  ],
+  "verified_inferred": [
+   32,
+   32
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "token-field",
+  "gallery": "02-text",
+  "inherited": 0,
+  "kind": "NSTokenField",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSTokenField",
+  "ownership": false,
+  "props": [
+   4,
+   4
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ],
+  "verified_inferred": [
+   5,
+   5
+  ]
+ },
+ {
+  "abstract": false,
   "bindings": 0,
   "dangerous": 4,
   "delivery": 2,
   "element": "view",
-  "gallery": null,
+  "gallery": "04-containers",
   "inherited": 0,
   "kind": "NSView",
   "lifetime": "owned",
   "methods": [
-   0,
-   3
+   4,
+   7
   ],
   "native": "NSView",
   "ownership": true,
@@ -329,12 +1127,12 @@
    2,
    2
   ],
-  "slots": 1,
-  "slots_own": 1,
+  "slots": 2,
+  "slots_own": 2,
   "unexposed": null,
   "verified": [
-   33,
-   33
+   37,
+   37
   ],
   "verified_inferred": [
    26,
@@ -344,16 +1142,54 @@
  {
   "abstract": false,
   "bindings": 0,
+  "dangerous": 0,
+  "delivery": 0,
+  "element": "visual-effect-view",
+  "gallery": "04-containers",
+  "inherited": 0,
+  "kind": "NSVisualEffectView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "NSVisualEffectView",
+  "ownership": false,
+  "props": [
+   6,
+   6
+  ],
+  "props_annotated": 4,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   6,
+   6
+  ],
+  "verified_inferred": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
   "dangerous": 4,
   "delivery": 13,
   "element": "window",
-  "gallery": null,
+  "gallery": "00-overview",
   "inherited": 0,
   "kind": "NSWindow",
   "lifetime": "toplevel",
   "methods": [
-   4,
-   6
+   15,
+   18
   ],
   "native": "NSWindow",
   "ownership": true,
@@ -371,8 +1207,8 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
-   58,
-   58
+   64,
+   64
   ],
   "verified_inferred": [
    45,

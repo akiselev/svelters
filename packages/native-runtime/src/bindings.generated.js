@@ -409,8 +409,6 @@ export const BINDINGS = {
   "segmented-control": {
     "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
-    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
-    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "selected-segment": { prop: "selected-segment", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
   },
   slider: {

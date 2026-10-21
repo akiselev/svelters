@@ -499,8 +499,7 @@
  "schema": "svelters-inferred-review/v1",
  "skipped": {
   "binding:enum-prop": 2,
-  "binding:inherited": 5,
-  "prop:denied": 1
+  "binding:inherited": 5
  },
  "toolkit": "appkit",
  "unreviewed": {

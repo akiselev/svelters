@@ -1002,7 +1002,7 @@ pub static OBSERVE: &[ObserveInfo] = &[
     ObserveInfo { kind: 4, name: "number-of-visible-items", kvo: "numberOfVisibleItems", class: ObsClass::Exact, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 4, name: "object-value-of-selected-item", kvo: "", class: ObsClass::None, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 4, name: "object-values", kvo: "", class: ObsClass::None, notifications: &[], action: false, proportional: false },
-    ObserveInfo { kind: 4, name: "uses-data-source", kvo: "usesDataSource", class: ObsClass::Exact, notifications: &[], action: false, proportional: false },
+    ObserveInfo { kind: 4, name: "uses-data-source", kvo: "", class: ObsClass::SetOnly, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 5, name: "action", kvo: "", class: ObsClass::SetOnly, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 5, name: "alignment", kvo: "alignment", class: ObsClass::Exact, notifications: &[], action: false, proportional: false },
     ObserveInfo { kind: 5, name: "allows-expansion-tool-tips", kvo: "allowsExpansionToolTips", class: ObsClass::Exact, notifications: &[], action: false, proportional: false },

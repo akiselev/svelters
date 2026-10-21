@@ -725,18 +725,6 @@
       "t": "str",
       "v": "svl probe"
      }
-    },
-    "uses-data-source": {
-     "attempts": 1,
-     "default": false,
-     "events": [],
-     "kvo": true,
-     "outcome": "exact",
-     "read": true,
-     "sample": {
-      "t": "bool",
-      "v": true
-     }
     }
    },
    "signals": {

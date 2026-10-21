@@ -1500,13 +1500,13 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:uses-data-source:observe",
-   "fingerprint": "08789305fd0608c5",
+   "fingerprint": "a9c4dfcd7c793729",
    "kind": "AppKit:NSComboBox",
    "name": "uses-data-source",
    "origin": "inferred",
-   "record_fp": "d65cd000562739f1",
+   "record_fp": "c84594e249645198",
    "section": "observe",
-   "strength": "connect",
+   "strength": "unsupported",
    "tests": [
     "observe_nscombobox_uses_data_source"
    ]
@@ -6504,30 +6504,6 @@
    ]
   },
   {
-   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:bindings:int-value",
-   "fingerprint": "af0e9c0da4c0949c",
-   "kind": "NSSegmentedControl",
-   "name": "int-value",
-   "origin": "inferred",
-   "record_fp": "c6ad52e91b90b419",
-   "section": "bindings",
-   "tests": [
-    "bind_nssegmentedcontrol_int_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:bindings:integer-value",
-   "fingerprint": "5aee8f7d7a4671fe",
-   "kind": "NSSegmentedControl",
-   "name": "integer-value",
-   "origin": "inferred",
-   "record_fp": "c3f8a415b5d01e26",
-   "section": "bindings",
-   "tests": [
-    "bind_nssegmentedcontrol_integer_value"
-   ]
-  },
-  {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:bindings:selected-segment",
    "fingerprint": "f11fc3dc269ffafb",
    "kind": "NSSegmentedControl",
@@ -6737,30 +6713,6 @@
    "section": "props",
    "tests": [
     "prop_nssegmentedcontrol_float_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:props:int-value",
-   "fingerprint": "7ff66737a248ea2d",
-   "kind": "NSSegmentedControl",
-   "name": "int-value",
-   "origin": "inferred",
-   "record_fp": "adffdff2f56ae0c6",
-   "section": "props",
-   "tests": [
-    "prop_nssegmentedcontrol_int_value"
-   ]
-  },
-  {
-   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:props:integer-value",
-   "fingerprint": "ad5961045e48d42e",
-   "kind": "NSSegmentedControl",
-   "name": "integer-value",
-   "origin": "inferred",
-   "record_fp": "4fbf3f412bf848b9",
-   "section": "props",
-   "tests": [
-    "prop_nssegmentedcontrol_integer_value"
    ]
   },
   {

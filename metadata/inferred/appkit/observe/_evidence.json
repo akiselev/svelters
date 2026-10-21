@@ -429,9 +429,9 @@
  "AppKit:NSComboBox:uses-data-source": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": true
+   "kvo": null
   },
-  "pattern": "observe:kvo-probe"
+  "pattern": "observe:set-only"
  },
  "AppKit:NSControl:action": {
   "confidence": 0.9,
