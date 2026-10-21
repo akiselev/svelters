@@ -91,7 +91,7 @@ pub(crate) struct OpTable {
     ops: RefCell<HashMap<u64, Op>>,
     keys: RefCell<HashMap<Key, KeyState>>,
     /// Host-side rejections (owner disposed) settled by the next drain.
-    rejects: RefCell<Vec<(u64, NativeError)>>,
+    rejects: RefCell<Vec<(u64, u64, NativeError)>>,
     /// A cap freed a slot: the next drain starts waiting calls.
     kick: Cell<bool>,
     warned: RefCell<HashSet<String>>,
@@ -494,14 +494,15 @@ impl Core {
 
     /// The owner of in-flight calls was disposed: they reject with `disposed` at the next checkpoint.
     pub(crate) fn ops_owner_gone(&self, h: svl_handle) {
-        let ids: Vec<u64> = self.ops.ops.borrow().iter().filter(|(_, o)| o.owner == Some(h) && !o.settled).map(|(i, _)| *i).collect();
+        let ids: Vec<(u64, u64)> =
+            self.ops.ops.borrow().iter().filter(|(_, o)| o.owner == Some(h) && !o.settled).map(|(i, o)| (*i, o.generation)).collect();
         if ids.is_empty() {
             return;
         }
-        for id in ids {
+        for (id, generation) in ids {
             if self.op_cancel(id) {
                 let msg = format!("app object #a{} was disposed while a call was in flight", h & !exports::APP_HANDLE_BIT);
-                self.ops.rejects.borrow_mut().push((id, exports::host_error("disposed", msg)));
+                self.ops.rejects.borrow_mut().push((id, generation, exports::host_error("disposed", msg)));
             }
         }
         self.ops.queue.rewake();
@@ -533,7 +534,8 @@ impl Core {
             self.ops.generation.set(old);
         }
         // Pending host rejections of retired calls have no runtime to go to.
-        self.ops.rejects.borrow_mut().clear();
+        let current = self.ops.generation.get();
+        self.ops.rejects.borrow_mut().retain(|(_, g, _)| *g == current);
     }
 
     /// The host is going away: no more wakes, every token fired, every job and future dropped.
@@ -564,7 +566,7 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
     let t = &core.ops;
     let mut out: Vec<OpSettle> = Vec::new();
     let mut settled = 0u64;
-    for (id, e) in std::mem::take(&mut *t.rejects.borrow_mut()) {
+    for (id, _, e) in std::mem::take(&mut *t.rejects.borrow_mut()) {
         out.push(OpSettle { id, outcome: OpOutcome::Reject(e) });
         settled += 1;
     }
