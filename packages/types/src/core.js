@@ -225,6 +225,190 @@ export function callStaticAsync(native, method, args, options, shape) {
   return settle(null, host().callStatic(native, method, withOptions(args, options)), shape);
 }
 
+// ---- streams (E3) ----------------------------------------------------------------------------------
+
+const STREAM = Symbol.for('svelters.stream');
+const END = Symbol('svelters.types.stream-end');
+const weakly = (x) => (typeof WeakRef === 'function' ? new WeakRef(x) : { deref: () => x });
+// A stream dropped unread is closed when collected, so its producer is not left blocked on a full buffer.
+// The registry holds only `{ close }`: the host side (the op table) reaches a stream weakly.
+const unread = typeof FinalizationRegistry === 'function' ? new FinalizationRegistry((held) => held.close?.()) : null;
+
+/**
+ * The JS side of a Rust stream (a `Sink<T>` parameter or a `Stream<T>` result of an app export): an async
+ * iterable. Items arrive at host checkpoints; the producer may run ahead by at most its `buffer` of
+ * items this iterator has not handed out yet. Leaving a `for await` early (or `close()`) closes the
+ * stream, and the producer's next `send` fails. An error of the call rejects `next()` after the items
+ * sent before it.
+ */
+export class NativeStream {
+  #buf = [];
+  #waiters = [];
+  #end = null;
+  #thrown = false;
+  #closed = false;
+  #ack = null;
+  #close = null;
+  #held = { close: null };
+  #shape;
+
+  constructor(shape) {
+    this.#shape = typeof shape === 'function' ? shape : null;
+    const ref = weakly(this);
+    const held = this.#held;
+    // What the host's op table talks to (the prelude binds the ack and close functions of the call).
+    this[STREAM] = {
+      bind(ack, close) {
+        held.close = close;
+        const s = ref.deref();
+        if (s) {
+          s.#ack = ack;
+          s.#close = close;
+        }
+      },
+      items(vs) {
+        ref.deref()?.#push(vs);
+      },
+    };
+    unread?.register(this, held);
+  }
+
+  #push(vs) {
+    if (this.#closed || !Array.isArray(vs)) return;
+    for (const raw of vs) this.#buf.push(this.#shape ? this.#shape(raw) : raw);
+    this.#wake();
+  }
+
+  #wake() {
+    const ws = this.#waiters;
+    this.#waiters = [];
+    for (const w of ws) w();
+  }
+
+  #wait() {
+    if (this.#buf.length || this.#end) return Promise.resolve();
+    return new Promise((r) => this.#waiters.push(r));
+  }
+
+  [END](error) {
+    if (this.#end) return;
+    this.#held.close = null;
+    this.#end = error === undefined ? { done: true } : { error };
+    this.#wake();
+  }
+
+  async next() {
+    await this.#wait();
+    if (this.#buf.length) {
+      const value = this.#buf.shift();
+      this.#ack?.(1);
+      return { value, done: false };
+    }
+    if (this.#end && 'error' in this.#end && !this.#thrown) {
+      this.#thrown = true;
+      throw this.#end.error;
+    }
+    return { value: undefined, done: true };
+  }
+
+  /** Closes the stream (what leaving a `for await` early does). */
+  async return() {
+    this.close();
+    return { value: undefined, done: true };
+  }
+
+  /** Closes the stream: the producer's next `send` fails; buffered items are dropped. */
+  close() {
+    if (this.#closed) return;
+    this.#closed = true;
+    this.#buf = [];
+    if (!this.#end) {
+      this.#close?.();
+      this[END]();
+    }
+  }
+
+  [Symbol.asyncIterator]() {
+    return this;
+  }
+
+  /** The items as arrays, one per host checkpoint that delivered some (for bulk consumers). */
+  async *batches() {
+    try {
+      for (;;) {
+        await this.#wait();
+        if (this.#buf.length) {
+          const b = this.#buf;
+          this.#buf = [];
+          this.#ack?.(b.length);
+          yield b;
+          continue;
+        }
+        if (this.#end && 'error' in this.#end && !this.#thrown) {
+          this.#thrown = true;
+          throw this.#end.error;
+        }
+        return;
+      }
+    } finally {
+      this.close();
+    }
+  }
+}
+
+function streamCall(self, start, args, options, shape) {
+  if (options !== undefined && options !== null && typeof options !== 'object') throw new TypeError('stream options must be an object ({ signal })');
+  const s = new NativeStream(shape);
+  const opts = { ...(options ?? {}), [STREAM]: s[STREAM] };
+  const ref = weakly(s);
+  settle(self, start([...args, opts])).then(
+    () => ref.deref()?.[END](),
+    (e) => ref.deref()?.[END](e),
+  );
+  return s;
+}
+
+/** A stream method of an app object: returns a `NativeStream` at once; `options.signal` closes it. */
+export function stream(self, method, args, options, shape) {
+  return streamCall(self, (a) => host().call(handleFor(self), method, a), args, options, shape);
+}
+
+/** A stream function of an app module or a static stream method. */
+export function streamStatic(native, method, args, options, shape) {
+  return streamCall(null, (a) => host().callStatic(native, method, a), args, options, shape);
+}
+
+// ---- persist (E3) ----------------------------------------------------------------------------------
+
+const classes = new Map();
+
+/** Lets `persist` give a persisted object back as its class (generated app modules call it). */
+export function registerClass(...cs) {
+  for (const c of cs) if (c && typeof c.native === 'string') classes.set(c.native, c);
+}
+
+/**
+ * The app object persisted under `key`: the one an earlier runtime made, which survives a hot reload
+ * (`persist('sim', () => new Simulation(p))` is the same Rust object after every reload), else
+ * `make()`'s result, persisted now. Objects not persisted die with their runtime. Without a host that
+ * persists (the Node TestHost), this is `make()`.
+ */
+export function persist(key, make) {
+  const h = globalThis.__svelters_host;
+  if (!h || typeof h.persist !== 'function') return make();
+  const got = h.persist(String(key));
+  if (got) return wrapObject(classes.get(got[1]) ?? NativeObject, got[0]);
+  const obj = make();
+  h.persist(String(key), obj);
+  return obj;
+}
+
+/** Forgets the object persisted under `key` (it lives on while anything else holds it). */
+export function unpersist(key) {
+  const h = globalThis.__svelters_host;
+  if (h && typeof h.persist === 'function') h.persist(String(key), null);
+}
+
 /** A GType argument: a generated class (its native name) or a native type name. */
 export function typeArg(x) {
   if (x === null || x === undefined) return null;
@@ -529,4 +713,11 @@ if (typeof Symbol.dispose === 'symbol') {
     configurable: true,
     writable: true,
   });
+}
+
+/** E2: a zeroed typed array over Rust memory (see core.d.ts); plain `new ctor(length)` without the host. */
+export function alloc(ctor, length) {
+  const h = globalThis.__svelters_host;
+  if (h && typeof h.alloc === 'function') return h.alloc(ctor.name, length);
+  return new ctor(length);
 }

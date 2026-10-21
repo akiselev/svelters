@@ -61,6 +61,32 @@ export interface WorkOptions<P> extends AsyncOptions {
   onProgress?: ((progress: P) => void) | null;
 }
 
+/**
+ * A Rust stream (an app export with a `Sink<T>` parameter or a `Stream<T>` result): an async iterable.
+ * Items arrive at host checkpoints; the producer runs ahead by at most its buffer. Leaving a `for await`
+ * early, `close()` or an abort of `options.signal` closes it.
+ */
+export class NativeStream<T> implements AsyncIterable<T> {
+  private constructor();
+  next(): Promise<IteratorResult<T, undefined>>;
+  return(): Promise<IteratorResult<T, undefined>>;
+  [Symbol.asyncIterator](): NativeStream<T>;
+  /** The items as arrays, one per host checkpoint that delivered some. */
+  batches(): AsyncGenerator<T[], void, undefined>;
+  /** Closes the stream: the producer's next `send` fails. */
+  close(): void;
+}
+
+/**
+ * The app object persisted under `key` (it survives hot reloads), or `make()`'s result, persisted now.
+ * Objects that are not persisted die with their JS runtime.
+ */
+export function persist<T extends NativeObject>(key: string, make: () => T): T;
+/** Forgets the object persisted under `key`. */
+export function unpersist(key: string): void;
+/** Registers generated classes so `persist` gives objects back as their class. */
+export function registerClass(...classes: Array<{ readonly native: string }>): void;
+
 /** An element (a renderer node) where a native widget is expected. */
 export interface NativeElement {
   readonly svlHandle: number | null;
@@ -92,3 +118,50 @@ export function observedSignal<T>(self: NativeObject, prop: string, signal: stri
 export function invalidate(self: NativeObject, name: string): void;
 /** `fn()` without reactive subscriptions. */
 export function untracked<T>(fn: () => T): T;
+
+// ---- E2: typed arrays shared with Rust exports ----
+
+/** Members of a typed array that write to it (a read-only view drops these writes silently). */
+type TypedArrayWriters = 'set' | 'fill' | 'copyWithin' | 'reverse' | 'sort' | 'subarray';
+
+/**
+ * A read-only typed array: a view of immutable Rust data (`Shared<[T]>` in an export). The engine
+ * ignores writes to it without an exception, so the type has no index setter and no writing methods.
+ * `slice()` and the other copying methods return ordinary (writable) arrays.
+ */
+export interface ReadonlyTypedArray<E, Self> {
+  readonly [index: number]: E;
+  /** A read-only view of a part of this one (no copy). */
+  subarray(begin?: number, end?: number): Self;
+}
+
+export interface ReadonlyUint8Array extends Omit<Uint8Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyUint8Array> {}
+export interface ReadonlyInt8Array extends Omit<Int8Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyInt8Array> {}
+export interface ReadonlyUint16Array extends Omit<Uint16Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyUint16Array> {}
+export interface ReadonlyInt16Array extends Omit<Int16Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyInt16Array> {}
+export interface ReadonlyUint32Array extends Omit<Uint32Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyUint32Array> {}
+export interface ReadonlyInt32Array extends Omit<Int32Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyInt32Array> {}
+export interface ReadonlyBigUint64Array extends Omit<BigUint64Array, TypedArrayWriters | number>, ReadonlyTypedArray<bigint, ReadonlyBigUint64Array> {}
+export interface ReadonlyBigInt64Array extends Omit<BigInt64Array, TypedArrayWriters | number>, ReadonlyTypedArray<bigint, ReadonlyBigInt64Array> {}
+export interface ReadonlyFloat32Array extends Omit<Float32Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyFloat32Array> {}
+export interface ReadonlyFloat64Array extends Omit<Float64Array, TypedArrayWriters | number>, ReadonlyTypedArray<number, ReadonlyFloat64Array> {}
+
+/** The typed array classes a Rust export takes as `Buffer<T>`. */
+export type BufferConstructor =
+  | Uint8ArrayConstructor
+  | Int8ArrayConstructor
+  | Uint16ArrayConstructor
+  | Int16ArrayConstructor
+  | Uint32ArrayConstructor
+  | Int32ArrayConstructor
+  | BigUint64ArrayConstructor
+  | BigInt64ArrayConstructor
+  | Float32ArrayConstructor
+  | Float64ArrayConstructor;
+
+/**
+ * A zeroed typed array over memory Rust allocated: passing it to a `Buffer<T>` parameter gives Rust
+ * that allocation back without a copy. (A `new Float32Array(n)` works too: its memory is moved to Rust
+ * with `transfer()`.) Outside the QuickJS host this is `new ctor(length)`.
+ */
+export function alloc<C extends BufferConstructor>(ctor: C, length: number): InstanceType<C>;

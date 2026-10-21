@@ -400,7 +400,7 @@ pub fn value_kind(v: &Value) -> &'static str {
         Value::Enum { .. } => "enum",
         Value::Flags { .. } => "flags",
         Value::Record { .. } => "record",
-        Value::Bytes(_) => "bytes",
+        Value::Bytes(_) | Value::Buffer(_) => "bytes",
         Value::Boxed { .. } => "boxed",
         Value::Callback { .. } => "function",
         Value::Map(_) => "object",

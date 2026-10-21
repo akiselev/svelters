@@ -1,6 +1,6 @@
 # egui: exposing the app's own Rust types, functions and widgets to Svelte
 
-Status: research proposal, 2026-10-21, for M7 (egui). **E0 and E1 are implemented** (`plans/milestones/E0-rust-exports.md`, `plans/milestones/E1-exports-offload.md`: as built, deviations, measurements); E2–E5 are not.
+Status: research proposal, 2026-10-21, for M7 (egui). **E0, E1, E2 and E3 are implemented** (`plans/milestones/E0-rust-exports.md`, `plans/milestones/E1-exports-offload.md`, `plans/milestones/E2-exports-buffers.md`, `plans/milestones/E3-exports-reactive.md`: as built, deviations, measurements); E4 and E5 are not.
 
 - **Scope:** how the developer of an all-Rust svelters-egui app exposes their own types, functions, background services and egui widgets to Svelte/TS, with compute offloaded to Rust threads.
 - **Not in scope:** the retained scene graph that the egui backend renders. Another lane is designing it; §7.4 lists only the interface this design needs from it.
@@ -483,6 +483,8 @@ checkpoint (start of next frame):
 
 ### 6.4 Stores: Rust state that Svelte reads like `$state`
 
+> **As built (E3):** see `plans/milestones/E3-exports-reactive.md`. The granularity is a dirty bit per field (§11 Q7, decided 2026-10-22). Differences from the sketch below: writes are `store.update(|s| ..)` (every field), `store.write(Field::X, |s| ..)` / `write_fields(&[..], ..)` (named fields) with a generated `<Name>Field` enum instead of per-field setters; `StoreHooks::on_write(&mut self, field)` runs after the assignment (it may normalize, or return `Err` to restore the old value and throw); a `StoreStatic` reaches JS through `#[svelters::export(module = "m")]` on the `static`; services start with the process's first `Host` (there is no `App::run`).
+
 ```rust
 // any thread:
 SIM_STATS.update(|s| { s.step += 1; s.energy = e; });   // write lock, mark all bits dirty, wake once
@@ -833,7 +835,7 @@ app crate (Rust)                         cargo build
 | E0 registry core | `svelters-host::exports` (handles in the app range, kinds `app:*`, routing in `construct`/`call`/`callStatic`/`getProp`/`setProp`/`listen`), `Record`/`Enum`/`Error` derives, `object` + sync `export` impls/free fns, schema dump + `.d.ts`, built-in `svelters:app/*` modules | an `examples/exports` app on GTK (works before M7!) calls a Rust object from Svelte; identity/dispose/GC tests; `svelte-check` passes against the dumped typings |
 | E1 offload | completion queue settled at checkpoint start, `worker`/`async`/`blocking`/`local`, `WorkCx` (cancel, progress), panics, `supersede`, `max_in_flight`, generation tags | the probe's numbers on the registry path; a 200 ms worker keeps 60 fps; abort/panic/reload rejection tests |
 | E2 buffers | `Value::Buffer`, engine buffer ops, `Buffer<T>`/`Shared<[T]>`/`svelters.alloc` | 64 MiB round trip without a copy; `Arc` released on GC; transfer token freed on the JS thread under abort |
-| E3 reactive | `Store`/`StoreStatic`/`service`, `Emitter`, `Sink`/`Stream`, `persist` | stores in the R1 batch (10k worker updates → one batch); `bind:` on a writable store field; state survives a hot reload |
+| E3 reactive (**done**, `plans/milestones/E3-exports-reactive.md`) | `Store`/`StoreStatic`/`service`, `Emitter`, `Sink`/`Stream`, `persist` | stores in the R1 batch (10k worker updates → one batch); `bind:` on a writable store field; state survives a hot reload |
 | E4 widgets (with M7) | `#[svelters::widget]`, `wrap_widget!`, semantic-spec fragment, IntrinsicElements typings; egui_plot / egui_extras / egui_dock wrappers | knob + plot + dock example; `bind:` on widget props observed `exact` |
 | E5 compiler | `PlatformSemantics::native_type`/`type_property` from `exports.json`; diagnostics for unknown members, `bind:` on read-only fields | compile-time errors for typos in `svelters:app/*` member access |
 
@@ -849,7 +851,10 @@ app crate (Rust)                         cargo build
 - **Q2 async executor: a bare `async fn` runs on the JS thread** (local, Deno-style): polled at the call (a future ready at once settles in the same turn), then whenever its waker fires, at checkpoint start. Pool execution is opt-in: `#[js(tokio)] async fn` (tokio, behind the `tokio` feature of `svelters`, not a default dependency), `#[js(worker)]`/`#[js(blocking)]` for sync code, and `svelters::exports::worker(|| ...).await` / `blocking(...)` inside a local future. Guard: documented on the facade crate, and debug builds print one console warning per member when a single poll of a JS-thread future takes over 20 ms.
 - **Q3 settle-on-abort: abort rejects immediately** with `NativeError { domain: 'svelters', code: 'cancelled' }`, in the abort listener itself. The worker sees the cancel through `WorkCx` (a queued job never starts; a JS-thread future is dropped; a tokio task is aborted). A late result is dropped on the JS thread without being converted, so it mints no handle; objects and buffers in it are freed there.
 
-Still open: Q4 (foreign traits; left out of E1), Q5 (fast path: the registry path's per-call cost is now measured, see the E0 milestone file), Q7 (store granularity), Q9 (subsecond), Q10 (CUSTOM-WIDGETS Q9).
+**Decided by the user on 2026-10-22 for E3** (implemented; `plans/milestones/E3-exports-reactive.md`):
+- **Q7 store granularity: a dirty bit per field.** A write marks the whole field changed and JS re-reads it (a clone under the store's read lock at the checkpoint, compared with the last delivered value). `#[store(proportional)]` fields (a big `Vec`, a log `String`) are invalidation only: never read or compared by the host, re-read by JS when it needs them. There are no per-item `Observable<T>` diffs in E3; per-item diffs for collection fields (feeding `@svelters/lists`) are possible future work.
+
+Still open: Q4 (foreign traits; left out of E1), Q5 (fast path: the registry path's per-call cost is now measured, see the E0 milestone file), Q9 (subsecond), Q10 (CUSTOM-WIDGETS Q9).
 
 
 1. **Specifier.** `svelters:app/<module>` matches `svelters:<provider>/<ns>`, keeps the bare `svelters:app` for QUICKJS-RUNTIME's built-in app-info module, and gives the M6 linker static roots. Alternatives: `$native/<module>` (tsconfig paths) or `native:<module>`.
@@ -858,7 +863,7 @@ Still open: Q4 (foreign traits; left out of E1), Q5 (fast path: the registry pat
 4. **`foreign` traits called from workers** block the worker on the JS thread. Keep them, restrict them to `async` methods only, or drop them from v1?
 5. **The fast path** (direct rquickjs functions for scalar `#[js(fast)]` methods): never, or only after a measured app need? This depends on the registry path's real per-call cost, which needs measuring once E0 exists. The ABI path measured 2.9–4.0 µs on a loaded machine.
 6. **The `i64`/`u64` policy:** a checked `number` by default (proposed) or `bigint`?
-7. **Store granularity:** a dirty bit per field (proposed), or per-field `Observable<T>` cells for nested or collection fields (`Vec` diffs for lists feeding `@svelters/lists`)?
+7. **Store granularity:** a dirty bit per field (proposed), or per-field `Observable<T>` cells for nested or collection fields (`Vec` diffs for lists feeding `@svelters/lists`)? **Decided 2026-10-22: a dirty bit per field** (above).
 8. **Should exported objects show up in the op log** in full (`call #h app:sim.Simulation.step [...]`) for TestHost replay, or only their creation and destruction?
 9. **Rust hot-patching** (`subsecond`) for export bodies in dev: worth a probe after E1?
 10. **CUSTOM-WIDGETS Q9** (Rust GTK widgets' methods): the registry gives GI-free thunks for any Rust type, and a GTK `glib::Object` subclass could be both a pack kind and an `#[svelters::object]`. Should one type be allowed to be both?

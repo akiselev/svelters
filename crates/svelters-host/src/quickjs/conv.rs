@@ -38,7 +38,9 @@ pub(crate) struct QjsConv<'js> {
     pub ctx: Ctx<'js>,
     pub core: Rc<Core>,
     /// Where function arguments are stored (`None` where callbacks make no sense, e.g. decoding).
-    cbs: Option<Rc<super::QjsCallbacks>>,
+    pub(crate) cbs: Option<Rc<super::QjsCallbacks>>,
+    /// E2: typed arrays checked for buffer slots, moved once every argument converted.
+    pub(crate) staged: std::cell::RefCell<Vec<super::buffers::Staged<'js>>>,
     /// An exception thrown by user JS while a value was read (a getter, a Proxy trap). The op
     /// rethrows it as is instead of wrapping its message.
     pending: std::cell::RefCell<Option<Value<'js>>>,
@@ -50,6 +52,7 @@ impl<'js> QjsConv<'js> {
             ctx,
             core,
             cbs,
+            staged: Default::default(),
             pending: Default::default(),
         }
     }
@@ -272,6 +275,14 @@ impl<'js> JsReader for QjsConv<'js> {
         let t: f64 = a.get(1).map_err(|e| self.err(e))?;
         Ok(Some((h as u64, t as u32)))
     }
+
+    fn stage_buffer(&self, v: &Value<'js>, elem: svelters_abi::Elem, take: crate::convert::Take) -> R<usize> {
+        self.stage(v, elem, take)
+    }
+
+    fn commit_buffers(&self) -> R<Vec<svelters_abi::BufferValue>> {
+        self.commit()
+    }
 }
 
 impl<'js> crate::convert::JsPromises for QjsConv<'js> {
@@ -304,8 +315,8 @@ impl<'js> crate::convert::JsPromises for QjsConv<'js> {
 }
 
 impl<'js> QjsConv<'js> {
-    /// The JS side of an op settlement: (0 resolve | 1 reject | 2 progress, value). A result that does
-    /// not convert (an integer outside ±2^53) rejects instead.
+    /// The JS side of an op settlement: (0 resolve | 1 reject | 2 progress | 3 stream items, value). A
+    /// result that does not convert (an integer outside ±2^53) rejects instead.
     pub(crate) fn op_value(&self, s: &crate::engine::OpSettle) -> (i32, Value<'js>) {
         use crate::engine::OpOutcome;
         let core = self.core.clone();
@@ -325,6 +336,22 @@ impl<'js> QjsConv<'js> {
                 }
             }
             OpOutcome::Reject(n) => (1, reject(n)),
+            OpOutcome::Items(items, slot) => {
+                let mut out = Vec::with_capacity(items.len());
+                for v in items {
+                    match crate::convert::decode_slot(self, v, slot, &*core) {
+                        Ok(x) => out.push(x),
+                        Err(m) => {
+                            let msg = m.strip_prefix("RangeError: ").unwrap_or(&m).to_string();
+                            return (1, reject(&crate::exports::host_error("range", msg)));
+                        }
+                    }
+                }
+                match crate::convert::JsWriter::array(self, out) {
+                    Ok(a) => (3, a),
+                    Err(m) => (1, reject(&crate::exports::host_error("internal", m))),
+                }
+            }
         }
     }
 }
@@ -418,6 +445,10 @@ impl<'js> JsWriter for QjsConv<'js> {
     fn native_error(&self, domain: &str, code: Value<'js>, message: &str) -> R<Value<'js>> {
         let f: Function = self.internal()?.get("makeNativeError").map_err(|e| self.err(e))?;
         f.call::<_, Value>((domain, code, message)).map_err(|e| self.err(e))
+    }
+
+    fn buffer(&self, b: &svelters_abi::BufferValue) -> R<Value<'js>> {
+        self.write_buffer(b)
     }
 }
 
