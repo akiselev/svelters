@@ -135,4 +135,119 @@ records, `Class` ↔ type name, NSError → `NativeError`, any other object → 
 
 ## Completion record
 
-(filled in at the end)
+Branch `worktree-agent-a4dd501cd92964802`, pushed as `ci/n4-appkit`, based on master bab98ff2. Not merged.
+Gates and CI below were observed on **8c6bec5b**; the commit after it only adds this record and the "N4 as built"
+note in `plans/research/NON-GUI-TYPES.md`.
+
+### Commits
+
+- 94a79334: ingest, classifier, Apple core (`types.rs`, `blocks.rs`, bridge `invoke_ex` and conversions), generator,
+  modules, typings, docs, generated type tests, `types_core.rs`, fixture `appkit-types`, types probe, CI steps.
+- 232aa359: CI round 1 fixes: class-cluster initializers resolve by name (`initWithString:` lives on the placeholder
+  `+alloc` returns), `-[NSData bytes]` declared `^v`, CFBoolean → boolean, `test_ledger.py` isolation,
+  `generated/facts.json` regenerated (`testing.rs` is part of the observe facts' fingerprint).
+- 1df3937d: CI round 2 fixes: NSAttributedString stays a handle in the type layer (element props keep the string),
+  the async test drains a completion that beats `cancel`, `no_construct` (NSPasteboard) and `runtime_missing`
+  (5 NSTypesetter selectors) overrides, the probe loads AppKit first.
+- 5e23e3ef: the probe output (`metadata/probe/appkit/types-26.5.json`, macOS 26.6.2) turns 374 declared read-only
+  properties into getters.
+- 8c6bec5b: ledger import of run 39572868685 and coverage.
+
+### CI (`ci/n4-appkit`)
+
+| Head | macos-appkit | js | linux-gtk | linux-qt | windows-winui |
+|---|---|---|---|---|---|
+| 94a79334 | failure 39570454889: `types` 53 passed before NSData `bytes` aborted the binary; `types_core` 3 failed; `counter` (types e2e) aborted; metadata job: `facts.json` fingerprints | failure 39570455102 (ledger; `test_ledger.py` saw the type facts) | success 39570455008 | success 39570455050 | success 39570455026 |
+| 232aa359 | failure 39571473898: `types` 119/126 (NSAttributedString, item-provider cancel race, NSPasteboard construct, NSTypesetter members), `types_core` 6/8; backend 21/21, generated 570/570, counter 2/2 (incl. `appkit_types_e2e`) | failure 39571473860 (ledger: 126 type facts not in the ledger, expected) | success 39571473838 | success 39571473908 | success 39571473759 |
+| 1df3937d | **success 39572277462**: types 126/126, types_core 8/8, backend 21/21, generated 570/570, counter 2/2; probe artifact | failure 39572277590 (ledger, expected) | success 39572277387 | success 39572277523 | success 39572277570 |
+| 5e23e3ef | **success 39572868685**: types 126/126, types_core 8/8, backend 21/21, generated 570/570, counter 2/2; probe output byte-identical to the committed one | failure 39572868653 (ledger, expected) | cancelled 39572868589 (superseded by the next push) | failure 39572868457 (the toolchain install step, superseded) | success 39572868488 |
+| **8c6bec5b** | **success 39573281044**: unit 4 + 18, backend 21/21, generated 570/570, **types 126/126**, **types_core 8/8**, counter 2/2 (`counter_e2e`, `appkit_types_e2e`) | **success 39573280936** | **success 39573281193** | **success 39573280987** | **success 39573281163** |
+
+The fixture on the real host (`appkit_types_e2e`): `new NSURL(s).host` → "example.com", `new NSUndoManager({ levelsOfUndo: 5 })`
+read back through KVC, `NSColor`/`NSFont` factories set as `text-color`/`font` (checked natively: red 0.8, 15 pt), and
+`NSItemProvider.loadDataRepresentationForTypeIdentifier()` resolving from its background queue with the registered
+string's bytes.
+
+### Gates (local, at 8c6bec5b)
+
+| Gate | Result |
+|---|---|
+| `tools/dev/cargo-slot cargo check --workspace --all-targets` | rc 0 (only pre-existing warnings outside the lane) |
+| `cargo check -p svelters-apple -p svelters-appkit --all-targets --target aarch64-apple-darwin` | rc 0, no warnings |
+| counter-mac `types.rs` / `types_core.rs` type-checked as test targets of svelters-appkit for `aarch64-apple-darwin` | rc 0 |
+| `corepack pnpm -r build` | rc 0 |
+| `corepack pnpm test` (incl. `test:meta`: pytest 148 passed / 1 skipped, every `--check`, `ledger.py check`, `coverage.py --check`) | rc 0 |
+| `ledger.py check` | appkit 205 manual facts verified (79 + 126 type facts) + 491 inferred; gtk, qt, winui unchanged |
+| `python3 tools/docs/build_ir.py` then `corepack pnpm docs:test` | unittest 11 (1 skipped) OK, site tests 17/17 |
+| `@svelters/types` node tests | 22/22 (19 + 3 AppKit: tree shaking, signature closure, every module loads), strict `tsc` on GTK + Qt + AppKit typings |
+| `types_objc2_ingest.py --check` (needs the cargo registry; not in CI) | current |
+
+### Classification (`metadata/appkit/types/report.txt`)
+
+- All classes of objc2-foundation + objc2-app-kit 0.3.2 (587): value 67, object 263, statics 0, primitive 18 (cross
+  as JS values), widget 95, excluded 144; 10 structs, 5 of them shapes the core converts.
+- Bound scope: **73 classes** from 24 roots (Foundation 29: object 21, value 8; AppKit 44: object 35, value 9).
+- Members of bound types: **Foundation 828 / 903 bound (91%)**, **AppKit 958 / 1099 (87%)**; 1083 methods (440
+  statics, 81 initializers, 50 throwing), 703 properties (374 from the probe), 23 async. Excluded by rule: 173
+  deprecated, 28 core (NSObject/KVC/KVO/coding machinery), 13 unsafe. Hidden value mutators: 14. Blocked: 216, mostly
+  pointer out-parameters (116), non-completion blocks (24), `NSCoder` (16), widget slots (9), CoreGraphics types.
+- Naming: 0 collisions, 0 renames. Overrides: 24 roots, 10 curated, 4 `class:` entries (2 change the verdict),
+  6 `string_ctor`, 1 `no_construct`, 5 `runtime_missing` selectors, one exclusion regex.
+- Curated (ledger-tested: construct, props, methods, statics, lifetime, members, async where present): NSColor 124
+  bound, NSImage 52, NSFont 58, NSAttributedString 42, NSURL 63, NSFileManager 52, NSPasteboard 35, NSUserDefaults 35,
+  NSUndoManager 34, NSItemProvider 14. Ledger: 126 type facts: 73 `members` (one per bound type) and 53 curated groups
+  (construct, props, methods, statics, lifetime × 10; async × 3: NSFileManager and NSPasteboard descriptors, NSItemProvider
+  completing, rejecting, cancelling and dying with its owner on the runner).
+
+### Build time and size
+
+- Release rebuild of svelters-apple + svelters-appkit (`aarch64-apple-darwin`, no SDK, sccache off): 6.1 s → 7.5-8.5 s.
+- rlibs: `libsvelters_appkit` 1.33 → 1.74 MB, `libsvelters_apple` 0.59 → 0.75 MB. The linked app's growth was not
+  measured (linking needs the SDK); the rlib growth bounds it.
+- The generated-objc2 alternative: objc2-foundation + objc2-app-kit with the bound scope's 78 header features build in
+  30.5 s clean against 13.6 s today, before any thunk (see Design decisions).
+- JS: `packages/types/appkit` 732 KB (78 files); a bundle keeps only what it imports (shake test).
+- Hand-written core: `types.rs` 411 lines, `types_table.rs` 66, `blocks.rs` 115, bridge +181 net, backend +86.
+
+### ABI
+
+No change. The AppKit backend implements the v2.5 members and `cancel`; conventions in
+`plans/architecture/backend-abi.md` ("AppKit non-GUI types (N4, no ABI change)").
+
+### Shared files touched outside the lane (all additive)
+
+- `tools/metadata/common/types_pkg.py`: `./appkit/` export group and `./manifest-appkit`.
+- `packages/types/vite.js`: the `svelters:appkit/<fw>` alias in `typesAliases()`; `packages/types/package.json`
+  (generated exports); `packages/types/test/types/tsconfig.json` (AppKit typings).
+- `packages/testhost/src/index.js`: `callStatic(kind, "init…:")` answers a fresh handle, like `new`.
+- `tools/metadata/ledger.py`: `appkit_type_facts()` joins the AppKit manifest.
+- `.github/workflows/macos-appkit.yml`: `counter-mac types` and `types_core` steps, the types probe step.
+- `docs/site/astro.config.mjs`: sidebar group "Non-UI types (AppKit)".
+- `plans/architecture/backend-abi.md`, `plans/research/NON-GUI-TYPES.md`: new sections.
+- `crates/svelters-appkit/src/testing.rs`: `invoke_callback` recording; this re-fingerprinted the 344 observe facts
+  (`gen_backend.py` hashes the file), re-verified by the import of run 39572868685.
+
+### Open items
+
+1. **Pointer out-parameters** (116 blocked members, e.g. `-[NSColor getRed:green:blue:alpha:]`) need an out-slot path in
+   `invoke_ex` (the Qt/GTK `{ret, outs}` shape).
+2. **Non-completion blocks** (`enumerate…usingBlock:`, `NSColor colorWithName:dynamicProvider:`, drawing handlers) need
+   call-scope callbacks with stop pointers and return values: not built.
+3. **String constants** (`NSPasteboardTypeString`, `NSFontAttributeName`, ...) are not exported: their values are only
+   known at run time; a probe could record them like the read-only properties.
+4. **Notifications as `on()` signals** for type objects (NSUndoManager's did-undo, NSUserDefaults' did-change) are not
+   wired; no type class has observe facts, so type getters are plain reads.
+5. **Widget slots** of type members (9) stay blocked (the NT1 `k: widget` element-handle form is not ported).
+6. **Async**: only `(e)`/`(oe)` shapes occur in the bound scope; the other seven shapes are built but untested on CI.
+   Async statics have no bound member to test (`+[NSFileVersion getNonlocalVersions…]` needs iCloud).
+7. A failed argument conversion inside `call_static(init…)` leaks the `+alloc`ed object (an uninitialized instance).
+8. The probe file name follows the runner's default SDK (26.5); the runtime macOS (26.6.2) is what it reflects.
+9. Linked binary size not measured (needs a Mac or the SDK).
+
+### Conflict risks
+
+- **N4-WinUI**: `tools/metadata/common/types_pkg.py` (`HEAD`/`GROUPS` lines), `packages/types/vite.js` (`typesAliases`),
+  `packages/types/package.json` (generated), `packages/types/test/types/tsconfig.json`, `docs/site/astro.config.mjs`,
+  `plans/architecture/backend-abi.md`: both lanes add a line next to the gtk/qt ones. `ledger.py` if WinUI adds type facts.
+- **N3**: `packages/types/src/core.js` is untouched here.
+- **Anyone regenerating AppKit facts**: `crates/svelters-appkit/src/generated/facts.json` and `metadata/verified/appkit.json`.
