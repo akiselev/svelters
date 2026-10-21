@@ -39,8 +39,14 @@ total             6       108       327        26         2         7        82 
   Gdk.Texture              object  bound   14 blocked   2 hidden   0
   Gio.File                 object  bound   95 blocked   4 hidden   0
   Gio.ListStore            model   bound   11 blocked   2 hidden   0
+  Gtk.CustomFilter         object  bound    2 blocked   0 hidden   0
+  Gtk.CustomSorter         object  bound    2 blocked   0 hidden   0
   Gtk.DirectoryList        model   bound   17 blocked   2 hidden   0
   Gtk.FileDialog           object  bound   33 blocked   0 hidden   0
+  Gtk.FilterListModel      model   bound   17 blocked   0 hidden   0
+  Gtk.MultiSelection       model   bound    6 blocked   0 hidden   0
+  Gtk.SingleSelection      model   bound   17 blocked   0 hidden   0
+  Gtk.SortListModel        model   bound   17 blocked   0 hidden   0
   Gtk.StringList           model   bound   10 blocked   0 hidden   0
   Gtk.TextBuffer           object  bound   85 blocked   7 hidden   0
   Pango.AttrList           value   bound    6 blocked   0 hidden   6

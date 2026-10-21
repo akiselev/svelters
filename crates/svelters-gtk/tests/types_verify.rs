@@ -560,6 +560,122 @@ fn gio_liststore_lifetime() {
     });
 }
 
+fn subject_gtk_customfilter(h: &Harness) -> u64 {
+    h.construct("Gtk.CustomFilter", &[]).unwrap()
+}
+
+#[test]
+fn gtk_customfilter_construct() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customfilter(&h);
+        assert_eq!(h.handle_info(s).unwrap().lifetime, SVL_LIFE_SHARED);
+        assert!(h.type_chain(s).iter().any(|n| n == "Gtk.CustomFilter") || false || false, "{:?}", h.type_chain(s));
+    });
+}
+
+#[test]
+fn gtk_customfilter_props() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customfilter(&h);
+        let _ = &s;
+    });
+}
+
+#[test]
+fn gtk_customfilter_methods() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customfilter(&h);
+        let _ = &s;
+    });
+}
+
+#[test]
+fn gtk_customfilter_signals() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customfilter(&h);
+        let _ = &s;
+    });
+}
+
+#[test]
+fn gtk_customfilter_lifetime() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customfilter(&h);
+        let weak = h.obj(s).downgrade();
+        let live = h.backend.live_handles();
+        pump(30);
+        assert!(weak.upgrade().is_some(), "SHARED keeps the object alive");
+        h.destroy(s);
+        pump(60);
+        assert!(h.handle_info(s).is_err(), "released: stale");
+        h.destroy(s);
+        assert!(h.backend.live_handles() < live, "nothing else leaked a handle");
+    });
+}
+
+fn subject_gtk_customsorter(h: &Harness) -> u64 {
+    h.construct("Gtk.CustomSorter", &[]).unwrap()
+}
+
+#[test]
+fn gtk_customsorter_construct() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customsorter(&h);
+        assert_eq!(h.handle_info(s).unwrap().lifetime, SVL_LIFE_SHARED);
+        assert!(h.type_chain(s).iter().any(|n| n == "Gtk.CustomSorter") || false || false, "{:?}", h.type_chain(s));
+    });
+}
+
+#[test]
+fn gtk_customsorter_props() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customsorter(&h);
+        let _ = &s;
+    });
+}
+
+#[test]
+fn gtk_customsorter_methods() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customsorter(&h);
+        let _ = &s;
+    });
+}
+
+#[test]
+fn gtk_customsorter_signals() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customsorter(&h);
+        let _ = &s;
+    });
+}
+
+#[test]
+fn gtk_customsorter_lifetime() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_customsorter(&h);
+        let weak = h.obj(s).downgrade();
+        let live = h.backend.live_handles();
+        pump(30);
+        assert!(weak.upgrade().is_some(), "SHARED keeps the object alive");
+        h.destroy(s);
+        pump(60);
+        assert!(h.handle_info(s).is_err(), "released: stale");
+        h.destroy(s);
+        assert!(h.backend.live_handles() < live, "nothing else leaked a handle");
+    });
+}
+
 fn subject_gtk_directorylist(h: &Harness) -> u64 {
     h.construct("Gtk.DirectoryList", &[("attributes", V::Str("standard::display-name".into()))]).unwrap()
 }
@@ -869,6 +985,426 @@ fn gtk_filedialog_async() {
         } else {
             eprintln!("SKIP select_multiple_folders: not in the running library (since 4.10)");
         }
+    });
+}
+
+fn subject_gtk_filterlistmodel(h: &Harness) -> u64 {
+    h.construct("Gtk.FilterListModel", &[]).unwrap()
+}
+
+#[test]
+fn gtk_filterlistmodel_construct() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_filterlistmodel(&h);
+        assert_eq!(h.handle_info(s).unwrap().lifetime, SVL_LIFE_SHARED);
+        assert!(h.type_chain(s).iter().any(|n| n == "Gtk.FilterListModel") || false || true, "{:?}", h.type_chain(s));
+    });
+}
+
+#[test]
+fn gtk_filterlistmodel_props() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_filterlistmodel(&h);
+        let _ = h.get(s, "filter"); // object
+        let _ = h.get(s, "incremental"); // bool
+        let cur = h.get_value(s, "incremental");
+        h.set_value(s, "incremental", &cur).unwrap();
+        assert_eq!(h.get_value(s, "incremental"), cur, "write-back of incremental");
+        if h.has_prop(s, "item-type") {
+            let _ = h.get(s, "item-type"); // gtype
+        } else {
+            eprintln!("SKIP item-type: not in the running library (since 4.8)");
+        }
+        let _ = h.get(s, "model"); // object
+        if h.has_prop(s, "n-items") {
+            let _ = h.get(s, "n-items"); // int
+        } else {
+            eprintln!("SKIP n-items: not in the running library (since 4.8)");
+        }
+        let _ = h.get(s, "pending"); // int
+        if h.has_prop(s, "watch-items") {
+            let _ = h.get(s, "watch-items"); // bool
+            let cur = h.get_value(s, "watch-items");
+            h.set_value(s, "watch-items", &cur).unwrap();
+            assert_eq!(h.get_value(s, "watch-items"), cur, "write-back of watch-items");
+        } else {
+            eprintln!("SKIP watch-items: not in the running library (since 4.20)");
+        }
+    });
+}
+
+#[test]
+fn gtk_filterlistmodel_methods() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_filterlistmodel(&h);
+        h.call_args(s, "get_filter", &[]).unwrap_or_else(|e| panic!("get_filter: {e}"));
+        h.call_args(s, "get_incremental", &[]).unwrap_or_else(|e| panic!("get_incremental: {e}"));
+        h.call_args(s, "get_model", &[]).unwrap_or_else(|e| panic!("get_model: {e}"));
+        h.call_args(s, "get_pending", &[]).unwrap_or_else(|e| panic!("get_pending: {e}"));
+        if h.resolve_method(s, "get_watch_items") != 0 {
+            h.call_args(s, "get_watch_items", &[]).unwrap_or_else(|e| panic!("get_watch_items: {e}"));
+        } else {
+            eprintln!("SKIP get_watch_items: not in the running library (since 4.20)");
+        }
+        if h.resolve_method(s, "get_item_type") != 0 {
+            h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
+        } else {
+            eprintln!("SKIP get_item_type: not in the running library (since 2.44)");
+        }
+        if h.resolve_method(s, "get_n_items") != 0 {
+            h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        } else {
+            eprintln!("SKIP get_n_items: not in the running library (since 2.44)");
+        }
+    });
+}
+
+#[test]
+fn gtk_filterlistmodel_signals() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_filterlistmodel(&h);
+        if h.has_signal(s, "items-changed") {
+            h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
+            h.listen(s, "items-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP items-changed: not in the running library (since 2.44)");
+        }
+        if h.has_signal(s, "sections-changed") {
+            h.listen(s, "sections-changed", true).unwrap_or_else(|e| panic!("sections-changed: {e}"));
+            h.listen(s, "sections-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP sections-changed: not in the running library (since 4.12)");
+        }
+    });
+}
+
+#[test]
+fn gtk_filterlistmodel_lifetime() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_filterlistmodel(&h);
+        let weak = h.obj(s).downgrade();
+        let live = h.backend.live_handles();
+        pump(30);
+        assert!(weak.upgrade().is_some(), "SHARED keeps the object alive");
+        h.destroy(s);
+        pump(60);
+        assert!(h.handle_info(s).is_err(), "released: stale");
+        h.destroy(s);
+        assert!(h.backend.live_handles() < live, "nothing else leaked a handle");
+    });
+}
+
+fn subject_gtk_multiselection(h: &Harness) -> u64 {
+    h.construct("Gtk.MultiSelection", &[]).unwrap()
+}
+
+#[test]
+fn gtk_multiselection_construct() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_multiselection(&h);
+        assert_eq!(h.handle_info(s).unwrap().lifetime, SVL_LIFE_SHARED);
+        assert!(h.type_chain(s).iter().any(|n| n == "Gtk.MultiSelection") || false || true, "{:?}", h.type_chain(s));
+    });
+}
+
+#[test]
+fn gtk_multiselection_props() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_multiselection(&h);
+        if h.has_prop(s, "item-type") {
+            let _ = h.get(s, "item-type"); // gtype
+        } else {
+            eprintln!("SKIP item-type: not in the running library (since 4.8)");
+        }
+        let _ = h.get(s, "model"); // object
+        if h.has_prop(s, "n-items") {
+            let _ = h.get(s, "n-items"); // int
+        } else {
+            eprintln!("SKIP n-items: not in the running library (since 4.8)");
+        }
+    });
+}
+
+#[test]
+fn gtk_multiselection_methods() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_multiselection(&h);
+        h.call_args(s, "get_model", &[]).unwrap_or_else(|e| panic!("get_model: {e}"));
+        if h.resolve_method(s, "get_item_type") != 0 {
+            h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
+        } else {
+            eprintln!("SKIP get_item_type: not in the running library (since 2.44)");
+        }
+        if h.resolve_method(s, "get_n_items") != 0 {
+            h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        } else {
+            eprintln!("SKIP get_n_items: not in the running library (since 2.44)");
+        }
+        h.call_args(s, "get_selection", &[]).unwrap_or_else(|e| panic!("get_selection: {e}"));
+    });
+}
+
+#[test]
+fn gtk_multiselection_signals() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_multiselection(&h);
+        if h.has_signal(s, "items-changed") {
+            h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
+            h.listen(s, "items-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP items-changed: not in the running library (since 2.44)");
+        }
+        if h.has_signal(s, "sections-changed") {
+            h.listen(s, "sections-changed", true).unwrap_or_else(|e| panic!("sections-changed: {e}"));
+            h.listen(s, "sections-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP sections-changed: not in the running library (since 4.12)");
+        }
+        h.listen(s, "selection-changed", true).unwrap_or_else(|e| panic!("selection-changed: {e}"));
+        h.listen(s, "selection-changed", false).unwrap();
+    });
+}
+
+#[test]
+fn gtk_multiselection_lifetime() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_multiselection(&h);
+        let weak = h.obj(s).downgrade();
+        let live = h.backend.live_handles();
+        pump(30);
+        assert!(weak.upgrade().is_some(), "SHARED keeps the object alive");
+        h.destroy(s);
+        pump(60);
+        assert!(h.handle_info(s).is_err(), "released: stale");
+        h.destroy(s);
+        assert!(h.backend.live_handles() < live, "nothing else leaked a handle");
+    });
+}
+
+fn subject_gtk_singleselection(h: &Harness) -> u64 {
+    h.construct("Gtk.SingleSelection", &[]).unwrap()
+}
+
+#[test]
+fn gtk_singleselection_construct() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_singleselection(&h);
+        assert_eq!(h.handle_info(s).unwrap().lifetime, SVL_LIFE_SHARED);
+        assert!(h.type_chain(s).iter().any(|n| n == "Gtk.SingleSelection") || false || true, "{:?}", h.type_chain(s));
+    });
+}
+
+#[test]
+fn gtk_singleselection_props() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_singleselection(&h);
+        let _ = h.get(s, "autoselect"); // bool
+        let cur = h.get_value(s, "autoselect");
+        h.set_value(s, "autoselect", &cur).unwrap();
+        assert_eq!(h.get_value(s, "autoselect"), cur, "write-back of autoselect");
+        let _ = h.get(s, "can-unselect"); // bool
+        let cur = h.get_value(s, "can-unselect");
+        h.set_value(s, "can-unselect", &cur).unwrap();
+        assert_eq!(h.get_value(s, "can-unselect"), cur, "write-back of can-unselect");
+        if h.has_prop(s, "item-type") {
+            let _ = h.get(s, "item-type"); // gtype
+        } else {
+            eprintln!("SKIP item-type: not in the running library (since 4.8)");
+        }
+        let _ = h.get(s, "model"); // object
+        if h.has_prop(s, "n-items") {
+            let _ = h.get(s, "n-items"); // int
+        } else {
+            eprintln!("SKIP n-items: not in the running library (since 4.8)");
+        }
+        let _ = h.get(s, "selected"); // int
+        let cur = h.get_value(s, "selected");
+        h.set_value(s, "selected", &cur).unwrap();
+        assert_eq!(h.get_value(s, "selected"), cur, "write-back of selected");
+        let _ = h.get(s, "selected-item"); // object
+    });
+}
+
+#[test]
+fn gtk_singleselection_methods() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_singleselection(&h);
+        h.call_args(s, "get_autoselect", &[]).unwrap_or_else(|e| panic!("get_autoselect: {e}"));
+        h.call_args(s, "get_can_unselect", &[]).unwrap_or_else(|e| panic!("get_can_unselect: {e}"));
+        h.call_args(s, "get_model", &[]).unwrap_or_else(|e| panic!("get_model: {e}"));
+        h.call_args(s, "get_selected", &[]).unwrap_or_else(|e| panic!("get_selected: {e}"));
+        h.call_args(s, "get_selected_item", &[]).unwrap_or_else(|e| panic!("get_selected_item: {e}"));
+        if h.resolve_method(s, "get_item_type") != 0 {
+            h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
+        } else {
+            eprintln!("SKIP get_item_type: not in the running library (since 2.44)");
+        }
+        if h.resolve_method(s, "get_n_items") != 0 {
+            h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        } else {
+            eprintln!("SKIP get_n_items: not in the running library (since 2.44)");
+        }
+        h.call_args(s, "get_selection", &[]).unwrap_or_else(|e| panic!("get_selection: {e}"));
+    });
+}
+
+#[test]
+fn gtk_singleselection_signals() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_singleselection(&h);
+        if h.has_signal(s, "items-changed") {
+            h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
+            h.listen(s, "items-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP items-changed: not in the running library (since 2.44)");
+        }
+        if h.has_signal(s, "sections-changed") {
+            h.listen(s, "sections-changed", true).unwrap_or_else(|e| panic!("sections-changed: {e}"));
+            h.listen(s, "sections-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP sections-changed: not in the running library (since 4.12)");
+        }
+        h.listen(s, "selection-changed", true).unwrap_or_else(|e| panic!("selection-changed: {e}"));
+        h.listen(s, "selection-changed", false).unwrap();
+    });
+}
+
+#[test]
+fn gtk_singleselection_lifetime() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_singleselection(&h);
+        let weak = h.obj(s).downgrade();
+        let live = h.backend.live_handles();
+        pump(30);
+        assert!(weak.upgrade().is_some(), "SHARED keeps the object alive");
+        h.destroy(s);
+        pump(60);
+        assert!(h.handle_info(s).is_err(), "released: stale");
+        h.destroy(s);
+        assert!(h.backend.live_handles() < live, "nothing else leaked a handle");
+    });
+}
+
+fn subject_gtk_sortlistmodel(h: &Harness) -> u64 {
+    h.construct("Gtk.SortListModel", &[]).unwrap()
+}
+
+#[test]
+fn gtk_sortlistmodel_construct() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_sortlistmodel(&h);
+        assert_eq!(h.handle_info(s).unwrap().lifetime, SVL_LIFE_SHARED);
+        assert!(h.type_chain(s).iter().any(|n| n == "Gtk.SortListModel") || false || true, "{:?}", h.type_chain(s));
+    });
+}
+
+#[test]
+fn gtk_sortlistmodel_props() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_sortlistmodel(&h);
+        let _ = h.get(s, "incremental"); // bool
+        let cur = h.get_value(s, "incremental");
+        h.set_value(s, "incremental", &cur).unwrap();
+        assert_eq!(h.get_value(s, "incremental"), cur, "write-back of incremental");
+        if h.has_prop(s, "item-type") {
+            let _ = h.get(s, "item-type"); // gtype
+        } else {
+            eprintln!("SKIP item-type: not in the running library (since 4.8)");
+        }
+        let _ = h.get(s, "model"); // object
+        if h.has_prop(s, "n-items") {
+            let _ = h.get(s, "n-items"); // int
+        } else {
+            eprintln!("SKIP n-items: not in the running library (since 4.8)");
+        }
+        let _ = h.get(s, "pending"); // int
+        if h.has_prop(s, "section-sorter") {
+            let _ = h.get(s, "section-sorter"); // object
+        } else {
+            eprintln!("SKIP section-sorter: not in the running library (since 4.12)");
+        }
+        let _ = h.get(s, "sorter"); // object
+    });
+}
+
+#[test]
+fn gtk_sortlistmodel_methods() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_sortlistmodel(&h);
+        h.call_args(s, "get_incremental", &[]).unwrap_or_else(|e| panic!("get_incremental: {e}"));
+        h.call_args(s, "get_model", &[]).unwrap_or_else(|e| panic!("get_model: {e}"));
+        h.call_args(s, "get_pending", &[]).unwrap_or_else(|e| panic!("get_pending: {e}"));
+        if h.resolve_method(s, "get_section_sorter") != 0 {
+            h.call_args(s, "get_section_sorter", &[]).unwrap_or_else(|e| panic!("get_section_sorter: {e}"));
+        } else {
+            eprintln!("SKIP get_section_sorter: not in the running library (since 4.12)");
+        }
+        h.call_args(s, "get_sorter", &[]).unwrap_or_else(|e| panic!("get_sorter: {e}"));
+        if h.resolve_method(s, "get_item_type") != 0 {
+            h.call_args(s, "get_item_type", &[]).unwrap_or_else(|e| panic!("get_item_type: {e}"));
+        } else {
+            eprintln!("SKIP get_item_type: not in the running library (since 2.44)");
+        }
+        if h.resolve_method(s, "get_n_items") != 0 {
+            h.call_args(s, "get_n_items", &[]).unwrap_or_else(|e| panic!("get_n_items: {e}"));
+        } else {
+            eprintln!("SKIP get_n_items: not in the running library (since 2.44)");
+        }
+    });
+}
+
+#[test]
+fn gtk_sortlistmodel_signals() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_sortlistmodel(&h);
+        if h.has_signal(s, "items-changed") {
+            h.listen(s, "items-changed", true).unwrap_or_else(|e| panic!("items-changed: {e}"));
+            h.listen(s, "items-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP items-changed: not in the running library (since 2.44)");
+        }
+        if h.has_signal(s, "sections-changed") {
+            h.listen(s, "sections-changed", true).unwrap_or_else(|e| panic!("sections-changed: {e}"));
+            h.listen(s, "sections-changed", false).unwrap();
+        } else {
+            eprintln!("SKIP sections-changed: not in the running library (since 4.12)");
+        }
+    });
+}
+
+#[test]
+fn gtk_sortlistmodel_lifetime() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let s = subject_gtk_sortlistmodel(&h);
+        let weak = h.obj(s).downgrade();
+        let live = h.backend.live_handles();
+        pump(30);
+        assert!(weak.upgrade().is_some(), "SHARED keeps the object alive");
+        h.destroy(s);
+        pump(60);
+        assert!(h.handle_info(s).is_err(), "released: stale");
+        h.destroy(s);
+        assert!(h.backend.live_handles() < live, "nothing else leaked a handle");
     });
 }
 

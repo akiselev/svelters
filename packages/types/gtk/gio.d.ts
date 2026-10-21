@@ -1209,6 +1209,8 @@ declare module 'svelters:gtk/gio' {
       getNItems(): number;
       /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
+      /** `get_item`, since 2.44 */
+      getItem(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
     on(signal: string, fn: (...args: any[]) => void): () => void;
@@ -1243,6 +1245,8 @@ declare module 'svelters:gtk/gio' {
       getNItems(): number;
       /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
+      /** `get_item`, since 2.44 */
+      getItem(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
     readonly itemType: string | { readonly native: string } | null;

@@ -6264,7 +6264,7 @@
      }
     }
    ],
-   "curated": false,
+   "curated": true,
    "gtype": "GtkCustomFilter",
    "hidden": [],
    "interfaces": [],
@@ -6397,7 +6397,7 @@
      }
     }
    ],
-   "curated": false,
+   "curated": true,
    "gtype": "GtkCustomSorter",
    "hidden": [],
    "interfaces": [],
@@ -10682,7 +10682,7 @@
      }
     }
    ],
-   "curated": false,
+   "curated": true,
    "gtype": "GtkFilterListModel",
    "hidden": [],
    "interfaces": [
@@ -16488,7 +16488,7 @@
      }
     }
    ],
-   "curated": false,
+   "curated": true,
    "gtype": "GtkMultiSelection",
    "hidden": [],
    "interfaces": [
@@ -25127,7 +25127,7 @@
      }
     }
    ],
-   "curated": false,
+   "curated": true,
    "gtype": "GtkSingleSelection",
    "hidden": [],
    "interfaces": [
@@ -26538,7 +26538,7 @@
      }
     }
    ],
-   "curated": false,
+   "curated": true,
    "gtype": "GtkSortListModel",
    "hidden": [],
    "interfaces": [

@@ -694,6 +694,10 @@ class Gen:
                 if inst_name(m["js"]) in anc_inst and anc_inst[inst_name(m["js"])] != self.sig_key(m):
                     t = self.loose(m, False)
                 lines.append("    " + t.replace("\n", "\n    "))
+                # The JS class has the alias too (`getItem` for the shadowing `get_object`, N3).
+                for al in m.get("aliases", []):
+                    if al != m["js"] and al not in {x["js"] for x in eff["methods"]}:
+                        lines.append("    " + self.ts_method(q, {**m, "js": al}, imports, False).replace("\n", "\n    "))
             for p in eff["properties"]:
                 n = inst_name(p["js"])
                 t = self.ts_type(q, p["type"], imports, True)

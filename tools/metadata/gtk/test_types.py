@@ -52,7 +52,9 @@ def test_facts_match_the_installed_gir():
 def test_the_curated_set_is_bound_with_the_expected_categories(facts):
     want = {"Gio.File": "object", "Gio.ListStore": "model", "Gtk.TextBuffer": "object", "Gtk.StringList": "model",
             "Gtk.DirectoryList": "model", "Gtk.FileDialog": "object", "Gdk.Texture": "object", "Gdk.Clipboard": "object",
-            "Pango.AttrList": "value", "Pango.FontDescription": "value"}
+            "Pango.AttrList": "value", "Pango.FontDescription": "value",
+            "Gtk.FilterListModel": "model", "Gtk.SortListModel": "model", "Gtk.SingleSelection": "model",
+            "Gtk.MultiSelection": "model", "Gtk.CustomFilter": "object", "Gtk.CustomSorter": "object"}
     for q, cat in want.items():
         assert facts[q]["category"] == cat, q
         assert facts[q]["curated"], q
@@ -237,8 +239,8 @@ def test_the_ledger_facts_cover_the_curated_types_and_their_tests_exist():
     data = json.loads((TF.FACTS_DIR / "facts.json").read_text())
     tests = (ROOT / "crates/svelters-gtk/tests/types_verify.rs").read_text()
     ids = {f["fact"] for f in data["facts"]}
-    # five groups per curated type, plus `async` for the four with async members (N1)
-    assert len(ids) == 54
+    # five groups per curated type, plus `async` for the four with async members (N1); N3 added six model kinds
+    assert len(ids) == 84
     assert "svelters-api:v1:type:gtk:Gio:File:async" in ids
     assert "svelters-api:v1:type:gtk:Gio:File:construct" in ids
     assert "svelters-api:v1:type:gtk:Pango:FontDescription:lifetime" in ids
