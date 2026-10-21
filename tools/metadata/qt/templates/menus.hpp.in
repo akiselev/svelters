@@ -36,13 +36,17 @@ QActionGroup *menu_group_for(QWidget *host, const QString &name) {
 bool menu_is_svl_group(const QActionGroup *g) { return g && g->objectName().startsWith(QStringLiteral("svl-group:")); }
 
 // Puts `a` into the exclusive set its `svlGroup` names (or takes it out when the name is empty).
+// A named action is checkable from the moment it has the name, not only once a menu holds it: Qt
+// keeps a `setChecked(true)` on a non-checkable action but reports isChecked() false until
+// setCheckable(true), which then reveals it without emitting `toggled` (the NOTIFY of `checked`).
+// So `checked` written before the insert reads back as written and an observer's baseline is right.
 void menu_apply_group(QAction *a, QWidget *host) {
   const QString name = a->property("svlGroup").toString();
+  if (!name.isEmpty()) a->setCheckable(true);
   if (name.isEmpty() || !host) {
     if (menu_is_svl_group(a->actionGroup())) a->setActionGroup(nullptr);
     return;
   }
-  a->setCheckable(true);
   a->setActionGroup(menu_group_for(host, name));
 }
 
