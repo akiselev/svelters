@@ -123,8 +123,6 @@ declare module 'svelters:gtk/pango' {
       getFace(): FontFace | null;
       /** `get_font_map`, since 1.10 */
       getFontMap(): FontMap | null;
-      /** `get_languages`, since 1.50 */
-      getLanguages(): Language[] | null;
       /** `get_metrics` */
       getMetrics(language?: Language | null): FontMetrics;
       /** `has_char`, since 1.44 */

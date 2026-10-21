@@ -178,10 +178,6 @@ export class DBusMessage extends GObject_Object {
     call(this, 'set_unix_fd_list', [fdList]);
   }
 
-  toBlob(capabilities) {
-    return call(this, 'to_blob', [capabilities]);
-  }
-
   toGerror() {
     return call(this, 'to_gerror', []);
   }

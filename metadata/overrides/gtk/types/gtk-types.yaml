@@ -64,6 +64,10 @@ exclude:
   - GObject.SignalGroup
   - GObject.WeakRef
   - GObject.ParamSpec
+  # FU3: a GVariant crosses the ABI as a plain JS value (SVL_T_VARIANT / SVL_T_TYPED_VARIANT), never as a
+  # handle: G_TYPE_VARIANT is a fundamental, so the backend mints no kind for it and none of its members
+  # could resolve (the members check found all 32 unresolved).
+  - GLib.Variant
 
 # VALUE mutator exceptions the name and `const` rules cannot decide. `hide` lists methods to hide,
 # `keep` methods to keep, by qualified type name. Filled from the `undecided` section of the report.

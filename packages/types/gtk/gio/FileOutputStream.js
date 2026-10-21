@@ -34,10 +34,6 @@ export class FileOutputStream extends OutputStream {
     return call(this, 'can_truncate', []);
   }
 
-  seek(offset, type, cancellable = null) {
-    return call(this, 'seek', [offset, type, cancellable]);
-  }
-
   tell() {
     return call(this, 'tell', []);
   }

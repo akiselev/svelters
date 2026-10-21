@@ -9,14 +9,6 @@ export class Uri extends NativeValue {
 
   static bases = ["GLib.Uri"];
 
-  static build(flags, scheme, userinfo, host, port, path, query = null, fragment = null) {
-    return wrapValue(Uri, callStatic('GLib.Uri', 'build', [flags, scheme, userinfo, host, port, path, query, fragment]));
-  }
-
-  static buildWithUser(flags, scheme, user, password, authParams, host, port, path, query = null, fragment = null) {
-    return wrapValue(Uri, callStatic('GLib.Uri', 'build_with_user', [flags, scheme, user, password, authParams, host, port, path, query, fragment]));
-  }
-
   static errorQuark() {
     return callStatic('GLib.Uri', 'error_quark', []);
   }
@@ -29,24 +21,8 @@ export class Uri extends NativeValue {
     return callStatic('GLib.Uri', 'escape_string', [unescaped, reservedCharsAllowed, allowUtf8]);
   }
 
-  static isValid(uriString, flags) {
-    return callStatic('GLib.Uri', 'is_valid', [uriString, flags]);
-  }
-
-  static join(flags, scheme, userinfo, host, port, path, query = null, fragment = null) {
-    return callStatic('GLib.Uri', 'join', [flags, scheme, userinfo, host, port, path, query, fragment]);
-  }
-
-  static joinWithUser(flags, scheme, user, password, authParams, host, port, path, query = null, fragment = null) {
-    return callStatic('GLib.Uri', 'join_with_user', [flags, scheme, user, password, authParams, host, port, path, query, fragment]);
-  }
-
   static listExtractUris(uriList) {
     return callStatic('GLib.Uri', 'list_extract_uris', [uriList]);
-  }
-
-  static parse(uriString, flags) {
-    return wrapValue(Uri, callStatic('GLib.Uri', 'parse', [uriString, flags]));
   }
 
   static parseScheme(uri) {
@@ -55,25 +31,6 @@ export class Uri extends NativeValue {
 
   static peekScheme(uri) {
     return callStatic('GLib.Uri', 'peek_scheme', [uri]);
-  }
-
-  static resolveRelative(baseUriString, uriRef, flags) {
-    return callStatic('GLib.Uri', 'resolve_relative', [baseUriString, uriRef, flags]);
-  }
-
-  static split(uriRef, flags) {
-    const __res = callStatic('GLib.Uri', 'split', [uriRef, flags]);
-    return { ret: __res.ret, scheme: __res.scheme, userinfo: __res.userinfo, host: __res.host, port: __res.port, path: __res.path, query: __res.query, fragment: __res.fragment };
-  }
-
-  static splitNetwork(uriString, flags) {
-    const __res = callStatic('GLib.Uri', 'split_network', [uriString, flags]);
-    return { ret: __res.ret, scheme: __res.scheme, host: __res.host, port: __res.port };
-  }
-
-  static splitWithUser(uriRef, flags) {
-    const __res = callStatic('GLib.Uri', 'split_with_user', [uriRef, flags]);
-    return { ret: __res.ret, scheme: __res.scheme, user: __res.user, password: __res.password, authParams: __res.auth_params, host: __res.host, port: __res.port, path: __res.path, query: __res.query, fragment: __res.fragment };
   }
 
   static unescapeBytes(escapedString, length, illegalCharacters = null) {
@@ -90,10 +47,6 @@ export class Uri extends NativeValue {
 
   getAuthParams() {
     return call(this, 'get_auth_params', []);
-  }
-
-  getFlags() {
-    return call(this, 'get_flags', []);
   }
 
   getFragment() {
@@ -132,15 +85,7 @@ export class Uri extends NativeValue {
     return call(this, 'get_userinfo', []);
   }
 
-  parseRelative(uriRef, flags) {
-    return wrapValue(Uri, call(this, 'parse_relative', [uriRef, flags]));
-  }
-
   toString() {
     return call(this, 'to_string', []);
-  }
-
-  toStringPartial(flags) {
-    return call(this, 'to_string_partial', [flags]);
   }
 }

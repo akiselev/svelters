@@ -1510,8 +1510,10 @@ def ts_key(name: str) -> str:
 
 
 def gen_types(m: Model) -> str:
-    """GTypes register lazily; call each concrete class's get_type before name lookup."""
-    ks = [d for d in m.kinds if d["kind"] == "object" and not d["abstract"] and d["native"].get("get_type")]
+    """GTypes register lazily; call each class's or interface's get_type before name lookup. Abstract classes
+    and interfaces too (FU3): their methods resolve through GI on the kind's own GType (`Gtk.Editable.get_text`,
+    `Gtk.NativeDialog.show`), which `Type::from_name` cannot find before something registered it."""
+    ks = [d for d in m.kinds if d["kind"] in ("object", "interface") and d["native"].get("get_type")]
     o = [HEADER, f"//\n// Kinds up to GTK {MIN_GTK[0]}.{MIN_GTK[1]} (the build minimum) link their get_type; newer ones are looked up\n"
          "// at run time, so the backend links against the minimum GTK.\n\nunsafe extern \"C\" {\n"]
     o += [f"    fn {d['native']['get_type']}() -> usize;\n" for d in ks if not needs(d)]

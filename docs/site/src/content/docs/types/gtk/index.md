@@ -42,7 +42,7 @@ The curated set below has a page and ledger-verified tests; the other bound type
 
 ## Bound types by namespace
 
-- `svelters:gtk/glib` (15): Bytes, DateTime, Error, HashTable, KeyFile, OptionGroup, PollFD, String, TimeZone, Tree, Uri, Variant, VariantBuilder, VariantDict, VariantType
+- `svelters:gtk/glib` (14): Bytes, DateTime, Error, HashTable, KeyFile, OptionGroup, PollFD, String, TimeZone, Tree, Uri, VariantBuilder, VariantDict, VariantType
 - `svelters:gtk/gobject` (3): InitiallyUnowned, Object, Value
 - `svelters:gtk/gdk` (25): AppLaunchContext, CairoContext, CicpParams, Clipboard, ColorState, ContentFormats, ContentProvider, Cursor, Device, DeviceTool, Display, DmabufFormats, Drag, DrawContext, Drop, EventSequence, FrameClock, FrameTimings, GLContext, Monitor, Paintable, Seat, Snapshot, Surface, Texture
 - `svelters:gtk/gio` (57): Action, ActionGroup, ActionMap, AppInfo, AppLaunchContext, Application, ApplicationCommandLine, AsyncInitable, Cancellable, Credentials, DBusAnnotationInfo, DBusArgInfo, DBusAuthObserver, DBusConnection, DBusInterfaceInfo, DBusMessage, DBusMethodInfo, DBusPropertyInfo, DBusSignalInfo, Drive, File, FileAttributeInfoList, FileAttributeMatcher, FileEnumerator, FileIOStream, FileIcon, FileInfo, FileInputStream, FileMonitor, FileOutputStream, IOStream, Icon, Initable, InputStream, ListModel, ListStore, LoadableIcon, Menu, MenuAttributeIter, MenuItem, MenuLinkIter, MenuModel, Mount, MountOperation, Notification, OutputStream, Permission, Seekable, Settings, SettingsBackend, SettingsSchema, SettingsSchemaKey, SimpleAction, SimpleActionGroup, ThemedIcon, UnixFDList, Volume

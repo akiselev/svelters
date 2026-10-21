@@ -139,11 +139,6 @@ export class Matrix extends NativeValue {
     return { ret: __res.ret, xx: __res.xx, yx: __res.yx, xy: __res.xy, yy: __res.yy, x0: __res.x_0, y0: __res.y_0 };
   }
 
-  toFloat() {
-    const __res = call(this, 'to_float', []);
-    return { v: __res.v };
-  }
-
   transformBounds(r) {
     const __res = call(this, 'transform_bounds', [r]);
     return { res: __res.res };

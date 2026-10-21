@@ -1238,6 +1238,7 @@
   "Application": {
    "abstract": false,
    "blocked": {
+    "add_main_option": "enum without GType",
     "add_main_option_entries": "type:needs-override:GLib.OptionEntry",
     "signal:handle-local-options": "struct by value"
    },
@@ -1289,62 +1290,6 @@
       "k": "void"
      },
      "since": "2.28"
-    },
-    {
-     "js": "addMainOption",
-     "name": "add_main_option",
-     "params": [
-      {
-       "js": "longName",
-       "name": "long_name",
-       "type": {
-        "k": "str"
-       }
-      },
-      {
-       "js": "shortName",
-       "name": "short_name",
-       "type": {
-        "k": "int",
-        "t": "gchar"
-       }
-      },
-      {
-       "js": "flags",
-       "name": "flags",
-       "type": {
-        "k": "flags",
-        "t": "GLib.OptionFlags"
-       }
-      },
-      {
-       "js": "arg",
-       "name": "arg",
-       "type": {
-        "k": "enum",
-        "t": "GLib.OptionArg"
-       }
-      },
-      {
-       "js": "description",
-       "name": "description",
-       "type": {
-        "k": "str"
-       }
-      },
-      {
-       "js": "argDescription",
-       "name": "arg_description",
-       "nullable": true,
-       "type": {
-        "k": "str"
-       }
-      }
-     ],
-     "ret": {
-      "k": "void"
-     },
-     "since": "2.42"
     },
     {
      "js": "addOptionGroup",
@@ -1947,8 +1892,6 @@
    ],
    "qualified": "Gio.Application",
    "refs": [
-    "GLib.OptionArg",
-    "GLib.OptionFlags",
     "GLib.OptionGroup",
     "GObject.Object",
     "Gio.ApplicationCommandLine",
@@ -3743,7 +3686,8 @@
     "get_body": "variant",
     "get_header": "variant",
     "set_body": "variant",
-    "set_header": "variant"
+    "set_header": "variant",
+    "to_blob": "caller-allocated out value"
    },
    "builder": false,
    "category": "object",
@@ -4375,40 +4319,6 @@
       "k": "void"
      },
      "since": "2.26"
-    },
-    {
-     "js": "toBlob",
-     "name": "to_blob",
-     "params": [
-      {
-       "dir": "out",
-       "hidden": true,
-       "js": "outSize",
-       "name": "out_size",
-       "type": {
-        "k": "int",
-        "t": "gsize"
-       }
-      },
-      {
-       "js": "capabilities",
-       "name": "capabilities",
-       "type": {
-        "k": "flags",
-        "t": "Gio.DBusCapabilityFlags"
-       }
-      }
-     ],
-     "ret": {
-      "elem": {
-       "k": "int",
-       "t": "guint8"
-      },
-      "k": "array",
-      "len": 0
-     },
-     "since": "2.26",
-     "throws": true
     },
     {
      "js": "toGerror",
@@ -9970,8 +9880,10 @@
   "InputStream": {
    "abstract": true,
    "blocked": {
-    "read_all_async": "async: start has out parameters",
-    "read_async": "async: start has out parameters"
+    "read": "caller-allocated out value",
+    "read_all": "caller-allocated out value",
+    "read_all_async": "caller-allocated out value",
+    "read_async": "caller-allocated out value"
    },
    "builder": false,
    "category": "object",
@@ -10047,98 +9959,6 @@
      "ret": {
       "k": "bool"
      }
-    },
-    {
-     "js": "read",
-     "name": "read",
-     "params": [
-      {
-       "dir": "out",
-       "js": "buffer",
-       "name": "buffer",
-       "type": {
-        "elem": {
-         "k": "int",
-         "t": "guint8"
-        },
-        "k": "array",
-        "len": 1
-       }
-      },
-      {
-       "hidden": true,
-       "js": "count",
-       "name": "count",
-       "type": {
-        "k": "int",
-        "t": "gsize"
-       }
-      },
-      {
-       "js": "cancellable",
-       "name": "cancellable",
-       "nullable": true,
-       "type": {
-        "k": "object",
-        "t": "Gio.Cancellable"
-       }
-      }
-     ],
-     "ret": {
-      "k": "int",
-      "t": "gssize"
-     },
-     "throws": true
-    },
-    {
-     "js": "readAll",
-     "name": "read_all",
-     "params": [
-      {
-       "dir": "out",
-       "js": "buffer",
-       "name": "buffer",
-       "type": {
-        "elem": {
-         "k": "int",
-         "t": "guint8"
-        },
-        "k": "array",
-        "len": 1
-       }
-      },
-      {
-       "hidden": true,
-       "js": "count",
-       "name": "count",
-       "type": {
-        "k": "int",
-        "t": "gsize"
-       }
-      },
-      {
-       "dir": "out",
-       "js": "bytesRead",
-       "name": "bytes_read",
-       "type": {
-        "k": "int",
-        "t": "gsize"
-       }
-      },
-      {
-       "js": "cancellable",
-       "name": "cancellable",
-       "nullable": true,
-       "type": {
-        "k": "object",
-        "t": "Gio.Cancellable"
-       }
-      }
-     ],
-     "ret": {
-      "k": "bool"
-     },
-     "throws": true
     },
     {
      "js": "readBytes",
@@ -13493,7 +13313,9 @@
   },
   "Seekable": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "seek": "enum without GType"
+   },
    "builder": false,
    "category": "object",
    "constructors": [],
@@ -13519,41 +13341,6 @@
      "ret": {
       "k": "bool"
      }
-    },
-    {
-     "js": "seek",
-     "name": "seek",
-     "params": [
-      {
-       "js": "offset",
-       "name": "offset",
-       "type": {
-        "k": "int",
-        "t": "gint64"
-       }
-      },
-      {
-       "js": "type",
-       "name": "type",
-       "type": {
-        "k": "enum",
-        "t": "GLib.SeekType"
-       }
-      },
-      {
-       "js": "cancellable",
-       "name": "cancellable",
-       "nullable": true,
-       "type": {
-        "k": "object",
-        "t": "Gio.Cancellable"
-       }
-      }
-     ],
-     "ret": {
-      "k": "bool"
-     },
-     "throws": true
     },
     {
      "js": "tell",
@@ -13599,7 +13386,6 @@
    "properties": [],
    "qualified": "Gio.Seekable",
    "refs": [
-    "GLib.SeekType",
     "Gio.Cancellable"
    ],
    "scope": "ancestor",

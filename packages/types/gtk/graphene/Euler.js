@@ -31,10 +31,6 @@ export class Euler extends NativeValue {
     return call(this, 'get_gamma', []);
   }
 
-  getOrder() {
-    return call(this, 'get_order', []);
-  }
-
   getX() {
     return call(this, 'get_x', []);
   }
@@ -45,11 +41,6 @@ export class Euler extends NativeValue {
 
   getZ() {
     return call(this, 'get_z', []);
-  }
-
-  reorder(order) {
-    const __res = call(this, 'reorder', [order]);
-    return { res: wrapValue(Euler, __res.res) };
   }
 
   toMatrix() {

@@ -10,7 +10,6 @@ export { String } from './String.js';
 export { TimeZone } from './TimeZone.js';
 export { Tree } from './Tree.js';
 export { Uri } from './Uri.js';
-export { Variant } from './Variant.js';
 export { VariantBuilder } from './VariantBuilder.js';
 export { VariantDict } from './VariantDict.js';
 export { VariantType } from './VariantType.js';

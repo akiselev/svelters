@@ -38,10 +38,6 @@ declare module 'svelters:gtk/gsk' {
       getClosestPoint(point: Record<string, number>, threshold: number): { ret: boolean; result: PathPoint; distance: number | null };
       /** `get_end_point`, since 4.14 */
       getEndPoint(): { ret: boolean; result: PathPoint };
-      /** `get_next`, since 4.22 */
-      getNext(point: PathPoint): { ret: boolean; point: PathPoint };
-      /** `get_previous`, since 4.22 */
-      getPrevious(point: PathPoint): { ret: boolean; point: PathPoint };
       /** `get_start_point`, since 4.14 */
       getStartPoint(): { ret: boolean; result: PathPoint };
       /** `get_stroke_bounds`, since 4.14 */

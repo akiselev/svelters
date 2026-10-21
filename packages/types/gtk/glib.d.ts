@@ -158,18 +158,6 @@ declare module 'svelters:gtk/glib' {
       getValue(groupName: string, key: string): string;
       /** `has_group`, since 2.6 */
       hasGroup(groupName: string): boolean;
-      /** `load_from_bytes`, since 2.50, throws */
-      loadFromBytes(bytes: Bytes, flags: string | string[] | number): boolean;
-      /** `load_from_data`, since 2.6, throws */
-      loadFromData(data: string, length: number, flags: string | string[] | number): boolean;
-      /** `load_from_data_dirs`, since 2.6, throws */
-      loadFromDataDirs(file: string, flags: string | string[] | number): { ret: boolean; fullPath: string | null };
-      /** `load_from_dirs`, since 2.14, throws */
-      loadFromDirs(file: string, searchDirs: string[], flags: string | string[] | number): { ret: boolean; fullPath: string | null };
-      /** `load_from_file`, since 2.6, throws */
-      loadFromFile(file: string, flags: string | string[] | number): boolean;
-      /** `load_unix_configurations`, since 2.90, throws */
-      loadUnixConfigurations(project: string | null, etcSubdir: string | null, runSubdir: string | null, usrSubdir: string | null, configName: string, configSuffix: string | null, flags: string | string[] | number): boolean;
       /** `save_to_file`, since 2.40, throws */
       saveToFile(filename: string): boolean;
       /** `to_data`, since 2.6, throws */
@@ -221,8 +209,6 @@ declare module 'svelters:gtk/glib' {
       static newOffset(seconds: number): TimeZone;
       /** `new_utc`, since 2.26 */
       static newUtc(): TimeZone;
-      /** `find_interval`, since 2.26 */
-      findInterval(type: string, time: number): number;
       /** `get_abbreviation`, since 2.26 */
       getAbbreviation(interval: number): string;
       /** `get_identifier`, since 2.58 */
@@ -245,38 +231,18 @@ declare module 'svelters:gtk/glib' {
   /** `GLib.Uri`, value, since 2.66 */
   export class Uri extends NativeValue {
     static readonly native: string;
-      /** `build`, since 2.66 */
-      static build(flags: string | string[] | number, scheme: string, userinfo: string | null, host: string | null, port: number, path: string, query?: string | null, fragment?: string | null): Uri;
-      /** `build_with_user`, since 2.66 */
-      static buildWithUser(flags: string | string[] | number, scheme: string, user: string | null, password: string | null, authParams: string | null, host: string | null, port: number, path: string, query?: string | null, fragment?: string | null): Uri;
       /** `error_quark` */
       static errorQuark(): number;
       /** `escape_bytes`, since 2.66 */
       static escapeBytes(unescaped: Uint8Array, reservedCharsAllowed?: string | null): string;
       /** `escape_string`, since 2.16 */
       static escapeString(unescaped: string, reservedCharsAllowed: string | null, allowUtf8: boolean): string;
-      /** `is_valid`, since 2.66, throws */
-      static isValid(uriString: string, flags: string | string[] | number): boolean;
-      /** `join`, since 2.66 */
-      static join(flags: string | string[] | number, scheme: string | null, userinfo: string | null, host: string | null, port: number, path: string, query?: string | null, fragment?: string | null): string;
-      /** `join_with_user`, since 2.66 */
-      static joinWithUser(flags: string | string[] | number, scheme: string | null, user: string | null, password: string | null, authParams: string | null, host: string | null, port: number, path: string, query?: string | null, fragment?: string | null): string;
       /** `list_extract_uris`, since 2.6 */
       static listExtractUris(uriList: string): string[];
-      /** `parse`, since 2.66, throws */
-      static parse(uriString: string, flags: string | string[] | number): Uri;
       /** `parse_scheme`, since 2.16 */
       static parseScheme(uri: string): string | null;
       /** `peek_scheme`, since 2.66 */
       static peekScheme(uri: string): string | null;
-      /** `resolve_relative`, since 2.66, throws */
-      static resolveRelative(baseUriString: string | null, uriRef: string, flags: string | string[] | number): string;
-      /** `split`, since 2.66, throws */
-      static split(uriRef: string, flags: string | string[] | number): { ret: boolean; scheme: string | null; userinfo: string | null; host: string | null; port: number | null; path: string | null; query: string | null; fragment: string | null };
-      /** `split_network`, since 2.66, throws */
-      static splitNetwork(uriString: string, flags: string | string[] | number): { ret: boolean; scheme: string | null; host: string | null; port: number | null };
-      /** `split_with_user`, since 2.66, throws */
-      static splitWithUser(uriRef: string, flags: string | string[] | number): { ret: boolean; scheme: string | null; user: string | null; password: string | null; authParams: string | null; host: string | null; port: number | null; path: string | null; query: string | null; fragment: string | null };
       /** `unescape_bytes`, since 2.66, throws */
       static unescapeBytes(escapedString: string, length: number, illegalCharacters?: string | null): Bytes;
       /** `unescape_segment`, since 2.16 */
@@ -285,8 +251,6 @@ declare module 'svelters:gtk/glib' {
       static unescapeString(escapedString: string, illegalCharacters?: string | null): string | null;
       /** `get_auth_params`, since 2.66 */
       getAuthParams(): string | null;
-      /** `get_flags`, since 2.66 */
-      getFlags(): string | string[] | number;
       /** `get_fragment`, since 2.66 */
       getFragment(): string | null;
       /** `get_host`, since 2.66 */
@@ -305,83 +269,8 @@ declare module 'svelters:gtk/glib' {
       getUser(): string | null;
       /** `get_userinfo`, since 2.66 */
       getUserinfo(): string | null;
-      /** `parse_relative`, since 2.66, throws */
-      parseRelative(uriRef: string, flags: string | string[] | number): Uri;
       /** `to_string`, since 2.66 */
       toString(): string;
-      /** `to_string_partial`, since 2.66 */
-      toStringPartial(flags: string | string[] | number): string;
-  }
-
-  /** `GLib.Variant`, value, since 2.24 */
-  export class Variant extends NativeValue {
-    static readonly native: string;
-      /** `is_object_path`, since 2.24 */
-      static isObjectPath(string: string): boolean;
-      /** `is_signature`, since 2.24 */
-      static isSignature(string: string): boolean;
-      /** `parse_error_quark` */
-      static parseErrorQuark(): number;
-      /** `check_format_string`, since 2.34 */
-      checkFormatString(formatString: string, copyOnly: boolean): boolean;
-      /** `classify`, since 2.24 */
-      classify(): string;
-      /** `dup_bytestring`, since 2.26 */
-      dupBytestring(): Uint8Array;
-      /** `dup_bytestring_array`, since 2.26 */
-      dupBytestringArray(): string[];
-      /** `dup_objv`, since 2.30 */
-      dupObjv(): string[];
-      /** `dup_string`, since 2.24 */
-      dupString(): { ret: string; length: number };
-      /** `dup_strv`, since 2.24 */
-      dupStrv(): string[];
-      /** `get_boolean`, since 2.24 */
-      getBoolean(): boolean;
-      /** `get_byte`, since 2.24 */
-      getByte(): number;
-      /** `get_bytestring`, since 2.26 */
-      getBytestring(): Uint8Array;
-      /** `get_bytestring_array`, since 2.26 */
-      getBytestringArray(): string[];
-      /** `get_data_as_bytes`, since 2.36 */
-      getDataAsBytes(): Bytes;
-      /** `get_double`, since 2.24 */
-      getDouble(): number;
-      /** `get_handle`, since 2.24 */
-      getHandle(): number;
-      /** `get_int16`, since 2.24 */
-      getInt16(): number;
-      /** `get_int32`, since 2.24 */
-      getInt32(): number;
-      /** `get_int64`, since 2.24 */
-      getInt64(): number;
-      /** `get_objv`, since 2.30 */
-      getObjv(): string[];
-      /** `get_size`, since 2.24 */
-      getSize(): number;
-      /** `get_string`, since 2.24 */
-      getString(): { ret: string; length: number | null };
-      /** `get_strv`, since 2.24 */
-      getStrv(): string[];
-      /** `get_type_string`, since 2.24 */
-      getTypeString(): string;
-      /** `get_uint16`, since 2.24 */
-      getUint16(): number;
-      /** `get_uint32`, since 2.24 */
-      getUint32(): number;
-      /** `get_uint64`, since 2.24 */
-      getUint64(): number;
-      /** `hash`, since 2.24 */
-      hash(): number;
-      /** `is_container`, since 2.24 */
-      isContainer(): boolean;
-      /** `is_normal_form`, since 2.24 */
-      isNormalForm(): boolean;
-      /** `n_children`, since 2.24 */
-      nChildren(): number;
-      /** `print`, since 2.24 */
-      print(typeAnnotate: boolean): string;
   }
 
   /** `GLib.VariantBuilder`, value */

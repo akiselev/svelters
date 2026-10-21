@@ -183,6 +183,8 @@
    "abstract": false,
    "blocked": {
     "foreach": "callback: array with length",
+    "get_next": "struct by value",
+    "get_previous": "struct by value",
     "to_cairo": "unbound:cairo.Context"
    },
    "builder": false,
@@ -363,44 +365,6 @@
       "k": "bool"
      },
      "since": "4.14"
-    },
-    {
-     "js": "getNext",
-     "name": "get_next",
-     "params": [
-      {
-       "dir": "inout",
-       "js": "point",
-       "name": "point",
-       "type": {
-        "k": "boxed",
-        "t": "Gsk.PathPoint"
-       }
-      }
-     ],
-     "ret": {
-      "k": "bool"
-     },
-     "since": "4.22"
-    },
-    {
-     "js": "getPrevious",
-     "name": "get_previous",
-     "params": [
-      {
-       "dir": "inout",
-       "js": "point",
-       "name": "point",
-       "type": {
-        "k": "boxed",
-        "t": "Gsk.PathPoint"
-       }
-      }
-     ],
-     "ret": {
-      "k": "bool"
-     },
-     "since": "4.22"
     },
     {
      "js": "getStartPoint",

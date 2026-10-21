@@ -163,8 +163,6 @@ declare module 'svelters:gtk/gio' {
       static idIsValid(applicationId: string): boolean;
       /** `activate`, since 2.28 */
       activate(): void;
-      /** `add_main_option`, since 2.42 */
-      addMainOption(longName: string, shortName: number, flags: string | string[] | number, arg: string, description: string, argDescription?: string | null): void;
       /** `add_option_group`, since 2.40 */
       addOptionGroup(group: OptionGroup): void;
       /** `bind_busy_property`, since 2.44 */
@@ -557,8 +555,6 @@ declare module 'svelters:gtk/gio' {
       setSignature(value?: string | null): void;
       /** `set_unix_fd_list`, since 2.26 */
       setUnixFdList(fdList?: UnixFDList | null): void;
-      /** `to_blob`, since 2.26, throws */
-      toBlob(capabilities: string | string[] | number): Uint8Array;
       /** `to_gerror`, since 2.26, throws */
       toGerror(): boolean;
     readonly locked: boolean | null;
@@ -897,8 +893,6 @@ declare module 'svelters:gtk/gio' {
       canSeek(): boolean;
       /** `can_truncate` */
       canTruncate(): boolean;
-      /** `seek`, throws */
-      seek(offset: number, type: string, cancellable?: Cancellable | null): boolean;
       /** `tell` */
       tell(): number;
       /** `truncate`, throws */
@@ -1078,8 +1072,6 @@ declare module 'svelters:gtk/gio' {
       canSeek(): boolean;
       /** `can_truncate` */
       canTruncate(): boolean;
-      /** `seek`, throws */
-      seek(offset: number, type: string, cancellable?: Cancellable | null): boolean;
       /** `tell` */
       tell(): number;
       /** `truncate`, throws */
@@ -1117,8 +1109,6 @@ declare module 'svelters:gtk/gio' {
       canSeek(): boolean;
       /** `can_truncate` */
       canTruncate(): boolean;
-      /** `seek`, throws */
-      seek(offset: number, type: string, cancellable?: Cancellable | null): boolean;
       /** `tell` */
       tell(): number;
       /** `truncate`, throws */
@@ -1184,10 +1174,6 @@ declare module 'svelters:gtk/gio' {
       hasPending(): boolean;
       /** `is_closed` */
       isClosed(): boolean;
-      /** `read`, throws */
-      read(cancellable?: Cancellable | null): { ret: number; buffer: Uint8Array };
-      /** `read_all`, throws */
-      readAll(cancellable?: Cancellable | null): { ret: boolean; buffer: Uint8Array; bytesRead: number };
       /** `read_bytes`, since 2.34, throws */
       readBytes(count: number, cancellable?: Cancellable | null): Bytes;
       /** `read_bytes_async` + `read_bytes_finish`, async (rejects with a NativeError; `options.signal` cancels), since 2.34 */
@@ -1577,8 +1563,6 @@ declare module 'svelters:gtk/gio' {
       canSeek(): boolean;
       /** `can_truncate` */
       canTruncate(): boolean;
-      /** `seek`, throws */
-      seek(offset: number, type: string, cancellable?: Cancellable | null): boolean;
       /** `tell` */
       tell(): number;
       /** `truncate`, throws */

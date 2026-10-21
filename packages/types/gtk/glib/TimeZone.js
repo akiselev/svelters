@@ -24,10 +24,6 @@ export class TimeZone extends NativeValue {
     return wrapValue(TimeZone, callStatic('GLib.TimeZone', 'new_utc', []));
   }
 
-  findInterval(type, time) {
-    return call(this, 'find_interval', [type, time]);
-  }
-
   getAbbreviation(interval) {
     return call(this, 'get_abbreviation', [interval]);
   }
