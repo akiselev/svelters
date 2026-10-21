@@ -1,5 +1,10 @@
 # WP-W (WinUI widget parity): handoff
 
+**Status: completed.** The second agent finished every step below. CI is green on `ci/wp-winui`, the ledger is
+imported, and the gallery and style setters are in place. The design as built, the counts, the measurements and the
+open items are in `plans/milestones/WP-winui-widgets.md`. The rest of this note is the first agent's handoff, kept for
+history.
+
 The first agent stopped here because it ran out of context. A fresh agent should continue from branch `ci/wp-winui`.
 The task brief is the WP-W lane brief: bring WinUI's element coverage close to GTK/Qt and write
 `plans/milestones/WP-winui-widgets.md`.
