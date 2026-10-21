@@ -24,6 +24,12 @@ while :; do
       export CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-$jobs}
       export NEXTEST_TEST_THREADS=${NEXTEST_TEST_THREADS:-$jobs}
       export CARGO_BUILD_BUILD_DIR=${CARGO_BUILD_BUILD_DIR:-target/build}
+      # A sccache server spawned by the build would inherit the lock fd and hold the slot for its
+      # whole lifetime, long after the build ends. Start it here with the fd closed (no-op when
+      # one is already running).
+      if [[ "${RUSTC_WRAPPER:-}" == *sccache* ]]; then
+        "$RUSTC_WRAPPER" --start-server {fd}>&- >/dev/null 2>&1 || true
+      fi
       # The lock fd is inherited by the command and released when it exits.
       exec "$@"
     fi
