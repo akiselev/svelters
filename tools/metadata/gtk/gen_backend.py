@@ -278,7 +278,62 @@ pub struct AttrInfo {
     for k, sid, sl, d, a in m.attrs:
         o.append(f"    AttrInfo {{ kind: {k}, slot: {sid}, name: {rs(a['name'])}, prop: {rs(a.get('property', ''))}, default: {attr_default(a)} }},\n")
     o.append("];\n")
+    o.append(gen_observe_table(m))
     return "".join(o)
+
+
+OBS_CLASS = {"constant": 1, "set_only": 2, "exact": 3, "partial": 4, "none": 5}
+
+
+def observe_gtypes(m: Model) -> dict[str, str]:
+    """Fact owner (`Gtk:Entry`, `Gio:ListStore`) -> GType name, from the kind docs and metadata/gtk/types."""
+    out = {d["id"][len(TYPE_PREFIX):]: d["native"]["gtype"] for d in m.kinds}
+    for p in sorted((META / "types").glob("[A-Z]*.json")):
+        doc = json.loads(p.read_text())
+        for name, rec in doc["types"].items():
+            if rec.get("gtype"):
+                out.setdefault(f"{doc['namespace']}:{name}", rec["gtype"])
+    return out
+
+
+def gen_observe_table(m: Model) -> str:
+    """REACTIVITY.md section 4 facts (metadata/observe/gtk.json) by (owner GType, property): what `describe` reports
+    as SVL_M_OBSERVABLE / SVL_M_PROPORTIONAL, and which writes the backend's echo suppression covers (section 5.4)."""
+    sys.path.insert(0, str(ROOT / "tools/metadata/common"))
+    import observe as obs
+    gtypes = observe_gtypes(m)
+    rows = []
+    for owner, props in obs.load("gtk").items():
+        g = gtypes.get(owner)
+        if not g:
+            raise SystemExit(f"gen_backend: observe fact owner {owner} has no GType in the metadata")
+        for prop, rec in props.items():
+            v = OBS_CLASS[rec["class"]] | (OBS_PROPORTIONAL if rec.get("value_cost") == "proportional" else 0)
+            rows.append((g, prop, v))
+    rows.sort()
+    o = [f"""
+/// Observability class of a property fact (metadata/observe/gtk.json, REACTIVITY.md section 4.1): the low bits of
+/// an [`OBSERVE`] entry. 0 = no fact (unknown).
+pub const O_CONSTANT: u8 = 1;
+pub const O_SET_ONLY: u8 = 2;
+pub const O_EXACT: u8 = 3;
+pub const O_PARTIAL: u8 = 4;
+pub const O_NONE: u8 = 5;
+pub const O_CLASS: u8 = 0x0f;
+/// `value_cost: proportional` (whole-text properties): reading is O(size).
+pub const O_PROPORTIONAL: u8 = 0x80;
+
+/// (owner GType, canonical property name, class | flags), sorted: one entry per observe fact.
+pub static OBSERVE: [(&str, &str, u8); {len(rows)}] = [
+"""]
+    o += [f"    ({rs(g)}, {rs(p)}, {v}),\n" for g, p, v in rows]
+    o.append("];\n\n/// The fact of property `prop` declared by the GType `owner`: class | flags, 0 when there is none.\n"
+             "pub fn observe_fact(owner: &str, prop: &str) -> u8 {\n"
+             "    OBSERVE.binary_search_by(|e| (e.0, e.1).cmp(&(owner, prop))).map_or(0, |i| OBSERVE[i].2)\n}\n")
+    return "".join(o)
+
+
+OBS_PROPORTIONAL = 0x80
 
 
 def attr_default(a: dict) -> str:

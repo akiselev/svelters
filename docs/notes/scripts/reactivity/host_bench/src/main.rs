@@ -5,6 +5,8 @@
 //!     `__svelters_dispatch` -> job drain), with and without reading the value back;
 //!   - the same with a Svelte reactive getter (`createSubscriber`) and a render effect, when the
 //!     optional Svelte bundle (`js/dist/svelte_bench.js`, built by `js/build.sh`) exists.
+//!   - R1: the real host batch (`host.observe`, dirty set, one read and one `__svelters_changed` per
+//!     checkpoint) under `@svelters/native-runtime`'s tracker (`js/dist/tracker_bench.js`).
 //! Each scenario is a JS module (in `js/`) that queues N native changes while it loads (GI calls of
 //! `gtk_adjustment_set_value`, which emit `value-changed`); the harness then times one checkpoint.
 use std::path::{Path, PathBuf};
@@ -71,5 +73,14 @@ fn main() {
         }
     } else {
         eprintln!("skipped Svelte scenarios: build {} first (js/build.sh)", sv.display());
+    }
+    // R1: the real host batch (dirty set, one read, one `__svelters_changed`) and the runtime's tracker.
+    let tr = js_dir().join("dist/tracker_bench.js");
+    if tr.exists() {
+        for (mode, label) in [("'batched'", "r1-tracker-batched"), ("'unobserved'", "r1-tracker-unobserved")] {
+            scenario(&tr, &[("N", n.to_string()), ("MODE", mode.to_string())], label);
+        }
+    } else {
+        eprintln!("skipped R1 tracker scenarios: build {} first (js/build.sh)", tr.display());
     }
 }

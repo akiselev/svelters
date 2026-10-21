@@ -831,6 +831,7 @@ impl Inner {
                 return Err(format!("property {} can only be set when the object is constructed", ps.name()));
             }
             let value = unsafe { convert::to_value(ps.value_type(), v, &**self) }.map_err(|e| format!("{}: {e}", ps.name()))?;
+            let _echo = observe::EchoGuard::for_write(h, prop, ps.owner_type().name(), ps.name());
             obj.set_property_from_value(ps.name(), &value);
             return Ok(());
         }
@@ -872,6 +873,7 @@ impl Inner {
         for (o, id) in &blocked {
             o.block_signal(id);
         }
+        let _echo = observe::EchoGuard::for_write(h, prop, KINDS[p.kind as usize - 1].gtype, p.name);
         obj.set_property_from_value(pname, &value);
         for (o, id) in &blocked {
             o.unblock_signal(id);
@@ -1348,9 +1350,10 @@ impl Inner {
             // A construct-only property is writable once: through `construct`. The descriptor keeps
             // its parameter so the host can encode it there; `setProp` refuses it with a clear error.
             let params = if writable || construct_only { vec![slot] } else { vec![] };
-            // Every readable GObject property can be watched through `notify::<name>`, except a
-            // construct-only one, which never changes.
-            let flags = if readable && !flags.contains(glib::ParamFlags::CONSTRUCT_ONLY) { SVL_M_OBSERVABLE } else { 0 };
+            // The observe fact of the declaring type decides; without one, every readable GObject
+            // property can be watched through `notify::<name>`, except a construct-only one.
+            let mechanical = readable && !flags.contains(glib::ParamFlags::CONSTRUCT_ONLY);
+            let flags = observe::member_flags(ps.owner_type().name(), ps.name(), mechanical);
             return Some(MemberDesc { name: ps.name().to_string(), params, ret, flags });
         }
         let kind = if kind == vlist::KIND_VLIST && !vlist::is_own_member(member) { self.table_kind(kind) } else { kind };
@@ -1417,12 +1420,12 @@ impl Inner {
         let slot = types::slot_for(&mut table, vt, ps.as_ref()).named(p.js_name);
         // `notify::<name>` on the element, or on the object a forwarded (`via`) property lives on.
         let constant = ps.as_ref().is_some_and(|ps| ps.flags().contains(glib::ParamFlags::CONSTRUCT_ONLY));
-        let observable = readable && !constant && (ps.is_some() || p.flags & F_VIA != 0);
+        let mechanical = readable && !constant && (ps.is_some() || p.flags & F_VIA != 0);
         Some(MemberDesc {
             name: p.name.to_string(),
             params: if writable { vec![slot.clone()] } else { vec![] },
             ret: if readable { slot } else { SlotDesc::new(SVL_NULL) },
-            flags: if observable { SVL_M_OBSERVABLE } else { 0 },
+            flags: observe::member_flags(KINDS[p.kind as usize - 1].gtype, p.name, mechanical),
         })
     }
 
