@@ -398,9 +398,21 @@ def md_type(g, q: str) -> str:
             out.append(f"- `{rec['name']}.{TF.camel(m['name'])}({', '.join(p['js'] for p in m['params'] if not p.get('hidden') and p.get('dir') != 'out')})`" + (f", since {m['since']}" if m.get("since") else ""))
         out.append("")
     if eff["properties"]:
-        out += ["## Properties", ""]
+        out += ["## Properties", "",
+                "Getters marked *reactive* re-run the effects (and template expressions) that read them when the property "
+                "changes natively; GTK announces the change (`notify`) and the host delivers it once per main-loop turn. "
+                "*Reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive "
+                "getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. "
+                "See [Reactivity](../../../concepts/reactivity/).", ""]
         for p in eff["properties"]:
-            flags = ", ".join(x for x, on in (("read-only", not p["writable"]), ("construct-only", p["construct_only"])) if on)
+            fact = g.observe_fact(p) or {}
+            cls = fact.get("class")
+            react = {"exact": "reactive", "partial": "reactive, misses changes by " + ", ".join(fact.get("missed") or ["some causes"]),
+                     "set_only": "reactive on writes", "none": "not reactive: changes are not announced",
+                     "constant": None}.get(cls) if p["readable"] else None
+            if react and fact.get("value_cost") == "proportional":
+                react += "; each read copies the whole value"
+            flags = ", ".join(x for x, on in (("read-only", not p["writable"]), ("construct-only", p["construct_only"]), (react, bool(react))) if on)
             out.append(f"- `{p['js']}` ({p['type']['k']}{', ' + flags if flags else ''})")
         out.append("")
     sync = [m for m in eff["methods"] if not m.get("async")]

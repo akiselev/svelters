@@ -28,7 +28,9 @@ Constructors (one JS constructor; the backend picks the overload from the argume
 
 ## Properties
 
-- `sortRole` (int)
+Getters marked *reactive* re-run the effects (and template expressions) that read them when the property changes natively (Qt announces it, the host delivers it once per event-loop turn); *reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. See [Reactivity](../../../concepts/reactivity/).
+
+- `sortRole` (int, reactive)
 
 ## Methods
 

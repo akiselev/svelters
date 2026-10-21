@@ -16,10 +16,10 @@ use crate::bindings::Microsoft::UI::Xaml::Media::CompositionTarget;
 use crate::bindings::Microsoft::UI::Xaml::{UIElement, Window};
 use crate::bindings::Windows::Win32::{DispatchMessageW, GetMessageW, MSG, PM_REMOVE, PeekMessageW, PostQuitMessage, TranslateMessage};
 use crate::conv;
-use crate::dispatch::{ATTR_GET, ATTR_SET, CREATE, EVENT_CONNECT, METHOD_CALL, PROP_GET, PROP_SET, SLOT_OPS, SlotOps};
+use crate::dispatch::{ATTR_GET, ATTR_SET, CREATE, EVENT_CONNECT, METHOD_CALL, OBSERVE_CONNECT, PROP_GET, PROP_SET, SLOT_OPS, SlotOps};
 use crate::names::EVENTS;
 use crate::sink::{Registration, Sink};
-use crate::table::{self, Ty};
+use crate::table::{self, ObsClass, Ty};
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::{Rc, Weak};
@@ -54,6 +54,9 @@ struct Entry {
     close_listeners: u32,
     /// Always-on registrations (the close handler of a toplevel).
     internal: Vec<Registration>,
+    /// ABI v2.6 observations: prop id -> (nesting count, the DP callback and event registrations). Dropping a
+    /// registration unregisters it (`UnregisterPropertyChangedCallback` with its token, or the event revoker).
+    observers: HashMap<u32, (u32, Vec<Registration>)>,
 }
 
 struct WakeShared {
@@ -76,6 +79,9 @@ pub(crate) struct Inner {
     wake: Arc<WakeShared>,
     running: Cell<bool>,
     quit_early: Cell<bool>,
+    /// The (handle, prop) `set_prop` is writing: a proportional prop is not reported for our own write
+    /// (REACTIVITY.md 5.4, backend-side echo suppression).
+    setting: Cell<Option<(u64, u32)>>,
 }
 
 /// The WinUI backend. One per thread; create it on the thread that will call `run`. Clones share
@@ -137,6 +143,24 @@ pub(crate) fn emit_close(sink: Sink) -> bool {
     }
     inner.native_death(sink.h, SVL_GONE_CLOSED);
     false
+}
+
+/// ABI v2.6: a mechanism of an observed (h, prop) fired. Delivered only while the observation exists (a late callback
+/// after `observe(off)` or `destroy` is dropped) and not for our own write of a proportional prop. DP callbacks and
+/// events run on the UI thread that owns the element (the DependencyObject rule), where `CURRENT` lives; anything
+/// else finds no backend and is dropped.
+pub(crate) fn emit_changed(h: u64, prop: u32) {
+    let Some(inner) = current() else { return };
+    if !inner.handles.borrow().get(&h).is_some_and(|e| e.observers.contains_key(&prop)) {
+        return;
+    }
+    if inner.setting.get() == Some((h, prop)) && table::observe(prop).is_some_and(|o| o.proportional) {
+        return;
+    }
+    if let Some(host) = host_of(&inner) {
+        drop(inner);
+        host.prop_changed(h, prop);
+    }
 }
 
 fn on_wake() {
@@ -217,6 +241,7 @@ impl Inner {
         GRAVEYARD.with(|g| {
             let mut g = g.borrow_mut();
             for e in dropped {
+                g.extend(e.observers.into_values().flat_map(|(_, r)| r));
                 g.extend(e.listeners.into_values());
                 g.extend(e.internal);
             }
@@ -285,6 +310,7 @@ impl WinUiBackend {
             wake,
             running: Cell::new(false),
             quit_early: Cell::new(false),
+            setting: Cell::new(None),
         });
         CURRENT.with(|c| *c.borrow_mut() = Rc::downgrade(&inner));
         Ok(WinUiBackend { inner })
@@ -445,8 +471,89 @@ impl WinUiBackend {
             name: p.name.to_string(),
             params: if p.write { vec![slot.clone()] } else { vec![] },
             ret: if p.read || p.ty == Ty::Custom { slot } else { SlotDesc::new(SVL_NULL) },
-            flags: 0,
+            flags: if observable(member) { SVL_M_OBSERVABLE } else { 0 },
         })
+    }
+}
+
+/// `SVL_M_OBSERVABLE`: the prop's fact is exact or partial and the backend installs at least one of its mechanisms.
+fn observable(prop: u32) -> bool {
+    let class = table::observe(prop).map(|o| o.class);
+    matches!(class, Some(ObsClass::Exact | ObsClass::Partial)) && OBSERVE_CONNECT.get(prop as usize - 1).is_some_and(|c| c.is_some())
+}
+
+impl WinUiBackend {
+    /// ABI v2.6 `observe` (REACTIVITY.md 3.4, 5.5, 5.6). UI thread only: DependencyObjects are thread-affine and the
+    /// callback registrations are made and removed on the thread that owns the element (NON-GUI-TYPES 4.1). Calls
+    /// nest per (h, prop); the first `on` installs every mechanism of the prop's fact (DP callback tokens and event
+    /// revokers, kept in the handle's entry), the matching last `off` drops them, and `destroy` / a native death drop
+    /// them before the element reference is released.
+    fn observe_impl(&self, h: u64, prop: u32, on: bool) -> Result<(), ObserveError> {
+        let inner = &self.inner;
+        if !inner.xaml.queue.HasThreadAccess().unwrap_or(false) {
+            return Err(ObserveError::Failed("observe must be called on the UI thread".into()));
+        }
+        if !on {
+            let regs = {
+                let mut handles = inner.handles.borrow_mut();
+                let Some(e) = handles.get_mut(&h) else { return Ok(()) };
+                let Some(o) = e.observers.get_mut(&prop) else { return Ok(()) };
+                o.0 -= 1;
+                if o.0 > 0 {
+                    return Ok(());
+                }
+                e.observers.remove(&prop)
+            };
+            // Unregistered outside the table borrow (an unregistration may re-enter nothing, but keep the rule).
+            drop(regs);
+            return Ok(());
+        }
+        let (obj, kind) = inner.get(h).map_err(ObserveError::Failed)?;
+        let p = table::prop(prop).ok_or_else(|| ObserveError::Failed(format!("unknown prop id {prop}")))?;
+        if !table::applies(kind, p.class) {
+            return Err(ObserveError::Failed(format!("<{}> has no prop {:?}", table::kind(kind).map_or("?", |k| k.tag), p.name)));
+        }
+        if !p.read {
+            return Err(ObserveError::Failed(format!("{:?} is write-only", p.name)));
+        }
+        let class = table::observe(prop).map_or(ObsClass::Unknown, |o| o.class);
+        let connect = match class {
+            ObsClass::Constant => return Err(ObserveError::Failed(format!("{:?} is constant: it never changes", p.name))),
+            ObsClass::Exact | ObsClass::Partial => OBSERVE_CONNECT[prop as usize - 1],
+            _ => None,
+        };
+        let Some(connect) = connect else {
+            let why = match class {
+                ObsClass::SetOnly => "only our setters change it (set_only)",
+                ObsClass::None => "WinUI does not announce its changes (none)",
+                _ => "no observe fact or no mechanism for it",
+            };
+            return Err(ObserveError::Unsupported(format!("{:?} cannot be observed: {why}", p.name)));
+        };
+        if let Some(o) = inner.handles.borrow_mut().get_mut(&h).and_then(|e| e.observers.get_mut(&prop)) {
+            o.0 += 1;
+            return Ok(());
+        }
+        let regs = connect(&obj, h, prop).map_err(|e| ObserveError::Failed(format!("observe {:?}: {}", p.name, conv::err(e))))?;
+        match inner.handles.borrow_mut().get_mut(&h) {
+            Some(e) => {
+                e.observers.insert(prop, (1, regs));
+            }
+            None => return Err(ObserveError::Failed(format!("handle {h} died while its observation was installed"))),
+        }
+        Ok(())
+    }
+
+    /// Writes a prop without marking it as our own write (tests: a native change, not a host op).
+    pub fn set_prop_natively(&self, h: u64, prop: u32, v: &Value) -> Result<(), String> {
+        let (obj, _) = self.inner.get(h)?;
+        let set = PROP_SET.get((prop as usize).wrapping_sub(1)).copied().flatten().ok_or("not a writable prop")?;
+        set(&obj, v)
+    }
+
+    /// Whether (h, prop) is observed natively right now (tests).
+    pub fn is_observed(&self, h: u64, prop: u32) -> bool {
+        self.inner.handles.borrow().get(&h).is_some_and(|e| e.observers.contains_key(&prop))
     }
 }
 
@@ -467,6 +574,7 @@ impl WinUiBackend {
         let mut regs = Vec::new();
         for e in entries {
             let top = table::kind(e.kind).is_some_and(|k| k.toplevel);
+            regs.extend(e.observers.into_values().flat_map(|(_, r)| r));
             regs.extend(e.listeners.into_values());
             regs.extend(e.internal);
             if top {
@@ -535,7 +643,17 @@ impl Backend for WinUiBackend {
         inner.by_ptr.borrow_mut().insert(identity(&obj), h);
         inner.handles.borrow_mut().insert(
             h,
-            Entry { obj, kind, parent: None, slot: 0, children: Vec::new(), listeners: HashMap::new(), close_listeners: 0, internal },
+            Entry {
+                obj,
+                kind,
+                parent: None,
+                slot: 0,
+                children: Vec::new(),
+                listeners: HashMap::new(),
+                close_listeners: 0,
+                internal,
+                observers: HashMap::new(),
+            },
         );
         Ok(h)
     }
@@ -654,7 +772,9 @@ impl Backend for WinUiBackend {
             }
         }
         let top = table::kind(e.kind).is_some_and(|k| k.toplevel);
-        let Entry { obj, listeners, internal, .. } = e;
+        let Entry { obj, listeners, internal, observers, .. } = e;
+        // Observations end first, before our reference to the element is released (REACTIVITY.md 5.5).
+        drop(observers);
         drop(listeners);
         if top {
             // The entry is gone, so the Closed handler neither vetoes nor reports this close.
@@ -673,7 +793,18 @@ impl Backend for WinUiBackend {
             return Err(format!("<{}> has no prop {:?}", table::kind(kind).map_or("?", |k| k.tag), p.name));
         }
         let set = PROP_SET[prop as usize - 1].ok_or_else(|| format!("{:?} is read-only", p.name))?;
-        set(&obj, v).map_err(|e| format!("{}: {e}", p.name))
+        let prev = self.inner.setting.replace(Some((h, prop)));
+        let r = set(&obj, v).map_err(|e| format!("{}: {e}", p.name));
+        self.inner.setting.set(prev);
+        r
+    }
+
+    fn supports_observe(&self) -> bool {
+        true
+    }
+
+    fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> Result<(), ObserveError> {
+        self.observe_impl(h, prop, on)
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {

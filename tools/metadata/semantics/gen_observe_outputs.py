@@ -37,7 +37,9 @@ TYPE_TOOLKITS = ["gtk", "qt"]
 TYPES_SCHEMA = "svelters-semantics-types/v0"
 # svelters:qt/<module> -> the Qt module of the observe facts' owner keys
 QT_MODULES = {"core": "QtCore", "gui": "QtGui", "widgets": "QtWidgets"}
-GETTER = re.compile(r"^  get (\w+)\(\) \{\n    return .*?getProp\(this, '([^']+)'\)", re.M)
+# A property-backed getter: `getProp` (plain), or R1's reactive `observed` / `observedLocal` (set_only).
+# `observedSignal` accessors have no native property behind them and are left out.
+GETTER = re.compile(r"^  get (\w+)\(\) \{\n    return .*?\b(?:getProp|observed|observedLocal)\(this, '([^']+)'\)", re.M)
 
 CAUSES = {
     "user_edit": "user edits",

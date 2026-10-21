@@ -32,6 +32,9 @@ use svelters_apple::objc::bridge::{self, Objects};
 use svelters_apple::objc::runloop::{LoopEvents, RunLoop};
 use svelters_apple::objc::target::{self, SveltersTarget, TargetEvent};
 
+#[path = "observe.rs"]
+mod observe;
+
 /// `NSRect` with its ObjC encoding (avoids the objc2-core-foundation dependency for one struct).
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
@@ -66,11 +69,13 @@ struct Native {
     delegate: Option<Retained<WindowDelegate>>,
     /// Table signal ids JS listens to.
     listening: Vec<u32>,
+    /// ABI v2.6 observations and the notification / target-action users they share with `listen`.
+    obs: observe::Observing,
 }
 
 impl Native {
     fn strong(obj: Retained<AnyObject>) -> Native {
-        Native { obj: Obj::Strong(obj), target: None, delegate: None, listening: Vec::new() }
+        Native { obj: Obj::Strong(obj), target: None, delegate: None, listening: Vec::new(), obs: Default::default() }
     }
     fn load(&self) -> Option<Retained<AnyObject>> {
         match &self.obj {
@@ -118,6 +123,10 @@ pub(crate) struct Inner {
     cur_owner: Cell<u64>,
     running: Cell<bool>,
     quit_requested: Cell<bool>,
+    /// The one KVO observer of the backend (`observeValueForKeyPath:ofObject:change:context:`).
+    observer: Retained<observe::SveltersObserver>,
+    /// The (handle, prop) `set_prop` is writing (backend-side echo suppression of proportional props).
+    setting: Cell<Option<(u64, u32)>>,
 }
 
 thread_local! {
@@ -171,6 +180,8 @@ impl LoopEvents for Events {
     fn wake(&self) {
         if let Some(i) = self.0.upgrade() {
             i.drain();
+            // KVO from other threads and deaths of observed borrowed objects, hopped here (REACTIVITY.md 5.6).
+            i.observe_hops();
             i.checkpoint();
             i.drain();
         }
@@ -235,7 +246,10 @@ impl AppKitBackend {
             cur_owner: Cell::new(0),
             running: Cell::new(false),
             quit_requested: Cell::new(false),
+            observer: observe::SveltersObserver::new(),
+            setting: Cell::new(None),
         });
+        observe::set_waker(inner.rl.waker());
         let weak = Rc::downgrade(&inner);
         CURRENT.with(|c| *c.borrow_mut() = weak.clone());
         inner.rl.set_events(Some(Rc::new(Events(weak.clone()))));
@@ -398,9 +412,17 @@ impl Inner {
         })
     }
 
+    /// `set_prop` as a host op: marks (h, prop) as our own write while it runs (REACTIVITY.md 5.4).
+    fn set_prop(&self, h: u64, prop: u32, v: &Value) -> Result<(), String> {
+        let prev = self.setting.replace(Some((h, prop)));
+        let r = self.set_prop_raw(h, prop, v);
+        self.setting.set(prev);
+        r
+    }
+
     /// Validates everything about a write before any value is converted or any native is touched:
     /// the prop must apply to the kind, be writable, and not be child storage owned by a slot.
-    fn set_prop(&self, h: u64, prop: u32, v: &Value) -> Result<(), String> {
+    fn set_prop_raw(&self, h: u64, prop: u32, v: &Value) -> Result<(), String> {
         let (kind, _) = self.entry_kind(h)?;
         let spec = self.prop_spec(kind, prop)?;
         if spec.setter.is_empty() {
@@ -599,6 +621,8 @@ impl Inner {
 
     fn cleanup(&self, h: u64, e: &Native) {
         let Some(obj) = e.load() else { return };
+        // Observers go first, while the object is certainly alive: KVO must be removed before it deallocates.
+        self.remove_observations(&obj, e);
         if let Some(t) = &e.target {
             unsafe {
                 if bridge::responds(&obj, sel!(setTarget:)) {
@@ -700,25 +724,10 @@ impl Inner {
                     if !bridge::responds(&obj, sel!(setTarget:)) {
                         return Err(format!("{} has no target/action", bridge::class_name_of(&obj)));
                     }
-                    unsafe {
-                        if on {
-                            let _: () = msg_send![&*obj, setTarget: t.as_any()];
-                            let _: () = msg_send![&*obj, setAction: Some(sel!(fire:))];
-                        } else {
-                            let _: () = msg_send![&*obj, setTarget: Option::<&AnyObject>::None];
-                            let _: () = msg_send![&*obj, setAction: Option::<Sel>::None];
-                        }
-                    }
+                    let _ = t;
+                    self.action_use(h, &obj, on);
                 } else {
-                    let name = NSString::from_str(info.native);
-                    unsafe {
-                        let center: Retained<AnyObject> = msg_send![class!(NSNotificationCenter), defaultCenter];
-                        if on {
-                            let _: () = msg_send![&*center, addObserver: t.as_any(), selector: sel!(notified:), name: &*name, object: &*obj];
-                        } else {
-                            let _: () = msg_send![&*center, removeObserver: t.as_any(), name: &*name, object: &*obj];
-                        }
-                    }
+                    self.note_use(h, Some(&obj), info.native, on);
                 }
             }
             Via::Delegate => {
@@ -765,6 +774,7 @@ impl Inner {
                     let args = self.signal_args(token, info);
                     self.post(token, sig, &args);
                 }
+                self.observed_fired(token, |o| o.action);
             }
             TargetEvent::Notification { token, name, .. } => {
                 if let Some(sig) = self.listened(token, |s| s.via == Via::Notification && s.native == name) {
@@ -772,6 +782,7 @@ impl Inner {
                     let args = self.signal_args(token, info);
                     self.post(token, sig, &args);
                 }
+                self.observed_fired(token, |o| o.notifications.contains(&name.as_str()));
             }
             TargetEvent::Tick { .. } => self.deliver_frame("link tick"),
         }
@@ -997,7 +1008,7 @@ impl Objects for Inner {
             .map(|c| lookup::kind_by_class(&c.name().to_string_lossy()))
             .find(|&k| k != 0)
             .unwrap_or(0);
-        let native = Native { obj: Obj::Weak(Weak::new(obj)), target: None, delegate: None, listening: Vec::new() };
+        let native = Native { obj: Obj::Weak(Weak::new(obj)), target: None, delegate: None, listening: Vec::new(), obs: Default::default() };
         let mut t = self.table.borrow_mut();
         let h = t.mint(native, kind, SVL_LIFE_BORROWED);
         let owner = self.cur_owner.get();
@@ -1132,7 +1143,7 @@ impl Backend for AppKitBackend {
         self.inner.request_frame();
     }
 
-    fn describe(&self, what: NameKind, _kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+    fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
         // Scalar props get descriptors so the renderer coerces static attributes ("8" -> 8,
         // "" -> true). Everything else converts dynamically.
         if what != NameKind::Prop || member >= DYN_BASE {
@@ -1155,8 +1166,17 @@ impl Backend for AppKitBackend {
             name: p.name.to_string(),
             params: if p.writable { vec![slot.clone()] } else { Vec::new() },
             ret: if p.setter.is_empty() { slot } else { SlotDesc::new(SVL_NULL) },
-            flags: 0,
+            // ABI v2.6: the fact along the element's chain is exact or partial with a mechanism we install.
+            flags: if p.setter.is_empty() && lookup::observable(if kind == 0 { p.kind as u32 } else { kind }, p.name) { SVL_M_OBSERVABLE } else { 0 },
         })
+    }
+
+    fn supports_observe(&self) -> bool {
+        true
+    }
+
+    fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> Result<(), ObserveError> {
+        objc2::rc::autoreleasepool(|_| self.inner.observe(h, prop, on))
     }
 
     fn describe_type(&self, ty: svl_id) -> Option<TypeDesc> {

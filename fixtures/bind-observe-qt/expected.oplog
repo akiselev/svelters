@@ -32,9 +32,9 @@ call #1 present []
 event #5 clicked []
 set #3 text "Zed"
 set #4 text "Zed"
-changed #3 text
-changed #4 text
-set #7 text "name Zed"
+changed #3 text "Kim"
+changed #4 text "Kim"
+set #7 text "name Kim"
 event #6 clicked []
 set #3 text "Bob"
 set #4 text "Bob"

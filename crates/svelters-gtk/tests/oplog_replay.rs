@@ -13,6 +13,20 @@ enum Val {
     Str(String),
 }
 
+/// An integer as a GValue of the property's own type.
+fn glib_int(obj: &gtk::glib::Object, prop: &str, i: i64) -> gtk::glib::Value {
+    use gtk::glib::Type;
+    let ty = obj.find_property(prop).map(|p| p.value_type()).unwrap_or(Type::I64);
+    match ty {
+        Type::I32 => (i as i32).to_value(),
+        Type::U32 => (i as u32).to_value(),
+        Type::U64 => (i as u64).to_value(),
+        Type::F64 => (i as f64).to_value(),
+        Type::F32 => (i as f32).to_value(),
+        _ => i.to_value(),
+    }
+}
+
 fn parse_val(s: &str) -> Val {
     let s = s.trim();
     match s {
@@ -155,13 +169,6 @@ fn replay(name: &str, log: String) {
                     let r = if flags == 0 { h.listen(hd(parts[1]), parts[2], on) } else { h.listen_ex(hd(parts[1]), parts[2], on, flags) };
                     r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
                 }
-                // ABI v2.6 observation (R2 `bind:` lowering): `observe #h prop on|off` must be accepted
-                // natively. `changed` is a scripted announcement into the op-log host, not a backend call;
-                // the native announcement path is covered by tests/observe*.rs and examples/counter.
-                "observe" => {
-                    h.observe(hd(parts[1]), parts[2], parts[3].trim() == "on").unwrap_or_else(|e| panic!("{ctx}: {e:?}"));
-                }
-                "changed" => {}
                 // ABI v2.2 child attribute: `attr #parent #child name json`.
                 "attr" => {
                     let rest: Vec<&str> = line.splitn(5, ' ').collect();
@@ -262,6 +269,32 @@ fn replay(name: &str, log: String) {
                     let got = h.take_events();
                     assert!(got.contains(&(o, sig.to_string())), "{ctx}: event not delivered, got {got:?}");
                     events += 1;
+                }
+                // ABI v2.6: the host's observation transitions reach the backend as they did in the log.
+                "observe" => {
+                    let on = match parts.get(3).copied() {
+                        Some("on") => true,
+                        Some("off") => false,
+                        _ => panic!("{ctx}: expected on|off"),
+                    };
+                    h.observe(hd(parts[1]), parts[2], on).unwrap_or_else(|e| panic!("{ctx}: {e:?}"));
+                }
+                // A scripted native change of an observed property: produce it natively (a set the
+                // toolkit makes, not one through the ABI) and check the backend announced it.
+                "changed" => {
+                    let (o, prop) = (hd(parts[1]), parts[2]);
+                    h.take_changed();
+                    let obj = h.obj(o);
+                    match (parts.get(3).map(|v| parse_val(v)), obj.downcast_ref::<gtk::TextBuffer>()) {
+                        (Some(Val::Str(s)), Some(buf)) if prop == "text" => buf.set_text(&s),
+                        (Some(Val::Str(s)), _) => obj.set_property(prop, s),
+                        (Some(Val::Bool(b)), _) => obj.set_property(prop, b),
+                        (Some(Val::Int(i)), _) => obj.set_property_from_value(prop, &glib_int(&obj, prop, i)),
+                        (Some(Val::Float(f)), _) => obj.set_property(prop, f),
+                        (v, _) => panic!("{ctx}: cannot produce a change to {:?}", v.is_some()),
+                    }
+                    let got = h.take_changed();
+                    assert!(got.iter().any(|c| c.0 == o), "{ctx}: change not announced, got {got:?}");
                 }
                 other => panic!("{ctx}: unknown op {other}"),
             }

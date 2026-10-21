@@ -3310,7 +3310,7 @@ interface WinuiObs_TextBlock {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:optical-margin-alignment|nonreactive"?: "none" | "trim-side-bearings";
   /** @observable exact on winui (notify) */ "bind:padding"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:padding|nonreactive"?: Insets;
-  /** Read-only. @observable exact on winui (notify) */ "bind:selected-text"?: string | null;
+  /** Read-only. @observable exact on winui (event:SelectionChanged) */ "bind:selected-text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:selected-text|nonreactive"?: string | null;
   /** @observable exact on winui (notify) */ "bind:text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text|nonreactive"?: string | null;

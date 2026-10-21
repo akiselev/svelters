@@ -23,6 +23,188 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:border-color:observe",
+   "fingerprint": "d9ddb4620de1c936",
+   "kind": "AppKit:NSBox",
+   "name": "border-color",
+   "origin": "inferred",
+   "record_fp": "bb53732d2ade3f63",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbox_border_color"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:border-rect:observe",
+   "fingerprint": "fa74e3e9efd93261",
+   "kind": "AppKit:NSBox",
+   "name": "border-rect",
+   "origin": "inferred",
+   "record_fp": "45d5b1e3ee0ab3e4",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbox_border_rect"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:border-width:observe",
+   "fingerprint": "09f1692e55ce81da",
+   "kind": "AppKit:NSBox",
+   "name": "border-width",
+   "origin": "inferred",
+   "record_fp": "e8260804bb3c6f45",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbox_border_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:box-type:observe",
+   "fingerprint": "d711e19f1b758c0e",
+   "kind": "AppKit:NSBox",
+   "name": "box-type",
+   "origin": "inferred",
+   "record_fp": "986ec2609636ed36",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbox_box_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:content-view-margins:observe",
+   "fingerprint": "81c9f7badced6eef",
+   "kind": "AppKit:NSBox",
+   "name": "content-view-margins",
+   "origin": "inferred",
+   "record_fp": "59466607c242f7ba",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbox_content_view_margins"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:content-view:observe",
+   "fingerprint": "a266fc2f65ec5b96",
+   "kind": "AppKit:NSBox",
+   "name": "content-view",
+   "origin": "inferred",
+   "record_fp": "693ad8f98345c6b7",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbox_content_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:corner-radius:observe",
+   "fingerprint": "434c87e984795b8e",
+   "kind": "AppKit:NSBox",
+   "name": "corner-radius",
+   "origin": "inferred",
+   "record_fp": "fec3ce6fa3f1bac1",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbox_corner_radius"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:fill-color:observe",
+   "fingerprint": "7405964c67c908e2",
+   "kind": "AppKit:NSBox",
+   "name": "fill-color",
+   "origin": "inferred",
+   "record_fp": "aa1a60540d4eb036",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbox_fill_color"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-cell:observe",
+   "fingerprint": "3f6aba901946e4a8",
+   "kind": "AppKit:NSBox",
+   "name": "title-cell",
+   "origin": "inferred",
+   "record_fp": "315638d4c8197a00",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbox_title_cell"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-font:observe",
+   "fingerprint": "eedf6dfd2373a9c8",
+   "kind": "AppKit:NSBox",
+   "name": "title-font",
+   "origin": "inferred",
+   "record_fp": "09cf23f1c5d6d8fd",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbox_title_font"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-position:observe",
+   "fingerprint": "d64f8d962af3bba2",
+   "kind": "AppKit:NSBox",
+   "name": "title-position",
+   "origin": "inferred",
+   "record_fp": "bed0da94a466d79e",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbox_title_position"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title-rect:observe",
+   "fingerprint": "4a9feab04d2b981e",
+   "kind": "AppKit:NSBox",
+   "name": "title-rect",
+   "origin": "inferred",
+   "record_fp": "a51c5cf627a06f8d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbox_title_rect"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:title:observe",
+   "fingerprint": "a66a047cd892611e",
+   "kind": "AppKit:NSBox",
+   "name": "title",
+   "origin": "inferred",
+   "record_fp": "2209849be360204a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbox_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:prop:transparent:observe",
+   "fingerprint": "1f0b3e736550bb86",
+   "kind": "AppKit:NSBox",
+   "name": "transparent",
+   "origin": "inferred",
+   "record_fp": "85f0f4d7e8c47129",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbox_transparent"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:props:border-width",
    "fingerprint": "b883f4e2c1896650",
    "kind": "NSBox",
@@ -169,6 +351,357 @@
    "section": "element",
    "tests": [
     "readable_nsbutton"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:active-compression-options:observe",
+   "fingerprint": "aab2ca87ae3e602b",
+   "kind": "AppKit:NSButton",
+   "name": "active-compression-options",
+   "origin": "inferred",
+   "record_fp": "eb78351b0eddeb2f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_active_compression_options"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:allows-mixed-state:observe",
+   "fingerprint": "931a8985ff8b19f7",
+   "kind": "AppKit:NSButton",
+   "name": "allows-mixed-state",
+   "origin": "inferred",
+   "record_fp": "dedb08f10768e3c1",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_allows_mixed_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:alternate-image:observe",
+   "fingerprint": "3ebda5e6c2a684a9",
+   "kind": "AppKit:NSButton",
+   "name": "alternate-image",
+   "origin": "inferred",
+   "record_fp": "cba030a4bcee0d03",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_alternate_image"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:alternate-title:observe",
+   "fingerprint": "d64fb9a3d7f7e417",
+   "kind": "AppKit:NSButton",
+   "name": "alternate-title",
+   "origin": "inferred",
+   "record_fp": "13b43370828b2ec9",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_alternate_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:attributed-alternate-title:observe",
+   "fingerprint": "5922c5490ce49078",
+   "kind": "AppKit:NSButton",
+   "name": "attributed-alternate-title",
+   "origin": "inferred",
+   "record_fp": "13b90c8206460fe3",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_attributed_alternate_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:attributed-title:observe",
+   "fingerprint": "3e5ddb0f35ef30f9",
+   "kind": "AppKit:NSButton",
+   "name": "attributed-title",
+   "origin": "inferred",
+   "record_fp": "725921350773bdd3",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_attributed_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:bezel-color:observe",
+   "fingerprint": "58fd4610e170b4c8",
+   "kind": "AppKit:NSButton",
+   "name": "bezel-color",
+   "origin": "inferred",
+   "record_fp": "b92058231260d7c9",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_bezel_color"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:bezel-style:observe",
+   "fingerprint": "8502fef7c23dae29",
+   "kind": "AppKit:NSButton",
+   "name": "bezel-style",
+   "origin": "inferred",
+   "record_fp": "9a016492f438b2d7",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_bezel_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:border-shape:observe",
+   "fingerprint": "a3c9242d43db3c1c",
+   "kind": "AppKit:NSButton",
+   "name": "border-shape",
+   "origin": "inferred",
+   "record_fp": "cc30549686cdff65",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_border_shape"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:bordered:observe",
+   "fingerprint": "62374964d4800491",
+   "kind": "AppKit:NSButton",
+   "name": "bordered",
+   "origin": "inferred",
+   "record_fp": "dd6585bd8b64ac78",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_bordered"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:content-tint-color:observe",
+   "fingerprint": "e1300c36fd1eb6d2",
+   "kind": "AppKit:NSButton",
+   "name": "content-tint-color",
+   "origin": "inferred",
+   "record_fp": "a5b744438b26dc8b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_content_tint_color"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:has-destructive-action:observe",
+   "fingerprint": "4225b231815c449e",
+   "kind": "AppKit:NSButton",
+   "name": "has-destructive-action",
+   "origin": "inferred",
+   "record_fp": "75f64fa1917be1be",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_has_destructive_action"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image-hugs-title:observe",
+   "fingerprint": "e882faf8d62d6047",
+   "kind": "AppKit:NSButton",
+   "name": "image-hugs-title",
+   "origin": "inferred",
+   "record_fp": "ab408fee683ac4bb",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_image_hugs_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image-position:observe",
+   "fingerprint": "2127e2dd8095fe52",
+   "kind": "AppKit:NSButton",
+   "name": "image-position",
+   "origin": "inferred",
+   "record_fp": "6d04d12f905cc43c",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_image_position"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image-scaling:observe",
+   "fingerprint": "f468c1d11f3bda65",
+   "kind": "AppKit:NSButton",
+   "name": "image-scaling",
+   "origin": "inferred",
+   "record_fp": "20c9f3404bd2acd1",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_image_scaling"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:image:observe",
+   "fingerprint": "3adb1342b124449d",
+   "kind": "AppKit:NSButton",
+   "name": "image",
+   "origin": "inferred",
+   "record_fp": "ce2cfb10f4ca94e2",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_image"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:key-equivalent-modifier-mask:observe",
+   "fingerprint": "924c8f7c81a521e4",
+   "kind": "AppKit:NSButton",
+   "name": "key-equivalent-modifier-mask",
+   "origin": "inferred",
+   "record_fp": "c07f8c2cb718a037",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_key_equivalent_modifier_mask"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:key-equivalent:observe",
+   "fingerprint": "aa1ed7721c74398b",
+   "kind": "AppKit:NSButton",
+   "name": "key-equivalent",
+   "origin": "inferred",
+   "record_fp": "64618bd7c8d7f8c2",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_key_equivalent"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:max-accelerator-level:observe",
+   "fingerprint": "f588a0218f3dca7d",
+   "kind": "AppKit:NSButton",
+   "name": "max-accelerator-level",
+   "origin": "inferred",
+   "record_fp": "6c651201b0c6f2e3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_max_accelerator_level"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:shows-border-only-while-mouse-inside:observe",
+   "fingerprint": "d0685e1dfa56d404",
+   "kind": "AppKit:NSButton",
+   "name": "shows-border-only-while-mouse-inside",
+   "origin": "inferred",
+   "record_fp": "4d308edba5fb5d37",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_shows_border_only_while_mouse_inside"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:sound:observe",
+   "fingerprint": "23892621b15b8367",
+   "kind": "AppKit:NSButton",
+   "name": "sound",
+   "origin": "inferred",
+   "record_fp": "2c0c4b640c8b3472",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_sound"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:spring-loaded:observe",
+   "fingerprint": "aeb34b7a0842ff46",
+   "kind": "AppKit:NSButton",
+   "name": "spring-loaded",
+   "origin": "inferred",
+   "record_fp": "34d2f8ff71fb12fb",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_spring_loaded"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:state:observe",
+   "fingerprint": "197e9adb712d874d",
+   "kind": "AppKit:NSButton",
+   "name": "state",
+   "origin": "inferred",
+   "record_fp": "6f119054f5d471e4",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:symbol-configuration:observe",
+   "fingerprint": "1d5d796d97afb400",
+   "kind": "AppKit:NSButton",
+   "name": "symbol-configuration",
+   "origin": "inferred",
+   "record_fp": "2708be556823ff6a",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsbutton_symbol_configuration"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:tint-prominence:observe",
+   "fingerprint": "2b8f3dd271646aac",
+   "kind": "AppKit:NSButton",
+   "name": "tint-prominence",
+   "origin": "inferred",
+   "record_fp": "e854c5899905f7f5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_tint_prominence"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:title:observe",
+   "fingerprint": "d27a7cb200cf8e11",
+   "kind": "AppKit:NSButton",
+   "name": "title",
+   "origin": "inferred",
+   "record_fp": "2209849be360204a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:prop:transparent:observe",
+   "fingerprint": "6a6d2a773e979fd6",
+   "kind": "AppKit:NSButton",
+   "name": "transparent",
+   "origin": "inferred",
+   "record_fp": "85f0f4d7e8c47129",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsbutton_transparent"
    ]
   },
   {
@@ -441,6 +974,318 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:action:observe",
+   "fingerprint": "6af22a269f36acbd",
+   "kind": "AppKit:NSControl",
+   "name": "action",
+   "origin": "inferred",
+   "record_fp": "550ec31e0534e908",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nscontrol_action"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:alignment:observe",
+   "fingerprint": "6734071b4ec279e4",
+   "kind": "AppKit:NSControl",
+   "name": "alignment",
+   "origin": "inferred",
+   "record_fp": "d0295007675d27bf",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:allows-expansion-tool-tips:observe",
+   "fingerprint": "f3d6a2d62b4d1d39",
+   "kind": "AppKit:NSControl",
+   "name": "allows-expansion-tool-tips",
+   "origin": "inferred",
+   "record_fp": "99a60021b5d71921",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_allows_expansion_tool_tips"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:attributed-string-value:observe",
+   "fingerprint": "5caf203156cb76f5",
+   "kind": "AppKit:NSControl",
+   "name": "attributed-string-value",
+   "origin": "inferred",
+   "record_fp": "990d100ef24c48ed",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nscontrol_attributed_string_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:base-writing-direction:observe",
+   "fingerprint": "1884c52087ca6a1e",
+   "kind": "AppKit:NSControl",
+   "name": "base-writing-direction",
+   "origin": "inferred",
+   "record_fp": "f1a968c4e7539ee1",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_base_writing_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:cell:observe",
+   "fingerprint": "f615a6be1fbea54f",
+   "kind": "AppKit:NSControl",
+   "name": "cell",
+   "origin": "inferred",
+   "record_fp": "e14c690d73ec233f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nscontrol_cell"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:continuous:observe",
+   "fingerprint": "204dcc8eb95cc4f1",
+   "kind": "AppKit:NSControl",
+   "name": "continuous",
+   "origin": "inferred",
+   "record_fp": "6a4e5c924e227476",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_continuous"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:control-size:observe",
+   "fingerprint": "5271645c00d1346c",
+   "kind": "AppKit:NSControl",
+   "name": "control-size",
+   "origin": "inferred",
+   "record_fp": "41d36356683439f5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_control_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:double-value:observe",
+   "fingerprint": "9c2690902eb958e8",
+   "kind": "AppKit:NSControl",
+   "name": "double-value",
+   "origin": "inferred",
+   "record_fp": "e4945317536936a2",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "observe_nscontrol_double_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:enabled:observe",
+   "fingerprint": "252019cffc49ae96",
+   "kind": "AppKit:NSControl",
+   "name": "enabled",
+   "origin": "inferred",
+   "record_fp": "0a185045ec5ee1ee",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:float-value:observe",
+   "fingerprint": "dc9a7028fea1f35c",
+   "kind": "AppKit:NSControl",
+   "name": "float-value",
+   "origin": "inferred",
+   "record_fp": "39271361d0189164",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "observe_nscontrol_float_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:font:observe",
+   "fingerprint": "1e4190a15a9c17ea",
+   "kind": "AppKit:NSControl",
+   "name": "font",
+   "origin": "inferred",
+   "record_fp": "94caa984c88e474e",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nscontrol_font"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:formatter:observe",
+   "fingerprint": "d5ee921687f8f7b3",
+   "kind": "AppKit:NSControl",
+   "name": "formatter",
+   "origin": "inferred",
+   "record_fp": "5ffa5415397508ac",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nscontrol_formatter"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:highlighted:observe",
+   "fingerprint": "34710d439cb2f7a9",
+   "kind": "AppKit:NSControl",
+   "name": "highlighted",
+   "origin": "inferred",
+   "record_fp": "93fe9bd2b15ee7a2",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_highlighted"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:ignores-multi-click:observe",
+   "fingerprint": "209344487fe869fd",
+   "kind": "AppKit:NSControl",
+   "name": "ignores-multi-click",
+   "origin": "inferred",
+   "record_fp": "3467e96228fa2842",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_ignores_multi_click"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:int-value:observe",
+   "fingerprint": "d46e232379cc8ae7",
+   "kind": "AppKit:NSControl",
+   "name": "int-value",
+   "origin": "inferred",
+   "record_fp": "0b49a599c69d3d8e",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_int_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:integer-value:observe",
+   "fingerprint": "aed854fe2c1ed175",
+   "kind": "AppKit:NSControl",
+   "name": "integer-value",
+   "origin": "inferred",
+   "record_fp": "cf67838f50da6659",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_integer_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:line-break-mode:observe",
+   "fingerprint": "b59d7e45b7dce90a",
+   "kind": "AppKit:NSControl",
+   "name": "line-break-mode",
+   "origin": "inferred",
+   "record_fp": "1613d2b3dad0ae85",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_line_break_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:object-value:observe",
+   "fingerprint": "4a9000afaa9a5db2",
+   "kind": "AppKit:NSControl",
+   "name": "object-value",
+   "origin": "inferred",
+   "record_fp": "2bd0fbbc78efe6fb",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nscontrol_object_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:refuses-first-responder:observe",
+   "fingerprint": "6b965ee6ef50cb0d",
+   "kind": "AppKit:NSControl",
+   "name": "refuses-first-responder",
+   "origin": "inferred",
+   "record_fp": "9c8fafb1ef8d289f",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_refuses_first_responder"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:string-value:observe",
+   "fingerprint": "8b0b7ec31bf78a84",
+   "kind": "AppKit:NSControl",
+   "name": "string-value",
+   "origin": "inferred",
+   "record_fp": "745eea64d834bacd",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "observe_nscontrol_string_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:tag:observe",
+   "fingerprint": "4cbaa10564a50e78",
+   "kind": "AppKit:NSControl",
+   "name": "tag",
+   "origin": "inferred",
+   "record_fp": "f83eb7682e6d9558",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_tag"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:target:observe",
+   "fingerprint": "48286bd51dd0b2d2",
+   "kind": "AppKit:NSControl",
+   "name": "target",
+   "origin": "inferred",
+   "record_fp": "76c9d30f845cae0d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nscontrol_target"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:prop:uses-single-line-mode:observe",
+   "fingerprint": "e342e53cf8380065",
+   "kind": "AppKit:NSControl",
+   "name": "uses-single-line-mode",
+   "origin": "inferred",
+   "record_fp": "e3b68ff606ba013b",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nscontrol_uses_single_line_mode"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSControl:props:alignment",
    "fingerprint": "fecf90f2568087d8",
    "kind": "NSControl",
@@ -659,6 +1504,123 @@
    "section": "methods",
    "tests": [
     "method_nsprogressindicator_stop_animation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:control-size:observe",
+   "fingerprint": "4be9cf51cd917eb2",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "control-size",
+   "origin": "inferred",
+   "record_fp": "41d36356683439f5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_control_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:displayed-when-stopped:observe",
+   "fingerprint": "0288077c35bdc36e",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "displayed-when-stopped",
+   "origin": "inferred",
+   "record_fp": "2986363db60c15f7",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_displayed_when_stopped"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:double-value:observe",
+   "fingerprint": "13d84c3a4d8133ad",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "double-value",
+   "origin": "inferred",
+   "record_fp": "e6a06677125f822a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_double_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:indeterminate:observe",
+   "fingerprint": "e91e1599c5617d03",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "indeterminate",
+   "origin": "inferred",
+   "record_fp": "81b538130c0c3a4b",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_indeterminate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:max-value:observe",
+   "fingerprint": "23b214a7aed6d144",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "max-value",
+   "origin": "inferred",
+   "record_fp": "c99bc0dc8371ddf7",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_max_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:min-value:observe",
+   "fingerprint": "a552bc2908345125",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "min-value",
+   "origin": "inferred",
+   "record_fp": "61508014634867ca",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_min_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:observed-progress:observe",
+   "fingerprint": "84e0748374e9c236",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "observed-progress",
+   "origin": "inferred",
+   "record_fp": "111b219bb2e98903",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsprogressindicator_observed_progress"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:style:observe",
+   "fingerprint": "ef815be10cecfb7f",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "style",
+   "origin": "inferred",
+   "record_fp": "abaa279f19903277",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:prop:uses-threaded-animation:observe",
+   "fingerprint": "2b306e1dbeb764a6",
+   "kind": "AppKit:NSProgressIndicator",
+   "name": "uses-threaded-animation",
+   "origin": "inferred",
+   "record_fp": "6315746d34a2f7de",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsprogressindicator_uses_threaded_animation"
    ]
   },
   {
@@ -904,6 +1866,227 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:allows-tick-mark-values-only:observe",
+   "fingerprint": "09ebd727dcf34e2c",
+   "kind": "AppKit:NSSlider",
+   "name": "allows-tick-mark-values-only",
+   "origin": "inferred",
+   "record_fp": "262b125406e3c9d5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_allows_tick_mark_values_only"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:alt-increment-value:observe",
+   "fingerprint": "385336c6f34c0616",
+   "kind": "AppKit:NSSlider",
+   "name": "alt-increment-value",
+   "origin": "inferred",
+   "record_fp": "5288e3069370a147",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_alt_increment_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:double-value:observe",
+   "fingerprint": "4312ad9a34913770",
+   "kind": "AppKit:NSSlider",
+   "name": "double-value",
+   "origin": "inferred",
+   "record_fp": "83f93b9c3bb9ecba",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_double_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:float-value:observe",
+   "fingerprint": "d486b2749dba514d",
+   "kind": "AppKit:NSSlider",
+   "name": "float-value",
+   "origin": "inferred",
+   "record_fp": "ffe7dd5b57517bf9",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_float_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:int-value:observe",
+   "fingerprint": "45fbcbdbcfd20129",
+   "kind": "AppKit:NSSlider",
+   "name": "int-value",
+   "origin": "inferred",
+   "record_fp": "376a9fbad8c3f587",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_int_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:integer-value:observe",
+   "fingerprint": "5e0b116d08eaed57",
+   "kind": "AppKit:NSSlider",
+   "name": "integer-value",
+   "origin": "inferred",
+   "record_fp": "dc52e12881e3d312",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_integer_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:knob-thickness:observe",
+   "fingerprint": "34971a162c8dd6dc",
+   "kind": "AppKit:NSSlider",
+   "name": "knob-thickness",
+   "origin": "inferred",
+   "record_fp": "e90a790a3cc461df",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsslider_knob_thickness"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:max-value:observe",
+   "fingerprint": "9ab2cb460b4c3816",
+   "kind": "AppKit:NSSlider",
+   "name": "max-value",
+   "origin": "inferred",
+   "record_fp": "c99bc0dc8371ddf7",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_max_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:min-value:observe",
+   "fingerprint": "e046b8075fbd5b48",
+   "kind": "AppKit:NSSlider",
+   "name": "min-value",
+   "origin": "inferred",
+   "record_fp": "61508014634867ca",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_min_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:neutral-value:observe",
+   "fingerprint": "cf5a636db50b90f7",
+   "kind": "AppKit:NSSlider",
+   "name": "neutral-value",
+   "origin": "inferred",
+   "record_fp": "4f44fb4313bf0530",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_neutral_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:number-of-tick-marks:observe",
+   "fingerprint": "9e9c087b4d16cfd5",
+   "kind": "AppKit:NSSlider",
+   "name": "number-of-tick-marks",
+   "origin": "inferred",
+   "record_fp": "2cdec702d8a3825d",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_number_of_tick_marks"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:object-value:observe",
+   "fingerprint": "4e4ee97af82beba8",
+   "kind": "AppKit:NSSlider",
+   "name": "object-value",
+   "origin": "inferred",
+   "record_fp": "3e806a92ea3231ff",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_object_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:slider-type:observe",
+   "fingerprint": "f425888a628be6e2",
+   "kind": "AppKit:NSSlider",
+   "name": "slider-type",
+   "origin": "inferred",
+   "record_fp": "73ef4194980b2c9c",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_slider_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:tick-mark-position:observe",
+   "fingerprint": "cd10632feabe0089",
+   "kind": "AppKit:NSSlider",
+   "name": "tick-mark-position",
+   "origin": "inferred",
+   "record_fp": "4ca8e1cc47925536",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_tick_mark_position"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:tint-prominence:observe",
+   "fingerprint": "efe5ce9437ac0854",
+   "kind": "AppKit:NSSlider",
+   "name": "tint-prominence",
+   "origin": "inferred",
+   "record_fp": "e854c5899905f7f5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_tint_prominence"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:track-fill-color:observe",
+   "fingerprint": "817912eb81aa3f38",
+   "kind": "AppKit:NSSlider",
+   "name": "track-fill-color",
+   "origin": "inferred",
+   "record_fp": "f6c496aae0ca8d37",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsslider_track_fill_color"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:prop:vertical:observe",
+   "fingerprint": "84b85a0446c2c4fa",
+   "kind": "AppKit:NSSlider",
+   "name": "vertical",
+   "origin": "inferred",
+   "record_fp": "7c7513e6d661b2d7",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsslider_vertical"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:props:allows-tick-mark-values-only",
    "fingerprint": "218c5d830ad34ec8",
    "kind": "NSSlider",
@@ -1088,6 +2271,136 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:alignment:observe",
+   "fingerprint": "06b7972b8acc548f",
+   "kind": "AppKit:NSStackView",
+   "name": "alignment",
+   "origin": "inferred",
+   "record_fp": "d0295007675d27bf",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsstackview_alignment"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:arranged-subviews:observe",
+   "fingerprint": "7a630864e4f567b0",
+   "kind": "AppKit:NSStackView",
+   "name": "arranged-subviews",
+   "origin": "inferred",
+   "record_fp": "378152da4e3f9db4",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsstackview_arranged_subviews"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:delegate:observe",
+   "fingerprint": "35c4c7d79b38bef2",
+   "kind": "AppKit:NSStackView",
+   "name": "delegate",
+   "origin": "inferred",
+   "record_fp": "ebdc3bdcd4c205cc",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsstackview_delegate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:detached-views:observe",
+   "fingerprint": "ce9c2016d046a8f7",
+   "kind": "AppKit:NSStackView",
+   "name": "detached-views",
+   "origin": "inferred",
+   "record_fp": "18f567691d0a941b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsstackview_detached_views"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:detaches-hidden-views:observe",
+   "fingerprint": "0979aa6345f94e08",
+   "kind": "AppKit:NSStackView",
+   "name": "detaches-hidden-views",
+   "origin": "inferred",
+   "record_fp": "50b40385a2d6a501",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsstackview_detaches_hidden_views"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:distribution:observe",
+   "fingerprint": "403f83799cfde3a0",
+   "kind": "AppKit:NSStackView",
+   "name": "distribution",
+   "origin": "inferred",
+   "record_fp": "280bb0ac5f78a023",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsstackview_distribution"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:edge-insets:observe",
+   "fingerprint": "7ef19cfebff7217b",
+   "kind": "AppKit:NSStackView",
+   "name": "edge-insets",
+   "origin": "inferred",
+   "record_fp": "e044747eca2943ef",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsstackview_edge_insets"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:orientation:observe",
+   "fingerprint": "d3819a42247a9d82",
+   "kind": "AppKit:NSStackView",
+   "name": "orientation",
+   "origin": "inferred",
+   "record_fp": "6d20b0d24cbe21aa",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsstackview_orientation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:spacing:observe",
+   "fingerprint": "2f88be72c0a96975",
+   "kind": "AppKit:NSStackView",
+   "name": "spacing",
+   "origin": "inferred",
+   "record_fp": "6610950bbfb75908",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsstackview_spacing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:prop:views:observe",
+   "fingerprint": "da5ed60a7b0846aa",
+   "kind": "AppKit:NSStackView",
+   "name": "views",
+   "origin": "inferred",
+   "record_fp": "1c609370721368b4",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsstackview_views"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:props:alignment",
    "fingerprint": "8015ddcd5e6f6797",
    "kind": "NSStackView",
@@ -1244,6 +2557,370 @@
    "section": "element",
    "tests": [
     "readable_nstextfield"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:accepts-first-responder:observe",
+   "fingerprint": "01a30273e4290b48",
+   "kind": "AppKit:NSTextField",
+   "name": "accepts-first-responder",
+   "origin": "inferred",
+   "record_fp": "c2534ae0892eb4d3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nstextfield_accepts_first_responder"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-character-picker-touch-bar-item:observe",
+   "fingerprint": "363ff2aab449e9c6",
+   "kind": "AppKit:NSTextField",
+   "name": "allows-character-picker-touch-bar-item",
+   "origin": "inferred",
+   "record_fp": "a0bf2e184d6a64bd",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_allows_character_picker_touch_bar_item"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-default-tightening-for-truncation:observe",
+   "fingerprint": "97a92ceb1d092f8c",
+   "kind": "AppKit:NSTextField",
+   "name": "allows-default-tightening-for-truncation",
+   "origin": "inferred",
+   "record_fp": "cd548ad25d9bb9ba",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_allows_default_tightening_for_truncation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-editing-text-attributes:observe",
+   "fingerprint": "67cc709b693338d6",
+   "kind": "AppKit:NSTextField",
+   "name": "allows-editing-text-attributes",
+   "origin": "inferred",
+   "record_fp": "5bcba5286eefc19a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_allows_editing_text_attributes"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-writing-tools-affordance:observe",
+   "fingerprint": "38fd3737a7eec25c",
+   "kind": "AppKit:NSTextField",
+   "name": "allows-writing-tools-affordance",
+   "origin": "inferred",
+   "record_fp": "0e3ac46c47765573",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_allows_writing_tools_affordance"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:allows-writing-tools:observe",
+   "fingerprint": "874cb2765b29c9fb",
+   "kind": "AppKit:NSTextField",
+   "name": "allows-writing-tools",
+   "origin": "inferred",
+   "record_fp": "773578ea55aa0229",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_allows_writing_tools"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:attributed-string-value:observe",
+   "fingerprint": "f9f5170d3bd8bc8f",
+   "kind": "AppKit:NSTextField",
+   "name": "attributed-string-value",
+   "origin": "inferred",
+   "record_fp": "df45a135ac7aeeac",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_attributed_string_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:automatic-text-completion-enabled:observe",
+   "fingerprint": "5dbedfb492b73272",
+   "kind": "AppKit:NSTextField",
+   "name": "automatic-text-completion-enabled",
+   "origin": "inferred",
+   "record_fp": "1eb3ddc66d162825",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_automatic_text_completion_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:background-color:observe",
+   "fingerprint": "f8ca89bb1e4ace5d",
+   "kind": "AppKit:NSTextField",
+   "name": "background-color",
+   "origin": "inferred",
+   "record_fp": "cbd6fe96001ab25d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nstextfield_background_color"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:bezel-style:observe",
+   "fingerprint": "8b015c2424ecc208",
+   "kind": "AppKit:NSTextField",
+   "name": "bezel-style",
+   "origin": "inferred",
+   "record_fp": "9a016492f438b2d7",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_bezel_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:bezeled:observe",
+   "fingerprint": "724e84d6791a6300",
+   "kind": "AppKit:NSTextField",
+   "name": "bezeled",
+   "origin": "inferred",
+   "record_fp": "a0632597490beca3",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_bezeled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:bordered:observe",
+   "fingerprint": "4af9ba29a532b286",
+   "kind": "AppKit:NSTextField",
+   "name": "bordered",
+   "origin": "inferred",
+   "record_fp": "dd6585bd8b64ac78",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_bordered"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:delegate:observe",
+   "fingerprint": "71719a94f1a86762",
+   "kind": "AppKit:NSTextField",
+   "name": "delegate",
+   "origin": "inferred",
+   "record_fp": "ebdc3bdcd4c205cc",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nstextfield_delegate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:draws-background:observe",
+   "fingerprint": "c7d50ae499460a92",
+   "kind": "AppKit:NSTextField",
+   "name": "draws-background",
+   "origin": "inferred",
+   "record_fp": "e79a6fce75f0879c",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_draws_background"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:editable:observe",
+   "fingerprint": "cb89b25b5b7039e7",
+   "kind": "AppKit:NSTextField",
+   "name": "editable",
+   "origin": "inferred",
+   "record_fp": "a2ff335df336b197",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_editable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:imports-graphics:observe",
+   "fingerprint": "907a93a011565d13",
+   "kind": "AppKit:NSTextField",
+   "name": "imports-graphics",
+   "origin": "inferred",
+   "record_fp": "49ed7faa09afd5e5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_imports_graphics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:line-break-strategy:observe",
+   "fingerprint": "5a51b0b72d3a3606",
+   "kind": "AppKit:NSTextField",
+   "name": "line-break-strategy",
+   "origin": "inferred",
+   "record_fp": "31ed50219eb9f8d2",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_line_break_strategy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:maximum-number-of-lines:observe",
+   "fingerprint": "2342f462d7471410",
+   "kind": "AppKit:NSTextField",
+   "name": "maximum-number-of-lines",
+   "origin": "inferred",
+   "record_fp": "079b59dbcf198163",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_maximum_number_of_lines"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:object-value:observe",
+   "fingerprint": "1d76c468e03a71e0",
+   "kind": "AppKit:NSTextField",
+   "name": "object-value",
+   "origin": "inferred",
+   "record_fp": "0d7307b279a6e385",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_object_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-attributed-string:observe",
+   "fingerprint": "05cd0e9982fbe777",
+   "kind": "AppKit:NSTextField",
+   "name": "placeholder-attributed-string",
+   "origin": "inferred",
+   "record_fp": "e782a8da807bfd8b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nstextfield_placeholder_attributed_string"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-attributed-strings:observe",
+   "fingerprint": "219ed449dfe2ad04",
+   "kind": "AppKit:NSTextField",
+   "name": "placeholder-attributed-strings",
+   "origin": "inferred",
+   "record_fp": "e31dee7efaaa8fc5",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nstextfield_placeholder_attributed_strings"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-string:observe",
+   "fingerprint": "895a4fc6ac630f8e",
+   "kind": "AppKit:NSTextField",
+   "name": "placeholder-string",
+   "origin": "inferred",
+   "record_fp": "cde254adcacd9465",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_placeholder_string"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:placeholder-strings:observe",
+   "fingerprint": "b3b9800509c13f27",
+   "kind": "AppKit:NSTextField",
+   "name": "placeholder-strings",
+   "origin": "inferred",
+   "record_fp": "7e334718beb96c69",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nstextfield_placeholder_strings"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:preferred-max-layout-width:observe",
+   "fingerprint": "d232b14dd6d65348",
+   "kind": "AppKit:NSTextField",
+   "name": "preferred-max-layout-width",
+   "origin": "inferred",
+   "record_fp": "6d68ae00e7b979ca",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_preferred_max_layout_width"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:resolves-natural-alignment-with-base-writing-direction:observe",
+   "fingerprint": "9ce69fb4c1065aef",
+   "kind": "AppKit:NSTextField",
+   "name": "resolves-natural-alignment-with-base-writing-direction",
+   "origin": "inferred",
+   "record_fp": "9566ee3b89955308",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_resolves_natural_alignment_with_base_writing_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:selectable:observe",
+   "fingerprint": "532e63fae5974f29",
+   "kind": "AppKit:NSTextField",
+   "name": "selectable",
+   "origin": "inferred",
+   "record_fp": "aa9e6af2f9346234",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_selectable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:string-value:observe",
+   "fingerprint": "0566409a03b29b6a",
+   "kind": "AppKit:NSTextField",
+   "name": "string-value",
+   "origin": "inferred",
+   "record_fp": "1f637c8449cd2ff6",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nstextfield_string_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:prop:text-color:observe",
+   "fingerprint": "082b7fb7c7faf33b",
+   "kind": "AppKit:NSTextField",
+   "name": "text-color",
+   "origin": "inferred",
+   "record_fp": "7e5dd94407c738b9",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nstextfield_text_color"
    ]
   },
   {
@@ -1582,6 +3259,1345 @@
    "section": "element",
    "tests": [
     "readable_nsview"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:additional-safe-area-insets:observe",
+   "fingerprint": "0f0c792b79e8e004",
+   "kind": "AppKit:NSView",
+   "name": "additional-safe-area-insets",
+   "origin": "inferred",
+   "record_fp": "3d5bef9fa8fa5172",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_additional_safe_area_insets"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:alignment-rect-insets:observe",
+   "fingerprint": "8b25b6602ccb2fe3",
+   "kind": "AppKit:NSView",
+   "name": "alignment-rect-insets",
+   "origin": "inferred",
+   "record_fp": "d64fea47c3c35515",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_alignment_rect_insets"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:allowed-touch-types:observe",
+   "fingerprint": "ca9bb6474b767407",
+   "kind": "AppKit:NSView",
+   "name": "allowed-touch-types",
+   "origin": "inferred",
+   "record_fp": "5a82de3f583d3da6",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_allowed_touch_types"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:allows-vibrancy:observe",
+   "fingerprint": "cf424541e13ccc77",
+   "kind": "AppKit:NSView",
+   "name": "allows-vibrancy",
+   "origin": "inferred",
+   "record_fp": "0d388b5f6daca842",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_allows_vibrancy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:alpha-value:observe",
+   "fingerprint": "081d0839d9c37447",
+   "kind": "AppKit:NSView",
+   "name": "alpha-value",
+   "origin": "inferred",
+   "record_fp": "a37167f077bc39e2",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_alpha_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:autoresizes-subviews:observe",
+   "fingerprint": "30d74ac777702d2d",
+   "kind": "AppKit:NSView",
+   "name": "autoresizes-subviews",
+   "origin": "inferred",
+   "record_fp": "df5b5450814eebe0",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_autoresizes_subviews"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:autoresizing-mask:observe",
+   "fingerprint": "04cfd263a6332ee1",
+   "kind": "AppKit:NSView",
+   "name": "autoresizing-mask",
+   "origin": "inferred",
+   "record_fp": "55e4255a4dfdf685",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_autoresizing_mask"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:background-filters:observe",
+   "fingerprint": "9363329ce05883d5",
+   "kind": "AppKit:NSView",
+   "name": "background-filters",
+   "origin": "inferred",
+   "record_fp": "3e640d47bb17a553",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_background_filters"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:baseline-offset-from-bottom:observe",
+   "fingerprint": "887ea6f427bcb083",
+   "kind": "AppKit:NSView",
+   "name": "baseline-offset-from-bottom",
+   "origin": "inferred",
+   "record_fp": "304cb503c30e27ee",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_baseline_offset_from_bottom"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:bottom-anchor:observe",
+   "fingerprint": "dceb5b01012c3da7",
+   "kind": "AppKit:NSView",
+   "name": "bottom-anchor",
+   "origin": "inferred",
+   "record_fp": "93119a5c1f040ce5",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_bottom_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:bounds-rotation:observe",
+   "fingerprint": "2e82c077af72f03d",
+   "kind": "AppKit:NSView",
+   "name": "bounds-rotation",
+   "origin": "inferred",
+   "record_fp": "1891cf7d028603c8",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_bounds_rotation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:bounds:observe",
+   "fingerprint": "e2d37cb3d962afaf",
+   "kind": "AppKit:NSView",
+   "name": "bounds",
+   "origin": "inferred",
+   "record_fp": "7cc398cd379d991c",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_bounds"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:can-become-key-view:observe",
+   "fingerprint": "d001e0413e6d0eb7",
+   "kind": "AppKit:NSView",
+   "name": "can-become-key-view",
+   "origin": "inferred",
+   "record_fp": "8f9410c83ab1971b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_can_become_key_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:can-draw-concurrently:observe",
+   "fingerprint": "2c3744f0e2443bc1",
+   "kind": "AppKit:NSView",
+   "name": "can-draw-concurrently",
+   "origin": "inferred",
+   "record_fp": "22c7ae1102412914",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_can_draw_concurrently"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:can-draw-subviews-into-layer:observe",
+   "fingerprint": "ad3209104632f25b",
+   "kind": "AppKit:NSView",
+   "name": "can-draw-subviews-into-layer",
+   "origin": "inferred",
+   "record_fp": "4d8546138c898ba3",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_can_draw_subviews_into_layer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:candidate-list-touch-bar-item:observe",
+   "fingerprint": "8c6ba8e66bed86c1",
+   "kind": "AppKit:NSView",
+   "name": "candidate-list-touch-bar-item",
+   "origin": "inferred",
+   "record_fp": "f78b349b54811d6f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_candidate_list_touch_bar_item"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:center-x-anchor:observe",
+   "fingerprint": "d8bac8997d875b72",
+   "kind": "AppKit:NSView",
+   "name": "center-x-anchor",
+   "origin": "inferred",
+   "record_fp": "effe2866060de16b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_center_x_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:center-y-anchor:observe",
+   "fingerprint": "690a569e640a0832",
+   "kind": "AppKit:NSView",
+   "name": "center-y-anchor",
+   "origin": "inferred",
+   "record_fp": "3268c867c7fabfa6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_center_y_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:clips-to-bounds:observe",
+   "fingerprint": "2dbfe5c270b19731",
+   "kind": "AppKit:NSView",
+   "name": "clips-to-bounds",
+   "origin": "inferred",
+   "record_fp": "eb0315c5f05b17aa",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_clips_to_bounds"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:compositing-filter:observe",
+   "fingerprint": "54d70d2a73ae4beb",
+   "kind": "AppKit:NSView",
+   "name": "compositing-filter",
+   "origin": "inferred",
+   "record_fp": "6ef2f3cac34d342c",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_compositing_filter"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:constraints:observe",
+   "fingerprint": "6bede92b64fbb30c",
+   "kind": "AppKit:NSView",
+   "name": "constraints",
+   "origin": "inferred",
+   "record_fp": "0fd71201b681d90a",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_constraints"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:content-filters:observe",
+   "fingerprint": "27c6b57e501b9a93",
+   "kind": "AppKit:NSView",
+   "name": "content-filters",
+   "origin": "inferred",
+   "record_fp": "1d3b4a7ba6732d2f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_content_filters"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:drawing-find-indicator:observe",
+   "fingerprint": "e15d6c5d6f53dde5",
+   "kind": "AppKit:NSView",
+   "name": "drawing-find-indicator",
+   "origin": "inferred",
+   "record_fp": "3a96b3f614fcebe4",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_drawing_find_indicator"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:enclosing-menu-item:observe",
+   "fingerprint": "e41f6805b1e9b9aa",
+   "kind": "AppKit:NSView",
+   "name": "enclosing-menu-item",
+   "origin": "inferred",
+   "record_fp": "f9ed9a7a0adceeb3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_enclosing_menu_item"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:enclosing-scroll-view:observe",
+   "fingerprint": "b82b826054b722ea",
+   "kind": "AppKit:NSView",
+   "name": "enclosing-scroll-view",
+   "origin": "inferred",
+   "record_fp": "2993fecf10c72220",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_enclosing_scroll_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:first-baseline-anchor:observe",
+   "fingerprint": "6ee02a4c02907a55",
+   "kind": "AppKit:NSView",
+   "name": "first-baseline-anchor",
+   "origin": "inferred",
+   "record_fp": "662b47bbfd0967c0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_first_baseline_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:first-baseline-offset-from-top:observe",
+   "fingerprint": "d81d51dca651b6d7",
+   "kind": "AppKit:NSView",
+   "name": "first-baseline-offset-from-top",
+   "origin": "inferred",
+   "record_fp": "92f2b6ce7979f5ef",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_first_baseline_offset_from_top"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:fitting-size:observe",
+   "fingerprint": "ae00f2b30193242f",
+   "kind": "AppKit:NSView",
+   "name": "fitting-size",
+   "origin": "inferred",
+   "record_fp": "cd68a6a3272607cb",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_fitting_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:flipped:observe",
+   "fingerprint": "e7c7c5db431e68f1",
+   "kind": "AppKit:NSView",
+   "name": "flipped",
+   "origin": "inferred",
+   "record_fp": "2582ada3ec20b2f0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_flipped"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:focus-ring-mask-bounds:observe",
+   "fingerprint": "cbf6efecd3bd3844",
+   "kind": "AppKit:NSView",
+   "name": "focus-ring-mask-bounds",
+   "origin": "inferred",
+   "record_fp": "b0f7ce08d914bccb",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_focus_ring_mask_bounds"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:focus-ring-type:observe",
+   "fingerprint": "8976b4b7a8e519af",
+   "kind": "AppKit:NSView",
+   "name": "focus-ring-type",
+   "origin": "inferred",
+   "record_fp": "3ebee33b63a07438",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_focus_ring_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:frame-center-rotation:observe",
+   "fingerprint": "33705b8f9a3f6983",
+   "kind": "AppKit:NSView",
+   "name": "frame-center-rotation",
+   "origin": "inferred",
+   "record_fp": "86f2ebd73384d2a6",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_frame_center_rotation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:frame-rotation:observe",
+   "fingerprint": "5595cd0f9ca7164f",
+   "kind": "AppKit:NSView",
+   "name": "frame-rotation",
+   "origin": "inferred",
+   "record_fp": "b3a592515dc6bd48",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_frame_rotation"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:frame:observe",
+   "fingerprint": "57e4a3eed3a1e12d",
+   "kind": "AppKit:NSView",
+   "name": "frame",
+   "origin": "inferred",
+   "record_fp": "9db8593fedfbaae7",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:gesture-recognizers:observe",
+   "fingerprint": "b0b7f0d6a34d78cd",
+   "kind": "AppKit:NSView",
+   "name": "gesture-recognizers",
+   "origin": "inferred",
+   "record_fp": "7619c23c06dc106b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_gesture_recognizers"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:has-ambiguous-layout:observe",
+   "fingerprint": "ddc0248150ebe66b",
+   "kind": "AppKit:NSView",
+   "name": "has-ambiguous-layout",
+   "origin": "inferred",
+   "record_fp": "bb56184d20c12cc4",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_has_ambiguous_layout"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:height-adjust-limit:observe",
+   "fingerprint": "3c3e04e50d335904",
+   "kind": "AppKit:NSView",
+   "name": "height-adjust-limit",
+   "origin": "inferred",
+   "record_fp": "05e68e880730aab7",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_height_adjust_limit"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:height-anchor:observe",
+   "fingerprint": "95d8b28c4c0e3d40",
+   "kind": "AppKit:NSView",
+   "name": "height-anchor",
+   "origin": "inferred",
+   "record_fp": "3981739875cdbcb0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_height_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:hidden-or-has-hidden-ancestor:observe",
+   "fingerprint": "7a3c8f6262f15647",
+   "kind": "AppKit:NSView",
+   "name": "hidden-or-has-hidden-ancestor",
+   "origin": "inferred",
+   "record_fp": "ab1e351f15f90263",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_hidden_or_has_hidden_ancestor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:hidden:observe",
+   "fingerprint": "b656f15bc8713fc3",
+   "kind": "AppKit:NSView",
+   "name": "hidden",
+   "origin": "inferred",
+   "record_fp": "8ec6594d22fde78b",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_hidden"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:horizontal-content-size-constraint-active:observe",
+   "fingerprint": "410ee71343f95b4b",
+   "kind": "AppKit:NSView",
+   "name": "horizontal-content-size-constraint-active",
+   "origin": "inferred",
+   "record_fp": "0f72f80ef783abfd",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_horizontal_content_size_constraint_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:in-full-screen-mode:observe",
+   "fingerprint": "2020ba861e8e6a2e",
+   "kind": "AppKit:NSView",
+   "name": "in-full-screen-mode",
+   "origin": "inferred",
+   "record_fp": "bfc2c520f6313e2e",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_in_full_screen_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:in-live-resize:observe",
+   "fingerprint": "7ad98858b882a94b",
+   "kind": "AppKit:NSView",
+   "name": "in-live-resize",
+   "origin": "inferred",
+   "record_fp": "5862a9c74e4ce4dd",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_in_live_resize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:input-context:observe",
+   "fingerprint": "9a8d6368b97f53f9",
+   "kind": "AppKit:NSView",
+   "name": "input-context",
+   "origin": "inferred",
+   "record_fp": "931b4b1c388f4886",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_input_context"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:intrinsic-content-size:observe",
+   "fingerprint": "a5273cf406999bbc",
+   "kind": "AppKit:NSView",
+   "name": "intrinsic-content-size",
+   "origin": "inferred",
+   "record_fp": "1f44044e18ba72e3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_intrinsic_content_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:last-baseline-anchor:observe",
+   "fingerprint": "c0124b6dcd4f0c36",
+   "kind": "AppKit:NSView",
+   "name": "last-baseline-anchor",
+   "origin": "inferred",
+   "record_fp": "41f76fa43deb05a0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_last_baseline_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:last-baseline-offset-from-bottom:observe",
+   "fingerprint": "175bd3533d913620",
+   "kind": "AppKit:NSView",
+   "name": "last-baseline-offset-from-bottom",
+   "origin": "inferred",
+   "record_fp": "70720ae04419af6b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_last_baseline_offset_from_bottom"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer-contents-placement:observe",
+   "fingerprint": "e2c0a662b99f2f17",
+   "kind": "AppKit:NSView",
+   "name": "layer-contents-placement",
+   "origin": "inferred",
+   "record_fp": "7743aa13f3a2c2ec",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_layer_contents_placement"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer-contents-redraw-policy:observe",
+   "fingerprint": "9862d18e842561dd",
+   "kind": "AppKit:NSView",
+   "name": "layer-contents-redraw-policy",
+   "origin": "inferred",
+   "record_fp": "ef7ba1a4fd878187",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_layer_contents_redraw_policy"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer-uses-core-image-filters:observe",
+   "fingerprint": "c929c328c409d02f",
+   "kind": "AppKit:NSView",
+   "name": "layer-uses-core-image-filters",
+   "origin": "inferred",
+   "record_fp": "35d56f11a50f0cfe",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_layer_uses_core_image_filters"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layer:observe",
+   "fingerprint": "5c156e36ef64b766",
+   "kind": "AppKit:NSView",
+   "name": "layer",
+   "origin": "inferred",
+   "record_fp": "677455cc42c279b6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_layer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layout-guides:observe",
+   "fingerprint": "c14a9204e1ace998",
+   "kind": "AppKit:NSView",
+   "name": "layout-guides",
+   "origin": "inferred",
+   "record_fp": "74896bce7873b0c8",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_layout_guides"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:layout-margins-guide:observe",
+   "fingerprint": "63dc42271b8e07f4",
+   "kind": "AppKit:NSView",
+   "name": "layout-margins-guide",
+   "origin": "inferred",
+   "record_fp": "221aca0747b14351",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_layout_margins_guide"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:leading-anchor:observe",
+   "fingerprint": "58cdfa0f08ec7a99",
+   "kind": "AppKit:NSView",
+   "name": "leading-anchor",
+   "origin": "inferred",
+   "record_fp": "ad210b024c2a11e0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_leading_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:left-anchor:observe",
+   "fingerprint": "b2fceed47d7b9b52",
+   "kind": "AppKit:NSView",
+   "name": "left-anchor",
+   "origin": "inferred",
+   "record_fp": "9b6de4c623492fb3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_left_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:mouse-down-can-move-window:observe",
+   "fingerprint": "434ae58eff6c197d",
+   "kind": "AppKit:NSView",
+   "name": "mouse-down-can-move-window",
+   "origin": "inferred",
+   "record_fp": "598af3b42b5fff89",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_mouse_down_can_move_window"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-display:observe",
+   "fingerprint": "6f99ab2d573ef0f4",
+   "kind": "AppKit:NSView",
+   "name": "needs-display",
+   "origin": "inferred",
+   "record_fp": "a6135e7f746854d3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_needs_display"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-layout:observe",
+   "fingerprint": "f25fe4edf2f330c2",
+   "kind": "AppKit:NSView",
+   "name": "needs-layout",
+   "origin": "inferred",
+   "record_fp": "e32b60d99e16f64f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_needs_layout"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-panel-to-become-key:observe",
+   "fingerprint": "9b39b9eccf5d21c0",
+   "kind": "AppKit:NSView",
+   "name": "needs-panel-to-become-key",
+   "origin": "inferred",
+   "record_fp": "53ba217825f43782",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_needs_panel_to_become_key"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:needs-update-constraints:observe",
+   "fingerprint": "f1bc8dc3c6e9d561",
+   "kind": "AppKit:NSView",
+   "name": "needs-update-constraints",
+   "origin": "inferred",
+   "record_fp": "36d272549ff61ec6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_needs_update_constraints"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:next-key-view:observe",
+   "fingerprint": "6754bdf7a5709765",
+   "kind": "AppKit:NSView",
+   "name": "next-key-view",
+   "origin": "inferred",
+   "record_fp": "5d9a75e32b6739e6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_next_key_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:next-valid-key-view:observe",
+   "fingerprint": "a80df99b947432ef",
+   "kind": "AppKit:NSView",
+   "name": "next-valid-key-view",
+   "origin": "inferred",
+   "record_fp": "cb80b582008f6760",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_next_valid_key_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:opaque-ancestor:observe",
+   "fingerprint": "8cc5d02c38c4fffc",
+   "kind": "AppKit:NSView",
+   "name": "opaque-ancestor",
+   "origin": "inferred",
+   "record_fp": "0674532b3b32f036",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_opaque_ancestor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:opaque:observe",
+   "fingerprint": "ace608a45b4ef98f",
+   "kind": "AppKit:NSView",
+   "name": "opaque",
+   "origin": "inferred",
+   "record_fp": "dcc45a588aa6e330",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_opaque"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:page-footer:observe",
+   "fingerprint": "eed74febd972e988",
+   "kind": "AppKit:NSView",
+   "name": "page-footer",
+   "origin": "inferred",
+   "record_fp": "8d7d1775cff5b586",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_page_footer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:page-header:observe",
+   "fingerprint": "6caf9f7f949a80ce",
+   "kind": "AppKit:NSView",
+   "name": "page-header",
+   "origin": "inferred",
+   "record_fp": "83c817959cb4ca1d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_page_header"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:posts-bounds-changed-notifications:observe",
+   "fingerprint": "0f55384c6b3591c3",
+   "kind": "AppKit:NSView",
+   "name": "posts-bounds-changed-notifications",
+   "origin": "inferred",
+   "record_fp": "b020103c18045bc0",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_posts_bounds_changed_notifications"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:posts-frame-changed-notifications:observe",
+   "fingerprint": "698eb33c264289f3",
+   "kind": "AppKit:NSView",
+   "name": "posts-frame-changed-notifications",
+   "origin": "inferred",
+   "record_fp": "35012ea4e551163b",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_posts_frame_changed_notifications"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:prefers-compact-control-size-metrics:observe",
+   "fingerprint": "33a6c91f0e069d01",
+   "kind": "AppKit:NSView",
+   "name": "prefers-compact-control-size-metrics",
+   "origin": "inferred",
+   "record_fp": "e8c40647aa612fc8",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_prefers_compact_control_size_metrics"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:prepared-content-rect:observe",
+   "fingerprint": "d8653230499521fc",
+   "kind": "AppKit:NSView",
+   "name": "prepared-content-rect",
+   "origin": "inferred",
+   "record_fp": "de6abc1c51a4fc79",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_prepared_content_rect"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:preserves-content-during-live-resize:observe",
+   "fingerprint": "78d83de7eecd09f6",
+   "kind": "AppKit:NSView",
+   "name": "preserves-content-during-live-resize",
+   "origin": "inferred",
+   "record_fp": "f5e24f7d4d13458e",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_preserves_content_during_live_resize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:pressure-configuration:observe",
+   "fingerprint": "85025a1f1ce3946e",
+   "kind": "AppKit:NSView",
+   "name": "pressure-configuration",
+   "origin": "inferred",
+   "record_fp": "043128447496000a",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_pressure_configuration"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:previous-key-view:observe",
+   "fingerprint": "5f1c969378a52670",
+   "kind": "AppKit:NSView",
+   "name": "previous-key-view",
+   "origin": "inferred",
+   "record_fp": "30cab2b671c8baad",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_previous_key_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:previous-valid-key-view:observe",
+   "fingerprint": "7720b16a92e2a675",
+   "kind": "AppKit:NSView",
+   "name": "previous-valid-key-view",
+   "origin": "inferred",
+   "record_fp": "7889aad902919f5c",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_previous_valid_key_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:print-job-title:observe",
+   "fingerprint": "7e2a7ba586112aa8",
+   "kind": "AppKit:NSView",
+   "name": "print-job-title",
+   "origin": "inferred",
+   "record_fp": "88943125178b8c17",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_print_job_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:rect-preserved-during-live-resize:observe",
+   "fingerprint": "ddfc3ca065e94c65",
+   "kind": "AppKit:NSView",
+   "name": "rect-preserved-during-live-resize",
+   "origin": "inferred",
+   "record_fp": "89f16c01c183d4ac",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_rect_preserved_during_live_resize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:registered-dragged-types:observe",
+   "fingerprint": "ca830e173a83f9e2",
+   "kind": "AppKit:NSView",
+   "name": "registered-dragged-types",
+   "origin": "inferred",
+   "record_fp": "05a8a784e426869c",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_registered_dragged_types"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:right-anchor:observe",
+   "fingerprint": "5d1f6e7f317855f7",
+   "kind": "AppKit:NSView",
+   "name": "right-anchor",
+   "origin": "inferred",
+   "record_fp": "45ecd33721b56e98",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_right_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:rotated-from-base:observe",
+   "fingerprint": "a4dbae2423dcf2d1",
+   "kind": "AppKit:NSView",
+   "name": "rotated-from-base",
+   "origin": "inferred",
+   "record_fp": "6664f8f5b387fc51",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_rotated_from_base"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:rotated-or-scaled-from-base:observe",
+   "fingerprint": "47b73b1a19ecf13c",
+   "kind": "AppKit:NSView",
+   "name": "rotated-or-scaled-from-base",
+   "origin": "inferred",
+   "record_fp": "7e34bc321a078660",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_rotated_or_scaled_from_base"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:safe-area-insets:observe",
+   "fingerprint": "eefb5e95a65e5d7c",
+   "kind": "AppKit:NSView",
+   "name": "safe-area-insets",
+   "origin": "inferred",
+   "record_fp": "6f93691d38685490",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_safe_area_insets"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:safe-area-layout-guide:observe",
+   "fingerprint": "d46a30a47fcb2a74",
+   "kind": "AppKit:NSView",
+   "name": "safe-area-layout-guide",
+   "origin": "inferred",
+   "record_fp": "e6eab11d852429c6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_safe_area_layout_guide"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:safe-area-rect:observe",
+   "fingerprint": "25cccc13dfff1fbd",
+   "kind": "AppKit:NSView",
+   "name": "safe-area-rect",
+   "origin": "inferred",
+   "record_fp": "66d54221627a5722",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_safe_area_rect"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:shadow:observe",
+   "fingerprint": "5c8fb35731bfd294",
+   "kind": "AppKit:NSView",
+   "name": "shadow",
+   "origin": "inferred",
+   "record_fp": "19e3bc8f80a464dd",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_shadow"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:subviews:observe",
+   "fingerprint": "23b9a0c932d18b03",
+   "kind": "AppKit:NSView",
+   "name": "subviews",
+   "origin": "inferred",
+   "record_fp": "080a43da5474e35d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_subviews"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:superview:observe",
+   "fingerprint": "c49d6fbb113dadde",
+   "kind": "AppKit:NSView",
+   "name": "superview",
+   "origin": "inferred",
+   "record_fp": "29bb1217439f5d25",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_superview"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:tag:observe",
+   "fingerprint": "7a0fe8cffaa1478d",
+   "kind": "AppKit:NSView",
+   "name": "tag",
+   "origin": "inferred",
+   "record_fp": "f83eb7682e6d9558",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "observe_nsview_tag"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:tool-tip:observe",
+   "fingerprint": "db4982ae48cf9a56",
+   "kind": "AppKit:NSView",
+   "name": "tool-tip",
+   "origin": "inferred",
+   "record_fp": "b7d5c23d1cdc1b86",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_tool_tip"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:top-anchor:observe",
+   "fingerprint": "1d19cb81fe6a7f74",
+   "kind": "AppKit:NSView",
+   "name": "top-anchor",
+   "origin": "inferred",
+   "record_fp": "6bcc384fb8add7a0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_top_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:tracking-areas:observe",
+   "fingerprint": "4bc89e6520844a35",
+   "kind": "AppKit:NSView",
+   "name": "tracking-areas",
+   "origin": "inferred",
+   "record_fp": "e890628143af50ea",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_tracking_areas"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:trailing-anchor:observe",
+   "fingerprint": "408a05d29c7be91e",
+   "kind": "AppKit:NSView",
+   "name": "trailing-anchor",
+   "origin": "inferred",
+   "record_fp": "0bd18439a545f8b7",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_trailing_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:translates-autoresizing-mask-into-constraints:observe",
+   "fingerprint": "53a28c240d254f07",
+   "kind": "AppKit:NSView",
+   "name": "translates-autoresizing-mask-into-constraints",
+   "origin": "inferred",
+   "record_fp": "22574a89f73401ff",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_translates_autoresizing_mask_into_constraints"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:user-interface-layout-direction:observe",
+   "fingerprint": "d5ecb2f376058395",
+   "kind": "AppKit:NSView",
+   "name": "user-interface-layout-direction",
+   "origin": "inferred",
+   "record_fp": "11900bcbe85bec80",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_user_interface_layout_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:vertical-content-size-constraint-active:observe",
+   "fingerprint": "e6d8c4a687ac4b10",
+   "kind": "AppKit:NSView",
+   "name": "vertical-content-size-constraint-active",
+   "origin": "inferred",
+   "record_fp": "7664aad4d7588967",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_vertical_content_size_constraint_active"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:visible-rect:observe",
+   "fingerprint": "c686d18f8ef7ecc2",
+   "kind": "AppKit:NSView",
+   "name": "visible-rect",
+   "origin": "inferred",
+   "record_fp": "64110868d4367da7",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_visible_rect"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-default-clipping:observe",
+   "fingerprint": "8b8d985febafe404",
+   "kind": "AppKit:NSView",
+   "name": "wants-default-clipping",
+   "origin": "inferred",
+   "record_fp": "3d8939457dd3a1ce",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_wants_default_clipping"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-layer:observe",
+   "fingerprint": "e9a507a989abde38",
+   "kind": "AppKit:NSView",
+   "name": "wants-layer",
+   "origin": "inferred",
+   "record_fp": "40dc375c0a1d3f42",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_wants_layer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-resting-touches:observe",
+   "fingerprint": "5994321efb8cddbf",
+   "kind": "AppKit:NSView",
+   "name": "wants-resting-touches",
+   "origin": "inferred",
+   "record_fp": "e298a9b1df148bdd",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nsview_wants_resting_touches"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:wants-update-layer:observe",
+   "fingerprint": "7928c7ade96c9d15",
+   "kind": "AppKit:NSView",
+   "name": "wants-update-layer",
+   "origin": "inferred",
+   "record_fp": "ad742144ed577494",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_wants_update_layer"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:width-adjust-limit:observe",
+   "fingerprint": "afcbb362b3b71741",
+   "kind": "AppKit:NSView",
+   "name": "width-adjust-limit",
+   "origin": "inferred",
+   "record_fp": "5ce1432637cf90cc",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_width_adjust_limit"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:width-anchor:observe",
+   "fingerprint": "38583a3cc8c7def8",
+   "kind": "AppKit:NSView",
+   "name": "width-anchor",
+   "origin": "inferred",
+   "record_fp": "ee3e8f4020bbdd22",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_width_anchor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:window:observe",
+   "fingerprint": "54b881f03db8d7a2",
+   "kind": "AppKit:NSView",
+   "name": "window",
+   "origin": "inferred",
+   "record_fp": "2e209707df0bf1d1",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_window"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSView:prop:writing-tools-coordinator:observe",
+   "fingerprint": "88d7fa3aab745f34",
+   "kind": "AppKit:NSView",
+   "name": "writing-tools-coordinator",
+   "origin": "inferred",
+   "record_fp": "b73e61614d72601a",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nsview_writing_tools_coordinator"
    ]
   },
   {
@@ -2006,6 +5022,1462 @@
    "section": "methods",
    "tests": [
     "method_nswindow_order_out"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:accepts-mouse-moved-events:observe",
+   "fingerprint": "ff7e70e2191776a0",
+   "kind": "AppKit:NSWindow",
+   "name": "accepts-mouse-moved-events",
+   "origin": "inferred",
+   "record_fp": "3d07d2cc8990492b",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_accepts_mouse_moved_events"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:allows-concurrent-view-drawing:observe",
+   "fingerprint": "e8e9d914702d4668",
+   "kind": "AppKit:NSWindow",
+   "name": "allows-concurrent-view-drawing",
+   "origin": "inferred",
+   "record_fp": "3a49612c8d5cb256",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_allows_concurrent_view_drawing"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:allows-tool-tips-when-application-is-inactive:observe",
+   "fingerprint": "3029a9983333e543",
+   "kind": "AppKit:NSWindow",
+   "name": "allows-tool-tips-when-application-is-inactive",
+   "origin": "inferred",
+   "record_fp": "41cd63414ee53cca",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_allows_tool_tips_when_application_is_inactive"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:alpha-value:observe",
+   "fingerprint": "f26529e3b4fb740e",
+   "kind": "AppKit:NSWindow",
+   "name": "alpha-value",
+   "origin": "inferred",
+   "record_fp": "a37167f077bc39e2",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_alpha_value"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:animation-behavior:observe",
+   "fingerprint": "3a012845e2e8d1a0",
+   "kind": "AppKit:NSWindow",
+   "name": "animation-behavior",
+   "origin": "inferred",
+   "record_fp": "e723f04a76790b4d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_animation_behavior"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:appearance-source:observe",
+   "fingerprint": "aa78a1098d2f76d1",
+   "kind": "AppKit:NSWindow",
+   "name": "appearance-source",
+   "origin": "inferred",
+   "record_fp": "e9ac3258b60450af",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_appearance_source"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:are-cursor-rects-enabled:observe",
+   "fingerprint": "1ff03c396f1c5e9d",
+   "kind": "AppKit:NSWindow",
+   "name": "are-cursor-rects-enabled",
+   "origin": "inferred",
+   "record_fp": "2f4558251894af19",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_are_cursor_rects_enabled"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:aspect-ratio:observe",
+   "fingerprint": "7ed420ab6d08ea24",
+   "kind": "AppKit:NSWindow",
+   "name": "aspect-ratio",
+   "origin": "inferred",
+   "record_fp": "caf392602ad26c5f",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_aspect_ratio"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:attached-sheet:observe",
+   "fingerprint": "ac6b529aaa2f4532",
+   "kind": "AppKit:NSWindow",
+   "name": "attached-sheet",
+   "origin": "inferred",
+   "record_fp": "055ba434ebd371fd",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_attached_sheet"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:autorecalculates-key-view-loop:observe",
+   "fingerprint": "06a757404473284b",
+   "kind": "AppKit:NSWindow",
+   "name": "autorecalculates-key-view-loop",
+   "origin": "inferred",
+   "record_fp": "342507aac05242c4",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_autorecalculates_key_view_loop"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:background-color:observe",
+   "fingerprint": "8ffaf6ca9ce76655",
+   "kind": "AppKit:NSWindow",
+   "name": "background-color",
+   "origin": "inferred",
+   "record_fp": "cbd6fe96001ab25d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_background_color"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:backing-scale-factor:observe",
+   "fingerprint": "32825ed8f3821026",
+   "kind": "AppKit:NSWindow",
+   "name": "backing-scale-factor",
+   "origin": "inferred",
+   "record_fp": "54b552b3e1422ced",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_backing_scale_factor"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:backing-type:observe",
+   "fingerprint": "9d7ea05f52932244",
+   "kind": "AppKit:NSWindow",
+   "name": "backing-type",
+   "origin": "inferred",
+   "record_fp": "e1f9ccef3dee7ae0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_backing_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-become-key-window:observe",
+   "fingerprint": "567af1e1d3521148",
+   "kind": "AppKit:NSWindow",
+   "name": "can-become-key-window",
+   "origin": "inferred",
+   "record_fp": "9401af71b94954e6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_can_become_key_window"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-become-main-window:observe",
+   "fingerprint": "8ed53a3a9b75adc2",
+   "kind": "AppKit:NSWindow",
+   "name": "can-become-main-window",
+   "origin": "inferred",
+   "record_fp": "adcf542bc4d93074",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_can_become_main_window"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-become-visible-without-login:observe",
+   "fingerprint": "39aa6f06cba5bcc3",
+   "kind": "AppKit:NSWindow",
+   "name": "can-become-visible-without-login",
+   "origin": "inferred",
+   "record_fp": "97a709361d22d207",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_can_become_visible_without_login"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:can-hide:observe",
+   "fingerprint": "5ef1a4039cab0521",
+   "kind": "AppKit:NSWindow",
+   "name": "can-hide",
+   "origin": "inferred",
+   "record_fp": "246431ee0f3a911f",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_can_hide"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:cascading-reference-frame:observe",
+   "fingerprint": "e7816e0f981907b2",
+   "kind": "AppKit:NSWindow",
+   "name": "cascading-reference-frame",
+   "origin": "inferred",
+   "record_fp": "0c491cddd22cd597",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_cascading_reference_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:child-windows:observe",
+   "fingerprint": "89c8af6002007e5f",
+   "kind": "AppKit:NSWindow",
+   "name": "child-windows",
+   "origin": "inferred",
+   "record_fp": "ca5b0722bb45047d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_child_windows"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:collection-behavior:observe",
+   "fingerprint": "b8cd7f7c4e80299b",
+   "kind": "AppKit:NSWindow",
+   "name": "collection-behavior",
+   "origin": "inferred",
+   "record_fp": "0de64bdd614f470f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_collection_behavior"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:color-space:observe",
+   "fingerprint": "c0de8b275f3f4695",
+   "kind": "AppKit:NSWindow",
+   "name": "color-space",
+   "origin": "inferred",
+   "record_fp": "3c395d9fdc3a727a",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_color_space"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-aspect-ratio:observe",
+   "fingerprint": "babd434566ccfd29",
+   "kind": "AppKit:NSWindow",
+   "name": "content-aspect-ratio",
+   "origin": "inferred",
+   "record_fp": "3c3597f4af2a9f33",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_content_aspect_ratio"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-layout-guide:observe",
+   "fingerprint": "202032933532abc9",
+   "kind": "AppKit:NSWindow",
+   "name": "content-layout-guide",
+   "origin": "inferred",
+   "record_fp": "f31be3e700688d65",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_content_layout_guide"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-layout-rect:observe",
+   "fingerprint": "b84f112466e8d3a3",
+   "kind": "AppKit:NSWindow",
+   "name": "content-layout-rect",
+   "origin": "inferred",
+   "record_fp": "4d248aa9cb845de9",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_content_layout_rect"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-max-size:observe",
+   "fingerprint": "6b4dc080583dd9f8",
+   "kind": "AppKit:NSWindow",
+   "name": "content-max-size",
+   "origin": "inferred",
+   "record_fp": "557cf39ab09940c5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_content_max_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-min-size:observe",
+   "fingerprint": "b6d094b567d13f3f",
+   "kind": "AppKit:NSWindow",
+   "name": "content-min-size",
+   "origin": "inferred",
+   "record_fp": "a89a5d7e840c5df4",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_content_min_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-resize-increments:observe",
+   "fingerprint": "78a77d43fa357a73",
+   "kind": "AppKit:NSWindow",
+   "name": "content-resize-increments",
+   "origin": "inferred",
+   "record_fp": "3580f6bad2971df1",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_content_resize_increments"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-view-controller:observe",
+   "fingerprint": "543451b6d1997bed",
+   "kind": "AppKit:NSWindow",
+   "name": "content-view-controller",
+   "origin": "inferred",
+   "record_fp": "11e38b1cf70e199e",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_content_view_controller"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:content-view:observe",
+   "fingerprint": "f5db4325f0620928",
+   "kind": "AppKit:NSWindow",
+   "name": "content-view",
+   "origin": "inferred",
+   "record_fp": "693ad8f98345c6b7",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_content_view"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:current-event:observe",
+   "fingerprint": "05260fa81a2e01b8",
+   "kind": "AppKit:NSWindow",
+   "name": "current-event",
+   "origin": "inferred",
+   "record_fp": "c7de1393ffdd45e3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_current_event"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:deepest-screen:observe",
+   "fingerprint": "ed679daa676fc6bd",
+   "kind": "AppKit:NSWindow",
+   "name": "deepest-screen",
+   "origin": "inferred",
+   "record_fp": "7f0dc0c8ae257f10",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_deepest_screen"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:default-button-cell:observe",
+   "fingerprint": "5022e2dfe411ca65",
+   "kind": "AppKit:NSWindow",
+   "name": "default-button-cell",
+   "origin": "inferred",
+   "record_fp": "1fbf784d967ffd16",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_default_button_cell"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:delegate:observe",
+   "fingerprint": "531ed714d7ce790a",
+   "kind": "AppKit:NSWindow",
+   "name": "delegate",
+   "origin": "inferred",
+   "record_fp": "ebdc3bdcd4c205cc",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_delegate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:depth-limit:observe",
+   "fingerprint": "6059ae5b4da7a330",
+   "kind": "AppKit:NSWindow",
+   "name": "depth-limit",
+   "origin": "inferred",
+   "record_fp": "82f7b3eaa622f745",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_depth_limit"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:device-description:observe",
+   "fingerprint": "94bfa50139d3f4f1",
+   "kind": "AppKit:NSWindow",
+   "name": "device-description",
+   "origin": "inferred",
+   "record_fp": "2dcc48532fb16544",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_device_description"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:displays-when-screen-profile-changes:observe",
+   "fingerprint": "a86cf8e16207d43d",
+   "kind": "AppKit:NSWindow",
+   "name": "displays-when-screen-profile-changes",
+   "origin": "inferred",
+   "record_fp": "6f270bab4cf0beee",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_displays_when_screen_profile_changes"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:dock-tile:observe",
+   "fingerprint": "dcfc23a7b3782658",
+   "kind": "AppKit:NSWindow",
+   "name": "dock-tile",
+   "origin": "inferred",
+   "record_fp": "2f4aa5c03a304e75",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_dock_tile"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:document-edited:observe",
+   "fingerprint": "c9faf2fb55578cc1",
+   "kind": "AppKit:NSWindow",
+   "name": "document-edited",
+   "origin": "inferred",
+   "record_fp": "9f9b3ddb0421b966",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_document_edited"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:drawers:observe",
+   "fingerprint": "87ec81d66dae5a31",
+   "kind": "AppKit:NSWindow",
+   "name": "drawers",
+   "origin": "inferred",
+   "record_fp": "f4b3d016c741c972",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_drawers"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:excluded-from-windows-menu:observe",
+   "fingerprint": "f2a397f902f514a0",
+   "kind": "AppKit:NSWindow",
+   "name": "excluded-from-windows-menu",
+   "origin": "inferred",
+   "record_fp": "4440dfa638780f27",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_excluded_from_windows_menu"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:first-responder:observe",
+   "fingerprint": "b287ca4c5d6208db",
+   "kind": "AppKit:NSWindow",
+   "name": "first-responder",
+   "origin": "inferred",
+   "record_fp": "bc21933ec1a59ce7",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_first_responder"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:floating-panel:observe",
+   "fingerprint": "bffb6cc4a23d25c8",
+   "kind": "AppKit:NSWindow",
+   "name": "floating-panel",
+   "origin": "inferred",
+   "record_fp": "23b87d15234fb2b7",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_floating_panel"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:frame-autosave-name:observe",
+   "fingerprint": "3eef465062a3f8b4",
+   "kind": "AppKit:NSWindow",
+   "name": "frame-autosave-name",
+   "origin": "inferred",
+   "record_fp": "bae79d3f28c8b8c3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_frame_autosave_name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:frame:observe",
+   "fingerprint": "9ead760837c56a85",
+   "kind": "AppKit:NSWindow",
+   "name": "frame",
+   "origin": "inferred",
+   "record_fp": "515daa818a1f7873",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-active-window-sharing-session:observe",
+   "fingerprint": "7430b5f313ba300d",
+   "kind": "AppKit:NSWindow",
+   "name": "has-active-window-sharing-session",
+   "origin": "inferred",
+   "record_fp": "68490f581136fd06",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_has_active_window_sharing_session"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-close-box:observe",
+   "fingerprint": "fd4c75242fa7c2bd",
+   "kind": "AppKit:NSWindow",
+   "name": "has-close-box",
+   "origin": "inferred",
+   "record_fp": "87298952f9a72ed1",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_has_close_box"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-dynamic-depth-limit:observe",
+   "fingerprint": "3db72c2c27f054eb",
+   "kind": "AppKit:NSWindow",
+   "name": "has-dynamic-depth-limit",
+   "origin": "inferred",
+   "record_fp": "2bd592197942d8ce",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_has_dynamic_depth_limit"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-shadow:observe",
+   "fingerprint": "80d3140c942d45e8",
+   "kind": "AppKit:NSWindow",
+   "name": "has-shadow",
+   "origin": "inferred",
+   "record_fp": "c77cdab5c4d104ba",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_has_shadow"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:has-title-bar:observe",
+   "fingerprint": "834f6af1b710c457",
+   "kind": "AppKit:NSWindow",
+   "name": "has-title-bar",
+   "origin": "inferred",
+   "record_fp": "126dd51ad2390c73",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_has_title_bar"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:hides-on-deactivate:observe",
+   "fingerprint": "24240d0c17106729",
+   "kind": "AppKit:NSWindow",
+   "name": "hides-on-deactivate",
+   "origin": "inferred",
+   "record_fp": "be02aabb242b07c3",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_hides_on_deactivate"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:ignores-mouse-events:observe",
+   "fingerprint": "a68840e4ce384614",
+   "kind": "AppKit:NSWindow",
+   "name": "ignores-mouse-events",
+   "origin": "inferred",
+   "record_fp": "994e8a23099fb2a2",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_ignores_mouse_events"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:in-live-resize:observe",
+   "fingerprint": "605704345dc639d4",
+   "kind": "AppKit:NSWindow",
+   "name": "in-live-resize",
+   "origin": "inferred",
+   "record_fp": "5862a9c74e4ce4dd",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_in_live_resize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:initial-first-responder:observe",
+   "fingerprint": "ba0bf5f23734ec2d",
+   "kind": "AppKit:NSWindow",
+   "name": "initial-first-responder",
+   "origin": "inferred",
+   "record_fp": "3a051023b7b136fe",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_initial_first_responder"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:key-view-selection-direction:observe",
+   "fingerprint": "385f7cb55ccadf7f",
+   "kind": "AppKit:NSWindow",
+   "name": "key-view-selection-direction",
+   "origin": "inferred",
+   "record_fp": "15c87536dfe3e074",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_key_view_selection_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:key-window:observe",
+   "fingerprint": "f894270638250b38",
+   "kind": "AppKit:NSWindow",
+   "name": "key-window",
+   "origin": "inferred",
+   "record_fp": "1e822fbd63d3312b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_key_window"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:level:observe",
+   "fingerprint": "8f8e7647f14bf106",
+   "kind": "AppKit:NSWindow",
+   "name": "level",
+   "origin": "inferred",
+   "record_fp": "2200a1b213fc7de6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_level"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:main-window:observe",
+   "fingerprint": "d071f43346e96465",
+   "kind": "AppKit:NSWindow",
+   "name": "main-window",
+   "origin": "inferred",
+   "record_fp": "778c98ad80eef388",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_main_window"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:max-full-screen-content-size:observe",
+   "fingerprint": "3fad729d81a2eb45",
+   "kind": "AppKit:NSWindow",
+   "name": "max-full-screen-content-size",
+   "origin": "inferred",
+   "record_fp": "5cc420a75e07404d",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_max_full_screen_content_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:max-size:observe",
+   "fingerprint": "252591cc220049b4",
+   "kind": "AppKit:NSWindow",
+   "name": "max-size",
+   "origin": "inferred",
+   "record_fp": "980db100800c939c",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_max_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:min-full-screen-content-size:observe",
+   "fingerprint": "920e7fb57c602268",
+   "kind": "AppKit:NSWindow",
+   "name": "min-full-screen-content-size",
+   "origin": "inferred",
+   "record_fp": "4e1098421e930ee9",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_min_full_screen_content_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:min-size:observe",
+   "fingerprint": "4217ccf1f0cbe59a",
+   "kind": "AppKit:NSWindow",
+   "name": "min-size",
+   "origin": "inferred",
+   "record_fp": "21a9cf71b76978ce",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_min_size"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniaturizable:observe",
+   "fingerprint": "de16b9484532df16",
+   "kind": "AppKit:NSWindow",
+   "name": "miniaturizable",
+   "origin": "inferred",
+   "record_fp": "f7a477a422b8bc2d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_miniaturizable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniaturized:observe",
+   "fingerprint": "fc9d9d6317b1f4bf",
+   "kind": "AppKit:NSWindow",
+   "name": "miniaturized",
+   "origin": "inferred",
+   "record_fp": "5dd812fc35aa5cf0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_miniaturized"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniwindow-image:observe",
+   "fingerprint": "ab8e9aefd41be978",
+   "kind": "AppKit:NSWindow",
+   "name": "miniwindow-image",
+   "origin": "inferred",
+   "record_fp": "a4d204751d1d2dab",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_miniwindow_image"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:miniwindow-title:observe",
+   "fingerprint": "0df282adcde90045",
+   "kind": "AppKit:NSWindow",
+   "name": "miniwindow-title",
+   "origin": "inferred",
+   "record_fp": "98313d12738c4d6c",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_miniwindow_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:modal-panel:observe",
+   "fingerprint": "1b96d4d54124bf4b",
+   "kind": "AppKit:NSWindow",
+   "name": "modal-panel",
+   "origin": "inferred",
+   "record_fp": "e618fe807a0836e5",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_modal_panel"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:mouse-location-outside-of-event-stream:observe",
+   "fingerprint": "af1f9c84d4b27849",
+   "kind": "AppKit:NSWindow",
+   "name": "mouse-location-outside-of-event-stream",
+   "origin": "inferred",
+   "record_fp": "49674dd2d7441f4e",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_mouse_location_outside_of_event_stream"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:movable-by-window-background:observe",
+   "fingerprint": "ecfda03cc74e2238",
+   "kind": "AppKit:NSWindow",
+   "name": "movable-by-window-background",
+   "origin": "inferred",
+   "record_fp": "c7ff48bd8bc285b5",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_movable_by_window_background"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:movable:observe",
+   "fingerprint": "f34f1f9a9e9c6689",
+   "kind": "AppKit:NSWindow",
+   "name": "movable",
+   "origin": "inferred",
+   "record_fp": "155bc6712f40320c",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_movable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:occlusion-state:observe",
+   "fingerprint": "7ec6f4e9b7ee0ddc",
+   "kind": "AppKit:NSWindow",
+   "name": "occlusion-state",
+   "origin": "inferred",
+   "record_fp": "c42c78b565068e29",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_occlusion_state"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:on-active-space:observe",
+   "fingerprint": "fb14fa4b9af526ec",
+   "kind": "AppKit:NSWindow",
+   "name": "on-active-space",
+   "origin": "inferred",
+   "record_fp": "fa8e9ecd779dea45",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_on_active_space"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:opaque:observe",
+   "fingerprint": "527d61e6db069d89",
+   "kind": "AppKit:NSWindow",
+   "name": "opaque",
+   "origin": "inferred",
+   "record_fp": "29ce832b6ff3c37f",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_opaque"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:ordered-index:observe",
+   "fingerprint": "402a65b0ece171df",
+   "kind": "AppKit:NSWindow",
+   "name": "ordered-index",
+   "origin": "inferred",
+   "record_fp": "f9a422b974ed431c",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_ordered_index"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:parent-window:observe",
+   "fingerprint": "7a4418ae21fc4516",
+   "kind": "AppKit:NSWindow",
+   "name": "parent-window",
+   "origin": "inferred",
+   "record_fp": "6dbf9a377eb4f8c4",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_parent_window"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:preserves-content-during-live-resize:observe",
+   "fingerprint": "a3e0243fd4b21cc0",
+   "kind": "AppKit:NSWindow",
+   "name": "preserves-content-during-live-resize",
+   "origin": "inferred",
+   "record_fp": "0e1a81d5b9b7e2ca",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_preserves_content_during_live_resize"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:prevents-application-termination-when-modal:observe",
+   "fingerprint": "67040efc6a7aacb7",
+   "kind": "AppKit:NSWindow",
+   "name": "prevents-application-termination-when-modal",
+   "origin": "inferred",
+   "record_fp": "5916272694f32d89",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_prevents_application_termination_when_modal"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:released-when-closed:observe",
+   "fingerprint": "1c5c3e5d79bcbb8c",
+   "kind": "AppKit:NSWindow",
+   "name": "released-when-closed",
+   "origin": "inferred",
+   "record_fp": "e2b18bf5c58b7572",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_released_when_closed"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:represented-filename:observe",
+   "fingerprint": "2a53fe1e7d0e62de",
+   "kind": "AppKit:NSWindow",
+   "name": "represented-filename",
+   "origin": "inferred",
+   "record_fp": "9d991e1f30a8f856",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_represented_filename"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:represented-url:observe",
+   "fingerprint": "74bf239c4a0dd3e7",
+   "kind": "AppKit:NSWindow",
+   "name": "represented-url",
+   "origin": "inferred",
+   "record_fp": "c2d19a82989ee1f3",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_represented_url"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:resizable:observe",
+   "fingerprint": "24e5929cf242b05d",
+   "kind": "AppKit:NSWindow",
+   "name": "resizable",
+   "origin": "inferred",
+   "record_fp": "9563ce705416a953",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_resizable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:resize-flags:observe",
+   "fingerprint": "8bbca6ea8b33730d",
+   "kind": "AppKit:NSWindow",
+   "name": "resize-flags",
+   "origin": "inferred",
+   "record_fp": "853ab166e261f919",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_resize_flags"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:resize-increments:observe",
+   "fingerprint": "04a2e93979c633ee",
+   "kind": "AppKit:NSWindow",
+   "name": "resize-increments",
+   "origin": "inferred",
+   "record_fp": "37f89b24d8c2b465",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_resize_increments"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:restorable:observe",
+   "fingerprint": "f768cee9c0bbb011",
+   "kind": "AppKit:NSWindow",
+   "name": "restorable",
+   "origin": "inferred",
+   "record_fp": "63ecb03a1c6901c8",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_restorable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:restoration-class:observe",
+   "fingerprint": "453e875e77f36b4e",
+   "kind": "AppKit:NSWindow",
+   "name": "restoration-class",
+   "origin": "inferred",
+   "record_fp": "388c874f7c62a8fc",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_restoration_class"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:screen:observe",
+   "fingerprint": "02f0f4a44fbd9a3d",
+   "kind": "AppKit:NSWindow",
+   "name": "screen",
+   "origin": "inferred",
+   "record_fp": "cbbcbebf1e1ed12f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_screen"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sharing-type:observe",
+   "fingerprint": "bc98cdbbd7b801dd",
+   "kind": "AppKit:NSWindow",
+   "name": "sharing-type",
+   "origin": "inferred",
+   "record_fp": "42c8edc48251289c",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_sharing_type"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sheet-parent:observe",
+   "fingerprint": "c190abb2fbe4dd9d",
+   "kind": "AppKit:NSWindow",
+   "name": "sheet-parent",
+   "origin": "inferred",
+   "record_fp": "8d31f025ba844dbe",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_sheet_parent"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sheet:observe",
+   "fingerprint": "e890e09f55669c16",
+   "kind": "AppKit:NSWindow",
+   "name": "sheet",
+   "origin": "inferred",
+   "record_fp": "944856308502516b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_sheet"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:sheets:observe",
+   "fingerprint": "fccfe4bb19558636",
+   "kind": "AppKit:NSWindow",
+   "name": "sheets",
+   "origin": "inferred",
+   "record_fp": "ed46dcc547deca2b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_sheets"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:string-with-saved-frame:observe",
+   "fingerprint": "2aeb2c9f0fae2828",
+   "kind": "AppKit:NSWindow",
+   "name": "string-with-saved-frame",
+   "origin": "inferred",
+   "record_fp": "552c8005d2012283",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_string_with_saved_frame"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:style-mask:observe",
+   "fingerprint": "08071927a7671b3b",
+   "kind": "AppKit:NSWindow",
+   "name": "style-mask",
+   "origin": "inferred",
+   "record_fp": "c82974ad81e09e0d",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_style_mask"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:subtitle:observe",
+   "fingerprint": "8f37971a29c4b3a4",
+   "kind": "AppKit:NSWindow",
+   "name": "subtitle",
+   "origin": "inferred",
+   "record_fp": "bd987d249bd3fefb",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_subtitle"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tab-group:observe",
+   "fingerprint": "a122f4b5132efe4a",
+   "kind": "AppKit:NSWindow",
+   "name": "tab-group",
+   "origin": "inferred",
+   "record_fp": "62039b5c3691ac67",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_tab_group"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tab:observe",
+   "fingerprint": "05d9ada40666664d",
+   "kind": "AppKit:NSWindow",
+   "name": "tab",
+   "origin": "inferred",
+   "record_fp": "2cbe4b84e5bb3986",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_tab"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tabbed-windows:observe",
+   "fingerprint": "604be98ed0f2e396",
+   "kind": "AppKit:NSWindow",
+   "name": "tabbed-windows",
+   "origin": "inferred",
+   "record_fp": "69ffdbac9b906777",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_tabbed_windows"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tabbing-identifier:observe",
+   "fingerprint": "be1c50e947f46a8e",
+   "kind": "AppKit:NSWindow",
+   "name": "tabbing-identifier",
+   "origin": "inferred",
+   "record_fp": "42edeaed458eab0f",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_tabbing_identifier"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:tabbing-mode:observe",
+   "fingerprint": "4a9f299e3b35582b",
+   "kind": "AppKit:NSWindow",
+   "name": "tabbing-mode",
+   "origin": "inferred",
+   "record_fp": "b4c166f88088f23a",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_tabbing_mode"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:title-visibility:observe",
+   "fingerprint": "dc2b88a6524ec48e",
+   "kind": "AppKit:NSWindow",
+   "name": "title-visibility",
+   "origin": "inferred",
+   "record_fp": "1b28375177581f26",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_title_visibility"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:title:observe",
+   "fingerprint": "94e4950989de856c",
+   "kind": "AppKit:NSWindow",
+   "name": "title",
+   "origin": "inferred",
+   "record_fp": "2209849be360204a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:titlebar-accessory-view-controllers:observe",
+   "fingerprint": "f8bacc9454786887",
+   "kind": "AppKit:NSWindow",
+   "name": "titlebar-accessory-view-controllers",
+   "origin": "inferred",
+   "record_fp": "c4bb91a763b21c31",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_titlebar_accessory_view_controllers"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:titlebar-appears-transparent:observe",
+   "fingerprint": "d2d0195428c9289d",
+   "kind": "AppKit:NSWindow",
+   "name": "titlebar-appears-transparent",
+   "origin": "inferred",
+   "record_fp": "9ed1de62d2944a1e",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_titlebar_appears_transparent"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:titlebar-separator-style:observe",
+   "fingerprint": "46934eaef4c677ed",
+   "kind": "AppKit:NSWindow",
+   "name": "titlebar-separator-style",
+   "origin": "inferred",
+   "record_fp": "efe5a402e80d2d1f",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_titlebar_separator_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:toolbar-style:observe",
+   "fingerprint": "edd3047139739d60",
+   "kind": "AppKit:NSWindow",
+   "name": "toolbar-style",
+   "origin": "inferred",
+   "record_fp": "b986c6d7c0421795",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_toolbar_style"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:toolbar:observe",
+   "fingerprint": "9a7852b43ac38b88",
+   "kind": "AppKit:NSWindow",
+   "name": "toolbar",
+   "origin": "inferred",
+   "record_fp": "4c9b98dc8b58a390",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_toolbar"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:views-need-display:observe",
+   "fingerprint": "c39d52905dff41f6",
+   "kind": "AppKit:NSWindow",
+   "name": "views-need-display",
+   "origin": "inferred",
+   "record_fp": "76dc247e34de07a4",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "observe_nswindow_views_need_display"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:visible:observe",
+   "fingerprint": "b0405b0c766e3195",
+   "kind": "AppKit:NSWindow",
+   "name": "visible",
+   "origin": "inferred",
+   "record_fp": "b121861077bd75b9",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_visible"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:window-controller:observe",
+   "fingerprint": "cf792b75e47114a8",
+   "kind": "AppKit:NSWindow",
+   "name": "window-controller",
+   "origin": "inferred",
+   "record_fp": "23d03151b7f5c51b",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_window_controller"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:window-number:observe",
+   "fingerprint": "a223ac333c301d09",
+   "kind": "AppKit:NSWindow",
+   "name": "window-number",
+   "origin": "inferred",
+   "record_fp": "ee086050ab1da1e1",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_window_number"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:window-titlebar-layout-direction:observe",
+   "fingerprint": "fa37a77487e5d6f1",
+   "kind": "AppKit:NSWindow",
+   "name": "window-titlebar-layout-direction",
+   "origin": "inferred",
+   "record_fp": "bb2d99a2a633d3a0",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_window_titlebar_layout_direction"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:works-when-modal:observe",
+   "fingerprint": "cfdb108afc97178b",
+   "kind": "AppKit:NSWindow",
+   "name": "works-when-modal",
+   "origin": "inferred",
+   "record_fp": "7901fe5bacd79ae6",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_works_when_modal"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:zoomable:observe",
+   "fingerprint": "040d96a626f7c439",
+   "kind": "AppKit:NSWindow",
+   "name": "zoomable",
+   "origin": "inferred",
+   "record_fp": "685fcf01a7fb8bbb",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_zoomable"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:zoomed:observe",
+   "fingerprint": "e177f8f1ee422711",
+   "kind": "AppKit:NSWindow",
+   "name": "zoomed",
+   "origin": "inferred",
+   "record_fp": "7d4a17777cf2e39a",
+   "section": "observe",
+   "strength": "unsupported",
+   "tests": [
+    "observe_nswindow_zoomed"
    ]
   },
   {

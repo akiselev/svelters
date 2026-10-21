@@ -13,26 +13,24 @@ const alive = (n) => !n.dead && !n.destroyed;
 
 /**
  * Observes `prop` of `node` for the lifetime of the enclosing effect, calling `take(value)` per
- * change. Returns false when the host reports it cannot observe the prop (a backend without the
- * mechanism yet: `host.observe` answers false), true otherwise. The binding holds one host-side
- * observation itself (the host refcounts per (handle, prop)), which also gives that answer.
+ * delivered change. Returns false when the host refused the observation (`unsubscribe.observed`
+ * false: a backend without the mechanism for this prop), true otherwise. The registration holds one
+ * host-side reference (refcounted per (handle, prop)); the effect teardown releases it before the
+ * natives are destroyed.
  */
 function observeFor(node, prop, take) {
   if (!alive(node)) return true;
   const { host: hs, h } = node;
-  if (hs.observe(h, prop, true) === false) return false;
-  $.user_pre_effect(() =>
-    $.untrack(() => {
-      const unsub = observeProp(h, prop, (v) => {
-        if (alive(node)) take(v === undefined ? hs.getProp(h, prop) : v);
-      });
-      return () => {
-        unsub();
-        if (!alive(node)) return;
-        hs.observe(h, prop, false);
-      };
+  const unsub = $.untrack(() =>
+    observeProp(h, prop, (v) => {
+      if (alive(node)) take(v === undefined ? hs.getProp(h, prop) : v);
     }),
   );
+  if (unsub.observed === false) {
+    unsub();
+    return false;
+  }
+  $.user_pre_effect(() => unsub);
   return true;
 }
 

@@ -361,6 +361,7 @@ impl Core {
                 st.tree.remove(&h);
                 // The backend drops its native observations of `h` in `destroy`.
                 st.observed.retain(|k, _| k.0 != h);
+                st.dirty.retain(|k| k.0 != h);
                 st.dead.push(h, Death::Destroyed);
             }
             self.cb_release_owner(h);
@@ -421,7 +422,13 @@ impl Core {
             }
             let res = self.backend.set_prop_raw(h, p, &raw).map_err(|e| self.backend_err(e));
             self.finish_callbacks(&mut ar, res.is_ok());
+            // ABI v2.6 set path (REACTIVITY.md §5.2): an observed prop is read back as its `last`.
+            let observed = res.is_ok() && self.st.borrow().observed.contains_key(&(h, p));
+            let written = observed.then(|| unsafe { Value::from_raw(&raw) });
             drop(ar);
+            if observed {
+                self.after_set(h, p, written);
+            }
             res
         })
     }
@@ -661,19 +668,25 @@ impl Core {
                 None => return Err(self.kind_of(h).unwrap_err().into()),
             };
             let p = self.resolve_name(NameKind::Prop, k, prop)?;
-            let count = self.st.borrow().observed.get(&(h, p)).map_or(0, |o| o.0);
+            let count = self.st.borrow().observed.get(&(h, p)).map_or(0, |o| o.count);
             if on {
                 if count > 0 {
-                    self.st.borrow_mut().observed.get_mut(&(h, p)).unwrap().0 += 1;
+                    self.st.borrow_mut().observed.get_mut(&(h, p)).unwrap().count += 1;
                     return Ok(true);
                 }
+                let desc = self.member(NameKind::Prop, k, p);
                 let name = match prop {
                     Name::Str(s) => s.to_string(),
-                    Name::Id(id) => self.member(NameKind::Prop, k, id).map(|d| d.name.clone()).unwrap_or_else(|| format!("#{id}")),
+                    Name::Id(id) => desc.as_ref().map(|d| d.name.clone()).unwrap_or_else(|| format!("#{id}")),
                 };
+                let proportional = desc.is_some_and(|d| d.flags & SVL_M_PROPORTIONAL != 0);
                 match self.backend.observe(h, p, true) {
                     Ok(()) => {
-                        self.st.borrow_mut().observed.insert((h, p), (1, name));
+                        // The baseline `last`: a notification that changes nothing (GTK re-notifies an
+                        // identical set) is then dropped from the start.
+                        let last = if proportional { None } else { self.read_last(h, p) };
+                        let o = Observed { count: 1, name, proportional, last, force: false };
+                        self.st.borrow_mut().observed.insert((h, p), o);
                         Ok(true)
                     }
                     Err(e) if e.code == SVL_OBSERVE_UNSUPPORTED => Ok(false),
@@ -688,7 +701,7 @@ impl Core {
                         Ok(false)
                     }
                     _ => {
-                        self.st.borrow_mut().observed.get_mut(&(h, p)).unwrap().0 -= 1;
+                        self.st.borrow_mut().observed.get_mut(&(h, p)).unwrap().count -= 1;
                         Ok(true)
                     }
                 }

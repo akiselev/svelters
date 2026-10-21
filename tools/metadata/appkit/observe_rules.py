@@ -32,6 +32,7 @@ def infer(rules_doc: dict, version: str) -> tuple[dict[str, list[dict]], dict, l
     value_props = set(o.get("value_props") or [])
     fallbacks = {k: list(v) for k, v in (o.get("fallbacks") or {}).items()}
     complete = set(o.get("fallback_complete") or [])
+    verify = dict(o.get("verify") or {})     # R4: the native trigger of the generated row, `Class:prop: trigger`
     probe_path = PROBE_DIR / f"{version}.json"
     probe = json.loads(probe_path.read_text())["classes"] if probe_path.exists() else {}
     classes = {}
@@ -107,6 +108,8 @@ def infer(rules_doc: dict, version: str) -> tuple[dict[str, list[dict]], dict, l
                         break
         for js, pr in sorted(props.items()):
             rec, conf, pattern = decide(cls, pr, cls)
+            if f"{cls}:{js}" in verify and rec["class"] in ("exact", "partial"):
+                rec["verify"] = {"on": key, "check": "cross", "trigger": verify[f"{cls}:{js}"]}
             evidence[f"{key}:{js}"] = {"confidence": conf, "pattern": pattern, "evidence": {"kvo": kvo_of(cls, js)}}
             if conf >= promote_at:
                 out.setdefault(key, []).append(rec)

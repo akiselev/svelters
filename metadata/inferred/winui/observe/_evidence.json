@@ -690,7 +690,7 @@
   "evidence": {
    "dependency_property": true
   },
-  "pattern": "observe:dp-callback"
+  "pattern": "observe:event"
  },
  "Microsoft.UI.Xaml.Controls:TextBlock:SelectionEnd": {
   "confidence": 0.9,

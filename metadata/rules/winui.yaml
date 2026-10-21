@@ -44,6 +44,9 @@ no_notify:
   - prop: FrameworkElement.ActualHeight
     use: SizeChanged
     reason: '"do not raise property change notifications" (FrameworkElement.ActualHeight docs); use SizeChanged'
+  - prop: TextBlock.SelectedText
+    use: SelectionChanged
+    reason: 'R4 windows-winui CI: the SelectedTextProperty change callback did not fire for SelectAll on a mounted, selectable TextBlock (a read-only computed DP); SelectionChanged reports the selection'
   - prop: FrameworkElement.ActualTheme
     use: ActualThemeChanged
     reason: computed from RequestedTheme up the tree; ActualThemeChanged reports it
@@ -88,3 +91,17 @@ observe:
     "UIElement.RenderSize": [SizeChanged]
     "Window.Visible": [VisibilityChanged]
     "Window.Bounds": [SizeChanged]
+  # The native trigger of the generated observe row (milestone R4) for props a plain write cannot change:
+  # crates/svelters-winui/src/testing.rs `Trig` (mount, resize, theme, select, select-all, activate).
+  verify:
+    "TextBox.SelectionStart": select
+    "TextBox.SelectionLength": select
+    "TextBox.SelectedText": select
+    "TextBlock.SelectedText": select-all
+    "FrameworkElement.ActualWidth": resize
+    "FrameworkElement.ActualHeight": resize
+    "FrameworkElement.ActualTheme": theme
+    "FrameworkElement.IsLoaded": mount
+    "UIElement.ActualSize": resize
+    "UIElement.RenderSize": resize
+    "Window.Visible": activate

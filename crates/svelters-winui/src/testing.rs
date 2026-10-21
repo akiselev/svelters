@@ -5,6 +5,7 @@ use crate::WinUiBackend;
 use std::cell::RefCell;
 use std::rc::Rc;
 use svelters_abi::*;
+pub use svelters_abi::ObserveError;
 
 /// What the recording host answers to `call_sync`.
 #[derive(Clone, Debug)]
@@ -19,6 +20,8 @@ struct Record {
     events: Vec<(u64, u32, Vec<Value>)>,
     gone: Vec<(u64, u32)>,
     reply: Option<Value>,
+    /// ABI v2.6 `prop_changed` calls, in order.
+    changed: Vec<(u64, u32)>,
 }
 
 struct Recorder(Rc<RefCell<Record>>);
@@ -37,6 +40,9 @@ impl HostCallbacks for Recorder {
         self.0.borrow_mut().gone.push((h, reason));
     }
     fn frame(&self) {}
+    fn prop_changed(&self, h: svl_handle, prop: svl_id) {
+        self.0.borrow_mut().changed.push((h, prop));
+    }
 }
 
 struct Shared {
@@ -183,6 +189,36 @@ impl Harness {
         r.events.iter().rev().find(|(eh, ev, _)| *eh == h && ev & SVL_SIGNAL_ID_MASK == id).map(|e| e.2.clone()).unwrap_or_default()
     }
 
+    /// The prop id `name` resolves to on `h`.
+    pub fn prop_id(&self, h: u64, name: &str) -> u32 {
+        self.id(NameKind::Prop, h, name)
+    }
+
+    /// ABI v2.6 `observe` through the backend trait.
+    pub fn observe(&self, h: u64, prop: &str, on: bool) -> Result<(), ObserveError> {
+        self.s.backend.observe(h, self.id(NameKind::Prop, h, prop), on)
+    }
+
+    /// A write that is not a host op (no echo marker): what native code changing the prop does.
+    pub fn set_natively(&self, h: u64, prop: &str, v: Value) -> Result<(), String> {
+        self.s.backend.set_prop_natively(h, self.id(NameKind::Prop, h, prop), &v)
+    }
+
+    /// `prop_changed` calls for (h, prop) since the last call (all calls are taken).
+    pub fn take_changed(&self, h: u64, prop: u32) -> usize {
+        let all = std::mem::take(&mut self.s.record.borrow_mut().changed);
+        all.into_iter().filter(|c| *c == (h, prop)).count()
+    }
+
+    /// Creates a window, puts `child` in it and activates it (layout, Loaded, theme need a live tree).
+    pub fn mount(&mut self, child: u64) -> u64 {
+        let win = self.create("window");
+        self.insert(win, child, None, None).unwrap_or_else(|e| panic!("mount: {e}"));
+        self.call(win, "activate", &[]).unwrap_or_else(|e| panic!("activate: {e}"));
+        self.pump(300);
+        win
+    }
+
     /// The `on_destroyed` reason reported for `h`, if any.
     pub fn gone(&self, h: u64) -> Option<u32> {
         self.s.record.borrow().gone.iter().find(|(g, _)| *g == h).map(|g| g.1)
@@ -253,6 +289,245 @@ pub fn call0(tag: &str, method: &str) {
     let mut h = Harness::new();
     let w = h.create(tag);
     h.call(w, method, &[]).unwrap_or_else(|e| panic!("<{tag}> {method}(): {e}"));
+}
+
+// ---- Observe facts (milestone R4; plans/research/REACTIVITY.md 4.5) ----
+
+/// How an observe row checks its fact (`tools/metadata/winui/gen_backend.py` picks it from the fact).
+pub enum ObsCheck {
+    /// Write these values natively in order (a write, not a host op): at least one is announced. Then the
+    /// identical-write, echo, coalescing and teardown checks of [`observe`].
+    Change(Vec<Value>),
+    /// A native change that is not a write of the prop (the fact's `verify.trigger`): announced.
+    Cross(Trig),
+    /// The mechanism installs and uninstalls; nothing triggers it (`verified: connect`).
+    Connect,
+    /// `observe` answers SVL_OBSERVE_UNSUPPORTED (class none or set_only: WinUI has no mechanism).
+    Unsupported,
+    /// `observe` answers -1 (class constant).
+    Refused,
+}
+
+/// Native triggers of `cross` facts (`verify.trigger` in metadata/rules/winui.yaml `observe.verify`).
+#[derive(Clone, Copy, Debug)]
+pub enum Trig {
+    /// Mount the element in an activated window (`Loaded`).
+    Mount,
+    /// Mount, then change `width` (layout: `SizeChanged`).
+    Resize,
+    /// Mount, then flip `requested-theme` (`ActualThemeChanged`).
+    Theme,
+    /// Text, then `select(1, 3)` on a mounted TextBox (`SelectionChanged`).
+    Select,
+    /// Text and selection enabled, then `select-all` on a mounted TextBlock (`SelectionChanged`).
+    SelectAll,
+    /// `activate` the window itself (`VisibilityChanged`).
+    Activate,
+}
+
+/// What an identical native write is expected to do (`fires` of the fact; `Any`: not decided yet, logged).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum Fires {
+    OnChange,
+    OnSet,
+    Any,
+}
+
+fn fire(h: &mut Harness, w: u64, t: Trig, n: usize) {
+    match t {
+        Trig::Mount => {
+            h.mount(w);
+        }
+        Trig::Resize => {
+            let width = if n % 2 == 0 { 220.0 } else { 160.0 };
+            h.set_natively(w, "width", Value::F64(width)).unwrap_or_else(|e| panic!("width: {e}"));
+            h.pump(200);
+        }
+        Trig::Theme => {
+            let cur = h.get(w, "actual-theme").unwrap_or(Value::Null);
+            let next = if cur == Value::Str("dark".into()) { "Light" } else { "Dark" };
+            h.set_natively(w, "requested-theme", Value::Str(next.into())).unwrap_or_else(|e| panic!("requested-theme: {e}"));
+            h.pump(200);
+        }
+        Trig::Select => {
+            let (a, b) = if n % 2 == 0 { (1, 3) } else { (2, 2) };
+            h.call(w, "select", &[Value::I64(a), Value::I64(b)]).unwrap_or_else(|e| panic!("select: {e}"));
+            h.pump(50);
+        }
+        Trig::SelectAll => {
+            h.call(w, "select-all", &[]).unwrap_or_else(|e| panic!("select-all: {e}"));
+            h.pump(50);
+        }
+        Trig::Activate => {
+            h.call(w, "activate", &[]).unwrap_or_else(|e| panic!("activate: {e}"));
+            h.pump(300);
+        }
+    }
+}
+
+/// Prepares the element a trigger acts on (mounted, with text) before observation starts.
+fn prepare(h: &mut Harness, w: u64, t: Trig) {
+    match t {
+        Trig::Mount | Trig::Activate => {}
+        Trig::Resize | Trig::Theme => {
+            h.mount(w);
+        }
+        Trig::Select => {
+            h.set(w, "text", Value::Str("hello world".into())).unwrap_or_else(|e| panic!("text: {e}"));
+            h.mount(w);
+        }
+        Trig::SelectAll => {
+            h.set(w, "text", Value::Str("hello world".into())).unwrap_or_else(|e| panic!("text: {e}"));
+            h.set(w, "is-text-selection-enabled", Value::Bool(true)).unwrap_or_else(|e| panic!("is-text-selection-enabled: {e}"));
+            h.mount(w);
+        }
+    }
+}
+
+/// One observe fact of a new `<tag>` through the real ABI v2.6 path (REACTIVITY.md 4.5, backend level):
+/// 1. native change: announced at least once (`prop_changed(h, prop)`), synchronously on the UI thread;
+/// 2. identical write: announced per `fires` (logged when `Any`);
+/// 3. echo: a write through `set_prop` (the host op) is announced unless the prop is proportional (the host's
+///    compare drops the echo of cheap props; the backend suppresses proportional ones);
+/// 4. coalescing input: 10 native changes produce at least one announcement (more than one per change is logged; the
+///    host coalesces them into one delivery per checkpoint);
+/// 5. teardown: after `observe(off)` nothing is announced; nested `on`s need as many `off`s; destroying the handle
+///    while observed ends the observation (no crash, nothing announced).
+pub fn observe(tag: &str, prop: &str, check: ObsCheck, fires: Fires) {
+    let mut h = Harness::new();
+    let w = h.create(tag);
+    let pid = h.prop_id(w, prop);
+    match check {
+        ObsCheck::Unsupported => {
+            match h.observe(w, prop, true) {
+                Err(ObserveError::Unsupported(_)) => {}
+                Err(ObserveError::Failed(m)) => panic!("<{tag}> {prop}: observe failed ({m}), want SVL_OBSERVE_UNSUPPORTED"),
+                Ok(()) => panic!("<{tag}> {prop}: observe accepted a prop the fact says WinUI cannot announce"),
+            }
+            return;
+        }
+        ObsCheck::Refused => {
+            match h.observe(w, prop, true) {
+                Err(ObserveError::Failed(_)) => {}
+                other => panic!("<{tag}> {prop}: observe answered {other:?}, want -1 (constant)"),
+            }
+            return;
+        }
+        _ => {}
+    }
+    if let ObsCheck::Cross(t) = check {
+        prepare(&mut h, w, t);
+    }
+    h.observe(w, prop, true).unwrap_or_else(|e| panic!("<{tag}> {prop}: observe: {e:?}"));
+    assert!(h.backend().is_observed(w, pid));
+    h.take_changed(w, pid);
+    // The writes cycle through the test values and the initial read-back, so consecutive writes differ even for a
+    // single test value (DP callbacks fire on effective changes only).
+    let seq: Vec<Value> = match &check {
+        ObsCheck::Change(values) => {
+            let mut s = values.clone();
+            s.push(h.get(w, prop).unwrap_or_else(|e| panic!("<{tag}> read {prop}: {e}")));
+            s
+        }
+        _ => Vec::new(),
+    };
+    let change = |h: &mut Harness, n: usize| match &check {
+        ObsCheck::Change(_) => {
+            let v = &seq[n % seq.len()];
+            h.set_natively(w, prop, v.clone()).unwrap_or_else(|e| panic!("<{tag}> {prop} = {v:?}: {e}"));
+        }
+        ObsCheck::Cross(t) => fire(h, w, *t, n),
+        _ => {}
+    };
+    if matches!(check, ObsCheck::Connect) {
+        h.observe(w, prop, false).unwrap_or_else(|e| panic!("<{tag}> {prop}: observe(off): {e:?}"));
+        assert!(!h.backend().is_observed(w, pid));
+        return;
+    }
+    // 1. a native change (every value once: at least one differs from the default)
+    let values = if let ObsCheck::Change(v) = &check { v.len() } else { 1 };
+    for n in 0..values {
+        change(&mut h, n);
+    }
+    h.pump(20);
+    let n1 = h.take_changed(w, pid);
+    assert!(n1 >= 1, "<{tag}> {prop}: a native change was not announced");
+    // 2. an identical write
+    if let ObsCheck::Change(_) = &check {
+        // The read-back written again (its wire form is accepted by the setter).
+        let cur = h.get(w, prop).unwrap_or_else(|e| panic!("<{tag}> read {prop}: {e}"));
+        if h.set_natively(w, prop, cur).is_ok() {
+            h.pump(20);
+            let n2 = h.take_changed(w, pid);
+            println!("observe <{tag}> {prop}: identical write announced {n2} time(s)");
+            match fires {
+                Fires::OnChange => assert_eq!(n2, 0, "<{tag}> {prop}: an identical write was announced (fires: on_change)"),
+                Fires::OnSet => assert!(n2 >= 1, "<{tag}> {prop}: an identical write was not announced (fires: on_set)"),
+                Fires::Any => {}
+            }
+        }
+        // 3. echo: our own writes (the host op) of every value of the cycle: at least one is a change
+        {
+            for v in &seq {
+                h.set(w, prop, v.clone()).unwrap();
+            }
+            h.pump(20);
+            let n3 = h.take_changed(w, pid);
+            let proportional = crate::table::observe(pid).is_some_and(|o| o.proportional);
+            if proportional {
+                assert_eq!(n3, 0, "<{tag}> {prop}: our own write of a proportional prop was announced");
+            } else {
+                assert!(n3 >= 1, "<{tag}> {prop}: our own write was not announced (the host compare drops it, not the backend)");
+            }
+        }
+    }
+    // 4. coalescing input: 10 native changes (a one-shot trigger, mounting, activating, select-all, cannot repeat)
+    let repeatable = match &check {
+        // Selecting all again selects the same text: no change.
+        ObsCheck::Cross(t) => !matches!(t, Trig::Mount | Trig::Activate | Trig::SelectAll),
+        _ => true,
+    };
+    if repeatable {
+        for n in 0..10 {
+            change(&mut h, n + 1);
+        }
+        h.pump(20);
+        let n4 = h.take_changed(w, pid);
+        assert!(n4 >= 1, "<{tag}> {prop}: 10 native changes were not announced");
+        if n4 > 10 {
+            println!("observe <{tag}> {prop}: 10 native changes announced {n4} times");
+        }
+    }
+    // 5. teardown: nesting, off, destroy while observed
+    h.observe(w, prop, true).unwrap();
+    h.observe(w, prop, false).unwrap();
+    assert!(h.backend().is_observed(w, pid), "<{tag}> {prop}: a nested off ended the observation");
+    h.observe(w, prop, false).unwrap();
+    assert!(!h.backend().is_observed(w, pid));
+    h.take_changed(w, pid);
+    if repeatable {
+        for n in 0..2 {
+            change(&mut h, n);
+        }
+        h.pump(20);
+        assert_eq!(h.take_changed(w, pid), 0, "<{tag}> {prop}: announced after observe(off)");
+    }
+    h.observe(w, prop, false).unwrap(); // off for an unobserved prop is 0
+    h.observe(w, prop, true).unwrap();
+    // Keep the element alive past the handle, so a callback that outlived `destroy` would still fire.
+    let obj = h.backend().object(w).unwrap();
+    h.backend().destroy(w);
+    h.created.retain(|x| *x != w);
+    h.pump(20);
+    if let ObsCheck::Change(values) = &check {
+        let set = crate::dispatch::PROP_SET[pid as usize - 1].unwrap();
+        for v in values {
+            let _ = set(&obj, v);
+        }
+    }
+    h.pump(20);
+    assert_eq!(h.take_changed(w, pid), 0, "<{tag}> {prop}: announced after the handle was destroyed");
+    drop(obj);
 }
 
 /// Runs `tests` on this thread; see [`crate::harness::main`].

@@ -2085,18 +2085,22 @@
     "prop": "SelectedText",
     "provenance": [
      {
-      "origin": "winmd",
-      "ref": "O6: SelectedTextProperty is a DependencyProperty: RegisterPropertyChangedCallback"
-     },
-     {
       "origin": "rule",
-      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+      "ref": "O6 deny list: R4 windows-winui CI: the SelectedTextProperty change callback did not fire for SelectAll on a mounted, selectable TextBlock (a read-only computed DP); SelectionChanged reports the selection"
      }
     ],
-    "record_fp": "b3cae58579e38677",
+    "record_fp": "4bb5b893ba62f9ee",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml.Controls:TextBlock",
+     "trigger": "select-all"
+    },
     "via": [
      {
-      "mechanism": "notify"
+      "events": [
+       "SelectionChanged"
+      ],
+      "mechanism": "event"
      }
     ]
    },
@@ -2790,7 +2794,12 @@
       "ref": "O5: event SelectionChanged"
      }
     ],
-    "record_fp": "6fabf6905f3ca65f",
+    "record_fp": "7dfc412bfdc47852",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml.Controls:TextBox",
+     "trigger": "select"
+    },
     "via": [
      {
       "events": [
@@ -2877,7 +2886,12 @@
       "ref": "O5: event SelectionChanged"
      }
     ],
-    "record_fp": "2c165379dff0de83",
+    "record_fp": "78469dbe251a3fda",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml.Controls:TextBox",
+     "trigger": "select"
+    },
     "via": [
      {
       "events": [
@@ -2898,7 +2912,12 @@
       "ref": "O5: event SelectionChanged"
      }
     ],
-    "record_fp": "65b4fa49a0178d0a",
+    "record_fp": "842280b7b6ba2491",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml.Controls:TextBox",
+     "trigger": "select"
+    },
     "via": [
      {
       "events": [
@@ -3037,7 +3056,12 @@
       "ref": "O6 deny list: \"do not raise property change notifications\" (FrameworkElement.ActualHeight docs); use SizeChanged"
      }
     ],
-    "record_fp": "b953fb3d3eb16191",
+    "record_fp": "2b22d3c3e4e389fc",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml:FrameworkElement",
+     "trigger": "resize"
+    },
     "via": [
      {
       "events": [
@@ -3058,7 +3082,12 @@
       "ref": "O6 deny list: computed from RequestedTheme up the tree; ActualThemeChanged reports it"
      }
     ],
-    "record_fp": "cc11bf7d4395c6a7",
+    "record_fp": "f2663f079b5d8ca7",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml:FrameworkElement",
+     "trigger": "theme"
+    },
     "via": [
      {
       "events": [
@@ -3079,7 +3108,12 @@
       "ref": "O6 deny list: \"do not raise property change notifications\" (FrameworkElement.ActualWidth docs); use SizeChanged"
      }
     ],
-    "record_fp": "49c388098cd693c9",
+    "record_fp": "8f288de7ef76f07b",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml:FrameworkElement",
+     "trigger": "resize"
+    },
     "via": [
      {
       "events": [
@@ -3355,7 +3389,12 @@
       "ref": "O5: event Loaded, Unloaded"
      }
     ],
-    "record_fp": "7b5d5df1502714cf",
+    "record_fp": "25d3a60879ce73fe",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml:FrameworkElement",
+     "trigger": "mount"
+    },
     "via": [
      {
       "events": [
@@ -3739,7 +3778,12 @@
       "ref": "O5: event SizeChanged"
      }
     ],
-    "record_fp": "ac89774deae76748",
+    "record_fp": "4ed07550c07b2296",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml:UIElement",
+     "trigger": "resize"
+    },
     "via": [
      {
       "events": [
@@ -4441,7 +4485,12 @@
       "ref": "O5: event SizeChanged"
      }
     ],
-    "record_fp": "8dd5ffbd67db2cc2",
+    "record_fp": "48e6ce92388e3638",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml:UIElement",
+     "trigger": "resize"
+    },
     "via": [
      {
       "events": [
@@ -5137,7 +5186,12 @@
       "ref": "O5: event VisibilityChanged"
      }
     ],
-    "record_fp": "da110df9b523417d",
+    "record_fp": "111c96ad1aad3b15",
+    "verify": {
+     "check": "cross",
+     "on": "Microsoft.UI.Xaml:Window",
+     "trigger": "activate"
+    },
     "via": [
      {
       "events": [

@@ -1,5 +1,5 @@
 //! ABI v2.6 end to end on GTK: the real host runs `tests/js/observe_e2e.js`, which observes a
-//! TextBuffer's `text`. A native edit reaches `__svelters_prop_changed` at the next checkpoint; the
+//! TextBuffer's `text`. A native edit reaches the `__svelters_changed` batch at the next checkpoint; the
 //! handler reads the text live and stops observing, so a second edit reaches nobody. Needs a
 //! display (xvfb-run).
 

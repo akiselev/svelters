@@ -1,6 +1,6 @@
 // R2: `bind:` lowered onto observation (src/bind-observe.js) against the Node TestHost. A native change
-// is modelled as a native write (host.setProp, not through the runtime) followed by the host's
-// per-notification `__svelters_prop_changed(h, prop)` (the R1a path the stand-in observe.js uses).
+// is modelled as the TestHost's `nativeChange` (store, compare with the last value, `changed` line) and
+// the `__svelters_changed` batch the host delivers (R1, src/observe.js).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as $ from 'svelte/internal/client';
@@ -18,9 +18,9 @@ function harness() {
   };
   /** The toolkit changes `prop` of `h` to `v` and announces it. */
   const native = (h, prop, v) => {
-    th.host.setProp(h, prop, v);
+    const batch = th.nativeChange(h, prop, v);
     take();
-    if (th.isObserved(h, prop)) globalThis.__svelters_prop_changed(h, prop);
+    if (batch) globalThis.__svelters_changed(batch);
     $.flush();
   };
   const event = (h, signal, args = []) => {

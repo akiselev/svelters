@@ -46,8 +46,142 @@ mod mac {
         wake_from_another_thread,
         request_frame_delivers_one_frame,
         run_returns_after_quit,
+        observe_typing_into_text_field,
+        observe_kvo_from_another_thread_hops,
+        observe_borrowed_object_death,
+        observe_codes_and_observable_flag,
         no_leaked_handles,
     ];
+
+    // ---- ABI v2.6 observe (milestone R4) ----
+
+    /// REACTIVITY.md 10 R4 acceptance: typing into an NSTextField (key events through -[NSWindow sendEvent:], the
+    /// field editor, NSControlTextDidChangeNotification) is observed on `string-value`, which then reads the text.
+    fn observe_typing_into_text_field() {
+        let h = Harness::shared();
+        let f = h.create("text-field");
+        let w = h.mount(f);
+        let pid = h.prop_id(f, "string-value");
+        h.observe(f, "string-value", true).unwrap();
+        assert!(h.focus(f), "the field became first responder");
+        h.take_changed(f, pid);
+        h.type_keys(f, "abc", 0);
+        h.pump(10);
+        let n = h.take_changed(f, pid);
+        println!("typing 3 keys announced string-value {n} time(s)");
+        assert!(n >= 3, "every keystroke is announced (notification): {n}");
+        assert_eq!(h.get(f, "string-value").unwrap(), V::Str("abc".into()), "the observed prop reads the typed text");
+        h.observe(f, "string-value", false).unwrap();
+        h.type_keys(f, "d", 0);
+        h.pump(10);
+        assert_eq!(h.take_changed(f, pid), 0, "not announced after observe(off)");
+        h.destroy(w);
+        h.destroy(f);
+    }
+
+    /// REACTIVITY.md 5.6: KVO notifies on the thread that made the change. From another thread the change is queued
+    /// (deduplicated per (h, prop)) and delivered on the main thread by the next wake, never on the changing thread.
+    fn observe_kvo_from_another_thread_hops() {
+        let h = Harness::shared();
+        let v = h.create("view");
+        let pid = h.prop_id(v, "tool-tip");
+        h.observe(v, "tool-tip", true).unwrap();
+        h.take_changed(v, pid);
+        let obj = h.retain(v);
+        let addr = objc2::rc::Retained::as_ptr(&obj) as usize;
+        std::thread::spawn(move || {
+            objc2::rc::autoreleasepool(|_| {
+                let o = addr as *const objc2::runtime::AnyObject;
+                for i in 0..3 {
+                    let s = objc2_foundation::NSString::from_str(&format!("tip {i}"));
+                    let key = objc2_foundation::NSString::from_str("toolTip");
+                    let _: () = unsafe { objc2::msg_send![&*o, setValue: &*s, forKey: &*key] };
+                }
+            })
+        })
+        .join()
+        .unwrap();
+        assert_eq!(h.take_changed(v, pid), 0, "not delivered on the changing thread");
+        h.backend.run_observe_hops();
+        assert_eq!(h.take_changed(v, pid), 1, "three changes on another thread: one delivery on the main thread");
+        h.observe(v, "tool-tip", false).unwrap();
+        drop(obj);
+        h.destroy(v);
+    }
+
+    /// REACTIVITY.md 5.5, decision 13.10: a BORROWED object observed through KVO (NSView `hidden` is autonotifying)
+    /// is not retained; when it deallocates, the identity sentinel reports it and the handle dies with
+    /// SVL_GONE_OWNER (the runtime removed the KVO registration: macOS 10.13+ relaxed unregistration).
+    fn observe_borrowed_object_death() {
+        let h = Harness::shared();
+        let w = h.create("window");
+        let cv = objc2::rc::autoreleasepool(|_| {
+            let V::Handle(cv) = h.get(w, "content-view").unwrap() else { panic!("content-view is a handle") };
+            cv
+        });
+        assert_eq!(h.lifetime(cv), SVL_LIFE_BORROWED);
+        h.observe(cv, "hidden", true).unwrap();
+        h.take_gone();
+        let auto = h.backend.kvo_autonotifying(cv, "hidden");
+        let kept = h.backend.retained_while_observed(cv);
+        println!("NSView hidden: autonotifying with NSObject's KVO state {auto:?}, retained while observed {kept}");
+        assert_eq!(kept, auto == Some(false), "retained exactly when the class is not autonotifying");
+        if kept {
+            // The manual-notifying path: off removes the registration from the live object and releases it.
+            let obj = h.retain(cv);
+            h.observe(cv, "hidden", false).unwrap();
+            assert!(!h.backend.retained_while_observed(cv), "released with the last KVO observation");
+            assert_eq!(Harness::observation_info(&obj), 0, "the KVO registration was removed from the live object");
+            drop(obj);
+            h.destroy(cv);
+            h.destroy(w);
+            return;
+        }
+        // Replace the content view: the window releases the old one, nothing else holds it.
+        let nv = h.create("view");
+        objc2::rc::autoreleasepool(|_| h.insert(w, nv, None, Some("content-view")).unwrap());
+        h.pump(20);
+        h.backend.run_observe_hops();
+        let mut gone = h.take_gone();
+        println!("after replacing the content view: object alive {}, gone {gone:?}", h.backend.object(cv).is_some());
+        if gone.is_empty() {
+            // The window still holds the old content view somewhere: closing and releasing the window frees it.
+            objc2::rc::autoreleasepool(|_| h.destroy(w));
+            h.pump(50);
+            h.backend.run_observe_hops();
+            gone = h.take_gone();
+            println!("after destroying the window: object alive {}, gone {gone:?}", h.backend.object(cv).is_some());
+        }
+        assert!(gone.contains(&(cv, SVL_GONE_OWNER)), "the sentinel reported the borrowed object's death: {gone:?}");
+        assert!(!h.alive(cv));
+        h.destroy(nv);
+        h.destroy(w);
+    }
+
+    /// Return codes (REACTIVITY.md 5.1) and SVL_M_OBSERVABLE in `describe` from the facts.
+    fn observe_codes_and_observable_flag() {
+        let h = Harness::shared();
+        let f = h.create("text-field");
+        let b = h.backend_trait();
+        let kind = b.handle_info(f).unwrap().kind;
+        let flags = |name: &str| b.describe(NameKind::Prop, kind, h.prop_id(f, name)).map_or(0, |d| d.flags);
+        assert_ne!(flags("string-value") & SVL_M_OBSERVABLE, 0, "exact (KVO + notification)");
+        assert_eq!(flags("font") & SVL_M_OBSERVABLE, 0, "set_only");
+        match h.observe(f, "font", true) {
+            Err(ObserveError::Unsupported(_)) => {}
+            other => panic!("set_only answers SVL_OBSERVE_UNSUPPORTED, got {other:?}"),
+        }
+        // A prop found at run time has no fact.
+        match h.observe(f, "identifier", true) {
+            Err(ObserveError::Unsupported(_)) => {}
+            other => panic!("a dynamic prop answers SVL_OBSERVE_UNSUPPORTED, got {other:?}"),
+        }
+        let pid = h.prop_id(f, "string-value");
+        assert_eq!(b.observe(f, pid, false), Ok(()), "off for an unobserved prop is 0");
+        h.destroy(f);
+        assert!(matches!(b.observe(f, pid, true), Err(ObserveError::Failed(_))), "a dead handle is -1");
+        assert_eq!(b.observe(f, pid, false), Ok(()), "off for a dead handle is 0");
+    }
 
     fn handles_are_never_reused() {
         let h = Harness::shared();

@@ -22,6 +22,13 @@ export class NativeObject {
   constructor(...args: any[]);
   /** Listens to a native signal (`'items-changed'` or `itemsChanged`). Returns the disposer. */
   on(signal: string, fn: (...args: any[]) => void): () => void;
+  /**
+   * A snapshot of a property: the getter's value without subscribing the running effect to its changes
+   * (getters of observable properties are reactive inside effects). A native spelling such as
+   * `'cursor-position'` works too. Classes with a native `peek` method of their own (Qt `QIODevice`,
+   * `Gio.UnixFDList`) shadow it: use Svelte's `untrack(() => obj.prop)` there.
+   */
+  peek(prop: any, ...rest: any[]): any;
   /** Releases our reference now. The native object lives on while anything else holds it. */
   dispose(): void;
   [Symbol.dispose](): void;
@@ -49,3 +56,30 @@ export interface AsyncOptions {
 export interface NativeElement {
   readonly svlHandle: number | null;
 }
+
+/** The tracker generated getters subscribe through (installed by `@svelters/native-runtime`). */
+export interface Tracker {
+  /** Subscribes the running effect to native changes of (handle, prop); no-op outside effects. */
+  track(h: number, prop: string): void;
+  /** Subscribes the running effect to our own writes of (handle, prop) only (`set_only` props). */
+  local(h: number, prop: string): void;
+  /** Re-runs the readers of (handle, prop) now. */
+  invalidate(h: number, prop: string): void;
+  /** Subscribes the running effect to a native signal of `obj`, as the accessor `prop`. */
+  signal?(obj: NativeObject, prop: string, signal: string): void;
+  /** Runs `fn` without subscribing. */
+  untrack<T>(fn: () => T): T;
+}
+
+/** Installs (or with `null` removes) the tracker. Without one, every getter is a plain read. */
+export function installTracker(t: Tracker | null): void;
+/** A reactive read of an observable property (REACTIVITY.md section 7). */
+export function observed(self: NativeObject, name: string): any;
+/** A reactive read of a `set_only` property: re-runs on our own writes only. */
+export function observedLocal(self: NativeObject, name: string): any;
+/** A reactive accessor backed by a change signal and a read function. */
+export function observedSignal<T>(self: NativeObject, prop: string, signal: string, read: () => T): T;
+/** Re-runs the readers of (object, prop) now. */
+export function invalidate(self: NativeObject, name: string): void;
+/** `fn()` without reactive subscriptions. */
+export function untracked<T>(fn: () => T): T;

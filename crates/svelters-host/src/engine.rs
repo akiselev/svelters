@@ -64,6 +64,16 @@ pub struct JobStatus {
     pub pending: bool,
 }
 
+/// One entry of a `__svelters_changed` batch (ABI v2.6, REACTIVITY.md §5.2): an observed property
+/// whose value differs from the last one the host delivered or read back. `value` is `None` for a
+/// `SVL_M_PROPORTIONAL` property (an invalidation: JS reads it live if it needs it).
+#[derive(Clone, Debug)]
+pub struct ChangedProp {
+    pub handle: u64,
+    pub prop: String,
+    pub value: Option<Value>,
+}
+
 pub trait JsEngine {
     /// Evaluates the entry module. Imports resolve relative to the entry file's directory and may
     /// not leave it. Jobs may remain queued afterwards.
@@ -98,9 +108,10 @@ pub trait JsEngine {
     /// native object behind `handle` died (`reason` is a `gone_name`).
     fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError>;
 
-    /// ABI v2.6: calls `globalThis.__svelters_prop_changed(handle, prop)` if the runtime installed
-    /// it: the observed property `prop` of `handle` may have changed (no value; read it live).
-    fn dispatch_prop_changed(&mut self, handle: u64, prop: &str) -> Result<(), JsError>;
+    /// ABI v2.6: calls `globalThis.__svelters_changed([h, prop, value, h, prop, value, ...])` once
+    /// with the whole batch, if the runtime installed it (REACTIVITY.md §5.2). `value` is
+    /// `undefined` for a proportional property.
+    fn dispatch_changed(&mut self, batch: &[ChangedProp]) -> Result<(), JsError>;
 
     /// Runs the callback registered for a timer id.
     fn fire_timer(&mut self, id: u32) -> Result<(), JsError>;

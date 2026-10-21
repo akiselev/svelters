@@ -14,6 +14,7 @@ export {
   current_boundary,
   root_boundary,
   queue_task,
+  subscriber,
   get_all_contexts,
   set_context,
   flush,

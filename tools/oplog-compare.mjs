@@ -75,9 +75,9 @@ function parseLine(line) {
       return { op, h: h(n), prop, on: on === 'on' };
     }
     case 'changed': {
-      // ABI v2.6: `changed #h prop` (the toolkit announced a change; no value)
-      const [, n, prop] = sp(line, 3);
-      return { op, h: h(n), prop };
+      // ABI v2.6: `changed #h prop [json]` (a scripted native change, with the new value when it has one)
+      const [, n, prop, json] = sp(line, 4);
+      return { op, h: h(n), prop, value: json === undefined || json === '' ? undefined : JSON.parse(json) };
     }
     case 'event':
     case 'sync':

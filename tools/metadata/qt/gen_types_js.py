@@ -36,6 +36,33 @@ import types_qt_classify as TQ  # noqa: E402
 from gen_cpp import enum_member_names  # noqa: E402
 import types_pkg  # noqa: E402
 
+# Observability facts (milestone R0): owner `<Module>:<Class>` -> prop -> record, looked up by class name.
+OBSERVE: dict[str, dict[str, dict]] = {o.split(":", 1)[1]: ps for o, ps in
+                                       json.loads((ROOT / "metadata/observe/qt.json").read_text())["facts"].items()}
+
+# Content accessors with no Q_PROPERTY behind them, made reactive by a change signal of the same object
+# (REACTIVITY.md section 7; the R1 acceptance: NON-GUI-TYPES.md section 7 on Qt without a `$state` mirror).
+SIGNAL_ACCESSORS: dict[str, list[dict]] = {
+    "QTextDocument": [{"prop": "plainText", "get": "toPlainText", "set": "setPlainText", "signal": "contentsChanged", "ts": "string"}],
+}
+
+
+def observe_fact(q: str, prop: str) -> dict | None:
+    return OBSERVE.get(q, {}).get(prop)
+
+
+def observe_remark(q: str, prop: str) -> str | None:
+    """The typings remark of a property that is not fully reactive (REACTIVITY.md section 7)."""
+    fact = observe_fact(q, prop) or {}
+    if fact.get("class") == "none":
+        return "Not observable on Qt: native changes are not announced, so this getter is a snapshot (not reactive)."
+    if fact.get("class") == "partial":
+        missed = ", ".join(fact.get("missed") or []) or "some causes"
+        return f"Partly observable on Qt: changes caused by {missed} are not announced, so effects reading it may miss them."
+    if fact.get("value_cost") == "proportional":
+        return "Reactive, but each read copies the whole value: prefer a length-like property in effects that run often."
+    return None
+
 PKG = ROOT / "packages/types"
 OUT = PKG / "qt"
 DOCS = ROOT / "docs/site/src/content/docs/types/qt"
@@ -300,9 +327,16 @@ class Gen:
             body.append(self.group_js(q, js, ovs, False))
         for p in rec["properties"]:
             n = inst_name(p["name"])
-            body.append(f"  get {n}() {{\n    return {self.w_expr(q, p['type'], f'getProp(this, {p['name']!r})')};\n  }}")
+            # REACTIVITY.md section 7 / 13 #3: reactive by default where Qt announces changes (exact/partial);
+            # set_only re-runs on our own writes; constant, none and unknown (no fact) are plain reads.
+            cls = (observe_fact(q, p["name"]) or {}).get("class")
+            read = {"exact": "observed", "partial": "observed", "set_only": "observedLocal"}.get(cls, "getProp")
+            body.append(f"  get {n}() {{\n    return {self.w_expr(q, p['type'], f'{read}(this, {p['name']!r})')};\n  }}")
             if p["writable"]:
                 body.append(f"  set {n}(v) {{\n    setProp(this, {p['name']!r}, v);\n  }}")
+        for a in SIGNAL_ACCESSORS.get(q, []):
+            body.append(f"  get {a['prop']}() {{\n    return observedSignal(this, {a['prop']!r}, {a['signal']!r}, () => call(this, {a['get']!r}, []));\n  }}")
+            body.append(f"  set {a['prop']}(v) {{\n    call(this, {a['set']!r}, [v]);\n    invalidate(this, {a['prop']!r});\n  }}")
         text = "\n\n".join(body)
         if cat == "statics":
             code = f"export class {name} {{\n{text}\n}}\n"
@@ -312,7 +346,8 @@ class Gen:
         if not parent and cat != "statics":
             needed.add(self.root_base(q))
         tail = code.split("\n", 1)[1]
-        for fn in ("call", "callStatic", "getProp", "setProp", "construct", "constructProps", "constructObject", "isProps", "wrapObject",
+        for fn in ("call", "callStatic", "getProp", "observed", "observedLocal", "observedSignal", "invalidate", "setProp", "construct",
+                   "constructProps", "constructObject", "isProps", "wrapObject",
                    "wrapValue", "CONSTRUCT", "NativeObject", "NativeValue"):
             if re.search(r"(?<![\w.'])" + re.escape(fn) + r"\b(?!')", tail):
                 needed.add(fn)
@@ -409,6 +444,8 @@ class Gen:
         meth = {inst_name(js): tuple(self.group_ts(q, js, ovs)) for js, ovs in rec["methods"].items()}
         stat = {static_name(js): tuple(self.group_ts(q, js, ovs)) for js, ovs in rec["statics"].items()}
         props = {inst_name(p["name"]): (self.ts(p["type"]), p["writable"]) for p in rec["properties"]}
+        for a in SIGNAL_ACCESSORS.get(q, []):
+            props[a["prop"]] = (a["ts"], True)
         return meth, stat, props
 
     def dts(self, ns: str) -> str:
@@ -480,6 +517,9 @@ class Gen:
                     continue
                 if n in a_props and a_props[n] != (t, w):
                     t = "any"
+                remark = observe_remark(q, n)
+                if remark:
+                    lines.append(f"    /** @remarks {remark} */")
                 lines.append(f"    {'' if w else 'readonly '}{n}: {t};")
             sigs = self.signals_all(q)
             if sigs:
@@ -570,8 +610,19 @@ class Gen:
         section("Statics", r["statics"], True)
         if r["properties"]:
             lines += ["## Properties", ""]
+            lines += ["Getters marked *reactive* re-run the effects (and template expressions) that read them when the property "
+                      "changes natively (Qt announces it, the host delivers it once per event-loop turn); *reactive on writes* "
+                      "re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without "
+                      "subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. "
+                      "See [Reactivity](../../../concepts/reactivity/).", ""]
             for p in r["properties"]:
-                lines.append(f"- `{p['name']}` ({p['type']['k']}{'' if p['writable'] else ', read-only'})")
+                fact = observe_fact(q, p["name"]) or {}
+                react = {"exact": "reactive", "partial": "reactive, misses changes by " + ", ".join(fact.get("missed") or ["some causes"]),
+                         "set_only": "reactive on writes", "none": "not reactive: changes are not announced"}.get(fact.get("class"))
+                bits = ([] if p["writable"] else ["read-only"]) + ([react] if react else [])
+                lines.append(f"- `{p['name']}` ({p['type']['k']}{''.join(', ' + b for b in bits)})")
+            for a in SIGNAL_ACCESSORS.get(q, []):
+                lines.append(f"- `{a['prop']}` ({a['ts']}, reactive: `{a['get']}()` re-read after `{a['signal']}`; each read copies the whole text)")
             lines.append("")
         section("Methods", r["methods"], False)
         if r["signals"]:

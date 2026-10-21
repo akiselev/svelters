@@ -75,4 +75,8 @@ observe:
   provenance:
   - origin: rule
     ref: 'O5: event VisibilityChanged'
+  verify:
+    'on': Microsoft.UI.Xaml:Window
+    check: cross
+    trigger: activate
   confidence: 0.9

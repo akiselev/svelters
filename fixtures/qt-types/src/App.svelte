@@ -3,11 +3,10 @@
   import { QTextDocument, QIcon } from 'svelters:qt/gui';
   import { QStringListModel, QUrl } from 'svelters:qt/core';
 
-  // One native QTextDocument shared by two editors; its `contentsChanged` signal drives a counter.
-  // Made by JS, it is SHARED: JS's reference owns it (no QObject parent).
+  // One native QTextDocument shared by two editors. Made by JS, it is SHARED: JS's reference owns it
+  // (no QObject parent). `doc.plainText` is reactive (R1: re-read after `contentsChanged`), so the label
+  // needs no `$state` mirror.
   const doc = new QTextDocument({ plainText: 'Hello' });
-  let length = $state(5);
-  $effect(() => doc.on('contentsChanged', () => (length = (doc.toPlainText() ?? '').length)));
 
   // A native model built and extended from JS (overloads dispatch at run time: index(row, column)).
   const names = new QStringListModel();
@@ -29,7 +28,7 @@
   <box-layout direction="top-to-bottom" spacing="6">
     <text-edit document={doc} />
     <text-edit document={doc} />
-    <label text={`${length} characters`} />
+    <label text={`${(doc.plainText ?? '').length} characters`} />
     <push-button icon={icon} text={home.host()} />
   </box-layout>
 </main-window>

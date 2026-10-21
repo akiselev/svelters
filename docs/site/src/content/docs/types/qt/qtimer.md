@@ -32,11 +32,13 @@ Constructors (one JS constructor; the backend picks the overload from the argume
 
 ## Properties
 
-- `active` (bool, read-only)
-- `interval` (int)
-- `remainingTime` (int, read-only)
-- `singleShot` (bool)
-- `timerType` (enum)
+Getters marked *reactive* re-run the effects (and template expressions) that read them when the property changes natively (Qt announces it, the host delivers it once per event-loop turn); *reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. See [Reactivity](../../../concepts/reactivity/).
+
+- `active` (bool, read-only, reactive)
+- `interval` (int, reactive)
+- `remainingTime` (int, read-only, not reactive: changes are not announced)
+- `singleShot` (bool, reactive)
+- `timerType` (enum, reactive)
 
 ## Methods
 

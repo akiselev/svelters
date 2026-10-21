@@ -1,7 +1,7 @@
 //! ABI v2.6 on the QuickJS host over the log backend: `host.observe` is refcounted per (handle,
-//! prop) and reaches the backend on transitions only; `prop_changed` is delivered to
-//! `__svelters_prop_changed(handle, prop)` at the next checkpoint while observed and dropped
-//! otherwise; destroy forgets the observations of a handle.
+//! prop) and reaches the backend on transitions only; a scripted native change (`changed` with a
+//! value) is delivered in a `__svelters_changed` batch while observed and when the value differs from
+//! the last one (our own write included), and dropped otherwise; destroy forgets the observations.
 
 use std::path::PathBuf;
 use svelters_backend_log::parse_script;
@@ -15,7 +15,7 @@ fn js(name: &str) -> PathBuf {
 fn observe_is_refcounted_and_prop_changed_reaches_js_while_observed() {
     let (cfg, opts) = fixture_config();
     let steps = parse_script(
-        r#"[{"changed":[3,"label"]},{"changed":[3,"label"]},{"changed":[3,"label"]},{"changed":[3,"tooltip-text"]},{"checkpoint":true}]"#,
+        r#"[{"changed":[3,"label","x"]},{"changed":[3,"label","y"]},{"changed":[3,"label","y"]},{"changed":[3,"label","z"]},{"changed":[3,"label","w"]},{"changed":[3,"tooltip-text","t"]},{"checkpoint":true}]"#,
     )
     .unwrap();
     let r = run_bundle(&js("observe.js"), steps, cfg, opts).unwrap();
@@ -31,13 +31,15 @@ fn observe_is_refcounted_and_prop_changed_reaches_js_while_observed() {
          create label #4\n\
          observe #4 label on\n\
          destroy #4\n\
-         changed #3 label\n\
-         set #2 label \"1: #btn label = \\\"x\\\"\"\n\
-         changed #3 label\n\
-         set #2 label \"2: #btn label = \\\"x\\\"\"\n\
+         changed #3 label \"x\"\n\
+         changed #3 label \"y\"\n\
+         set #2 label \"1: #btn label = \\\"y\\\" (live \\\"y\\\")\"\n\
+         changed #3 label \"y\"\n\
+         changed #3 label \"z\"\n\
+         set #2 label \"2: #btn label = \\\"z\\\" (live \\\"z\\\")\"\n\
          observe #3 label off\n\
-         changed #3 label\n\
-         changed #3 tooltip-text\n"
+         changed #3 label \"w\"\n\
+         changed #3 tooltip-text \"t\"\n"
     );
     let console: Vec<String> = r.console.iter().map(|c| c.text.clone()).collect();
     assert_eq!(

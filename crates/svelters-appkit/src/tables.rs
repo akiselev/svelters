@@ -125,3 +125,30 @@ pub struct SlotInfo {
     pub remove: &'static [&'static str],
     pub detach: &'static [&'static str],
 }
+
+/// The observe class of a prop (`metadata/observe/appkit.json`, REACTIVITY.md 4.1).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ObsClass {
+    Constant,
+    SetOnly,
+    Exact,
+    Partial,
+    None,
+}
+
+/// ABI v2.6 `observe` facts of one prop of one class (the class the fact is written on; lookup walks the
+/// element's chain, so `NSTextField:string-value` wins over `NSControl:string-value` for a text field).
+pub struct ObserveInfo {
+    pub kind: u16,
+    /// JS name of the prop.
+    pub name: &'static str,
+    /// The KVC key KVO observes (`notify`); empty when the prop has no KVO mechanism.
+    pub kvo: &'static str,
+    pub class: ObsClass,
+    /// `NSNotification` names posted with the object as sender (`NSControlTextDidChangeNotification`).
+    pub notifications: &'static [&'static str],
+    /// The control's target-action pair reports a change (user edits of sliders, buttons).
+    pub action: bool,
+    /// `value_cost: proportional`: not reported while our own `set_prop` writes it (REACTIVITY.md 5.4).
+    pub proportional: bool,
+}

@@ -1,5 +1,5 @@
-// ABI v2.6 mechanics: host.observe (refcounted per handle and prop) and the raw
-// __svelters_prop_changed(handle, prop) notification. No value is delivered: the handler reads it live.
+// ABI v2.6 on the log backend: host.observe (refcounted per handle and prop) and the
+// __svelters_changed([h, prop, value, ...]) batch of scripted native changes (compared with the last value).
 const h = globalThis.__svelters_host;
 const win = h.create('window');
 const lbl = h.create('label');
@@ -8,9 +8,10 @@ h.insert(win, lbl, null);
 
 let seen = 0;
 globalThis.__svelters_dispatch = () => {};
-globalThis.__svelters_prop_changed = (handle, prop) => {
+globalThis.__svelters_changed = (batch) => {
   seen++;
-  h.setProp(lbl, 'label', `${seen}: #${handle === btn ? 'btn' : handle} ${prop} = ${JSON.stringify(h.getProp(handle, prop))}`);
+  const [handle, prop, value] = batch;
+  h.setProp(lbl, 'label', `${seen}: #${handle === btn ? 'btn' : handle} ${prop} = ${JSON.stringify(value)} (live ${JSON.stringify(h.getProp(handle, prop))})`);
   // The first notification drops one of the two observations (still observed), the second the last.
   if (seen <= 2) console.log(`off -> ${h.observe(btn, 'label', false)}`);
 };

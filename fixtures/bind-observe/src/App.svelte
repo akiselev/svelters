@@ -4,9 +4,10 @@
   //            bind:cursor-position (read-only, exact) -> $n.bind_readonly, no annotation needed
   //   entry B  bind:text|nonreactive          -> $n.bind_once: read once, then write-only
   //            bind:cursor-position|nonreactive -> one snapshot after the first layout pass
-  // "native" writes both entries behind the runtime's back (bind:this + setProp), as the toolkit would;
-  // the script then announces the changes (`changed` steps). Only A follows them. It also selects a
-  // region of A, which moves its cursor natively (the real toolkits announce `cursor-position`).
+  // "native" writes both entries through bind:this + setProp (the host reads the value back and drops
+  // its echo, so no state changes) and selects a region of A, which moves its cursor natively (the real
+  // toolkits announce `cursor-position`). The script then changes both texts natively to a different
+  // value (value-carrying `changed` steps); only A follows.
   let name = $state('Ann');
   let draft = $state('Ann');
   let pos = $state(-1);
