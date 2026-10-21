@@ -90,6 +90,16 @@ typedef struct svl_host {
 
 The P milestone applies ops directly instead of batching. Batching comes later if measurements justify it.
 
+**Wake delivery (FU2).** A `wake` must not be starvable by the toolkit's ordinary sources: a busy timer, I/O
+or input at the toolkit's default priority must not keep it from running. Wakes coalesce (one pending at a
+time). Per backend: GTK, a `G_PRIORITY_DEFAULT` idle (the priority of GDK events and timeouts), with a
+redraw guard: after 4 wakes in a row at `DEFAULT`, the next one waits just below `GDK_PRIORITY_REDRAW`, with
+a 4 ms backup at `DEFAULT`; Qt, a queued call (a posted event: the GLib dispatcher's post-event source at
+`G_PRIORITY_DEFAULT`, or the start of every turn on the Unix dispatcher); AppKit, a version-0
+`CFRunLoopSource` (every signalled source0 runs on each run-loop pass); WinUI, `DispatcherQueue.TryEnqueue`
+at `Normal` (FIFO with the queue's timers); egui, a flag read at the start of the next pass plus
+`request_repaint`. Details in `plans/milestones/FU2-gtk-wake-priority.md`.
+
 ## JS-side host ops
 
 The L1 runtime (`@svelters/native-runtime`) calls these and the host forwards them to the vtable:

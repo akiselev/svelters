@@ -201,7 +201,8 @@ pool. Fixed by gating the abort/dispose on the job's start and giving the test p
 - Settle cost: ~3 µs per completion is the QuickJS entry; a direct `JS_NewPromiseCapability` resolve (no prelude
   loop) might halve it. Not needed for the acceptance.
 - GTK `wake` runs at idle priority: a busy default-priority source starves checkpoints (seen with a 1 ms probe
-  timer). A backend question for FU1/G1, not changed here.
+  timer). A backend question for FU1/G1, not changed here. Fixed in FU2 (`plans/milestones/FU2-gtk-wake-priority.md`):
+  the wake is now a default-priority source, and `worker_job_keeps_the_ui_responsive` runs a 1 ms probe timer again.
 - Node TestHost: offloaded exports, like E0's, are QuickJS-host only.
 
 ## Conflict risks
