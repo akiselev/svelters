@@ -1,6 +1,6 @@
 //! Runs a compiled bundle in an eframe window: `svelters-egui-run <dist/app.js>`.
 //!
-//! `--idle-report <ms>`: after the app has settled (1.5 s), counts the frames drawn and the CPU time
+//! `--idle-report <ms>`: after the app has settled (first frames drawn, then 1 s without one), counts the frames drawn and the CPU time
 //! the process used over `<ms>`, prints one JSON line (`{"frames":..,"cpu_ms":..,"wall_ms":..}`) and
 //! exits. That is the idle-CPU measurement of the G1 milestone (run under tools/dev/headless).
 
@@ -43,7 +43,16 @@ fn main() {
     if let Some(ms) = idle_ms {
         let frames = backend.frame_counter();
         std::thread::spawn(move || {
-            std::thread::sleep(Duration::from_millis(1500));
+            // Settled: the first frames are drawn and no frame came for 1 s (up to 30 s on a slow,
+            // loaded machine).
+            let start = Instant::now();
+            let (mut last, mut quiet) = (frames(), 0);
+            while start.elapsed() < Duration::from_secs(30) && (last == 0 || quiet < 10) {
+                std::thread::sleep(Duration::from_millis(100));
+                let f = frames();
+                quiet = if f == last { quiet + 1 } else { 0 };
+                last = f;
+            }
             let (f0, c0, t0) = (frames(), cpu_ms().unwrap_or(f64::NAN), Instant::now());
             std::thread::sleep(Duration::from_millis(ms));
             let (f1, c1) = (frames(), cpu_ms().unwrap_or(f64::NAN));
