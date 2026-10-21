@@ -182,6 +182,7 @@ The machine was this WSL2 box (Ryzen 7 5700U) with other lanes building: load av
 | Workflow | Run | Result |
 |---|---|---|
 | linux-gtk (gtk 2205/2205, of which svelters-egui 15/15 including eframe_idle; gtk-4-14 1928/1928 with 1 flaky; portable 48/48) | 39635462475 | success |
+| linux-gtk at 76e9aeb4 | 39638716759 | failure: eframe_idle saw a burst of 6 frames / 30 ms in the idle window on CI's Xvfb (late window event); the test now allows a burst of up to 10 frames but no loop |
 | linux-qt | 39635462327 | success |
 | js | 39635462590 | success |
 | macos-appkit | 39635462393 | success |
