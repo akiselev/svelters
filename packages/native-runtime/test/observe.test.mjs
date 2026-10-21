@@ -173,6 +173,27 @@ test('observeProp calls back once per delivered change and shares one host obser
   assert.equal(trackedCount(h), 0);
 });
 
+// The contract R2's `bind:` lowering relies on (REACTIVITY.md §5.2 set path, §13 #7): our own `setProp` on an
+// observed prop is read back into `last`, so its announcement (a scripted `changed` without a value, or the
+// toolkit's echo) is dropped and `observeProp` callbacks do not run for it. A native change to a different value
+// is delivered.
+test('observeProp is not called for the echo of our own setProp, only for a different native value', () => {
+  const { th, h, native } = harness();
+  const raw = h.create('label');
+  const seen = [];
+  const off = $n.observeProp(raw, 'label', (v) => seen.push(v));
+  h.setProp(raw, 'label', 'mine');
+  native(raw, 'label', 'mine');
+  assert.deepEqual(seen, [], 'the echo of our write is dropped');
+  native(raw, 'label', 'theirs');
+  assert.deepEqual(seen, ['theirs']);
+  h.setProp(raw, 'label', 'theirs');
+  native(raw, 'label', 'theirs');
+  assert.deepEqual(seen, ['theirs'], 'writing the current value announces nothing either');
+  off();
+  void th;
+});
+
 test('trackProp spellings share one entry (cursor-position / cursorPosition)', () => {
   const { th, h } = harness();
   const raw = h.create('entry');
