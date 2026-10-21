@@ -173,7 +173,16 @@ pub fn get_value(env: &dyn Env, obj: &IUnknown, slot: u16, t: TyId, pre: &[Word]
 // ---- activation ---------------------------------------------------------------------------------------------------
 
 thread_local! {
-    static FACTORIES: RefCell<HashMap<(String, u128), IUnknown>> = RefCell::default();
+    /// Leaked on purpose: a cached factory must not be released by a TLS destructor while the process exits, after
+    /// COM and the framework DLLs are gone (CI run 39572396616: an access violation in combase.dll at exit of a test
+    /// binary that never shut its backend down). [`clear_factories`] releases them while COM is alive.
+    static FACTORIES: &'static RefCell<HashMap<(String, u128), IUnknown>> = Box::leak(Box::default());
+}
+
+/// Releases the cached activation factories (`WinUiBackend::shutdown`, before XAML and the dispatcher queue go).
+pub fn clear_factories() {
+    let all: Vec<IUnknown> = FACTORIES.with(|c| c.borrow_mut().drain().map(|(_, f)| f).collect());
+    drop(all);
 }
 
 /// The activation factory of `class` for interface `iid` (cached per thread). `RoGetActivationFactory` first (the

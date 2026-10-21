@@ -137,7 +137,7 @@ mod win {
         if args.selftest {
             let (b, h, r) = (driver.clone(), host.clone(), report.clone());
             let steps = move || -> Result<(), String> {
-                let root = *h.toplevels().first().ok_or("no window")?;
+                let root = *h.toplevel_handles().first().ok_or("no window")?;
                 let mut all = Vec::new();
                 walk(&b, root, &mut all);
                 let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h).ok_or(format!("no <{tag}> #{n}"));
@@ -163,7 +163,7 @@ mod win {
             let check = move || {
                 let mut failures: Vec<String> = Vec::new();
                 let mut all = Vec::new();
-                if let Some(root) = h2.toplevels().first() {
+                if let Some(root) = h2.toplevel_handles().first() {
                     walk(&b2, *root, &mut all);
                 }
                 let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h);

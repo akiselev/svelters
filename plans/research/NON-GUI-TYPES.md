@@ -566,6 +566,16 @@ Where the build deviates from the plan above:
 - **Widget slots.** Widget-typed parameters and returns of non-widget classes are now bound as element handles (`k: widget` in the facts). `FileDialog.open(parent)`, the §7 example, needed this. It unblocked about 90 Gtk members, including the synchronous ones.
 - **Abort of a file dialog** rejects with `gtk-dialog-error-quark` / `cancelled`. `dismissed` is the user closing it. §7's comment assumed `dismissed` for both.
 
+### N4 WinUI as built (2026-10-21, `plans/milestones/N4-winui-types.md`)
+
+Where the build deviates from the plan above:
+
+- **No C++/WinRT and no per-member native code.** The core is Rust over windows-core (`crates/svelters-winui/src/types/`, about 2.6k lines with its unit tests). The generated layer is const data (interface IID index, vtable slot and ABI parameter types per member), and one dynamic invoker calls the slot: on x86_64 the WinRT ABI is the Microsoft x64 convention, which 27 function shapes cover. `bindings.rs` does not grow.
+- **Ingest** is a new `winmd-tool types` subcommand over 21 whole namespaces (1,780 types classified); the classifier is pure over the checked-in dump. Parameterized IIDs are computed by the generator (UUIDv5 over the WinRT type signature).
+- **Classification adds** `args` (event args), `interface` (non-exclusive interfaces bound as kinds), `class-interface` (folded into their class), and generic collection instances as kinds (`IVector<string>`).
+- **Thread class** as §4.1 proposed (`dispatcher` / `ui` / `any`); the minting check is tested with a Compositor made on a second dispatcher thread.
+- **Not bound yet:** delegate parameters, collection and array arguments (JS arrays into `IIterable<T>`), static events, async progress.
+
 ## 10. Decisions (user, 2026-10-17)
 
 - **Q1 — transfer-none returns of non-widget objects are SHARED** (strong references), for now. The `lifetime: borrowed` override stays available for exceptions.

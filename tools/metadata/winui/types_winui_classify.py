@@ -937,13 +937,13 @@ def report(data: dict) -> str:
              "collection", "async", "reference", "generic", "widget", "internal", "excluded", "unclassified"]
     lines = ["== types by category (all types of the ingested namespaces; winmd: Windows App SDK 2.5.1 + Windows.winmd 0.100)"]
     short = {"class-interface": "cls-ifc", "collection": "collect", "reference": "ref", "unclassified": "unclass"}
-    lines.append(f"{'namespace':40s}" + "".join(f"{short.get(c, c)[:8]:>8s}" for c in order) + f"{'total':>8s}")
+    lines.append(f"{'namespace':40s}" + "".join(f" {short.get(c, c)[:8]:>8s}" for c in order) + f" {'total':>8s}")
     tot = Counter()
     for ns in sorted(ing.namespaces):
         c = Counter(cats[n] for n in ing.inside if ing.types[n].get("namespace") == ns)
         tot.update(c)
-        lines.append(f"{ns:40s}" + "".join(f"{c.get(k, 0):8d}" for k in order) + f"{sum(c.values()):8d}")
-    lines.append(f"{'total':40s}" + "".join(f"{tot.get(k, 0):8d}" for k in order) + f"{sum(tot.values()):8d}")
+        lines.append(f"{ns:40s}" + "".join(f" {c.get(k, 0):8d}" for k in order) + f" {sum(c.values()):8d}")
+    lines.append(f"{'total':40s}" + "".join(f" {tot.get(k, 0):8d}" for k in order) + f" {sum(tot.values()):8d}")
     lines.append("")
     kinds = {**{n: r for ns in data["namespaces"].values() for n, r in ns.items()}, **data["generic_kinds"]}
     lines.append(f"== bound scope (roots + signature closure within the scope namespaces + bases), by namespace")

@@ -626,6 +626,10 @@ impl WinUiBackend {
             drop((rev, f));
         }
         GRAVEYARD.with(|g| g.borrow_mut().clear());
+        // N4: async operations in flight and the cached activation factories, while COM is alive.
+        let pending: Vec<_> = inner.pending.borrow_mut().drain().collect();
+        drop(pending);
+        types::rt::clear_factories();
         // Let the closes and releases above run through the queue before it shuts down.
         self.pump(50);
         inner.xaml.shutdown();

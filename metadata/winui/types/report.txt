@@ -1,27 +1,27 @@
 == types by category (all types of the ingested namespaces; winmd: Windows App SDK 2.5.1 + Windows.winmd 0.100)
-namespace                                 record    enum   flagscallback  object   model statics    argsinterfac cls-ifc collect   async     ref generic  widgetinternalexcluded unclass   total
-Microsoft.UI                                   3       0       0       1       0       0       2       0       1       5       0       0       0       0       0       0       0       0      12
-Microsoft.UI.Composition                       0      21       1       0      95       5       2       2       7     170       0       0       0       0       0       0       0       0     303
-Microsoft.UI.Dispatching                       0       1       1       1       3       0       0       1       0      10       0       0       0       0       0       0       1       0      18
-Microsoft.UI.Windowing                         0       8       0       0       8       0       0       2       0      28       0       0       0       0       0       0       0       0      46
-Microsoft.UI.Xaml                              6      34       3      15      30       6      11      21       3     143       0       0       0       0       2       0       9       0     283
-Microsoft.UI.Xaml.Data                         1       3       0       2       7       0       1       3      11      22       0       0       0       0       0       0       0       0      50
-Microsoft.UI.Xaml.Documents                    1       2       0       0      15       2       1       1       0      33       0       0       0       0       1       0       0       0      56
-Microsoft.UI.Xaml.Input                        0      10       1      11      12       0       2      25       1      51       0       0       0       0       0       0       0       0     113
-Microsoft.UI.Xaml.Media                        1      14       0       0      48       8       1       4       0     126       0       0       0       0       0       0       2       0     204
-Microsoft.UI.Xaml.Media.Animation              2       6       0       0      79       6       2       0       0     150       0       0       0       0       0       0       0       0     245
-Microsoft.UI.Xaml.Media.Imaging                0       2       1       1       8       0       2       2       0      24       0       0       0       0       0       0       0       0      40
-Windows.ApplicationModel.DataTransfer          0       3       1       2      19       1       5       6       0      56       0       0       0       0       0       0       0       0      93
-Windows.Data.Json                              0       2       0       0       1       2       1       0       1       8       0       0       0       0       0       0       0       0      15
-Windows.Foundation                             7       2       0       9       5       0       2       0       7      11       0       5       2       0       0       2       0       0      52
-Windows.Foundation.Collections                 0       1       0       2       0       3       0       0       2       0      10       0       0       0       0       0       0       0      18
-Windows.Foundation.Numerics                    8       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       0       8
-Windows.Storage                                0      11       3       2      24       2       7       0      11      55       0       0       0       0       0       0       0       0     115
-Windows.Storage.FileProperties                 0       4       2       0       7       0       1       0       1       8       0       0       0       0       0       0       0       0      23
-Windows.Storage.Search                         1       6       0       0      10       1       0       0       3      15       0       0       0       0       0       0       0       0      36
-Windows.Storage.Streams                        0       3       1       0      13       0       1       0      11       8       0       0       0       0       0       0       0       0      37
-Windows.UI                                     2       0       0       0       1       0       3       0       0       7       0       0       0       0       0       0       0       0      13
-total                                         32     133      14      46     385      36      44      67      59     930      10       5       2       0       3       2      12       0    1780
+namespace                                  record     enum    flags callback   object    model  statics     args interfac  cls-ifc  collect    async      ref  generic   widget internal excluded  unclass    total
+Microsoft.UI                                    3        0        0        1        0        0        2        0        1        5        0        0        0        0        0        0        0        0       12
+Microsoft.UI.Composition                        0       21        1        0       95        5        2        2        7      170        0        0        0        0        0        0        0        0      303
+Microsoft.UI.Dispatching                        0        1        1        1        3        0        0        1        0       10        0        0        0        0        0        0        1        0       18
+Microsoft.UI.Windowing                          0        8        0        0        8        0        0        2        0       28        0        0        0        0        0        0        0        0       46
+Microsoft.UI.Xaml                               6       34        3       15       30        6       11       21        3      143        0        0        0        0        2        0        9        0      283
+Microsoft.UI.Xaml.Data                          1        3        0        2        7        0        1        3       11       22        0        0        0        0        0        0        0        0       50
+Microsoft.UI.Xaml.Documents                     1        2        0        0       15        2        1        1        0       33        0        0        0        0        1        0        0        0       56
+Microsoft.UI.Xaml.Input                         0       10        1       11       12        0        2       25        1       51        0        0        0        0        0        0        0        0      113
+Microsoft.UI.Xaml.Media                         1       14        0        0       48        8        1        4        0      126        0        0        0        0        0        0        2        0      204
+Microsoft.UI.Xaml.Media.Animation               2        6        0        0       79        6        2        0        0      150        0        0        0        0        0        0        0        0      245
+Microsoft.UI.Xaml.Media.Imaging                 0        2        1        1        8        0        2        2        0       24        0        0        0        0        0        0        0        0       40
+Windows.ApplicationModel.DataTransfer           0        3        1        2       19        1        5        6        0       56        0        0        0        0        0        0        0        0       93
+Windows.Data.Json                               0        2        0        0        1        2        1        0        1        8        0        0        0        0        0        0        0        0       15
+Windows.Foundation                              7        2        0        9        5        0        2        0        7       11        0        5        2        0        0        2        0        0       52
+Windows.Foundation.Collections                  0        1        0        2        0        3        0        0        2        0       10        0        0        0        0        0        0        0       18
+Windows.Foundation.Numerics                     8        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        8
+Windows.Storage                                 0       11        3        2       24        2        7        0       11       55        0        0        0        0        0        0        0        0      115
+Windows.Storage.FileProperties                  0        4        2        0        7        0        1        0        1        8        0        0        0        0        0        0        0        0       23
+Windows.Storage.Search                          1        6        0        0       10        1        0        0        3       15        0        0        0        0        0        0        0        0       36
+Windows.Storage.Streams                         0        3        1        0       13        0        1        0       11        8        0        0        0        0        0        0        0        0       37
+Windows.UI                                      2        0        0        0        1        0        3        0        0        7        0        0        0        0        0        0        0        0       13
+total                                          32      133       14       46      385       36       44       67       59      930       10        5        2        0        3        2       12        0     1780
 
 == bound scope (roots + signature closure within the scope namespaces + bases), by namespace
   Microsoft.UI                                2  statics 2
