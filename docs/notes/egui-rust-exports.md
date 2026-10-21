@@ -1,6 +1,6 @@
 # egui: exposing the app's own Rust types, functions and widgets to Svelte
 
-Status: research proposal, 2026-10-21, for M7 (egui). **E0 is implemented** (`plans/milestones/E0-rust-exports.md`, as built and deviations); E1–E5 are not.
+Status: research proposal, 2026-10-21, for M7 (egui). **E0 and E1 are implemented** (`plans/milestones/E0-rust-exports.md`, `plans/milestones/E1-exports-offload.md`: as built, deviations, measurements); E2–E5 are not.
 
 - **Scope:** how the developer of an all-Rust svelters-egui app exposes their own types, functions, background services and egui widgets to Svelte/TS, with compute offloaded to Rust threads.
 - **Not in scope:** the retained scene graph that the egui backend renders. Another lane is designing it; §7.4 lists only the interface this design needs from it.
@@ -27,7 +27,7 @@ Status: research proposal, 2026-10-21, for M7 (egui). **E0 is implemented** (`pl
    - `#[svelters::widget]`: egui widgets as Svelte elements.
    - JS imports everything from `svelters:app/<module>`.
 3. **Threading is opt-in per call and checked at compile time.**
-   - `#[js(worker)]` runs on rayon, `async fn` on tokio, `#[js(blocking)]` on a blocking pool, `#[js(local)]` on the JS thread.
+   - `#[js(worker)]` runs on rayon, `#[js(blocking)]` on a blocking pool, a bare `async fn` (or `#[js(local)] async fn`) on the JS thread, `#[js(tokio)] async fn` on tokio (decided 2026-10-21, §11).
    - Arguments become owned `Send` data on the JS thread. Results come back through a **host completion queue drained at the start of every checkpoint**. egui's `request_repaint` is the wake.
    - Workers never see JS values.
    - Cancellation is the existing `{ signal }` → `cancelAsync` path.
@@ -189,7 +189,8 @@ One facade crate, `svelters`, holds the macros (`svelters-macros`) and the runti
 - **The thread a call runs on is visible in the signature:**
   - plain `fn`: sync, JS thread;
   - `#[js(worker)]`: rayon;
-  - `async fn`: tokio;
+  - `async fn` (= `#[js(local)] async fn`): the JS thread, eagerly polled (decided 2026-10-21, §11);
+  - `#[js(tokio)] async fn`: tokio (feature `tokio`);
   - `#[js(blocking)]`: blocking pool;
   - `#[js(local)] async fn`: JS thread, eagerly polled.
 
@@ -425,9 +426,9 @@ pub enum BufData {
 |---|---|---|---|---|
 | `fn` (default) | JS thread, synchronously | any; `&mut self` on ui objects | value / throw | n/a |
 | `#[js(worker)] fn` | rayon (the app's pool or global) | `self: Arc<Self>` (shared), args `Send + 'static` | `Promise<T>` | queued → skipped; running → `cx.check()` |
-| `async fn` | tokio (app's runtime or one the host extension owns) | future `Send + 'static` | `Promise<T>` | future dropped at the next `.await` (`JoinHandle::abort`) |
+| `#[js(tokio)] async fn` (feature `tokio`) | tokio (app's runtime or one the host extension owns) | future `Send + 'static` | `Promise<T>` | future dropped at the next `.await` (`JoinHandle::abort`) |
 | `#[js(blocking)] fn` | tokio `spawn_blocking` or a dedicated pool (file/DB I/O) | as worker | `Promise<T>` | cooperative |
-| `#[js(local)] async fn` | JS thread; polled eagerly at call, then on wake at checkpoints | `!Send` ok; may await JS promises (`JsPromise<T>`) | `Promise<T>` | dropped |
+| `async fn` = `#[js(local)] async fn` (the default, §11) | JS thread; polled eagerly at call, then on wake at checkpoints | `!Send` ok; may await JS promises (`JsPromise<T>`) | `Promise<T>` | dropped |
 | `#[svelters::service]` | a long-lived thread or task started at app start | `Send` | a store/handle exported to JS | stopped at shutdown, **not** at reload |
 
 There are two compile errors, each with a fix-it message:
@@ -844,7 +845,11 @@ app crate (Rust)                         cargo build
 - **Q8 op log:** exported-object calls are logged in full, like native calls (`construct #a1 app:sim.Simulation [...]`, `call #a1 app:sim.Simulation.step [...]`, `static app:sim.f [...]`, `set #a1 app:sim.T.prop <json>`), so TestHost replay covers them.
 - E0 and G0 (non-blocking host start + started hook) ship together.
 
-Still open: Q2 (async executor default), Q3 (settle-on-abort), Q4 (foreign traits), Q5 (fast path: the registry path's per-call cost is now measured, see the milestone file), Q7 (store granularity), Q9 (subsecond), Q10 (CUSTOM-WIDGETS Q9).
+**Decided by the user on 2026-10-21 for E1** (implemented; `plans/milestones/E1-exports-offload.md`):
+- **Q2 async executor: a bare `async fn` runs on the JS thread** (local, Deno-style): polled at the call (a future ready at once settles in the same turn), then whenever its waker fires, at checkpoint start. Pool execution is opt-in: `#[js(tokio)] async fn` (tokio, behind the `tokio` feature of `svelters`, not a default dependency), `#[js(worker)]`/`#[js(blocking)]` for sync code, and `svelters::exports::worker(|| ...).await` / `blocking(...)` inside a local future. Guard: documented on the facade crate, and debug builds print one console warning per member when a single poll of a JS-thread future takes over 20 ms.
+- **Q3 settle-on-abort: abort rejects immediately** with `NativeError { domain: 'svelters', code: 'cancelled' }`, in the abort listener itself. The worker sees the cancel through `WorkCx` (a queued job never starts; a JS-thread future is dropped; a tokio task is aborted). A late result is dropped on the JS thread without being converted, so it mints no handle; objects and buffers in it are freed there.
+
+Still open: Q4 (foreign traits; left out of E1), Q5 (fast path: the registry path's per-call cost is now measured, see the E0 milestone file), Q7 (store granularity), Q9 (subsecond), Q10 (CUSTOM-WIDGETS Q9).
 
 
 1. **Specifier.** `svelters:app/<module>` matches `svelters:<provider>/<ns>`, keeps the bare `svelters:app` for QUICKJS-RUNTIME's built-in app-info module, and gives the M6 linker static roots. Alternatives: `$native/<module>` (tsconfig paths) or `native:<module>`.

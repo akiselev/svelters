@@ -168,7 +168,7 @@ impl Simulation {
 <button onclicked={run}>Run</button>
 ```
 
-- Also: data enums → discriminated unions, `#[derive(svelters::Error)]` → `NativeError` codes, `Emitter<E>` events, `async fn` on tokio, `#[js(blocking)]`, `#[js(local)]`, streams (`Sink<T>` → `AsyncIterable`, bounded), `supersede` (a new call cancels the previous one, for "recompute while the slider drags"), `max_in_flight`, JS-implemented Rust traits (lowest priority).
+- Also: data enums → discriminated unions, `#[derive(svelters::Error)]` → `NativeError` codes, `Emitter<E>` events, `async fn` on the JS thread (decided, D6) and `#[js(tokio)] async fn` on tokio, `#[js(blocking)]`, streams (`Sink<T>` → `AsyncIterable`, bounded), `supersede` (a new call cancels the previous one, for "recompute while the slider drags"), `max_in_flight`, JS-implemented Rust traits (lowest priority).
 - **Compile-time thread checks:** a worker method on a non-`shared` object, or a `JsFn` argument crossing to a worker, is a targeted compile error with a fix-it.
 - **Results** go to a host completion queue drained at the start of each checkpoint (wake = `request_repaint` on egui, `g_main_context_wakeup` on GTK). The probe kept the JS thread free during a 200 ms worker job (156–166 1 ms ticks delivered meanwhile). Settling through today's callback path costs ~20 µs each, so the registry settles promises directly in the engine.
 - **Zero-copy (measured):** 64 MiB `Arc<[f32]>` → read-only `Float32Array` 0.02–0.045 ms (copy: 80–94 ms); `ArrayBuffer.transfer()` JS → worker → JS 0.024–0.031 ms with the same memory coming back; the `Arc` is released on GC. One new owned value variant, `Value::Buffer`; C backends never see it. Writes to an immutable view are *silently ignored*, so typings mark them read-only.
@@ -294,9 +294,10 @@ Two cross-backend wins fall out and can be scheduled independently: the svpaint 
 - **D3: layout properties are allowed in `<style>` wherever the backend supports them.** The backend's style table says which properties a backend accepts; egui (taffy) accepts the layout set; GTK/Qt keep refusing them with the existing diagnostic. This refines X6 decision 7 per backend instead of reversing it.
 - **D4: yes, if possible.** The compiler emits a stable per-element `identity` where it can derive one (file + template position + key path + instance path); nodes without one fall back to handle ids.
 - **D5 (was D7): yes, MCP.** egui_mcp gives the UI half for free; Svelte-level tools are merged into it. Revisit CLI decision 7 accordingly.
+- **D6 Exports (decided in part):** the specifier is `svelters:app/<module>` and `i64`/`u64` cross as a checked `number` (E0). For E1: **a bare `async fn` runs on the JS thread** (Deno-style); pool execution is opt-in (`#[js(tokio)]` behind the optional `tokio` feature, `#[js(worker)]`, `#[js(blocking)]`), with a debug-build warning when one poll of a JS-thread future runs long. **An abort rejects immediately** (`cancelled`); the worker sees the cancel through `WorkCx` and its late result is dropped and freed on the JS thread. Implemented by E1 (`plans/milestones/E1-exports-offload.md`). Still open in D6's area: foreign traits called from workers, the rquickjs fast path, store granularity, subsecond.
 - **Handoff:** the Rust exports work (§3, phases E0–E5 in `docs/notes/egui-rust-exports.md` §10) goes to the svelters dev agent, starting with G0/E0 on GTK.
 
-The list below is the original question list; D6 and D8–D10 are still open.
+The list below is the original question list; D8–D10 are still open (D6's decided parts are above).
 
 1. **D1 Host ownership.** Support "embedder drives the frame" (islands, kittest, workbench, bevy, mobile) from G1, alongside `run()`-owns-the-loop? Recommended: yes, since the kittest harness needs it anyway, and it's the same start-order change mobile needs.
 2. **D2 Layout engine.** Taffy on our arena (recommended) vs egui `Layout` vs `egui_flex`.
