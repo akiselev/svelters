@@ -100,6 +100,9 @@ pub enum Op<'a> {
     ListenAttach { signal: String, handler: &'a Expression, flags: u32, span: Span },
     /// `{@attach expr}`: Svelte's `$.attach(node, () => expr)` with the runtime node.
     Attach { expr: &'a Expression, span: Span },
+    /// `use:name={arg}`: Svelte's `$.action(node, ($$node, $$action_arg) => name?.($$node,
+    /// $$action_arg), () => arg)` with the runtime node (`name` may be dotted: `use:a.b`).
+    Action { name: String, arg: Option<&'a Expression>, span: Span },
     /// `parent:<name>=...`: `$n.child_attr(node, name, value)`, sent to the native parent after insertion.
     ChildAttr { name: String, value: AttrValue<'a>, span: Span },
     /// `$n.bind(node, prop, signal, arg, get, set)`; `target` is the bound lvalue.

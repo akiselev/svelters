@@ -34,6 +34,11 @@ pub trait Rewriter {
     }
     /// JS that assigns the JS expression text `value` to the lvalue `target` (bind: setters).
     fn assign(&self, target: &Expression, value: &str) -> String;
+    /// The JS that reads a directive name (`use:name`, possibly dotted), which the parser keeps
+    /// as text rather than an expression.
+    fn directive_name(&self, name: &str) -> String {
+        name.to_string()
+    }
     /// Svelte's `extract_paths(pattern, initial)` for a destructuring template binding (snippet
     /// parameter, `{#each}` context, `{@const}`, `{:then}`/`{:catch}`), as JS over the JS text
     /// `initial`: default values and computed keys are rewritten like any template expression.
@@ -349,6 +354,18 @@ impl Codegen<'_, '_> {
                 self.w.write(&format!("$.attach({n}, () => "));
                 self.paren_expr(expr, Mode::Read);
                 self.w.write(");");
+            }
+            Op::Action { name, arg, span } => {
+                self.w.map(span.start);
+                let f = self.rw.directive_name(name);
+                match arg {
+                    Some(a) => {
+                        self.w.write(&format!("$.action({n}, ($$node, $$action_arg) => {f}?.($$node, $$action_arg), () => "));
+                        self.paren_expr(a, Mode::Read);
+                        self.w.write(");");
+                    }
+                    None => self.w.write(&format!("$.action({n}, ($$node) => {f}?.($$node));")),
+                }
             }
             Op::Classes { base, dynamic, toggles, span } => {
                 self.w.map(span.start);

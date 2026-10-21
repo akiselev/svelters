@@ -71,7 +71,7 @@ the installed Svelte (version pin, these names, the hidden modules, effect flag 
   effect_tracking, proxy, snapshot, to_array`
 - effects: `effect_root, user_effect, user_pre_effect, template_effect`
 - component: `push, pop, prop, fallback, rest_props, spread_props, exclude_from_object, props_id,
-  bind_this, attach, noop`
+  bind_this, attach, action, noop`
 - stores: `setup_stores, store_get, store_set, store_mutate, store_unsub, validate_store,
   update_store, update_pre_store, update_prop, update_pre_prop`
 - dev: `tag, tag_proxy, inspect, trace`

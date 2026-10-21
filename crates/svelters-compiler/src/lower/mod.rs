@@ -788,6 +788,7 @@ impl<'a> Lower<'a, '_, '_> {
                     ops.extend(self.listen_op(&er, &format!("on{}", d.name), Handler::Expr(d.expression.as_ref().unwrap()), d.span(), ns));
                 }
                 AttributeLike::AttachTag(t) => ops.extend(self.attach_op(&er, t)),
+                AttributeLike::UseDirective(d) => ops.push(Op::Action { name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() }),
                 AttributeLike::Attribute(at) => {
                     let prop = match self.sem.writable_property(&er, &at.name) {
                         Ok(p) => p.clone(),
@@ -881,8 +882,10 @@ impl<'a> Lower<'a, '_, '_> {
         // Bindings write their value after the element's other attributes (as Svelte's own bindings,
         // and the retired renderer, did): a bound value must not be written before the props that
         // constrain it (`<scale bind:value lower upper>`: GTK clamps to the adjustment's range).
+        // Actions go with them, in source order ("actions need to run after attribute updates in
+        // order with bindings/events", Svelte's UseDirective visitor).
         let (binds, rest): (Vec<_>, Vec<_>) =
-            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. }));
+            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } | Op::Action { .. }));
         ops = rest;
         ops.extend(binds);
 

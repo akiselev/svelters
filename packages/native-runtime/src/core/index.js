@@ -36,6 +36,7 @@ export {
   props_id,
   bind_this,
   attach,
+  action,
   noop,
   // stores
   setup_stores,

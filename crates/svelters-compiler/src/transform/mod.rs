@@ -536,6 +536,21 @@ impl Rewriter for ScopeRewriter<'_> {
         h.impure || (h.calls && h.deps)
     }
 
+    fn directive_name(&self, name: &str) -> String {
+        // `parse_directive_name` + visit: the first segment is an identifier read as usual. The
+        // scope analysis records directive names as synthetic references, so it is resolved from
+        // the instance scope (a name bound only in a template scope reads as written).
+        let (first, rest) = name.split_once('.').map_or((name, None), |(a, b)| (a, Some(b)));
+        let read = match self.cx.instance_scope.and_then(|s| self.cx.arena.get(s, first)) {
+            Some(b) => read_text(&self.cx.transform_of(b), first),
+            None => first.to_string(),
+        };
+        match rest {
+            Some(r) => format!("{read}.{r}"),
+            None => read,
+        }
+    }
+
     fn destructure(&self, pattern: &Pattern, initial: &str, derived_arrays: bool) -> crate::codegen::component::Destructured {
         let mut edits = Edits::new();
         let rw = visit::Rw::new(&self.cx, &mut edits, Mode::Read, true);
