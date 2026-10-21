@@ -20,7 +20,7 @@ use crate::render::{self, Out};
 use crate::scene::{self, Arena, Handle, W};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use svelters_abi::*;
@@ -29,6 +29,8 @@ use svelters_abi::*;
 #[derive(Default)]
 pub(crate) struct Shared {
     pub wake: AtomicBool,
+    /// Frames drawn, readable from any thread (idle measurements).
+    pub frames: AtomicU64,
     pub ctx: Mutex<Option<egui::Context>>,
 }
 
@@ -114,6 +116,12 @@ impl EguiBackend {
     /// The `svl_backend` vtable over this backend (it keeps a clone).
     pub fn vtable(&self) -> BackendVtable {
         BackendVtable::new(self.clone())
+    }
+
+    /// A thread-safe counter of the frames drawn (for idle measurements from another thread).
+    pub fn frame_counter(&self) -> Arc<dyn Fn() -> u64 + Send + Sync> {
+        let shared = self.0.shared.clone();
+        Arc::new(move || shared.frames.load(Ordering::Relaxed))
     }
 
     pub fn stats(&self) -> Stats {
@@ -206,6 +214,7 @@ impl EguiBackend {
         self.0.in_frame.set(true);
         if ctx.current_pass_index() == 0 {
             self.bump(|s| s.frames += 1);
+            self.0.shared.frames.fetch_add(1, Ordering::Relaxed);
             self.before_pass(&ctx);
         }
         let out = self.walk(ui);
