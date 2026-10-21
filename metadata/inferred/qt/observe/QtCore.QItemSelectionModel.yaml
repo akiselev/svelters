@@ -12,5 +12,7 @@ observe:
     ref: 'O3: NOTIFY selectionChanged'
   verify:
     'on': QtCore:QItemSelectionModel
-    check: connect
+    check: cross
+    native: 'o->select(o->model()->index(o->isSelected(o->model()->index(0, 0)) ? 1 : 0, 0), QItemSelectionModel::ClearAndSelect)'
+    setup: o->setModel(new QStandardItemModel(2, 1, o))
   confidence: 0.9

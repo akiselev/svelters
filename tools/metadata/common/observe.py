@@ -82,12 +82,16 @@ KEYS = {"prop", "class", "via", "missed", "fires", "derived_from", "value_cost",
 #            refused  observe is refused (constant)
 #            unsupported  observe answers SVL_OBSERVE_UNSUPPORTED: the backend has no mechanism (none); with a
 #                     `trigger` (Qt), the native change happens and nothing could announce it (a verified `none`)
+#   values   (GTK, check change) Rust expressions on `o` making new values of an object/boxed property's type, set in
+#            turn (`observe.values` of the rules; OV1)
+#   make     (GTK) how the test gets the instance when a bare `on` cannot be built: `static:<method>` (a static
+#            constructor of `on`), `borrow:<tag or Ns.Type>.<getter>` (the object a new instance's getter returns; OV1)
 #   setup / native / user (Qt): C++ statements on `o` (the subject class) run before observing, as the native
 #            trigger, and as the user-path synthesizer (key/mouse events) whose change must be announced too
 VERIFY_CHECKS = ("change", "cross", "via", "silent", "connect", "refused", "unsupported")
 # Key order of a written record.
 ORDER = ("prop", "class", "via", "missed", "fires", "derived_from", "value_cost", "timing", "provenance", "verify", "confidence")
-VERIFY_KEYS = {"on", "check", "trigger", "rust", "native", "setup", "user"}
+VERIFY_KEYS = {"on", "check", "trigger", "rust", "native", "setup", "user", "values", "make"}
 MECH_KEYS = {"notify": {"signal", "coarse"}, "bindable": set(), "signal": {"signal"}, "event": {"events"},
              "notification": {"name"}, "target_action": set(), "via": {"object", "prop"}}
 MECH_REQUIRED = {"signal": {"signal"}, "event": {"events"}, "notification": {"name"}, "via": {"object", "prop"}}
@@ -178,9 +182,91 @@ def mechanism_str(rec: dict) -> str:
     return "+".join(parts)
 
 
-def spec(rec: dict) -> dict:
-    """The compiler's ObserveSpec (crates/svelters-compiler/src/semantics/spec.rs) of a merged record."""
+# Verification strength of a fact (milestone OV1), what `verified` in the ObserveSpec says:
+#   delivery  a generated row passed that changed the property natively (or ran a native trigger) and checked the
+#             fact's claim on the real backend: the change was announced (`change`, `cross`, `via`), or, for a
+#             `silent` row, it was not (a missed cause of a partial/none fact)
+#   weak      a row passed that only installed the mechanism (`connect`) or checked the backend's answer
+#             (`refused`, `unsupported` without a native change)
+#   none      no passing row (no row can be generated, or the result is missing from the ledger)
+# The compiler lowers `bind:` onto observation only for `exact` + `delivery` (plans/research/REACTIVITY.md 13 #8).
+VERIFIED = ("delivery", "weak", "none")
+WEAK_STRENGTHS = ("connect", "refused", "unsupported")
+
+
+def check_strength(v: dict) -> str:
+    """The ledger strength of a row made from a fact's `verify` block (as gtk/gen_backend.py and qt/gen_cpp.py
+    map it): connect | refused | unsupported | silent | change."""
+    c = v.get("check")
+    if c == "unsupported" and v.get("trigger"):
+        return "silent"  # Qt: the native change happened and nothing could announce it
+    return c if c in ("connect", "refused", "silent", "unsupported") else "change"
+
+
+def verification(tk: str, facts: dict[str, dict[str, dict]] | None = None) -> dict[str, str]:
+    """fact id -> `delivery` | `weak` | `none` (VERIFIED) for every merged observe fact of `tk`.
+
+    A fact counts only when every ledger entry of it passes (metadata/verified/<tk>.json). The row's strength comes
+    from the toolkit's committed facts manifest when it has one (gtk, appkit, winui: their generators decide the
+    check), else (qt, whose manifest is built on the fly) from the fact's `verify` block."""
+    sys.path.insert(0, str(ROOT / "tools/metadata"))
+    import ledger
+    facts = load(tk) if facts is None else facts
+    passed = ledger.verified_facts(tk)
+    strengths: dict[str, str] = {}
+    mp = ledger.FACTS.get(tk)
+    if mp is not None and mp.exists():
+        for f in json.loads(mp.read_text())["facts"]:
+            if f.get("section") == "observe" and f.get("strength"):
+                strengths[f["fact"]] = f["strength"]
+    out = {}
+    for props in facts.values():
+        for r in props.values():
+            fid = r["fact"]
+            if fid not in passed:
+                out[fid] = "none"
+                continue
+            s = strengths.get(fid) or (check_strength(r["verify"]) if r.get("verify") else "connect")
+            out[fid] = "weak" if s in WEAK_STRENGTHS else "delivery"
+    return out
+
+
+def unverified_groups(tk: str, facts: dict[str, dict[str, dict]], ver: dict[str, str]) -> dict[str, dict]:
+    """OV1: the `exact` facts that are not `delivery`-verified, by the group of `observe.connect_only` in
+    metadata/rules/<tk>.yaml (`facts`: `<Owner>:<prop>` names, or `pattern`: a regex over them): {group: {count,
+    reason, facts}}. Facts no group names are under `unclassified`."""
+    import re
+    rp = ROOT / f"metadata/rules/{tk}.yaml"
+    groups = (svmeta.load_yaml(rp).get("observe") or {}).get("connect_only") or [] if rp.exists() else []
+    out: dict[str, dict] = {}
+    for owner, props in sorted(facts.items()):
+        for p, r in sorted(props.items()):
+            if r["class"] != "exact" or ver.get(r["fact"]) == "delivery":
+                continue
+            name = f"{owner}:{p}"
+            g = next((g for g in groups if name in g.get("facts", []) or (g.get("pattern") and re.search(g["pattern"], name))), None)
+            key = g["group"] if g else "unclassified"
+            e = out.setdefault(key, {"count": 0, "reason": g["reason"] if g else "no group in observe.connect_only", "facts": []})
+            e["count"] += 1
+            e["facts"].append(name)
+    return out
+
+
+def short_fact(fid: str) -> str:
+    """`svelters-api:v1:type:gtk:Gtk:Entry:prop:text:observe` -> `Gtk:Entry:text` (the name diagnostics print)."""
+    body = fid.split(":type:", 1)[1].split(":", 1)[1]
+    owner, prop = body.rsplit(":prop:", 1)
+    return f"{owner}:{prop.removesuffix(':observe')}"
+
+
+def spec(rec: dict, verified: str | None = None) -> dict:
+    """The compiler's ObserveSpec (crates/svelters-compiler/src/semantics/spec.rs) of a merged record; `verified`
+    from `verification()` (absent: the compiler reads `none`)."""
     out = {"class": rec["class"], "mechanism": mechanism_str(rec)}
+    if verified:
+        out["verified"] = verified
+    if rec.get("fact"):
+        out["fact"] = short_fact(rec["fact"])
     if rec.get("missed"):
         out["missed"] = list(rec["missed"])
     if rec.get("fires") == "coarse" or any(m.get("coarse") for m in rec.get("via", [])):

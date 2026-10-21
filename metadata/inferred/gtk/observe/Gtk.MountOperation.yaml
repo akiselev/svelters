@@ -13,6 +13,11 @@ observe:
     ref: 'O1: GObject property, notify::display'
   - origin: rule
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:MountOperation
+    check: change
+    values:
+    - gtk::gdk::Display::open(None).unwrap()
   confidence: 0.9
 - prop: parent
   class: exact
@@ -25,4 +30,9 @@ observe:
     ref: 'O1: GObject property, notify::parent'
   - origin: rule
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+  verify:
+    'on': Gtk:MountOperation
+    check: change
+    values:
+    - gtk::Window::new()
   confidence: 0.9

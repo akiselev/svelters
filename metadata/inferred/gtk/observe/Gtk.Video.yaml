@@ -29,7 +29,10 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Video:file)'
   verify:
     'on': Gtk:Video
-    check: connect
+    check: change
+    values:
+    - gtk::gio::File::for_path("/tmp/svelters-ov1-a")
+    - gtk::gio::File::for_path("/tmp/svelters-ov1-b")
   confidence: 0.95
 - prop: graphics-offload
   class: exact
@@ -73,5 +76,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Video
-    check: connect
+    check: change
+    values:
+    - gtk::MediaFile::new()
   confidence: 0.9

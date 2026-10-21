@@ -20,10 +20,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::mnemonic-modifiers (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:ShortcutController
-    check: connect
+    check: change
   confidence: 0.9
 - prop: n-items
   class: exact
@@ -38,7 +38,9 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:ShortcutController
-    check: connect
+    check: cross
+    rust: o.downcast_ref::<gtk::ShortcutController>().unwrap().add_shortcut(gtk::Shortcut::new(gtk::ShortcutTrigger::parse_string("<Control>a"),
+      None::<gtk::ShortcutAction>));
   confidence: 0.9
 - prop: scope
   class: exact

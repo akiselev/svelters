@@ -29,7 +29,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:DirectoryList
-    check: connect
+    check: change
+    values:
+    - gtk::gio::File::for_path("/tmp/svelters-ov1-a")
+    - gtk::gio::File::for_path("/tmp/svelters-ov1-b")
   confidence: 0.9
 - prop: io-priority
   class: exact
@@ -83,5 +86,8 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:DirectoryList
-    check: connect
+    check: cross
+    rust: let d = o.downcast_ref::<gtk::DirectoryList>().unwrap(); let dir = std::env::temp_dir().join("svelters-ov1-dir"); std::fs::create_dir_all(&dir).unwrap();
+      std::fs::write(dir.join("a"), "a").unwrap(); if d.file().is_some() { d.set_file(None::<&gtk::gio::File>); } else { d.set_file(Some(&gtk::gio::File::for_path(&dir)));
+      for _ in 0..200 { if !d.is_loading() { break; } crate::testing::pump(10); } }
   confidence: 0.9

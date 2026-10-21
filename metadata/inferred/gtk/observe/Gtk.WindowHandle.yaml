@@ -14,5 +14,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:WindowHandle
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9

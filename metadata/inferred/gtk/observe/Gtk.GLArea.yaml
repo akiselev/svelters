@@ -16,8 +16,7 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GLArea:use-es)'
   verify:
     'on': Gtk:GLArea
-    check: cross
-    trigger: use-es
+    check: change
   confidence: 0.95
 - prop: auto-render
   class: exact

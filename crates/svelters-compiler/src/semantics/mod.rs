@@ -19,7 +19,7 @@ pub use overlay::Overlay;
 pub use types::{TypeProp, TypeRef, TypeTable};
 pub use spec::{
     AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, ObsClass, ObsTiming,
-    ObserveSpec, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
+    ObsVerified, ObserveSpec, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
     StylePropSpec, ValueCost, ValueKind, Via,
 };
 
@@ -52,8 +52,11 @@ pub mod codes {
     pub const BIND_MODIFIER_INVALID: &str = "bind_modifier_invalid";
     pub const NONREACTIVE_REDUNDANT: &str = "nonreactive_redundant";
     pub const OBSERVABILITY_DIFFERS: &str = "observability_differs";
+    // OV1: `bind:` on an `exact` prop whose fact no generated row has seen deliver a native change
+    pub const BIND_OBSERVATION_UNVERIFIED: &str = "bind_observation_unverified";
     /// The warnings `--strict-native` turns into errors (decision 13 #5).
-    pub const STRICT_NATIVE: &[&str] = &[BIND_PARTIALLY_OBSERVED, NATIVE_READ_NOT_OBSERVABLE, NONREACTIVE_REDUNDANT, OBSERVABILITY_DIFFERS];
+    pub const STRICT_NATIVE: &[&str] =
+        &[BIND_PARTIALLY_OBSERVED, NATIVE_READ_NOT_OBSERVABLE, NONREACTIVE_REDUNDANT, OBSERVABILITY_DIFFERS, BIND_OBSERVATION_UNVERIFIED];
 }
 
 /// Why a question has no answer on this backend.

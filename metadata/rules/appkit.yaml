@@ -102,3 +102,9 @@ observe:
   # crates/svelters-appkit/src/testing.rs `Trig` (set-frame: -[NSWindow setFrame:display:]).
   verify:
     "NSWindow:frame": set-frame
+  # OV1: exact facts without delivery evidence (no passing native-change row on the macos-appkit job), by group.
+  # Read by tools/metadata/common/observe.py `unverified_groups` for the coverage report.
+  connect_only:
+    - group: read-only-on-class
+      reason: NSView's tag is read-only on NSView itself (only NSControl and other subclasses set it), so the row on NSView can only connect
+      facts: ["AppKit:NSView:tag"]

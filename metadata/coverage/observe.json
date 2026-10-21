@@ -42,6 +42,17 @@
     "verified_weak": 70
    }
   },
+  "exact_by_verification": {
+   "delivery": 149,
+   "none": 0,
+   "weak": 1
+  },
+  "exact_unverified_groups": {
+   "read-only-on-class": {
+    "count": 1,
+    "reason": "NSView's tag is read-only on NSView itself (only NSControl and other subclasses set it), so the row on NSView can only connect"
+   }
+  },
   "parked": 0,
   "unreviewed": {
    "by_pattern": {},
@@ -61,11 +72,11 @@
    },
    "exact": {
     "manual": 0,
-    "no_test": 58,
+    "no_test": 33,
     "pending": 0,
-    "total": 1127,
-    "verified": 831,
-    "verified_weak": 238
+    "total": 1125,
+    "verified": 1079,
+    "verified_weak": 13
    },
    "none": {
     "manual": 0,
@@ -79,8 +90,8 @@
     "manual": 0,
     "no_test": 0,
     "pending": 0,
-    "total": 14,
-    "verified": 14,
+    "total": 16,
+    "verified": 16,
     "verified_weak": 0
    },
    "set_only": {
@@ -90,6 +101,69 @@
     "total": 2,
     "verified": 0,
     "verified_weak": 0
+   }
+  },
+  "exact_by_verification": {
+   "delivery": 1079,
+   "none": 33,
+   "weak": 13
+  },
+  "exact_unverified_groups": {
+   "async-io": {
+    "count": 1,
+    "reason": "GtkBookmarkList loads its construct-only file asynchronously; a bare instance reads the user's bookmarks"
+   },
+   "container-page": {
+    "count": 7,
+    "reason": "a page object belongs to its container (gtk_notebook_get_page, gtk_stack_get_page); a bare GtkNotebookPage has no container to reorder it in, and a bare GtkStackPage crashes (the probe's crash list), so no test instance exists"
+   },
+   "deprecated-content": {
+    "count": 1,
+    "reason": "the shortcuts window shows sections added from a builder file (gtk_shortcuts_window_add_section needs GTK 4.14 bindings this crate does not enable); a bare window has none to switch to"
+   },
+   "display-server": {
+    "count": 5,
+    "reason": "changed by the window manager (activation) or needs a real display connection a test cannot fake"
+   },
+   "font-config": {
+    "count": 2,
+    "reason": "the families of a font map change when the font configuration changes (fonts installed or added); no headless trigger, and the abstract font map types have no bare instance"
+   },
+   "gio-service": {
+    "count": 4,
+    "reason": "needs a registered GApplication (gtk_application_add_window and gtk_application_set_menubar act on a registered application only), a D-Bus connection or a file monitor backend; no test instance is made for the last two"
+   },
+   "layout-child": {
+    "count": 1,
+    "reason": "a layout child belongs to a layout manager and its child widget; on a bare GtkFixedLayoutChild (no manager) the set transform is dropped, and making a real one needs a GtkFixed with a child"
+   },
+   "list-view": {
+    "count": 3,
+    "reason": "a tree list row, a list header and a tree list model's root exist only inside a list model or view that creates them; a bare instance has no model, so nothing can change them"
+   },
+   "media-backend": {
+    "count": 6,
+    "reason": "GtkMediaStream and GtkMediaFile are abstract; gtk_media_file_new returns the media backend's private subclass (GtkNoMediaFile without GStreamer), which the backend's property tables do not name, so no test instance exists (no row)"
+   },
+   "newer-gtk": {
+    "count": 1,
+    "reason": "GtkEnumList is not in GTK 4.22.4, the version the facts are made for (the probe found no type), so no row is generated"
+   },
+   "normalized-read": {
+    "count": 2,
+    "reason": "a native set leaves the read value unchanged, so there is no change to observe (GtkPasswordEntry extra-menu reads its own wrapper menu, which stays the same object; GtkFileDialog initial-file reads back unchanged on a dialog that is not shown, GTK 4.22)"
+   },
+   "print-backend": {
+    "count": 8,
+    "reason": "a print dialog or print job enumerates printers through the print backends (CUPS, file); the probe and the tests make no instance"
+   },
+   "realize": {
+    "count": 4,
+    "reason": "the instance exists only once a widget or surface is realized (GL context, accessibility context, surface); the tests do not realize"
+   },
+   "stateless-instance": {
+    "count": 1,
+    "reason": "GSimpleAction notifies state in g_simple_action_set_state, but a bare instance is stateless (state-type is construct-only), so the generated test has nothing to change"
    }
   },
   "parked": 4,
@@ -154,8 +228,8 @@
     "no_test": 45,
     "pending": 0,
     "total": 180,
-    "verified": 121,
-    "verified_weak": 14
+    "verified": 133,
+    "verified_weak": 2
    },
    "none": {
     "manual": 0,
@@ -180,6 +254,25 @@
     "total": 451,
     "verified": 0,
     "verified_weak": 296
+   }
+  },
+  "exact_by_verification": {
+   "delivery": 133,
+   "none": 45,
+   "weak": 2
+  },
+  "exact_unverified_groups": {
+   "crashes-bare": {
+    "count": 4,
+    "reason": "QDockWidget crashes on a bare instance (R0, R3), so no row is generated"
+   },
+   "no-element-or-type": {
+    "count": 41,
+    "reason": "the class is neither an element nor an NT2 type, so the backend cannot reach it and the generated test has no row; no `bind:` can name these properties either"
+   },
+   "window-input": {
+    "count": 2,
+    "reason": "focus and window activation need a window manager; offscreen/xcb without one gives no reliable headless focus or activation (R3)"
    }
   },
   "parked": 0,
@@ -230,6 +323,29 @@
     "total": 18,
     "verified": 0,
     "verified_weak": 2
+   }
+  },
+  "exact_by_verification": {
+   "delivery": 130,
+   "none": 69,
+   "weak": 8
+  },
+  "exact_unverified_groups": {
+   "edit-history": {
+    "count": 3,
+    "reason": "changed by text edits, undo history or the clipboard; the generated rows have no trigger for them yet (a TextBox edit + Undo trigger in the WinUI harness would verify CanUndo/CanRedo)"
+   },
+   "input-state": {
+    "count": 3,
+    "reason": "set by pointer input or focus (IsPointerOver, IsPressed, FocusState); the generated row has no UI Automation or input synthesizer for them, so it only connects"
+   },
+   "layout": {
+    "count": 2,
+    "reason": "set by layout or by an items control that hosts the panel; no trigger in the generated rows"
+   },
+   "not-exposed": {
+    "count": 69,
+    "reason": "the backend does not expose the property (brushes, templates, transitions, ...), so no row is generated and no `bind:` can name it (R4)"
    }
   },
   "parked": 0,

@@ -13,6 +13,13 @@ section 8.4 diagnostics. `native_type` / `type_property` answer from `metadata/s
 (GTK and Qt non-GUI classes, `tools/metadata/semantics/gen_observe_outputs.py`), for
 `native_read_not_observable`. The compile-time runtime side is `svelters_compiler::target::RuntimeTarget`.
 
+OV1 (plans/milestones/OV1-delivery-verified-observe.md): each `observe` also carries `verified`
+(`delivery` | `weak` | `none`: the fact's verification strength in the ledger, `tools/metadata/common/observe.py`
+`verification`) and `fact` (`<Ns>:<Type>:<prop>`, for messages). `plan_bind` lowers `bind:` onto
+observation only for `exact` + `delivery`; an `exact` fact without delivery evidence keeps the declared signal
+plan, or, without one, observes with the `bind_observation_unverified` warning (an error under
+`--strict-native`). A spec without `verified` reads as `none`.
+
 ## Generated vs hand-written
 
 | Source | Gives | Where |

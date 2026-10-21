@@ -23,7 +23,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:FlattenListModel
-    check: connect
+    check: change
+    values:
+    - gtk::StringList::new(&["a", "b"])
   confidence: 0.9
 - prop: n-items
   class: exact
@@ -38,5 +40,7 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:FlattenListModel
-    check: connect
+    check: cross
+    rust: let m = o.downcast_ref::<gtk::FlattenListModel>().unwrap(); let s = m.model().and_downcast::<gtk::gio::ListStore>().unwrap_or_else(||
+      { let s = gtk::gio::ListStore::new::<gtk::StringList>(); m.set_model(Some(&s)); s }); s.append(&gtk::StringList::new(&["a"]));
   confidence: 0.9

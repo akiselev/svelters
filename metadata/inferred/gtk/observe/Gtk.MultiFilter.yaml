@@ -24,5 +24,6 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:AnyFilter
-    check: connect
+    check: cross
+    rust: o.downcast_ref::<gtk::MultiFilter>().unwrap().append(gtk::CustomFilter::new(|_| true));
   confidence: 0.9

@@ -12,7 +12,9 @@ observe:
     ref: 'O3: NOTIFY valueChanged'
   verify:
     'on': QtCore:QVariantAnimation
-    check: connect
+    check: cross
+    native: 'o->setCurrentTime(o->currentTime() == 50 ? 20 : 50)'
+    setup: o->setStartValue(0); o->setEndValue(100); o->setDuration(100)
   confidence: 0.9
 - prop: duration
   class: exact
@@ -36,7 +38,8 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   verify:
     'on': QtCore:QVariantAnimation
-    check: connect
+    check: cross
+    native: 'o->setEasingCurve(o->easingCurve().type() == QEasingCurve::Linear ? QEasingCurve::InQuad : QEasingCurve::Linear)'
   confidence: 0.9
 - prop: endValue
   class: set_only

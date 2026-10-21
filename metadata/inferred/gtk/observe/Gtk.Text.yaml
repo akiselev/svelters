@@ -29,7 +29,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Text
-    check: connect
+    check: change
+    values:
+    - gtk::pango::AttrList::from_string("0 1 weight bold").unwrap()
+    - gtk::pango::AttrList::from_string("0 2 style italic").unwrap()
   confidence: 0.9
 - prop: buffer
   class: exact
@@ -43,7 +46,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:buffer)'
   verify:
     'on': Gtk:Text
-    check: connect
+    check: change
+    values:
+    - gtk::EntryBuffer::new(None::<&str>)
   confidence: 0.95
 - prop: enable-emoji-completion
   class: exact
@@ -72,7 +77,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:extra-menu)'
   verify:
     'on': Gtk:Text
-    check: connect
+    check: change
+    values:
+    - gtk::gio::Menu::new()
   confidence: 0.95
 - prop: im-module
   class: exact
@@ -98,10 +105,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::input-hints (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:Text
-    check: connect
+    check: change
   confidence: 0.9
 - prop: input-purpose
   class: exact
@@ -224,7 +231,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Text
-    check: connect
+    check: change
+    values:
+    - gtk::pango::TabArray::new(1, true)
+    - gtk::pango::TabArray::new(2, true)
   confidence: 0.9
 - prop: truncate-multiline
   class: exact

@@ -32,8 +32,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:icon-name, set:Gtk.Button:label)'
   verify:
     'on': Gtk:Button
-    check: cross
-    trigger: icon-name
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.95
 - prop: has-frame
   class: exact

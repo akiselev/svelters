@@ -26,7 +26,7 @@
 
 use super::Harness;
 use gtk::glib;
-use gtk::glib::translate::ToGlibPtr;
+use gtk::glib::translate::{ToGlibPtr, ToGlibPtrMut};
 use gtk::prelude::*;
 use std::io::Write;
 
@@ -34,6 +34,12 @@ use std::io::Write;
 pub enum On {
     Create(&'static str),
     Construct(&'static str),
+    /// (type by GIR name, static constructor): `Gtk.MediaFile.new` makes a concrete subclass the
+    /// typelib does not name (OV1, `verify.make: static:<method>`).
+    Static(&'static str, &'static str),
+    /// (type by GIR name, element tag or GIR name, getter): the object a new instance's getter returns,
+    /// borrowed (`Gtk.TreeView.get_selection`; OV1, `verify.make: borrow:<tag>.<getter>`).
+    Borrow(&'static str, &'static str, &'static str),
 }
 
 /// A native change that is not a set of the observed property itself.
@@ -46,6 +52,11 @@ pub enum Trig {
 
 pub enum Check {
     Change,
+    /// Set the property natively to these values in turn (object and boxed types: `observe.values` in
+    /// `metadata/rules/gtk.yaml`, keyed by the property's value type). Each is made fresh per call. An
+    /// object value must read back natively as another object than before (the one set, or the toolkit's
+    /// normalization of it); a boxed one must read back differently through the ABI.
+    Values(Vec<fn(&glib::Object) -> glib::Value>),
     Cross(Trig),
     /// (the property holding the forwarded-to object, the property on it)
     Via(&'static str, &'static str),
@@ -117,6 +128,35 @@ pub fn next_value(ps: &glib::ParamSpec, cur: &glib::Value) -> Option<glib::Value
         let c: Option<String> = cur.get().ok()?;
         return Some(format!("{}x", c.unwrap_or_default()).to_value());
     }
+    if ps.downcast_ref::<glib::ParamSpecFlags>().is_some() {
+        // Toggle the first single-bit member: each call changes the value.
+        let fc = glib::FlagsClass::with_type(ps.value_type())?;
+        let c = unsafe { glib::gobject_ffi::g_value_get_flags(cur.to_glib_none().0) };
+        let bit = fc.values().iter().map(|x| x.value()).find(|v| v.count_ones() == 1)?;
+        let mut v = glib::Value::from_type(ps.value_type());
+        unsafe { glib::gobject_ffi::g_value_set_flags(v.to_glib_none_mut().0, c ^ bit) };
+        return Some(v);
+    }
+    if ps.value_type() == glib::StrV::static_type() {
+        let c: glib::StrV = cur.get().unwrap_or_default();
+        let mut c: Vec<String> = c.iter().map(|s| s.to_string()).collect();
+        c.push(format!("x{}", c.len()));
+        return Some(c.to_value());
+    }
+    if let Some(s) = ps.downcast_ref::<glib::ParamSpecVariant>() {
+        let c: Option<glib::Variant> = cur.get().ok()?;
+        let next = match s.type_().map_or("*", |t| t.as_str()) {
+            "*" | "s" => {
+                let prev = c.as_ref().and_then(|v| v.str().map(str::to_string)).unwrap_or_default();
+                format!("{prev}x").to_variant()
+            }
+            "b" => (!c.and_then(|v| v.get::<bool>()).unwrap_or(false)).to_variant(),
+            "i" => (c.and_then(|v| v.get::<i32>()).unwrap_or(0) + 1).to_variant(),
+            "u" => (c.and_then(|v| v.get::<u32>()).unwrap_or(0) + 1).to_variant(),
+            _ => return None,
+        };
+        return Some(next.to_value());
+    }
     if ps.downcast_ref::<glib::ParamSpecEnum>().is_some() {
         let ec = glib::EnumClass::with_type(ps.value_type())?;
         let c = unsafe { glib::gobject_ffi::g_value_get_enum(cur.to_glib_none().0) };
@@ -124,6 +164,36 @@ pub fn next_value(ps: &glib::ParamSpec, cur: &glib::Value) -> Option<glib::Value
         return ec.to_value(v);
     }
     None
+}
+
+/// A new instance of a GType by name (`GtkColorDialog`), registering the type through its
+/// `<snake>_get_type` function first when nothing used it yet (types newer than the gtk-rs feature
+/// level have no typed constructor here). For `observe.values` samples.
+pub fn new_type(name: &str) -> glib::Object {
+    let t = glib::Type::from_name(name).filter(|t| *t != glib::Type::INVALID).or_else(|| {
+        let mut sym = String::new();
+        for (i, c) in name.chars().enumerate() {
+            if c.is_ascii_uppercase() && i > 0 {
+                sym.push('_');
+            }
+            sym.push(c.to_ascii_lowercase());
+        }
+        // GtkColorDialog -> gtk_color_dialog_get_type; GListStore -> g_list_store_get_type
+        let sym = std::ffi::CString::new(format!("{sym}_get_type")).ok()?;
+        #[cfg(not(unix))]
+        let f: *mut std::ffi::c_void = {
+            let _ = sym;
+            std::ptr::null_mut()
+        };
+        #[cfg(unix)]
+        let f = unsafe { libc::dlsym(libc::RTLD_DEFAULT, sym.as_ptr()) };
+        if f.is_null() {
+            return None;
+        }
+        let f: unsafe extern "C" fn() -> glib::ffi::GType = unsafe { std::mem::transmute(f) };
+        Some(unsafe { glib::translate::from_glib(f()) })
+    });
+    glib::Object::with_type(t.unwrap_or_else(|| panic!("no GType {name}")))
 }
 
 /// Sets `name` of `obj` natively to a new value; Err when the type has no next value.
@@ -174,6 +244,26 @@ fn run(r: &Row) -> Result<Outcome, String> {
             }
             (name, h.construct(name, &[])?)
         }
+        On::Static(name, method) => {
+            if h.try_kind_id(name).is_none() {
+                return Ok(Outcome::Skip(format!("no type {name} on this GTK")));
+            }
+            match h.call_static(name, method, &[])? {
+                super::V::Handle(o) => (name, o),
+                other => return Err(format!("{name}.{method} answered {other:?}, not an object")),
+            }
+        }
+        On::Borrow(name, tag, getter) => {
+            if h.try_kind_id(tag).is_none() {
+                return Ok(Outcome::Skip(format!("no kind {tag} on this GTK")));
+            }
+            // an element by tag, or a type without one by GIR name (`Gtk.TreeView`)
+            let owner = if tag.contains('.') { h.construct(tag, &[])? } else { h.try_create(tag)? };
+            match h.call_args(owner, getter, &[])? {
+                super::V::Handle(b) => (name, b),
+                other => return Err(format!("{tag}.{getter} answered {other:?}, not an object")),
+            }
+        }
     };
     let obj = h.obj(o);
     if let Some(f) = r.setup {
@@ -208,9 +298,18 @@ fn run(r: &Row) -> Result<Outcome, String> {
         return Ok(Outcome::Pass);
     }
     // The object the native change is made on, and how.
+    let turn = std::cell::Cell::new(0usize);
+    let last_set: std::cell::RefCell<Option<glib::Value>> = std::cell::RefCell::new(None);
     let change = |h: &Harness| -> Result<(), String> {
         match &r.check {
             Check::Change => set_next(&obj, r.prop),
+            Check::Values(vs) => {
+                let v = vs[turn.get() % vs.len()](&obj);
+                turn.set(turn.get() + 1);
+                obj.set_property_from_value(r.prop, &v);
+                *last_set.borrow_mut() = Some(v);
+                Ok(())
+            }
             Check::Cross(t) | Check::Silent(t) => fire(&obj, t),
             Check::Via(holder, target) => {
                 let tgt = obj.property::<Option<glib::Object>>(holder).ok_or_else(|| format!("{holder} is unset"))?;
@@ -223,10 +322,30 @@ fn run(r: &Row) -> Result<Outcome, String> {
     };
     h.take_changed();
     let before = snap(&h, o, r.prop);
+    // Sample-value rows (`Check::Values`): object-like values (objects, GtkExpression) compare by identity
+    // natively, since the ABI may not read them at all (an expression reads as Null) and its shapes hide handles.
+    // Boxed reads are copies, so they compare by their ABI shape, unless the ABI cannot read the type (Null both
+    // times): then natively too (GskTransform copies by reference, so an unchanged value keeps its pointer).
+    let values_row = matches!(r.check, Check::Values(_));
+    let boxed = obj.find_property(r.prop).is_some_and(|ps| ps.value_type().is_a(glib::Type::BOXED));
+    let peek = |v: &glib::Value| unsafe { glib::gobject_ffi::g_value_peek_pointer(v.to_glib_none().0) } as usize;
+    let native_before = obj.find_property(r.prop).map(|_| peek(&obj.property_value(r.prop)));
     change(&h)?;
     let n = count(&h);
     let after = snap(&h, o, r.prop);
-    if before == after && !matches!(r.check, Check::Silent(_)) {
+    let unreadable = before == after && after == "Null" && !matches!(r.check, Check::Silent(_));
+    let by_identity = native_before.is_some() && ((values_row && !boxed) || unreadable);
+    if by_identity {
+        let back = obj.property_value(r.prop);
+        if Some(peek(&back)) == native_before {
+            return Err(format!("the native change left {} at the same {}", r.prop, back.type_().name()));
+        }
+        let set = last_set.borrow().as_ref().map(peek);
+        if values_row && !boxed && set != Some(peek(&back)) {
+            // normalized: the toolkit stores another object (GtkScrolledWindow wraps a child in a viewport)
+            eprintln!("NOTE {}: read back another value than the one set (normalized)", r.prop);
+        }
+    } else if before == after && !matches!(r.check, Check::Silent(_)) {
         // Shapes hide handle values (object props): only a scalar that did not move is a broken precondition.
         if !after.contains('#') {
             return Err(format!("the native change left {} at {after}", r.prop));
@@ -245,7 +364,7 @@ fn run(r: &Row) -> Result<Outcome, String> {
     if n == 0 {
         return Err(format!("a native change of {} was not announced", r.prop));
     }
-    if let Check::Change = r.check {
+    if matches!(r.check, Check::Change | Check::Values(_)) {
         // An identical set: GObject re-notifies unless the property is EXPLICIT_NOTIFY and checks.
         let cur = obj.property_value(r.prop);
         obj.set_property_from_value(r.prop, &cur);

@@ -14,7 +14,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Shortcut
-    check: connect
+    check: change
+    values:
+    - gtk::ShortcutAction::parse_string("action(ov1.a)").unwrap()
+    - gtk::ShortcutAction::parse_string("action(ov1.b)").unwrap()
   confidence: 0.9
 - prop: arguments
   class: exact
@@ -25,10 +28,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::arguments (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:Shortcut
-    check: connect
+    check: change
   confidence: 0.9
 - prop: trigger
   class: exact
@@ -42,5 +45,8 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Shortcut
-    check: connect
+    check: change
+    values:
+    - gtk::ShortcutTrigger::parse_string("<Control>a").unwrap()
+    - gtk::ShortcutTrigger::parse_string("<Control>b").unwrap()
   confidence: 0.9

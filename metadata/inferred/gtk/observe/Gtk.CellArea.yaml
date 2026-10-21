@@ -15,5 +15,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:CellAreaBox
-    check: connect
+    check: change
+    values:
+    - gtk::CellRendererToggle::new()
   confidence: 0.9

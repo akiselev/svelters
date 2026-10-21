@@ -11,5 +11,5 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::allowed-apis (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   confidence: 0.9

@@ -382,7 +382,7 @@ interface GtkObs_Gtk_HeaderBar {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-native-controls|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_Image {
-  /** @observable exact on gtk (notify) */ "bind:file"?: string | null;
+  /** @observable partial on gtk: misses programmatic changes (notify) */ "bind:file"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:file|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:gicon"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:gicon|nonreactive"?: number | null;
@@ -597,7 +597,7 @@ interface GtkObs_Gtk_Paned {
 interface GtkObs_Gtk_PasswordEntry {
   /** @observable exact on gtk (notify) */ "bind:activates-default"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:activates-default|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:extra-menu"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:extra-menu"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:extra-menu|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:placeholder-text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-text|nonreactive"?: string | null;
@@ -1040,7 +1040,7 @@ interface GtkObs_Gtk_Widget {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:width-request|nonreactive"?: number;
 }
 interface GtkObs_Gtk_Window {
-  /** @observable exact on gtk (notify) */ "bind:application"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:application"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:application|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
@@ -1072,7 +1072,7 @@ interface GtkObs_Gtk_Window {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hide-on-close|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:icon-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:icon-name|nonreactive"?: string | null;
-  /** Read-only. @observable exact on gtk (notify) */ "bind:is-active"?: boolean;
+  /** Read-only. @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-active"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-active|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:maximized"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:maximized|nonreactive"?: boolean;
@@ -1535,13 +1535,13 @@ interface QtObs_dialog_button_box {
 }
 interface QtObs_dock_widget {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accessible-name|nonreactive"?: string;
-  /** @observable exact on qt (notify) */ "bind:allowed-areas"?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
+  /** @observable exact on qt (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allowed-areas"?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allowed-areas|nonreactive"?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
   /** @observable exact on qt (event:EnabledChange) */ "bind:enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enabled|nonreactive"?: boolean;
-  /** @observable exact on qt (notify) */ "bind:features"?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
+  /** @observable exact on qt (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:features"?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:features|nonreactive"?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
-  /** @observable exact on qt (notify) */ "bind:floating"?: boolean;
+  /** @observable exact on qt (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:floating"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:floating|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-height|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-width|nonreactive"?: number;
@@ -2950,7 +2950,7 @@ interface AppkitObs_NSView {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:shadow|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:subviews|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:superview|nonreactive"?: number | null;
-  /** Read-only. @observable exact on appkit (notify) */ "bind:tag"?: number;
+  /** Read-only. @observable exact on appkit (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:tag"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:tag|nonreactive"?: number;
   /** @observable exact on appkit (notify) */ "bind:tool-tip"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string | null;
@@ -3136,9 +3136,9 @@ export interface AppkitObservedBindings {
 interface WinuiObs_ButtonBase {
   /** @observable exact on winui (notify) */ "bind:click-mode"?: "release" | "press" | "hover";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:click-mode|nonreactive"?: "release" | "press" | "hover";
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-pointer-over"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-pointer-over"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-pointer-over|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-pressed"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-pressed"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-pressed|nonreactive"?: boolean;
 }
 interface WinuiObs_ContentControl {
@@ -3238,7 +3238,7 @@ interface WinuiObs_Grid {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:row-spacing|nonreactive"?: number;
 }
 interface WinuiObs_Panel {
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-items-host"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-items-host"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-items-host|nonreactive"?: boolean;
 }
 interface WinuiObs_RangeBase {
@@ -3307,7 +3307,7 @@ interface WinuiObs_TextBlock {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-text-scale-factor-enabled|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:is-text-selection-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-text-selection-enabled|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-text-trimmed"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-text-trimmed"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-text-trimmed|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:line-height"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:line-height|nonreactive"?: number;
@@ -3335,11 +3335,11 @@ interface WinuiObs_TextBlock {
 interface WinuiObs_TextBox {
   /** @observable exact on winui (notify) */ "bind:accepts-return"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accepts-return|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:can-paste-clipboard-content"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:can-paste-clipboard-content"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:can-paste-clipboard-content|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:can-redo"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:can-redo"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:can-redo|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:can-undo"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:can-undo"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:can-undo|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:character-casing"?: "normal" | "lower" | "upper";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:character-casing|nonreactive"?: "normal" | "lower" | "upper";
@@ -3391,7 +3391,7 @@ interface WinuiObs_UIElement {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:composite-mode|nonreactive"?: "inherit" | "source-over" | "min-blend";
   /** @observable exact on winui (notify) */ "bind:exit-display-mode-on-access-key-invoked"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:exit-display-mode-on-access-key-invoked|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:focus-state"?: "unfocused" | "pointer" | "keyboard" | "programmatic";
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:focus-state"?: "unfocused" | "pointer" | "keyboard" | "programmatic";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:focus-state|nonreactive"?: "unfocused" | "pointer" | "keyboard" | "programmatic";
   /** @observable exact on winui (notify) */ "bind:is-access-key-scope"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-access-key-scope|nonreactive"?: boolean;

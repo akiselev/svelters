@@ -14,7 +14,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:SearchBar
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: key-capture-widget
   class: exact
@@ -28,7 +30,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:SearchBar
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: search-mode-enabled
   class: exact

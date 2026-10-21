@@ -30,7 +30,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:FontButton
-    check: connect
+    check: change
+    values:
+    - gtk::pango::FontDescription::from_string("Sans 13")
+    - gtk::pango::FontDescription::from_string("Serif 9")
   confidence: 0.9
 - prop: language
   class: exact
@@ -56,10 +59,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::level (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:FontButton
-    check: connect
+    check: change
   confidence: 0.9
 - prop: preview-text
   class: exact

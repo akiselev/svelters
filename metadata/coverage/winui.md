@@ -56,6 +56,17 @@ Observe facts per class (`metadata/observe/winui.json`; plans/research/REACTIVIT
 
 Parked (an inferred fact whose generated test failed): 0. Below the promotion threshold (not written, needs judgement): 0 middle band, 0 low band.
 
+`exact` facts by verification strength (milestone OV1; `bind:` lowers onto observation only for `delivery`): delivery 130, weak 8, none 69.
+
+`exact` facts without delivery evidence (a passing native-change row), by group (`observe.connect_only` of `metadata/rules/winui.yaml`):
+
+| Group | Facts | Why no native change |
+| --- | --- | --- |
+| not-exposed | 69 | the backend does not expose the property (brushes, templates, transitions, ...), so no row is generated and no `bind:` can name it (R4) |
+| input-state | 3 | set by pointer input or focus (IsPointerOver, IsPressed, FocusState); the generated row has no UI Automation or input synthesizer for them, so it only connects |
+| layout | 2 | set by layout or by an items control that hosts the panel; no trigger in the generated rows |
+| edit-history | 3 | changed by text edits, undo history or the clipboard; the generated rows have no trigger for them yet (a TextBox edit + Undo trigger in the WinUI harness would verify CanUndo/CanRedo) |
+
 ## Kinds
 
 | Kind | Element | Props | Signals | Methods | Slots | Ownership | Signal results | Bindings | Verified | Gallery | Lifetime |

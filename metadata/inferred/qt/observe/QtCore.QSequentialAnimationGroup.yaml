@@ -15,5 +15,7 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   verify:
     'on': QtCore:QSequentialAnimationGroup
-    check: connect
+    check: cross
+    native: 'o->setCurrentTime(o->currentTime() < 100 ? 150 : 50)'
+    setup: o->addPause(100); o->addPause(100)
   confidence: 0.9

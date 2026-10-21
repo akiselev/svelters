@@ -69,7 +69,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:EntryCompletion
-    check: connect
+    check: change
+    values:
+    - gtk::ListStore::new(&[gtk::glib::Type::STRING])
   confidence: 0.9
 - prop: popup-completion
   class: exact

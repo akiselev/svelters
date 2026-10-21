@@ -17074,13 +17074,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gdk:CicpParams:prop:range:observe",
-   "fingerprint": "a7fcec5c96aecb00",
+   "fingerprint": "ea0c2e9447f7c89a",
    "kind": "Gdk:CicpParams",
    "name": "range",
    "origin": "inferred",
-   "record_fp": "e5da098e894b5969",
+   "record_fp": "56eaa87d2dd38e39",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gdk_cicpparams#range"
    ]
@@ -17242,6 +17242,71 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:application-id:observe",
+   "fingerprint": "ed43d946c256a0cb",
+   "kind": "Gio:Application",
+   "name": "application-id",
+   "origin": "inferred",
+   "record_fp": "e66bd846644760f2",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gio_application#application-id"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:flags:observe",
+   "fingerprint": "18d6332053118a72",
+   "kind": "Gio:Application",
+   "name": "flags",
+   "origin": "inferred",
+   "record_fp": "183472a31d99d9bd",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gio_application#flags"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:inactivity-timeout:observe",
+   "fingerprint": "ad77d5c74eefe3aa",
+   "kind": "Gio:Application",
+   "name": "inactivity-timeout",
+   "origin": "inferred",
+   "record_fp": "05345bc6ff7c4837",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gio_application#inactivity-timeout"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:resource-base-path:observe",
+   "fingerprint": "5c1aaca0159a378e",
+   "kind": "Gio:Application",
+   "name": "resource-base-path",
+   "origin": "inferred",
+   "record_fp": "4affa26a633d1877",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gio_application#resource-base-path"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gio:Application:prop:version:observe",
+   "fingerprint": "72566aac7173a72c",
+   "kind": "Gio:Application",
+   "name": "version",
+   "origin": "inferred",
+   "record_fp": "b4af44761da85f56",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gio_application#version"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gio:DBusMessage:prop:locked:observe",
    "fingerprint": "00a02ce8a95c2c33",
    "kind": "Gio:DBusMessage",
@@ -17360,13 +17425,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gio:MountOperation:prop:password-save:observe",
-   "fingerprint": "b6222763fa32c530",
+   "fingerprint": "91b93defdfc4b6b0",
    "kind": "Gio:MountOperation",
    "name": "password-save",
    "origin": "inferred",
-   "record_fp": "ed171205ad91489e",
+   "record_fp": "8ff1e6d2d56e3dc9",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gio_mountoperation#password-save"
    ]
@@ -17438,11 +17503,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gio:SimpleAction:prop:state:observe",
-   "fingerprint": "6e40421108077468",
+   "fingerprint": "a071830493b5590c",
    "kind": "Gio:SimpleAction",
    "name": "state",
    "origin": "inferred",
-   "record_fp": "9ec5a2840beb9ed5",
+   "record_fp": "dc096a3447feadd7",
    "section": "observe",
    "strength": "connect",
    "tests": [
@@ -17477,26 +17542,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:artists:observe",
-   "fingerprint": "118b5311b4cf7394",
+   "fingerprint": "b9bffaf32d6d073d",
    "kind": "Gtk:AboutDialog",
    "name": "artists",
    "origin": "inferred",
-   "record_fp": "8a8113fd85db37c0",
+   "record_fp": "6550b0f59075dd54",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_aboutdialog#artists"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:authors:observe",
-   "fingerprint": "fd6f68ac145e5c1d",
+   "fingerprint": "c4e736f583d4f575",
    "kind": "Gtk:AboutDialog",
    "name": "authors",
    "origin": "inferred",
-   "record_fp": "0bff08d77638f9b4",
+   "record_fp": "d46959ced56807b5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_aboutdialog#authors"
    ]
@@ -17529,13 +17594,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:documenters:observe",
-   "fingerprint": "03df4c3f5d191d92",
+   "fingerprint": "7133964ccfd4d61c",
    "kind": "Gtk:AboutDialog",
    "name": "documenters",
    "origin": "inferred",
-   "record_fp": "f87a787fd133b390",
+   "record_fp": "674106697bc74683",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_aboutdialog#documenters"
    ]
@@ -17568,13 +17633,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AboutDialog:prop:logo:observe",
-   "fingerprint": "7480262f9fa5cfe7",
+   "fingerprint": "8a3b6229eca78309",
    "kind": "Gtk:AboutDialog",
    "name": "logo",
    "origin": "inferred",
-   "record_fp": "8adbd581461add2b",
+   "record_fp": "add8a8da90f63c06",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_aboutdialog#logo"
    ]
@@ -17724,13 +17789,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Actionable:prop:action-target:observe",
-   "fingerprint": "58fe1901c04454bd",
+   "fingerprint": "cecb4dec8acc4ff0",
    "kind": "Gtk:Actionable",
    "name": "action-target",
    "origin": "inferred",
-   "record_fp": "135f7b4e09f523c5",
+   "record_fp": "6ff8680a11e077a6",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_actionable#action-target"
    ]
@@ -17815,13 +17880,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AlertDialog:prop:buttons:observe",
-   "fingerprint": "fe284c4b0768e52f",
+   "fingerprint": "9984169ac275435a",
    "kind": "Gtk:AlertDialog",
    "name": "buttons",
    "origin": "inferred",
-   "record_fp": "46d6bc015b66afd0",
+   "record_fp": "5f27e87ec902599c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_alertdialog#buttons"
    ]
@@ -18087,6 +18152,32 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Application:prop:menubar:observe",
+   "fingerprint": "0dbc6d3657a177d7",
+   "kind": "Gtk:Application",
+   "name": "menubar",
+   "origin": "inferred",
+   "record_fp": "957b8adc8cd2e14c",
+   "section": "observe",
+   "strength": "connect",
+   "tests": [
+    "generated::verify::observe_gtk_application#menubar"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:Application:prop:register-session:observe",
+   "fingerprint": "8b37f241189823d7",
+   "kind": "Gtk:Application",
+   "name": "register-session",
+   "origin": "inferred",
+   "record_fp": "9f01579b50426e5e",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_application#register-session"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:ApplicationWindow:prop:show-menubar:observe",
    "fingerprint": "de1ae4145d470377",
    "kind": "Gtk:ApplicationWindow",
@@ -18101,13 +18192,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:AspectFrame:prop:child:observe",
-   "fingerprint": "384ae26b0bb5bb3b",
+   "fingerprint": "2deef14ef248a62b",
    "kind": "Gtk:AspectFrame",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "2cfea65c3ec4a1d1",
+   "record_fp": "20defa1943670ef1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_aspectframe#child"
    ]
@@ -18283,13 +18374,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:BoolFilter:prop:expression:observe",
-   "fingerprint": "d83a102803033cd2",
+   "fingerprint": "65b5a5b93aa8c5ea",
    "kind": "Gtk:BoolFilter",
    "name": "expression",
    "origin": "inferred",
-   "record_fp": "6627b72aaea403ca",
+   "record_fp": "69d80d7d94d261de",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_boolfilter#expression"
    ]
@@ -18413,26 +18504,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Builder:prop:current-object:observe",
-   "fingerprint": "f5d717a888960539",
+   "fingerprint": "06394b5c15a443bc",
    "kind": "Gtk:Builder",
    "name": "current-object",
    "origin": "inferred",
-   "record_fp": "6603b6058780046c",
+   "record_fp": "4b1a92f038886653",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_builder#current-object"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Builder:prop:scope:observe",
-   "fingerprint": "3560b1c8d991106b",
+   "fingerprint": "3549a4b79704d034",
    "kind": "Gtk:Builder",
    "name": "scope",
    "origin": "inferred",
-   "record_fp": "054f105d92287b2a",
+   "record_fp": "3f8b68acc2d48b40",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_builder#scope"
    ]
@@ -18504,11 +18595,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Button:prop:child:observe",
-   "fingerprint": "7a8154c4576ae7fc",
+   "fingerprint": "3b8c5c58fbec1283",
    "kind": "Gtk:Button",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "4c48e218c928af4e",
+   "record_fp": "39f677d618f97dff",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -18569,13 +18660,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Calendar:prop:date:observe",
-   "fingerprint": "91296d3f978f90e7",
+   "fingerprint": "5481d35787da8be8",
    "kind": "Gtk:Calendar",
    "name": "date",
    "origin": "inferred",
-   "record_fp": "7676dd82a116d0a9",
+   "record_fp": "f06606cee9c15ca5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_calendar#date"
    ]
@@ -18660,13 +18751,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellArea:prop:focus-cell:observe",
-   "fingerprint": "8a4179e1bbfb93c5",
+   "fingerprint": "9fae6143e3f97f8d",
    "kind": "Gtk:CellArea",
    "name": "focus-cell",
    "origin": "inferred",
-   "record_fp": "615cffaf202a3cf1",
+   "record_fp": "29e8d096d9aaacc2",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellarea#focus-cell"
    ]
@@ -18712,13 +18803,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRenderer:prop:cell-background-rgba:observe",
-   "fingerprint": "e5e8dc7b0d5b9f2c",
+   "fingerprint": "3de799b6f4d43d30",
    "kind": "Gtk:CellRenderer",
    "name": "cell-background-rgba",
    "origin": "inferred",
-   "record_fp": "a9495113183344ad",
+   "record_fp": "5823bf1c463a1dcb",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrenderer#cell-background-rgba"
    ]
@@ -18907,13 +18998,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererAccel:prop:accel-mods:observe",
-   "fingerprint": "21ee496fb2bb8fa9",
+   "fingerprint": "cc6b023eabbec3a3",
    "kind": "Gtk:CellRendererAccel",
    "name": "accel-mods",
    "origin": "inferred",
-   "record_fp": "d71ff59c342c152c",
+   "record_fp": "68c62ecccc4d58cc",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrendereraccel#accel-mods"
    ]
@@ -18946,13 +19037,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererCombo:prop:model:observe",
-   "fingerprint": "9f0340718df436f0",
+   "fingerprint": "07ae0310b0433d7c",
    "kind": "Gtk:CellRendererCombo",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "0991a1c5b64983fe",
+   "record_fp": "e051e33fe8055b23",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrenderercombo#model"
    ]
@@ -18972,13 +19063,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:gicon:observe",
-   "fingerprint": "a88fb5ab3e9f2232",
+   "fingerprint": "32c5bbefaf0ec480",
    "kind": "Gtk:CellRendererPixbuf",
    "name": "gicon",
    "origin": "inferred",
-   "record_fp": "e8100293c8db43f2",
+   "record_fp": "7f46cf2cacbf6f2c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrendererpixbuf#gicon"
    ]
@@ -19011,39 +19102,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:pixbuf-expander-closed:observe",
-   "fingerprint": "6e9f55324b24ee37",
+   "fingerprint": "636447481ee0acfe",
    "kind": "Gtk:CellRendererPixbuf",
    "name": "pixbuf-expander-closed",
    "origin": "inferred",
-   "record_fp": "9f4af4d2bee3c015",
+   "record_fp": "21a206526176abaf",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrendererpixbuf#pixbuf-expander-closed"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:pixbuf-expander-open:observe",
-   "fingerprint": "c8111a056744372b",
+   "fingerprint": "966922b5686d6efa",
    "kind": "Gtk:CellRendererPixbuf",
    "name": "pixbuf-expander-open",
    "origin": "inferred",
-   "record_fp": "3fb2f6f625058c4d",
+   "record_fp": "5c0da828c202cbbd",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrendererpixbuf#pixbuf-expander-open"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererPixbuf:prop:texture:observe",
-   "fingerprint": "e79c4129c4d7ee9e",
+   "fingerprint": "db5d0c5c4b29ef91",
    "kind": "Gtk:CellRendererPixbuf",
    "name": "texture",
    "origin": "inferred",
-   "record_fp": "f29e2019862117a4",
+   "record_fp": "d65eb6ebe79628de",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrendererpixbuf#texture"
    ]
@@ -19128,13 +19219,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererSpin:prop:adjustment:observe",
-   "fingerprint": "b0ccf4e95c6d4ce6",
+   "fingerprint": "74fc0238b72c930f",
    "kind": "Gtk:CellRendererSpin",
    "name": "adjustment",
    "origin": "inferred",
-   "record_fp": "54a61402b93060ff",
+   "record_fp": "9f97a43bdc611dc4",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrendererspin#adjustment"
    ]
@@ -19232,26 +19323,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:attributes:observe",
-   "fingerprint": "d4e3c656faa34df4",
+   "fingerprint": "3b6f5f9a563de073",
    "kind": "Gtk:CellRendererText",
    "name": "attributes",
    "origin": "inferred",
-   "record_fp": "8216403b3ef3a34f",
+   "record_fp": "2e38577c53561466",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrenderertext#attributes"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:background-rgba:observe",
-   "fingerprint": "620ef664c1f996bb",
+   "fingerprint": "233a8c05f7a780b6",
    "kind": "Gtk:CellRendererText",
    "name": "background-rgba",
    "origin": "inferred",
-   "record_fp": "7144ce74f4586245",
+   "record_fp": "71714610277f7d0b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrenderertext#background-rgba"
    ]
@@ -19349,26 +19440,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:font-desc:observe",
-   "fingerprint": "cf68bfb2d099f132",
+   "fingerprint": "627040c2b1141e9e",
    "kind": "Gtk:CellRendererText",
    "name": "font-desc",
    "origin": "inferred",
-   "record_fp": "d7127a9558925c1d",
+   "record_fp": "e2481adab648b3f7",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrenderertext#font-desc"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellRendererText:prop:foreground-rgba:observe",
-   "fingerprint": "f6c3f24b838fdf3c",
+   "fingerprint": "68e3c7f67c2ea399",
    "kind": "Gtk:CellRendererText",
    "name": "foreground-rgba",
    "origin": "inferred",
-   "record_fp": "a80cd4ec1c88cde0",
+   "record_fp": "553878c0f72aab29",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellrenderertext#foreground-rgba"
    ]
@@ -19843,13 +19934,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CellView:prop:model:observe",
-   "fingerprint": "4a7f30b0d518c3ca",
+   "fingerprint": "60aead4376c8d403",
    "kind": "Gtk:CellView",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "d0f9d6a856d74ca7",
+   "record_fp": "6beb6014b0c93d09",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_cellview#model"
    ]
@@ -19869,26 +19960,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:center-widget:observe",
-   "fingerprint": "9db63da28f38f484",
+   "fingerprint": "c3ac38019653b4d3",
    "kind": "Gtk:CenterBox",
    "name": "center-widget",
    "origin": "inferred",
-   "record_fp": "17f2fbb7c3b7ff12",
+   "record_fp": "553e91768c8497e6",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_centerbox#center-widget"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:end-widget:observe",
-   "fingerprint": "837f31d1c0878caf",
+   "fingerprint": "6d0e7f48869f23b1",
    "kind": "Gtk:CenterBox",
    "name": "end-widget",
    "origin": "inferred",
-   "record_fp": "b230dc75a454d838",
+   "record_fp": "fd2f06438c5fd16b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_centerbox#end-widget"
    ]
@@ -19908,13 +19999,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CenterBox:prop:start-widget:observe",
-   "fingerprint": "06958643e872d881",
+   "fingerprint": "c5abe5f6c6a620c9",
    "kind": "Gtk:CenterBox",
    "name": "start-widget",
    "origin": "inferred",
-   "record_fp": "4fab025dee14a02c",
+   "record_fp": "d4d2754735121d85",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_centerbox#start-widget"
    ]
@@ -19947,13 +20038,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:CheckButton:prop:child:observe",
-   "fingerprint": "e4184e66fb4c527d",
+   "fingerprint": "0ff77ddce8915f8f",
    "kind": "Gtk:CheckButton",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "87dada74aecb51f2",
+   "record_fp": "c71f3821c9e2a52b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_checkbutton#child"
    ]
@@ -20038,13 +20129,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColorChooser:prop:rgba:observe",
-   "fingerprint": "eca4f382557ca771",
+   "fingerprint": "2d641b4449490ae1",
    "kind": "Gtk:ColorChooser",
    "name": "rgba",
    "origin": "inferred",
-   "record_fp": "67f03f2c4328bc35",
+   "record_fp": "a9ac2c371af70af7",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_colorchooser#rgba"
    ]
@@ -20129,26 +20220,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:prop:dialog:observe",
-   "fingerprint": "cb8374b571f69528",
+   "fingerprint": "cf93153beafac7e8",
    "kind": "Gtk:ColorDialogButton",
    "name": "dialog",
    "origin": "inferred",
-   "record_fp": "f41092da33195b1e",
+   "record_fp": "11cc927cb7761a87",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_colordialogbutton#dialog"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColorDialogButton:prop:rgba:observe",
-   "fingerprint": "e82f84d3678e85d3",
+   "fingerprint": "f7bd89fa69ac0771",
    "kind": "Gtk:ColorDialogButton",
    "name": "rgba",
    "origin": "inferred",
-   "record_fp": "3f3fe2c3d1e91520",
+   "record_fp": "2a84b82b8a507cc4",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_colordialogbutton#rgba"
    ]
@@ -20168,26 +20259,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:header-factory:observe",
-   "fingerprint": "bc171761202f08a1",
+   "fingerprint": "34340ef496f27512",
    "kind": "Gtk:ColumnView",
    "name": "header-factory",
    "origin": "inferred",
-   "record_fp": "9df90f5d0ebe105e",
+   "record_fp": "93cf96b17cb09fd6",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_columnview#header-factory"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:model:observe",
-   "fingerprint": "ff76170ddc824e09",
+   "fingerprint": "d0eb0131860872cb",
    "kind": "Gtk:ColumnView",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "1499100f1c0c154b",
+   "record_fp": "74601d75052475a3",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_columnview#model"
    ]
@@ -20207,13 +20298,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnView:prop:row-factory:observe",
-   "fingerprint": "fd19a131d29eb354",
+   "fingerprint": "7ce10516b90688e8",
    "kind": "Gtk:ColumnView",
    "name": "row-factory",
    "origin": "inferred",
-   "record_fp": "390379649ae9da7b",
+   "record_fp": "0c52d06e37dc73ca",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_columnview#row-factory"
    ]
@@ -20272,13 +20363,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnViewCell:prop:child:observe",
-   "fingerprint": "dc8d5bae11dac167",
+   "fingerprint": "0ff96405ee68da5f",
    "kind": "Gtk:ColumnViewCell",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "b83b8343048ce256",
+   "record_fp": "bb14bb84839c2662",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_columnviewcell#child"
    ]
@@ -20311,13 +20402,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:factory:observe",
-   "fingerprint": "998bf1fffe422014",
+   "fingerprint": "89d3c3f0ac5e28ce",
    "kind": "Gtk:ColumnViewColumn",
    "name": "factory",
    "origin": "inferred",
-   "record_fp": "b0977e6f52d267b4",
+   "record_fp": "63e45d9459f5df1e",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_columnviewcolumn#factory"
    ]
@@ -20337,13 +20428,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:header-menu:observe",
-   "fingerprint": "7cba2b0b10f6ead5",
+   "fingerprint": "bde1d0acfaca15fa",
    "kind": "Gtk:ColumnViewColumn",
    "name": "header-menu",
    "origin": "inferred",
-   "record_fp": "c86699b12f35463a",
+   "record_fp": "0a6e724b2d042e03",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_columnviewcolumn#header-menu"
    ]
@@ -20376,13 +20467,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ColumnViewColumn:prop:sorter:observe",
-   "fingerprint": "87bf15add5ef1af0",
+   "fingerprint": "34f1820c54fc6369",
    "kind": "Gtk:ColumnViewColumn",
    "name": "sorter",
    "origin": "inferred",
-   "record_fp": "4082f10c85be22ad",
+   "record_fp": "cab6a363e3036292",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_columnviewcolumn#sorter"
    ]
@@ -20480,26 +20571,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:active:observe",
-   "fingerprint": "cc62663acc8553a0",
+   "fingerprint": "5cfc3026c1c039b4",
    "kind": "Gtk:ComboBox",
    "name": "active",
    "origin": "inferred",
-   "record_fp": "f4d311f8554145dd",
+   "record_fp": "7037d1cbc0e386fd",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_combobox#active"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:active-id:observe",
-   "fingerprint": "c0ad8929f2e6f733",
+   "fingerprint": "144a0f43326e4224",
    "kind": "Gtk:ComboBox",
    "name": "active-id",
    "origin": "inferred",
-   "record_fp": "ba06fcaf7cb2dda8",
+   "record_fp": "936e13f6c7ec2ee1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_combobox#active-id"
    ]
@@ -20519,13 +20610,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:child:observe",
-   "fingerprint": "e7f8e3fce8eab0f2",
+   "fingerprint": "d3f13ab55b7ca642",
    "kind": "Gtk:ComboBox",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "bdc48b9eb7e4babf",
+   "record_fp": "021ebdad5b5f04ae",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_combobox#child"
    ]
@@ -20584,13 +20675,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ComboBox:prop:model:observe",
-   "fingerprint": "3d02e7a30c2af9f3",
+   "fingerprint": "26c88d9f5ebb7eda",
    "kind": "Gtk:ComboBox",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "714e30ae37a71d58",
+   "record_fp": "9d72aa96edcb2a97",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_combobox#model"
    ]
@@ -20883,13 +20974,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:file:observe",
-   "fingerprint": "8e9f8389c116d435",
+   "fingerprint": "8c9c94351738a8c1",
    "kind": "Gtk:DirectoryList",
    "name": "file",
    "origin": "inferred",
-   "record_fp": "80091eecab10d881",
+   "record_fp": "0be0c027335203ec",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_directorylist#file"
    ]
@@ -20922,39 +21013,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:n-items:observe",
-   "fingerprint": "83932501ad8eb880",
+   "fingerprint": "787918e96cd9828b",
    "kind": "Gtk:DirectoryList",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "55d3bdc9220179a1",
+   "record_fp": "fd3cfbff2a7d1114",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_directorylist#n-items"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DragSource:prop:actions:observe",
-   "fingerprint": "bd21f2aadf19f710",
+   "fingerprint": "64e1707dc3ae4c41",
    "kind": "Gtk:DragSource",
    "name": "actions",
    "origin": "inferred",
-   "record_fp": "1cc00478430eba90",
+   "record_fp": "caf0260806df6612",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dragsource#actions"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DragSource:prop:content:observe",
-   "fingerprint": "24aa44e5353aaeb7",
+   "fingerprint": "44ac3533173f6b7f",
    "kind": "Gtk:DragSource",
    "name": "content",
    "origin": "inferred",
-   "record_fp": "0af36360d8556ce4",
+   "record_fp": "73b89851e276a87b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dragsource#content"
    ]
@@ -21000,65 +21091,65 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:expression:observe",
-   "fingerprint": "19cb82f44f3db680",
+   "fingerprint": "dc0b1115390c2dce",
    "kind": "Gtk:DropDown",
    "name": "expression",
    "origin": "inferred",
-   "record_fp": "8b5f6aef9d037a41",
+   "record_fp": "95f39939d53186c3",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dropdown#expression"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:factory:observe",
-   "fingerprint": "e23e82cc37cc47d9",
+   "fingerprint": "3ad6613fc0e5c425",
    "kind": "Gtk:DropDown",
    "name": "factory",
    "origin": "inferred",
-   "record_fp": "e322a0d4a0906738",
+   "record_fp": "8d10ab3cb440b3f6",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dropdown#factory"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:header-factory:observe",
-   "fingerprint": "0fe0558340e10cc7",
+   "fingerprint": "74e541aed14a098a",
    "kind": "Gtk:DropDown",
    "name": "header-factory",
    "origin": "inferred",
-   "record_fp": "b21d838c5ca97c36",
+   "record_fp": "959fb893cee8a3ed",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dropdown#header-factory"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:list-factory:observe",
-   "fingerprint": "71af51ada728562e",
+   "fingerprint": "6cf94eced1cba237",
    "kind": "Gtk:DropDown",
    "name": "list-factory",
    "origin": "inferred",
-   "record_fp": "b5ddcd1b46cc381e",
+   "record_fp": "9fca428e48b12d19",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dropdown#list-factory"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:model:observe",
-   "fingerprint": "3999e65077aa4e98",
+   "fingerprint": "ac92b846171b1567",
    "kind": "Gtk:DropDown",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "3c46b61d2e5e34e2",
+   "record_fp": "1ab83776779b1b90",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dropdown#model"
    ]
@@ -21078,13 +21169,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropDown:prop:selected:observe",
-   "fingerprint": "6a91b2bc00ab2885",
+   "fingerprint": "02fc838db631c1bf",
    "kind": "Gtk:DropDown",
    "name": "selected",
    "origin": "inferred",
-   "record_fp": "f4dc6f642b778f26",
+   "record_fp": "11c678739f78a1ff",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_dropdown#selected"
    ]
@@ -21117,13 +21208,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropTarget:prop:actions:observe",
-   "fingerprint": "24ed01f70e449cef",
+   "fingerprint": "3ae5fb2282da9b7f",
    "kind": "Gtk:DropTarget",
    "name": "actions",
    "origin": "inferred",
-   "record_fp": "0ea5fb71e730ab1f",
+   "record_fp": "441476c24d6052e1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_droptarget#actions"
    ]
@@ -21156,26 +21247,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:prop:actions:observe",
-   "fingerprint": "3bee358f7d1fead5",
+   "fingerprint": "48b0104883e0adfd",
    "kind": "Gtk:DropTargetAsync",
    "name": "actions",
    "origin": "inferred",
-   "record_fp": "ef6b5a402bdd5471",
+   "record_fp": "c3523f0bc5e52da8",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_droptargetasync#actions"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:DropTargetAsync:prop:formats:observe",
-   "fingerprint": "db543d55a9bc7014",
+   "fingerprint": "6897b582c714b65f",
    "kind": "Gtk:DropTargetAsync",
    "name": "formats",
    "origin": "inferred",
-   "record_fp": "b3250ac013f21df3",
+   "record_fp": "71e63db4b1564234",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_droptargetasync#formats"
    ]
@@ -21312,39 +21403,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:attributes:observe",
-   "fingerprint": "fc79be5cf3bad8a5",
+   "fingerprint": "00ebe871354abeba",
    "kind": "Gtk:Entry",
    "name": "attributes",
    "origin": "inferred",
-   "record_fp": "9d53677e79083358",
+   "record_fp": "4a0435f7d70e7467",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#attributes"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:buffer:observe",
-   "fingerprint": "bd184d5cdf42e8dd",
+   "fingerprint": "33f39122ea15a6cb",
    "kind": "Gtk:Entry",
    "name": "buffer",
    "origin": "inferred",
-   "record_fp": "0112c671082aac8a",
+   "record_fp": "2ba71b4feaf663fe",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#buffer"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:completion:observe",
-   "fingerprint": "ea9709253416e30b",
+   "fingerprint": "caccf29fdab417a8",
    "kind": "Gtk:Entry",
    "name": "completion",
    "origin": "inferred",
-   "record_fp": "d06497ff83a2a189",
+   "record_fp": "f93ad548b40a0546",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#completion"
    ]
@@ -21364,13 +21455,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:extra-menu:observe",
-   "fingerprint": "5f7cbcc84a91b0d4",
+   "fingerprint": "7223cbe918d530fd",
    "kind": "Gtk:Entry",
    "name": "extra-menu",
    "origin": "inferred",
-   "record_fp": "ffc24633af34386d",
+   "record_fp": "f29dfd77a2eb2652",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#extra-menu"
    ]
@@ -21403,13 +21494,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:input-hints:observe",
-   "fingerprint": "f4efd5ae553b093f",
+   "fingerprint": "88e7e62e35845b2f",
    "kind": "Gtk:Entry",
    "name": "input-hints",
    "origin": "inferred",
-   "record_fp": "39a8dccaa2abc310",
+   "record_fp": "0d73a0e7ec76a7f5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#input-hints"
    ]
@@ -21533,13 +21624,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-gicon:observe",
-   "fingerprint": "12a666589975a566",
+   "fingerprint": "cb27d82178a0bc7a",
    "kind": "Gtk:Entry",
    "name": "primary-icon-gicon",
    "origin": "inferred",
-   "record_fp": "c2f8d32f4eb52ef6",
+   "record_fp": "b2a942ad783541a0",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#primary-icon-gicon"
    ]
@@ -21559,13 +21650,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:primary-icon-paintable:observe",
-   "fingerprint": "801fe26ab430500c",
+   "fingerprint": "7f41a0912a119ba7",
    "kind": "Gtk:Entry",
    "name": "primary-icon-paintable",
    "origin": "inferred",
-   "record_fp": "75696c03b102dfe1",
+   "record_fp": "74d876c22ac8ae18",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#primary-icon-paintable"
    ]
@@ -21663,13 +21754,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-gicon:observe",
-   "fingerprint": "15d390c992f2bd61",
+   "fingerprint": "c9c588f3f7c6c7aa",
    "kind": "Gtk:Entry",
    "name": "secondary-icon-gicon",
    "origin": "inferred",
-   "record_fp": "3e35a6db8a5db551",
+   "record_fp": "1411b4e0c01afe87",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#secondary-icon-gicon"
    ]
@@ -21689,13 +21780,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:secondary-icon-paintable:observe",
-   "fingerprint": "f9cd84ae73620cbb",
+   "fingerprint": "527b055d56407efe",
    "kind": "Gtk:Entry",
    "name": "secondary-icon-paintable",
    "origin": "inferred",
-   "record_fp": "87a18f40c766452c",
+   "record_fp": "45a0727da0e00ba7",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#secondary-icon-paintable"
    ]
@@ -21767,13 +21858,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:tabs:observe",
-   "fingerprint": "3e3bcd691163718f",
+   "fingerprint": "971ae573dda5f0b2",
    "kind": "Gtk:Entry",
    "name": "tabs",
    "origin": "inferred",
-   "record_fp": "b8efd0b3b2f1a6e3",
+   "record_fp": "32c308bcc9463de4",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entry#tabs"
    ]
@@ -21910,13 +22001,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:EntryCompletion:prop:model:observe",
-   "fingerprint": "3130bef996a26b7b",
+   "fingerprint": "79c0291b5870e92e",
    "kind": "Gtk:EntryCompletion",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "2cb1b62fd9a3a33d",
+   "record_fp": "1cce474339923fd1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_entrycompletion#model"
    ]
@@ -22027,26 +22118,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:EventControllerScroll:prop:flags:observe",
-   "fingerprint": "a013693db04630ae",
+   "fingerprint": "849244ee2f670d1a",
    "kind": "Gtk:EventControllerScroll",
    "name": "flags",
    "origin": "inferred",
-   "record_fp": "815b27fc9c0f8a43",
+   "record_fp": "8ba5d280a4fb332b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_eventcontrollerscroll#flags"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:prop:child:observe",
-   "fingerprint": "dc5d3a1de2f41d6b",
+   "fingerprint": "d77ff9c70b4a3adb",
    "kind": "Gtk:Expander",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "a67de3d5652551da",
+   "record_fp": "cc238bf658c72eb4",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_expander#child"
    ]
@@ -22079,11 +22170,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Expander:prop:label-widget:observe",
-   "fingerprint": "5e409a58e3c666b3",
+   "fingerprint": "cf9a05ad2b0f6616",
    "kind": "Gtk:Expander",
    "name": "label-widget",
    "origin": "inferred",
-   "record_fp": "bdf8befe7284efb0",
+   "record_fp": "c0979b53f28acb0a",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -22157,13 +22248,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FileChooser:prop:filter:observe",
-   "fingerprint": "577a883f875be7bb",
+   "fingerprint": "1ed06ad00373c379",
    "kind": "Gtk:FileChooser",
    "name": "filter",
    "origin": "inferred",
-   "record_fp": "c1e8a63c85d47463",
+   "record_fp": "5407d32696c9dae8",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filechooser#filter"
    ]
@@ -22248,26 +22339,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:default-filter:observe",
-   "fingerprint": "571c105745260775",
+   "fingerprint": "607a114aa8c9710a",
    "kind": "Gtk:FileDialog",
    "name": "default-filter",
    "origin": "inferred",
-   "record_fp": "dfe540da9b439315",
+   "record_fp": "36d8e9fd8703b2f1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filedialog#default-filter"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:filters:observe",
-   "fingerprint": "afe5d80b6c84b638",
+   "fingerprint": "c0c23b912e352056",
    "kind": "Gtk:FileDialog",
    "name": "filters",
    "origin": "inferred",
-   "record_fp": "766a884e707440b0",
+   "record_fp": "8af70409276e7bec",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filedialog#filters"
    ]
@@ -22287,13 +22378,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FileDialog:prop:initial-folder:observe",
-   "fingerprint": "21347744f1037cec",
+   "fingerprint": "24cac0db4a579858",
    "kind": "Gtk:FileDialog",
    "name": "initial-folder",
    "origin": "inferred",
-   "record_fp": "0ff407c612094f9a",
+   "record_fp": "1e2115f2aaaff05a",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filedialog#initial-folder"
    ]
@@ -22365,13 +22456,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FileLauncher:prop:file:observe",
-   "fingerprint": "6739390879cd4dc2",
+   "fingerprint": "2df39cb315ad6d3c",
    "kind": "Gtk:FileLauncher",
    "name": "file",
    "origin": "inferred",
-   "record_fp": "ab64f70a7c4915cf",
+   "record_fp": "37dff49e85e206a4",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filelauncher#file"
    ]
@@ -22391,13 +22482,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:filter:observe",
-   "fingerprint": "bd0cea47350f6242",
+   "fingerprint": "65c3d479c1e48bd0",
    "kind": "Gtk:FilterListModel",
    "name": "filter",
    "origin": "inferred",
-   "record_fp": "fa0de78c1c609467",
+   "record_fp": "7c5a9dfa7f0de8fb",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filterlistmodel#filter"
    ]
@@ -22417,26 +22508,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:model:observe",
-   "fingerprint": "6f57d2f3d7209ce7",
+   "fingerprint": "ad36ee909cfb95ea",
    "kind": "Gtk:FilterListModel",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "0d77607dbed6fbdc",
+   "record_fp": "9b52bc696b5533bc",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filterlistmodel#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FilterListModel:prop:n-items:observe",
-   "fingerprint": "06e9532891cc7aae",
+   "fingerprint": "935782a1bd1fff9d",
    "kind": "Gtk:FilterListModel",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "1fc7d88c4ec90c97",
+   "record_fp": "157009992e4d1104",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_filterlistmodel#n-items"
    ]
@@ -22469,26 +22560,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FlattenListModel:prop:model:observe",
-   "fingerprint": "44d50ad72d6d3715",
+   "fingerprint": "cd6502febcc1614e",
    "kind": "Gtk:FlattenListModel",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "abaf3bdb706957d5",
+   "record_fp": "d6658aa6512e91fd",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_flattenlistmodel#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FlattenListModel:prop:n-items:observe",
-   "fingerprint": "3fae37680a7daddd",
+   "fingerprint": "c73145f7b402cce2",
    "kind": "Gtk:FlattenListModel",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "4c363d06e0fb93b8",
+   "record_fp": "2e03f6dede3bf5aa",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_flattenlistmodel#n-items"
    ]
@@ -22599,13 +22690,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FlowBoxChild:prop:child:observe",
-   "fingerprint": "1fc5997f5cc6987d",
+   "fingerprint": "76edf964d980faf2",
    "kind": "Gtk:FlowBoxChild",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "6f8d77fb79f64163",
+   "record_fp": "cd65f72762e09ea5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_flowboxchild#child"
    ]
@@ -22677,13 +22768,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:font-desc:observe",
-   "fingerprint": "feaa3c8c14d21238",
+   "fingerprint": "97e0eaca3d10a537",
    "kind": "Gtk:FontChooser",
    "name": "font-desc",
    "origin": "inferred",
-   "record_fp": "fe72c4dcffc9920f",
+   "record_fp": "db2669ca94072a8c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontchooser#font-desc"
    ]
@@ -22703,13 +22794,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontChooser:prop:level:observe",
-   "fingerprint": "f408a349d5cd22af",
+   "fingerprint": "6e2413a9c6b7312e",
    "kind": "Gtk:FontChooser",
    "name": "level",
    "origin": "inferred",
-   "record_fp": "bc88ea54479be9d7",
+   "record_fp": "3b45394341343c49",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontchooser#level"
    ]
@@ -22742,39 +22833,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:filter:observe",
-   "fingerprint": "0a4fa1216a9fef31",
+   "fingerprint": "f81cf5899e2c684d",
    "kind": "Gtk:FontDialog",
    "name": "filter",
    "origin": "inferred",
-   "record_fp": "4dc21037144fcf19",
+   "record_fp": "91c5a1288f1e1c98",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontdialog#filter"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:font-map:observe",
-   "fingerprint": "8a3414eef1db4560",
+   "fingerprint": "18542d72947e5e6a",
    "kind": "Gtk:FontDialog",
    "name": "font-map",
    "origin": "inferred",
-   "record_fp": "80ae233f396fb5b6",
+   "record_fp": "63ffc63f12998264",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontdialog#font-map"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontDialog:prop:language:observe",
-   "fingerprint": "adeeca056ddaec10",
+   "fingerprint": "8b36723d14a4219d",
    "kind": "Gtk:FontDialog",
    "name": "language",
    "origin": "inferred",
-   "record_fp": "0b034488da4907a1",
+   "record_fp": "6a66f8d7e1a2d85d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontdialog#language"
    ]
@@ -22807,26 +22898,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:dialog:observe",
-   "fingerprint": "66e2e9668089e045",
+   "fingerprint": "f8a6b98740bf9141",
    "kind": "Gtk:FontDialogButton",
    "name": "dialog",
    "origin": "inferred",
-   "record_fp": "c27496ccad29e368",
+   "record_fp": "4f53050ddc3adeee",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontdialogbutton#dialog"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:font-desc:observe",
-   "fingerprint": "859bee6336de5483",
+   "fingerprint": "09f108180e240a78",
    "kind": "Gtk:FontDialogButton",
    "name": "font-desc",
    "origin": "inferred",
-   "record_fp": "af12ff90dee6ba2b",
+   "record_fp": "1eae52705048d0de",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontdialogbutton#font-desc"
    ]
@@ -22846,13 +22937,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:FontDialogButton:prop:language:observe",
-   "fingerprint": "53edf1aceb943941",
+   "fingerprint": "f11d8eb89d8b999e",
    "kind": "Gtk:FontDialogButton",
    "name": "language",
    "origin": "inferred",
-   "record_fp": "659fac6aae2a5349",
+   "record_fp": "512b03642d96db8c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_fontdialogbutton#language"
    ]
@@ -22898,13 +22989,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:prop:child:observe",
-   "fingerprint": "31c2c6df1f5e3ebe",
+   "fingerprint": "a648bd47bc9f4f34",
    "kind": "Gtk:Frame",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "cbca7aed473795b7",
+   "record_fp": "d7b84b6ce95d8410",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_frame#child"
    ]
@@ -22924,11 +23015,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Frame:prop:label-widget:observe",
-   "fingerprint": "cfba349390988ddf",
+   "fingerprint": "05ff568d3b2ac1b1",
    "kind": "Gtk:Frame",
    "name": "label-widget",
    "origin": "inferred",
-   "record_fp": "ce167d1a40e4cad4",
+   "record_fp": "51cfdb8bc25ca52b",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -22950,11 +23041,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:GLArea:prop:allowed-apis:observe",
-   "fingerprint": "07b3cb0e16399515",
+   "fingerprint": "559b5926536d21de",
    "kind": "Gtk:GLArea",
    "name": "allowed-apis",
    "origin": "inferred",
-   "record_fp": "2b84a2a6b4ad6e89",
+   "record_fp": "783885749297a960",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -23119,13 +23210,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:GraphicsOffload:prop:child:observe",
-   "fingerprint": "b917ce3fa1458b85",
+   "fingerprint": "95dad840fac53de9",
    "kind": "Gtk:GraphicsOffload",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "ac2d0701ce0b0b6e",
+   "record_fp": "b51f49a251b45803",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_graphicsoffload#child"
    ]
@@ -23340,13 +23431,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:GridView:prop:factory:observe",
-   "fingerprint": "ca40a5c42136d8ed",
+   "fingerprint": "628b0422968305b3",
    "kind": "Gtk:GridView",
    "name": "factory",
    "origin": "inferred",
-   "record_fp": "e6a6b51c7829d9c0",
+   "record_fp": "1d2e8344450ea0ec",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_gridview#factory"
    ]
@@ -23379,13 +23470,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:GridView:prop:model:observe",
-   "fingerprint": "bd706b66ff5540c2",
+   "fingerprint": "1d5a37e53da3cff1",
    "kind": "Gtk:GridView",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "6d67647eb0660807",
+   "record_fp": "c175d23f7ed39aa6",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_gridview#model"
    ]
@@ -23444,13 +23535,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:HeaderBar:prop:title-widget:observe",
-   "fingerprint": "c27aeb5d92716b1a",
+   "fingerprint": "2c150bdffe13d1f9",
    "kind": "Gtk:HeaderBar",
    "name": "title-widget",
    "origin": "inferred",
-   "record_fp": "86bf436c382afd79",
+   "record_fp": "a87e3c098b1ed460",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_headerbar#title-widget"
    ]
@@ -23470,13 +23561,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:IMContext:prop:input-hints:observe",
-   "fingerprint": "6a7d76d2a6df63ef",
+   "fingerprint": "fe5e9f8f5dbfcad6",
    "kind": "Gtk:IMContext",
    "name": "input-hints",
    "origin": "inferred",
-   "record_fp": "31163d0f227cf494",
+   "record_fp": "0c4130a266b12240",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_imcontext#input-hints"
    ]
@@ -23561,39 +23652,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:IconTheme:prop:display:observe",
-   "fingerprint": "4028c14af9ff86fd",
+   "fingerprint": "d8afff285098e742",
    "kind": "Gtk:IconTheme",
    "name": "display",
    "origin": "inferred",
-   "record_fp": "aab02b8c64e8e493",
+   "record_fp": "5597e7e00175efc1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_icontheme#display"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:IconTheme:prop:resource-path:observe",
-   "fingerprint": "1c94e4603c69e01c",
+   "fingerprint": "e4cc4461cfd33294",
    "kind": "Gtk:IconTheme",
    "name": "resource-path",
    "origin": "inferred",
-   "record_fp": "aca17e5938083b40",
+   "record_fp": "2c74c7af87148ed9",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_icontheme#resource-path"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:IconTheme:prop:search-path:observe",
-   "fingerprint": "b60497a6d2d2eeb0",
+   "fingerprint": "c6fe7471b96ccee5",
    "kind": "Gtk:IconTheme",
    "name": "search-path",
    "origin": "inferred",
-   "record_fp": "d6ff0b987a8b326b",
+   "record_fp": "6c80d2469648f309",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_icontheme#search-path"
    ]
@@ -23730,13 +23821,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:IconView:prop:model:observe",
-   "fingerprint": "63b8bea82f4870e8",
+   "fingerprint": "2aff4c1b232e4fbd",
    "kind": "Gtk:IconView",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "255639de6de28505",
+   "record_fp": "e7bba9c6cfa4e67c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_iconview#model"
    ]
@@ -23834,26 +23925,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:file:observe",
-   "fingerprint": "7be1ef7080354ee8",
+   "fingerprint": "6105d7c6b46e8073",
    "kind": "Gtk:Image",
    "name": "file",
    "origin": "inferred",
-   "record_fp": "432114a7a8763619",
+   "record_fp": "fc69bfff30ae6734",
    "section": "observe",
-   "strength": "connect",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_image#file"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:gicon:observe",
-   "fingerprint": "b51d2d4ba56e5cea",
+   "fingerprint": "3fb9a2d5c6c85082",
    "kind": "Gtk:Image",
    "name": "gicon",
    "origin": "inferred",
-   "record_fp": "4e280a26f2584d8a",
+   "record_fp": "e2b51c51af617a2c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_image#gicon"
    ]
@@ -23886,13 +23977,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:paintable:observe",
-   "fingerprint": "b96672739451b7b2",
+   "fingerprint": "4bc3914754238c9e",
    "kind": "Gtk:Image",
    "name": "paintable",
    "origin": "inferred",
-   "record_fp": "6b2051ceb31cec42",
+   "record_fp": "504fe96fafe56c5d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_image#paintable"
    ]
@@ -23912,13 +24003,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:resource:observe",
-   "fingerprint": "6622f39c933ece97",
+   "fingerprint": "b4ed9ebaa6b724b7",
    "kind": "Gtk:Image",
    "name": "resource",
    "origin": "inferred",
-   "record_fp": "73e1bc1bba37fce0",
+   "record_fp": "46216613ca6465b2",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_image#resource"
    ]
@@ -23990,13 +24081,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Inscription:prop:attributes:observe",
-   "fingerprint": "53f8e974b4030e42",
+   "fingerprint": "00373bf1fc37ad71",
    "kind": "Gtk:Inscription",
    "name": "attributes",
    "origin": "inferred",
-   "record_fp": "9f32f84d853c8128",
+   "record_fp": "a7f4993bdfd72035",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_inscription#attributes"
    ]
@@ -24146,13 +24237,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:attributes:observe",
-   "fingerprint": "6d95a6bf33780b9f",
+   "fingerprint": "ce243d6f2b00e5d5",
    "kind": "Gtk:Label",
    "name": "attributes",
    "origin": "inferred",
-   "record_fp": "a9d470e95be82b98",
+   "record_fp": "d20c139cf79d3c3b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_label#attributes"
    ]
@@ -24172,13 +24263,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:extra-menu:observe",
-   "fingerprint": "f2f4ead3e77a706c",
+   "fingerprint": "1ba03ab30b07d310",
    "kind": "Gtk:Label",
    "name": "extra-menu",
    "origin": "inferred",
-   "record_fp": "74d4138e91261f95",
+   "record_fp": "b715893065ae44ee",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_label#extra-menu"
    ]
@@ -24250,13 +24341,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:mnemonic-widget:observe",
-   "fingerprint": "994b52495d9fa0a6",
+   "fingerprint": "79df8fc448f33348",
    "kind": "Gtk:Label",
    "name": "mnemonic-widget",
    "origin": "inferred",
-   "record_fp": "2e7ade4a9eae9360",
+   "record_fp": "53435f0567fe5136",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_label#mnemonic-widget"
    ]
@@ -24302,13 +24393,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Label:prop:tabs:observe",
-   "fingerprint": "07a536f00a779696",
+   "fingerprint": "6c06207b124d5825",
    "kind": "Gtk:Label",
    "name": "tabs",
    "origin": "inferred",
-   "record_fp": "2716c5c20dded502",
+   "record_fp": "f3f6a67970a4563a",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_label#tabs"
    ]
@@ -24614,13 +24705,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ListBoxRow:prop:child:observe",
-   "fingerprint": "258b1e8988a31be4",
+   "fingerprint": "ffbcf1bc5d9240a4",
    "kind": "Gtk:ListBoxRow",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "c3ae108f4f77cfa6",
+   "record_fp": "d4891239cd0a5148",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_listboxrow#child"
    ]
@@ -24640,13 +24731,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ListHeader:prop:child:observe",
-   "fingerprint": "48ab793144d8492d",
+   "fingerprint": "7714cef77e4d29d9",
    "kind": "Gtk:ListHeader",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "5607aa72a09fe820",
+   "record_fp": "d5d1f238a125996b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_listheader#child"
    ]
@@ -24705,13 +24796,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ListItem:prop:child:observe",
-   "fingerprint": "c9f3d93d5cbe918b",
+   "fingerprint": "77e29327e625d0f5",
    "kind": "Gtk:ListItem",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "2793e2a183ad8a16",
+   "record_fp": "1591035082ddbf55",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_listitem#child"
    ]
@@ -24757,39 +24848,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ListView:prop:factory:observe",
-   "fingerprint": "6abc8414e00ea567",
+   "fingerprint": "00ad96d15b701784",
    "kind": "Gtk:ListView",
    "name": "factory",
    "origin": "inferred",
-   "record_fp": "7e778bc54b3ce426",
+   "record_fp": "461103ccdbedfbae",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_listview#factory"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ListView:prop:header-factory:observe",
-   "fingerprint": "ddac53c65f781d9c",
+   "fingerprint": "404b889553d59dc5",
    "kind": "Gtk:ListView",
    "name": "header-factory",
    "origin": "inferred",
-   "record_fp": "d60aae2d557a7df2",
+   "record_fp": "787de189fa980041",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_listview#header-factory"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ListView:prop:model:observe",
-   "fingerprint": "f5f414a2c6a846a8",
+   "fingerprint": "26f5a84ae9954aaa",
    "kind": "Gtk:ListView",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "017cc45bfdc375b4",
+   "record_fp": "98fcbcc2b6e890f8",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_listview#model"
    ]
@@ -24835,13 +24926,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:LockButton:prop:permission:observe",
-   "fingerprint": "823fa17edf88128a",
+   "fingerprint": "7a757014bf4dc06e",
    "kind": "Gtk:LockButton",
    "name": "permission",
    "origin": "inferred",
-   "record_fp": "dbfb2b36ec88acd2",
+   "record_fp": "87b392e4b91c198b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_lockbutton#permission"
    ]
@@ -24926,39 +25017,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:model:observe",
-   "fingerprint": "50b31405db49b013",
+   "fingerprint": "afa77a286767b0e1",
    "kind": "Gtk:MapListModel",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "0d1dc74dd1800eb5",
+   "record_fp": "9f412dbc50baab6d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_maplistmodel#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MapListModel:prop:n-items:observe",
-   "fingerprint": "cfd7b7e145cec712",
+   "fingerprint": "b2141ce65cb06d7c",
    "kind": "Gtk:MapListModel",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "64f778d37affbe96",
+   "record_fp": "e6ae7bf4934b4213",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_maplistmodel#n-items"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MediaControls:prop:media-stream:observe",
-   "fingerprint": "9ba9445be1ec3862",
+   "fingerprint": "6e45f86cbf4430d5",
    "kind": "Gtk:MediaControls",
    "name": "media-stream",
    "origin": "inferred",
-   "record_fp": "f65978a46763c019",
+   "record_fp": "fd3c920e2db6b930",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_mediacontrols#media-stream"
    ]
@@ -25004,13 +25095,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:child:observe",
-   "fingerprint": "54bb7cebba0e0cff",
+   "fingerprint": "489aa9e76182c70e",
    "kind": "Gtk:MenuButton",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "2580c28dbdb4adb4",
+   "record_fp": "743cccb1ccd465bb",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_menubutton#child"
    ]
@@ -25069,26 +25160,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:menu-model:observe",
-   "fingerprint": "18d7a3e50fd5e3fd",
+   "fingerprint": "7e9655f636870006",
    "kind": "Gtk:MenuButton",
    "name": "menu-model",
    "origin": "inferred",
-   "record_fp": "6fafe5576f14be64",
+   "record_fp": "d9c465fd2526b03f",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_menubutton#menu-model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MenuButton:prop:popover:observe",
-   "fingerprint": "5b2f5d73ad0d33bd",
+   "fingerprint": "1f9efd0b0cbadae9",
    "kind": "Gtk:MenuButton",
    "name": "popover",
    "origin": "inferred",
-   "record_fp": "200e6102b9ff15e2",
+   "record_fp": "9c3de61c93eeaf9e",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_menubutton#popover"
    ]
@@ -25147,13 +25238,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MessageDialog:prop:secondary-use-markup:observe",
-   "fingerprint": "236977cbf2d891c8",
+   "fingerprint": "35654b4adecd61e4",
    "kind": "Gtk:MessageDialog",
    "name": "secondary-use-markup",
    "origin": "inferred",
-   "record_fp": "38e324f4f0f177f7",
+   "record_fp": "f47014197b00441e",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_messagedialog#secondary-use-markup"
    ]
@@ -25198,53 +25289,79 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MountOperation:prop:display:observe",
+   "fingerprint": "72283687835b078e",
+   "kind": "Gtk:MountOperation",
+   "name": "display",
+   "origin": "inferred",
+   "record_fp": "73786ef86a38fabb",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_mountoperation#display"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:MountOperation:prop:parent:observe",
+   "fingerprint": "1ed46042b714c517",
+   "kind": "Gtk:MountOperation",
+   "name": "parent",
+   "origin": "inferred",
+   "record_fp": "e1b6fb4998a80c65",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_mountoperation#parent"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:MultiFilter:prop:n-items:observe",
-   "fingerprint": "e554c15eba377bc5",
+   "fingerprint": "92fd27ded9a121d4",
    "kind": "Gtk:MultiFilter",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "49e246e4a2edf273",
+   "record_fp": "bfe4aa704823cd45",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_multifilter#n-items"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MultiSelection:prop:model:observe",
-   "fingerprint": "3c410464f893eb8d",
+   "fingerprint": "196794d785c64e88",
    "kind": "Gtk:MultiSelection",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "b4cfbbc679f12c31",
+   "record_fp": "ecb992fa54da0bfa",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_multiselection#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MultiSelection:prop:n-items:observe",
-   "fingerprint": "7cf9f55f0f520d21",
+   "fingerprint": "936d9577d30bfa5d",
    "kind": "Gtk:MultiSelection",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "6bb9816a568efb76",
+   "record_fp": "8d317f1c6ce13db1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_multiselection#n-items"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:MultiSorter:prop:n-items:observe",
-   "fingerprint": "2a175a8d739ed8d9",
+   "fingerprint": "59ec8eafc92dbd0b",
    "kind": "Gtk:MultiSorter",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "876177e56965e5c5",
+   "record_fp": "be8a384e239fac1c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_multisorter#n-items"
    ]
@@ -25277,13 +25394,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:NativeDialog:prop:transient-for:observe",
-   "fingerprint": "457fe04626c34b61",
+   "fingerprint": "f2d8969ff8fe7ed4",
    "kind": "Gtk:NativeDialog",
    "name": "transient-for",
    "origin": "inferred",
-   "record_fp": "113fd67688aaff60",
+   "record_fp": "4908974a1cd2150e",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_nativedialog#transient-for"
    ]
@@ -25303,26 +25420,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:NoSelection:prop:model:observe",
-   "fingerprint": "345f038b5d7d7c4a",
+   "fingerprint": "c1c8416d63c220d2",
    "kind": "Gtk:NoSelection",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "9d96cf0f635ea0b5",
+   "record_fp": "25855eda742dab1d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_noselection#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:NoSelection:prop:n-items:observe",
-   "fingerprint": "1533648961c65ff2",
+   "fingerprint": "c6ede46d947f3ddf",
    "kind": "Gtk:NoSelection",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "de65db2fde060623",
+   "record_fp": "99a3aac990b6dd44",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_noselection#n-items"
    ]
@@ -25355,13 +25472,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Notebook:prop:page:observe",
-   "fingerprint": "125a0dd75df767e8",
+   "fingerprint": "dc5c9c3fbdf47a75",
    "kind": "Gtk:Notebook",
    "name": "page",
    "origin": "inferred",
-   "record_fp": "2c2dab88f3efe971",
+   "record_fp": "7d5b32a55bede8dd",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_notebook#page"
    ]
@@ -25550,13 +25667,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:NumericSorter:prop:expression:observe",
-   "fingerprint": "acc2dd6e52e32779",
+   "fingerprint": "bfcdad1ecd4f958d",
    "kind": "Gtk:NumericSorter",
    "name": "expression",
    "origin": "inferred",
-   "record_fp": "73109f97356cdf36",
+   "record_fp": "409bd8a76eccd98d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_numericsorter#expression"
    ]
@@ -25589,13 +25706,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Overlay:prop:child:observe",
-   "fingerprint": "a7b00c01a02244e6",
+   "fingerprint": "536b0c0765d87e80",
    "kind": "Gtk:Overlay",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "ca736bced68bc9d7",
+   "record_fp": "3097660e49af49a9",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_overlay#child"
    ]
@@ -25654,13 +25771,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Paned:prop:end-child:observe",
-   "fingerprint": "f8ac387db51f57ef",
+   "fingerprint": "30946ca582d7e087",
    "kind": "Gtk:Paned",
    "name": "end-child",
    "origin": "inferred",
-   "record_fp": "80c5b58c29445f6b",
+   "record_fp": "c3004027a2a96774",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_paned#end-child"
    ]
@@ -25745,13 +25862,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Paned:prop:start-child:observe",
-   "fingerprint": "0cb33473288ea5f8",
+   "fingerprint": "a498b13c0570ffd4",
    "kind": "Gtk:Paned",
    "name": "start-child",
    "origin": "inferred",
-   "record_fp": "01f2f413e3cac4cc",
+   "record_fp": "34d43abddc6b5181",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_paned#start-child"
    ]
@@ -25862,13 +25979,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:file:observe",
-   "fingerprint": "c8702a114e7ce051",
+   "fingerprint": "565646d469421678",
    "kind": "Gtk:Picture",
    "name": "file",
    "origin": "inferred",
-   "record_fp": "20dc3293061b063f",
+   "record_fp": "c82f4d3efbc6a865",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_picture#file"
    ]
@@ -25901,13 +26018,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Picture:prop:paintable:observe",
-   "fingerprint": "479c6241b30237fc",
+   "fingerprint": "4f4900fecdeafa69",
    "kind": "Gtk:Picture",
    "name": "paintable",
    "origin": "inferred",
-   "record_fp": "37825ca3505d2c82",
+   "record_fp": "63c91844dbcc0207",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_picture#paintable"
    ]
@@ -25940,26 +26057,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:child:observe",
-   "fingerprint": "b539f6bdf72553c7",
+   "fingerprint": "cf656cf79733f619",
    "kind": "Gtk:Popover",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "bc550236b8af39ee",
+   "record_fp": "b94ae59e6c278d03",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popover#child"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:default-widget:observe",
-   "fingerprint": "0108bf0924b653b5",
+   "fingerprint": "e3edfb8451c037bd",
    "kind": "Gtk:Popover",
    "name": "default-widget",
    "origin": "inferred",
-   "record_fp": "ea0f7780eb9cf220",
+   "record_fp": "836b325ddb62f2b0",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popover#default-widget"
    ]
@@ -25992,13 +26109,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Popover:prop:pointing-to:observe",
-   "fingerprint": "fc06fb62cb09f1e9",
+   "fingerprint": "190c389cdbb84091",
    "kind": "Gtk:Popover",
    "name": "pointing-to",
    "origin": "inferred",
-   "record_fp": "aca7597c2ab51b6b",
+   "record_fp": "432e64c5b67d13c5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popover#pointing-to"
    ]
@@ -26018,13 +26135,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PopoverBin:prop:child:observe",
-   "fingerprint": "20068da36ba0b841",
+   "fingerprint": "03da8b5620d6a1c4",
    "kind": "Gtk:PopoverBin",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "8f04c2303f9fd88a",
+   "record_fp": "6121a868d78f6c23",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popoverbin#child"
    ]
@@ -26044,78 +26161,78 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PopoverBin:prop:menu-model:observe",
-   "fingerprint": "ed670b91e86114ad",
+   "fingerprint": "9ff069879e63eeb9",
    "kind": "Gtk:PopoverBin",
    "name": "menu-model",
    "origin": "inferred",
-   "record_fp": "5f515d3650d19b6e",
+   "record_fp": "33e79bf5bb4e0433",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popoverbin#menu-model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PopoverBin:prop:popover:observe",
-   "fingerprint": "c7cffc36bf024621",
+   "fingerprint": "b9b1bbbcdf28e9c6",
    "kind": "Gtk:PopoverBin",
    "name": "popover",
    "origin": "inferred",
-   "record_fp": "b7ff7fee1a2110ec",
+   "record_fp": "084b20a68ca909d8",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popoverbin#popover"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PopoverMenu:prop:flags:observe",
-   "fingerprint": "75e3319e7b4c088a",
+   "fingerprint": "50713e9dadb759e5",
    "kind": "Gtk:PopoverMenu",
    "name": "flags",
    "origin": "inferred",
-   "record_fp": "dc05e1eb750eb251",
+   "record_fp": "47bb69c76b085db2",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popovermenu#flags"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PopoverMenu:prop:menu-model:observe",
-   "fingerprint": "4af4d37d0fe951ae",
+   "fingerprint": "3ab10cdb8e96fd99",
    "kind": "Gtk:PopoverMenu",
    "name": "menu-model",
    "origin": "inferred",
-   "record_fp": "06a234a5e3da21b9",
+   "record_fp": "0b4d580b4971e08c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popovermenu#menu-model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PopoverMenu:prop:visible-submenu:observe",
-   "fingerprint": "25524ccf44cfd344",
+   "fingerprint": "564547781b7e04f5",
    "kind": "Gtk:PopoverMenu",
    "name": "visible-submenu",
    "origin": "inferred",
-   "record_fp": "50aea4e893774bd5",
+   "record_fp": "fe5541cb73c957cb",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popovermenu#visible-submenu"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PopoverMenuBar:prop:menu-model:observe",
-   "fingerprint": "15b730a7d711bc44",
+   "fingerprint": "026e9af05d65149e",
    "kind": "Gtk:PopoverMenuBar",
    "name": "menu-model",
    "origin": "inferred",
-   "record_fp": "7daaead6c0b0e522",
+   "record_fp": "ce9920b1dd763ec5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_popovermenubar#menu-model"
    ]
@@ -26148,26 +26265,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:page-setup:observe",
-   "fingerprint": "3fc68a5f5e7a51c1",
+   "fingerprint": "b3d777f9d91e3170",
    "kind": "Gtk:PrintDialog",
    "name": "page-setup",
    "origin": "inferred",
-   "record_fp": "6e4b0505f62f8a4d",
+   "record_fp": "6abfb1f000db1b06",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_printdialog#page-setup"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:PrintDialog:prop:print-settings:observe",
-   "fingerprint": "39d407ebaeec2b50",
+   "fingerprint": "516bc2fd54e2af11",
    "kind": "Gtk:PrintDialog",
    "name": "print-settings",
    "origin": "inferred",
-   "record_fp": "3b0a1703123500e4",
+   "record_fp": "1d1a37cf3899356a",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_printdialog#print-settings"
    ]
@@ -26183,6 +26300,201 @@
    "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_printdialog#title"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:allow-async:observe",
+   "fingerprint": "1ebf8a6a7de1ee7c",
+   "kind": "Gtk:PrintOperation",
+   "name": "allow-async",
+   "origin": "inferred",
+   "record_fp": "eab02dafcebf87dc",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#allow-async"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:current-page:observe",
+   "fingerprint": "648ae30377df4502",
+   "kind": "Gtk:PrintOperation",
+   "name": "current-page",
+   "origin": "inferred",
+   "record_fp": "65c24edd51b408a9",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#current-page"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:custom-tab-label:observe",
+   "fingerprint": "6f93029cfa410ada",
+   "kind": "Gtk:PrintOperation",
+   "name": "custom-tab-label",
+   "origin": "inferred",
+   "record_fp": "daed87724adb8033",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#custom-tab-label"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:default-page-setup:observe",
+   "fingerprint": "32f906d5729045f6",
+   "kind": "Gtk:PrintOperation",
+   "name": "default-page-setup",
+   "origin": "inferred",
+   "record_fp": "942f5067ff1626f0",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#default-page-setup"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:embed-page-setup:observe",
+   "fingerprint": "087bdb61bd594de8",
+   "kind": "Gtk:PrintOperation",
+   "name": "embed-page-setup",
+   "origin": "inferred",
+   "record_fp": "ca5f31315e018e6e",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#embed-page-setup"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:export-filename:observe",
+   "fingerprint": "2606d46d874d5371",
+   "kind": "Gtk:PrintOperation",
+   "name": "export-filename",
+   "origin": "inferred",
+   "record_fp": "2f5b0d13ba08677a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#export-filename"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:has-selection:observe",
+   "fingerprint": "e2454d8457fb20e4",
+   "kind": "Gtk:PrintOperation",
+   "name": "has-selection",
+   "origin": "inferred",
+   "record_fp": "87af3ad20287921a",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#has-selection"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:job-name:observe",
+   "fingerprint": "6cfab5426063f94b",
+   "kind": "Gtk:PrintOperation",
+   "name": "job-name",
+   "origin": "inferred",
+   "record_fp": "411bbc1a677045c0",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#job-name"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:n-pages:observe",
+   "fingerprint": "22b5ae7eaf126fe2",
+   "kind": "Gtk:PrintOperation",
+   "name": "n-pages",
+   "origin": "inferred",
+   "record_fp": "3729dea667815536",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#n-pages"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:print-settings:observe",
+   "fingerprint": "e99f32f90fe700df",
+   "kind": "Gtk:PrintOperation",
+   "name": "print-settings",
+   "origin": "inferred",
+   "record_fp": "dbbb1f38eb56e9a8",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#print-settings"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:show-progress:observe",
+   "fingerprint": "af1c3e15a2d6b6ea",
+   "kind": "Gtk:PrintOperation",
+   "name": "show-progress",
+   "origin": "inferred",
+   "record_fp": "e61fdf523cc70db0",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#show-progress"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:support-selection:observe",
+   "fingerprint": "efb74e4ab97e8e25",
+   "kind": "Gtk:PrintOperation",
+   "name": "support-selection",
+   "origin": "inferred",
+   "record_fp": "93fc9fccb8d1c3fe",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#support-selection"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:track-print-status:observe",
+   "fingerprint": "ecb43ada2b977a29",
+   "kind": "Gtk:PrintOperation",
+   "name": "track-print-status",
+   "origin": "inferred",
+   "record_fp": "f0836b27685f4cbf",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#track-print-status"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:unit:observe",
+   "fingerprint": "7f2ab01c1dd66b60",
+   "kind": "Gtk:PrintOperation",
+   "name": "unit",
+   "origin": "inferred",
+   "record_fp": "9d43a41461a28da1",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#unit"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:PrintOperation:prop:use-full-page:observe",
+   "fingerprint": "a53d86425ba49e09",
+   "kind": "Gtk:PrintOperation",
+   "name": "use-full-page",
+   "origin": "inferred",
+   "record_fp": "b150b53ee285140f",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_printoperation#use-full-page"
    ]
   },
   {
@@ -26330,13 +26642,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Range:prop:adjustment:observe",
-   "fingerprint": "be18a6530fcafc20",
+   "fingerprint": "f8626e5ee51598cd",
    "kind": "Gtk:Range",
    "name": "adjustment",
    "origin": "inferred",
-   "record_fp": "b14366a89f9fbf1d",
+   "record_fp": "ff4c3139a69b72d6",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_range#adjustment"
    ]
@@ -26499,13 +26811,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Revealer:prop:child:observe",
-   "fingerprint": "e36ec0ad7a278d66",
+   "fingerprint": "06d2102b418c941a",
    "kind": "Gtk:Revealer",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "48197689c1414152",
+   "record_fp": "f94faf6208aad8f1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_revealer#child"
    ]
@@ -26616,13 +26928,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:adjustment:observe",
-   "fingerprint": "7df49b047f51d7cb",
+   "fingerprint": "de2cac6e83861669",
    "kind": "Gtk:ScaleButton",
    "name": "adjustment",
    "origin": "inferred",
-   "record_fp": "a95e900b0ccd74dc",
+   "record_fp": "2b93954a80d01a0d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_scalebutton#adjustment"
    ]
@@ -26642,11 +26954,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScaleButton:prop:icons:observe",
-   "fingerprint": "3a38dfca78a44546",
+   "fingerprint": "d66b68aa65009e2f",
    "kind": "Gtk:ScaleButton",
    "name": "icons",
    "origin": "inferred",
-   "record_fp": "f86e2d5f282d7c22",
+   "record_fp": "d736eb79d9ed484b",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -26668,13 +26980,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:hadjustment:observe",
-   "fingerprint": "cfb101dbbf24561c",
+   "fingerprint": "fedfd6b3398ce8f0",
    "kind": "Gtk:Scrollable",
    "name": "hadjustment",
    "origin": "inferred",
-   "record_fp": "cd7ee56f2c6f676f",
+   "record_fp": "b46e683f6ec49471",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_scrollable#hadjustment"
    ]
@@ -26694,13 +27006,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Scrollable:prop:vadjustment:observe",
-   "fingerprint": "bc7cc224da51fcca",
+   "fingerprint": "1aa6e78dff6630cc",
    "kind": "Gtk:Scrollable",
    "name": "vadjustment",
    "origin": "inferred",
-   "record_fp": "63439cc1330aebe6",
+   "record_fp": "66271281154811d3",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_scrollable#vadjustment"
    ]
@@ -26720,39 +27032,39 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Scrollbar:prop:adjustment:observe",
-   "fingerprint": "9235d5869db86a18",
+   "fingerprint": "3756d8183d9933ed",
    "kind": "Gtk:Scrollbar",
    "name": "adjustment",
    "origin": "inferred",
-   "record_fp": "b87ac53fc2878054",
+   "record_fp": "e30265a1b88ec4c1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_scrollbar#adjustment"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:child:observe",
-   "fingerprint": "62c4c2204a70d95f",
+   "fingerprint": "c67b2bc23b62fcea",
    "kind": "Gtk:ScrolledWindow",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "bd5bd70e967f3381",
+   "record_fp": "c950552e32f1ebc2",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_scrolledwindow#child"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:hadjustment:observe",
-   "fingerprint": "a21c56d0e9184bc4",
+   "fingerprint": "61e109a51229d78d",
    "kind": "Gtk:ScrolledWindow",
    "name": "hadjustment",
    "origin": "inferred",
-   "record_fp": "17e9da98d75519d9",
+   "record_fp": "93917bf74fc40b86",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_scrolledwindow#hadjustment"
    ]
@@ -26889,13 +27201,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ScrolledWindow:prop:vadjustment:observe",
-   "fingerprint": "7ec71e8508a25dd3",
+   "fingerprint": "e539d06f5d1b3740",
    "kind": "Gtk:ScrolledWindow",
    "name": "vadjustment",
    "origin": "inferred",
-   "record_fp": "0fad507668ec5837",
+   "record_fp": "884d590817c97ea8",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_scrolledwindow#vadjustment"
    ]
@@ -26928,26 +27240,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SearchBar:prop:child:observe",
-   "fingerprint": "120ae7e1862da6e9",
+   "fingerprint": "1d5b1564e0eb7c1b",
    "kind": "Gtk:SearchBar",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "857ca11dd07e3ee4",
+   "record_fp": "33e19949a3ac8aa1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_searchbar#child"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SearchBar:prop:key-capture-widget:observe",
-   "fingerprint": "5731129ffcdec04b",
+   "fingerprint": "bd14a9d3b44534da",
    "kind": "Gtk:SearchBar",
    "name": "key-capture-widget",
    "origin": "inferred",
-   "record_fp": "c1c87a053d63cc62",
+   "record_fp": "72d9265281487461",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_searchbar#key-capture-widget"
    ]
@@ -26993,13 +27305,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:input-hints:observe",
-   "fingerprint": "f15c85ad3cac7b26",
+   "fingerprint": "9681605bf6c96e48",
    "kind": "Gtk:SearchEntry",
    "name": "input-hints",
    "origin": "inferred",
-   "record_fp": "8821733995286ddd",
+   "record_fp": "98a70936d2cc6b16",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_searchentry#input-hints"
    ]
@@ -27019,13 +27331,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SearchEntry:prop:key-capture-widget:observe",
-   "fingerprint": "fba2560e42214e2d",
+   "fingerprint": "7ae044ce8bc2d44d",
    "kind": "Gtk:SearchEntry",
    "name": "key-capture-widget",
    "origin": "inferred",
-   "record_fp": "eabf45869e4f3f8f",
+   "record_fp": "57a40b827b48a89d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_searchentry#key-capture-widget"
    ]
@@ -27058,26 +27370,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SelectionFilterModel:prop:model:observe",
-   "fingerprint": "9d44de6f86b19cc4",
+   "fingerprint": "297de2794a62a3a4",
    "kind": "Gtk:SelectionFilterModel",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "1a6e58b82e4e31ad",
+   "record_fp": "36e79689da81d14e",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_selectionfiltermodel#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SelectionFilterModel:prop:n-items:observe",
-   "fingerprint": "47e580821dd7d535",
+   "fingerprint": "43ed28ab5f7a80b3",
    "kind": "Gtk:SelectionFilterModel",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "b237bd0c4cc17c40",
+   "record_fp": "68e0e68a742486a4",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_selectionfiltermodel#n-items"
    ]
@@ -27799,65 +28111,65 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Shortcut:prop:action:observe",
-   "fingerprint": "142c27e4926974ca",
+   "fingerprint": "a5dc4526497306ce",
    "kind": "Gtk:Shortcut",
    "name": "action",
    "origin": "inferred",
-   "record_fp": "cd0f4e5c3c1a5861",
+   "record_fp": "37f8e14255990e15",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_shortcut#action"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Shortcut:prop:arguments:observe",
-   "fingerprint": "2ec1e29cb347ab49",
+   "fingerprint": "923c62dbde123923",
    "kind": "Gtk:Shortcut",
    "name": "arguments",
    "origin": "inferred",
-   "record_fp": "f338ebff0fafbb94",
+   "record_fp": "0ddc61d7b04fb37b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_shortcut#arguments"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Shortcut:prop:trigger:observe",
-   "fingerprint": "c076535530ad9a1c",
+   "fingerprint": "54717f5153d26a4e",
    "kind": "Gtk:Shortcut",
    "name": "trigger",
    "origin": "inferred",
-   "record_fp": "f1028885b80f0f69",
+   "record_fp": "ea5faa1ee145b411",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_shortcut#trigger"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:mnemonic-modifiers:observe",
-   "fingerprint": "a734cc7c40548b74",
+   "fingerprint": "db3f6d48f40c6c20",
    "kind": "Gtk:ShortcutController",
    "name": "mnemonic-modifiers",
    "origin": "inferred",
-   "record_fp": "9221a2538b2c0c52",
+   "record_fp": "75f14bae9f78f633",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_shortcutcontroller#mnemonic-modifiers"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:ShortcutController:prop:n-items:observe",
-   "fingerprint": "63b7e137502d1bff",
+   "fingerprint": "653856687f34c644",
    "kind": "Gtk:ShortcutController",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "ccfe13c60941dac2",
+   "record_fp": "100d5ca6fad4b74e",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_shortcutcontroller#n-items"
    ]
@@ -28150,52 +28462,52 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:model:observe",
-   "fingerprint": "0c939fd3e0641772",
+   "fingerprint": "50664d2e25a3b1b1",
    "kind": "Gtk:SingleSelection",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "f968fa16757ba141",
+   "record_fp": "927c76328e76337c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_singleselection#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:n-items:observe",
-   "fingerprint": "0b714a04982776fb",
+   "fingerprint": "485f5d324d34c226",
    "kind": "Gtk:SingleSelection",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "3a9b42bf6e4e754d",
+   "record_fp": "e1dbd41753e58a26",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_singleselection#n-items"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:selected:observe",
-   "fingerprint": "a117096fc88fe216",
+   "fingerprint": "053439d935ac0b43",
    "kind": "Gtk:SingleSelection",
    "name": "selected",
    "origin": "inferred",
-   "record_fp": "68e48db6d050b9f7",
+   "record_fp": "114e09b4d046df26",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_singleselection#selected"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SingleSelection:prop:selected-item:observe",
-   "fingerprint": "d38deea249d1df11",
+   "fingerprint": "e5a406dd746b5697",
    "kind": "Gtk:SingleSelection",
    "name": "selected-item",
    "origin": "inferred",
-   "record_fp": "23e127eec4ee4106",
+   "record_fp": "aeb3f8b6908203d5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_singleselection#selected-item"
    ]
@@ -28215,26 +28527,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:model:observe",
-   "fingerprint": "094836fb15545702",
+   "fingerprint": "09b894851adc608e",
    "kind": "Gtk:SliceListModel",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "3bef662ae8eae9ad",
+   "record_fp": "732919ef7350f46c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_slicelistmodel#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SliceListModel:prop:n-items:observe",
-   "fingerprint": "f1107dc920d40bc2",
+   "fingerprint": "8f6e066d281d35b4",
    "kind": "Gtk:SliceListModel",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "9b013a6ecd35ee89",
+   "record_fp": "c2592a545746efb8",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_slicelistmodel#n-items"
    ]
@@ -28280,52 +28592,52 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:model:observe",
-   "fingerprint": "94837d8cb369e117",
+   "fingerprint": "f3724d1aae1f4254",
    "kind": "Gtk:SortListModel",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "4bd319d6a04140a2",
+   "record_fp": "219e8c766d2cb86c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_sortlistmodel#model"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:n-items:observe",
-   "fingerprint": "0d72cc1a7d988551",
+   "fingerprint": "395a6fdd1d1986af",
    "kind": "Gtk:SortListModel",
    "name": "n-items",
    "origin": "inferred",
-   "record_fp": "c6f7c90327013a2b",
+   "record_fp": "2cecce85732e177f",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_sortlistmodel#n-items"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:section-sorter:observe",
-   "fingerprint": "2b4d86258c9ae3de",
+   "fingerprint": "eb0b692da8a164cf",
    "kind": "Gtk:SortListModel",
    "name": "section-sorter",
    "origin": "inferred",
-   "record_fp": "23066110edc51d35",
+   "record_fp": "6226a2bfd5a56436",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_sortlistmodel#section-sorter"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SortListModel:prop:sorter:observe",
-   "fingerprint": "f738774d059c8e4f",
+   "fingerprint": "00a1c8f2a3b2e267",
    "kind": "Gtk:SortListModel",
    "name": "sorter",
    "origin": "inferred",
-   "record_fp": "49daa48ffa6dbceb",
+   "record_fp": "e1d36d4cd532a40f",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_sortlistmodel#sorter"
    ]
@@ -28345,13 +28657,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:SpinButton:prop:adjustment:observe",
-   "fingerprint": "a8f7078372309ddd",
+   "fingerprint": "a912553c52d866fd",
    "kind": "Gtk:SpinButton",
    "name": "adjustment",
    "origin": "inferred",
-   "record_fp": "dfb44fa87cff4799",
+   "record_fp": "314d6732123f960d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_spinbutton#adjustment"
    ]
@@ -28579,65 +28891,65 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child:observe",
-   "fingerprint": "e3d14925b6e13709",
+   "fingerprint": "bd0a3026584acf55",
    "kind": "Gtk:Stack",
    "name": "visible-child",
    "origin": "inferred",
-   "record_fp": "ce006ad6c3d002b6",
+   "record_fp": "26c140265add14cb",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_stack#visible-child"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Stack:prop:visible-child-name:observe",
-   "fingerprint": "4c855648dee3f778",
+   "fingerprint": "1affeef6443008d7",
    "kind": "Gtk:Stack",
    "name": "visible-child-name",
    "origin": "inferred",
-   "record_fp": "750ee9b8d91e8f45",
+   "record_fp": "e0c613180a600769",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_stack#visible-child-name"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:StackSidebar:prop:stack:observe",
-   "fingerprint": "024872bc6fcf61f7",
+   "fingerprint": "422a354d5552c1e4",
    "kind": "Gtk:StackSidebar",
    "name": "stack",
    "origin": "inferred",
-   "record_fp": "0751999c811b44ea",
+   "record_fp": "2bf91b2e770fac68",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_stacksidebar#stack"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:StackSwitcher:prop:stack:observe",
-   "fingerprint": "4cd39db36ec26699",
+   "fingerprint": "c33aa42d6f82f3b7",
    "kind": "Gtk:StackSwitcher",
    "name": "stack",
    "origin": "inferred",
-   "record_fp": "479e6b1051528b3e",
+   "record_fp": "ffb7dce325134043",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_stackswitcher#stack"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:StringFilter:prop:expression:observe",
-   "fingerprint": "962b5b4468c34c14",
+   "fingerprint": "3c4c9907e346c75b",
    "kind": "Gtk:StringFilter",
    "name": "expression",
    "origin": "inferred",
-   "record_fp": "9f1cefb2bcf89f21",
+   "record_fp": "d7499d3cbb2c3e6f",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_stringfilter#expression"
    ]
@@ -28709,13 +29021,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:StringSorter:prop:expression:observe",
-   "fingerprint": "32240c2c2e72b2a0",
+   "fingerprint": "ac5a52928d8e53c2",
    "kind": "Gtk:StringSorter",
    "name": "expression",
    "origin": "inferred",
-   "record_fp": "f532128a706a6638",
+   "record_fp": "96efff901dfeaf5a",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_stringsorter#expression"
    ]
@@ -28735,26 +29047,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:StyleContext:prop:display:observe",
-   "fingerprint": "6df6c4e702fd7d63",
+   "fingerprint": "0196da71c298aee4",
    "kind": "Gtk:StyleContext",
    "name": "display",
    "origin": "inferred",
-   "record_fp": "4adcd6bb690e4d9d",
+   "record_fp": "edae7dc2d080f406",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_stylecontext#display"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Svg:prop:features:observe",
-   "fingerprint": "98362a3733992b41",
+   "fingerprint": "b7c37260fbde88b4",
    "kind": "Gtk:Svg",
    "name": "features",
    "origin": "inferred",
-   "record_fp": "484186b844da3f40",
+   "record_fp": "f305c00fe7cf33a7",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_svg#features"
    ]
@@ -28852,26 +29164,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:attributes:observe",
-   "fingerprint": "86a1f9a6c57e5b91",
+   "fingerprint": "f51ea74e5e63df92",
    "kind": "Gtk:Text",
    "name": "attributes",
    "origin": "inferred",
-   "record_fp": "760cd82a23b55189",
+   "record_fp": "9062aa580d7fbb94",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_text#attributes"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:buffer:observe",
-   "fingerprint": "34dc5a8931279f10",
+   "fingerprint": "9d5417541eae2728",
    "kind": "Gtk:Text",
    "name": "buffer",
    "origin": "inferred",
-   "record_fp": "85c1eb8fd8ae6b18",
+   "record_fp": "a7dac840c235fb99",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_text#buffer"
    ]
@@ -28891,13 +29203,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:extra-menu:observe",
-   "fingerprint": "b17631cacd39e336",
+   "fingerprint": "fa1705eef4003812",
    "kind": "Gtk:Text",
    "name": "extra-menu",
    "origin": "inferred",
-   "record_fp": "7bf5f0c0754f3d4e",
+   "record_fp": "599b7856be898316",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_text#extra-menu"
    ]
@@ -28917,13 +29229,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:input-hints:observe",
-   "fingerprint": "0bd42f13818d4349",
+   "fingerprint": "58df1ca4b0838873",
    "kind": "Gtk:Text",
    "name": "input-hints",
    "origin": "inferred",
-   "record_fp": "f782b0b54e719cdb",
+   "record_fp": "4b2baa4702dc25a8",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_text#input-hints"
    ]
@@ -29021,13 +29333,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Text:prop:tabs:observe",
-   "fingerprint": "a63de8a3a71e4668",
+   "fingerprint": "73ce0f32bf858c16",
    "kind": "Gtk:Text",
    "name": "tabs",
    "origin": "inferred",
-   "record_fp": "38305dd10c06a6ae",
+   "record_fp": "ce0cd4f52a37a74c",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_text#tabs"
    ]
@@ -29060,13 +29372,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextBuffer:prop:can-redo:observe",
-   "fingerprint": "4c56dac82139bd48",
+   "fingerprint": "284afe007d33d9be",
    "kind": "Gtk:TextBuffer",
    "name": "can-redo",
    "origin": "inferred",
-   "record_fp": "c58e216831295ef1",
+   "record_fp": "4d9a8bb15e747719",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_textbuffer#can-redo"
    ]
@@ -29242,13 +29554,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:background-rgba:observe",
-   "fingerprint": "2a966e8881f200c6",
+   "fingerprint": "28d336630792bac5",
    "kind": "Gtk:TextTag",
    "name": "background-rgba",
    "origin": "inferred",
-   "record_fp": "c50f9ea7b24fbe65",
+   "record_fp": "9071d010750756a1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#background-rgba"
    ]
@@ -29372,13 +29684,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:font-desc:observe",
-   "fingerprint": "976bff369a1a4350",
+   "fingerprint": "9ea2720d9717d0fd",
    "kind": "Gtk:TextTag",
    "name": "font-desc",
    "origin": "inferred",
-   "record_fp": "d2161aedacb2e92f",
+   "record_fp": "e90e81d7e0f8e473",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#font-desc"
    ]
@@ -29411,13 +29723,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:foreground-rgba:observe",
-   "fingerprint": "f1e62f3b3a03c7e6",
+   "fingerprint": "f7f78cf45eed5fa1",
    "kind": "Gtk:TextTag",
    "name": "foreground-rgba",
    "origin": "inferred",
-   "record_fp": "7c58c709044f571c",
+   "record_fp": "1f3bfb534bf233d1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#foreground-rgba"
    ]
@@ -29671,13 +29983,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:overline-rgba:observe",
-   "fingerprint": "53c52e3d31471de7",
+   "fingerprint": "19bd9d3dcc925bf4",
    "kind": "Gtk:TextTag",
    "name": "overline-rgba",
    "origin": "inferred",
-   "record_fp": "6b70a2d47284dd6b",
+   "record_fp": "43f713da70a2db5b",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#overline-rgba"
    ]
@@ -29710,13 +30022,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:paragraph-background-rgba:observe",
-   "fingerprint": "cb77b987fead1633",
+   "fingerprint": "3c5a9e6c813d0282",
    "kind": "Gtk:TextTag",
    "name": "paragraph-background-rgba",
    "origin": "inferred",
-   "record_fp": "a3cca4cd070cbcc3",
+   "record_fp": "ee5aaaf12cbfb342",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#paragraph-background-rgba"
    ]
@@ -29905,13 +30217,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:show-spaces:observe",
-   "fingerprint": "d84dd5340fd16137",
+   "fingerprint": "90e58a1bb1409a5b",
    "kind": "Gtk:TextTag",
    "name": "show-spaces",
    "origin": "inferred",
-   "record_fp": "50dd6f7ae9297ab2",
+   "record_fp": "0b314e8c70da0442",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#show-spaces"
    ]
@@ -30009,13 +30321,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:strikethrough-rgba:observe",
-   "fingerprint": "c21530d1faaa5cfc",
+   "fingerprint": "e279f474971e42f6",
    "kind": "Gtk:TextTag",
    "name": "strikethrough-rgba",
    "origin": "inferred",
-   "record_fp": "b88d2ecb8cc3e50b",
+   "record_fp": "d243010b6cf63274",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#strikethrough-rgba"
    ]
@@ -30074,13 +30386,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:tabs:observe",
-   "fingerprint": "39d0e5aeaf4ea438",
+   "fingerprint": "5915c67b61f2db5a",
    "kind": "Gtk:TextTag",
    "name": "tabs",
    "origin": "inferred",
-   "record_fp": "89d6b6a09a21fc0e",
+   "record_fp": "49643fcf5d12f0ce",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#tabs"
    ]
@@ -30139,13 +30451,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextTag:prop:underline-rgba:observe",
-   "fingerprint": "3b94eeaf057e8d08",
+   "fingerprint": "415393b4e12c0dd9",
    "kind": "Gtk:TextTag",
    "name": "underline-rgba",
    "origin": "inferred",
-   "record_fp": "b5023cd6dba2801e",
+   "record_fp": "e974abc6f43769ee",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_texttag#underline-rgba"
    ]
@@ -30295,13 +30607,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:buffer:observe",
-   "fingerprint": "7c33f3c5e4a9a19b",
+   "fingerprint": "75726cb79cb05382",
    "kind": "Gtk:TextView",
    "name": "buffer",
    "origin": "inferred",
-   "record_fp": "0e7bf7d0aa83eeb9",
+   "record_fp": "5ca6e0993a95b361",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_textview#buffer"
    ]
@@ -30334,13 +30646,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:extra-menu:observe",
-   "fingerprint": "0a9db2089b9a35f5",
+   "fingerprint": "278e3ef3d7b05772",
    "kind": "Gtk:TextView",
    "name": "extra-menu",
    "origin": "inferred",
-   "record_fp": "d9cf308f8c10c42c",
+   "record_fp": "25d88ab46eb4aaf2",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_textview#extra-menu"
    ]
@@ -30373,13 +30685,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:input-hints:observe",
-   "fingerprint": "f4e4ca104829d8d5",
+   "fingerprint": "9cd23fb8552756da",
    "kind": "Gtk:TextView",
    "name": "input-hints",
    "origin": "inferred",
-   "record_fp": "6fa1ba5c57aa5678",
+   "record_fp": "70a6b1c5cfe35f95",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_textview#input-hints"
    ]
@@ -30503,13 +30815,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TextView:prop:tabs:observe",
-   "fingerprint": "6c1566c2cdeb1d35",
+   "fingerprint": "5c8b069c17d95083",
    "kind": "Gtk:TextView",
    "name": "tabs",
    "origin": "inferred",
-   "record_fp": "a559367ec11f719d",
+   "record_fp": "35a2b26cd0e977b5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_textview#tabs"
    ]
@@ -30568,13 +30880,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeExpander:prop:child:observe",
-   "fingerprint": "646141a39a099db7",
+   "fingerprint": "e149113c61de5f9e",
    "kind": "Gtk:TreeExpander",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "1bb121326b5a90a3",
+   "record_fp": "68977b3f6c2dc56f",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_treeexpander#child"
    ]
@@ -30620,13 +30932,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeExpander:prop:list-row:observe",
-   "fingerprint": "1f508deb81b659fc",
+   "fingerprint": "5dfe690dc1fee73c",
    "kind": "Gtk:TreeExpander",
    "name": "list-row",
    "origin": "inferred",
-   "record_fp": "1b74440b428ad29c",
+   "record_fp": "3a1fde22488314d0",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_treeexpander#list-row"
    ]
@@ -30685,13 +30997,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeListRowSorter:prop:sorter:observe",
-   "fingerprint": "447e4ea55efb8aa4",
+   "fingerprint": "c790964085ba3720",
    "kind": "Gtk:TreeListRowSorter",
    "name": "sorter",
    "origin": "inferred",
-   "record_fp": "9d91ad17ef9ca38f",
+   "record_fp": "0124f4c20d1f15aa",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_treelistrowsorter#sorter"
    ]
@@ -30733,6 +31045,19 @@
    "strength": "refused",
    "tests": [
     "generated::verify::observe_gtk_treemodelsort#model"
+   ]
+  },
+  {
+   "fact": "svelters-api:v1:type:gtk:Gtk:TreeSelection:prop:mode:observe",
+   "fingerprint": "b06c5f05edd10119",
+   "kind": "Gtk:TreeSelection",
+   "name": "mode",
+   "origin": "inferred",
+   "record_fp": "9ad6c268d771e484",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_treeselection#mode"
    ]
   },
   {
@@ -30789,13 +31114,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:expander-column:observe",
-   "fingerprint": "8348bd7581e69272",
+   "fingerprint": "6cb2cf85bb6b9e74",
    "kind": "Gtk:TreeView",
    "name": "expander-column",
    "origin": "inferred",
-   "record_fp": "86ad3a33a8c9cb4e",
+   "record_fp": "5e81c96e0f0a3c8f",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_treeview#expander-column"
    ]
@@ -30815,13 +31140,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:headers-clickable:observe",
-   "fingerprint": "c8cf7a481b4ea382",
+   "fingerprint": "2883145da211f90b",
    "kind": "Gtk:TreeView",
    "name": "headers-clickable",
    "origin": "inferred",
-   "record_fp": "55fedd5aff9c0b28",
+   "record_fp": "8d18f9a0602e8471",
    "section": "observe",
-   "strength": "connect",
+   "strength": "silent",
    "tests": [
     "generated::verify::observe_gtk_treeview#headers-clickable"
    ]
@@ -30880,13 +31205,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:model:observe",
-   "fingerprint": "54a6cf312a255211",
+   "fingerprint": "51889b45c6d0cb28",
    "kind": "Gtk:TreeView",
    "name": "model",
    "origin": "inferred",
-   "record_fp": "c4981338a9b8f252",
+   "record_fp": "c857612b302526c5",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_treeview#model"
    ]
@@ -31166,13 +31491,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:TreeViewColumn:prop:widget:observe",
-   "fingerprint": "127f2644749f879e",
+   "fingerprint": "a78f2887f867630c",
    "kind": "Gtk:TreeViewColumn",
    "name": "widget",
    "origin": "inferred",
-   "record_fp": "a19644b989627734",
+   "record_fp": "6b7b75b859ac8cf1",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_treeviewcolumn#widget"
    ]
@@ -31205,13 +31530,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Video:prop:file:observe",
-   "fingerprint": "2844dae6c5c49150",
+   "fingerprint": "06dff310f90d22d2",
    "kind": "Gtk:Video",
    "name": "file",
    "origin": "inferred",
-   "record_fp": "8f14da5e2f1fb167",
+   "record_fp": "1b42ae20d4ef5ddb",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_video#file"
    ]
@@ -31244,26 +31569,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Video:prop:media-stream:observe",
-   "fingerprint": "241ab7b64c477ef3",
+   "fingerprint": "f98f4d54233432d9",
    "kind": "Gtk:Video",
    "name": "media-stream",
    "origin": "inferred",
-   "record_fp": "88471587c12d39c3",
+   "record_fp": "af5b32d06c6c12e9",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_video#media-stream"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Viewport:prop:child:observe",
-   "fingerprint": "f2794eafe94fb1b0",
+   "fingerprint": "d202a90e83fcd426",
    "kind": "Gtk:Viewport",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "8745144a8bb8d959",
+   "record_fp": "20526bd1d4cc7a2d",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_viewport#child"
    ]
@@ -31348,11 +31673,11 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:cursor:observe",
-   "fingerprint": "51be00adea557b66",
+   "fingerprint": "1247375b19672fdb",
    "kind": "Gtk:Widget",
    "name": "cursor",
    "origin": "inferred",
-   "record_fp": "c621f827275cfc68",
+   "record_fp": "8da8e279a52e174d",
    "section": "observe",
    "strength": "change",
    "tests": [
@@ -31452,13 +31777,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Widget:prop:layout-manager:observe",
-   "fingerprint": "0214494c1a8fa4db",
+   "fingerprint": "60998b96d37645f2",
    "kind": "Gtk:Widget",
    "name": "layout-manager",
    "origin": "inferred",
-   "record_fp": "abff018745193b90",
+   "record_fp": "7803053215ed53dc",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_widget#layout-manager"
    ]
@@ -31699,13 +32024,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:WidgetPaintable:prop:widget:observe",
-   "fingerprint": "6b40ff5bacc4605d",
+   "fingerprint": "75c95dfda6d5bb73",
    "kind": "Gtk:WidgetPaintable",
    "name": "widget",
    "origin": "inferred",
-   "record_fp": "25d90661d11a015b",
+   "record_fp": "0469dc25679a7a10",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_widgetpaintable#widget"
    ]
@@ -31725,13 +32050,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:child:observe",
-   "fingerprint": "b3fc81ca3d4474c9",
+   "fingerprint": "09511f4974ab38fc",
    "kind": "Gtk:Window",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "8ec9e26ad1283723",
+   "record_fp": "a501790954fee202",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_window#child"
    ]
@@ -31764,13 +32089,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:default-widget:observe",
-   "fingerprint": "2289dac8022c965b",
+   "fingerprint": "da677c2f914e4bce",
    "kind": "Gtk:Window",
    "name": "default-widget",
    "origin": "inferred",
-   "record_fp": "3e8e293437f81f13",
+   "record_fp": "5469a42d50e717ee",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_window#default-widget"
    ]
@@ -31816,13 +32141,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:display:observe",
-   "fingerprint": "799f5ee9956c7d1f",
+   "fingerprint": "aa52bf42e8d97dc0",
    "kind": "Gtk:Window",
    "name": "display",
    "origin": "inferred",
-   "record_fp": "1b27b3db8898578a",
+   "record_fp": "96bf72423d4f8403",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_window#display"
    ]
@@ -31842,13 +32167,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:focus-widget:observe",
-   "fingerprint": "25109e3821846b67",
+   "fingerprint": "8e01825e41762c65",
    "kind": "Gtk:Window",
    "name": "focus-widget",
    "origin": "inferred",
-   "record_fp": "39742a9179f6db06",
+   "record_fp": "7435bb74586bff47",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_window#focus-widget"
    ]
@@ -31998,26 +32323,26 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:titlebar:observe",
-   "fingerprint": "7e843e39e28c7ff8",
+   "fingerprint": "4c807b69354270e1",
    "kind": "Gtk:Window",
    "name": "titlebar",
    "origin": "inferred",
-   "record_fp": "0b1c25bee8eba7ac",
+   "record_fp": "d838a791f7b6d062",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_window#titlebar"
    ]
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Window:prop:transient-for:observe",
-   "fingerprint": "d9316e04a17a4bd1",
+   "fingerprint": "e61edfe695bd12ed",
    "kind": "Gtk:Window",
    "name": "transient-for",
    "origin": "inferred",
-   "record_fp": "72091d57467e5b7a",
+   "record_fp": "68e9d781a899f122",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_window#transient-for"
    ]
@@ -32063,13 +32388,13 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:WindowHandle:prop:child:observe",
-   "fingerprint": "9688d51ebb57c8cd",
+   "fingerprint": "8c2534acf862fb08",
    "kind": "Gtk:WindowHandle",
    "name": "child",
    "origin": "inferred",
-   "record_fp": "9cb1ae1e7de0fb53",
+   "record_fp": "ecf81a83605a11c6",
    "section": "observe",
-   "strength": "connect",
+   "strength": "change",
    "tests": [
     "generated::verify::observe_gtk_windowhandle#child"
    ]

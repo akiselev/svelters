@@ -14,7 +14,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TreeExpander
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: hide-expander
   class: exact
@@ -73,5 +75,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TreeExpander
-    check: connect
+    check: change
+    values:
+    - gtk::TreeListModel::new(gtk::StringList::new(&["a"]), false, false, |_| None).row(0).unwrap()
   confidence: 0.9

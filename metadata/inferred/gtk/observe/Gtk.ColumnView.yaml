@@ -38,7 +38,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:header-factory)'
   verify:
     'on': Gtk:ColumnView
-    check: connect
+    check: change
+    values:
+    - gtk::SignalListItemFactory::new()
   confidence: 0.95
 - prop: model
   class: exact
@@ -52,7 +54,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:model)'
   verify:
     'on': Gtk:ColumnView
-    check: connect
+    check: change
+    values:
+    - gtk::SingleSelection::new(Some(gtk::StringList::new(&["a", "b"])))
   confidence: 0.95
 - prop: reorderable
   class: exact
@@ -81,7 +85,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:row-factory)'
   verify:
     'on': Gtk:ColumnView
-    check: connect
+    check: change
+    values:
+    - gtk::SignalListItemFactory::new()
   confidence: 0.95
 - prop: show-column-separators
   class: exact

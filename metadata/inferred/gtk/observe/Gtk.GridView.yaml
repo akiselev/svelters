@@ -29,7 +29,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridView:factory)'
   verify:
     'on': Gtk:GridView
-    check: connect
+    check: change
+    values:
+    - gtk::SignalListItemFactory::new()
   confidence: 0.95
 - prop: max-columns
   class: exact
@@ -73,7 +75,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridView:model)'
   verify:
     'on': Gtk:GridView
-    check: connect
+    check: change
+    values:
+    - gtk::SingleSelection::new(Some(gtk::StringList::new(&["a", "b"])))
   confidence: 0.95
 - prop: single-click-activate
   class: exact

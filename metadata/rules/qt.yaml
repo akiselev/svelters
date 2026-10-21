@@ -175,3 +175,28 @@ observe:
     "QAction:icon": {native: "QPixmap px(4, 4); px.fill(Qt::red); o->setIcon(QIcon(px))"}
     "QWidget:windowIcon": {native: "QPixmap px(4, 4); px.fill(Qt::red); o->setWindowIcon(QIcon(px))"}
     "QToolBox:currentIndex": {setup: "o->addItem(new QWidget, \"a\"); o->addItem(new QWidget, \"b\")", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    # OV1: exact facts whose rows only connected (R3): a native change for each.
+    "QAbstractAnimation:currentLoop": {setup: "o->setDuration(10); o->setLoopCount(3)", native: "o->setCurrentTime(o->currentLoop() == 0 ? 15 : 5)"}
+    "QAbstractAnimation:currentTime": {setup: "o->addAnimation(new QPauseAnimation(100))", native: "o->setCurrentTime(o->currentTime() == 50 ? 20 : 50)"}
+    "QAbstractAnimation:direction": {native: "o->setDirection(o->direction() == QAbstractAnimation::Forward ? QAbstractAnimation::Backward : QAbstractAnimation::Forward)"}
+    "QAbstractAnimation:loopCount": {native: "o->setLoopCount(o->loopCount() + 1)"}
+    "QAbstractAnimation:state": {setup: "o->setDuration(100000)", native: "if (o->state() == QAbstractAnimation::Running) o->stop(); else o->start()"}
+    "QAbstractProxyModel:sourceModel": {native: "o->setSourceModel(new QStandardItemModel(o))"}
+    "QItemSelectionModel:selectedIndexes": {setup: "o->setModel(new QStandardItemModel(2, 1, o))", native: "o->select(o->model()->index(o->isSelected(o->model()->index(0, 0)) ? 1 : 0, 0), QItemSelectionModel::ClearAndSelect)"}
+    "QSequentialAnimationGroup:currentAnimation": {setup: "o->addPause(100); o->addPause(100)", native: "o->setCurrentTime(o->currentTime() < 100 ? 150 : 50)"}
+    "QSortFilterProxyModel:filterRegularExpression": {native: "o->setFilterRegularExpression(QRegularExpression(o->filterRegularExpression().pattern() + \"x\"))"}
+    "QVariantAnimation:currentValue": {setup: "o->setStartValue(0); o->setEndValue(100); o->setDuration(100)", native: "o->setCurrentTime(o->currentTime() == 50 ? 20 : 50)"}
+    "QVariantAnimation:easingCurve": {native: "o->setEasingCurve(o->easingCurve().type() == QEasingCurve::Linear ? QEasingCurve::InQuad : QEasingCurve::Linear)"}
+    "QRegularExpressionValidator:regularExpression": {native: "o->setRegularExpression(QRegularExpression(o->regularExpression().pattern() + \"x\"))"}
+  # OV1: exact facts without delivery evidence (no passing native-change row), by group with the reason. Read by
+  # tools/metadata/common/observe.py `unverified_groups` for the coverage report; `facts` names or a `pattern`.
+  connect_only:
+    - group: no-element-or-type
+      reason: the class is neither an element nor an NT2 type, so the backend cannot reach it and the generated test has no row; no `bind:` can name these properties either
+      pattern: '^QtWidgets:(QGraphics\w+|QHeaderView|QRhiWidget|QScroller|QStackedLayout|QDataWidgetMapper):'
+    - group: crashes-bare
+      reason: QDockWidget crashes on a bare instance (R0, R3), so no row is generated
+      pattern: '^QtWidgets:QDockWidget:'
+    - group: window-input
+      reason: focus and window activation need a window manager; offscreen/xcb without one gives no reliable headless focus or activation (R3)
+      facts: ["QtWidgets:QWidget:focus", "QtWidgets:QWidget:isActiveWindow"]
