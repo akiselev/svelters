@@ -2,7 +2,7 @@
 //! sections 8.2-8.4, decisions 13 #4-#8): which runtime helper a `bind:` on a native element lowers
 //! to, from the property's observe fact on the platform, and the diagnostics that go with it.
 
-use super::spec::{ObsClass, ObsTiming, ObserveSpec, ValueCost};
+use super::spec::{ObsClass, ObsTiming, ObsVerified, ObserveSpec, ValueCost};
 use super::{ElementRef, PlatformSemantics, Unresolved, codes};
 
 /// Whether and how a native change of a property is announced on one platform (the compiler's
@@ -15,11 +15,25 @@ pub struct Observability {
     pub value_cost: ValueCost,
     pub timing: ObsTiming,
     pub mechanism: String,
+    /// Verification strength of the fact (OV1): only `Delivery` lets an `exact` `bind:` lower onto
+    /// observation without a warning.
+    pub verified: ObsVerified,
+    /// The fact's name for messages (`Gtk:Entry:text`); empty when unknown.
+    pub fact: String,
 }
 
 impl From<&ObserveSpec> for Observability {
     fn from(o: &ObserveSpec) -> Self {
-        Observability { class: o.class, missed: o.missed.clone(), coarse: o.coarse, value_cost: o.value_cost, timing: o.timing, mechanism: o.mechanism.clone() }
+        Observability {
+            class: o.class,
+            missed: o.missed.clone(),
+            coarse: o.coarse,
+            value_cost: o.value_cost,
+            timing: o.timing,
+            mechanism: o.mechanism.clone(),
+            verified: o.verified,
+            fact: o.fact.clone(),
+        }
     }
 }
 
@@ -95,7 +109,8 @@ pub struct BindPlan {
     pub prop: String,
     pub lowering: BindLowering,
     pub observability: Option<Observability>,
-    /// `bind_partially_observed`, `nonreactive_redundant` (errors under `--strict-native`).
+    /// `bind_partially_observed`, `bind_observation_unverified`, `nonreactive_redundant` (errors under
+    /// `--strict-native`).
     pub warnings: Vec<Unresolved>,
 }
 
@@ -139,8 +154,36 @@ pub fn plan_bind<S: PlatformSemantics + ?Sized>(sem: &S, el: &ElementRef, name: 
     }
     let sig = signal.as_ref().map(|s| (s.signal.clone(), s.arg_operand()));
     let lowering = match (class, &obs) {
-        (Some(ObsClass::Exact), _) if p.writable => BindLowering::Prop { fallback: sig },
-        (Some(ObsClass::Exact), _) => BindLowering::Readonly,
+        (Some(ObsClass::Exact), Some(o)) if o.verified == ObsVerified::Delivery => {
+            if p.writable {
+                BindLowering::Prop { fallback: sig }
+            } else {
+                BindLowering::Readonly
+            }
+        }
+        // `exact`, but no generated row has seen a native change delivered (OV1): a silent prop would
+        // leave the bound value stale, so a declared signal plan stays; without one the binding still
+        // observes, with a warning naming the fact.
+        (Some(ObsClass::Exact), Some(o)) => match sig {
+            Some((signal, arg)) => BindLowering::Signal { signal, arg },
+            None => {
+                let what = match o.verified {
+                    ObsVerified::Weak => "its test only checks that the observation installs",
+                    _ => "it has no passing test",
+                };
+                let fact = if o.fact.is_empty() { String::new() } else { format!(" (fact {})", o.fact) };
+                warnings.push(
+                    Unresolved::new(
+                        codes::BIND_OBSERVATION_UNVERIFIED,
+                        format!(
+                            "bind:{name} on <{tag}>: `{js}` is exact on {platform}{fact}, but no native change has been seen delivered ({what}), so the bound value could go stale"
+                        ),
+                    )
+                    .help("read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`; verifying the fact (metadata/observe) removes this warning"),
+                );
+                if p.writable { BindLowering::Prop { fallback: None } } else { BindLowering::Readonly }
+            }
+        },
         (Some(ObsClass::Partial), Some(o)) => {
             warnings.push(
                 Unresolved::new(
@@ -174,7 +217,7 @@ pub fn plan_bind<S: PlatformSemantics + ?Sized>(sem: &S, el: &ElementRef, name: 
                     format!("read it when you need it (`bind:{name}|nonreactive` or node.getProp), or listen to an event")
                 }));
         }
-        (None, _) | (Some(ObsClass::Partial), None) => match sig {
+        (None, _) | (Some(ObsClass::Partial | ObsClass::Exact), None) => match sig {
             // no observe fact: unknown, never lowered onto observation (R0)
             Some((signal, arg)) => BindLowering::Signal { signal, arg },
             None => {

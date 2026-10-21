@@ -244,6 +244,40 @@ pub struct ObserveSpec {
     /// `notify`, `notify+notification:NSControlTextDidChangeNotification`, `via:buffer.text`, ...
     #[serde(default)]
     pub mechanism: String,
+    /// How strongly the fact is verified in the ledger (milestone OV1). Absent (specs from before
+    /// OV1) reads as [`ObsVerified::None`].
+    #[serde(default)]
+    pub verified: ObsVerified,
+    /// The fact's name for messages: `<Ns>:<Type>:<prop>` of `metadata/observe/<tk>.json`.
+    #[serde(default)]
+    pub fact: String,
+}
+
+/// Verification strength of an observe fact (`tools/metadata/common/observe.py` `verification`).
+/// `bind:` lowers onto observation only for an `exact` fact that is [`ObsVerified::Delivery`]
+/// (decision 13 #8 as implemented in OV1).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ObsVerified {
+    /// A generated row changed the property natively on the real backend and the change was
+    /// announced (or, for a missed cause, was not).
+    Delivery,
+    /// A row only installed the mechanism (`connect`) or checked the backend's refusal.
+    Weak,
+    /// No passing row.
+    #[default]
+    None,
+}
+
+impl ObsVerified {
+    /// The spec's word (`delivery`, `weak`, `none`).
+    pub fn name(self) -> &'static str {
+        match self {
+            ObsVerified::Delivery => "delivery",
+            ObsVerified::Weak => "weak",
+            ObsVerified::None => "none",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]

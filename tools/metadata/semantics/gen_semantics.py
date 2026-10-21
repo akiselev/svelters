@@ -42,9 +42,11 @@ import svmeta  # noqa: E402
 
 def observe_index(tk: str) -> tuple[dict[tuple[str, str], dict], dict[str, str]]:
     """((owner key, prop) -> ObserveSpec, type name -> owner key) from metadata/observe/<tk>.json (milestone R0;
-    tools/metadata/common/observe.py). A property without a fact gets no `observe` field (unknown, as before R0)."""
+    tools/metadata/common/observe.py). A property without a fact gets no `observe` field (unknown, as before R0).
+    `verified` is the fact's verification strength in the ledger (milestone OV1; `observe.verification`)."""
     facts = observe_facts.load(tk)
-    specs = {(o, p): observe_facts.spec(r) for o, props in facts.items() for p, r in props.items()}
+    ver = observe_facts.verification(tk, facts)
+    specs = {(o, p): observe_facts.spec(r, ver[r["fact"]]) for o, props in facts.items() for p, r in props.items()}
     return specs, {o.rsplit(":", 1)[1]: o for o in facts}
 
 

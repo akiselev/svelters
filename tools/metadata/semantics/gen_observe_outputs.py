@@ -170,7 +170,13 @@ def bind_doc(tk: str, p: dict, declared: bool) -> str | None:
     mech = f" ({o['mechanism']})" if o and o.get("mechanism") else ""
     ro = "" if p["writable"] else "Read-only. "
     if cls == "exact":
-        return f"{ro}@observable exact on {tk}{mech}"
+        if o.get("verified", "none") == "delivery":
+            return f"{ro}@observable exact on {tk}{mech}"
+        # OV1: no generated row saw a native change delivered; plan_bind keeps a declared signal plan, else it
+        # observes with the `bind_observation_unverified` warning
+        how = ("bound through its change signal" if declared
+               else "observed with a bind_observation_unverified warning")
+        return f"{ro}@observable exact on {tk}{mech}, delivery not verified ({o.get('verified', 'none')}): {how}"
     if cls == "partial":
         return f"{ro}@observable partial on {tk}: misses {missed_text(o.get('missed', []))}{mech}"
     if cls is None and declared:

@@ -6,21 +6,21 @@ import type { Color, Insets, Point, Rect, Size } from './values';
 
 // ---- gtk
 interface GtkObs_Gtk_AboutDialog {
-  /** @observable exact on gtk (notify) */ "bind:artists"?: string[];
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:artists"?: string[];
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:artists|nonreactive"?: string[];
-  /** @observable exact on gtk (notify) */ "bind:authors"?: string[];
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:authors"?: string[];
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:authors|nonreactive"?: string[];
   /** @observable exact on gtk (notify) */ "bind:comments"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:comments|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:copyright"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:copyright|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:documenters"?: string[];
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:documenters"?: string[];
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:documenters|nonreactive"?: string[];
   /** @observable exact on gtk (notify) */ "bind:license"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:license|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:license-type"?: "unknown" | "custom" | "gpl-2-0" | "gpl-3-0" | "lgpl-2-1" | "lgpl-3-0" | "bsd" | "mit-x11" | "artistic" | "gpl-2-0-only" | "gpl-3-0-only" | "lgpl-2-1-only" | "lgpl-3-0-only" | "agpl-3-0" | "agpl-3-0-only" | "bsd-3" | "apache-2-0" | "mpl-2-0" | "0bsd";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:license-type|nonreactive"?: "unknown" | "custom" | "gpl-2-0" | "gpl-3-0" | "lgpl-2-1" | "lgpl-3-0" | "bsd" | "mit-x11" | "artistic" | "gpl-2-0-only" | "gpl-3-0-only" | "lgpl-2-1-only" | "lgpl-3-0-only" | "agpl-3-0" | "agpl-3-0-only" | "bsd-3" | "apache-2-0" | "mpl-2-0" | "0bsd";
-  /** @observable exact on gtk (notify) */ "bind:logo"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:logo"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:logo|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:logo-icon-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:logo-icon-name|nonreactive"?: string | null;
@@ -50,7 +50,7 @@ interface GtkObs_Gtk_ActionBar {
 interface GtkObs_Gtk_Actionable {
   /** @observable exact on gtk (notify) */ "bind:action-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:action-name|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:action-target"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:action-target"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:action-target|nonreactive"?: unknown;
 }
 interface GtkObs_Gtk_ApplicationWindow {
@@ -58,7 +58,7 @@ interface GtkObs_Gtk_ApplicationWindow {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:show-menubar|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_AspectFrame {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:obey-child"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:obey-child|nonreactive"?: boolean;
@@ -94,7 +94,7 @@ interface GtkObs_Gtk_Button {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-underline|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_Calendar {
-  /** @observable exact on gtk (notify) */ "bind:date"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:date"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:date|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:day"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:day|nonreactive"?: number;
@@ -116,19 +116,19 @@ interface GtkObs_Gtk_CellEditable {
 interface GtkObs_Gtk_CenterBox {
   /** @observable exact on gtk (notify) */ "bind:baseline-position"?: "top" | "center" | "bottom";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:baseline-position|nonreactive"?: "top" | "center" | "bottom";
-  /** @observable exact on gtk (notify) */ "bind:center-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:center-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:center-widget|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:end-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:end-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:end-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:shrink-center-last"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:shrink-center-last|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:start-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:start-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:start-widget|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_CheckButton {
   /** @observable exact on gtk (notify) */ "bind:active"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:active|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:inconsistent"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:inconsistent|nonreactive"?: boolean;
@@ -138,9 +138,9 @@ interface GtkObs_Gtk_CheckButton {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-underline|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_ColorDialogButton {
-  /** @observable exact on gtk (notify) */ "bind:dialog"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:dialog"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:dialog|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:rgba"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:rgba"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:rgba|nonreactive"?: unknown;
 }
 interface GtkObs_Gtk_DrawingArea {
@@ -175,21 +175,21 @@ interface GtkObs_Gtk_EditableLabel {
 interface GtkObs_Gtk_Entry {
   /** @observable exact on gtk (notify) */ "bind:activates-default"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:activates-default|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:attributes"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:attributes"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:attributes|nonreactive"?: unknown;
-  /** @observable exact on gtk (notify) */ "bind:buffer"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:buffer"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:buffer|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:completion"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:completion"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:completion|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:enable-emoji-completion"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enable-emoji-completion|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:extra-menu"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:extra-menu"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:extra-menu|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:has-frame"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-frame|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:im-module"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:im-module|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-hints|nonreactive"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @observable exact on gtk (notify) */ "bind:input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-purpose|nonreactive"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
@@ -209,11 +209,11 @@ interface GtkObs_Gtk_Entry {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-text|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:primary-icon-activatable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:primary-icon-activatable|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:primary-icon-gicon"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:primary-icon-gicon"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:primary-icon-gicon|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:primary-icon-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:primary-icon-name|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:primary-icon-paintable"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:primary-icon-paintable"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:primary-icon-paintable|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:primary-icon-sensitive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:primary-icon-sensitive|nonreactive"?: boolean;
@@ -230,11 +230,11 @@ interface GtkObs_Gtk_Entry {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:scroll-offset|nonreactive"?: number;
   /** @observable exact on gtk (notify) */ "bind:secondary-icon-activatable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:secondary-icon-activatable|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:secondary-icon-gicon"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:secondary-icon-gicon"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:secondary-icon-gicon|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:secondary-icon-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:secondary-icon-name|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:secondary-icon-paintable"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:secondary-icon-paintable"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:secondary-icon-paintable|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:secondary-icon-sensitive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:secondary-icon-sensitive|nonreactive"?: boolean;
@@ -246,7 +246,7 @@ interface GtkObs_Gtk_Entry {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:secondary-icon-tooltip-text|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:show-emoji-icon"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:show-emoji-icon|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:tabs"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:tabs"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tabs|nonreactive"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on gtk */ "bind:text-length|nonreactive"?: number;
   /** @observable exact on gtk (notify) */ "bind:truncate-multiline"?: boolean;
@@ -272,11 +272,11 @@ interface GtkObs_Gtk_EventControllerMotion {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:is-pointer|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_EventControllerScroll {
-  /** @observable exact on gtk (notify) */ "bind:flags"?: Array<"none" | "vertical" | "horizontal" | "discrete" | "kinetic" | "physical-direction" | "both-axes">;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:flags"?: Array<"none" | "vertical" | "horizontal" | "discrete" | "kinetic" | "physical-direction" | "both-axes">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:flags|nonreactive"?: Array<"none" | "vertical" | "horizontal" | "discrete" | "kinetic" | "physical-direction" | "both-axes">;
 }
 interface GtkObs_Gtk_Expander {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:expanded"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:expanded|nonreactive"?: boolean;
@@ -310,17 +310,17 @@ interface GtkObs_Gtk_FlowBox {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-mode|nonreactive"?: "none" | "single" | "browse" | "multiple";
 }
 interface GtkObs_Gtk_FlowBoxChild {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_FontDialogButton {
-  /** @observable exact on gtk (notify) */ "bind:dialog"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:dialog"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:dialog|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:font-desc"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:font-desc"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-desc|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:font-features"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font-features|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:language"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:language"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:language|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:level"?: "family" | "face" | "font" | "features";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:level|nonreactive"?: "family" | "face" | "font" | "features";
@@ -330,7 +330,7 @@ interface GtkObs_Gtk_FontDialogButton {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-size|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_Frame {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:label"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:label|nonreactive"?: string | null;
@@ -353,7 +353,7 @@ interface GtkObs_Gtk_GestureSingle {
 interface GtkObs_Gtk_GraphicsOffload {
   /** @observable exact on gtk (notify) */ "bind:black-background"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:black-background|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:enabled"?: "enabled" | "disabled";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enabled|nonreactive"?: "enabled" | "disabled";
@@ -376,25 +376,25 @@ interface GtkObs_Gtk_HeaderBar {
   /** @observable exact on gtk (notify) */ "bind:show-title-buttons"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:show-title-buttons|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:title|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:title-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:title-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:title-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:use-native-controls"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-native-controls|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_Image {
-  /** @observable exact on gtk (notify) */ "bind:file"?: string | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:file"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:file|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:gicon"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:gicon"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:gicon|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:icon-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:icon-name|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:icon-size"?: "inherit" | "normal" | "large";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:icon-size|nonreactive"?: "inherit" | "normal" | "large";
-  /** @observable exact on gtk (notify) */ "bind:paintable"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:paintable"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:paintable|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:pixel-size"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:pixel-size|nonreactive"?: number;
-  /** @observable exact on gtk (notify) */ "bind:resource"?: string | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:resource"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:resource|nonreactive"?: string | null;
   /** Read-only. @observable exact on gtk (notify) */ "bind:storage-type"?: "empty" | "icon-name" | "gicon" | "paintable";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:storage-type|nonreactive"?: "empty" | "icon-name" | "gicon" | "paintable";
@@ -402,7 +402,7 @@ interface GtkObs_Gtk_Image {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-fallback|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_Inscription {
-  /** @observable exact on gtk (notify) */ "bind:attributes"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:attributes"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:attributes|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:min-chars"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:min-chars|nonreactive"?: number;
@@ -424,11 +424,11 @@ interface GtkObs_Gtk_Inscription {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:yalign|nonreactive"?: number;
 }
 interface GtkObs_Gtk_Label {
-  /** @observable exact on gtk (notify) */ "bind:attributes"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:attributes"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:attributes|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:ellipsize"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:ellipsize|nonreactive"?: string;
-  /** @observable exact on gtk (notify) */ "bind:extra-menu"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:extra-menu"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:extra-menu|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:justify"?: "left" | "right" | "center" | "fill";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:justify|nonreactive"?: "left" | "right" | "center" | "fill";
@@ -440,7 +440,7 @@ interface GtkObs_Gtk_Label {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-width-chars|nonreactive"?: number;
   /** Read-only. @observable exact on gtk (notify) */ "bind:mnemonic-keyval"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:mnemonic-keyval|nonreactive"?: number;
-  /** @observable exact on gtk (notify) */ "bind:mnemonic-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:mnemonic-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:mnemonic-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:natural-wrap-mode"?: "inherit" | "none" | "word";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:natural-wrap-mode|nonreactive"?: "inherit" | "none" | "word";
@@ -448,7 +448,7 @@ interface GtkObs_Gtk_Label {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selectable|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:single-line-mode"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:single-line-mode|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:tabs"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:tabs"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tabs|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:use-markup"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-markup|nonreactive"?: boolean;
@@ -498,13 +498,13 @@ interface GtkObs_Gtk_ListBox {
 interface GtkObs_Gtk_ListBoxRow {
   /** @observable exact on gtk (notify) */ "bind:activatable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:activatable|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:selectable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selectable|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_LockButton {
-  /** @observable exact on gtk (notify) */ "bind:permission"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:permission"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:permission|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:text-lock"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-lock|nonreactive"?: string | null;
@@ -518,7 +518,7 @@ interface GtkObs_Gtk_LockButton {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tooltip-unlock|nonreactive"?: string | null;
 }
 interface GtkObs_Gtk_MediaControls {
-  /** @observable exact on gtk (notify) */ "bind:media-stream"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:media-stream"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:media-stream|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_MenuButton {
@@ -528,7 +528,7 @@ interface GtkObs_Gtk_MenuButton {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:always-show-arrow|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:can-shrink"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:can-shrink|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:direction"?: "up" | "down" | "left" | "right" | "none";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:direction|nonreactive"?: "up" | "down" | "left" | "right" | "none";
@@ -538,9 +538,9 @@ interface GtkObs_Gtk_MenuButton {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:icon-name|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:label"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:label|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:menu-model"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:menu-model"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:menu-model|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:popover"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:popover"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:popover|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:primary"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:primary|nonreactive"?: boolean;
@@ -552,7 +552,7 @@ interface GtkObs_Gtk_Notebook {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enable-popup|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:group-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:group-name|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:page"?: number;
+  /** @observable exact on gtk (notify), delivery not verified (weak): bound through its change signal */ "bind:page"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:page|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:pages|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:scrollable"?: boolean;
@@ -569,11 +569,11 @@ interface GtkObs_Gtk_Orientable {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:orientation|nonreactive"?: "horizontal" | "vertical";
 }
 interface GtkObs_Gtk_Overlay {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_Paned {
-  /** @observable exact on gtk (notify) */ "bind:end-child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:end-child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:end-child|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:max-position|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:min-position|nonreactive"?: number;
@@ -589,7 +589,7 @@ interface GtkObs_Gtk_Paned {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:shrink-end-child|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:shrink-start-child"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:shrink-start-child|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:start-child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:start-child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:start-child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:wide-handle"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:wide-handle|nonreactive"?: boolean;
@@ -597,7 +597,7 @@ interface GtkObs_Gtk_Paned {
 interface GtkObs_Gtk_PasswordEntry {
   /** @observable exact on gtk (notify) */ "bind:activates-default"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:activates-default|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:extra-menu"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:extra-menu"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:extra-menu|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:placeholder-text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-text|nonreactive"?: string | null;
@@ -611,13 +611,13 @@ interface GtkObs_Gtk_Picture {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:can-shrink|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:content-fit"?: "fill" | "contain" | "cover" | "scale-down";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:content-fit|nonreactive"?: "fill" | "contain" | "cover" | "scale-down";
-  /** @observable exact on gtk (notify) */ "bind:file"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:file"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:file|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:isolate-contents"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:isolate-contents|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:keep-aspect-ratio"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:keep-aspect-ratio|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:paintable"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:paintable"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:paintable|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_Popover {
@@ -625,29 +625,29 @@ interface GtkObs_Gtk_Popover {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:autohide|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:cascade-popdown"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:cascade-popdown|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:default-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:default-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:default-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:has-arrow"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-arrow|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:mnemonics-visible"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:mnemonics-visible|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:pointing-to"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:pointing-to"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:pointing-to|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:position"?: "left" | "right" | "top" | "bottom";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:position|nonreactive"?: "left" | "right" | "top" | "bottom";
 }
 interface GtkObs_Gtk_PopoverMenu {
-  /** @observable exact on gtk (notify) */ "bind:flags"?: Array<"sliding" | "nested">;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:flags"?: Array<"sliding" | "nested">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:flags|nonreactive"?: Array<"sliding" | "nested">;
-  /** @observable exact on gtk (notify) */ "bind:menu-model"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:menu-model"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:menu-model|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:visible-submenu"?: string | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:visible-submenu"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:visible-submenu|nonreactive"?: string | null;
 }
 interface GtkObs_Gtk_PopoverMenuBar {
-  /** @observable exact on gtk (notify) */ "bind:menu-model"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:menu-model"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:menu-model|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_ProgressBar {
@@ -665,7 +665,7 @@ interface GtkObs_Gtk_ProgressBar {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text|nonreactive"?: string | null;
 }
 interface GtkObs_Gtk_Range {
-  /** @observable exact on gtk (notify) */ "bind:adjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:adjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:adjustment|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:fill-level"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:fill-level|nonreactive"?: number;
@@ -691,7 +691,7 @@ interface GtkObs_Gtk_Range {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:value|nonreactive"?: number;
 }
 interface GtkObs_Gtk_Revealer {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** Read-only. @observable exact on gtk (notify) */ "bind:child-revealed"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:child-revealed|nonreactive"?: boolean;
@@ -714,7 +714,7 @@ interface GtkObs_Gtk_Scale {
 }
 interface GtkObs_Gtk_ScaleButton {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:active|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:adjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:adjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:adjustment|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:has-frame"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-frame|nonreactive"?: boolean;
@@ -724,23 +724,23 @@ interface GtkObs_Gtk_ScaleButton {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:value|nonreactive"?: number;
 }
 interface GtkObs_Gtk_Scrollable {
-  /** @observable exact on gtk (notify) */ "bind:hadjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:hadjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hadjustment|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:hscroll-policy"?: "minimum" | "natural";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hscroll-policy|nonreactive"?: "minimum" | "natural";
-  /** @observable exact on gtk (notify) */ "bind:vadjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:vadjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vadjustment|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:vscroll-policy"?: "minimum" | "natural";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vscroll-policy|nonreactive"?: "minimum" | "natural";
 }
 interface GtkObs_Gtk_Scrollbar {
-  /** @observable exact on gtk (notify) */ "bind:adjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:adjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:adjustment|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_ScrolledWindow {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:hadjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:hadjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hadjustment|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:has-frame"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-frame|nonreactive"?: boolean;
@@ -762,7 +762,7 @@ interface GtkObs_Gtk_ScrolledWindow {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:propagate-natural-height|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:propagate-natural-width"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:propagate-natural-width|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:vadjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:vadjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vadjustment|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:vscrollbar-policy"?: "always" | "automatic" | "never" | "external";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vscrollbar-policy|nonreactive"?: "always" | "automatic" | "never" | "external";
@@ -770,9 +770,9 @@ interface GtkObs_Gtk_ScrolledWindow {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:window-placement|nonreactive"?: "top-left" | "bottom-left" | "top-right" | "bottom-right";
 }
 interface GtkObs_Gtk_SearchBar {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:key-capture-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:key-capture-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:key-capture-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:search-mode-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:search-mode-enabled|nonreactive"?: boolean;
@@ -782,11 +782,11 @@ interface GtkObs_Gtk_SearchBar {
 interface GtkObs_Gtk_SearchEntry {
   /** @observable exact on gtk (notify) */ "bind:activates-default"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:activates-default|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-hints|nonreactive"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @observable exact on gtk (notify) */ "bind:input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-purpose|nonreactive"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
-  /** @observable exact on gtk (notify) */ "bind:key-capture-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:key-capture-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:key-capture-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:placeholder-text"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-text|nonreactive"?: string | null;
@@ -802,7 +802,7 @@ interface GtkObs_Gtk_ShortcutLabel {
 interface GtkObs_Gtk_SpinButton {
   /** @observable exact on gtk (notify) */ "bind:activates-default"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:activates-default|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:adjustment"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:adjustment"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:adjustment|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:climb-rate"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:climb-rate|nonreactive"?: number;
@@ -844,17 +844,17 @@ interface GtkObs_Gtk_Stack {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:transition-type|nonreactive"?: "none" | "crossfade" | "slide-right" | "slide-left" | "slide-up" | "slide-down" | "slide-left-right" | "slide-up-down" | "over-up" | "over-down" | "over-left" | "over-right" | "under-up" | "under-down" | "under-left" | "under-right" | "over-up-down" | "over-down-up" | "over-left-right" | "over-right-left" | "rotate-left" | "rotate-right" | "rotate-left-right";
   /** @observable exact on gtk (notify) */ "bind:vhomogeneous"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vhomogeneous|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:visible-child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:visible-child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:visible-child|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:visible-child-name"?: string | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:visible-child-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:visible-child-name|nonreactive"?: string | null;
 }
 interface GtkObs_Gtk_StackSidebar {
-  /** @observable exact on gtk (notify) */ "bind:stack"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:stack"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:stack|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_StackSwitcher {
-  /** @observable exact on gtk (notify) */ "bind:stack"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:stack"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:stack|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_Switch {
@@ -866,17 +866,17 @@ interface GtkObs_Gtk_Switch {
 interface GtkObs_Gtk_Text {
   /** @observable exact on gtk (notify) */ "bind:activates-default"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:activates-default|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:attributes"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:attributes"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:attributes|nonreactive"?: unknown;
-  /** @observable exact on gtk (notify) */ "bind:buffer"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:buffer"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:buffer|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:enable-emoji-completion"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enable-emoji-completion|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:extra-menu"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:extra-menu"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:extra-menu|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:im-module"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:im-module|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-hints|nonreactive"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @observable exact on gtk (notify) */ "bind:input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-purpose|nonreactive"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
@@ -893,7 +893,7 @@ interface GtkObs_Gtk_Text {
   /** @observable exact on gtk (notify) */ "bind:propagate-text-width"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:propagate-text-width|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:scroll-offset|nonreactive"?: number;
-  /** @observable exact on gtk (notify) */ "bind:tabs"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:tabs"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tabs|nonreactive"?: unknown;
   /** @observable exact on gtk (notify) */ "bind:truncate-multiline"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:truncate-multiline|nonreactive"?: boolean;
@@ -905,19 +905,19 @@ interface GtkObs_Gtk_TextView {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accepts-tab|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:bottom-margin"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:bottom-margin|nonreactive"?: number;
-  /** @observable exact on gtk (notify) */ "bind:buffer"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:buffer"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:buffer|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:cursor-visible"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:cursor-visible|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:editable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:editable|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:extra-menu"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:extra-menu"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:extra-menu|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:im-module"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:im-module|nonreactive"?: string | null;
   /** @observable exact on gtk (notify) */ "bind:indent"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:indent|nonreactive"?: number;
-  /** @observable exact on gtk (notify) */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:input-hints"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-hints|nonreactive"?: Array<"none" | "spellcheck" | "no-spellcheck" | "word-completion" | "lowercase" | "uppercase-chars" | "uppercase-words" | "uppercase-sentences" | "inhibit-osk" | "vertical-writing" | "emoji" | "no-emoji" | "private">;
   /** @observable exact on gtk (notify) */ "bind:input-purpose"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-purpose|nonreactive"?: "free-form" | "alpha" | "digits" | "number" | "phone" | "url" | "email" | "name" | "password" | "pin" | "terminal";
@@ -937,7 +937,7 @@ interface GtkObs_Gtk_TextView {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:pixels-inside-wrap|nonreactive"?: number;
   /** @observable exact on gtk (notify) */ "bind:right-margin"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:right-margin|nonreactive"?: number;
-  /** @observable exact on gtk (notify) */ "bind:tabs"?: unknown;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:tabs"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tabs|nonreactive"?: unknown;
   /** @observable exact on gtk (via:buffer.text) */ "bind:text"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text|nonreactive"?: string;
@@ -953,17 +953,17 @@ interface GtkObs_Gtk_ToggleButton {
 interface GtkObs_Gtk_Video {
   /** @observable exact on gtk (notify) */ "bind:autoplay"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:autoplay|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:file"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:file"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:file|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:graphics-offload"?: "enabled" | "disabled";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:graphics-offload|nonreactive"?: "enabled" | "disabled";
   /** @observable exact on gtk (notify) */ "bind:loop"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:loop|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:media-stream"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:media-stream"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:media-stream|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_Viewport {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:scroll-to-focus"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:scroll-to-focus|nonreactive"?: boolean;
@@ -998,7 +998,7 @@ interface GtkObs_Gtk_Widget {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hexpand|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:hexpand-set"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hexpand-set|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:layout-manager"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:layout-manager"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:layout-manager|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:limit-events"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:limit-events|nonreactive"?: boolean;
@@ -1040,15 +1040,15 @@ interface GtkObs_Gtk_Widget {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:width-request|nonreactive"?: number;
 }
 interface GtkObs_Gtk_Window {
-  /** @observable exact on gtk (notify) */ "bind:application"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:application"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:application|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:decorated"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:decorated|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:default-height"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:default-height|nonreactive"?: number;
-  /** @observable exact on gtk (notify) */ "bind:default-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:default-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:default-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:default-width"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:default-width|nonreactive"?: number;
@@ -1056,11 +1056,11 @@ interface GtkObs_Gtk_Window {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:deletable|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:destroy-with-parent"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:destroy-with-parent|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:display"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:display"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:display|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:focus-visible"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:focus-visible|nonreactive"?: boolean;
-  /** @observable exact on gtk (notify) */ "bind:focus-widget"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:focus-widget"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:focus-widget|nonreactive"?: number | null;
   /** @observable exact on gtk (notify) */ "bind:fullscreened"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:fullscreened|nonreactive"?: boolean;
@@ -1072,7 +1072,7 @@ interface GtkObs_Gtk_Window {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hide-on-close|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:icon-name"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:icon-name|nonreactive"?: string | null;
-  /** Read-only. @observable exact on gtk (notify) */ "bind:is-active"?: boolean;
+  /** Read-only. @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-active"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-active|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:maximized"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:maximized|nonreactive"?: boolean;
@@ -1085,9 +1085,9 @@ interface GtkObs_Gtk_Window {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on gtk */ "bind:suspended|nonreactive"?: boolean;
   /** @observable exact on gtk (notify) */ "bind:title"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:title|nonreactive"?: string | null;
-  /** @observable exact on gtk (notify) */ "bind:titlebar"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:titlebar"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:titlebar|nonreactive"?: number | null;
-  /** @observable exact on gtk (notify) */ "bind:transient-for"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:transient-for"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:transient-for|nonreactive"?: number | null;
 }
 interface GtkObs_Gtk_WindowControls {
@@ -1100,7 +1100,7 @@ interface GtkObs_Gtk_WindowControls {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:use-native-controls|nonreactive"?: boolean;
 }
 interface GtkObs_Gtk_WindowHandle {
-  /** @observable exact on gtk (notify) */ "bind:child"?: number | null;
+  /** @observable exact on gtk (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:child"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:child|nonreactive"?: number | null;
 }
 interface GtkObs_Svelters_Action {
@@ -1535,13 +1535,13 @@ interface QtObs_dialog_button_box {
 }
 interface QtObs_dock_widget {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accessible-name|nonreactive"?: string;
-  /** @observable exact on qt (notify) */ "bind:allowed-areas"?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
+  /** @observable exact on qt (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allowed-areas"?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allowed-areas|nonreactive"?: Array<"all-dock-widget-areas" | "bottom-dock-widget-area" | "dock-widget-area-mask" | "left-dock-widget-area" | "no-dock-widget-area" | "right-dock-widget-area" | "top-dock-widget-area">;
   /** @observable exact on qt (event:EnabledChange) */ "bind:enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enabled|nonreactive"?: boolean;
-  /** @observable exact on qt (notify) */ "bind:features"?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
+  /** @observable exact on qt (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:features"?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:features|nonreactive"?: Array<"dock-widget-closable" | "dock-widget-feature-mask" | "dock-widget-floatable" | "dock-widget-movable" | "dock-widget-vertical-title-bar" | "no-dock-widget-features" | "reserved">;
-  /** @observable exact on qt (notify) */ "bind:floating"?: boolean;
+  /** @observable exact on qt (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:floating"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:floating|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-height|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-width|nonreactive"?: number;
@@ -2950,7 +2950,7 @@ interface AppkitObs_NSView {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:shadow|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:subviews|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:superview|nonreactive"?: number | null;
-  /** Read-only. @observable exact on appkit (notify) */ "bind:tag"?: number;
+  /** Read-only. @observable exact on appkit (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:tag"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:tag|nonreactive"?: number;
   /** @observable exact on appkit (notify) */ "bind:tool-tip"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string | null;
@@ -3136,9 +3136,9 @@ export interface AppkitObservedBindings {
 interface WinuiObs_ButtonBase {
   /** @observable exact on winui (notify) */ "bind:click-mode"?: "release" | "press" | "hover";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:click-mode|nonreactive"?: "release" | "press" | "hover";
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-pointer-over"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-pointer-over"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-pointer-over|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-pressed"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-pressed"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-pressed|nonreactive"?: boolean;
 }
 interface WinuiObs_ContentControl {
@@ -3238,7 +3238,7 @@ interface WinuiObs_Grid {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:row-spacing|nonreactive"?: number;
 }
 interface WinuiObs_Panel {
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-items-host"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-items-host"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-items-host|nonreactive"?: boolean;
 }
 interface WinuiObs_RangeBase {
@@ -3307,7 +3307,7 @@ interface WinuiObs_TextBlock {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-text-scale-factor-enabled|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:is-text-selection-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-text-selection-enabled|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:is-text-trimmed"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:is-text-trimmed"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:is-text-trimmed|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:line-height"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:line-height|nonreactive"?: number;
@@ -3335,11 +3335,11 @@ interface WinuiObs_TextBlock {
 interface WinuiObs_TextBox {
   /** @observable exact on winui (notify) */ "bind:accepts-return"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accepts-return|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:can-paste-clipboard-content"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:can-paste-clipboard-content"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:can-paste-clipboard-content|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:can-redo"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:can-redo"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:can-redo|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:can-undo"?: boolean;
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:can-undo"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:can-undo|nonreactive"?: boolean;
   /** @observable exact on winui (notify) */ "bind:character-casing"?: "normal" | "lower" | "upper";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:character-casing|nonreactive"?: "normal" | "lower" | "upper";
@@ -3391,7 +3391,7 @@ interface WinuiObs_UIElement {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:composite-mode|nonreactive"?: "inherit" | "source-over" | "min-blend";
   /** @observable exact on winui (notify) */ "bind:exit-display-mode-on-access-key-invoked"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:exit-display-mode-on-access-key-invoked|nonreactive"?: boolean;
-  /** Read-only. @observable exact on winui (notify) */ "bind:focus-state"?: "unfocused" | "pointer" | "keyboard" | "programmatic";
+  /** Read-only. @observable exact on winui (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:focus-state"?: "unfocused" | "pointer" | "keyboard" | "programmatic";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:focus-state|nonreactive"?: "unfocused" | "pointer" | "keyboard" | "programmatic";
   /** @observable exact on winui (notify) */ "bind:is-access-key-scope"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:is-access-key-scope|nonreactive"?: boolean;

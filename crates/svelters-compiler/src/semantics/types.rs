@@ -91,6 +91,9 @@ impl TypeTable {
                         value_cost: p.value_cost,
                         timing: ObsTiming::Sync,
                         mechanism: String::new(),
+                        // native reads only use the class (diagnostics); the type tables carry no strength
+                        verified: Default::default(),
+                        fact: String::new(),
                     }),
                 });
             }

@@ -766,6 +766,7 @@ The Rust port keeps modifiers on every directive (`crates/svelters-compiler/src/
 | `bind_not_observable` | error | `bind:` on a `none`/`constant` prop (replaces the `notify` wording of `bind_no_plan`, `backend.rs:303`) |
 | `bind_set_only` | error | two-way `bind:` on a `set_only` prop: "nothing but your code changes it; use `prop={x}`" |
 | `bind_partially_observed` | warning | `bind:` on a `partial` prop; names the `missed` causes per platform |
+| `bind_observation_unverified` | warning (error under `--strict-native`) | OV1: `bind:` on an `exact` prop whose fact no generated row has seen deliver a native change (`verified: weak` or `none`), when the prop has no signal plan to keep; names the fact |
 | `native_read_not_observable` | warning (best effort) | a template expression, `$derived` or `$effect` reads `obj.prop` where `obj` is statically a native type and `prop` is `none`/`partial`. Static typing comes from scope analysis: `const b = new TextBuffer(...)` with `TextBuffer` imported from `svelters:<tk>/<ns>`, `bind:this` targets of known tags, and generated-class parameters. Unknown receivers are silent |
 | `bind_modifier_invalid` | error | unknown modifier, or `\|nonreactive` where it has no meaning |
 | `nonreactive_redundant` | warning | `\|nonreactive` on a `set_only`/`constant` prop |
@@ -970,6 +971,7 @@ All recommendations in §12 are adopted, except #8:
 6. **`set_only` props:** no native observation; setters invalidate locally; two-way `bind:` is a compile error.
 7. **Echo:** for observed props, host compare-with-last replaces handler blocking. Backend-side suppression applies only to proportional props. Signal-based echo rules are unchanged.
 8. **`bind:` migration: all at once (not gradually).** In R2 every `bind:` on an `exact` prop is lowered onto observation (`bind_prop` / `bind_readonly`). Signal-based binding plans remain only for props that are not `exact` on that platform (e.g. AppKit user edits through the field editor, which KVO misses).
+   *Implementation detail (OV1, plans/milestones/OV1-delivery-verified-observe.md):* "`exact`" here means `exact` **and delivery-verified**: a generated test observed the prop, changed it natively (not through our `set_prop`) and saw the change announced (`verified: delivery` in the spec). An `exact` fact whose test only installed the mechanism (`weak`) or that has no passing test (`none`) keeps its declared signal plan; without one, `bind:` still observes and the compiler warns with `bind_observation_unverified` (an error under `--strict-native`). The host's fallback to the signal plan covers only a *refused* observation, never a silent one, so this is checked at compile time.
 9. **Polling for `none` props:** not in v1. Report `none` with a warning.
 10. **AppKit BORROWED + KVO:** as recommended. **The minimum macOS is 11**, which covers the 10.13 relaxed-unregistration requirement.
 11. **Compiler traits:** one object-safe `PlatformSemantics` (renamed from `BackendSemantics`) with `observability` and type-member lookup, a thin `RuntimeTarget`, and overrides through `Overlay`. **`|lazy` waits** for R5.
