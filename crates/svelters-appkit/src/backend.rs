@@ -979,6 +979,17 @@ impl Inner {
         Ok(())
     }
 
+    /// ABI v2.7 `start`: attaches the host without running the loop (`AppKitBackend::new` already
+    /// set up `NSApplication`, its menu and the run-loop sources); the caller pumps the run loop or
+    /// calls `run` later. Like `run`, it queues a checkpoint for the first loop turn. NULL detaches:
+    /// wakes, timers and frames read the host when they fire, so none reaches a detached host.
+    fn start(&self, host: *const svl_host) {
+        self.host.set(host);
+        if !host.is_null() {
+            self.rl.waker().wake();
+        }
+    }
+
     fn quit(&self) {
         self.quit_requested.set(true);
         if !self.running.get() {
@@ -1170,6 +1181,15 @@ impl Backend for AppKitBackend {
 
     fn run(&self, host: &HostRef<'_>) -> StrResult<()> {
         self.inner.run(host.as_raw())
+    }
+
+    fn supports_start(&self) -> bool {
+        true
+    }
+
+    fn start(&self, host: Option<&HostRef<'_>>) -> StrResult<()> {
+        self.inner.start(host.map_or(std::ptr::null(), |h| h.as_raw()));
+        Ok(())
     }
 
     fn waker(&self) -> Waker {

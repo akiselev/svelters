@@ -753,7 +753,13 @@ int (*start)(void *self, const svl_host *host);
   iterates the default main context), and `wake` re-reads the pointer at dispatch. Qt sets `g.host`
   and creates the `QApplication` (`ensure_app`), delivering a wake that came before the waker existed.
   The log backend records the attachment only (no op logged; in start mode its script is not played
-  and the embedder checkpoints). AppKit and WinUI leave it NULL for now (`attach_host`). The iOS and
+  and the embedder checkpoints). AppKit (FU1) stores the host (`AppKitBackend::new` already set up
+  `NSApplication` and the run-loop sources; the caller pumps the run loop) and queues a checkpoint for
+  the first loop turn, as `run` does. WinUI (FU1) stores the host (`WinUiBackend::new` already
+  initialised XAML and the dispatcher queue; the caller pumps messages), posts type events raised
+  before it attached, and queues a checkpoint. Both read the host when a wake, timer or frame fires,
+  so nothing reaches a detached host; `attach_host` keeps working. All four desktop backends
+  implement `start`. The iOS and
   Android backends implement `start` and checkpoint once the platform has brought the UI up
   (docs/notes/ios-uikit-backend.md §2.2 decision I1, docs/notes/android-backend.md A2); egui
   embedding uses it as plans/research/EGUI.md §8 D1 describes.

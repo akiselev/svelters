@@ -3,8 +3,16 @@
 //! (docs/notes/windows-setup.md). Off Windows the target lists no tests.
 //!
 //! `winui_types_selftest` does the same for `fixtures/winui-types` (N4: non-GUI WinRT types from Svelte).
+//! The `start_*` tests run `counter-win --start-test <mode>` (G0, ABI v2.7 `start`, FU1).
 
-const TESTS: &[(&str, &str)] = &[("counter_win_selftest", "counter-win"), ("winui_types_selftest", "winui-types")];
+/// (test name, `counter-win` arguments).
+const TESTS: &[(&str, &[&str])] = &[
+    ("counter_win_selftest", &["--fixture", "counter-win", "--selftest", "--timeout", "30"]),
+    ("winui_types_selftest", &["--fixture", "winui-types", "--selftest", "--timeout", "30"]),
+    ("start_with_mounts_in_the_hook_while_pumping", &["--start-test", "start-with"]),
+    ("run_with_mounts_in_the_hook_of_the_loop", &["--start-test", "run-with"]),
+    ("desktop_order_mount_has_the_host_attached", &["--start-test", "preattach"]),
+];
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -17,24 +25,25 @@ fn main() {
         return;
     }
     let filters: Vec<&String> = args.iter().filter(|a| !a.starts_with('-')).collect();
-    for (name, fixture) in TESTS {
+    for (name, argv) in TESTS {
         if !filters.is_empty() && !filters.iter().any(|f| name.contains(f.as_str())) {
             continue;
         }
         #[cfg(windows)]
-        selftest(name, fixture);
+        selftest(name, argv);
         #[cfg(not(windows))]
-        let _ = fixture;
+        let _ = argv;
     }
 }
 
 #[cfg(windows)]
-fn selftest(name: &str, fixture: &str) {
-    let dir = std::env::temp_dir().join(format!("counter-win-{}-{fixture}", std::process::id()));
+fn selftest(name: &str, argv: &[&str]) {
+    let dir = std::env::temp_dir().join(format!("counter-win-{}-{name}", std::process::id()));
     std::fs::create_dir_all(&dir).unwrap();
     let report = dir.join("report.json");
     let out = std::process::Command::new(env!("CARGO_BIN_EXE_counter-win"))
-        .args(["--fixture", fixture, "--selftest", "--timeout", "30", "--report"])
+        .args(argv)
+        .arg("--report")
         .arg(&report)
         .output()
         .expect("spawn counter-win");

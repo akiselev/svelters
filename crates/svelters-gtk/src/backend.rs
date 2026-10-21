@@ -661,7 +661,7 @@ impl Inner {
         }
         let si = SLOTS.get(slot as usize - 1).ok_or("unknown slot")?;
         if !lookup::in_chain(pk, si.kind) {
-            return Err(format!("slot {} does not belong to {}", si.name, KINDS[pk as usize - 1].gtype));
+            return Err(format!("slot {} does not belong to {}", si.name, pw.type_().name()));
         }
         let bw = if before != 0 && !si.unordered { Some(self.widget_of(before)?.0) } else { None };
         if let Some(b) = &bw {
@@ -747,7 +747,7 @@ impl Inner {
         };
         let a = ATTRS.get((attr as usize).wrapping_sub(1)).ok_or("unknown child attribute")?;
         let id = lookup::attr_for_slot(pk, attr, slot).ok_or_else(|| {
-            format!("child attribute {} does not apply to slot {} of {}", a.name, SLOTS[slot as usize - 1].name, KINDS[pk as usize - 1].gtype)
+            format!("child attribute {} does not apply to slot {} of {}", a.name, SLOTS[slot as usize - 1].name, pw.type_().name())
         })?;
         Ok((id, pw, cw))
     }
@@ -837,7 +837,7 @@ impl Inner {
         }
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
-            return Err(format!("property {} does not belong to {}", p.name, KINDS[kind as usize - 1].gtype));
+            return Err(format!("property {} does not belong to {}", p.name, obj.type_().name()));
         }
         if p.flags & F_WRITE == 0 {
             return Err(format!("property {} is read-only", p.name));
@@ -915,7 +915,7 @@ impl Inner {
         }
         let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or("unknown property")?;
         if !lookup::in_chain(kind, p.kind) {
-            return Err(format!("property {} does not belong to {}", p.name, KINDS[kind as usize - 1].gtype));
+            return Err(format!("property {} does not belong to {}", p.name, obj.type_().name()));
         }
         if p.flags & F_READ == 0 {
             return Err(format!("property {} is write-only", p.name));
@@ -955,7 +955,7 @@ impl Inner {
             return self.call_dynamic(h, Recv::Obj(obj), method, args, out);
         };
         if !lookup::in_chain(kind, m.kind) {
-            return Err(format!("method {} does not belong to {}", m.name, KINDS[kind as usize - 1].gtype).into());
+            return Err(format!("method {} does not belong to {}", m.name, obj.type_().name()).into());
         }
         if !args.is_empty() {
             return Err(format!("method {} takes no arguments", m.name).into());
@@ -1100,7 +1100,7 @@ impl Inner {
         }
         let sig = SIGNALS.get((signal as usize).wrapping_sub(1)).ok_or("unknown signal")?;
         if !lookup::in_chain(kind, sig.kind) {
-            return Err(format!("signal {} does not belong to {}", sig.name, KINDS[kind as usize - 1].gtype));
+            return Err(format!("signal {} does not belong to {}", sig.name, obj.type_().name()));
         }
         if flags & !(SVL_LISTEN_AFTER | SVL_LISTEN_CAPTURE) != 0 {
             return Err(format!("unknown listener flags {flags:#x}"));
