@@ -44,6 +44,7 @@ pub struct ReactiveStats {
     pub events_dropped: u64,
 }
 
+#[derive(Clone)]
 pub(crate) struct Persisted {
     kind: svl_id,
     ty: TypeId,
@@ -78,10 +79,12 @@ impl Reactive {
     }
 }
 
-/// The old runtime's observations and listeners on app objects, while a reload loads the new one.
+/// The old runtime's observations and listeners on app objects, while a reload loads the new one, and
+/// the persisted objects as they were (a failed load must not leave its own objects persisted).
 pub(crate) struct ReactiveStash {
     observed: Vec<((svl_handle, svl_id), Observed)>,
     listened: Vec<(svl_handle, u64)>,
+    persist: HashMap<String, Persisted>,
 }
 
 fn disposed(h: svl_handle) -> OpError {
@@ -264,12 +267,15 @@ impl Core {
                 (*h, m)
             })
             .collect();
-        ReactiveStash { observed, listened }
+        let persist = self.reactive.persist.borrow().clone();
+        ReactiveStash { observed, listened, persist }
     }
 
     /// The reload failed: the old runtime's observations and listeners come back (merged with what the
     /// failed load registered on handles that stay live).
     pub(crate) fn reactive_restore(&self, s: ReactiveStash) {
+        let failed = std::mem::replace(&mut *self.reactive.persist.borrow_mut(), s.persist);
+        drop(failed);
         {
             let mut st = self.st.borrow_mut();
             for (k, o) in s.observed {

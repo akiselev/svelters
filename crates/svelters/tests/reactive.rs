@@ -772,10 +772,22 @@ console.log('v1', c.value, appStats.count);
         unsafe { svelters_abi::HostRef::from_raw(host.host_callbacks()) }.checkpoint();
     };
 
-    // A failed reload: the old runtime keeps its observation of the app-wide store.
-    reload("this is not javascript (");
+    // A failed reload: the old runtime keeps its observation of the app-wide store, and what the failed
+    // bundle persisted before it threw is not kept.
+    reload(
+        r#"
+import { Counter, appStats } from 'svelters:app/rx';
+import { persist } from 'svelters:core';
+persist('other', () => new Counter(1, 904));
+globalThis.__svelters_host.observe(appStats.svlHandle, 'count', true);
+throw new Error('broken v2');
+"#,
+    );
     assert_eq!(*reloads.borrow(), vec![false]);
     let _ = host.take_errors();
+    assert_eq!(host.persisted(), vec!["counter".to_string()]);
+    r.turn();
+    assert!(recorded("counter-drop 904"), "the failed runtime's object was released");
     APP_STATS.write(StatsField::Count, |s| s.count += 1);
     r.turn();
     assert!(r.has("changed count=8"), "{:?}", r.lines);
