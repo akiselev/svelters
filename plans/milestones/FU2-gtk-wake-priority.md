@@ -82,6 +82,24 @@ No change outside GTK. AppKit and WinUI are read from the code only (CI-verified
   asserts: the probe's longest gap < 100 ms during the worker job (8.5 ms locally) and ≥ 150 ms during
   the blocking one (204 ms). The hand-driven dispatch measurement stays.
 
+## Completion record
+
+Branch `ci/fu2`, code head **da8fd6e0** (based on master 4ce61e32). This record is a docs-only commit on top.
+
+CI on da8fd6e0, all success: js 39656941892, linux-gtk 39656942002 (GTK 4.14 1933 tests and Arch GTK 2222,
+`wake_priority` 3/3 on both, `worker_job_keeps_the_ui_responsive` ok), linux-qt 39656941937 (97/97,
+`qt_a_busy_timer_does_not_starve_wake` ok), macos-appkit 39656942016, windows-winui 39656941976.
+
+Local gates on da8fd6e0, all rc 0:
+
+| Gate | Result |
+| --- | --- |
+| `tools/dev/cargo-slot cargo check --workspace --all-targets` | rc 0 (only warnings that were already there) |
+| `flock ... tools/dev/headless tools/dev/cargo-slot cargo nextest run --workspace --test-threads 4` | 2427/2427 passed, 9 skipped (an earlier run hit `svelters-host::reload failed_reload_keeps_the_process_and_recovers` on both tries: a log-backend file-watcher timing test that FU2 does not touch; 3/3 passes alone, and the rerun was clean) |
+| `pnpm -r build` (after `cargo build -p svelters-compiler`, `python3 tools/docs/build_ir.py`) | rc 0 |
+| `pnpm test` (incl. `ledger.py check`: gtk 580, qt 634, appkit 205, winui 105 manual facts) | rc 0 |
+| `pnpm docs:test` | rc 0 (11 tests, 1 skipped) |
+
 ## Open items
 
 - Qt `wake` does not coalesce in the backend (one posted event per call; `g.queued` is only read by
