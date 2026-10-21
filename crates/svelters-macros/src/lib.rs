@@ -75,6 +75,13 @@ struct Js {
     rename: Option<String>,
     default: Option<Option<Expr>>,
     code: Option<String>,
+    // E1 offload
+    worker: bool,
+    blocking: bool,
+    local: bool,
+    tokio: bool,
+    supersede: bool,
+    max_in_flight: Option<u32>,
 }
 
 fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
@@ -94,9 +101,19 @@ fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
                 "default" => {
                     js.default = Some(if m.input.peek(Token![=]) { Some(m.value()?.parse::<Expr>()?) } else { None });
                 }
-                "worker" | "blocking" | "local" | "supersede" | "max_in_flight" | "buffer" => {
-                    return Err(m.error(format!("#[js({id})] is thread offload, which arrives with E1; E0 exports run synchronously on the UI thread")));
+                "worker" => js.worker = true,
+                "blocking" => js.blocking = true,
+                "local" => js.local = true,
+                "tokio" => js.tokio = true,
+                "supersede" => js.supersede = true,
+                "max_in_flight" => {
+                    let n = m.value()?.parse::<syn::LitInt>()?.base10_parse::<u32>()?;
+                    if n == 0 {
+                        return Err(m.error("max_in_flight must be at least 1"));
+                    }
+                    js.max_in_flight = Some(n);
                 }
+                "buffer" => return Err(m.error("#[js(buffer)] belongs to streams (Sink<T>), which arrive with E3")),
                 "tag" => return Err(m.error("data enums (#[js(tag)]) are not supported yet (E0): use a record with an enum field")),
                 _ => return Err(m.error(format!("unknown #[js] option `{id}`"))),
             }
@@ -415,6 +432,8 @@ enum ArgKind {
     Obj(Type),
     /// `&mut T` of an exported UI object
     ObjMut(Type),
+    /// `WorkCx<P>`: injected by the host (offloaded members), not a JS argument.
+    Injected(Type),
 }
 
 struct Arg {
@@ -429,6 +448,57 @@ struct Gen {
     items: Vec<Ts>,
 }
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Recv {
+    None,
+    Ref,
+    Mut,
+    Arc,
+}
+
+/// Where an offloaded member runs (E1).
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Exec {
+    Worker,
+    Blocking,
+    Local,
+    Tokio,
+}
+
+fn exec_of(sig: &syn::Signature, js: &Js) -> syn::Result<Option<Exec>> {
+    let span = sig.ident.span();
+    let picked = [js.worker, js.blocking, js.local, js.tokio].iter().filter(|x| **x).count();
+    if picked > 1 {
+        return Err(syn::Error::new(span, "pick one of #[js(worker)], #[js(blocking)], #[js(local)], #[js(tokio)]"));
+    }
+    let exec = if sig.asyncness.is_some() {
+        if js.worker || js.blocking {
+            return Err(syn::Error::new(
+                span,
+                "#[js(worker)]/#[js(blocking)] run a synchronous fn on a pool; an `async fn` runs on the JS thread (default, or #[js(local)]) or on tokio (#[js(tokio)])",
+            ));
+        }
+        Some(if js.tokio { Exec::Tokio } else { Exec::Local })
+    } else if js.tokio {
+        return Err(syn::Error::new(span, "#[js(tokio)] needs an `async fn`"));
+    } else if js.local {
+        return Err(syn::Error::new(span, "#[js(local)] is for an `async fn`; a plain fn already runs on the JS thread, synchronously"));
+    } else if js.worker {
+        Some(Exec::Worker)
+    } else if js.blocking {
+        Some(Exec::Blocking)
+    } else {
+        None
+    };
+    if exec.is_none() && (js.supersede || js.max_in_flight.is_some()) {
+        return Err(syn::Error::new(span, "#[js(supersede)] and #[js(max_in_flight)] apply to offloaded calls (#[js(worker)], #[js(blocking)], `async fn`)"));
+    }
+    if exec.is_some() && (js.constructor || js.getter || js.setter) {
+        return Err(syn::Error::new(span, "constructors, getters and setters run synchronously: they cannot be offloaded or async"));
+    }
+    Ok(exec)
+}
+
 #[allow(clippy::too_many_arguments)]
 fn member(
     g: &mut Gen,
@@ -440,39 +510,34 @@ fn member(
     call_path: Ts,
 ) -> syn::Result<()> {
     let p = quote!(::svelters::__private);
-    if sig.asyncness.is_some() {
-        return Err(syn::Error::new(sig.asyncness.span(), "async exports arrive with E1 (thread offload); E0 exports are synchronous"));
-    }
+    let exec = exec_of(sig, js)?;
     if !sig.generics.params.is_empty() {
         return Err(syn::Error::new(sig.generics.span(), "exported functions cannot be generic"));
     }
     let rust = sig.ident.to_string();
-    let mut receiver = quote!(None);
-    let mut recv_code = Ts::new();
-    let mut recv_arg = Ts::new();
+    let mut recv = Recv::None;
     let mut args = Vec::new();
     for (i, input) in sig.inputs.iter_mut().enumerate() {
         match input {
             FnArg::Receiver(r) => {
-                let Some(self_ty) = self_ty else { unreachable!() };
                 if r.colon_token.is_some() {
                     // `self: Arc<Self>`
                     if last_ident(&r.ty).as_deref() != Some("Arc") {
                         return Err(syn::Error::new(r.ty.span(), "the only typed receiver an export takes is `self: Arc<Self>` (shared objects)"));
                     }
-                    receiver = quote!(Arc);
-                    recv_code = quote!(let __this = #p::__private::this_arc::<#self_ty>(cx)?;);
-                    recv_arg = quote!(__this,);
+                    recv = Recv::Arc;
                 } else if r.reference.is_none() {
                     return Err(syn::Error::new(r.span(), "exported methods cannot take `self` by value (the object stays owned by JS)"));
                 } else if r.mutability.is_some() {
-                    receiver = quote!(Mut);
-                    recv_code = quote!(let __this = #p::__private::this::<#self_ty>(cx)?; let mut __s = #p::__private::borrow_mut::<#self_ty>(&__this)?;);
-                    recv_arg = quote!(&mut *__s,);
+                    if matches!(exec, Some(Exec::Worker | Exec::Blocking | Exec::Tokio)) {
+                        return Err(syn::Error::new(
+                            r.span(),
+                            "worker methods need #[svelters::object(shared)] and `self: Arc<Self>` or `&self` (Self: Send + Sync); `&mut self` stays on the JS thread (a plain `async fn`)",
+                        ));
+                    }
+                    recv = Recv::Mut;
                 } else {
-                    receiver = quote!(Ref);
-                    recv_code = quote!(let __this = #p::__private::this::<#self_ty>(cx)?; let __s = <#self_ty as #p::ExportObject>::__borrow(&__this)?;);
-                    recv_arg = quote!(&*__s,);
+                    recv = Recv::Ref;
                 }
             }
             FnArg::Typed(pt) => {
@@ -487,7 +552,19 @@ fn member(
                     ReplaceSelf(st).visit_type_mut(&mut ty);
                 }
                 let kind = match &ty {
+                    Type::Path(_) if last_ident(&ty).as_deref() == Some("WorkCx") => {
+                        if exec.is_none() {
+                            return Err(syn::Error::new(ty.span(), "`WorkCx` is for offloaded calls: add #[js(worker)], #[js(blocking)], or make the fn `async`"));
+                        }
+                        ArgKind::Injected(ty)
+                    }
                     Type::Reference(r) => {
+                        if exec.is_some() {
+                            return Err(syn::Error::new(
+                                r.span(),
+                                "an offloaded call outlives the JS call that started it, so it cannot borrow its arguments: take `String`, `Vec<T>`, `Arc<T>` or `Obj<T>`",
+                            ));
+                        }
                         let inner = (*r.elem).clone();
                         match &inner {
                             Type::Path(tp) if tp.path.is_ident("str") => {
@@ -519,18 +596,23 @@ fn member(
         quote!(Getter)
     } else if js.setter {
         quote!(Setter)
-    } else if self_ty.is_none() || receiver.to_string() == "None" {
+    } else if self_ty.is_none() || recv == Recv::None {
         quote!(Static)
     } else {
         quote!(Method)
     };
-    let is_none = receiver.to_string() == "None";
-    if (js.getter || js.setter) && is_none {
+    if (js.getter || js.setter) && recv == Recv::None {
         return Err(syn::Error::new(sig.span(), "getters and setters need a receiver (`&self`, or `&mut self` on UI objects)"));
     }
-    if js.constructor && !is_none {
+    if js.constructor && recv != Recv::None {
         return Err(syn::Error::new(sig.span(), "a #[js(constructor)] takes no receiver"));
     }
+    let receiver = match recv {
+        Recv::None => quote!(None),
+        Recv::Ref => quote!(Ref),
+        Recv::Mut => quote!(Mut),
+        Recv::Arc => quote!(Arc),
+    };
     let jsname = js.rename.clone().unwrap_or_else(|| {
         if js.setter {
             camel(rust.strip_prefix("set_").unwrap_or(&rust))
@@ -539,19 +621,31 @@ fn member(
         }
     });
 
+    let pooled = matches!(exec, Some(Exec::Worker | Exec::Blocking | Exec::Tokio));
     let mut conv = Vec::new();
     let mut borrows = Vec::new();
     let mut pass = Vec::new();
     let mut params = Vec::new();
+    let mut checks = Vec::new();
+    let mut progress = quote!(::core::option::Option::None);
     for (i, a) in args.iter().enumerate() {
         let v = format_ident!("__a{i}");
         let b = format_ident!("__b{i}");
         let next = quote!(__it.next().unwrap_or(#p::Value::Null));
         let name = &a.name;
         let dty = match &a.kind {
+            ArgKind::Injected(t) => {
+                conv.push(quote!(let #v = <#t as #p::__private::Injected>::inject(__op);));
+                pass.push(quote!(#v));
+                progress = quote!(<#t as #p::__private::Injected>::progress(b));
+                continue;
+            }
             ArgKind::Value(t) => {
                 conv.push(quote!(let #v = <#t as #p::FromJs>::from_js(#next, cx)?;));
                 pass.push(quote!(#v));
+                if pooled {
+                    checks.push(quote_spanned!(t.span()=> #p::__private::assert_worker_send::<#t>();));
+                }
                 t.clone()
             }
             ArgKind::ByRef(t) => {
@@ -590,23 +684,123 @@ fn member(
         ret_d = quote!(#p::__private::bigint(#ret_d));
     }
     let thunk = format_ident!("__svl_thunk_{idx}");
+    let start = format_ident!("__svl_start_{idx}");
     let sigf = format_ident!("__svl_sig_{idx}");
     g.items.push(quote! {
-        #[allow(non_snake_case, unused_mut, unused_variables, clippy::needless_borrow)]
-        fn #thunk(cx: &#p::CallCx<'_>, args: ::std::vec::Vec<#p::Value>) -> ::core::result::Result<#p::Value, #p::NativeError> {
-            let mut __it = args.into_iter();
-            #(#conv)*
-            let __ret: #ret_ty = {
-                #recv_code
-                #(#borrows)*
-                #call_path(#recv_arg #(#pass),*)
-            };
-            #p::IntoJs::into_js(__ret, cx)
-        }
         fn #sigf(b: &mut #p::TypeBuilder) -> #p::Sig {
-            #p::Sig { params: ::std::vec![#(#params),*], ret: #ret_d, throws: <#ret_ty as #p::JsType>::throws() }
+            #p::Sig { params: ::std::vec![#(#params),*], ret: #ret_d, throws: <#ret_ty as #p::JsType>::throws(), progress: #progress }
         }
     });
+
+    let offload = match exec {
+        None => {
+            let (recv_code, recv_arg) = match (recv, self_ty) {
+                (Recv::Arc, Some(st)) => (quote!(let __this = #p::__private::this_arc::<#st>(cx)?;), quote!(__this,)),
+                (Recv::Mut, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;), quote!(&mut *__s,))
+                }
+                (Recv::Ref, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let __s = <#st as #p::ExportObject>::__borrow(&__this)?;), quote!(&*__s,))
+                }
+                _ => (Ts::new(), Ts::new()),
+            };
+            g.items.push(quote! {
+                #[allow(non_snake_case, unused_mut, unused_variables, clippy::needless_borrow)]
+                fn #thunk(cx: &#p::CallCx<'_>, args: ::std::vec::Vec<#p::Value>) -> ::core::result::Result<#p::Value, #p::NativeError> {
+                    let mut __it = args.into_iter();
+                    #(#conv)*
+                    let __ret: #ret_ty = {
+                        #recv_code
+                        #(#borrows)*
+                        #call_path(#recv_arg #(#pass),*)
+                    };
+                    #p::IntoJs::into_js(__ret, cx)
+                }
+            });
+            quote!(::core::option::Option::None)
+        }
+        Some(exec) => {
+            // The receiver: a clone of the object's holder, taken on the JS thread; the job borrows it.
+            let mut recv_take = Ts::new();
+            let mut recv_borrow = Ts::new();
+            let mut recv_arg = Ts::new();
+            if let (true, Some(st)) = (recv != Recv::None, self_ty) {
+                if pooled {
+                    checks.push(quote_spanned!(st.span()=> #p::__private::assert_offload_self::<#st>();));
+                }
+                match recv {
+                    Recv::Arc => {
+                        recv_take = quote!(let __this = #p::__private::this_arc::<#st>(cx)?;);
+                        recv_arg = quote!(__this,);
+                    }
+                    Recv::Ref if pooled => {
+                        recv_take = quote!(let __this = #p::__private::this_arc::<#st>(cx)?;);
+                        recv_arg = quote!(&*__this,);
+                    }
+                    Recv::Ref => {
+                        recv_take = quote!(let __this = #p::__private::this::<#st>(cx)?;);
+                        recv_borrow = quote!(let __s = <#st as #p::ExportObject>::__borrow(&__this)?;);
+                        recv_arg = quote!(&*__s,);
+                    }
+                    Recv::Mut => {
+                        recv_take = quote!(let __this = #p::__private::this::<#st>(cx)?;);
+                        recv_borrow = quote!(let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;);
+                        recv_arg = quote!(&mut *__s,);
+                    }
+                    Recv::None => {}
+                }
+            }
+            let job = match exec {
+                Exec::Worker | Exec::Blocking => {
+                    let e = if exec == Exec::Worker { quote!(Worker) } else { quote!(Blocking) };
+                    checks.push(quote_spanned!(ret_ty.span()=> #p::__private::assert_worker_send::<#ret_ty>();));
+                    quote! {
+                        #p::__private::pool_job::<#ret_ty>(#p::Exec::#e, move || -> #ret_ty { #call_path(#recv_arg #(#pass),*) })
+                    }
+                }
+                Exec::Local => quote! {
+                    #p::__private::local_job::<#ret_ty>(async move {
+                        #recv_borrow
+                        let __r: #ret_ty = #call_path(#recv_arg #(#pass),*).await;
+                        ::core::result::Result::Ok::<#ret_ty, #p::NativeError>(__r)
+                    })
+                },
+                Exec::Tokio => {
+                    checks.push(quote_spanned!(ret_ty.span()=> #p::__private::assert_worker_send::<#ret_ty>();));
+                    quote! {
+                        #p::__private::tokio_job::<#ret_ty, _>(async move {
+                            let __r: #ret_ty = #call_path(#recv_arg #(#pass),*).await;
+                            ::core::result::Result::Ok::<#ret_ty, #p::NativeError>(__r)
+                        })
+                    }
+                }
+            };
+            g.items.push(quote! {
+                #[allow(non_snake_case, unused_mut, unused_variables, clippy::needless_borrow)]
+                fn #start(
+                    cx: &#p::CallCx<'_>,
+                    args: ::std::vec::Vec<#p::Value>,
+                    __op: &::std::sync::Arc<#p::__private::OpShared>,
+                ) -> ::core::result::Result<#p::__private::Job, #p::NativeError> {
+                    const _: () = { #(#checks)* };
+                    let mut __it = args.into_iter();
+                    #(#conv)*
+                    #recv_take
+                    ::core::result::Result::Ok(#job)
+                }
+            });
+            let e = match exec {
+                Exec::Worker => quote!(Worker),
+                Exec::Blocking => quote!(Blocking),
+                Exec::Local => quote!(Local),
+                Exec::Tokio => quote!(Tokio),
+            };
+            let supersede = js.supersede;
+            let max = js.max_in_flight.unwrap_or(0);
+            quote!(::core::option::Option::Some(#p::OffloadDef { exec: #p::Exec::#e, start: #start, supersede: #supersede, max_in_flight: #max }))
+        }
+    };
+    let thunk_ref = if exec.is_some() { quote!(#p::__private::offload_thunk) } else { quote!(#thunk) };
     g.defs.push(quote! {
         #p::MemberDef {
             name: #jsname,
@@ -615,11 +809,13 @@ fn member(
             receiver: #p::Receiver::#receiver,
             docs: #fdocs,
             sig: #sigf,
-            thunk: #thunk,
+            thunk: #thunk_ref,
+            offload: #offload,
         }
     });
     Ok(())
 }
+
 
 /// `#[svelters::export]` on an `impl` block of an exported object: every `pub fn` becomes a member.
 /// `#[svelters::export(module = "m")]` on a free function: a function of `svelters:app/m`.

@@ -385,6 +385,25 @@ impl JsEngine for QjsEngine {
         self.rt.run_gc();
     }
 
+    fn settle_ops(&mut self, batch: &[crate::engine::OpSettle]) -> Result<(), JsError> {
+        let core = self.core.clone();
+        self.call_guarded(|ctx| {
+            let conv = QjsConv::new(ctx.clone(), core.clone(), None);
+            let arr = rquickjs::Array::new(ctx.clone())?;
+            let mut i = 0;
+            for s in batch {
+                let (kind, v) = conv.op_value(s);
+                arr.set(i, kind)?;
+                arr.set(i + 1, s.id as f64)?;
+                arr.set(i + 2, v)?;
+                i += 3;
+            }
+            let internal: Object = ctx.globals().get("__svelters_internal")?;
+            let f: Function = internal.get("settleOps")?;
+            f.call::<_, ()>((arr,))
+        })
+    }
+
     fn take_errors(&mut self) -> Vec<JsError> {
         std::mem::take(&mut *self.async_errors.borrow_mut())
     }
@@ -543,6 +562,16 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
             Function::new(ctx.clone(), move |id: f64| {
                 if let Some(c) = w.upgrade() {
                     c.op_cancel_async(id as u64);
+                }
+            })?,
+        )?;
+        // E1: the signal of an offloaded export call aborted (JS rejected its Promise already).
+        let w = core.clone();
+        native.set(
+            "cancelOp",
+            Function::new(ctx.clone(), move |id: f64| {
+                if let Some(c) = w.upgrade() {
+                    c.op_cancel_from_js(id as u64);
                 }
             })?,
         )?;

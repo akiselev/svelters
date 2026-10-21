@@ -7,7 +7,7 @@
 //! log sink (decision 2026-10-21: in full, like native calls).
 
 use super::*;
-use crate::convert::{self, Arena, Cx, JsReader, JsWriter};
+use crate::convert::{self, Arena, Cx, JsPromises, JsReader, JsWriter};
 use crate::exports::{self, CallCx, MemberKind, MemberSchema, Receiver, Thunk, schema};
 use std::panic::{AssertUnwindSafe, catch_unwind};
 use svelters_abi::*;
@@ -17,7 +17,7 @@ fn tag(h: svl_handle) -> String {
     format!("#a{}", h & !exports::APP_HANDLE_BIT)
 }
 
-fn json_args(args: &[Value]) -> String {
+pub(crate) fn json_args(args: &[Value]) -> String {
     svelters_backend_log::json_string(&Value::List(args.to_vec()))
 }
 
@@ -59,6 +59,16 @@ impl Core {
             msg: format!("app object {} was disposed", tag(h)),
             native: Some(exports::host_error("disposed", format!("app object {} was disposed", tag(h)))),
         })
+    }
+
+    /// A live, unpoisoned app object.
+    pub(crate) fn app_check_live(&self, h: svl_handle) -> Result<svl_id, OpError> {
+        let kind = self.app_live(h)?;
+        if self.apps.is_poisoned(h) {
+            let msg = format!("app object {} is poisoned: an earlier call panicked while it was borrowed mutably", tag(h));
+            return Err(OpError { kind: OpKind::Error, msg: msg.clone(), native: Some(exports::host_error("poisoned", msg)) });
+        }
+        Ok(kind)
     }
 
     fn logging(&self) -> bool {
@@ -165,13 +175,16 @@ impl Core {
     /// `host.call(h, method, args)` on an app object.
     pub(crate) fn app_call<E>(&self, e: &E, h: svl_handle, method: Name<'_>, args: &<E as JsReader>::V) -> Result<<E as JsReader>::V, OpError>
     where
-        E: JsReader + JsWriter<V = <E as JsReader>::V>,
+        E: JsReader + JsWriter<V = <E as JsReader>::V> + JsPromises,
     {
         let kind = self.app_live(h)?;
         let m = self.app_resolve(NameKind::Method, kind, method)?;
         let kname = || self.app_kind_name(kind);
         if m.kind != MemberKind::Method {
             return Err(type_err(format!("{}.{} is static: call it on the class", kname(), m.name)));
+        }
+        if m.offload.is_some() {
+            return self.app_start_op(e, Some(h), kind, m, &|| format!("{}.{}", kname(), m.name), args);
         }
         let args = self.app_args(e, m, &|| format!("{}.{}", kname(), m.name), args)?;
         self.note_op(|| format!("call {} {}.{} {}", tag(h), kname(), m.name, json_args(&args)));
@@ -182,12 +195,15 @@ impl Core {
     /// `host.callStatic('app:<module>[.<Type>]', name, args)`: a static method or a module function.
     pub(crate) fn app_call_static<E>(&self, e: &E, kind: svl_id, method: Name<'_>, args: &<E as JsReader>::V) -> Result<<E as JsReader>::V, OpError>
     where
-        E: JsReader + JsWriter<V = <E as JsReader>::V>,
+        E: JsReader + JsWriter<V = <E as JsReader>::V> + JsPromises,
     {
         let m = self.app_resolve(NameKind::Method, kind, method)?;
         let kname = || self.app_kind_name(kind);
         if m.kind == MemberKind::Method {
             return Err(type_err(format!("{}.{} is an instance method; call it on an object", kname(), m.name)));
+        }
+        if m.offload.is_some() {
+            return self.app_start_op(e, None, kind, m, &|| format!("{}.{}", kname(), m.name), args);
         }
         let args = self.app_args(e, m, &|| format!("{}.{}", kname(), m.name), args)?;
         let line = self.logging().then(|| json_args(&args));
@@ -234,6 +250,8 @@ impl Core {
     /// `host.destroy(h)` (`dispose()`, or a collected wrapper): drops our reference. Idempotent.
     /// Not logged: a release by the garbage collector is not deterministic.
     pub(crate) fn app_destroy(&self, h: svl_handle) {
+        // In-flight calls on it reject with `disposed` (E1); their jobs keep their own reference.
+        self.ops_owner_gone(h);
         self.apps.release(h);
     }
 

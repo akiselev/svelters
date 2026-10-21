@@ -52,6 +52,15 @@ export interface AsyncOptions {
   signal?: { readonly aborted: boolean; addEventListener(type: 'abort', fn: () => void): void } | null;
 }
 
+/**
+ * Options of an offloaded Rust export (`#[js(worker)]`, `async fn`, ...) whose Rust side reports progress
+ * through `WorkCx<P>`: `onProgress` receives the latest value, at most once per host checkpoint. An abort
+ * of `signal` rejects the Promise at once with `NativeError { domain: 'svelters', code: 'cancelled' }`.
+ */
+export interface WorkOptions<P> extends AsyncOptions {
+  onProgress?: ((progress: P) => void) | null;
+}
+
 /** An element (a renderer node) where a native widget is expected. */
 export interface NativeElement {
   readonly svlHandle: number | null;

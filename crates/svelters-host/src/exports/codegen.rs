@@ -23,6 +23,23 @@ fn params(m: &MemberSchema) -> String {
     m.sig.params.iter().map(|p| p.name).collect::<Vec<_>>().join(", ")
 }
 
+/// The declared parameters plus `options` for an offloaded member.
+fn params_with_options(m: &MemberSchema) -> String {
+    let mut p: Vec<&str> = m.sig.params.iter().map(|p| p.name).collect();
+    if m.offload.is_some() {
+        p.push("options");
+    }
+    p.join(", ")
+}
+
+/// `callAsync(...)`'s trailing `shape` argument: the result wrapper, if any.
+fn shape(m: &MemberSchema) -> String {
+    match &m.sig.ret.wrap {
+        Some(w) => format!(", {w}"),
+        None => String::new(),
+    }
+}
+
 /// The JS module `svelters:app/<module>`. `core` is the specifier of `@svelters/types/core`;
 /// `sibling` maps another module name to its specifier.
 pub fn javascript(module: &str, core: &str, sibling: &dyn Fn(&str) -> String) -> Option<String> {
@@ -33,7 +50,9 @@ pub fn javascript(module: &str, core: &str, sibling: &dyn Fn(&str) -> String) ->
 fn js_module(m: &ModuleSchema, core: &str, sibling: &dyn Fn(&str) -> String) -> String {
     let mut s = String::new();
     let _ = writeln!(s, "// svelters:app/{} - {HEADER}", m.name);
-    let _ = writeln!(s, "import {{ NativeObject, CONSTRUCT, call, callStatic, construct, getProp, setProp, wrapObject }} from '{core}';");
+    let offloaded = m.functions.iter().chain(m.classes.iter().flat_map(|c| c.methods.iter().chain(c.statics.iter()))).any(|x| x.offload.is_some());
+    let asyncs = if offloaded { "callAsync, callStaticAsync, " } else { "" };
+    let _ = writeln!(s, "import {{ NativeObject, CONSTRUCT, call, callStatic, {asyncs}construct, getProp, setProp, wrapObject }} from '{core}';");
     let mut by_mod: std::collections::BTreeMap<&str, Vec<&str>> = Default::default();
     for (om, c) in &m.imports {
         by_mod.entry(om).or_default().push(c);
@@ -53,6 +72,17 @@ const own = (w) => { const h = w.svlHandle; if (gc && typeof h === 'number' && t
     let kind = format!("app:{}", m.name);
     for f in &m.functions {
         let p = params(f);
+        if f.offload.is_some() {
+            let _ = writeln!(
+                s,
+                "\nexport function {}({}) {{\n  return callStaticAsync('{kind}', '{}', [{p}], options{});\n}}",
+                f.name,
+                params_with_options(f),
+                f.name,
+                shape(f)
+            );
+            continue;
+        }
         let _ = writeln!(s, "\nexport function {}({p}) {{\n  return {};\n}}", f.name, wrap_call(f, &format!("callStatic('{kind}', '{}', [{p}])", f.name)));
     }
     s
@@ -81,17 +111,59 @@ fn js_class(s: &mut String, c: &ClassSchema) {
     }
     for m in &c.methods {
         let p = params(m);
+        if m.offload.is_some() {
+            let _ = writeln!(s, "  {}({}) {{\n    return callAsync(this, '{}', [{p}], options{});\n  }}", prop_key(&m.name), params_with_options(m), m.name, shape(m));
+            continue;
+        }
         let _ = writeln!(s, "  {}({p}) {{\n    return {};\n  }}", prop_key(&m.name), wrap_call(m, &format!("call(this, '{}', [{p}])", m.name)));
     }
     for m in &c.statics {
         let p = params(m);
+        if m.offload.is_some() {
+            let _ = writeln!(
+                s,
+                "  static {}({}) {{\n    return callStaticAsync('{}', '{}', [{p}], options{});\n  }}",
+                prop_key(&m.name),
+                params_with_options(m),
+                c.native,
+                m.name,
+                shape(m)
+            );
+            continue;
+        }
         let _ = writeln!(s, "  static {}({p}) {{\n    return {};\n  }}", prop_key(&m.name), wrap_call(m, &format!("callStatic('{}', '{}', [{p}])", c.native, m.name)));
     }
     s.push_str("}\n");
 }
 
 fn doc(s: &mut String, indent: &str, docs: &str, throws: &[&str], module: &str) {
+    doc_runs(s, indent, docs, throws, module, None);
+}
+
+/// What the typings say about where an offloaded member runs.
+fn runs_on(m: &MemberSchema) -> Option<String> {
+    let o = m.offload?;
+    let mut line = match o.exec {
+        super::Exec::Worker => "Runs on a worker thread (rayon)".to_string(),
+        super::Exec::Blocking => "Runs on the blocking pool".to_string(),
+        super::Exec::Local => "Runs on the JS thread (async)".to_string(),
+        super::Exec::Tokio => "Runs on tokio".to_string(),
+    };
+    if o.supersede {
+        line.push_str("; a new call supersedes the one in flight");
+    }
+    if o.max_in_flight > 0 {
+        line.push_str(&format!("; at most {} in flight per object, more wait", o.max_in_flight));
+    }
+    line.push_str(". Rejects with NativeError `svelters` `cancelled` on abort, `panic` on a Rust panic.");
+    Some(line)
+}
+
+fn doc_runs(s: &mut String, indent: &str, docs: &str, throws: &[&str], module: &str, runs: Option<String>) {
     let mut lines: Vec<String> = docs.lines().map(|l| l.trim().to_string()).filter(|l| !l.is_empty()).collect();
+    if let Some(r) = runs {
+        lines.push(r);
+    }
     if !throws.is_empty() {
         lines.push(format!("@throws NativeError `app:{module}` {}", throws.iter().map(|c| format!("`{c}`")).collect::<Vec<_>>().join(" | ")));
     }
@@ -110,7 +182,8 @@ fn doc(s: &mut String, indent: &str, docs: &str, throws: &[&str], module: &str) 
 }
 
 fn ts_params(m: &MemberSchema) -> String {
-    m.sig
+    let mut p: Vec<String> = m
+        .sig
         .params
         .iter()
         .zip(&m.desc.params)
@@ -121,8 +194,19 @@ fn ts_params(m: &MemberSchema) -> String {
                 format!("{}: {}", p.name, p.ty.ts)
             }
         })
-        .collect::<Vec<_>>()
-        .join(", ")
+        .collect();
+    if m.offload.is_some() {
+        p.push(match &m.sig.progress {
+            Some(t) => format!("options?: WorkOptions<{}>", t.ts),
+            None => "options?: AsyncOptions".to_string(),
+        });
+    }
+    p.join(", ")
+}
+
+/// The TS result type: `Promise<T>` for offloaded members.
+fn ts_ret(m: &MemberSchema) -> String {
+    if m.offload.is_some() { format!("Promise<{}>", m.sig.ret.ts) } else { m.sig.ret.ts.clone() }
 }
 
 /// `app.d.ts`: one `declare module 'svelters:app/<module>'` per module.
@@ -130,7 +214,15 @@ pub fn typescript() -> String {
     let mut s = format!("// {HEADER}\n");
     for m in &schema().modules {
         let _ = writeln!(s, "\ndeclare module 'svelters:app/{}' {{", m.name);
-        let _ = writeln!(s, "  import type {{ NativeObject }} from '@svelters/types/core';");
+        let members = || m.functions.iter().chain(m.classes.iter().flat_map(|c| c.methods.iter().chain(c.statics.iter())));
+        let mut core = vec!["NativeObject"];
+        if members().any(|x| x.offload.is_some() && x.sig.progress.is_none()) {
+            core.push("AsyncOptions");
+        }
+        if members().any(|x| x.offload.is_some() && x.sig.progress.is_some()) {
+            core.push("WorkOptions");
+        }
+        let _ = writeln!(s, "  import type {{ {} }} from '@svelters/types/core';", core.join(", "));
         for t in &m.types {
             doc(&mut s, "  ", &t.docs, &[], &m.name);
             let _ = writeln!(s, "  export {}", t.decl);
@@ -154,18 +246,18 @@ pub fn typescript() -> String {
                 let _ = writeln!(s, "    {ro}{}: {ty};", prop_key(&p.name));
             }
             for x in &c.methods {
-                doc(&mut s, "    ", x.docs, &x.sig.throws, &m.name);
-                let _ = writeln!(s, "    {}({}): {};", prop_key(&x.name), ts_params(x), x.sig.ret.ts);
+                doc_runs(&mut s, "    ", x.docs, &x.sig.throws, &m.name, runs_on(x));
+                let _ = writeln!(s, "    {}({}): {};", prop_key(&x.name), ts_params(x), ts_ret(x));
             }
             for x in &c.statics {
-                doc(&mut s, "    ", x.docs, &x.sig.throws, &m.name);
-                let _ = writeln!(s, "    static {}({}): {};", prop_key(&x.name), ts_params(x), x.sig.ret.ts);
+                doc_runs(&mut s, "    ", x.docs, &x.sig.throws, &m.name, runs_on(x));
+                let _ = writeln!(s, "    static {}({}): {};", prop_key(&x.name), ts_params(x), ts_ret(x));
             }
             s.push_str("  }\n");
         }
         for f in &m.functions {
-            doc(&mut s, "  ", f.docs, &f.sig.throws, &m.name);
-            let _ = writeln!(s, "  export function {}({}): {};", f.name, ts_params(f), f.sig.ret.ts);
+            doc_runs(&mut s, "  ", f.docs, &f.sig.throws, &m.name, runs_on(f));
+            let _ = writeln!(s, "  export function {}({}): {};", f.name, ts_params(f), ts_ret(f));
         }
         s.push_str("}\n");
     }
@@ -191,7 +283,11 @@ fn member_json(m: &MemberSchema) -> Json {
         "throws": m.sig.throws,
         "readonly": m.kind == MemberKind::Getter && m.setter.is_none(),
         "writeonly": m.thunk.is_none(),
-        "runsOn": "ui",
+        "runsOn": m.offload.map_or("ui", |o| o.exec.name()),
+        "async": m.offload.is_some(),
+        "supersede": m.offload.is_some_and(|o| o.supersede),
+        "maxInFlight": m.offload.map_or(0, |o| o.max_in_flight),
+        "progress": m.sig.progress.as_ref().map(|t| t.ts.clone()),
         "docs": m.docs.trim(),
     })
 }

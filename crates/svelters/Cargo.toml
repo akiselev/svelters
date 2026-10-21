@@ -10,7 +10,13 @@ publish.workspace = true
 svelters-macros = { path = "../svelters-macros" }
 svelters-host.workspace = true
 
+[features]
+# `#[js(tokio)] async fn` exports.
+tokio = ["svelters-host/tokio"]
+
 [dev-dependencies]
+svelters-host = { workspace = true, features = ["tokio"] }
+tokio = { version = "1.47", default-features = false, features = ["rt", "time", "sync"] }
 svelters-abi.workspace = true
 svelters-backend-log.workspace = true
 serde_json.workspace = true

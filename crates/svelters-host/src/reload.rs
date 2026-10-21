@@ -159,8 +159,10 @@ impl Reloader {
         core.clear_events();
         let old_timers = core.swap_timers(Timers::default());
 
-        // App objects the old runtime held die with it (E0: nothing is persisted yet).
+        // App objects the old runtime held die with it (E0: nothing is persisted yet), and so do its
+        // offloaded calls (E1): results tagged with its generation are dropped.
         let old_apps = core.app_handles();
+        let old_gen = core.ops_begin_generation();
         let loaded = (self.make)(core).and_then(|fresh| {
             let old_engine = std::mem::replace(&mut *engine.borrow_mut(), fresh);
             match core::load_bundle(core, engine, &path) {
@@ -179,6 +181,7 @@ impl Reloader {
                 for h in old_roots {
                     core.destroy_subtree(h);
                 }
+                core.ops_end_generation(old_gen, true);
                 core.app_release_all(&old_apps);
                 None
             }
@@ -189,6 +192,7 @@ impl Reloader {
                     }
                 }
                 drop(core.swap_timers(old_timers));
+                core.ops_end_generation(old_gen, false);
                 let new_apps: Vec<_> = core.app_handles().into_iter().filter(|h| !old_apps.contains(h)).collect();
                 core.app_release_all(&new_apps);
                 let e = core.map_error(e);

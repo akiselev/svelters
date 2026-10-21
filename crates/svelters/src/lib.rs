@@ -44,16 +44,43 @@
 //!   object while it lives).
 //! - JS imports `svelters:app/<module>`; the host serves the stubs. [`exports::dump`] writes
 //!   `exports.json` (`svelters-exports/1`), `app.d.ts` and `<module>.js` for bundlers and svelte-check.
+//!
+//! # Offload (E1)
+//!
+//! The thread a call runs on is in its signature; every offloaded member returns a `Promise` in JS
+//! and takes a trailing `{ signal, onProgress }`:
+//!
+//! - `#[js(worker)] fn`: rayon (rayon's global pool, or [`exports::set_worker_pool`]). Methods take
+//!   `self: Arc<Self>` or `&self` of a shared object; parameters and results must be `Send + 'static`.
+//! - `#[js(blocking)] fn`: a pool of plain threads, for blocking I/O.
+//! - `async fn` (or `#[js(local)] async fn`): **the JS thread**, polled at the call and again when its
+//!   waker fires (decision 2026-10-21). It may hold `!Send` state and borrow a UI object across
+//!   `.await`. It must not block: offload CPU work with [`exports::worker`]`(|| ...).await` or I/O with
+//!   [`exports::blocking`]. Debug builds warn when one poll takes more than 20 ms.
+//! - `#[js(tokio)] async fn` (feature `tokio`): a tokio runtime ([`exports::set_tokio_handle`], else a
+//!   small one of our own). tokio is not a default dependency.
+//! - `#[js(supersede)]`: a new call cancels the previous in-flight calls of the member on the same
+//!   object (they reject with `superseded`); `#[js(max_in_flight = n)]` queues calls beyond `n`.
+//!
+//! A [`WorkCx<P>`] parameter is injected (not a JS argument): [`WorkCx::check`] / `is_cancelled` /
+//! `cancelled().await` for cancellation, [`WorkCx::progress`] for `onProgress` (latest value, once per
+//! checkpoint). An abort rejects the Promise at once with `NativeError { domain: 'svelters', code:
+//! 'cancelled' }` (decision 2026-10-21); the job sees the cancel through `WorkCx`, and its late result
+//! is dropped on the JS thread. A panic rejects with `code: 'panic'`, disposing the object a call runs
+//! on rejects it with `disposed`, and a hot reload drops the calls of the old runtime.
 
 pub use svelters_host::exports;
 pub use svelters_host::exports::{
-    CallCx, ExportError, ExportObject, FromJs, IntoJs, JsType, NativeError, Obj, SharedObject, TypeBuilder, TypeRef, UiObject, Value,
+    CallCx, Cancelled, ExportError, ExportObject, FromJs, IntoJs, JsType, NativeError, Obj, SharedObject, TypeBuilder, TypeRef, UiObject, Value,
+    WorkCx,
 };
+/// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
+pub use svelters_host::exports::offload::rayon;
 pub use svelters_macros::{Enum, Error, Record, export, object};
 
 /// `use svelters::prelude::*;`
 pub mod prelude {
-    pub use super::{ExportError, NativeError, Obj};
+    pub use super::{Cancelled, ExportError, NativeError, Obj, WorkCx};
     pub use std::sync::Arc;
 }
 

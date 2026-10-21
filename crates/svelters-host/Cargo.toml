@@ -13,3 +13,10 @@ serde_json.workspace = true
 sourcemap = { version = "9.3.2", default-features = false }
 notify = "8"
 inventory = "0.3"
+# E1: `#[js(worker)]` exports run on rayon.
+rayon = "1.12"
+# E1: `#[js(tokio)] async fn` exports (feature `tokio`).
+tokio = { version = "1.47", optional = true, default-features = false, features = ["rt", "rt-multi-thread"] }
+
+[features]
+tokio = ["dep:tokio"]

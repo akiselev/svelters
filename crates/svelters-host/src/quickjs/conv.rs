@@ -289,6 +289,44 @@ impl<'js> crate::convert::JsPromises for QjsConv<'js> {
         let f: Function = self.internal()?.get("watchAbort").map_err(|e| self.err(e))?;
         f.call::<_, ()>((signal.clone(), id as f64)).map_err(|e| self.err(e))
     }
+
+    fn new_op(&self, id: u64, options: Option<&Value<'js>>) -> R<Value<'js>> {
+        let f: Function = self.internal()?.get("makeOp").map_err(|e| self.err(e))?;
+        let opts = options.cloned().unwrap_or_else(|| Value::new_undefined(self.ctx.clone()));
+        f.call((id as f64, opts)).map_err(|e| self.err(e))
+    }
+
+    fn settle_op_soon(&self, s: &crate::engine::OpSettle) -> R<()> {
+        let (kind, v) = self.op_value(s);
+        let f: Function = self.internal()?.get("settleOpSoon").map_err(|e| self.err(e))?;
+        f.call::<_, ()>((kind, s.id as f64, v)).map_err(|e| self.err(e))
+    }
+}
+
+impl<'js> QjsConv<'js> {
+    /// The JS side of an op settlement: (0 resolve | 1 reject | 2 progress, value). A result that does
+    /// not convert (an integer outside ±2^53) rejects instead.
+    pub(crate) fn op_value(&self, s: &crate::engine::OpSettle) -> (i32, Value<'js>) {
+        use crate::engine::OpOutcome;
+        let core = self.core.clone();
+        let reject = |n: &svelters_abi::NativeError| -> Value<'js> {
+            crate::convert::decode(self, &svelters_abi::Value::Error(Box::new(n.clone())), &*core)
+                .unwrap_or_else(|_| Value::new_null(self.ctx.clone()))
+        };
+        match &s.outcome {
+            OpOutcome::Resolve(v, slot) | OpOutcome::Progress(v, slot) => {
+                let kind = if matches!(s.outcome, OpOutcome::Resolve(..)) { 0 } else { 2 };
+                match crate::convert::decode_slot(self, v, slot, &*core) {
+                    Ok(x) => (kind, x),
+                    Err(m) => {
+                        let msg = m.strip_prefix("RangeError: ").unwrap_or(&m).to_string();
+                        (1, reject(&crate::exports::host_error("range", msg)))
+                    }
+                }
+            }
+            OpOutcome::Reject(n) => (1, reject(n)),
+        }
+    }
 }
 
 impl<'js> JsWriter for QjsConv<'js> {
