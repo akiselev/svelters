@@ -32,9 +32,8 @@ file) and the coordinator's merge into master.
 - `cargo check --workspace --all-targets`: exit 0, no errors (pre-existing warnings only).
 - `pnpm -r build`: exit 0.
 - full-workspace nextest (headless, shared lock, `--test-threads 4`): **2464/2464 passed, 10 skipped**.
-- `pnpm test` and `python3 tools/docs/build_ir.py` + `pnpm docs:test`: **still running when this note was
-  written**; not yet observed on the merged tree. Before the merge, the example's `pnpm test` and
-  `packages/types` tests passed. Re-run them (below) and record the result.
+- `pnpm test`: exit 0.
+- `python3 tools/docs/build_ir.py` + `pnpm docs:test`: exit 0.
 
 CI on c6bd90cf: all five workflows success (js 39673578928, linux-gtk 39673578839, linux-qt 39673578895,
 macos-appkit 39673578900, windows-winui 39673578914). Earlier heads also green except the first WIP push
