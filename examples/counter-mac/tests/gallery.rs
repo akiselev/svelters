@@ -85,9 +85,18 @@ mod mac {
         let tv = g.first("NSTextView");
         let s: Retained<NSString> = unsafe { msg_send![&*tv, string] };
         assert!(s.to_string().starts_with("A text view"), "bind:string wrote the text view: {s}");
-        let sv = g.first("NSScrollView");
-        let doc: Option<Retained<AnyObject>> = unsafe { msg_send![&*sv, documentView] };
-        assert!(doc.is_some_and(|d| class_name(&d) == "NSTextView"), "the text view is the scroll view's document view");
+        let svs: Vec<_> = g.objects().into_iter().filter(|o| is_kind(o, "NSScrollView")).collect();
+        assert_eq!(svs.len(), 1, "one scroll view handle: {:?}", svs.iter().map(|o| class_name(o)).collect::<Vec<_>>());
+        let doc: Option<Retained<AnyObject>> = unsafe { msg_send![&*svs[0], documentView] };
+        let enclosing: Option<Retained<AnyObject>> = unsafe { msg_send![&*tv, enclosingScrollView] };
+        assert!(
+            doc.as_deref().is_some_and(|d| std::ptr::eq(d, &*tv)),
+            "the text view is the scroll view's document view: document view {:?}, scroll view {}, text view's enclosing scroll view {:?} (same: {})",
+            doc.as_deref().map(class_name),
+            class_name(&svs[0]),
+            enclosing.as_deref().map(class_name),
+            enclosing.as_deref().is_some_and(|e| std::ptr::eq(e, &*svs[0])),
+        );
     });
     gallery_page!(appkit_03_values, "appkit", "03-values", ["NSSlider", "NSProgressIndicator", "NSLevelIndicator", "NSDatePicker", "NSColorWell", "NSPathControl", "NSImageView"], |g: &Gallery| {
         assert!(g.has_label("level 60"), "bind:double-value on the slider: {:?}", g.labels());
