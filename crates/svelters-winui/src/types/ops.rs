@@ -519,8 +519,22 @@ fn post_values(inner: &Inner, h: u64, ev: u32, values: Vec<Value>) {
         return;
     }
     let _ = Sink { h, ev };
-    if let Some(host) = host_of(inner) {
-        host.post_event(h, ev, &values);
+    match host_of(inner) {
+        Some(host) => host.post_event(h, ev, &values),
+        // Raised before `run` attached the host (an app's script runs before the loop: `PropertySet.insert` in a
+        // component's init): kept and posted when the host attaches.
+        None => inner.early.borrow_mut().push((h, ev, values)),
+    }
+}
+
+/// Posts the type events raised before the host attached (`run`, `attach_host`), in order, for live handles.
+pub fn flush_early(inner: &Inner) {
+    let Some(host) = host_of(inner) else { return };
+    let early: Vec<(u64, u32, Vec<Value>)> = std::mem::take(&mut *inner.early.borrow_mut());
+    for (h, ev, values) in early {
+        if inner.handles.borrow().contains_key(&h) {
+            host.post_event(h, ev, &values);
+        }
     }
 }
 

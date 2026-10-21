@@ -105,6 +105,8 @@ pub(crate) struct Inner {
     pub(crate) setting: Cell<Option<(u64, u32)>>,
     /// N4: async operations in flight, by completion callback id.
     pub(crate) pending: RefCell<crate::types::ops::PendingMap>,
+    /// N4: type events raised before the host attached, posted when it does.
+    pub(crate) early: RefCell<Vec<(u64, u32, Vec<Value>)>>,
 }
 
 /// The WinUI backend. One per thread; create it on the thread that will call `run`. Clones share
@@ -335,6 +337,7 @@ impl WinUiBackend {
             quit_early: Cell::new(false),
             setting: Cell::new(None),
             pending: RefCell::default(),
+            early: RefCell::default(),
         });
         CURRENT.with(|c| *c.borrow_mut() = Rc::downgrade(&inner));
         Ok(WinUiBackend { inner })
@@ -348,6 +351,7 @@ impl WinUiBackend {
     /// every later call, or be detached with a null pointer.
     pub fn attach_host(&self, host: *const svl_host) {
         self.inner.host.set(host);
+        types::ops::flush_early(&self.inner);
     }
 
     /// Dispatch pending messages for up to `ms` milliseconds (test harnesses; `run` does this forever).
@@ -908,6 +912,7 @@ impl Backend for WinUiBackend {
     fn run(&self, host: &HostRef<'_>) -> StrResult<()> {
         let inner = &self.inner;
         inner.host.set(host.as_raw());
+        types::ops::flush_early(inner);
         inner.running.set(true);
         if inner.wake.pending.load(Ordering::SeqCst) {
             on_wake();
