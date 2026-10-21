@@ -93,3 +93,140 @@ are excluded, and no counted sample fails on it.
 
 Plan, largest in-subset buckets first: R-use (16), R-destructure (15), F-misc (15), R-decl-tag (4),
 F-await (6), F-memo/F-name/F-async-destructure (4), F-harness (5), F-trace (7), R-debug (1).
+
+## 2. Result
+
+Full run on `ci/cf1` (`run.mjs --check --update-baseline`, `TIMEOUT_MS=60000`, on `06dd6360` plus
+the harness changes of `73014b07`), master (E2, E3, FU2) merged in:
+
+| | pass | expected rejection | failing | skipped |
+| --- | ---: | ---: | ---: | ---: |
+| before (`8e92af95`) | 500 | (not separated) | 271 | 3 |
+| after | **565** | 161 | 45 | 3 |
+
+So 565 / 774 (73.0%) pass. Of the 610 samples that are neither expected rejections nor skipped,
+565 (92.6%) pass. `baseline.json` went from 500 to 565 (+65 −0), and no sample that passed before
+fails now. By outcome: rejected 132 (all but 12 expected), runtime errors 24, mismatches 50,
+timeouts 0.
+
+## 3. Expected rejections (`expected.json`)
+
+`expected.json` lists the samples that need a feature outside the native subset or design, by
+category, each with the reason and the document that decides it. `run.mjs` scores them apart:
+
+- **pass / expected rejection / failing / skipped** add up to the samples with a `dom` variant;
+- an expected rejection never counts as a pass;
+- a listed sample is "expected" only while it fails the way its `match` says (compile-time reasons,
+  or the runtime message; pinned per sample where the assertion message is generic). One that
+  passes or fails differently is listed as **stale** in REPORT.md and counts as failing, so a real
+  bug cannot hide behind the list. The final run has no stale entry.
+
+| category | samples | why | decided in |
+| --- | ---: | --- | --- |
+| spread | 38 | spread attributes on native elements | runtime-contract.md "Spread attributes"; language-subset.md |
+| transition | 33 | `transition:` / `in:` / `out:` / `animate:` | svelte-feature-survey.md §8; custom-renderer-trial.md |
+| legacy | 21 | Svelte 4 syntax and legacy mode (`export let`, `<slot>`, `let:`, `on:`, `<svelte:fragment>`, `runes={false}`, `$$props`/`$$restProps`/`$$slots`, class components, `createClassComponent`) | language-subset.md "Legacy mode" |
+| dom-node | 20 | DOM APIs (`textContent`, `id`, `dataset`, `tagName`, `click()`, `focus()`, `addEventListener`, `style`) on a native handle | svelte-support.md (`bind:this`: the runtime node); svelte-feature-survey.md §4.2 |
+| foreign-element | 17 | SVG, MathML, custom elements, `<script>`, unknown tags | language-subset.md (`$host()`); semantic-spec.md |
+| svelte-element | 8 | `<svelte:element this>` (a dynamic kind, unchecked like a spread) | svelte-support.md (error); runtime-contract.md |
+| dom-only-element | 7 | `<svelte:window/document/body/head>`, `<title>` | svelte-feature-survey.md §9 |
+| html | 5 | `{@html}` | svelte-feature-survey.md §9 |
+| raw-snippet | 5 | `createRawSnippet` (HTML strings) | custom-renderer-trial.md |
+| dom-css | 4 | the scoping hash class, `<svelte-css-wrapper>` for `--css-props` | styling-syntax.md |
+| dom-meta | 3 | dev `__svelte_meta` on DOM nodes | svelte-support.md |
+| | **161** | | |
+
+They were not listed: the test-spec gaps (`R-spec`, `R-style-dir`), the `$inspect` stack frames, the
+template-effect order and the dom-host attribute semantics. Those are fixable, or need a decision,
+so they stay failures.
+
+## 4. Fixes
+
+Each fix follows Svelte's own code (the visitor or runtime function named), and each sample listed
+was seen passing in the full run.
+
+| fix | where | samples |
+| --- | --- | ---: |
+| `{#await}` on Svelte's microtask queue; branches built under the block via `capture()` (with the component-name fix for `await-pending-wait`) | runtime `await_block`, hidden modules async/batch/flags | 7 |
+| destructuring template bindings (snippet params and defaults, `{#each}`, `{@const}`, `{:then}`/`{:catch}`) via `extract_paths` | compiler | 15 |
+| `use:` actions (`$.action` with the runtime node, ordered with bindings) | compiler, core contract | 7 |
+| `$inspect.trace` dependencies (tracing flag import, each items traced to `collection[index]`) | compiler, core | 7 |
+| declaration tags `{let x = $state()}`, `{@debug}` | compiler | 4 |
+| template call memoization (Svelte's `Memoizer`), component names (`get_component_name`), async destructuring IIFE | compiler | 3 |
+| single-sample bugs: predeclared ctor fields, mutable each items over stores, `mark_store_binding`, hoisted nodes in whitespace cleanup | compiler | 6 |
+| vitest shim, `matchMedia` mock, `./x.svelte` → `x.svelte.js` resolution | harness | 2 |
+| dev snippets: `$.wrap_snippet` + `$n.validate_snippet_args`, wrapped `children`, `invalid_snippet` in DEV | compiler, runtime | 4 |
+| `svelte` facade: `mount`/`unmount` from `svelte` mount the native component (`src/svelte.js`, aliased by `vite.js` and the hooks) | runtime, vite, hooks | 4 |
+| event handlers as `build_event_handler`: memoized when they call; `$n.apply` (`event_handler_invalid`) in dev | compiler, runtime | 3 |
+| `each_key_volatile` in DEV | runtime | 1 |
+| DEV init on mount: Svelte's `Array.prototype` patches (`state_proxy_equality_mismatch`) | core (hidden module `dev/equality`) | 1 |
+| `side-effect-template` (passes with the template memoization) | | 1 |
+| | | **65** |
+
+Other changes: the blocks-diagnostics fixture lost its three destructuring diagnostics (they compile
+now). `esm-env` joins the runtime's dependencies (already in the lockfile through svelte), and
+`wrap_snippet` joins the core contract. `deviations.md` and `runtime-contract.md` were updated.
+
+## 5. Failing (45), with effort
+
+| bucket | samples | cause | effort |
+| --- | ---: | --- | --- |
+| F-inspect-stack | 13 | `$inspect`'s stack line shows our `dispatch` frame, not `HTMLButtonElement.click` / `$effect` (`get_stack` filtering) | medium; environment-specific, low value |
+| F-dev-warn | 8 | ownership (`non-local-mutation-*`, 5), `binding_property_non_reactive`, `select_multiple_invalid_value`, `legacy-recursive-reactive-block` | medium: needs Svelte's dev component identity (`Component[$.FILENAME]`, `$.push(.., Component)`, `$$ownership_validator.mutation/binding`) in the script transform, then `$.validate_binding` |
+| R-spec | 8 | the dom test spec lacks the prop/event (`bind:group`, media elements, `contenteditable`, form reset) | small each, in `metadata/semantics/dom` |
+| F-order | 7 | one `template_effect` per fragment (section 6) | decision |
+| R-style-dir | 4 | `style:` directives: no `style` prop on the dom test backend | small (test spec) |
+| F-dom-host | 3 | `dom-host.mjs` attribute semantics (`translate`, form default value, input type before value) | small, low value |
+| F-misc | 2 | `error-boundary-reset-destroyed` (async `transformError`; our boundary is synchronous), `hmr-dynamic-component` (an HMR output path; `invalid_snippet` now) | medium / skip |
+| | **45** | | |
+
+## 6. Decision needed: one `template_effect` per fragment (F-order)
+
+Svelte puts every dynamic update of a fragment into one `$.template_effect`, created after the
+fragment's children (components included) are initialised. We emit one effect per dynamic op, in
+element order, interleaved with child component init. The switch exists already:
+`DEFER_TEMPLATE_EFFECTS` in `crates/svelters-compiler/src/codegen/component.rs`, off.
+
+Measured by turning it on locally (then reverted):
+
+- conformance: `lifecycle-render-order-for-children`, `-2`, `-3`, `-4` pass (+4).
+  `lifecycle-render-order-for-children-6`, `props-default-value-lazy` and
+  `props-default-value-lazy-accessors` still fail; they also need Svelte's grouping into one effect
+  with memoized deps, not only the deferral;
+- `experiments/native-compiler/compiled`: 32 op-log comparisons fail (49 of 81 pass). The four
+  hand-written references are state-equal but in a different order. Every `expected.{gtk,qt}.oplog`
+  moves its initial prop `set`s after the insertion of the element's children. The GTK/Qt TestHost
+  op-log tests in the Rust crates were not run with it on.
+
+Options:
+
+- (a) defer and group as Svelte does, and regenerate the op logs and references (a few days with
+  the grouping; +7);
+- (b) defer only with `--dev` or in conformance (two orders to maintain);
+- (c) keep per-op effects and record the 7 as a deviation.
+
+Recommendation: (a). It matches Svelte, and the op-log churn is a one-off. The decision belongs to
+the op-log owners.
+
+## 7. CI
+
+All five workflows (`js`, `linux-gtk`, `linux-qt`, `macos-appkit`, `windows-winui`) are green on
+`ci/cf1`:
+
+- `15a94918` (the master merge plus the fixture fix);
+- `0cf42afd` (dev snippets);
+- `06dd6360` (the last code change);
+- `73014b07` (the final run's results and baseline).
+
+On earlier heads, red came from the hidden-module aliases (fixed in `a47ee1b9`) and from the
+blocks-diagnostics fixture after the merge (`15a94918`). Intermediate heads were cancelled by newer
+pushes.
+
+## 8. Conflict risks
+
+- `crates/svelters-compiler/src/codegen/component.rs` and `transform/mod.rs` (snippets, event
+  handlers, `Rewriter::dev`/`dev_location`): FU3 works in `lower/native_reads.rs` and `compile.rs`;
+- `packages/native-runtime/{vite.js, package.json, src/index.js, src/core/*, src/svelte.js}`: the
+  `svelte` alias and the new hidden modules (`svelte/index-client`, `dev/equality`);
+- `tools/check-svelte-internals.mjs`, `docs/notes/native-compiler/{deviations,runtime-contract}.md`,
+  `pnpm-lock.yaml` (esm-env).
