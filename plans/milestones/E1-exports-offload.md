@@ -154,7 +154,7 @@ figure was 5.5–8.2 µs.
 
 ## Tests
 
-- `crates/svelters/tests/offload.rs` (11): worker/blocking/local/`&mut self` local calls resolve, eager local
+- `crates/svelters/tests/offload.rs` (11, plus the 6 E0 tests in the same crate): worker/blocking/local/`&mut self` local calls resolve, eager local
   settlement; abort rejects at once (same turn, `opsLive` drops), already-aborted calls never start, a queued
   cancelled job never runs, a running worker sees the cancel, a local future is dropped, the late result is
   dropped and its object freed with no handle minted; progress (latest value, once per checkpoint, before the
@@ -168,11 +168,31 @@ figure was 5.5–8.2 µs.
   benchmark).
 - `examples/exports/app`: `pnpm test` (vite build + svelte-check against the dumped typings): 0 errors.
 
-Local gates (after the last code change): see "Completion record" below.
+Local gates and CI: see "Completion record" below.
 
 ## Completion record
 
-(filled in at the end of the lane)
+Code head **734f6ddf** on `ci/e1` (based on master 746b2500). This record is a docs-only commit on top.
+
+Local gates, all re-run after the last code edit (734f6ddf), `SVELTERS_SLOT_JOBS=4`:
+
+- `cargo check --workspace --all-targets`: clean (pre-existing warnings only).
+- `cargo nextest run --workspace --test-threads 4` (headless, under the shared nextest lock): **2402/2402
+  passed**, 9 skipped.
+- `pnpm -r build`, `pnpm test` (155 passed, 1 skipped, incl. the example's svelte-check: 0 errors),
+  `python3 tools/docs/build_ir.py` + `pnpm docs:test` (17/17): all exit 0.
+- `crates/svelters` offload tests also pass pinned to one and two cores (`taskset -c 0`, `-c 0,1`), and in
+  `cargo test`'s shared-process mode.
+
+CI on 734f6ddf, all success: js 39641602270, linux-gtk 39641602246 (gtk 2198/2198, gtk-4-14 1928/1928 with 2
+retried flakes outside E1's code: `counter::integration bind_observe_gtk` and a SEGV in
+`generated::verify::observe_gtk_shortcutsgroup`, both passed on try 2; portable 48/48), linux-qt 39641602259,
+macos-appkit 39641602299, windows-winui 39641602334.
+
+An earlier WIP head (0b3d3497) failed linux-gtk: two offload tests aborted/disposed calls before their jobs
+started (correctly skipped, so no "saw cancel"), and on a small runner the gated jobs filled rayon's per-core
+pool. Fixed by gating the abort/dispose on the job's start and giving the test process a 32-thread worker pool
+(`set_worker_pool`).
 
 ## Open items
 
