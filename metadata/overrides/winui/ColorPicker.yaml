@@ -1,0 +1,3 @@
+# WP-W: GTK ColorDialogButton / Qt QColorDialog inline; Color is a #rrggbb[aa] string
+class: Microsoft.UI.Xaml.Controls.ColorPicker
+element: {}

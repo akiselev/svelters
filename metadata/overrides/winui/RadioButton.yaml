@@ -1,0 +1,5 @@
+class: Microsoft.UI.Xaml.Controls.RadioButton
+element:
+  text_prop: Content
+props:
+  - { name: GroupName, test: "group-a", provenance: "RadioButton.GroupName DP: string (winmd); radio buttons of one group are mutually exclusive" }

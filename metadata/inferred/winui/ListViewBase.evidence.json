@@ -1,0 +1,405 @@
+{
+ "events:ChoosingGroupHeaderContainer": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ChoosingItemContainer": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ContainerContentChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DragItemsCompleted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.DragItemsCompletedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.DragItemsCompletedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DragItemsStarting": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.DragItemsStartingEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.DragItemsStartingEventHandler",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ItemClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ItemClickEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.ItemClickEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "methods:CompleteViewChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "methods:InitializeViewChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "methods:IsDragSource": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": "bool"
+  },
+  "rule": "M1"
+ },
+ "methods:SelectAll": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "notify:CanDragItems": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CanDragItemsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CanReorderItems": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CanReorderItemsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:DataFetchSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DataFetchSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:IncrementalLoadingThreshold": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IncrementalLoadingThresholdProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:IncrementalLoadingTrigger": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IncrementalLoadingTriggerProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsActiveView": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsActiveViewProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsItemClickEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsItemClickEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsMultiSelectCheckBoxEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsMultiSelectCheckBoxEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsSwipeEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsSwipeEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsZoomedInView": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsZoomedInViewProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:ReorderMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ReorderModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ListViewReorderMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectionMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectionModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ListViewSelectionMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:ShowsScrollingPlaceholders": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ShowsScrollingPlaceholdersProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:SingleSelectionFollowsFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SingleSelectionFollowsFocusProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:CanDragItems": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CanReorderItems": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DataFetchSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IncrementalLoadingThreshold": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IncrementalLoadingTrigger": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    "Edge",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsActiveView": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsItemClickEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsMultiSelectCheckBoxEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsSwipeEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsZoomedInView": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ReorderMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    "Enabled",
+    "Disabled"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ListViewReorderMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    "Single",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ListViewSelectionMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ShowsScrollingPlaceholders": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SingleSelectionFollowsFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

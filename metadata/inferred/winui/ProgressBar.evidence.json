@@ -1,0 +1,92 @@
+{
+ "bindings:is-indeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-indeterminate",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:show-error": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::show-error",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:show-paused": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::show-paused",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "notify:IsIndeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsIndeterminateProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:ShowError": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ShowErrorProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:ShowPaused": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ShowPausedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:IsIndeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressBar",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ShowError": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressBar",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ShowPaused": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressBar",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

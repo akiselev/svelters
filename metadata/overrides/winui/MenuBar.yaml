@@ -1,0 +1,9 @@
+# WP-W: GTK PopoverMenuBar / Qt QMenuBar
+class: Microsoft.UI.Xaml.Controls.MenuBar
+element: {}
+slots:
+  - name: items
+    prop: Items
+    default: true
+    child: menu-bar-item
+    provenance: "[ContentProperty(Name=\"Items\")] on MenuBar (winmd); Items: IVector<MenuBarItem>"

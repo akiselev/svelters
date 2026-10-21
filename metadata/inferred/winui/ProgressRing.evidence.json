@@ -1,0 +1,152 @@
+{
+ "bindings:is-active": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-active",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-indeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-indeterminate",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:maximum": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::maximum",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:minimum": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::minimum",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::value",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "notify:IsActive": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsActiveProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsIndeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsIndeterminateProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Maximum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaximumProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Minimum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinimumProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ValueProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "props:IsActive": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressRing",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsIndeterminate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressRing",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Maximum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressRing",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Minimum": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressRing",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IProgressRing",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

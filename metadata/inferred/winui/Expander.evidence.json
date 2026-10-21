@@ -1,0 +1,89 @@
+{
+ "bindings:expand-direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::expand-direction",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ExpandDirection>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-expanded": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-expanded",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "events:Collapsed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ExpanderCollapsedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Expander, Microsoft.UI.Xaml.Controls.ExpanderCollapsedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Expanding": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ExpanderExpandingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Expander, Microsoft.UI.Xaml.Controls.ExpanderExpandingEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:ExpandDirection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ExpandDirectionProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ExpandDirection>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsExpanded": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsExpandedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:ExpandDirection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+   "samples": [
+    "Up",
+    "Down"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ExpandDirection>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IsExpanded": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

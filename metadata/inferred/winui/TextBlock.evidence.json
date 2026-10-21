@@ -188,6 +188,14 @@
   },
   "rule": "O6"
  },
+ "notify:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontFamilyProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+  },
+  "rule": "O6"
+ },
  "notify:FontSize": {
   "confidence": 0.9,
   "evidence": {
@@ -209,6 +217,22 @@
   "evidence": {
    "dp": "FontStyleProperty",
    "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
   },
   "rule": "O6"
  },
@@ -284,6 +308,14 @@
   },
   "rule": "O6"
  },
+ "notify:SelectionHighlightColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectionHighlightColorProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+  },
+  "rule": "O6"
+ },
  "notify:Text": {
   "confidence": 0.9,
   "evidence": {
@@ -356,6 +388,20 @@
   },
   "rule": "P1"
  },
+ "props:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "Consolas",
+    "Segoe UI"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:FontSize": {
   "confidence": 0.9,
   "evidence": {
@@ -394,6 +440,34 @@
     "Normal"
    ],
    "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
    "write": true
   },
   "rule": "P1"
@@ -541,6 +615,20 @@
    "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
    "type": "string",
    "write": false
+  },
+  "rule": "P1"
+ },
+ "props:SelectionHighlightColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBlock",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>",
+   "write": true
   },
   "rule": "P1"
  },

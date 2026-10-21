@@ -1,0 +1,78 @@
+{
+ "events:SelectionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:IsSynchronizedWithCurrentItem": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsSynchronizedWithCurrentItemProperty",
+   "type": "nullable<bool>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedIndexProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedValuePath": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedValuePathProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:IsSynchronizedWithCurrentItem": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "nullable<bool>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedValuePath": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

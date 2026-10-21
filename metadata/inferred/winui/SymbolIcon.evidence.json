@@ -1,0 +1,32 @@
+{
+ "bindings:symbol": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::symbol",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Symbol>"
+  },
+  "rule": "B1"
+ },
+ "notify:Symbol": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SymbolProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Symbol>"
+  },
+  "rule": "O6"
+ },
+ "props:Symbol": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISymbolIcon",
+   "samples": [
+    "Next",
+    "Previous"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Symbol>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

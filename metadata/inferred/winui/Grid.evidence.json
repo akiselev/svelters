@@ -31,6 +31,14 @@
   },
   "rule": "O6"
  },
+ "notify:BorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
  "notify:BorderThickness": {
   "confidence": 0.9,
   "evidence": {
@@ -44,6 +52,14 @@
   "evidence": {
    "dp": "ColumnSpacingProperty",
    "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:CornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CornerRadiusProperty",
+   "type": "value<Microsoft.UI.Xaml.CornerRadius>"
   },
   "rule": "O6"
  },
@@ -77,6 +93,20 @@
   },
   "rule": "P1"
  },
+ "props:BorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IGrid",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:BorderThickness": {
   "confidence": 0.9,
   "evidence": {
@@ -101,6 +131,20 @@
     24.0
    ],
    "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IGrid",
+   "samples": [
+    "4",
+    "1,2,3,4"
+   ],
+   "type": "value<Microsoft.UI.Xaml.CornerRadius>",
    "write": true
   },
   "rule": "P1"

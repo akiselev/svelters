@@ -876,6 +876,20 @@
   },
   "rule": "P1"
  },
+ "props:Rotation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.IUIElement",
+   "samples": [
+    2.0,
+    4.0
+   ],
+   "type": "f32",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:TabFocusNavigation": {
   "confidence": 0.9,
   "evidence": {

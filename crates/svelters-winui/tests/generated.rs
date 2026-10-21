@@ -8,86 +8,135 @@ mod tests {
 use svelters_abi::Value;
 use svelters_winui::testing::{self as t, Harness, Reply};
 
-pub fn prop_button_content() {
+pub fn prop_app_bar_button_label() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
+    h.set(w, "label", Value::Str("svelters".into())).unwrap();
+    assert_eq!(h.get(w, "label").unwrap(), Value::Str("svelters".into()));
+}
+
+pub fn prop_app_bar_toggle_button_label() {
+    let mut h = Harness::new();
+    let w = h.create("app-bar-toggle-button");
+    h.set(w, "label", Value::Str("svelters".into())).unwrap();
+    assert_eq!(h.get(w, "label").unwrap(), Value::Str("svelters".into()));
+}
+
+pub fn prop_auto_suggest_box_header() {
+    let mut h = Harness::new();
+    let w = h.create("auto-suggest-box");
+    h.set(w, "header", Value::Str("Search".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Search".into()));
+}
+
+pub fn prop_combo_box_header() {
+    let mut h = Harness::new();
+    let w = h.create("combo-box");
+    h.set(w, "header", Value::Str("Fruit".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Fruit".into()));
+}
+
+pub fn prop_app_bar_button_content() {
+    let mut h = Harness::new();
+    let w = h.create("app-bar-button");
     h.set(w, "content", Value::Str("hello".into())).unwrap();
     assert_eq!(h.get(w, "content").unwrap(), Value::Str("hello".into()));
 }
 
-pub fn prop_button_is_enabled() {
+pub fn prop_content_dialog_title() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("content-dialog");
+    h.set(w, "title", Value::Str("Delete?".into())).unwrap();
+    assert_eq!(h.get(w, "title").unwrap(), Value::Str("Delete?".into()));
+}
+
+pub fn prop_app_bar_button_is_enabled() {
+    let mut h = Harness::new();
+    let w = h.create("app-bar-button");
     h.set(w, "is-enabled", Value::Bool(false)).unwrap();
     assert_eq!(h.get(w, "is-enabled").unwrap(), Value::Bool(false));
 }
 
-pub fn prop_button_font_size() {
+pub fn prop_app_bar_button_font_size() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "font-size", Value::F64(20.0)).unwrap();
     assert_eq!(h.get(w, "font-size").unwrap(), Value::F64(20.0));
 }
 
-pub fn prop_button_padding() {
+pub fn prop_app_bar_button_padding() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "padding", Value::Str("4".into())).unwrap();
     assert_eq!(h.get(w, "padding").unwrap(), Value::Str("4,4,4,4".into()));
 }
 
-pub fn prop_button_width() {
+pub fn prop_date_picker_header() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("date-picker");
+    h.set(w, "header", Value::Str("Date".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Date".into()));
+}
+
+pub fn prop_expander_header() {
+    let mut h = Harness::new();
+    let w = h.create("expander");
+    h.set(w, "header", Value::Str("Details".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Details".into()));
+}
+
+pub fn prop_app_bar_button_width() {
+    let mut h = Harness::new();
+    let w = h.create("app-bar-button");
     h.set(w, "width", Value::F64(120.0)).unwrap();
     assert_eq!(h.get(w, "width").unwrap(), Value::F64(120.0));
 }
 
-pub fn prop_button_height() {
+pub fn prop_app_bar_button_height() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "height", Value::F64(40.0)).unwrap();
     assert_eq!(h.get(w, "height").unwrap(), Value::F64(40.0));
 }
 
-pub fn prop_button_min_width() {
+pub fn prop_app_bar_button_min_width() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "min-width", Value::F64(10.0)).unwrap();
     assert_eq!(h.get(w, "min-width").unwrap(), Value::F64(10.0));
 }
 
-pub fn prop_button_min_height() {
+pub fn prop_app_bar_button_min_height() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "min-height", Value::F64(10.0)).unwrap();
     assert_eq!(h.get(w, "min-height").unwrap(), Value::F64(10.0));
 }
 
-pub fn prop_button_margin() {
+pub fn prop_app_bar_button_margin() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "margin", Value::Str("1,2,3,4".into())).unwrap();
     assert_eq!(h.get(w, "margin").unwrap(), Value::Str("1,2,3,4".into()));
 }
 
-pub fn prop_button_horizontal_alignment() {
+pub fn prop_app_bar_button_horizontal_alignment() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "horizontal-alignment", Value::Str("Center".into())).unwrap();
     assert_eq!(h.get(w, "horizontal-alignment").unwrap(), Value::Str("center".into()));
 }
 
-pub fn prop_button_vertical_alignment() {
+pub fn prop_app_bar_button_vertical_alignment() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "vertical-alignment", Value::Str("Bottom".into())).unwrap();
     assert_eq!(h.get(w, "vertical-alignment").unwrap(), Value::Str("bottom".into()));
 }
 
-pub fn prop_button_name() {
+pub fn prop_app_bar_button_name() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "name", Value::Str("first".into())).unwrap();
     assert_eq!(h.get(w, "name").unwrap(), Value::Str("first".into()));
 }
@@ -127,39 +176,109 @@ pub fn prop_grid_column_definitions() {
     assert_eq!(h.get(w, "column-definitions").unwrap(), Value::Str("*,*".into()));
 }
 
-pub fn prop_slider_minimum() {
+pub fn prop_menu_bar_item_title() {
     let mut h = Harness::new();
-    let w = h.create("slider");
+    let w = h.create("menu-bar-item");
+    h.set(w, "title", Value::Str("svelters".into())).unwrap();
+    assert_eq!(h.get(w, "title").unwrap(), Value::Str("svelters".into()));
+}
+
+pub fn prop_menu_flyout_item_text() {
+    let mut h = Harness::new();
+    let w = h.create("menu-flyout-item");
+    h.set(w, "text", Value::Str("svelters".into())).unwrap();
+    assert_eq!(h.get(w, "text").unwrap(), Value::Str("svelters".into()));
+}
+
+pub fn prop_menu_flyout_sub_item_text() {
+    let mut h = Harness::new();
+    let w = h.create("menu-flyout-sub-item");
+    h.set(w, "text", Value::Str("svelters".into())).unwrap();
+    assert_eq!(h.get(w, "text").unwrap(), Value::Str("svelters".into()));
+}
+
+pub fn prop_number_box_header() {
+    let mut h = Harness::new();
+    let w = h.create("number-box");
+    h.set(w, "header", Value::Str("Amount".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Amount".into()));
+}
+
+pub fn prop_password_box_header() {
+    let mut h = Harness::new();
+    let w = h.create("password-box");
+    h.set(w, "header", Value::Str("Password".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Password".into()));
+}
+
+pub fn prop_radio_button_group_name() {
+    let mut h = Harness::new();
+    let w = h.create("radio-button");
+    h.set(w, "group-name", Value::Str("group-a".into())).unwrap();
+    assert_eq!(h.get(w, "group-name").unwrap(), Value::Str("group-a".into()));
+}
+
+pub fn prop_radio_buttons_header() {
+    let mut h = Harness::new();
+    let w = h.create("radio-buttons");
+    h.set(w, "header", Value::Str("Size".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Size".into()));
+}
+
+pub fn prop_radio_buttons_selected_index() {
+    let mut h = Harness::new();
+    let w = h.create("radio-buttons");
+    h.set(w, "selected-index", Value::I64(-1)).unwrap();
+    assert_eq!(h.get(w, "selected-index").unwrap(), Value::I64(-1));
+}
+
+pub fn prop_progress_bar_minimum() {
+    let mut h = Harness::new();
+    let w = h.create("progress-bar");
     h.set(w, "minimum", Value::F64(5.0)).unwrap();
     assert_eq!(h.get(w, "minimum").unwrap(), Value::F64(5.0));
 }
 
-pub fn prop_slider_maximum() {
+pub fn prop_progress_bar_maximum() {
     let mut h = Harness::new();
-    let w = h.create("slider");
+    let w = h.create("progress-bar");
     h.set(w, "maximum", Value::F64(50.0)).unwrap();
     assert_eq!(h.get(w, "maximum").unwrap(), Value::F64(50.0));
 }
 
-pub fn prop_slider_value() {
+pub fn prop_progress_bar_value() {
     let mut h = Harness::new();
-    let w = h.create("slider");
+    let w = h.create("progress-bar");
     h.set(w, "value", Value::F64(7.0)).unwrap();
     assert_eq!(h.get(w, "value").unwrap(), Value::F64(7.0));
 }
 
-pub fn prop_slider_small_change() {
+pub fn prop_progress_bar_small_change() {
     let mut h = Harness::new();
-    let w = h.create("slider");
+    let w = h.create("progress-bar");
     h.set(w, "small-change", Value::F64(2.0)).unwrap();
     assert_eq!(h.get(w, "small-change").unwrap(), Value::F64(2.0));
 }
 
-pub fn prop_slider_large_change() {
+pub fn prop_progress_bar_large_change() {
     let mut h = Harness::new();
-    let w = h.create("slider");
+    let w = h.create("progress-bar");
     h.set(w, "large-change", Value::F64(20.0)).unwrap();
     assert_eq!(h.get(w, "large-change").unwrap(), Value::F64(20.0));
+}
+
+pub fn prop_rich_edit_box_header() {
+    let mut h = Harness::new();
+    let w = h.create("rich-edit-box");
+    h.set(w, "header", Value::Str("Notes".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Notes".into()));
+}
+
+pub fn prop_selector_bar_item_text() {
+    let mut h = Harness::new();
+    let w = h.create("selector-bar-item");
+    h.set(w, "text", Value::Str("svelters".into())).unwrap();
+    assert_eq!(h.get(w, "text").unwrap(), Value::Str("svelters".into()));
 }
 
 pub fn prop_slider_step_frequency() {
@@ -202,6 +321,20 @@ pub fn prop_stack_panel_padding() {
     let w = h.create("stack-panel");
     h.set(w, "padding", Value::Str("2,4".into())).unwrap();
     assert_eq!(h.get(w, "padding").unwrap(), Value::Str("2,4,2,4".into()));
+}
+
+pub fn prop_tab_view_selected_index() {
+    let mut h = Harness::new();
+    let w = h.create("tab-view");
+    h.set(w, "selected-index", Value::I64(-1)).unwrap();
+    assert_eq!(h.get(w, "selected-index").unwrap(), Value::I64(-1));
+}
+
+pub fn prop_tab_view_item_header() {
+    let mut h = Harness::new();
+    let w = h.create("tab-view-item");
+    h.set(w, "header", Value::Str("Tab".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Tab".into()));
 }
 
 pub fn prop_text_block_text() {
@@ -288,37 +421,51 @@ pub fn prop_text_box_header() {
     assert_eq!(h.get(w, "header").unwrap(), Value::Str("Your name".into()));
 }
 
-pub fn prop_check_box_is_checked() {
+pub fn prop_time_picker_header() {
     let mut h = Harness::new();
-    let w = h.create("check-box");
+    let w = h.create("time-picker");
+    h.set(w, "header", Value::Str("Time".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Time".into()));
+}
+
+pub fn prop_app_bar_toggle_button_is_checked() {
+    let mut h = Harness::new();
+    let w = h.create("app-bar-toggle-button");
     h.set(w, "is-checked", Value::Bool(true)).unwrap();
     assert_eq!(h.get(w, "is-checked").unwrap(), Value::Bool(true));
 }
 
-pub fn prop_check_box_is_three_state() {
+pub fn prop_app_bar_toggle_button_is_three_state() {
     let mut h = Harness::new();
-    let w = h.create("check-box");
+    let w = h.create("app-bar-toggle-button");
     h.set(w, "is-three-state", Value::Bool(true)).unwrap();
     assert_eq!(h.get(w, "is-three-state").unwrap(), Value::Bool(true));
 }
 
-pub fn prop_button_visibility() {
+pub fn prop_toggle_switch_header() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("toggle-switch");
+    h.set(w, "header", Value::Str("Wi-Fi".into())).unwrap();
+    assert_eq!(h.get(w, "header").unwrap(), Value::Str("Wi-Fi".into()));
+}
+
+pub fn prop_app_bar_button_visibility() {
+    let mut h = Harness::new();
+    let w = h.create("app-bar-button");
     h.set(w, "visibility", Value::Str("Collapsed".into())).unwrap();
     assert_eq!(h.get(w, "visibility").unwrap(), Value::Str("collapsed".into()));
 }
 
-pub fn prop_button_opacity() {
+pub fn prop_app_bar_button_opacity() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "opacity", Value::F64(0.5)).unwrap();
     assert_eq!(h.get(w, "opacity").unwrap(), Value::F64(0.5));
 }
 
-pub fn prop_button_is_hit_test_visible() {
+pub fn prop_app_bar_button_is_hit_test_visible() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.set(w, "is-hit-test-visible", Value::Bool(false)).unwrap();
     assert_eq!(h.get(w, "is-hit-test-visible").unwrap(), Value::Bool(false));
 }
@@ -330,9 +477,67 @@ pub fn prop_window_title() {
     assert_eq!(h.get(w, "title").unwrap(), Value::Str("Counter".into()));
 }
 
-pub fn slot_button_content() {
+pub fn slot_border_child() {
     let mut h = Harness::new();
-    let p = h.create("button");
+    let p = h.create("border");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("child")).unwrap();
+    assert_eq!(h.slot_items(p, "child"), vec![a]);
+    h.insert(p, b, None, Some("child")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "child").is_empty());
+    h.insert(p, b, None, Some("child")).unwrap();
+    assert_eq!(h.slot_items(p, "child"), vec![b]);
+}
+
+pub fn slot_app_bar_button_flyout() {
+    let mut h = Harness::new();
+    let p = h.create("app-bar-button");
+    let a = h.create("menu-flyout");
+    let b = h.create("menu-flyout");
+    h.insert(p, a, None, Some("flyout")).unwrap();
+    assert_eq!(h.slot_items(p, "flyout"), vec![a]);
+    h.insert(p, b, None, Some("flyout")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "flyout").is_empty());
+    h.insert(p, b, None, Some("flyout")).unwrap();
+    assert_eq!(h.slot_items(p, "flyout"), vec![b]);
+}
+
+pub fn slot_command_bar_primary_commands() {
+    let mut h = Harness::new();
+    let p = h.create("command-bar");
+    let a = h.create("app-bar-button");
+    let b = h.create("app-bar-button");
+    h.insert(p, a, None, Some("primary-commands")).unwrap();
+    h.insert(p, b, Some(a), Some("primary-commands")).unwrap();
+    assert_eq!(h.slot_items(p, "primary-commands"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "primary-commands"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "primary-commands").is_empty());
+}
+
+pub fn slot_command_bar_secondary_commands() {
+    let mut h = Harness::new();
+    let p = h.create("command-bar");
+    let a = h.create("app-bar-button");
+    let b = h.create("app-bar-button");
+    h.insert(p, a, None, Some("secondary-commands")).unwrap();
+    h.insert(p, b, Some(a), Some("secondary-commands")).unwrap();
+    assert_eq!(h.slot_items(p, "secondary-commands"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "secondary-commands"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "secondary-commands").is_empty());
+}
+
+pub fn slot_app_bar_button_content() {
+    let mut h = Harness::new();
+    let p = h.create("app-bar-button");
     let a = h.create("text-block");
     let b = h.create("text-block");
     h.insert(p, a, None, Some("content")).unwrap();
@@ -344,9 +549,171 @@ pub fn slot_button_content() {
     assert_eq!(h.slot_items(p, "content"), vec![b]);
 }
 
-pub fn slot_grid_children() {
+pub fn slot_info_bar_content() {
     let mut h = Harness::new();
-    let p = h.create("grid");
+    let p = h.create("info-bar");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("content")).unwrap();
+    assert_eq!(h.slot_items(p, "content"), vec![a]);
+    h.insert(p, b, None, Some("content")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "content").is_empty());
+    h.insert(p, b, None, Some("content")).unwrap();
+    assert_eq!(h.slot_items(p, "content"), vec![b]);
+}
+
+pub fn slot_auto_suggest_box_items() {
+    let mut h = Harness::new();
+    let p = h.create("auto-suggest-box");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("items")).unwrap();
+    h.insert(p, b, Some(a), Some("items")).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "items").is_empty());
+}
+
+pub fn slot_menu_bar_items() {
+    let mut h = Harness::new();
+    let p = h.create("menu-bar");
+    let a = h.create("menu-bar-item");
+    let b = h.create("menu-bar-item");
+    h.insert(p, a, None, Some("items")).unwrap();
+    h.insert(p, b, Some(a), Some("items")).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "items").is_empty());
+}
+
+pub fn slot_menu_bar_item_items() {
+    let mut h = Harness::new();
+    let p = h.create("menu-bar-item");
+    let a = h.create("menu-flyout-item");
+    let b = h.create("menu-flyout-item");
+    h.insert(p, a, None, Some("items")).unwrap();
+    h.insert(p, b, Some(a), Some("items")).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "items").is_empty());
+}
+
+pub fn slot_menu_flyout_items() {
+    let mut h = Harness::new();
+    let p = h.create("menu-flyout");
+    let a = h.create("menu-flyout-item");
+    let b = h.create("menu-flyout-item");
+    h.insert(p, a, None, Some("items")).unwrap();
+    h.insert(p, b, Some(a), Some("items")).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "items").is_empty());
+}
+
+pub fn slot_menu_flyout_sub_item_items() {
+    let mut h = Harness::new();
+    let p = h.create("menu-flyout-sub-item");
+    let a = h.create("menu-flyout-item");
+    let b = h.create("menu-flyout-item");
+    h.insert(p, a, None, Some("items")).unwrap();
+    h.insert(p, b, Some(a), Some("items")).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "items").is_empty());
+}
+
+pub fn slot_navigation_view_menu_items() {
+    let mut h = Harness::new();
+    let p = h.create("navigation-view");
+    let a = h.create("navigation-view-item");
+    let b = h.create("navigation-view-item");
+    h.insert(p, a, None, Some("menu-items")).unwrap();
+    h.insert(p, b, Some(a), Some("menu-items")).unwrap();
+    assert_eq!(h.slot_items(p, "menu-items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "menu-items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "menu-items").is_empty());
+}
+
+pub fn slot_navigation_view_footer_menu_items() {
+    let mut h = Harness::new();
+    let p = h.create("navigation-view");
+    let a = h.create("navigation-view-item");
+    let b = h.create("navigation-view-item");
+    h.insert(p, a, None, Some("footer-menu-items")).unwrap();
+    h.insert(p, b, Some(a), Some("footer-menu-items")).unwrap();
+    assert_eq!(h.slot_items(p, "footer-menu-items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "footer-menu-items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "footer-menu-items").is_empty());
+}
+
+pub fn slot_navigation_view_pane_header() {
+    let mut h = Harness::new();
+    let p = h.create("navigation-view");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("pane-header")).unwrap();
+    assert_eq!(h.slot_items(p, "pane-header"), vec![a]);
+    h.insert(p, b, None, Some("pane-header")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "pane-header").is_empty());
+    h.insert(p, b, None, Some("pane-header")).unwrap();
+    assert_eq!(h.slot_items(p, "pane-header"), vec![b]);
+}
+
+pub fn slot_navigation_view_pane_footer() {
+    let mut h = Harness::new();
+    let p = h.create("navigation-view");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("pane-footer")).unwrap();
+    assert_eq!(h.slot_items(p, "pane-footer"), vec![a]);
+    h.insert(p, b, None, Some("pane-footer")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "pane-footer").is_empty());
+    h.insert(p, b, None, Some("pane-footer")).unwrap();
+    assert_eq!(h.slot_items(p, "pane-footer"), vec![b]);
+}
+
+pub fn slot_navigation_view_item_menu_items() {
+    let mut h = Harness::new();
+    let p = h.create("navigation-view-item");
+    let a = h.create("navigation-view-item");
+    let b = h.create("navigation-view-item");
+    h.insert(p, a, None, Some("menu-items")).unwrap();
+    h.insert(p, b, Some(a), Some("menu-items")).unwrap();
+    assert_eq!(h.slot_items(p, "menu-items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "menu-items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "menu-items").is_empty());
+}
+
+pub fn slot_canvas_children() {
+    let mut h = Harness::new();
+    let p = h.create("canvas");
     let a = h.create("text-block");
     let b = h.create("text-block");
     h.insert(p, a, None, Some("children")).unwrap();
@@ -357,6 +724,135 @@ pub fn slot_grid_children() {
     h.remove(p, b).unwrap_err();
     h.remove(p, a).unwrap();
     assert!(h.slot_items(p, "children").is_empty());
+}
+
+pub fn slot_radio_buttons_items() {
+    let mut h = Harness::new();
+    let p = h.create("radio-buttons");
+    let a = h.create("radio-button");
+    let b = h.create("radio-button");
+    h.insert(p, a, None, Some("items")).unwrap();
+    h.insert(p, b, Some(a), Some("items")).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "items").is_empty());
+}
+
+pub fn slot_selector_bar_items() {
+    let mut h = Harness::new();
+    let p = h.create("selector-bar");
+    let a = h.create("selector-bar-item");
+    let b = h.create("selector-bar-item");
+    h.insert(p, a, None, Some("items")).unwrap();
+    h.insert(p, b, Some(a), Some("items")).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "items").is_empty());
+}
+
+pub fn slot_split_button_flyout() {
+    let mut h = Harness::new();
+    let p = h.create("split-button");
+    let a = h.create("menu-flyout");
+    let b = h.create("menu-flyout");
+    h.insert(p, a, None, Some("flyout")).unwrap();
+    assert_eq!(h.slot_items(p, "flyout"), vec![a]);
+    h.insert(p, b, None, Some("flyout")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "flyout").is_empty());
+    h.insert(p, b, None, Some("flyout")).unwrap();
+    assert_eq!(h.slot_items(p, "flyout"), vec![b]);
+}
+
+pub fn slot_split_view_content() {
+    let mut h = Harness::new();
+    let p = h.create("split-view");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("content")).unwrap();
+    assert_eq!(h.slot_items(p, "content"), vec![a]);
+    h.insert(p, b, None, Some("content")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "content").is_empty());
+    h.insert(p, b, None, Some("content")).unwrap();
+    assert_eq!(h.slot_items(p, "content"), vec![b]);
+}
+
+pub fn slot_split_view_pane() {
+    let mut h = Harness::new();
+    let p = h.create("split-view");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("pane")).unwrap();
+    assert_eq!(h.slot_items(p, "pane"), vec![a]);
+    h.insert(p, b, None, Some("pane")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "pane").is_empty());
+    h.insert(p, b, None, Some("pane")).unwrap();
+    assert_eq!(h.slot_items(p, "pane"), vec![b]);
+}
+
+pub fn slot_tab_view_tab_items() {
+    let mut h = Harness::new();
+    let p = h.create("tab-view");
+    let a = h.create("tab-view-item");
+    let b = h.create("tab-view-item");
+    h.insert(p, a, None, Some("tab-items")).unwrap();
+    h.insert(p, b, Some(a), Some("tab-items")).unwrap();
+    assert_eq!(h.slot_items(p, "tab-items"), vec![b, a], "before= inserts in front");
+    h.remove(p, b).unwrap();
+    assert_eq!(h.slot_items(p, "tab-items"), vec![a]);
+    h.remove(p, b).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "tab-items").is_empty());
+}
+
+pub fn slot_teaching_tip_hero_content() {
+    let mut h = Harness::new();
+    let p = h.create("teaching-tip");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("hero-content")).unwrap();
+    assert_eq!(h.slot_items(p, "hero-content"), vec![a]);
+    h.insert(p, b, None, Some("hero-content")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "hero-content").is_empty());
+    h.insert(p, b, None, Some("hero-content")).unwrap();
+    assert_eq!(h.slot_items(p, "hero-content"), vec![b]);
+}
+
+pub fn slot_app_bar_button_context_flyout() {
+    let mut h = Harness::new();
+    let p = h.create("app-bar-button");
+    let a = h.create("menu-flyout");
+    let b = h.create("menu-flyout");
+    h.insert(p, a, None, Some("context-flyout")).unwrap();
+    assert_eq!(h.slot_items(p, "context-flyout"), vec![a]);
+    h.insert(p, b, None, Some("context-flyout")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "context-flyout").is_empty());
+    h.insert(p, b, None, Some("context-flyout")).unwrap();
+    assert_eq!(h.slot_items(p, "context-flyout"), vec![b]);
+}
+
+pub fn slot_viewbox_child() {
+    let mut h = Harness::new();
+    let p = h.create("viewbox");
+    let a = h.create("text-block");
+    let b = h.create("text-block");
+    h.insert(p, a, None, Some("child")).unwrap();
+    assert_eq!(h.slot_items(p, "child"), vec![a]);
+    h.insert(p, b, None, Some("child")).unwrap_err();
+    h.remove(p, a).unwrap();
+    assert!(h.slot_items(p, "child").is_empty());
+    h.insert(p, b, None, Some("child")).unwrap();
+    assert_eq!(h.slot_items(p, "child"), vec![b]);
 }
 
 pub fn slot_window_content() {
@@ -371,6 +867,45 @@ pub fn slot_window_content() {
     assert!(h.slot_items(p, "content").is_empty());
     h.insert(p, b, None, Some("content")).unwrap();
     assert_eq!(h.slot_items(p, "content"), vec![b]);
+}
+
+pub fn attr_canvas_left() {
+    let mut h = Harness::new();
+    let p = h.create("canvas");
+    let c = h.create("text-block");
+    h.insert(p, c, None, None).unwrap();
+    h.set_attr(p, c, "left", Value::F64(12.0)).unwrap();
+    assert_eq!(h.get_attr(p, c, "left").unwrap(), Value::F64(12.0));
+    h.set_attr(p, c, "left", Value::Null).unwrap();
+    assert_eq!(h.get_attr(p, c, "left").unwrap(), Value::F64(0.0));
+    h.remove(p, c).unwrap();
+    h.set_attr(p, c, "left", Value::I64(1)).unwrap_err();
+}
+
+pub fn attr_canvas_top() {
+    let mut h = Harness::new();
+    let p = h.create("canvas");
+    let c = h.create("text-block");
+    h.insert(p, c, None, None).unwrap();
+    h.set_attr(p, c, "top", Value::F64(8.0)).unwrap();
+    assert_eq!(h.get_attr(p, c, "top").unwrap(), Value::F64(8.0));
+    h.set_attr(p, c, "top", Value::Null).unwrap();
+    assert_eq!(h.get_attr(p, c, "top").unwrap(), Value::F64(0.0));
+    h.remove(p, c).unwrap();
+    h.set_attr(p, c, "top", Value::I64(1)).unwrap_err();
+}
+
+pub fn attr_canvas_z_index() {
+    let mut h = Harness::new();
+    let p = h.create("canvas");
+    let c = h.create("text-block");
+    h.insert(p, c, None, None).unwrap();
+    h.set_attr(p, c, "z-index", Value::I64(2)).unwrap();
+    assert_eq!(h.get_attr(p, c, "z-index").unwrap(), Value::I64(2));
+    h.set_attr(p, c, "z-index", Value::Null).unwrap();
+    assert_eq!(h.get_attr(p, c, "z-index").unwrap(), Value::I64(0));
+    h.remove(p, c).unwrap();
+    h.set_attr(p, c, "z-index", Value::I64(1)).unwrap_err();
 }
 
 pub fn attr_grid_row() {
@@ -425,9 +960,9 @@ pub fn attr_grid_column_span() {
     h.set_attr(p, c, "column-span", Value::I64(1)).unwrap_err();
 }
 
-pub fn event_button_click() {
+pub fn event_app_bar_button_click() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
@@ -438,9 +973,9 @@ pub fn event_button_click() {
     assert_eq!(h.events(w, "click"), 1, "event delivered once");
 }
 
-pub fn event_button_is_enabled_changed() {
+pub fn event_app_bar_button_is_enabled_changed() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
@@ -453,9 +988,9 @@ pub fn event_button_is_enabled_changed() {
     assert!(h.events(w, "is-enabled-changed") >= 1, "event delivered");
 }
 
-pub fn event_button_layout_updated() {
+pub fn event_app_bar_button_layout_updated() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.listen(w, "layout-updated", true).unwrap();
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
@@ -464,9 +999,9 @@ pub fn event_button_layout_updated() {
     assert!(h.events(w, "layout-updated") >= 1, "raised when mounted in an activated window");
 }
 
-pub fn event_button_loaded() {
+pub fn event_app_bar_button_loaded() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.listen(w, "loaded", true).unwrap();
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
@@ -475,9 +1010,9 @@ pub fn event_button_loaded() {
     assert!(h.events(w, "loaded") >= 1, "raised when mounted in an activated window");
 }
 
-pub fn event_button_size_changed() {
+pub fn event_app_bar_button_size_changed() {
     let mut h = Harness::new();
-    let w = h.create("button");
+    let w = h.create("app-bar-button");
     h.listen(w, "size-changed", true).unwrap();
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
@@ -486,9 +1021,9 @@ pub fn event_button_size_changed() {
     assert!(h.events(w, "size-changed") >= 1, "raised when mounted in an activated window");
 }
 
-pub fn event_slider_value_changed() {
+pub fn event_progress_bar_value_changed() {
     let mut h = Harness::new();
-    let w = h.create("slider");
+    let w = h.create("progress-bar");
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
@@ -543,9 +1078,9 @@ pub fn event_text_box_text_changing() {
     assert!(h.events(w, "text-changing") >= 1, "event delivered");
 }
 
-pub fn event_check_box_checked() {
+pub fn event_app_bar_toggle_button_checked() {
     let mut h = Harness::new();
-    let w = h.create("check-box");
+    let w = h.create("app-bar-toggle-button");
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
@@ -556,9 +1091,9 @@ pub fn event_check_box_checked() {
     assert_eq!(h.events(w, "checked"), 1, "event delivered once");
 }
 
-pub fn event_check_box_unchecked() {
+pub fn event_app_bar_toggle_button_unchecked() {
     let mut h = Harness::new();
-    let w = h.create("check-box");
+    let w = h.create("app-bar-toggle-button");
     let win = h.create("window");
     h.insert(win, w, None, None).unwrap();
     h.call(win, "activate", &[]).unwrap();
@@ -587,34 +1122,53 @@ pub fn event_window_closed() {
 }
 
 pub static TESTS: &[(&str, fn())] = &[
-    ("prop_button_content", prop_button_content),
-    ("prop_button_is_enabled", prop_button_is_enabled),
-    ("prop_button_font_size", prop_button_font_size),
-    ("prop_button_padding", prop_button_padding),
-    ("prop_button_width", prop_button_width),
-    ("prop_button_height", prop_button_height),
-    ("prop_button_min_width", prop_button_min_width),
-    ("prop_button_min_height", prop_button_min_height),
-    ("prop_button_margin", prop_button_margin),
-    ("prop_button_horizontal_alignment", prop_button_horizontal_alignment),
-    ("prop_button_vertical_alignment", prop_button_vertical_alignment),
-    ("prop_button_name", prop_button_name),
+    ("prop_app_bar_button_label", prop_app_bar_button_label),
+    ("prop_app_bar_toggle_button_label", prop_app_bar_toggle_button_label),
+    ("prop_auto_suggest_box_header", prop_auto_suggest_box_header),
+    ("prop_combo_box_header", prop_combo_box_header),
+    ("prop_app_bar_button_content", prop_app_bar_button_content),
+    ("prop_content_dialog_title", prop_content_dialog_title),
+    ("prop_app_bar_button_is_enabled", prop_app_bar_button_is_enabled),
+    ("prop_app_bar_button_font_size", prop_app_bar_button_font_size),
+    ("prop_app_bar_button_padding", prop_app_bar_button_padding),
+    ("prop_date_picker_header", prop_date_picker_header),
+    ("prop_expander_header", prop_expander_header),
+    ("prop_app_bar_button_width", prop_app_bar_button_width),
+    ("prop_app_bar_button_height", prop_app_bar_button_height),
+    ("prop_app_bar_button_min_width", prop_app_bar_button_min_width),
+    ("prop_app_bar_button_min_height", prop_app_bar_button_min_height),
+    ("prop_app_bar_button_margin", prop_app_bar_button_margin),
+    ("prop_app_bar_button_horizontal_alignment", prop_app_bar_button_horizontal_alignment),
+    ("prop_app_bar_button_vertical_alignment", prop_app_bar_button_vertical_alignment),
+    ("prop_app_bar_button_name", prop_app_bar_button_name),
     ("prop_grid_row_spacing", prop_grid_row_spacing),
     ("prop_grid_column_spacing", prop_grid_column_spacing),
     ("prop_grid_padding", prop_grid_padding),
     ("prop_grid_row_definitions", prop_grid_row_definitions),
     ("prop_grid_column_definitions", prop_grid_column_definitions),
-    ("prop_slider_minimum", prop_slider_minimum),
-    ("prop_slider_maximum", prop_slider_maximum),
-    ("prop_slider_value", prop_slider_value),
-    ("prop_slider_small_change", prop_slider_small_change),
-    ("prop_slider_large_change", prop_slider_large_change),
+    ("prop_menu_bar_item_title", prop_menu_bar_item_title),
+    ("prop_menu_flyout_item_text", prop_menu_flyout_item_text),
+    ("prop_menu_flyout_sub_item_text", prop_menu_flyout_sub_item_text),
+    ("prop_number_box_header", prop_number_box_header),
+    ("prop_password_box_header", prop_password_box_header),
+    ("prop_radio_button_group_name", prop_radio_button_group_name),
+    ("prop_radio_buttons_header", prop_radio_buttons_header),
+    ("prop_radio_buttons_selected_index", prop_radio_buttons_selected_index),
+    ("prop_progress_bar_minimum", prop_progress_bar_minimum),
+    ("prop_progress_bar_maximum", prop_progress_bar_maximum),
+    ("prop_progress_bar_value", prop_progress_bar_value),
+    ("prop_progress_bar_small_change", prop_progress_bar_small_change),
+    ("prop_progress_bar_large_change", prop_progress_bar_large_change),
+    ("prop_rich_edit_box_header", prop_rich_edit_box_header),
+    ("prop_selector_bar_item_text", prop_selector_bar_item_text),
     ("prop_slider_step_frequency", prop_slider_step_frequency),
     ("prop_slider_orientation", prop_slider_orientation),
     ("prop_slider_header", prop_slider_header),
     ("prop_stack_panel_orientation", prop_stack_panel_orientation),
     ("prop_stack_panel_spacing", prop_stack_panel_spacing),
     ("prop_stack_panel_padding", prop_stack_panel_padding),
+    ("prop_tab_view_selected_index", prop_tab_view_selected_index),
+    ("prop_tab_view_item_header", prop_tab_view_item_header),
     ("prop_text_block_text", prop_text_block_text),
     ("prop_text_block_font_size", prop_text_block_font_size),
     ("prop_text_block_text_wrapping", prop_text_block_text_wrapping),
@@ -627,76 +1181,518 @@ pub static TESTS: &[(&str, fn())] = &[
     ("prop_text_box_accepts_return", prop_text_box_accepts_return),
     ("prop_text_box_text_wrapping", prop_text_box_text_wrapping),
     ("prop_text_box_header", prop_text_box_header),
-    ("prop_check_box_is_checked", prop_check_box_is_checked),
-    ("prop_check_box_is_three_state", prop_check_box_is_three_state),
-    ("prop_button_visibility", prop_button_visibility),
-    ("prop_button_opacity", prop_button_opacity),
-    ("prop_button_is_hit_test_visible", prop_button_is_hit_test_visible),
+    ("prop_time_picker_header", prop_time_picker_header),
+    ("prop_app_bar_toggle_button_is_checked", prop_app_bar_toggle_button_is_checked),
+    ("prop_app_bar_toggle_button_is_three_state", prop_app_bar_toggle_button_is_three_state),
+    ("prop_toggle_switch_header", prop_toggle_switch_header),
+    ("prop_app_bar_button_visibility", prop_app_bar_button_visibility),
+    ("prop_app_bar_button_opacity", prop_app_bar_button_opacity),
+    ("prop_app_bar_button_is_hit_test_visible", prop_app_bar_button_is_hit_test_visible),
     ("prop_window_title", prop_window_title),
-    ("slot_button_content", slot_button_content),
-    ("slot_grid_children", slot_grid_children),
+    ("slot_border_child", slot_border_child),
+    ("slot_app_bar_button_flyout", slot_app_bar_button_flyout),
+    ("slot_command_bar_primary_commands", slot_command_bar_primary_commands),
+    ("slot_command_bar_secondary_commands", slot_command_bar_secondary_commands),
+    ("slot_app_bar_button_content", slot_app_bar_button_content),
+    ("slot_info_bar_content", slot_info_bar_content),
+    ("slot_auto_suggest_box_items", slot_auto_suggest_box_items),
+    ("slot_menu_bar_items", slot_menu_bar_items),
+    ("slot_menu_bar_item_items", slot_menu_bar_item_items),
+    ("slot_menu_flyout_items", slot_menu_flyout_items),
+    ("slot_menu_flyout_sub_item_items", slot_menu_flyout_sub_item_items),
+    ("slot_navigation_view_menu_items", slot_navigation_view_menu_items),
+    ("slot_navigation_view_footer_menu_items", slot_navigation_view_footer_menu_items),
+    ("slot_navigation_view_pane_header", slot_navigation_view_pane_header),
+    ("slot_navigation_view_pane_footer", slot_navigation_view_pane_footer),
+    ("slot_navigation_view_item_menu_items", slot_navigation_view_item_menu_items),
+    ("slot_canvas_children", slot_canvas_children),
+    ("slot_radio_buttons_items", slot_radio_buttons_items),
+    ("slot_selector_bar_items", slot_selector_bar_items),
+    ("slot_split_button_flyout", slot_split_button_flyout),
+    ("slot_split_view_content", slot_split_view_content),
+    ("slot_split_view_pane", slot_split_view_pane),
+    ("slot_tab_view_tab_items", slot_tab_view_tab_items),
+    ("slot_teaching_tip_hero_content", slot_teaching_tip_hero_content),
+    ("slot_app_bar_button_context_flyout", slot_app_bar_button_context_flyout),
+    ("slot_viewbox_child", slot_viewbox_child),
     ("slot_window_content", slot_window_content),
+    ("attr_canvas_left", attr_canvas_left),
+    ("attr_canvas_top", attr_canvas_top),
+    ("attr_canvas_z_index", attr_canvas_z_index),
     ("attr_grid_row", attr_grid_row),
     ("attr_grid_column", attr_grid_column),
     ("attr_grid_row_span", attr_grid_row_span),
     ("attr_grid_column_span", attr_grid_column_span),
-    ("event_button_click", event_button_click),
-    ("event_button_is_enabled_changed", event_button_is_enabled_changed),
-    ("event_button_layout_updated", event_button_layout_updated),
-    ("event_button_loaded", event_button_loaded),
-    ("event_button_size_changed", event_button_size_changed),
-    ("event_slider_value_changed", event_slider_value_changed),
+    ("event_app_bar_button_click", event_app_bar_button_click),
+    ("event_app_bar_button_is_enabled_changed", event_app_bar_button_is_enabled_changed),
+    ("event_app_bar_button_layout_updated", event_app_bar_button_layout_updated),
+    ("event_app_bar_button_loaded", event_app_bar_button_loaded),
+    ("event_app_bar_button_size_changed", event_app_bar_button_size_changed),
+    ("event_progress_bar_value_changed", event_progress_bar_value_changed),
     ("event_text_box_text_changed", event_text_box_text_changed),
     ("event_text_box_before_text_changing", event_text_box_before_text_changing),
     ("event_text_box_text_changing", event_text_box_text_changing),
-    ("event_check_box_checked", event_check_box_checked),
-    ("event_check_box_unchecked", event_check_box_unchecked),
+    ("event_app_bar_toggle_button_checked", event_app_bar_toggle_button_checked),
+    ("event_app_bar_toggle_button_unchecked", event_app_bar_toggle_button_unchecked),
     ("event_window_closed", event_window_closed),
-    ("prop_button_click_mode", || t::roundtrip("button", "click-mode", &[(Value::Str("Press".into()), Value::Str("press".into())), (Value::Str("Release".into()), Value::Str("release".into()))])),
-    ("prop_button_is_pointer_over", || t::readable("button", "is-pointer-over")),
-    ("prop_button_is_pressed", || t::readable("button", "is-pressed")),
-    ("prop_button_background_sizing", || t::roundtrip("button", "background-sizing", &[(Value::Str("OuterBorderEdge".into()), Value::Str("outer-border-edge".into())), (Value::Str("InnerBorderEdge".into()), Value::Str("inner-border-edge".into()))])),
-    ("prop_button_border_thickness", || t::roundtrip("button", "border-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
-    ("prop_button_character_spacing", || t::roundtrip("button", "character-spacing", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
-    ("prop_button_element_sound_mode", || t::roundtrip("button", "element-sound-mode", &[(Value::Str("FocusOnly".into()), Value::Str("focus-only".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
-    ("prop_button_font_stretch", || t::roundtrip("button", "font-stretch", &[(Value::Str("UltraCondensed".into()), Value::Str("ultra-condensed".into())), (Value::Str("Undefined".into()), Value::Str("undefined".into()))])),
-    ("prop_button_font_style", || t::roundtrip("button", "font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
-    ("prop_button_horizontal_content_alignment", || t::roundtrip("button", "horizontal-content-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Left".into()), Value::Str("left".into()))])),
-    ("prop_button_is_focus_engagement_enabled", || t::roundtrip("button", "is-focus-engagement-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_is_text_scale_factor_enabled", || t::roundtrip("button", "is-text-scale-factor-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_requires_pointer", || t::roundtrip("button", "requires-pointer", &[(Value::Str("WhenEngaged".into()), Value::Str("when-engaged".into())), (Value::Str("Never".into()), Value::Str("never".into()))])),
-    ("prop_button_tab_navigation", || t::roundtrip("button", "tab-navigation", &[(Value::Str("Cycle".into()), Value::Str("cycle".into())), (Value::Str("Local".into()), Value::Str("local".into()))])),
-    ("prop_button_vertical_content_alignment", || t::roundtrip("button", "vertical-content-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Top".into()), Value::Str("top".into()))])),
-    ("prop_button_actual_theme", || t::readable("button", "actual-theme")),
-    ("prop_button_allow_focus_on_interaction", || t::roundtrip("button", "allow-focus-on-interaction", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_allow_focus_when_disabled", || t::roundtrip("button", "allow-focus-when-disabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_flow_direction", || t::roundtrip("button", "flow-direction", &[(Value::Str("RightToLeft".into()), Value::Str("right-to-left".into())), (Value::Str("LeftToRight".into()), Value::Str("left-to-right".into()))])),
-    ("prop_button_focus_visual_margin", || t::roundtrip("button", "focus-visual-margin", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
-    ("prop_button_focus_visual_primary_thickness", || t::roundtrip("button", "focus-visual-primary-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
-    ("prop_button_focus_visual_secondary_thickness", || t::roundtrip("button", "focus-visual-secondary-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
-    ("prop_button_is_loaded", || t::readable("button", "is-loaded")),
-    ("prop_button_language", || t::roundtrip("button", "language", &[(Value::Str("de-DE".into()), Value::Str("de-DE".into())), (Value::Str("en-US".into()), Value::Str("en-US".into()))])),
-    ("prop_button_max_height", || t::roundtrip("button", "max-height", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
-    ("prop_button_max_width", || t::roundtrip("button", "max-width", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
-    ("prop_button_requested_theme", || t::roundtrip("button", "requested-theme", &[(Value::Str("Light".into()), Value::Str("light".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_command_bar_closed_display_mode", || t::roundtrip("command-bar", "closed-display-mode", &[(Value::Str("Minimal".into()), Value::Str("minimal".into())), (Value::Str("Compact".into()), Value::Str("compact".into()))])),
+    ("prop_command_bar_is_open", || t::roundtrip("command-bar", "is-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_command_bar_is_sticky", || t::roundtrip("command-bar", "is-sticky", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_command_bar_light_dismiss_overlay_mode", || t::roundtrip("command-bar", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_app_bar_button_dynamic_overflow_order", || t::roundtrip("app-bar-button", "dynamic-overflow-order", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_app_bar_button_icon", || t::roundtrip("app-bar-button", "icon", &[(Value::Str("Accept".into()), Value::Str("accept".into())), (Value::Str("Cancel".into()), Value::Str("cancel".into()))])),
+    ("prop_app_bar_button_is_compact", || t::roundtrip("app-bar-button", "is-compact", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_is_in_overflow", || t::readable("app-bar-button", "is-in-overflow")),
+    ("prop_app_bar_button_keyboard_accelerator_text_override", || t::roundtrip("app-bar-button", "keyboard-accelerator-text-override", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_app_bar_button_label_position", || t::roundtrip("app-bar-button", "label-position", &[(Value::Str("Collapsed".into()), Value::Str("collapsed".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_app_bar_separator_dynamic_overflow_order", || t::roundtrip("app-bar-separator", "dynamic-overflow-order", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_app_bar_separator_is_compact", || t::roundtrip("app-bar-separator", "is-compact", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_separator_is_in_overflow", || t::readable("app-bar-separator", "is-in-overflow")),
+    ("prop_app_bar_toggle_button_dynamic_overflow_order", || t::roundtrip("app-bar-toggle-button", "dynamic-overflow-order", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_app_bar_toggle_button_icon", || t::roundtrip("app-bar-toggle-button", "icon", &[(Value::Str("Accept".into()), Value::Str("accept".into())), (Value::Str("Cancel".into()), Value::Str("cancel".into()))])),
+    ("prop_app_bar_toggle_button_is_compact", || t::roundtrip("app-bar-toggle-button", "is-compact", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_toggle_button_is_in_overflow", || t::readable("app-bar-toggle-button", "is-in-overflow")),
+    ("prop_app_bar_toggle_button_keyboard_accelerator_text_override", || t::roundtrip("app-bar-toggle-button", "keyboard-accelerator-text-override", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_app_bar_toggle_button_label_position", || t::roundtrip("app-bar-toggle-button", "label-position", &[(Value::Str("Collapsed".into()), Value::Str("collapsed".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_auto_suggest_box_auto_maximize_suggestion_area", || t::roundtrip("auto-suggest-box", "auto-maximize-suggestion-area", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_auto_suggest_box_description", || t::roundtrip("auto-suggest-box", "description", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_auto_suggest_box_is_suggestion_list_open", || t::roundtrip("auto-suggest-box", "is-suggestion-list-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_auto_suggest_box_light_dismiss_overlay_mode", || t::roundtrip("auto-suggest-box", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_auto_suggest_box_max_suggestion_list_height", || t::roundtrip("auto-suggest-box", "max-suggestion-list-height", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_auto_suggest_box_placeholder_text", || t::roundtrip("auto-suggest-box", "placeholder-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_auto_suggest_box_query_icon", || t::roundtrip("auto-suggest-box", "query-icon", &[(Value::Str("Accept".into()), Value::Str("accept".into())), (Value::Str("Cancel".into()), Value::Str("cancel".into()))])),
+    ("prop_auto_suggest_box_text", || t::roundtrip("auto-suggest-box", "text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_auto_suggest_box_text_member_path", || t::roundtrip("auto-suggest-box", "text-member-path", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_auto_suggest_box_update_text_on_select", || t::roundtrip("auto-suggest-box", "update-text-on-select", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_border_background", || t::roundtrip("border", "background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_border_background_sizing", || t::roundtrip("border", "background-sizing", &[(Value::Str("OuterBorderEdge".into()), Value::Str("outer-border-edge".into())), (Value::Str("InnerBorderEdge".into()), Value::Str("inner-border-edge".into()))])),
+    ("prop_border_border_brush", || t::roundtrip("border", "border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_border_border_thickness", || t::roundtrip("border", "border-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_border_corner_radius", || t::roundtrip("border", "corner-radius", &[(Value::Str("4".into()), Value::Str("4,4,4,4".into())), (Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into()))])),
+    ("prop_border_padding", || t::roundtrip("border", "padding", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_app_bar_button_click_mode", || t::roundtrip("app-bar-button", "click-mode", &[(Value::Str("Press".into()), Value::Str("press".into())), (Value::Str("Release".into()), Value::Str("release".into()))])),
+    ("prop_app_bar_button_is_pointer_over", || t::readable("app-bar-button", "is-pointer-over")),
+    ("prop_app_bar_button_is_pressed", || t::readable("app-bar-button", "is-pressed")),
+    ("prop_calendar_date_picker_calendar_identifier", || t::roundtrip("calendar-date-picker", "calendar-identifier", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_date_picker_date", || t::roundtrip("calendar-date-picker", "date", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Null, Value::Null)])),
+    ("prop_calendar_date_picker_date_format", || t::roundtrip("calendar-date-picker", "date-format", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_date_picker_day_of_week_format", || t::roundtrip("calendar-date-picker", "day-of-week-format", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_date_picker_description", || t::roundtrip("calendar-date-picker", "description", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_date_picker_display_mode", || t::roundtrip("calendar-date-picker", "display-mode", &[(Value::Str("Year".into()), Value::Str("year".into())), (Value::Str("Month".into()), Value::Str("month".into()))])),
+    ("prop_calendar_date_picker_first_day_of_week", || t::roundtrip("calendar-date-picker", "first-day-of-week", &[(Value::Str("Monday".into()), Value::Str("monday".into())), (Value::Str("Sunday".into()), Value::Str("sunday".into()))])),
+    ("prop_calendar_date_picker_header", || t::roundtrip("calendar-date-picker", "header", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_date_picker_is_calendar_open", || t::roundtrip("calendar-date-picker", "is-calendar-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_calendar_date_picker_is_group_label_visible", || t::roundtrip("calendar-date-picker", "is-group-label-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_calendar_date_picker_is_out_of_scope_enabled", || t::roundtrip("calendar-date-picker", "is-out-of-scope-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_calendar_date_picker_is_today_highlighted", || t::roundtrip("calendar-date-picker", "is-today-highlighted", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_calendar_date_picker_light_dismiss_overlay_mode", || t::roundtrip("calendar-date-picker", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_calendar_date_picker_max_date", || t::roundtrip("calendar-date-picker", "max-date", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Str("2021-01-02T00:00:00Z".into()), Value::DateTime(1609545600000.0))])),
+    ("prop_calendar_date_picker_min_date", || t::roundtrip("calendar-date-picker", "min-date", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Str("2021-01-02T00:00:00Z".into()), Value::DateTime(1609545600000.0))])),
+    ("prop_calendar_date_picker_placeholder_text", || t::roundtrip("calendar-date-picker", "placeholder-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_view_blackout_background", || t::roundtrip("calendar-view", "blackout-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_blackout_foreground", || t::roundtrip("calendar-view", "blackout-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_blackout_strikethrough_brush", || t::roundtrip("calendar-view", "blackout-strikethrough-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_calendar_identifier", || t::roundtrip("calendar-view", "calendar-identifier", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_view_calendar_item_background", || t::roundtrip("calendar-view", "calendar-item-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_calendar_item_border_brush", || t::roundtrip("calendar-view", "calendar-item-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_calendar_item_border_thickness", || t::roundtrip("calendar-view", "calendar-item-border-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_calendar_view_calendar_item_corner_radius", || t::roundtrip("calendar-view", "calendar-item-corner-radius", &[(Value::Str("4".into()), Value::Str("4,4,4,4".into())), (Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into()))])),
+    ("prop_calendar_view_calendar_item_disabled_background", || t::roundtrip("calendar-view", "calendar-item-disabled-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_calendar_item_foreground", || t::roundtrip("calendar-view", "calendar-item-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_calendar_item_hover_background", || t::roundtrip("calendar-view", "calendar-item-hover-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_calendar_item_pressed_background", || t::roundtrip("calendar-view", "calendar-item-pressed-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_day_item_font_family", || t::roundtrip("calendar-view", "day-item-font-family", &[(Value::Str("Consolas".into()), Value::Str("Consolas".into())), (Value::Str("Segoe UI".into()), Value::Str("Segoe UI".into()))])),
+    ("prop_calendar_view_day_item_font_size", || t::roundtrip("calendar-view", "day-item-font-size", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_calendar_view_day_item_font_style", || t::roundtrip("calendar-view", "day-item-font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_calendar_view_day_item_font_weight", || t::roundtrip("calendar-view", "day-item-font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_calendar_view_day_item_margin", || t::roundtrip("calendar-view", "day-item-margin", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_calendar_view_day_of_week_format", || t::roundtrip("calendar-view", "day-of-week-format", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_calendar_view_disabled_foreground", || t::roundtrip("calendar-view", "disabled-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_display_mode", || t::roundtrip("calendar-view", "display-mode", &[(Value::Str("Year".into()), Value::Str("year".into())), (Value::Str("Month".into()), Value::Str("month".into()))])),
+    ("prop_calendar_view_first_day_of_week", || t::roundtrip("calendar-view", "first-day-of-week", &[(Value::Str("Monday".into()), Value::Str("monday".into())), (Value::Str("Sunday".into()), Value::Str("sunday".into()))])),
+    ("prop_calendar_view_first_of_month_label_font_family", || t::roundtrip("calendar-view", "first-of-month-label-font-family", &[(Value::Str("Consolas".into()), Value::Str("Consolas".into())), (Value::Str("Segoe UI".into()), Value::Str("Segoe UI".into()))])),
+    ("prop_calendar_view_first_of_month_label_font_size", || t::roundtrip("calendar-view", "first-of-month-label-font-size", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_calendar_view_first_of_month_label_font_style", || t::roundtrip("calendar-view", "first-of-month-label-font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_calendar_view_first_of_month_label_font_weight", || t::roundtrip("calendar-view", "first-of-month-label-font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_calendar_view_first_of_month_label_margin", || t::roundtrip("calendar-view", "first-of-month-label-margin", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_calendar_view_first_of_year_decade_label_font_family", || t::roundtrip("calendar-view", "first-of-year-decade-label-font-family", &[(Value::Str("Consolas".into()), Value::Str("Consolas".into())), (Value::Str("Segoe UI".into()), Value::Str("Segoe UI".into()))])),
+    ("prop_calendar_view_first_of_year_decade_label_font_size", || t::roundtrip("calendar-view", "first-of-year-decade-label-font-size", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_calendar_view_first_of_year_decade_label_font_style", || t::roundtrip("calendar-view", "first-of-year-decade-label-font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_calendar_view_first_of_year_decade_label_font_weight", || t::roundtrip("calendar-view", "first-of-year-decade-label-font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_calendar_view_first_of_year_decade_label_margin", || t::roundtrip("calendar-view", "first-of-year-decade-label-margin", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_calendar_view_focus_border_brush", || t::roundtrip("calendar-view", "focus-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_horizontal_day_item_alignment", || t::roundtrip("calendar-view", "horizontal-day-item-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Left".into()), Value::Str("left".into()))])),
+    ("prop_calendar_view_horizontal_first_of_month_label_alignment", || t::roundtrip("calendar-view", "horizontal-first-of-month-label-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Left".into()), Value::Str("left".into()))])),
+    ("prop_calendar_view_hover_border_brush", || t::roundtrip("calendar-view", "hover-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_is_group_label_visible", || t::roundtrip("calendar-view", "is-group-label-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_calendar_view_is_out_of_scope_enabled", || t::roundtrip("calendar-view", "is-out-of-scope-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_calendar_view_is_today_highlighted", || t::roundtrip("calendar-view", "is-today-highlighted", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_calendar_view_max_date", || t::roundtrip("calendar-view", "max-date", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Str("2021-01-02T00:00:00Z".into()), Value::DateTime(1609545600000.0))])),
+    ("prop_calendar_view_min_date", || t::roundtrip("calendar-view", "min-date", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Str("2021-01-02T00:00:00Z".into()), Value::DateTime(1609545600000.0))])),
+    ("prop_calendar_view_month_year_item_font_family", || t::roundtrip("calendar-view", "month-year-item-font-family", &[(Value::Str("Consolas".into()), Value::Str("Consolas".into())), (Value::Str("Segoe UI".into()), Value::Str("Segoe UI".into()))])),
+    ("prop_calendar_view_month_year_item_font_size", || t::roundtrip("calendar-view", "month-year-item-font-size", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_calendar_view_month_year_item_font_style", || t::roundtrip("calendar-view", "month-year-item-font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_calendar_view_month_year_item_font_weight", || t::roundtrip("calendar-view", "month-year-item-font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_calendar_view_month_year_item_margin", || t::roundtrip("calendar-view", "month-year-item-margin", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_calendar_view_number_of_weeks_in_view", || t::roundtrip("calendar-view", "number-of-weeks-in-view", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_calendar_view_out_of_scope_background", || t::roundtrip("calendar-view", "out-of-scope-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_out_of_scope_foreground", || t::roundtrip("calendar-view", "out-of-scope-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_out_of_scope_hover_foreground", || t::roundtrip("calendar-view", "out-of-scope-hover-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_out_of_scope_pressed_foreground", || t::roundtrip("calendar-view", "out-of-scope-pressed-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_pressed_border_brush", || t::roundtrip("calendar-view", "pressed-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_pressed_foreground", || t::roundtrip("calendar-view", "pressed-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_border_brush", || t::roundtrip("calendar-view", "selected-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_disabled_border_brush", || t::roundtrip("calendar-view", "selected-disabled-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_disabled_foreground", || t::roundtrip("calendar-view", "selected-disabled-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_foreground", || t::roundtrip("calendar-view", "selected-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_hover_border_brush", || t::roundtrip("calendar-view", "selected-hover-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_hover_foreground", || t::roundtrip("calendar-view", "selected-hover-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_pressed_border_brush", || t::roundtrip("calendar-view", "selected-pressed-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selected_pressed_foreground", || t::roundtrip("calendar-view", "selected-pressed-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_selection_mode", || t::roundtrip("calendar-view", "selection-mode", &[(Value::Str("Single".into()), Value::Str("single".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_calendar_view_today_background", || t::roundtrip("calendar-view", "today-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_today_blackout_background", || t::roundtrip("calendar-view", "today-blackout-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_today_blackout_foreground", || t::roundtrip("calendar-view", "today-blackout-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_today_disabled_background", || t::roundtrip("calendar-view", "today-disabled-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_today_font_weight", || t::roundtrip("calendar-view", "today-font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_calendar_view_today_foreground", || t::roundtrip("calendar-view", "today-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_today_hover_background", || t::roundtrip("calendar-view", "today-hover-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_today_pressed_background", || t::roundtrip("calendar-view", "today-pressed-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_today_selected_inner_border_brush", || t::roundtrip("calendar-view", "today-selected-inner-border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_calendar_view_vertical_day_item_alignment", || t::roundtrip("calendar-view", "vertical-day-item-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Top".into()), Value::Str("top".into()))])),
+    ("prop_calendar_view_vertical_first_of_month_label_alignment", || t::roundtrip("calendar-view", "vertical-first-of-month-label-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Top".into()), Value::Str("top".into()))])),
+    ("prop_color_picker_color", || t::roundtrip("color-picker", "color", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_color_picker_color_spectrum_components", || t::roundtrip("color-picker", "color-spectrum-components", &[(Value::Str("ValueHue".into()), Value::Str("value-hue".into())), (Value::Str("HueValue".into()), Value::Str("hue-value".into()))])),
+    ("prop_color_picker_color_spectrum_shape", || t::roundtrip("color-picker", "color-spectrum-shape", &[(Value::Str("Ring".into()), Value::Str("ring".into())), (Value::Str("Box".into()), Value::Str("box".into()))])),
+    ("prop_color_picker_is_alpha_enabled", || t::roundtrip("color-picker", "is-alpha-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_alpha_slider_visible", || t::roundtrip("color-picker", "is-alpha-slider-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_alpha_text_input_visible", || t::roundtrip("color-picker", "is-alpha-text-input-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_color_channel_text_input_visible", || t::roundtrip("color-picker", "is-color-channel-text-input-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_color_preview_visible", || t::roundtrip("color-picker", "is-color-preview-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_color_slider_visible", || t::roundtrip("color-picker", "is-color-slider-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_color_spectrum_visible", || t::roundtrip("color-picker", "is-color-spectrum-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_hex_input_visible", || t::roundtrip("color-picker", "is-hex-input-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_is_more_button_visible", || t::roundtrip("color-picker", "is-more-button-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_color_picker_max_hue", || t::roundtrip("color-picker", "max-hue", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_color_picker_max_saturation", || t::roundtrip("color-picker", "max-saturation", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_color_picker_max_value", || t::roundtrip("color-picker", "max-value", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_color_picker_min_hue", || t::roundtrip("color-picker", "min-hue", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_color_picker_min_saturation", || t::roundtrip("color-picker", "min-saturation", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_color_picker_min_value", || t::roundtrip("color-picker", "min-value", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_color_picker_orientation", || t::roundtrip("color-picker", "orientation", &[(Value::Str("Horizontal".into()), Value::Str("horizontal".into())), (Value::Str("Vertical".into()), Value::Str("vertical".into()))])),
+    ("prop_color_picker_previous_color", || t::roundtrip("color-picker", "previous-color", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Null, Value::Null)])),
+    ("prop_combo_box_description", || t::roundtrip("combo-box", "description", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_combo_box_is_drop_down_open", || t::roundtrip("combo-box", "is-drop-down-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_combo_box_is_editable", || t::roundtrip("combo-box", "is-editable", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_combo_box_is_selection_box_highlighted", || t::readable("combo-box", "is-selection-box-highlighted")),
+    ("prop_combo_box_is_text_search_enabled", || t::roundtrip("combo-box", "is-text-search-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_combo_box_light_dismiss_overlay_mode", || t::roundtrip("combo-box", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_combo_box_max_drop_down_height", || t::roundtrip("combo-box", "max-drop-down-height", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_combo_box_placeholder_foreground", || t::roundtrip("combo-box", "placeholder-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_combo_box_placeholder_text", || t::roundtrip("combo-box", "placeholder-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_combo_box_selection_changed_trigger", || t::roundtrip("combo-box", "selection-changed-trigger", &[(Value::Str("Always".into()), Value::Str("always".into())), (Value::Str("Committed".into()), Value::Str("committed".into()))])),
+    ("prop_combo_box_text", || t::roundtrip("combo-box", "text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_command_bar_default_label_position", || t::roundtrip("command-bar", "default-label-position", &[(Value::Str("Right".into()), Value::Str("right".into())), (Value::Str("Bottom".into()), Value::Str("bottom".into()))])),
+    ("prop_command_bar_is_dynamic_overflow_enabled", || t::roundtrip("command-bar", "is-dynamic-overflow-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_command_bar_overflow_button_visibility", || t::roundtrip("command-bar", "overflow-button-visibility", &[(Value::Str("Visible".into()), Value::Str("visible".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_content_dialog_close_button_text", || t::roundtrip("content-dialog", "close-button-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_content_dialog_default_button", || t::roundtrip("content-dialog", "default-button", &[(Value::Str("Primary".into()), Value::Str("primary".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_content_dialog_full_size_desired", || t::roundtrip("content-dialog", "full-size-desired", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_content_dialog_is_primary_button_enabled", || t::roundtrip("content-dialog", "is-primary-button-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_content_dialog_is_secondary_button_enabled", || t::roundtrip("content-dialog", "is-secondary-button-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_content_dialog_primary_button_text", || t::roundtrip("content-dialog", "primary-button-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_content_dialog_secondary_button_text", || t::roundtrip("content-dialog", "secondary-button-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_app_bar_button_background", || t::roundtrip("app-bar-button", "background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_app_bar_button_background_sizing", || t::roundtrip("app-bar-button", "background-sizing", &[(Value::Str("OuterBorderEdge".into()), Value::Str("outer-border-edge".into())), (Value::Str("InnerBorderEdge".into()), Value::Str("inner-border-edge".into()))])),
+    ("prop_app_bar_button_border_brush", || t::roundtrip("app-bar-button", "border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_app_bar_button_border_thickness", || t::roundtrip("app-bar-button", "border-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_app_bar_button_character_spacing", || t::roundtrip("app-bar-button", "character-spacing", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_app_bar_button_corner_radius", || t::roundtrip("app-bar-button", "corner-radius", &[(Value::Str("4".into()), Value::Str("4,4,4,4".into())), (Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into()))])),
+    ("prop_app_bar_button_default_style_resource_uri", || t::roundtrip("app-bar-button", "default-style-resource-uri", &[(Value::Str("https://example.com/a".into()), Value::Str("https://example.com/a".into())), (Value::Str("https://example.org/b".into()), Value::Str("https://example.org/b".into()))])),
+    ("prop_app_bar_button_element_sound_mode", || t::roundtrip("app-bar-button", "element-sound-mode", &[(Value::Str("FocusOnly".into()), Value::Str("focus-only".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_app_bar_button_font_family", || t::roundtrip("app-bar-button", "font-family", &[(Value::Str("Consolas".into()), Value::Str("Consolas".into())), (Value::Str("Segoe UI".into()), Value::Str("Segoe UI".into()))])),
+    ("prop_app_bar_button_font_stretch", || t::roundtrip("app-bar-button", "font-stretch", &[(Value::Str("UltraCondensed".into()), Value::Str("ultra-condensed".into())), (Value::Str("Undefined".into()), Value::Str("undefined".into()))])),
+    ("prop_app_bar_button_font_style", || t::roundtrip("app-bar-button", "font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_app_bar_button_font_weight", || t::roundtrip("app-bar-button", "font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_app_bar_button_foreground", || t::roundtrip("app-bar-button", "foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_app_bar_button_horizontal_content_alignment", || t::roundtrip("app-bar-button", "horizontal-content-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Left".into()), Value::Str("left".into()))])),
+    ("prop_app_bar_button_is_focus_engagement_enabled", || t::roundtrip("app-bar-button", "is-focus-engagement-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_is_text_scale_factor_enabled", || t::roundtrip("app-bar-button", "is-text-scale-factor-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_requires_pointer", || t::roundtrip("app-bar-button", "requires-pointer", &[(Value::Str("WhenEngaged".into()), Value::Str("when-engaged".into())), (Value::Str("Never".into()), Value::Str("never".into()))])),
+    ("prop_app_bar_button_tab_navigation", || t::roundtrip("app-bar-button", "tab-navigation", &[(Value::Str("Cycle".into()), Value::Str("cycle".into())), (Value::Str("Local".into()), Value::Str("local".into()))])),
+    ("prop_app_bar_button_vertical_content_alignment", || t::roundtrip("app-bar-button", "vertical-content-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Top".into()), Value::Str("top".into()))])),
+    ("prop_date_picker_calendar_identifier", || t::roundtrip("date-picker", "calendar-identifier", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_date_picker_date", || t::roundtrip("date-picker", "date", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Str("2021-01-02T00:00:00Z".into()), Value::DateTime(1609545600000.0))])),
+    ("prop_date_picker_day_format", || t::roundtrip("date-picker", "day-format", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_date_picker_day_visible", || t::roundtrip("date-picker", "day-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_date_picker_light_dismiss_overlay_mode", || t::roundtrip("date-picker", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_date_picker_max_year", || t::roundtrip("date-picker", "max-year", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Str("2021-01-02T00:00:00Z".into()), Value::DateTime(1609545600000.0))])),
+    ("prop_date_picker_min_year", || t::roundtrip("date-picker", "min-year", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Str("2021-01-02T00:00:00Z".into()), Value::DateTime(1609545600000.0))])),
+    ("prop_date_picker_month_format", || t::roundtrip("date-picker", "month-format", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_date_picker_month_visible", || t::roundtrip("date-picker", "month-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_date_picker_orientation", || t::roundtrip("date-picker", "orientation", &[(Value::Str("Horizontal".into()), Value::Str("horizontal".into())), (Value::Str("Vertical".into()), Value::Str("vertical".into()))])),
+    ("prop_date_picker_selected_date", || t::roundtrip("date-picker", "selected-date", &[(Value::Str("2024-05-17T00:00:00Z".into()), Value::DateTime(1715904000000.0)), (Value::Null, Value::Null)])),
+    ("prop_date_picker_year_format", || t::roundtrip("date-picker", "year-format", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_date_picker_year_visible", || t::roundtrip("date-picker", "year-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_expander_expand_direction", || t::roundtrip("expander", "expand-direction", &[(Value::Str("Up".into()), Value::Str("up".into())), (Value::Str("Down".into()), Value::Str("down".into()))])),
+    ("prop_expander_is_expanded", || t::roundtrip("expander", "is-expanded", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_menu_flyout_allow_focus_on_interaction", || t::roundtrip("menu-flyout", "allow-focus-on-interaction", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_menu_flyout_allow_focus_when_disabled", || t::roundtrip("menu-flyout", "allow-focus-when-disabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_menu_flyout_are_open_close_animations_enabled", || t::roundtrip("menu-flyout", "are-open-close-animations-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_menu_flyout_element_sound_mode", || t::roundtrip("menu-flyout", "element-sound-mode", &[(Value::Str("FocusOnly".into()), Value::Str("focus-only".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_menu_flyout_input_device_prefers_primary_commands", || t::readable("menu-flyout", "input-device-prefers-primary-commands")),
+    ("prop_menu_flyout_is_constrained_to_root_bounds", || t::readable("menu-flyout", "is-constrained-to-root-bounds")),
+    ("prop_menu_flyout_is_open", || t::readable("menu-flyout", "is-open")),
+    ("prop_menu_flyout_light_dismiss_overlay_mode", || t::roundtrip("menu-flyout", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_menu_flyout_placement", || t::roundtrip("menu-flyout", "placement", &[(Value::Str("Bottom".into()), Value::Str("bottom".into())), (Value::Str("Top".into()), Value::Str("top".into()))])),
+    ("prop_menu_flyout_should_constrain_to_root_bounds", || t::roundtrip("menu-flyout", "should-constrain-to-root-bounds", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_menu_flyout_show_mode", || t::roundtrip("menu-flyout", "show-mode", &[(Value::Str("Standard".into()), Value::Str("standard".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_font_icon_font_family", || t::roundtrip("font-icon", "font-family", &[(Value::Str("Consolas".into()), Value::Str("Consolas".into())), (Value::Str("Segoe UI".into()), Value::Str("Segoe UI".into()))])),
+    ("prop_font_icon_font_size", || t::roundtrip("font-icon", "font-size", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_font_icon_font_style", || t::roundtrip("font-icon", "font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_font_icon_font_weight", || t::roundtrip("font-icon", "font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_font_icon_glyph", || t::roundtrip("font-icon", "glyph", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_font_icon_is_text_scale_factor_enabled", || t::roundtrip("font-icon", "is-text-scale-factor-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_font_icon_mirrored_when_right_to_left", || t::roundtrip("font-icon", "mirrored-when-right-to-left", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_actual_theme", || t::readable("app-bar-button", "actual-theme")),
+    ("prop_app_bar_button_allow_focus_on_interaction", || t::roundtrip("app-bar-button", "allow-focus-on-interaction", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_allow_focus_when_disabled", || t::roundtrip("app-bar-button", "allow-focus-when-disabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_base_uri", || t::readable("app-bar-button", "base-uri")),
+    ("prop_app_bar_button_flow_direction", || t::roundtrip("app-bar-button", "flow-direction", &[(Value::Str("RightToLeft".into()), Value::Str("right-to-left".into())), (Value::Str("LeftToRight".into()), Value::Str("left-to-right".into()))])),
+    ("prop_app_bar_button_focus_visual_margin", || t::roundtrip("app-bar-button", "focus-visual-margin", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_app_bar_button_focus_visual_primary_brush", || t::roundtrip("app-bar-button", "focus-visual-primary-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_app_bar_button_focus_visual_primary_thickness", || t::roundtrip("app-bar-button", "focus-visual-primary-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_app_bar_button_focus_visual_secondary_brush", || t::roundtrip("app-bar-button", "focus-visual-secondary-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_app_bar_button_focus_visual_secondary_thickness", || t::roundtrip("app-bar-button", "focus-visual-secondary-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_app_bar_button_is_loaded", || t::readable("app-bar-button", "is-loaded")),
+    ("prop_app_bar_button_language", || t::roundtrip("app-bar-button", "language", &[(Value::Str("de-DE".into()), Value::Str("de-DE".into())), (Value::Str("en-US".into()), Value::Str("en-US".into()))])),
+    ("prop_app_bar_button_max_height", || t::roundtrip("app-bar-button", "max-height", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_app_bar_button_max_width", || t::roundtrip("app-bar-button", "max-width", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_app_bar_button_requested_theme", || t::roundtrip("app-bar-button", "requested-theme", &[(Value::Str("Light".into()), Value::Str("light".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
     ("prop_grid_background_sizing", || t::roundtrip("grid", "background-sizing", &[(Value::Str("OuterBorderEdge".into()), Value::Str("outer-border-edge".into())), (Value::Str("InnerBorderEdge".into()), Value::Str("inner-border-edge".into()))])),
+    ("prop_grid_border_brush", || t::roundtrip("grid", "border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
     ("prop_grid_border_thickness", || t::roundtrip("grid", "border-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
-    ("prop_grid_is_items_host", || t::readable("grid", "is-items-host")),
+    ("prop_grid_corner_radius", || t::roundtrip("grid", "corner-radius", &[(Value::Str("4".into()), Value::Str("4,4,4,4".into())), (Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into()))])),
+    ("prop_hyperlink_button_navigate_uri", || t::roundtrip("hyperlink-button", "navigate-uri", &[(Value::Str("https://example.com/a".into()), Value::Str("https://example.com/a".into())), (Value::Str("https://example.org/b".into()), Value::Str("https://example.org/b".into()))])),
+    ("prop_font_icon_foreground", || t::roundtrip("font-icon", "foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_image_nine_grid", || t::roundtrip("image", "nine-grid", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_image_source", || t::roundtrip("image", "source", &[(Value::Str("https://example.com/a.png".into()), Value::Str("https://example.com/a.png".into())), (Value::Str("https://example.org/b.png".into()), Value::Str("https://example.org/b.png".into()))])),
+    ("prop_image_stretch", || t::roundtrip("image", "stretch", &[(Value::Str("Fill".into()), Value::Str("fill".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_info_badge_value", || t::roundtrip("info-badge", "value", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_info_bar_is_closable", || t::roundtrip("info-bar", "is-closable", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_info_bar_is_icon_visible", || t::roundtrip("info-bar", "is-icon-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_info_bar_is_open", || t::roundtrip("info-bar", "is-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_info_bar_message", || t::roundtrip("info-bar", "message", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_info_bar_severity", || t::roundtrip("info-bar", "severity", &[(Value::Str("Success".into()), Value::Str("success".into())), (Value::Str("Informational".into()), Value::Str("informational".into()))])),
+    ("prop_info_bar_title", || t::roundtrip("info-bar", "title", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_selector_bar_item_is_selected", || t::roundtrip("selector-bar-item", "is-selected", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_auto_suggest_box_display_member_path", || t::roundtrip("auto-suggest-box", "display-member-path", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_auto_suggest_box_is_grouping", || t::readable("auto-suggest-box", "is-grouping")),
+    ("prop_grid_view_can_drag_items", || t::roundtrip("grid-view", "can-drag-items", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_can_reorder_items", || t::roundtrip("grid-view", "can-reorder-items", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_data_fetch_size", || t::roundtrip("grid-view", "data-fetch-size", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_grid_view_header", || t::roundtrip("grid-view", "header", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_grid_view_incremental_loading_threshold", || t::roundtrip("grid-view", "incremental-loading-threshold", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_grid_view_incremental_loading_trigger", || t::roundtrip("grid-view", "incremental-loading-trigger", &[(Value::Str("Edge".into()), Value::Str("edge".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_grid_view_is_active_view", || t::roundtrip("grid-view", "is-active-view", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_is_item_click_enabled", || t::roundtrip("grid-view", "is-item-click-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_is_multi_select_check_box_enabled", || t::roundtrip("grid-view", "is-multi-select-check-box-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_is_swipe_enabled", || t::roundtrip("grid-view", "is-swipe-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_is_zoomed_in_view", || t::roundtrip("grid-view", "is-zoomed-in-view", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_reorder_mode", || t::roundtrip("grid-view", "reorder-mode", &[(Value::Str("Enabled".into()), Value::Str("enabled".into())), (Value::Str("Disabled".into()), Value::Str("disabled".into()))])),
+    ("prop_grid_view_selection_mode", || t::roundtrip("grid-view", "selection-mode", &[(Value::Str("Single".into()), Value::Str("single".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_grid_view_shows_scrolling_placeholders", || t::roundtrip("grid-view", "shows-scrolling-placeholders", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_grid_view_single_selection_follows_focus", || t::roundtrip("grid-view", "single-selection-follows-focus", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_menu_flyout_item_icon", || t::roundtrip("menu-flyout-item", "icon", &[(Value::Str("Accept".into()), Value::Str("accept".into())), (Value::Str("Cancel".into()), Value::Str("cancel".into()))])),
+    ("prop_menu_flyout_item_keyboard_accelerator_text_override", || t::roundtrip("menu-flyout-item", "keyboard-accelerator-text-override", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_menu_flyout_sub_item_icon", || t::roundtrip("menu-flyout-sub-item", "icon", &[(Value::Str("Accept".into()), Value::Str("accept".into())), (Value::Str("Cancel".into()), Value::Str("cancel".into()))])),
+    ("prop_navigation_view_always_show_header", || t::roundtrip("navigation-view", "always-show-header", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_compact_mode_threshold_width", || t::roundtrip("navigation-view", "compact-mode-threshold-width", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_navigation_view_compact_pane_length", || t::roundtrip("navigation-view", "compact-pane-length", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_navigation_view_display_mode", || t::readable("navigation-view", "display-mode")),
+    ("prop_navigation_view_expanded_mode_threshold_width", || t::roundtrip("navigation-view", "expanded-mode-threshold-width", &[(Value::F64(48.0), Value::F64(48.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_navigation_view_header", || t::roundtrip("navigation-view", "header", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_navigation_view_is_back_button_visible", || t::roundtrip("navigation-view", "is-back-button-visible", &[(Value::Str("Visible".into()), Value::Str("visible".into())), (Value::Str("Collapsed".into()), Value::Str("collapsed".into()))])),
+    ("prop_navigation_view_is_back_enabled", || t::roundtrip("navigation-view", "is-back-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_is_pane_open", || t::roundtrip("navigation-view", "is-pane-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_is_pane_toggle_button_visible", || t::roundtrip("navigation-view", "is-pane-toggle-button-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_is_pane_visible", || t::roundtrip("navigation-view", "is-pane-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_is_settings_visible", || t::roundtrip("navigation-view", "is-settings-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_is_title_bar_auto_padding_enabled", || t::roundtrip("navigation-view", "is-title-bar-auto-padding-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_open_pane_length", || t::roundtrip("navigation-view", "open-pane-length", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_navigation_view_overflow_label_mode", || t::roundtrip("navigation-view", "overflow-label-mode", &[(Value::Str("NoLabel".into()), Value::Str("no-label".into())), (Value::Str("MoreLabel".into()), Value::Str("more-label".into()))])),
+    ("prop_navigation_view_pane_display_mode", || t::roundtrip("navigation-view", "pane-display-mode", &[(Value::Str("Left".into()), Value::Str("left".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_navigation_view_pane_title", || t::roundtrip("navigation-view", "pane-title", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_navigation_view_selection_follows_focus", || t::roundtrip("navigation-view", "selection-follows-focus", &[(Value::Str("Enabled".into()), Value::Str("enabled".into())), (Value::Str("Disabled".into()), Value::Str("disabled".into()))])),
+    ("prop_navigation_view_shoulder_navigation_enabled", || t::roundtrip("navigation-view", "shoulder-navigation-enabled", &[(Value::Str("Always".into()), Value::Str("always".into())), (Value::Str("WhenSelectionFollowsFocus".into()), Value::Str("when-selection-follows-focus".into()))])),
+    ("prop_navigation_view_item_compact_pane_length", || t::readable("navigation-view-item", "compact-pane-length")),
+    ("prop_navigation_view_item_has_unrealized_children", || t::roundtrip("navigation-view-item", "has-unrealized-children", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_item_icon", || t::roundtrip("navigation-view-item", "icon", &[(Value::Str("Accept".into()), Value::Str("accept".into())), (Value::Str("Cancel".into()), Value::Str("cancel".into()))])),
+    ("prop_navigation_view_item_is_child_selected", || t::roundtrip("navigation-view-item", "is-child-selected", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_item_is_expanded", || t::roundtrip("navigation-view-item", "is-expanded", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_item_selects_on_invoked", || t::roundtrip("navigation-view-item", "selects-on-invoked", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_navigation_view_item_is_selected", || t::roundtrip("navigation-view-item", "is-selected", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_number_box_accepts_expression", || t::roundtrip("number-box", "accepts-expression", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_number_box_description", || t::roundtrip("number-box", "description", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_number_box_is_wrap_enabled", || t::roundtrip("number-box", "is-wrap-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_number_box_large_change", || t::roundtrip("number-box", "large-change", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_number_box_maximum", || t::roundtrip("number-box", "maximum", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_number_box_minimum", || t::roundtrip("number-box", "minimum", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_number_box_placeholder_text", || t::roundtrip("number-box", "placeholder-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_number_box_prevent_keyboard_display_on_programmatic_focus", || t::roundtrip("number-box", "prevent-keyboard-display-on-programmatic-focus", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_number_box_selection_highlight_color", || t::roundtrip("number-box", "selection-highlight-color", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_number_box_small_change", || t::roundtrip("number-box", "small-change", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_number_box_spin_button_placement_mode", || t::roundtrip("number-box", "spin-button-placement-mode", &[(Value::Str("Compact".into()), Value::Str("compact".into())), (Value::Str("Hidden".into()), Value::Str("hidden".into()))])),
+    ("prop_number_box_text", || t::roundtrip("number-box", "text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_number_box_text_reading_order", || t::roundtrip("number-box", "text-reading-order", &[(Value::Str("UseFlowDirection".into()), Value::Str("use-flow-direction".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_number_box_validation_mode", || t::roundtrip("number-box", "validation-mode", &[(Value::Str("Disabled".into()), Value::Str("disabled".into())), (Value::Str("InvalidInputOverwritten".into()), Value::Str("invalid-input-overwritten".into()))])),
+    ("prop_number_box_value", || t::roundtrip("number-box", "value", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_canvas_background", || t::roundtrip("canvas", "background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_canvas_is_items_host", || t::readable("canvas", "is-items-host")),
+    ("prop_password_box_can_paste_clipboard_content", || t::readable("password-box", "can-paste-clipboard-content")),
+    ("prop_password_box_description", || t::roundtrip("password-box", "description", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_password_box_is_password_reveal_button_enabled", || t::roundtrip("password-box", "is-password-reveal-button-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_password_box_max_length", || t::roundtrip("password-box", "max-length", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_password_box_password", || t::roundtrip("password-box", "password", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_password_box_password_char", || t::roundtrip("password-box", "password-char", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_password_box_password_reveal_mode", || t::roundtrip("password-box", "password-reveal-mode", &[(Value::Str("Hidden".into()), Value::Str("hidden".into())), (Value::Str("Peek".into()), Value::Str("peek".into()))])),
+    ("prop_password_box_placeholder_text", || t::roundtrip("password-box", "placeholder-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_password_box_prevent_keyboard_display_on_programmatic_focus", || t::roundtrip("password-box", "prevent-keyboard-display-on-programmatic-focus", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_password_box_selection_highlight_color", || t::roundtrip("password-box", "selection-highlight-color", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_password_box_text_reading_order", || t::roundtrip("password-box", "text-reading-order", &[(Value::Str("UseFlowDirection".into()), Value::Str("use-flow-direction".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_person_picture_badge_glyph", || t::roundtrip("person-picture", "badge-glyph", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_person_picture_badge_image_source", || t::roundtrip("person-picture", "badge-image-source", &[(Value::Str("https://example.com/a.png".into()), Value::Str("https://example.com/a.png".into())), (Value::Str("https://example.org/b.png".into()), Value::Str("https://example.org/b.png".into()))])),
+    ("prop_person_picture_badge_number", || t::roundtrip("person-picture", "badge-number", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_person_picture_badge_text", || t::roundtrip("person-picture", "badge-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_person_picture_display_name", || t::roundtrip("person-picture", "display-name", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_person_picture_initials", || t::roundtrip("person-picture", "initials", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_person_picture_is_group", || t::roundtrip("person-picture", "is-group", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_person_picture_prefer_small_image", || t::roundtrip("person-picture", "prefer-small-image", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_person_picture_profile_picture", || t::roundtrip("person-picture", "profile-picture", &[(Value::Str("https://example.com/a.png".into()), Value::Str("https://example.com/a.png".into())), (Value::Str("https://example.org/b.png".into()), Value::Str("https://example.org/b.png".into()))])),
+    ("prop_progress_bar_is_indeterminate", || t::roundtrip("progress-bar", "is-indeterminate", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_progress_bar_show_error", || t::roundtrip("progress-bar", "show-error", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_progress_bar_show_paused", || t::roundtrip("progress-bar", "show-paused", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_progress_ring_is_active", || t::roundtrip("progress-ring", "is-active", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_progress_ring_is_indeterminate", || t::roundtrip("progress-ring", "is-indeterminate", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_progress_ring_maximum", || t::roundtrip("progress-ring", "maximum", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_progress_ring_minimum", || t::roundtrip("progress-ring", "minimum", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_progress_ring_value", || t::roundtrip("progress-ring", "value", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_radio_buttons_max_columns", || t::roundtrip("radio-buttons", "max-columns", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_rating_control_caption", || t::roundtrip("rating-control", "caption", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_rating_control_initial_set_value", || t::roundtrip("rating-control", "initial-set-value", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_rating_control_is_clear_enabled", || t::roundtrip("rating-control", "is-clear-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rating_control_is_read_only", || t::roundtrip("rating-control", "is-read-only", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rating_control_max_rating", || t::roundtrip("rating-control", "max-rating", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_rating_control_placeholder_value", || t::roundtrip("rating-control", "placeholder-value", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_rating_control_value", || t::roundtrip("rating-control", "value", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_repeat_button_delay", || t::roundtrip("repeat-button", "delay", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_repeat_button_interval", || t::roundtrip("repeat-button", "interval", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_rich_edit_box_accepts_return", || t::roundtrip("rich-edit-box", "accepts-return", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rich_edit_box_character_casing", || t::roundtrip("rich-edit-box", "character-casing", &[(Value::Str("Lower".into()), Value::Str("lower".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_rich_edit_box_clipboard_copy_format", || t::roundtrip("rich-edit-box", "clipboard-copy-format", &[(Value::Str("PlainText".into()), Value::Str("plain-text".into())), (Value::Str("AllFormats".into()), Value::Str("all-formats".into()))])),
+    ("prop_rich_edit_box_description", || t::roundtrip("rich-edit-box", "description", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_rich_edit_box_desired_candidate_window_alignment", || t::roundtrip("rich-edit-box", "desired-candidate-window-alignment", &[(Value::Str("BottomEdge".into()), Value::Str("bottom-edge".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_rich_edit_box_horizontal_text_alignment", || t::roundtrip("rich-edit-box", "horizontal-text-alignment", &[(Value::Str("Left".into()), Value::Str("left".into())), (Value::Str("Center".into()), Value::Str("center".into()))])),
+    ("prop_rich_edit_box_is_color_font_enabled", || t::roundtrip("rich-edit-box", "is-color-font-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rich_edit_box_is_read_only", || t::roundtrip("rich-edit-box", "is-read-only", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rich_edit_box_is_spell_check_enabled", || t::roundtrip("rich-edit-box", "is-spell-check-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rich_edit_box_is_text_prediction_enabled", || t::roundtrip("rich-edit-box", "is-text-prediction-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rich_edit_box_max_length", || t::roundtrip("rich-edit-box", "max-length", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_rich_edit_box_placeholder_text", || t::roundtrip("rich-edit-box", "placeholder-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_rich_edit_box_prevent_keyboard_display_on_programmatic_focus", || t::roundtrip("rich-edit-box", "prevent-keyboard-display-on-programmatic-focus", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_rich_edit_box_selection_highlight_color", || t::roundtrip("rich-edit-box", "selection-highlight-color", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_rich_edit_box_selection_highlight_color_when_not_focused", || t::roundtrip("rich-edit-box", "selection-highlight-color-when-not-focused", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_rich_edit_box_text_alignment", || t::roundtrip("rich-edit-box", "text-alignment", &[(Value::Str("Left".into()), Value::Str("left".into())), (Value::Str("Center".into()), Value::Str("center".into()))])),
+    ("prop_rich_edit_box_text_reading_order", || t::roundtrip("rich-edit-box", "text-reading-order", &[(Value::Str("UseFlowDirection".into()), Value::Str("use-flow-direction".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
+    ("prop_rich_edit_box_text_wrapping", || t::roundtrip("rich-edit-box", "text-wrapping", &[(Value::Str("Wrap".into()), Value::Str("wrap".into())), (Value::Str("NoWrap".into()), Value::Str("no-wrap".into()))])),
+    ("prop_scroll_viewer_bring_into_view_on_focus_change", || t::roundtrip("scroll-viewer", "bring-into-view-on-focus-change", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_can_content_render_outside_bounds", || t::roundtrip("scroll-viewer", "can-content-render-outside-bounds", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_computed_horizontal_scroll_bar_visibility", || t::readable("scroll-viewer", "computed-horizontal-scroll-bar-visibility")),
+    ("prop_scroll_viewer_computed_vertical_scroll_bar_visibility", || t::readable("scroll-viewer", "computed-vertical-scroll-bar-visibility")),
+    ("prop_scroll_viewer_extent_height", || t::readable("scroll-viewer", "extent-height")),
+    ("prop_scroll_viewer_extent_width", || t::readable("scroll-viewer", "extent-width")),
+    ("prop_scroll_viewer_horizontal_anchor_ratio", || t::roundtrip("scroll-viewer", "horizontal-anchor-ratio", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_scroll_viewer_horizontal_offset", || t::readable("scroll-viewer", "horizontal-offset")),
+    ("prop_scroll_viewer_horizontal_scroll_bar_visibility", || t::roundtrip("scroll-viewer", "horizontal-scroll-bar-visibility", &[(Value::Str("Auto".into()), Value::Str("auto".into())), (Value::Str("Disabled".into()), Value::Str("disabled".into()))])),
+    ("prop_scroll_viewer_horizontal_scroll_mode", || t::roundtrip("scroll-viewer", "horizontal-scroll-mode", &[(Value::Str("Enabled".into()), Value::Str("enabled".into())), (Value::Str("Disabled".into()), Value::Str("disabled".into()))])),
+    ("prop_scroll_viewer_horizontal_snap_points_alignment", || t::roundtrip("scroll-viewer", "horizontal-snap-points-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Near".into()), Value::Str("near".into()))])),
+    ("prop_scroll_viewer_horizontal_snap_points_type", || t::roundtrip("scroll-viewer", "horizontal-snap-points-type", &[(Value::Str("Optional".into()), Value::Str("optional".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_scroll_viewer_is_deferred_scrolling_enabled", || t::roundtrip("scroll-viewer", "is-deferred-scrolling-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_is_horizontal_rail_enabled", || t::roundtrip("scroll-viewer", "is-horizontal-rail-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_is_horizontal_scroll_chaining_enabled", || t::roundtrip("scroll-viewer", "is-horizontal-scroll-chaining-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_is_scroll_inertia_enabled", || t::roundtrip("scroll-viewer", "is-scroll-inertia-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_is_vertical_rail_enabled", || t::roundtrip("scroll-viewer", "is-vertical-rail-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_is_vertical_scroll_chaining_enabled", || t::roundtrip("scroll-viewer", "is-vertical-scroll-chaining-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_is_zoom_chaining_enabled", || t::roundtrip("scroll-viewer", "is-zoom-chaining-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_is_zoom_inertia_enabled", || t::roundtrip("scroll-viewer", "is-zoom-inertia-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_max_zoom_factor", || t::roundtrip("scroll-viewer", "max-zoom-factor", &[(Value::F64(2.0), Value::F64(2.0)), (Value::F64(4.0), Value::F64(4.0))])),
+    ("prop_scroll_viewer_min_zoom_factor", || t::roundtrip("scroll-viewer", "min-zoom-factor", &[(Value::F64(2.0), Value::F64(2.0)), (Value::F64(4.0), Value::F64(4.0))])),
+    ("prop_scroll_viewer_reduce_viewport_for_core_input_view_occlusions", || t::roundtrip("scroll-viewer", "reduce-viewport-for-core-input-view-occlusions", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_scroll_viewer_scrollable_height", || t::readable("scroll-viewer", "scrollable-height")),
+    ("prop_scroll_viewer_scrollable_width", || t::readable("scroll-viewer", "scrollable-width")),
+    ("prop_scroll_viewer_vertical_anchor_ratio", || t::roundtrip("scroll-viewer", "vertical-anchor-ratio", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_scroll_viewer_vertical_offset", || t::readable("scroll-viewer", "vertical-offset")),
+    ("prop_scroll_viewer_vertical_scroll_bar_visibility", || t::roundtrip("scroll-viewer", "vertical-scroll-bar-visibility", &[(Value::Str("Auto".into()), Value::Str("auto".into())), (Value::Str("Disabled".into()), Value::Str("disabled".into()))])),
+    ("prop_scroll_viewer_vertical_scroll_mode", || t::roundtrip("scroll-viewer", "vertical-scroll-mode", &[(Value::Str("Enabled".into()), Value::Str("enabled".into())), (Value::Str("Disabled".into()), Value::Str("disabled".into()))])),
+    ("prop_scroll_viewer_vertical_snap_points_alignment", || t::roundtrip("scroll-viewer", "vertical-snap-points-alignment", &[(Value::Str("Center".into()), Value::Str("center".into())), (Value::Str("Near".into()), Value::Str("near".into()))])),
+    ("prop_scroll_viewer_vertical_snap_points_type", || t::roundtrip("scroll-viewer", "vertical-snap-points-type", &[(Value::Str("Optional".into()), Value::Str("optional".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_scroll_viewer_viewport_height", || t::readable("scroll-viewer", "viewport-height")),
+    ("prop_scroll_viewer_viewport_width", || t::readable("scroll-viewer", "viewport-width")),
+    ("prop_scroll_viewer_zoom_factor", || t::readable("scroll-viewer", "zoom-factor")),
+    ("prop_scroll_viewer_zoom_mode", || t::roundtrip("scroll-viewer", "zoom-mode", &[(Value::Str("Enabled".into()), Value::Str("enabled".into())), (Value::Str("Disabled".into()), Value::Str("disabled".into()))])),
+    ("prop_scroll_viewer_zoom_snap_points_type", || t::roundtrip("scroll-viewer", "zoom-snap-points-type", &[(Value::Str("Optional".into()), Value::Str("optional".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_combo_box_is_synchronized_with_current_item", || t::roundtrip("combo-box", "is-synchronized-with-current-item", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_combo_box_selected_index", || t::roundtrip("combo-box", "selected-index", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_combo_box_selected_value_path", || t::roundtrip("combo-box", "selected-value-path", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_selector_bar_item_icon", || t::roundtrip("selector-bar-item", "icon", &[(Value::Str("Accept".into()), Value::Str("accept".into())), (Value::Str("Cancel".into()), Value::Str("cancel".into()))])),
+    ("prop_combo_box_item_is_selected", || t::roundtrip("combo-box-item", "is-selected", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_slider_intermediate_value", || t::roundtrip("slider", "intermediate-value", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
     ("prop_slider_is_direction_reversed", || t::roundtrip("slider", "is-direction-reversed", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_slider_is_thumb_tool_tip_enabled", || t::roundtrip("slider", "is-thumb-tool-tip-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_slider_snaps_to", || t::roundtrip("slider", "snaps-to", &[(Value::Str("Ticks".into()), Value::Str("ticks".into())), (Value::Str("StepValues".into()), Value::Str("step-values".into()))])),
     ("prop_slider_tick_frequency", || t::roundtrip("slider", "tick-frequency", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
     ("prop_slider_tick_placement", || t::roundtrip("slider", "tick-placement", &[(Value::Str("TopLeft".into()), Value::Str("top-left".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_split_view_compact_pane_length", || t::roundtrip("split-view", "compact-pane-length", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_split_view_display_mode", || t::roundtrip("split-view", "display-mode", &[(Value::Str("Inline".into()), Value::Str("inline".into())), (Value::Str("Overlay".into()), Value::Str("overlay".into()))])),
+    ("prop_split_view_is_pane_open", || t::roundtrip("split-view", "is-pane-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_split_view_light_dismiss_overlay_mode", || t::roundtrip("split-view", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_split_view_open_pane_length", || t::roundtrip("split-view", "open-pane-length", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_split_view_pane_background", || t::roundtrip("split-view", "pane-background", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_split_view_pane_placement", || t::roundtrip("split-view", "pane-placement", &[(Value::Str("Right".into()), Value::Str("right".into())), (Value::Str("Left".into()), Value::Str("left".into()))])),
     ("prop_stack_panel_are_horizontal_snap_points_regular", || t::readable("stack-panel", "are-horizontal-snap-points-regular")),
     ("prop_stack_panel_are_scroll_snap_points_regular", || t::roundtrip("stack-panel", "are-scroll-snap-points-regular", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_stack_panel_are_vertical_snap_points_regular", || t::readable("stack-panel", "are-vertical-snap-points-regular")),
     ("prop_stack_panel_background_sizing", || t::roundtrip("stack-panel", "background-sizing", &[(Value::Str("OuterBorderEdge".into()), Value::Str("outer-border-edge".into())), (Value::Str("InnerBorderEdge".into()), Value::Str("inner-border-edge".into()))])),
+    ("prop_stack_panel_border_brush", || t::roundtrip("stack-panel", "border-brush", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
     ("prop_stack_panel_border_thickness", || t::roundtrip("stack-panel", "border-thickness", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_stack_panel_corner_radius", || t::roundtrip("stack-panel", "corner-radius", &[(Value::Str("4".into()), Value::Str("4,4,4,4".into())), (Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into()))])),
+    ("prop_symbol_icon_symbol", || t::roundtrip("symbol-icon", "symbol", &[(Value::Str("Next".into()), Value::Str("next".into())), (Value::Str("Previous".into()), Value::Str("previous".into()))])),
+    ("prop_tab_view_allow_drop_tabs", || t::roundtrip("tab-view", "allow-drop-tabs", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_tab_view_can_drag_tabs", || t::roundtrip("tab-view", "can-drag-tabs", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_tab_view_can_reorder_tabs", || t::roundtrip("tab-view", "can-reorder-tabs", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_tab_view_can_tear_out_tabs", || t::roundtrip("tab-view", "can-tear-out-tabs", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_tab_view_close_button_overlay_mode", || t::roundtrip("tab-view", "close-button-overlay-mode", &[(Value::Str("OnPointerOver".into()), Value::Str("on-pointer-over".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_tab_view_is_add_tab_button_visible", || t::roundtrip("tab-view", "is-add-tab-button-visible", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_tab_view_tab_width_mode", || t::roundtrip("tab-view", "tab-width-mode", &[(Value::Str("SizeToContent".into()), Value::Str("size-to-content".into())), (Value::Str("Equal".into()), Value::Str("equal".into()))])),
+    ("prop_tab_view_item_is_closable", || t::roundtrip("tab-view-item", "is-closable", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_teaching_tip_action_button_content", || t::roundtrip("teaching-tip", "action-button-content", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_teaching_tip_close_button_content", || t::roundtrip("teaching-tip", "close-button-content", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_teaching_tip_hero_content_placement", || t::roundtrip("teaching-tip", "hero-content-placement", &[(Value::Str("Top".into()), Value::Str("top".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_teaching_tip_is_light_dismiss_enabled", || t::roundtrip("teaching-tip", "is-light-dismiss-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_teaching_tip_is_open", || t::roundtrip("teaching-tip", "is-open", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_teaching_tip_placement_margin", || t::roundtrip("teaching-tip", "placement-margin", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
+    ("prop_teaching_tip_preferred_placement", || t::roundtrip("teaching-tip", "preferred-placement", &[(Value::Str("Top".into()), Value::Str("top".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_teaching_tip_should_constrain_to_root_bounds", || t::roundtrip("teaching-tip", "should-constrain-to-root-bounds", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_teaching_tip_subtitle", || t::roundtrip("teaching-tip", "subtitle", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_teaching_tip_tail_visibility", || t::roundtrip("teaching-tip", "tail-visibility", &[(Value::Str("Visible".into()), Value::Str("visible".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_teaching_tip_title", || t::roundtrip("teaching-tip", "title", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
     ("prop_text_block_baseline_offset", || t::readable("text-block", "baseline-offset")),
     ("prop_text_block_character_spacing", || t::roundtrip("text-block", "character-spacing", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_text_block_font_family", || t::roundtrip("text-block", "font-family", &[(Value::Str("Consolas".into()), Value::Str("Consolas".into())), (Value::Str("Segoe UI".into()), Value::Str("Segoe UI".into()))])),
     ("prop_text_block_font_stretch", || t::roundtrip("text-block", "font-stretch", &[(Value::Str("UltraCondensed".into()), Value::Str("ultra-condensed".into())), (Value::Str("Undefined".into()), Value::Str("undefined".into()))])),
     ("prop_text_block_font_style", || t::roundtrip("text-block", "font-style", &[(Value::Str("Oblique".into()), Value::Str("oblique".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_text_block_font_weight", || t::roundtrip("text-block", "font-weight", &[(Value::I64(700), Value::I64(700)), (Value::I64(300), Value::I64(300))])),
+    ("prop_text_block_foreground", || t::roundtrip("text-block", "foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
     ("prop_text_block_horizontal_text_alignment", || t::roundtrip("text-block", "horizontal-text-alignment", &[(Value::Str("Left".into()), Value::Str("left".into())), (Value::Str("Center".into()), Value::Str("center".into()))])),
     ("prop_text_block_is_color_font_enabled", || t::roundtrip("text-block", "is-color-font-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_text_block_is_text_scale_factor_enabled", || t::roundtrip("text-block", "is-text-scale-factor-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
@@ -706,6 +1702,7 @@ pub static TESTS: &[(&str, fn())] = &[
     ("prop_text_block_optical_margin_alignment", || t::roundtrip("text-block", "optical-margin-alignment", &[(Value::Str("TrimSideBearings".into()), Value::Str("trim-side-bearings".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
     ("prop_text_block_padding", || t::roundtrip("text-block", "padding", &[(Value::Str("1,2,3,4".into()), Value::Str("1,2,3,4".into())), (Value::Str("5".into()), Value::Str("5,5,5,5".into()))])),
     ("prop_text_block_selected_text", || t::readable("text-block", "selected-text")),
+    ("prop_text_block_selection_highlight_color", || t::roundtrip("text-block", "selection-highlight-color", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
     ("prop_text_block_text_alignment", || t::roundtrip("text-block", "text-alignment", &[(Value::Str("Left".into()), Value::Str("left".into())), (Value::Str("Center".into()), Value::Str("center".into()))])),
     ("prop_text_block_text_line_bounds", || t::roundtrip("text-block", "text-line-bounds", &[(Value::Str("TrimToCapHeight".into()), Value::Str("trim-to-cap-height".into())), (Value::Str("Full".into()), Value::Str("full".into()))])),
     ("prop_text_block_text_trimming", || t::roundtrip("text-block", "text-trimming", &[(Value::Str("CharacterEllipsis".into()), Value::Str("character-ellipsis".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
@@ -713,93 +1710,545 @@ pub static TESTS: &[(&str, fn())] = &[
     ("prop_text_box_can_redo", || t::readable("text-box", "can-redo")),
     ("prop_text_box_can_undo", || t::readable("text-box", "can-undo")),
     ("prop_text_box_character_casing", || t::roundtrip("text-box", "character-casing", &[(Value::Str("Lower".into()), Value::Str("lower".into())), (Value::Str("Normal".into()), Value::Str("normal".into()))])),
+    ("prop_text_box_description", || t::roundtrip("text-box", "description", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
     ("prop_text_box_desired_candidate_window_alignment", || t::roundtrip("text-box", "desired-candidate-window-alignment", &[(Value::Str("BottomEdge".into()), Value::Str("bottom-edge".into())), (Value::Str("Default".into()), Value::Str("default".into()))])),
     ("prop_text_box_horizontal_text_alignment", || t::roundtrip("text-box", "horizontal-text-alignment", &[(Value::Str("Left".into()), Value::Str("left".into())), (Value::Str("Center".into()), Value::Str("center".into()))])),
     ("prop_text_box_is_color_font_enabled", || t::roundtrip("text-box", "is-color-font-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_text_box_is_spell_check_enabled", || t::roundtrip("text-box", "is-spell-check-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_text_box_is_text_prediction_enabled", || t::roundtrip("text-box", "is-text-prediction-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_text_box_placeholder_foreground", || t::roundtrip("text-box", "placeholder-foreground", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
     ("prop_text_box_prevent_keyboard_display_on_programmatic_focus", || t::roundtrip("text-box", "prevent-keyboard-display-on-programmatic-focus", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
     ("prop_text_box_selected_text", || t::roundtrip("text-box", "selected-text", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_text_box_selection_highlight_color", || t::roundtrip("text-box", "selection-highlight-color", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
+    ("prop_text_box_selection_highlight_color_when_not_focused", || t::roundtrip("text-box", "selection-highlight-color-when-not-focused", &[(Value::Str("#ff0000".into()), Value::Str("#ff0000".into())), (Value::Str("#00ff0080".into()), Value::Str("#00ff0080".into()))])),
     ("prop_text_box_selection_length", || t::roundtrip("text-box", "selection-length", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
     ("prop_text_box_selection_start", || t::roundtrip("text-box", "selection-start", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
     ("prop_text_box_text_alignment", || t::roundtrip("text-box", "text-alignment", &[(Value::Str("Left".into()), Value::Str("left".into())), (Value::Str("Center".into()), Value::Str("center".into()))])),
-    ("prop_button_access_key", || t::roundtrip("button", "access-key", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
-    ("prop_button_can_be_scroll_anchor", || t::roundtrip("button", "can-be-scroll-anchor", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_composite_mode", || t::roundtrip("button", "composite-mode", &[(Value::Str("SourceOver".into()), Value::Str("source-over".into())), (Value::Str("Inherit".into()), Value::Str("inherit".into()))])),
-    ("prop_button_exit_display_mode_on_access_key_invoked", || t::roundtrip("button", "exit-display-mode-on-access-key-invoked", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_focus_state", || t::readable("button", "focus-state")),
-    ("prop_button_is_access_key_scope", || t::roundtrip("button", "is-access-key-scope", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_is_double_tap_enabled", || t::roundtrip("button", "is-double-tap-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_is_holding_enabled", || t::roundtrip("button", "is-holding-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_is_right_tap_enabled", || t::roundtrip("button", "is-right-tap-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_is_tab_stop", || t::roundtrip("button", "is-tab-stop", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_is_tap_enabled", || t::roundtrip("button", "is-tap-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_key_tip_horizontal_offset", || t::roundtrip("button", "key-tip-horizontal-offset", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
-    ("prop_button_key_tip_placement_mode", || t::roundtrip("button", "key-tip-placement-mode", &[(Value::Str("Bottom".into()), Value::Str("bottom".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
-    ("prop_button_key_tip_vertical_offset", || t::roundtrip("button", "key-tip-vertical-offset", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
-    ("prop_button_keyboard_accelerator_placement_mode", || t::roundtrip("button", "keyboard-accelerator-placement-mode", &[(Value::Str("Hidden".into()), Value::Str("hidden".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
-    ("prop_button_rasterization_scale", || t::roundtrip("button", "rasterization-scale", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
-    ("prop_button_tab_focus_navigation", || t::roundtrip("button", "tab-focus-navigation", &[(Value::Str("Cycle".into()), Value::Str("cycle".into())), (Value::Str("Local".into()), Value::Str("local".into()))])),
-    ("prop_button_tab_index", || t::roundtrip("button", "tab-index", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
-    ("prop_button_use_layout_rounding", || t::roundtrip("button", "use-layout-rounding", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_use_system_focus_visuals", || t::roundtrip("button", "use-system-focus-visuals", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
-    ("prop_button_xy_focus_down_navigation_strategy", || t::roundtrip("button", "xy-focus-down-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
-    ("prop_button_xy_focus_keyboard_navigation", || t::roundtrip("button", "xy-focus-keyboard-navigation", &[(Value::Str("Enabled".into()), Value::Str("enabled".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
-    ("prop_button_xy_focus_left_navigation_strategy", || t::roundtrip("button", "xy-focus-left-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
-    ("prop_button_xy_focus_right_navigation_strategy", || t::roundtrip("button", "xy-focus-right-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
-    ("prop_button_xy_focus_up_navigation_strategy", || t::roundtrip("button", "xy-focus-up-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_time_picker_clock_identifier", || t::roundtrip("time-picker", "clock-identifier", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_time_picker_light_dismiss_overlay_mode", || t::roundtrip("time-picker", "light-dismiss-overlay-mode", &[(Value::Str("On".into()), Value::Str("on".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_time_picker_minute_increment", || t::roundtrip("time-picker", "minute-increment", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_time_picker_selected_time", || t::roundtrip("time-picker", "selected-time", &[(Value::F64(3600000.0), Value::F64(3600000.0)), (Value::Null, Value::Null)])),
+    ("prop_time_picker_time", || t::roundtrip("time-picker", "time", &[(Value::F64(3600000.0), Value::F64(3600000.0)), (Value::F64(7200000.0), Value::F64(7200000.0))])),
+    ("prop_toggle_menu_flyout_item_is_checked", || t::roundtrip("toggle-menu-flyout-item", "is-checked", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_toggle_switch_is_on", || t::roundtrip("toggle-switch", "is-on", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_toggle_switch_off_content", || t::roundtrip("toggle-switch", "off-content", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_toggle_switch_on_content", || t::roundtrip("toggle-switch", "on-content", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_app_bar_button_access_key", || t::roundtrip("app-bar-button", "access-key", &[(Value::Str("svelters".into()), Value::Str("svelters".into())), (Value::Str("winui".into()), Value::Str("winui".into()))])),
+    ("prop_app_bar_button_can_be_scroll_anchor", || t::roundtrip("app-bar-button", "can-be-scroll-anchor", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_composite_mode", || t::roundtrip("app-bar-button", "composite-mode", &[(Value::Str("SourceOver".into()), Value::Str("source-over".into())), (Value::Str("Inherit".into()), Value::Str("inherit".into()))])),
+    ("prop_app_bar_button_exit_display_mode_on_access_key_invoked", || t::roundtrip("app-bar-button", "exit-display-mode-on-access-key-invoked", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_focus_state", || t::readable("app-bar-button", "focus-state")),
+    ("prop_app_bar_button_is_access_key_scope", || t::roundtrip("app-bar-button", "is-access-key-scope", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_is_double_tap_enabled", || t::roundtrip("app-bar-button", "is-double-tap-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_is_holding_enabled", || t::roundtrip("app-bar-button", "is-holding-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_is_right_tap_enabled", || t::roundtrip("app-bar-button", "is-right-tap-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_is_tab_stop", || t::roundtrip("app-bar-button", "is-tab-stop", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_is_tap_enabled", || t::roundtrip("app-bar-button", "is-tap-enabled", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_key_tip_horizontal_offset", || t::roundtrip("app-bar-button", "key-tip-horizontal-offset", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_app_bar_button_key_tip_placement_mode", || t::roundtrip("app-bar-button", "key-tip-placement-mode", &[(Value::Str("Bottom".into()), Value::Str("bottom".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_app_bar_button_key_tip_vertical_offset", || t::roundtrip("app-bar-button", "key-tip-vertical-offset", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_app_bar_button_keyboard_accelerator_placement_mode", || t::roundtrip("app-bar-button", "keyboard-accelerator-placement-mode", &[(Value::Str("Hidden".into()), Value::Str("hidden".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_app_bar_button_rasterization_scale", || t::roundtrip("app-bar-button", "rasterization-scale", &[(Value::F64(12.0), Value::F64(12.0)), (Value::F64(24.0), Value::F64(24.0))])),
+    ("prop_app_bar_button_rotation", || t::roundtrip("app-bar-button", "rotation", &[(Value::F64(2.0), Value::F64(2.0)), (Value::F64(4.0), Value::F64(4.0))])),
+    ("prop_app_bar_button_tab_focus_navigation", || t::roundtrip("app-bar-button", "tab-focus-navigation", &[(Value::Str("Cycle".into()), Value::Str("cycle".into())), (Value::Str("Local".into()), Value::Str("local".into()))])),
+    ("prop_app_bar_button_tab_index", || t::roundtrip("app-bar-button", "tab-index", &[(Value::I64(3), Value::I64(3)), (Value::I64(7), Value::I64(7))])),
+    ("prop_app_bar_button_use_layout_rounding", || t::roundtrip("app-bar-button", "use-layout-rounding", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_use_system_focus_visuals", || t::roundtrip("app-bar-button", "use-system-focus-visuals", &[(Value::Bool(true), Value::Bool(true)), (Value::Bool(false), Value::Bool(false))])),
+    ("prop_app_bar_button_xy_focus_down_navigation_strategy", || t::roundtrip("app-bar-button", "xy-focus-down-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_app_bar_button_xy_focus_keyboard_navigation", || t::roundtrip("app-bar-button", "xy-focus-keyboard-navigation", &[(Value::Str("Enabled".into()), Value::Str("enabled".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_app_bar_button_xy_focus_left_navigation_strategy", || t::roundtrip("app-bar-button", "xy-focus-left-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_app_bar_button_xy_focus_right_navigation_strategy", || t::roundtrip("app-bar-button", "xy-focus-right-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_app_bar_button_xy_focus_up_navigation_strategy", || t::roundtrip("app-bar-button", "xy-focus-up-navigation-strategy", &[(Value::Str("Projection".into()), Value::Str("projection".into())), (Value::Str("Auto".into()), Value::Str("auto".into()))])),
+    ("prop_viewbox_stretch", || t::roundtrip("viewbox", "stretch", &[(Value::Str("Fill".into()), Value::Str("fill".into())), (Value::Str("None".into()), Value::Str("none".into()))])),
+    ("prop_viewbox_stretch_direction", || t::roundtrip("viewbox", "stretch-direction", &[(Value::Str("DownOnly".into()), Value::Str("down-only".into())), (Value::Str("UpOnly".into()), Value::Str("up-only".into()))])),
     ("prop_window_visible", || t::readable("window", "visible")),
-    ("notify_button_click_mode", || t::notify("button", "click-mode", "notify::click-mode", &[Value::Str("Press".into()), Value::Str("Release".into())])),
-    ("event_button_focus_disengaged", || t::connect("button", "focus-disengaged")),
-    ("event_button_focus_engaged", || t::connect("button", "focus-engaged")),
-    ("notify_button_background_sizing", || t::notify("button", "background-sizing", "notify::background-sizing", &[Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())])),
-    ("notify_button_border_thickness", || t::notify("button", "border-thickness", "notify::border-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
-    ("notify_button_character_spacing", || t::notify("button", "character-spacing", "notify::character-spacing", &[Value::I64(3), Value::I64(7)])),
-    ("notify_button_element_sound_mode", || t::notify("button", "element-sound-mode", "notify::element-sound-mode", &[Value::Str("FocusOnly".into()), Value::Str("Default".into())])),
-    ("notify_button_font_size", || t::notify("button", "font-size", "notify::font-size", &[Value::F64(20.0)])),
-    ("notify_button_font_stretch", || t::notify("button", "font-stretch", "notify::font-stretch", &[Value::Str("UltraCondensed".into()), Value::Str("Undefined".into())])),
-    ("notify_button_font_style", || t::notify("button", "font-style", "notify::font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
-    ("notify_button_horizontal_content_alignment", || t::notify("button", "horizontal-content-alignment", "notify::horizontal-content-alignment", &[Value::Str("Center".into()), Value::Str("Left".into())])),
-    ("notify_button_is_enabled", || t::notify("button", "is-enabled", "notify::is-enabled", &[Value::Bool(false)])),
-    ("notify_button_is_focus_engagement_enabled", || t::notify("button", "is-focus-engagement-enabled", "notify::is-focus-engagement-enabled", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_is_text_scale_factor_enabled", || t::notify("button", "is-text-scale-factor-enabled", "notify::is-text-scale-factor-enabled", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_padding", || t::notify("button", "padding", "notify::padding", &[Value::Str("4".into())])),
-    ("notify_button_requires_pointer", || t::notify("button", "requires-pointer", "notify::requires-pointer", &[Value::Str("WhenEngaged".into()), Value::Str("Never".into())])),
-    ("notify_button_tab_navigation", || t::notify("button", "tab-navigation", "notify::tab-navigation", &[Value::Str("Cycle".into()), Value::Str("Local".into())])),
-    ("notify_button_vertical_content_alignment", || t::notify("button", "vertical-content-alignment", "notify::vertical-content-alignment", &[Value::Str("Center".into()), Value::Str("Top".into())])),
-    ("event_button_actual_theme_changed", || t::connect("button", "actual-theme-changed")),
-    ("event_button_data_context_changed", || t::connect("button", "data-context-changed")),
-    ("event_button_effective_viewport_changed", || t::connect("button", "effective-viewport-changed")),
-    ("event_button_loading", || t::connect("button", "loading")),
-    ("event_button_unloaded", || t::connect("button", "unloaded")),
-    ("notify_button_allow_focus_on_interaction", || t::notify("button", "allow-focus-on-interaction", "notify::allow-focus-on-interaction", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_allow_focus_when_disabled", || t::notify("button", "allow-focus-when-disabled", "notify::allow-focus-when-disabled", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_flow_direction", || t::notify("button", "flow-direction", "notify::flow-direction", &[Value::Str("RightToLeft".into()), Value::Str("LeftToRight".into())])),
-    ("notify_button_focus_visual_margin", || t::notify("button", "focus-visual-margin", "notify::focus-visual-margin", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
-    ("notify_button_focus_visual_primary_thickness", || t::notify("button", "focus-visual-primary-thickness", "notify::focus-visual-primary-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
-    ("notify_button_focus_visual_secondary_thickness", || t::notify("button", "focus-visual-secondary-thickness", "notify::focus-visual-secondary-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
-    ("notify_button_height", || t::notify("button", "height", "notify::height", &[Value::F64(40.0)])),
-    ("notify_button_horizontal_alignment", || t::notify("button", "horizontal-alignment", "notify::horizontal-alignment", &[Value::Str("Center".into())])),
-    ("notify_button_language", || t::notify("button", "language", "notify::language", &[Value::Str("de-DE".into()), Value::Str("en-US".into())])),
-    ("notify_button_margin", || t::notify("button", "margin", "notify::margin", &[Value::Str("1,2,3,4".into())])),
-    ("notify_button_max_height", || t::notify("button", "max-height", "notify::max-height", &[Value::F64(48.0), Value::F64(24.0)])),
-    ("notify_button_max_width", || t::notify("button", "max-width", "notify::max-width", &[Value::F64(48.0), Value::F64(24.0)])),
-    ("notify_button_min_height", || t::notify("button", "min-height", "notify::min-height", &[Value::F64(10.0)])),
-    ("notify_button_min_width", || t::notify("button", "min-width", "notify::min-width", &[Value::F64(10.0)])),
-    ("notify_button_name", || t::notify("button", "name", "notify::name", &[Value::Str("first".into())])),
-    ("notify_button_requested_theme", || t::notify("button", "requested-theme", "notify::requested-theme", &[Value::Str("Light".into()), Value::Str("Default".into())])),
-    ("notify_button_vertical_alignment", || t::notify("button", "vertical-alignment", "notify::vertical-alignment", &[Value::Str("Bottom".into())])),
-    ("notify_button_width", || t::notify("button", "width", "notify::width", &[Value::F64(120.0)])),
+    ("event_command_bar_closed", || t::connect("command-bar", "closed")),
+    ("event_command_bar_closing", || t::connect("command-bar", "closing")),
+    ("event_command_bar_opened", || t::connect("command-bar", "opened")),
+    ("event_command_bar_opening", || t::connect("command-bar", "opening")),
+    ("notify_command_bar_closed_display_mode", || t::notify("command-bar", "closed-display-mode", "notify::closed-display-mode", &[Value::Str("Minimal".into()), Value::Str("Compact".into())])),
+    ("notify_command_bar_is_open", || t::notify("command-bar", "is-open", "notify::is-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_command_bar_is_sticky", || t::notify("command-bar", "is-sticky", "notify::is-sticky", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_command_bar_light_dismiss_overlay_mode", || t::notify("command-bar", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_app_bar_button_dynamic_overflow_order", || t::notify("app-bar-button", "dynamic-overflow-order", "notify::dynamic-overflow-order", &[Value::I64(3), Value::I64(7)])),
+    ("notify_app_bar_button_icon", || t::notify("app-bar-button", "icon", "notify::icon", &[Value::Str("Accept".into()), Value::Str("Cancel".into())])),
+    ("notify_app_bar_button_is_compact", || t::notify("app-bar-button", "is-compact", "notify::is-compact", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_keyboard_accelerator_text_override", || t::notify("app-bar-button", "keyboard-accelerator-text-override", "notify::keyboard-accelerator-text-override", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_app_bar_button_label", || t::notify("app-bar-button", "label", "notify::label", &[Value::Str("svelters".into())])),
+    ("notify_app_bar_button_label_position", || t::notify("app-bar-button", "label-position", "notify::label-position", &[Value::Str("Collapsed".into()), Value::Str("Default".into())])),
+    ("notify_app_bar_separator_dynamic_overflow_order", || t::notify("app-bar-separator", "dynamic-overflow-order", "notify::dynamic-overflow-order", &[Value::I64(3), Value::I64(7)])),
+    ("notify_app_bar_separator_is_compact", || t::notify("app-bar-separator", "is-compact", "notify::is-compact", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_toggle_button_dynamic_overflow_order", || t::notify("app-bar-toggle-button", "dynamic-overflow-order", "notify::dynamic-overflow-order", &[Value::I64(3), Value::I64(7)])),
+    ("notify_app_bar_toggle_button_icon", || t::notify("app-bar-toggle-button", "icon", "notify::icon", &[Value::Str("Accept".into()), Value::Str("Cancel".into())])),
+    ("notify_app_bar_toggle_button_is_compact", || t::notify("app-bar-toggle-button", "is-compact", "notify::is-compact", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_toggle_button_keyboard_accelerator_text_override", || t::notify("app-bar-toggle-button", "keyboard-accelerator-text-override", "notify::keyboard-accelerator-text-override", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_app_bar_toggle_button_label", || t::notify("app-bar-toggle-button", "label", "notify::label", &[Value::Str("svelters".into())])),
+    ("notify_app_bar_toggle_button_label_position", || t::notify("app-bar-toggle-button", "label-position", "notify::label-position", &[Value::Str("Collapsed".into()), Value::Str("Default".into())])),
+    ("event_auto_suggest_box_query_submitted", || t::connect("auto-suggest-box", "query-submitted")),
+    ("event_auto_suggest_box_suggestion_chosen", || t::connect("auto-suggest-box", "suggestion-chosen")),
+    ("event_auto_suggest_box_text_changed", || t::connect("auto-suggest-box", "text-changed")),
+    ("notify_auto_suggest_box_auto_maximize_suggestion_area", || t::notify("auto-suggest-box", "auto-maximize-suggestion-area", "notify::auto-maximize-suggestion-area", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_auto_suggest_box_is_suggestion_list_open", || t::notify("auto-suggest-box", "is-suggestion-list-open", "notify::is-suggestion-list-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_auto_suggest_box_light_dismiss_overlay_mode", || t::notify("auto-suggest-box", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_auto_suggest_box_max_suggestion_list_height", || t::notify("auto-suggest-box", "max-suggestion-list-height", "notify::max-suggestion-list-height", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_auto_suggest_box_placeholder_text", || t::notify("auto-suggest-box", "placeholder-text", "notify::placeholder-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_auto_suggest_box_query_icon", || t::notify("auto-suggest-box", "query-icon", "notify::query-icon", &[Value::Str("Accept".into()), Value::Str("Cancel".into())])),
+    ("notify_auto_suggest_box_text", || t::notify("auto-suggest-box", "text", "notify::text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_auto_suggest_box_text_member_path", || t::notify("auto-suggest-box", "text-member-path", "notify::text-member-path", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_auto_suggest_box_update_text_on_select", || t::notify("auto-suggest-box", "update-text-on-select", "notify::update-text-on-select", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_border_background", || t::notify("border", "background", "notify::background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_border_background_sizing", || t::notify("border", "background-sizing", "notify::background-sizing", &[Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())])),
+    ("notify_border_border_brush", || t::notify("border", "border-brush", "notify::border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_border_border_thickness", || t::notify("border", "border-thickness", "notify::border-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_border_corner_radius", || t::notify("border", "corner-radius", "notify::corner-radius", &[Value::Str("4".into()), Value::Str("1,2,3,4".into())])),
+    ("notify_border_padding", || t::notify("border", "padding", "notify::padding", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_app_bar_button_click_mode", || t::notify("app-bar-button", "click-mode", "notify::click-mode", &[Value::Str("Press".into()), Value::Str("Release".into())])),
+    ("event_calendar_date_picker_calendar_view_day_item_changing", || t::connect("calendar-date-picker", "calendar-view-day-item-changing")),
+    ("event_calendar_date_picker_closed", || t::connect("calendar-date-picker", "closed")),
+    ("event_calendar_date_picker_date_changed", || t::connect("calendar-date-picker", "date-changed")),
+    ("event_calendar_date_picker_opened", || t::connect("calendar-date-picker", "opened")),
+    ("notify_calendar_date_picker_calendar_identifier", || t::notify("calendar-date-picker", "calendar-identifier", "notify::calendar-identifier", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_calendar_date_picker_date", || t::notify("calendar-date-picker", "date", "notify::date", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Null])),
+    ("notify_calendar_date_picker_date_format", || t::notify("calendar-date-picker", "date-format", "notify::date-format", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_calendar_date_picker_day_of_week_format", || t::notify("calendar-date-picker", "day-of-week-format", "notify::day-of-week-format", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_calendar_date_picker_display_mode", || t::notify("calendar-date-picker", "display-mode", "notify::display-mode", &[Value::Str("Year".into()), Value::Str("Month".into())])),
+    ("notify_calendar_date_picker_first_day_of_week", || t::notify("calendar-date-picker", "first-day-of-week", "notify::first-day-of-week", &[Value::Str("Monday".into()), Value::Str("Sunday".into())])),
+    ("notify_calendar_date_picker_is_calendar_open", || t::notify("calendar-date-picker", "is-calendar-open", "notify::is-calendar-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_calendar_date_picker_is_group_label_visible", || t::notify("calendar-date-picker", "is-group-label-visible", "notify::is-group-label-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_calendar_date_picker_is_out_of_scope_enabled", || t::notify("calendar-date-picker", "is-out-of-scope-enabled", "notify::is-out-of-scope-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_calendar_date_picker_is_today_highlighted", || t::notify("calendar-date-picker", "is-today-highlighted", "notify::is-today-highlighted", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_calendar_date_picker_light_dismiss_overlay_mode", || t::notify("calendar-date-picker", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_calendar_date_picker_max_date", || t::notify("calendar-date-picker", "max-date", "notify::max-date", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Str("2021-01-02T00:00:00Z".into())])),
+    ("notify_calendar_date_picker_min_date", || t::notify("calendar-date-picker", "min-date", "notify::min-date", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Str("2021-01-02T00:00:00Z".into())])),
+    ("notify_calendar_date_picker_placeholder_text", || t::notify("calendar-date-picker", "placeholder-text", "notify::placeholder-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("event_calendar_view_calendar_view_day_item_changing", || t::connect("calendar-view", "calendar-view-day-item-changing")),
+    ("event_calendar_view_selected_dates_changed", || t::connect("calendar-view", "selected-dates-changed")),
+    ("notify_calendar_view_blackout_background", || t::notify("calendar-view", "blackout-background", "notify::blackout-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_blackout_foreground", || t::notify("calendar-view", "blackout-foreground", "notify::blackout-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_blackout_strikethrough_brush", || t::notify("calendar-view", "blackout-strikethrough-brush", "notify::blackout-strikethrough-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_calendar_identifier", || t::notify("calendar-view", "calendar-identifier", "notify::calendar-identifier", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_calendar_view_calendar_item_background", || t::notify("calendar-view", "calendar-item-background", "notify::calendar-item-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_calendar_item_border_brush", || t::notify("calendar-view", "calendar-item-border-brush", "notify::calendar-item-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_calendar_item_border_thickness", || t::notify("calendar-view", "calendar-item-border-thickness", "notify::calendar-item-border-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_calendar_view_calendar_item_corner_radius", || t::notify("calendar-view", "calendar-item-corner-radius", "notify::calendar-item-corner-radius", &[Value::Str("4".into()), Value::Str("1,2,3,4".into())])),
+    ("notify_calendar_view_calendar_item_disabled_background", || t::notify("calendar-view", "calendar-item-disabled-background", "notify::calendar-item-disabled-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_calendar_item_foreground", || t::notify("calendar-view", "calendar-item-foreground", "notify::calendar-item-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_calendar_item_hover_background", || t::notify("calendar-view", "calendar-item-hover-background", "notify::calendar-item-hover-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_calendar_item_pressed_background", || t::notify("calendar-view", "calendar-item-pressed-background", "notify::calendar-item-pressed-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_day_item_font_family", || t::notify("calendar-view", "day-item-font-family", "notify::day-item-font-family", &[Value::Str("Consolas".into()), Value::Str("Segoe UI".into())])),
+    ("notify_calendar_view_day_item_font_size", || t::notify("calendar-view", "day-item-font-size", "notify::day-item-font-size", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_calendar_view_day_item_font_style", || t::notify("calendar-view", "day-item-font-style", "notify::day-item-font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
+    ("notify_calendar_view_day_item_font_weight", || t::notify("calendar-view", "day-item-font-weight", "notify::day-item-font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_calendar_view_day_item_margin", || t::notify("calendar-view", "day-item-margin", "notify::day-item-margin", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_calendar_view_day_of_week_format", || t::notify("calendar-view", "day-of-week-format", "notify::day-of-week-format", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_calendar_view_disabled_foreground", || t::notify("calendar-view", "disabled-foreground", "notify::disabled-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_display_mode", || t::notify("calendar-view", "display-mode", "notify::display-mode", &[Value::Str("Year".into()), Value::Str("Month".into())])),
+    ("notify_calendar_view_first_day_of_week", || t::notify("calendar-view", "first-day-of-week", "notify::first-day-of-week", &[Value::Str("Monday".into()), Value::Str("Sunday".into())])),
+    ("notify_calendar_view_first_of_month_label_font_family", || t::notify("calendar-view", "first-of-month-label-font-family", "notify::first-of-month-label-font-family", &[Value::Str("Consolas".into()), Value::Str("Segoe UI".into())])),
+    ("notify_calendar_view_first_of_month_label_font_size", || t::notify("calendar-view", "first-of-month-label-font-size", "notify::first-of-month-label-font-size", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_calendar_view_first_of_month_label_font_style", || t::notify("calendar-view", "first-of-month-label-font-style", "notify::first-of-month-label-font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
+    ("notify_calendar_view_first_of_month_label_font_weight", || t::notify("calendar-view", "first-of-month-label-font-weight", "notify::first-of-month-label-font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_calendar_view_first_of_month_label_margin", || t::notify("calendar-view", "first-of-month-label-margin", "notify::first-of-month-label-margin", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_calendar_view_first_of_year_decade_label_font_family", || t::notify("calendar-view", "first-of-year-decade-label-font-family", "notify::first-of-year-decade-label-font-family", &[Value::Str("Consolas".into()), Value::Str("Segoe UI".into())])),
+    ("notify_calendar_view_first_of_year_decade_label_font_size", || t::notify("calendar-view", "first-of-year-decade-label-font-size", "notify::first-of-year-decade-label-font-size", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_calendar_view_first_of_year_decade_label_font_style", || t::notify("calendar-view", "first-of-year-decade-label-font-style", "notify::first-of-year-decade-label-font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
+    ("notify_calendar_view_first_of_year_decade_label_font_weight", || t::notify("calendar-view", "first-of-year-decade-label-font-weight", "notify::first-of-year-decade-label-font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_calendar_view_first_of_year_decade_label_margin", || t::notify("calendar-view", "first-of-year-decade-label-margin", "notify::first-of-year-decade-label-margin", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_calendar_view_focus_border_brush", || t::notify("calendar-view", "focus-border-brush", "notify::focus-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_horizontal_day_item_alignment", || t::notify("calendar-view", "horizontal-day-item-alignment", "notify::horizontal-day-item-alignment", &[Value::Str("Center".into()), Value::Str("Left".into())])),
+    ("notify_calendar_view_horizontal_first_of_month_label_alignment", || t::notify("calendar-view", "horizontal-first-of-month-label-alignment", "notify::horizontal-first-of-month-label-alignment", &[Value::Str("Center".into()), Value::Str("Left".into())])),
+    ("notify_calendar_view_hover_border_brush", || t::notify("calendar-view", "hover-border-brush", "notify::hover-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_is_group_label_visible", || t::notify("calendar-view", "is-group-label-visible", "notify::is-group-label-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_calendar_view_is_out_of_scope_enabled", || t::notify("calendar-view", "is-out-of-scope-enabled", "notify::is-out-of-scope-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_calendar_view_is_today_highlighted", || t::notify("calendar-view", "is-today-highlighted", "notify::is-today-highlighted", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_calendar_view_max_date", || t::notify("calendar-view", "max-date", "notify::max-date", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Str("2021-01-02T00:00:00Z".into())])),
+    ("notify_calendar_view_min_date", || t::notify("calendar-view", "min-date", "notify::min-date", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Str("2021-01-02T00:00:00Z".into())])),
+    ("notify_calendar_view_month_year_item_font_family", || t::notify("calendar-view", "month-year-item-font-family", "notify::month-year-item-font-family", &[Value::Str("Consolas".into()), Value::Str("Segoe UI".into())])),
+    ("notify_calendar_view_month_year_item_font_size", || t::notify("calendar-view", "month-year-item-font-size", "notify::month-year-item-font-size", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_calendar_view_month_year_item_font_style", || t::notify("calendar-view", "month-year-item-font-style", "notify::month-year-item-font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
+    ("notify_calendar_view_month_year_item_font_weight", || t::notify("calendar-view", "month-year-item-font-weight", "notify::month-year-item-font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_calendar_view_month_year_item_margin", || t::notify("calendar-view", "month-year-item-margin", "notify::month-year-item-margin", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_calendar_view_number_of_weeks_in_view", || t::notify("calendar-view", "number-of-weeks-in-view", "notify::number-of-weeks-in-view", &[Value::I64(3), Value::I64(7)])),
+    ("notify_calendar_view_out_of_scope_background", || t::notify("calendar-view", "out-of-scope-background", "notify::out-of-scope-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_out_of_scope_foreground", || t::notify("calendar-view", "out-of-scope-foreground", "notify::out-of-scope-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_out_of_scope_hover_foreground", || t::notify("calendar-view", "out-of-scope-hover-foreground", "notify::out-of-scope-hover-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_out_of_scope_pressed_foreground", || t::notify("calendar-view", "out-of-scope-pressed-foreground", "notify::out-of-scope-pressed-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_pressed_border_brush", || t::notify("calendar-view", "pressed-border-brush", "notify::pressed-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_pressed_foreground", || t::notify("calendar-view", "pressed-foreground", "notify::pressed-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_border_brush", || t::notify("calendar-view", "selected-border-brush", "notify::selected-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_disabled_border_brush", || t::notify("calendar-view", "selected-disabled-border-brush", "notify::selected-disabled-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_disabled_foreground", || t::notify("calendar-view", "selected-disabled-foreground", "notify::selected-disabled-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_foreground", || t::notify("calendar-view", "selected-foreground", "notify::selected-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_hover_border_brush", || t::notify("calendar-view", "selected-hover-border-brush", "notify::selected-hover-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_hover_foreground", || t::notify("calendar-view", "selected-hover-foreground", "notify::selected-hover-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_pressed_border_brush", || t::notify("calendar-view", "selected-pressed-border-brush", "notify::selected-pressed-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selected_pressed_foreground", || t::notify("calendar-view", "selected-pressed-foreground", "notify::selected-pressed-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_selection_mode", || t::notify("calendar-view", "selection-mode", "notify::selection-mode", &[Value::Str("Single".into()), Value::Str("None".into())])),
+    ("notify_calendar_view_today_background", || t::notify("calendar-view", "today-background", "notify::today-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_today_blackout_background", || t::notify("calendar-view", "today-blackout-background", "notify::today-blackout-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_today_blackout_foreground", || t::notify("calendar-view", "today-blackout-foreground", "notify::today-blackout-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_today_disabled_background", || t::notify("calendar-view", "today-disabled-background", "notify::today-disabled-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_today_font_weight", || t::notify("calendar-view", "today-font-weight", "notify::today-font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_calendar_view_today_foreground", || t::notify("calendar-view", "today-foreground", "notify::today-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_today_hover_background", || t::notify("calendar-view", "today-hover-background", "notify::today-hover-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_today_pressed_background", || t::notify("calendar-view", "today-pressed-background", "notify::today-pressed-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_today_selected_inner_border_brush", || t::notify("calendar-view", "today-selected-inner-border-brush", "notify::today-selected-inner-border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_calendar_view_vertical_day_item_alignment", || t::notify("calendar-view", "vertical-day-item-alignment", "notify::vertical-day-item-alignment", &[Value::Str("Center".into()), Value::Str("Top".into())])),
+    ("notify_calendar_view_vertical_first_of_month_label_alignment", || t::notify("calendar-view", "vertical-first-of-month-label-alignment", "notify::vertical-first-of-month-label-alignment", &[Value::Str("Center".into()), Value::Str("Top".into())])),
+    ("event_color_picker_color_changed", || t::connect("color-picker", "color-changed")),
+    ("notify_color_picker_color", || t::notify("color-picker", "color", "notify::color", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_color_picker_color_spectrum_components", || t::notify("color-picker", "color-spectrum-components", "notify::color-spectrum-components", &[Value::Str("ValueHue".into()), Value::Str("HueValue".into())])),
+    ("notify_color_picker_color_spectrum_shape", || t::notify("color-picker", "color-spectrum-shape", "notify::color-spectrum-shape", &[Value::Str("Ring".into()), Value::Str("Box".into())])),
+    ("notify_color_picker_is_alpha_enabled", || t::notify("color-picker", "is-alpha-enabled", "notify::is-alpha-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_alpha_slider_visible", || t::notify("color-picker", "is-alpha-slider-visible", "notify::is-alpha-slider-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_alpha_text_input_visible", || t::notify("color-picker", "is-alpha-text-input-visible", "notify::is-alpha-text-input-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_color_channel_text_input_visible", || t::notify("color-picker", "is-color-channel-text-input-visible", "notify::is-color-channel-text-input-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_color_preview_visible", || t::notify("color-picker", "is-color-preview-visible", "notify::is-color-preview-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_color_slider_visible", || t::notify("color-picker", "is-color-slider-visible", "notify::is-color-slider-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_color_spectrum_visible", || t::notify("color-picker", "is-color-spectrum-visible", "notify::is-color-spectrum-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_hex_input_visible", || t::notify("color-picker", "is-hex-input-visible", "notify::is-hex-input-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_is_more_button_visible", || t::notify("color-picker", "is-more-button-visible", "notify::is-more-button-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_color_picker_max_hue", || t::notify("color-picker", "max-hue", "notify::max-hue", &[Value::I64(3), Value::I64(7)])),
+    ("notify_color_picker_max_saturation", || t::notify("color-picker", "max-saturation", "notify::max-saturation", &[Value::I64(3), Value::I64(7)])),
+    ("notify_color_picker_max_value", || t::notify("color-picker", "max-value", "notify::max-value", &[Value::I64(3), Value::I64(7)])),
+    ("notify_color_picker_min_hue", || t::notify("color-picker", "min-hue", "notify::min-hue", &[Value::I64(3), Value::I64(7)])),
+    ("notify_color_picker_min_saturation", || t::notify("color-picker", "min-saturation", "notify::min-saturation", &[Value::I64(3), Value::I64(7)])),
+    ("notify_color_picker_min_value", || t::notify("color-picker", "min-value", "notify::min-value", &[Value::I64(3), Value::I64(7)])),
+    ("notify_color_picker_orientation", || t::notify("color-picker", "orientation", "notify::orientation", &[Value::Str("Horizontal".into()), Value::Str("Vertical".into())])),
+    ("notify_color_picker_previous_color", || t::notify("color-picker", "previous-color", "notify::previous-color", &[Value::Str("#ff0000".into()), Value::Null])),
+    ("event_combo_box_drop_down_closed", || t::connect("combo-box", "drop-down-closed")),
+    ("event_combo_box_drop_down_opened", || t::connect("combo-box", "drop-down-opened")),
+    ("event_combo_box_text_submitted", || t::connect("combo-box", "text-submitted")),
+    ("notify_combo_box_is_drop_down_open", || t::notify("combo-box", "is-drop-down-open", "notify::is-drop-down-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_combo_box_is_editable", || t::notify("combo-box", "is-editable", "notify::is-editable", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_combo_box_is_text_search_enabled", || t::notify("combo-box", "is-text-search-enabled", "notify::is-text-search-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_combo_box_light_dismiss_overlay_mode", || t::notify("combo-box", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_combo_box_max_drop_down_height", || t::notify("combo-box", "max-drop-down-height", "notify::max-drop-down-height", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_combo_box_placeholder_foreground", || t::notify("combo-box", "placeholder-foreground", "notify::placeholder-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_combo_box_placeholder_text", || t::notify("combo-box", "placeholder-text", "notify::placeholder-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_combo_box_selection_changed_trigger", || t::notify("combo-box", "selection-changed-trigger", "notify::selection-changed-trigger", &[Value::Str("Always".into()), Value::Str("Committed".into())])),
+    ("notify_combo_box_text", || t::notify("combo-box", "text", "notify::text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("event_command_bar_dynamic_overflow_items_changing", || t::connect("command-bar", "dynamic-overflow-items-changing")),
+    ("notify_command_bar_default_label_position", || t::notify("command-bar", "default-label-position", "notify::default-label-position", &[Value::Str("Right".into()), Value::Str("Bottom".into())])),
+    ("notify_command_bar_is_dynamic_overflow_enabled", || t::notify("command-bar", "is-dynamic-overflow-enabled", "notify::is-dynamic-overflow-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_command_bar_overflow_button_visibility", || t::notify("command-bar", "overflow-button-visibility", "notify::overflow-button-visibility", &[Value::Str("Visible".into()), Value::Str("Auto".into())])),
+    ("event_content_dialog_closed", || t::content_dialog_show()),
+    ("event_content_dialog_close_button_click", || t::connect("content-dialog", "close-button-click")),
+    ("event_content_dialog_closing", || t::connect("content-dialog", "closing")),
+    ("event_content_dialog_primary_button_click", || t::connect("content-dialog", "primary-button-click")),
+    ("event_content_dialog_secondary_button_click", || t::connect("content-dialog", "secondary-button-click")),
+    ("notify_content_dialog_close_button_text", || t::notify("content-dialog", "close-button-text", "notify::close-button-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_content_dialog_default_button", || t::notify("content-dialog", "default-button", "notify::default-button", &[Value::Str("Primary".into()), Value::Str("None".into())])),
+    ("notify_content_dialog_full_size_desired", || t::notify("content-dialog", "full-size-desired", "notify::full-size-desired", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_content_dialog_is_primary_button_enabled", || t::notify("content-dialog", "is-primary-button-enabled", "notify::is-primary-button-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_content_dialog_is_secondary_button_enabled", || t::notify("content-dialog", "is-secondary-button-enabled", "notify::is-secondary-button-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_content_dialog_primary_button_text", || t::notify("content-dialog", "primary-button-text", "notify::primary-button-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_content_dialog_secondary_button_text", || t::notify("content-dialog", "secondary-button-text", "notify::secondary-button-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("event_app_bar_button_focus_disengaged", || t::connect("app-bar-button", "focus-disengaged")),
+    ("event_app_bar_button_focus_engaged", || t::connect("app-bar-button", "focus-engaged")),
+    ("notify_app_bar_button_background", || t::notify("app-bar-button", "background", "notify::background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_app_bar_button_background_sizing", || t::notify("app-bar-button", "background-sizing", "notify::background-sizing", &[Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())])),
+    ("notify_app_bar_button_border_brush", || t::notify("app-bar-button", "border-brush", "notify::border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_app_bar_button_border_thickness", || t::notify("app-bar-button", "border-thickness", "notify::border-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_app_bar_button_character_spacing", || t::notify("app-bar-button", "character-spacing", "notify::character-spacing", &[Value::I64(3), Value::I64(7)])),
+    ("notify_app_bar_button_corner_radius", || t::notify("app-bar-button", "corner-radius", "notify::corner-radius", &[Value::Str("4".into()), Value::Str("1,2,3,4".into())])),
+    ("notify_app_bar_button_default_style_resource_uri", || t::notify("app-bar-button", "default-style-resource-uri", "notify::default-style-resource-uri", &[Value::Str("https://example.com/a".into()), Value::Str("https://example.org/b".into())])),
+    ("notify_app_bar_button_element_sound_mode", || t::notify("app-bar-button", "element-sound-mode", "notify::element-sound-mode", &[Value::Str("FocusOnly".into()), Value::Str("Default".into())])),
+    ("notify_app_bar_button_font_family", || t::notify("app-bar-button", "font-family", "notify::font-family", &[Value::Str("Consolas".into()), Value::Str("Segoe UI".into())])),
+    ("notify_app_bar_button_font_size", || t::notify("app-bar-button", "font-size", "notify::font-size", &[Value::F64(20.0)])),
+    ("notify_app_bar_button_font_stretch", || t::notify("app-bar-button", "font-stretch", "notify::font-stretch", &[Value::Str("UltraCondensed".into()), Value::Str("Undefined".into())])),
+    ("notify_app_bar_button_font_style", || t::notify("app-bar-button", "font-style", "notify::font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
+    ("notify_app_bar_button_font_weight", || t::notify("app-bar-button", "font-weight", "notify::font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_app_bar_button_foreground", || t::notify("app-bar-button", "foreground", "notify::foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_app_bar_button_horizontal_content_alignment", || t::notify("app-bar-button", "horizontal-content-alignment", "notify::horizontal-content-alignment", &[Value::Str("Center".into()), Value::Str("Left".into())])),
+    ("notify_app_bar_button_is_enabled", || t::notify("app-bar-button", "is-enabled", "notify::is-enabled", &[Value::Bool(false)])),
+    ("notify_app_bar_button_is_focus_engagement_enabled", || t::notify("app-bar-button", "is-focus-engagement-enabled", "notify::is-focus-engagement-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_is_text_scale_factor_enabled", || t::notify("app-bar-button", "is-text-scale-factor-enabled", "notify::is-text-scale-factor-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_padding", || t::notify("app-bar-button", "padding", "notify::padding", &[Value::Str("4".into())])),
+    ("notify_app_bar_button_requires_pointer", || t::notify("app-bar-button", "requires-pointer", "notify::requires-pointer", &[Value::Str("WhenEngaged".into()), Value::Str("Never".into())])),
+    ("notify_app_bar_button_tab_navigation", || t::notify("app-bar-button", "tab-navigation", "notify::tab-navigation", &[Value::Str("Cycle".into()), Value::Str("Local".into())])),
+    ("notify_app_bar_button_vertical_content_alignment", || t::notify("app-bar-button", "vertical-content-alignment", "notify::vertical-content-alignment", &[Value::Str("Center".into()), Value::Str("Top".into())])),
+    ("event_date_picker_date_changed", || t::connect("date-picker", "date-changed")),
+    ("event_date_picker_selected_date_changed", || t::connect("date-picker", "selected-date-changed")),
+    ("notify_date_picker_calendar_identifier", || t::notify("date-picker", "calendar-identifier", "notify::calendar-identifier", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_date_picker_date", || t::notify("date-picker", "date", "notify::date", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Str("2021-01-02T00:00:00Z".into())])),
+    ("notify_date_picker_day_format", || t::notify("date-picker", "day-format", "notify::day-format", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_date_picker_day_visible", || t::notify("date-picker", "day-visible", "notify::day-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_date_picker_light_dismiss_overlay_mode", || t::notify("date-picker", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_date_picker_max_year", || t::notify("date-picker", "max-year", "notify::max-year", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Str("2021-01-02T00:00:00Z".into())])),
+    ("notify_date_picker_min_year", || t::notify("date-picker", "min-year", "notify::min-year", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Str("2021-01-02T00:00:00Z".into())])),
+    ("notify_date_picker_month_format", || t::notify("date-picker", "month-format", "notify::month-format", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_date_picker_month_visible", || t::notify("date-picker", "month-visible", "notify::month-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_date_picker_orientation", || t::notify("date-picker", "orientation", "notify::orientation", &[Value::Str("Horizontal".into()), Value::Str("Vertical".into())])),
+    ("notify_date_picker_selected_date", || t::notify("date-picker", "selected-date", "notify::selected-date", &[Value::Str("2024-05-17T00:00:00Z".into()), Value::Null])),
+    ("notify_date_picker_year_format", || t::notify("date-picker", "year-format", "notify::year-format", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_date_picker_year_visible", || t::notify("date-picker", "year-visible", "notify::year-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("event_expander_collapsed", || t::connect("expander", "collapsed")),
+    ("event_expander_expanding", || t::connect("expander", "expanding")),
+    ("notify_expander_expand_direction", || t::notify("expander", "expand-direction", "notify::expand-direction", &[Value::Str("Up".into()), Value::Str("Down".into())])),
+    ("notify_expander_is_expanded", || t::notify("expander", "is-expanded", "notify::is-expanded", &[Value::Bool(true), Value::Bool(false)])),
+    ("event_menu_flyout_closed", || t::connect("menu-flyout", "closed")),
+    ("event_menu_flyout_closing", || t::connect("menu-flyout", "closing")),
+    ("event_menu_flyout_opened", || t::connect("menu-flyout", "opened")),
+    ("event_menu_flyout_opening", || t::connect("menu-flyout", "opening")),
+    ("notify_menu_flyout_allow_focus_on_interaction", || t::notify("menu-flyout", "allow-focus-on-interaction", "notify::allow-focus-on-interaction", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_menu_flyout_allow_focus_when_disabled", || t::notify("menu-flyout", "allow-focus-when-disabled", "notify::allow-focus-when-disabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_menu_flyout_are_open_close_animations_enabled", || t::notify("menu-flyout", "are-open-close-animations-enabled", "notify::are-open-close-animations-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_menu_flyout_element_sound_mode", || t::notify("menu-flyout", "element-sound-mode", "notify::element-sound-mode", &[Value::Str("FocusOnly".into()), Value::Str("Default".into())])),
+    ("notify_menu_flyout_light_dismiss_overlay_mode", || t::notify("menu-flyout", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_menu_flyout_placement", || t::notify("menu-flyout", "placement", "notify::placement", &[Value::Str("Bottom".into()), Value::Str("Top".into())])),
+    ("notify_menu_flyout_should_constrain_to_root_bounds", || t::notify("menu-flyout", "should-constrain-to-root-bounds", "notify::should-constrain-to-root-bounds", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_menu_flyout_show_mode", || t::notify("menu-flyout", "show-mode", "notify::show-mode", &[Value::Str("Standard".into()), Value::Str("Auto".into())])),
+    ("notify_font_icon_font_family", || t::notify("font-icon", "font-family", "notify::font-family", &[Value::Str("Consolas".into()), Value::Str("Segoe UI".into())])),
+    ("notify_font_icon_font_size", || t::notify("font-icon", "font-size", "notify::font-size", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_font_icon_font_style", || t::notify("font-icon", "font-style", "notify::font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
+    ("notify_font_icon_font_weight", || t::notify("font-icon", "font-weight", "notify::font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_font_icon_glyph", || t::notify("font-icon", "glyph", "notify::glyph", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_font_icon_is_text_scale_factor_enabled", || t::notify("font-icon", "is-text-scale-factor-enabled", "notify::is-text-scale-factor-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_font_icon_mirrored_when_right_to_left", || t::notify("font-icon", "mirrored-when-right-to-left", "notify::mirrored-when-right-to-left", &[Value::Bool(true), Value::Bool(false)])),
+    ("event_app_bar_button_actual_theme_changed", || t::connect("app-bar-button", "actual-theme-changed")),
+    ("event_app_bar_button_data_context_changed", || t::connect("app-bar-button", "data-context-changed")),
+    ("event_app_bar_button_effective_viewport_changed", || t::connect("app-bar-button", "effective-viewport-changed")),
+    ("event_app_bar_button_loading", || t::connect("app-bar-button", "loading")),
+    ("event_app_bar_button_unloaded", || t::connect("app-bar-button", "unloaded")),
+    ("notify_app_bar_button_allow_focus_on_interaction", || t::notify("app-bar-button", "allow-focus-on-interaction", "notify::allow-focus-on-interaction", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_allow_focus_when_disabled", || t::notify("app-bar-button", "allow-focus-when-disabled", "notify::allow-focus-when-disabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_flow_direction", || t::notify("app-bar-button", "flow-direction", "notify::flow-direction", &[Value::Str("RightToLeft".into()), Value::Str("LeftToRight".into())])),
+    ("notify_app_bar_button_focus_visual_margin", || t::notify("app-bar-button", "focus-visual-margin", "notify::focus-visual-margin", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_app_bar_button_focus_visual_primary_brush", || t::notify("app-bar-button", "focus-visual-primary-brush", "notify::focus-visual-primary-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_app_bar_button_focus_visual_primary_thickness", || t::notify("app-bar-button", "focus-visual-primary-thickness", "notify::focus-visual-primary-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_app_bar_button_focus_visual_secondary_brush", || t::notify("app-bar-button", "focus-visual-secondary-brush", "notify::focus-visual-secondary-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_app_bar_button_focus_visual_secondary_thickness", || t::notify("app-bar-button", "focus-visual-secondary-thickness", "notify::focus-visual-secondary-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_app_bar_button_height", || t::notify("app-bar-button", "height", "notify::height", &[Value::F64(40.0)])),
+    ("notify_app_bar_button_horizontal_alignment", || t::notify("app-bar-button", "horizontal-alignment", "notify::horizontal-alignment", &[Value::Str("Center".into())])),
+    ("notify_app_bar_button_language", || t::notify("app-bar-button", "language", "notify::language", &[Value::Str("de-DE".into()), Value::Str("en-US".into())])),
+    ("notify_app_bar_button_margin", || t::notify("app-bar-button", "margin", "notify::margin", &[Value::Str("1,2,3,4".into())])),
+    ("notify_app_bar_button_max_height", || t::notify("app-bar-button", "max-height", "notify::max-height", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_app_bar_button_max_width", || t::notify("app-bar-button", "max-width", "notify::max-width", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_app_bar_button_min_height", || t::notify("app-bar-button", "min-height", "notify::min-height", &[Value::F64(10.0)])),
+    ("notify_app_bar_button_min_width", || t::notify("app-bar-button", "min-width", "notify::min-width", &[Value::F64(10.0)])),
+    ("notify_app_bar_button_name", || t::notify("app-bar-button", "name", "notify::name", &[Value::Str("first".into())])),
+    ("notify_app_bar_button_requested_theme", || t::notify("app-bar-button", "requested-theme", "notify::requested-theme", &[Value::Str("Light".into()), Value::Str("Default".into())])),
+    ("notify_app_bar_button_vertical_alignment", || t::notify("app-bar-button", "vertical-alignment", "notify::vertical-alignment", &[Value::Str("Bottom".into())])),
+    ("notify_app_bar_button_width", || t::notify("app-bar-button", "width", "notify::width", &[Value::F64(120.0)])),
     ("notify_grid_background_sizing", || t::notify("grid", "background-sizing", "notify::background-sizing", &[Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())])),
+    ("notify_grid_border_brush", || t::notify("grid", "border-brush", "notify::border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
     ("notify_grid_border_thickness", || t::notify("grid", "border-thickness", "notify::border-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
     ("notify_grid_column_spacing", || t::notify("grid", "column-spacing", "notify::column-spacing", &[Value::F64(4.0)])),
+    ("notify_grid_corner_radius", || t::notify("grid", "corner-radius", "notify::corner-radius", &[Value::Str("4".into()), Value::Str("1,2,3,4".into())])),
     ("notify_grid_padding", || t::notify("grid", "padding", "notify::padding", &[Value::Str("8".into())])),
     ("notify_grid_row_spacing", || t::notify("grid", "row-spacing", "notify::row-spacing", &[Value::F64(4.0)])),
-    ("notify_slider_large_change", || t::notify("slider", "large-change", "notify::large-change", &[Value::F64(20.0)])),
-    ("notify_slider_maximum", || t::notify("slider", "maximum", "notify::maximum", &[Value::F64(50.0)])),
-    ("notify_slider_minimum", || t::notify("slider", "minimum", "notify::minimum", &[Value::F64(5.0)])),
-    ("notify_slider_small_change", || t::notify("slider", "small-change", "notify::small-change", &[Value::F64(2.0)])),
-    ("notify_slider_value", || t::notify("slider", "value", "notify::value", &[Value::F64(7.0)])),
+    ("notify_hyperlink_button_navigate_uri", || t::notify("hyperlink-button", "navigate-uri", "notify::navigate-uri", &[Value::Str("https://example.com/a".into()), Value::Str("https://example.org/b".into())])),
+    ("notify_font_icon_foreground", || t::notify("font-icon", "foreground", "notify::foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("event_image_image_failed", || t::connect("image", "image-failed")),
+    ("event_image_image_opened", || t::connect("image", "image-opened")),
+    ("notify_image_nine_grid", || t::notify("image", "nine-grid", "notify::nine-grid", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_image_source", || t::notify("image", "source", "notify::source", &[Value::Str("https://example.com/a.png".into()), Value::Str("https://example.org/b.png".into())])),
+    ("notify_image_stretch", || t::notify("image", "stretch", "notify::stretch", &[Value::Str("Fill".into()), Value::Str("None".into())])),
+    ("notify_info_badge_value", || t::notify("info-badge", "value", "notify::value", &[Value::I64(3), Value::I64(7)])),
+    ("event_info_bar_close_button_click", || t::connect("info-bar", "close-button-click")),
+    ("event_info_bar_closed", || t::connect("info-bar", "closed")),
+    ("event_info_bar_closing", || t::connect("info-bar", "closing")),
+    ("notify_info_bar_is_closable", || t::notify("info-bar", "is-closable", "notify::is-closable", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_info_bar_is_icon_visible", || t::notify("info-bar", "is-icon-visible", "notify::is-icon-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_info_bar_is_open", || t::notify("info-bar", "is-open", "notify::is-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_info_bar_message", || t::notify("info-bar", "message", "notify::message", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_info_bar_severity", || t::notify("info-bar", "severity", "notify::severity", &[Value::Str("Success".into()), Value::Str("Informational".into())])),
+    ("notify_info_bar_title", || t::notify("info-bar", "title", "notify::title", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_selector_bar_item_is_selected", || t::notify("selector-bar-item", "is-selected", "notify::is-selected", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_auto_suggest_box_display_member_path", || t::notify("auto-suggest-box", "display-member-path", "notify::display-member-path", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("event_grid_view_choosing_group_header_container", || t::connect("grid-view", "choosing-group-header-container")),
+    ("event_grid_view_choosing_item_container", || t::connect("grid-view", "choosing-item-container")),
+    ("event_grid_view_container_content_changing", || t::connect("grid-view", "container-content-changing")),
+    ("event_grid_view_drag_items_completed", || t::connect("grid-view", "drag-items-completed")),
+    ("event_grid_view_drag_items_starting", || t::connect("grid-view", "drag-items-starting")),
+    ("event_grid_view_item_click", || t::connect("grid-view", "item-click")),
+    ("notify_grid_view_can_drag_items", || t::notify("grid-view", "can-drag-items", "notify::can-drag-items", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_can_reorder_items", || t::notify("grid-view", "can-reorder-items", "notify::can-reorder-items", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_data_fetch_size", || t::notify("grid-view", "data-fetch-size", "notify::data-fetch-size", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_grid_view_incremental_loading_threshold", || t::notify("grid-view", "incremental-loading-threshold", "notify::incremental-loading-threshold", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_grid_view_incremental_loading_trigger", || t::notify("grid-view", "incremental-loading-trigger", "notify::incremental-loading-trigger", &[Value::Str("Edge".into()), Value::Str("None".into())])),
+    ("notify_grid_view_is_active_view", || t::notify("grid-view", "is-active-view", "notify::is-active-view", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_is_item_click_enabled", || t::notify("grid-view", "is-item-click-enabled", "notify::is-item-click-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_is_multi_select_check_box_enabled", || t::notify("grid-view", "is-multi-select-check-box-enabled", "notify::is-multi-select-check-box-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_is_swipe_enabled", || t::notify("grid-view", "is-swipe-enabled", "notify::is-swipe-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_is_zoomed_in_view", || t::notify("grid-view", "is-zoomed-in-view", "notify::is-zoomed-in-view", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_reorder_mode", || t::notify("grid-view", "reorder-mode", "notify::reorder-mode", &[Value::Str("Enabled".into()), Value::Str("Disabled".into())])),
+    ("notify_grid_view_selection_mode", || t::notify("grid-view", "selection-mode", "notify::selection-mode", &[Value::Str("Single".into()), Value::Str("None".into())])),
+    ("notify_grid_view_shows_scrolling_placeholders", || t::notify("grid-view", "shows-scrolling-placeholders", "notify::shows-scrolling-placeholders", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_grid_view_single_selection_follows_focus", || t::notify("grid-view", "single-selection-follows-focus", "notify::single-selection-follows-focus", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_menu_bar_item_title", || t::notify("menu-bar-item", "title", "notify::title", &[Value::Str("svelters".into())])),
+    ("event_menu_flyout_item_click", || t::connect("menu-flyout-item", "click")),
+    ("notify_menu_flyout_item_icon", || t::notify("menu-flyout-item", "icon", "notify::icon", &[Value::Str("Accept".into()), Value::Str("Cancel".into())])),
+    ("notify_menu_flyout_item_keyboard_accelerator_text_override", || t::notify("menu-flyout-item", "keyboard-accelerator-text-override", "notify::keyboard-accelerator-text-override", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_menu_flyout_item_text", || t::notify("menu-flyout-item", "text", "notify::text", &[Value::Str("svelters".into())])),
+    ("notify_menu_flyout_sub_item_icon", || t::notify("menu-flyout-sub-item", "icon", "notify::icon", &[Value::Str("Accept".into()), Value::Str("Cancel".into())])),
+    ("notify_menu_flyout_sub_item_text", || t::notify("menu-flyout-sub-item", "text", "notify::text", &[Value::Str("svelters".into())])),
+    ("event_navigation_view_back_requested", || t::connect("navigation-view", "back-requested")),
+    ("event_navigation_view_collapsed", || t::connect("navigation-view", "collapsed")),
+    ("event_navigation_view_display_mode_changed", || t::connect("navigation-view", "display-mode-changed")),
+    ("event_navigation_view_expanding", || t::connect("navigation-view", "expanding")),
+    ("event_navigation_view_item_invoked", || t::connect("navigation-view", "item-invoked")),
+    ("event_navigation_view_pane_closed", || t::connect("navigation-view", "pane-closed")),
+    ("event_navigation_view_pane_closing", || t::connect("navigation-view", "pane-closing")),
+    ("event_navigation_view_pane_opened", || t::connect("navigation-view", "pane-opened")),
+    ("event_navigation_view_pane_opening", || t::connect("navigation-view", "pane-opening")),
+    ("event_navigation_view_selection_changed", || t::connect("navigation-view", "selection-changed")),
+    ("notify_navigation_view_always_show_header", || t::notify("navigation-view", "always-show-header", "notify::always-show-header", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_compact_mode_threshold_width", || t::notify("navigation-view", "compact-mode-threshold-width", "notify::compact-mode-threshold-width", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_navigation_view_compact_pane_length", || t::notify("navigation-view", "compact-pane-length", "notify::compact-pane-length", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_navigation_view_expanded_mode_threshold_width", || t::notify("navigation-view", "expanded-mode-threshold-width", "notify::expanded-mode-threshold-width", &[Value::F64(48.0), Value::F64(24.0)])),
+    ("notify_navigation_view_is_back_button_visible", || t::notify("navigation-view", "is-back-button-visible", "notify::is-back-button-visible", &[Value::Str("Visible".into()), Value::Str("Collapsed".into())])),
+    ("notify_navigation_view_is_back_enabled", || t::notify("navigation-view", "is-back-enabled", "notify::is-back-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_is_pane_open", || t::notify("navigation-view", "is-pane-open", "notify::is-pane-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_is_pane_toggle_button_visible", || t::notify("navigation-view", "is-pane-toggle-button-visible", "notify::is-pane-toggle-button-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_is_pane_visible", || t::notify("navigation-view", "is-pane-visible", "notify::is-pane-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_is_settings_visible", || t::notify("navigation-view", "is-settings-visible", "notify::is-settings-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_is_title_bar_auto_padding_enabled", || t::notify("navigation-view", "is-title-bar-auto-padding-enabled", "notify::is-title-bar-auto-padding-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_open_pane_length", || t::notify("navigation-view", "open-pane-length", "notify::open-pane-length", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_navigation_view_overflow_label_mode", || t::notify("navigation-view", "overflow-label-mode", "notify::overflow-label-mode", &[Value::Str("NoLabel".into()), Value::Str("MoreLabel".into())])),
+    ("notify_navigation_view_pane_display_mode", || t::notify("navigation-view", "pane-display-mode", "notify::pane-display-mode", &[Value::Str("Left".into()), Value::Str("Auto".into())])),
+    ("notify_navigation_view_pane_title", || t::notify("navigation-view", "pane-title", "notify::pane-title", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_navigation_view_selection_follows_focus", || t::notify("navigation-view", "selection-follows-focus", "notify::selection-follows-focus", &[Value::Str("Enabled".into()), Value::Str("Disabled".into())])),
+    ("notify_navigation_view_shoulder_navigation_enabled", || t::notify("navigation-view", "shoulder-navigation-enabled", "notify::shoulder-navigation-enabled", &[Value::Str("Always".into()), Value::Str("WhenSelectionFollowsFocus".into())])),
+    ("notify_navigation_view_item_has_unrealized_children", || t::notify("navigation-view-item", "has-unrealized-children", "notify::has-unrealized-children", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_item_icon", || t::notify("navigation-view-item", "icon", "notify::icon", &[Value::Str("Accept".into()), Value::Str("Cancel".into())])),
+    ("notify_navigation_view_item_is_child_selected", || t::notify("navigation-view-item", "is-child-selected", "notify::is-child-selected", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_item_is_expanded", || t::notify("navigation-view-item", "is-expanded", "notify::is-expanded", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_item_selects_on_invoked", || t::notify("navigation-view-item", "selects-on-invoked", "notify::selects-on-invoked", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_navigation_view_item_is_selected", || t::notify("navigation-view-item", "is-selected", "notify::is-selected", &[Value::Bool(true), Value::Bool(false)])),
+    ("event_number_box_value_changed", || t::connect("number-box", "value-changed")),
+    ("notify_number_box_accepts_expression", || t::notify("number-box", "accepts-expression", "notify::accepts-expression", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_number_box_is_wrap_enabled", || t::notify("number-box", "is-wrap-enabled", "notify::is-wrap-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_number_box_large_change", || t::notify("number-box", "large-change", "notify::large-change", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_number_box_maximum", || t::notify("number-box", "maximum", "notify::maximum", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_number_box_minimum", || t::notify("number-box", "minimum", "notify::minimum", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_number_box_placeholder_text", || t::notify("number-box", "placeholder-text", "notify::placeholder-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_number_box_prevent_keyboard_display_on_programmatic_focus", || t::notify("number-box", "prevent-keyboard-display-on-programmatic-focus", "notify::prevent-keyboard-display-on-programmatic-focus", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_number_box_selection_highlight_color", || t::notify("number-box", "selection-highlight-color", "notify::selection-highlight-color", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_number_box_small_change", || t::notify("number-box", "small-change", "notify::small-change", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_number_box_spin_button_placement_mode", || t::notify("number-box", "spin-button-placement-mode", "notify::spin-button-placement-mode", &[Value::Str("Compact".into()), Value::Str("Hidden".into())])),
+    ("notify_number_box_text", || t::notify("number-box", "text", "notify::text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_number_box_text_reading_order", || t::notify("number-box", "text-reading-order", "notify::text-reading-order", &[Value::Str("UseFlowDirection".into()), Value::Str("Default".into())])),
+    ("notify_number_box_validation_mode", || t::notify("number-box", "validation-mode", "notify::validation-mode", &[Value::Str("Disabled".into()), Value::Str("InvalidInputOverwritten".into())])),
+    ("notify_number_box_value", || t::notify("number-box", "value", "notify::value", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_canvas_background", || t::notify("canvas", "background", "notify::background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("event_password_box_context_menu_opening", || t::connect("password-box", "context-menu-opening")),
+    ("event_password_box_password_changed", || t::connect("password-box", "password-changed")),
+    ("event_password_box_password_changing", || t::connect("password-box", "password-changing")),
+    ("event_password_box_paste", || t::connect("password-box", "paste")),
+    ("notify_password_box_is_password_reveal_button_enabled", || t::notify("password-box", "is-password-reveal-button-enabled", "notify::is-password-reveal-button-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_password_box_max_length", || t::notify("password-box", "max-length", "notify::max-length", &[Value::I64(3), Value::I64(7)])),
+    ("notify_password_box_password", || t::notify("password-box", "password", "notify::password", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_password_box_password_char", || t::notify("password-box", "password-char", "notify::password-char", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_password_box_password_reveal_mode", || t::notify("password-box", "password-reveal-mode", "notify::password-reveal-mode", &[Value::Str("Hidden".into()), Value::Str("Peek".into())])),
+    ("notify_password_box_placeholder_text", || t::notify("password-box", "placeholder-text", "notify::placeholder-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_password_box_prevent_keyboard_display_on_programmatic_focus", || t::notify("password-box", "prevent-keyboard-display-on-programmatic-focus", "notify::prevent-keyboard-display-on-programmatic-focus", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_password_box_selection_highlight_color", || t::notify("password-box", "selection-highlight-color", "notify::selection-highlight-color", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_password_box_text_reading_order", || t::notify("password-box", "text-reading-order", "notify::text-reading-order", &[Value::Str("UseFlowDirection".into()), Value::Str("Default".into())])),
+    ("notify_person_picture_badge_glyph", || t::notify("person-picture", "badge-glyph", "notify::badge-glyph", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_person_picture_badge_image_source", || t::notify("person-picture", "badge-image-source", "notify::badge-image-source", &[Value::Str("https://example.com/a.png".into()), Value::Str("https://example.org/b.png".into())])),
+    ("notify_person_picture_badge_number", || t::notify("person-picture", "badge-number", "notify::badge-number", &[Value::I64(3), Value::I64(7)])),
+    ("notify_person_picture_badge_text", || t::notify("person-picture", "badge-text", "notify::badge-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_person_picture_display_name", || t::notify("person-picture", "display-name", "notify::display-name", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_person_picture_initials", || t::notify("person-picture", "initials", "notify::initials", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_person_picture_is_group", || t::notify("person-picture", "is-group", "notify::is-group", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_person_picture_prefer_small_image", || t::notify("person-picture", "prefer-small-image", "notify::prefer-small-image", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_person_picture_profile_picture", || t::notify("person-picture", "profile-picture", "notify::profile-picture", &[Value::Str("https://example.com/a.png".into()), Value::Str("https://example.org/b.png".into())])),
+    ("notify_progress_bar_is_indeterminate", || t::notify("progress-bar", "is-indeterminate", "notify::is-indeterminate", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_progress_bar_show_error", || t::notify("progress-bar", "show-error", "notify::show-error", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_progress_bar_show_paused", || t::notify("progress-bar", "show-paused", "notify::show-paused", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_progress_ring_is_active", || t::notify("progress-ring", "is-active", "notify::is-active", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_progress_ring_is_indeterminate", || t::notify("progress-ring", "is-indeterminate", "notify::is-indeterminate", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_progress_ring_maximum", || t::notify("progress-ring", "maximum", "notify::maximum", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_progress_ring_minimum", || t::notify("progress-ring", "minimum", "notify::minimum", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_progress_ring_value", || t::notify("progress-ring", "value", "notify::value", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_radio_button_group_name", || t::notify("radio-button", "group-name", "notify::group-name", &[Value::Str("group-a".into())])),
+    ("event_radio_buttons_selection_changed", || t::connect("radio-buttons", "selection-changed")),
+    ("notify_radio_buttons_max_columns", || t::notify("radio-buttons", "max-columns", "notify::max-columns", &[Value::I64(3), Value::I64(7)])),
+    ("notify_radio_buttons_selected_index", || t::notify("radio-buttons", "selected-index", "notify::selected-index", &[Value::I64(-1)])),
+    ("notify_progress_bar_large_change", || t::notify("progress-bar", "large-change", "notify::large-change", &[Value::F64(20.0)])),
+    ("notify_progress_bar_maximum", || t::notify("progress-bar", "maximum", "notify::maximum", &[Value::F64(50.0)])),
+    ("notify_progress_bar_minimum", || t::notify("progress-bar", "minimum", "notify::minimum", &[Value::F64(5.0)])),
+    ("notify_progress_bar_small_change", || t::notify("progress-bar", "small-change", "notify::small-change", &[Value::F64(2.0)])),
+    ("notify_progress_bar_value", || t::notify("progress-bar", "value", "notify::value", &[Value::F64(7.0)])),
+    ("event_rating_control_value_changed", || t::connect("rating-control", "value-changed")),
+    ("notify_rating_control_caption", || t::notify("rating-control", "caption", "notify::caption", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_rating_control_initial_set_value", || t::notify("rating-control", "initial-set-value", "notify::initial-set-value", &[Value::I64(3), Value::I64(7)])),
+    ("notify_rating_control_is_clear_enabled", || t::notify("rating-control", "is-clear-enabled", "notify::is-clear-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rating_control_is_read_only", || t::notify("rating-control", "is-read-only", "notify::is-read-only", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rating_control_max_rating", || t::notify("rating-control", "max-rating", "notify::max-rating", &[Value::I64(3), Value::I64(7)])),
+    ("notify_rating_control_placeholder_value", || t::notify("rating-control", "placeholder-value", "notify::placeholder-value", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_rating_control_value", || t::notify("rating-control", "value", "notify::value", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_repeat_button_delay", || t::notify("repeat-button", "delay", "notify::delay", &[Value::I64(3), Value::I64(7)])),
+    ("notify_repeat_button_interval", || t::notify("repeat-button", "interval", "notify::interval", &[Value::I64(3), Value::I64(7)])),
+    ("event_rich_edit_box_candidate_window_bounds_changed", || t::connect("rich-edit-box", "candidate-window-bounds-changed")),
+    ("event_rich_edit_box_context_menu_opening", || t::connect("rich-edit-box", "context-menu-opening")),
+    ("event_rich_edit_box_copying_to_clipboard", || t::connect("rich-edit-box", "copying-to-clipboard")),
+    ("event_rich_edit_box_cutting_to_clipboard", || t::connect("rich-edit-box", "cutting-to-clipboard")),
+    ("event_rich_edit_box_paste", || t::connect("rich-edit-box", "paste")),
+    ("event_rich_edit_box_selection_changed", || t::connect("rich-edit-box", "selection-changed")),
+    ("event_rich_edit_box_selection_changing", || t::connect("rich-edit-box", "selection-changing")),
+    ("event_rich_edit_box_text_changed", || t::connect("rich-edit-box", "text-changed")),
+    ("event_rich_edit_box_text_changing", || t::connect("rich-edit-box", "text-changing")),
+    ("event_rich_edit_box_text_composition_changed", || t::connect("rich-edit-box", "text-composition-changed")),
+    ("event_rich_edit_box_text_composition_ended", || t::connect("rich-edit-box", "text-composition-ended")),
+    ("event_rich_edit_box_text_composition_started", || t::connect("rich-edit-box", "text-composition-started")),
+    ("notify_rich_edit_box_accepts_return", || t::notify("rich-edit-box", "accepts-return", "notify::accepts-return", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rich_edit_box_character_casing", || t::notify("rich-edit-box", "character-casing", "notify::character-casing", &[Value::Str("Lower".into()), Value::Str("Normal".into())])),
+    ("notify_rich_edit_box_clipboard_copy_format", || t::notify("rich-edit-box", "clipboard-copy-format", "notify::clipboard-copy-format", &[Value::Str("PlainText".into()), Value::Str("AllFormats".into())])),
+    ("notify_rich_edit_box_desired_candidate_window_alignment", || t::notify("rich-edit-box", "desired-candidate-window-alignment", "notify::desired-candidate-window-alignment", &[Value::Str("BottomEdge".into()), Value::Str("Default".into())])),
+    ("notify_rich_edit_box_horizontal_text_alignment", || t::notify("rich-edit-box", "horizontal-text-alignment", "notify::horizontal-text-alignment", &[Value::Str("Left".into()), Value::Str("Center".into())])),
+    ("notify_rich_edit_box_is_color_font_enabled", || t::notify("rich-edit-box", "is-color-font-enabled", "notify::is-color-font-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rich_edit_box_is_read_only", || t::notify("rich-edit-box", "is-read-only", "notify::is-read-only", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rich_edit_box_is_spell_check_enabled", || t::notify("rich-edit-box", "is-spell-check-enabled", "notify::is-spell-check-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rich_edit_box_is_text_prediction_enabled", || t::notify("rich-edit-box", "is-text-prediction-enabled", "notify::is-text-prediction-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rich_edit_box_max_length", || t::notify("rich-edit-box", "max-length", "notify::max-length", &[Value::I64(3), Value::I64(7)])),
+    ("notify_rich_edit_box_placeholder_text", || t::notify("rich-edit-box", "placeholder-text", "notify::placeholder-text", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_rich_edit_box_prevent_keyboard_display_on_programmatic_focus", || t::notify("rich-edit-box", "prevent-keyboard-display-on-programmatic-focus", "notify::prevent-keyboard-display-on-programmatic-focus", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_rich_edit_box_selection_highlight_color", || t::notify("rich-edit-box", "selection-highlight-color", "notify::selection-highlight-color", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_rich_edit_box_selection_highlight_color_when_not_focused", || t::notify("rich-edit-box", "selection-highlight-color-when-not-focused", "notify::selection-highlight-color-when-not-focused", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_rich_edit_box_text_alignment", || t::notify("rich-edit-box", "text-alignment", "notify::text-alignment", &[Value::Str("Left".into()), Value::Str("Center".into())])),
+    ("notify_rich_edit_box_text_reading_order", || t::notify("rich-edit-box", "text-reading-order", "notify::text-reading-order", &[Value::Str("UseFlowDirection".into()), Value::Str("Default".into())])),
+    ("notify_rich_edit_box_text_wrapping", || t::notify("rich-edit-box", "text-wrapping", "notify::text-wrapping", &[Value::Str("Wrap".into()), Value::Str("NoWrap".into())])),
+    ("event_scroll_viewer_anchor_requested", || t::connect("scroll-viewer", "anchor-requested")),
+    ("event_scroll_viewer_direct_manipulation_completed", || t::connect("scroll-viewer", "direct-manipulation-completed")),
+    ("event_scroll_viewer_direct_manipulation_started", || t::connect("scroll-viewer", "direct-manipulation-started")),
+    ("event_scroll_viewer_view_changed", || t::connect("scroll-viewer", "view-changed")),
+    ("event_scroll_viewer_view_changing", || t::connect("scroll-viewer", "view-changing")),
+    ("notify_scroll_viewer_bring_into_view_on_focus_change", || t::notify("scroll-viewer", "bring-into-view-on-focus-change", "notify::bring-into-view-on-focus-change", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_can_content_render_outside_bounds", || t::notify("scroll-viewer", "can-content-render-outside-bounds", "notify::can-content-render-outside-bounds", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_horizontal_anchor_ratio", || t::notify("scroll-viewer", "horizontal-anchor-ratio", "notify::horizontal-anchor-ratio", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_scroll_viewer_horizontal_scroll_bar_visibility", || t::notify("scroll-viewer", "horizontal-scroll-bar-visibility", "notify::horizontal-scroll-bar-visibility", &[Value::Str("Auto".into()), Value::Str("Disabled".into())])),
+    ("notify_scroll_viewer_horizontal_scroll_mode", || t::notify("scroll-viewer", "horizontal-scroll-mode", "notify::horizontal-scroll-mode", &[Value::Str("Enabled".into()), Value::Str("Disabled".into())])),
+    ("notify_scroll_viewer_horizontal_snap_points_alignment", || t::notify("scroll-viewer", "horizontal-snap-points-alignment", "notify::horizontal-snap-points-alignment", &[Value::Str("Center".into()), Value::Str("Near".into())])),
+    ("notify_scroll_viewer_horizontal_snap_points_type", || t::notify("scroll-viewer", "horizontal-snap-points-type", "notify::horizontal-snap-points-type", &[Value::Str("Optional".into()), Value::Str("None".into())])),
+    ("notify_scroll_viewer_is_deferred_scrolling_enabled", || t::notify("scroll-viewer", "is-deferred-scrolling-enabled", "notify::is-deferred-scrolling-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_is_horizontal_rail_enabled", || t::notify("scroll-viewer", "is-horizontal-rail-enabled", "notify::is-horizontal-rail-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_is_horizontal_scroll_chaining_enabled", || t::notify("scroll-viewer", "is-horizontal-scroll-chaining-enabled", "notify::is-horizontal-scroll-chaining-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_is_scroll_inertia_enabled", || t::notify("scroll-viewer", "is-scroll-inertia-enabled", "notify::is-scroll-inertia-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_is_vertical_rail_enabled", || t::notify("scroll-viewer", "is-vertical-rail-enabled", "notify::is-vertical-rail-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_is_vertical_scroll_chaining_enabled", || t::notify("scroll-viewer", "is-vertical-scroll-chaining-enabled", "notify::is-vertical-scroll-chaining-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_is_zoom_chaining_enabled", || t::notify("scroll-viewer", "is-zoom-chaining-enabled", "notify::is-zoom-chaining-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_is_zoom_inertia_enabled", || t::notify("scroll-viewer", "is-zoom-inertia-enabled", "notify::is-zoom-inertia-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_max_zoom_factor", || t::notify("scroll-viewer", "max-zoom-factor", "notify::max-zoom-factor", &[Value::F64(2.0), Value::F64(4.0)])),
+    ("notify_scroll_viewer_min_zoom_factor", || t::notify("scroll-viewer", "min-zoom-factor", "notify::min-zoom-factor", &[Value::F64(2.0), Value::F64(4.0)])),
+    ("notify_scroll_viewer_reduce_viewport_for_core_input_view_occlusions", || t::notify("scroll-viewer", "reduce-viewport-for-core-input-view-occlusions", "notify::reduce-viewport-for-core-input-view-occlusions", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_scroll_viewer_vertical_anchor_ratio", || t::notify("scroll-viewer", "vertical-anchor-ratio", "notify::vertical-anchor-ratio", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_scroll_viewer_vertical_scroll_bar_visibility", || t::notify("scroll-viewer", "vertical-scroll-bar-visibility", "notify::vertical-scroll-bar-visibility", &[Value::Str("Auto".into()), Value::Str("Disabled".into())])),
+    ("notify_scroll_viewer_vertical_scroll_mode", || t::notify("scroll-viewer", "vertical-scroll-mode", "notify::vertical-scroll-mode", &[Value::Str("Enabled".into()), Value::Str("Disabled".into())])),
+    ("notify_scroll_viewer_vertical_snap_points_alignment", || t::notify("scroll-viewer", "vertical-snap-points-alignment", "notify::vertical-snap-points-alignment", &[Value::Str("Center".into()), Value::Str("Near".into())])),
+    ("notify_scroll_viewer_vertical_snap_points_type", || t::notify("scroll-viewer", "vertical-snap-points-type", "notify::vertical-snap-points-type", &[Value::Str("Optional".into()), Value::Str("None".into())])),
+    ("notify_scroll_viewer_zoom_mode", || t::notify("scroll-viewer", "zoom-mode", "notify::zoom-mode", &[Value::Str("Enabled".into()), Value::Str("Disabled".into())])),
+    ("notify_scroll_viewer_zoom_snap_points_type", || t::notify("scroll-viewer", "zoom-snap-points-type", "notify::zoom-snap-points-type", &[Value::Str("Optional".into()), Value::Str("None".into())])),
+    ("event_combo_box_selection_changed", || t::connect("combo-box", "selection-changed")),
+    ("notify_combo_box_is_synchronized_with_current_item", || t::notify("combo-box", "is-synchronized-with-current-item", "notify::is-synchronized-with-current-item", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_combo_box_selected_index", || t::notify("combo-box", "selected-index", "notify::selected-index", &[Value::I64(3), Value::I64(7)])),
+    ("notify_combo_box_selected_value_path", || t::notify("combo-box", "selected-value-path", "notify::selected-value-path", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("event_selector_bar_selection_changed", || t::connect("selector-bar", "selection-changed")),
+    ("notify_selector_bar_item_icon", || t::notify("selector-bar-item", "icon", "notify::icon", &[Value::Str("Accept".into()), Value::Str("Cancel".into())])),
+    ("notify_selector_bar_item_text", || t::notify("selector-bar-item", "text", "notify::text", &[Value::Str("svelters".into())])),
+    ("notify_combo_box_item_is_selected", || t::notify("combo-box-item", "is-selected", "notify::is-selected", &[Value::Bool(true), Value::Bool(false)])),
     ("notify_slider_intermediate_value", || t::notify("slider", "intermediate-value", "notify::intermediate-value", &[Value::F64(12.0), Value::F64(24.0)])),
     ("notify_slider_is_direction_reversed", || t::notify("slider", "is-direction-reversed", "notify::is-direction-reversed", &[Value::Bool(true), Value::Bool(false)])),
     ("notify_slider_is_thumb_tool_tip_enabled", || t::notify("slider", "is-thumb-tool-tip-enabled", "notify::is-thumb-tool-tip-enabled", &[Value::Bool(true), Value::Bool(false)])),
@@ -808,21 +2257,75 @@ pub static TESTS: &[(&str, fn())] = &[
     ("notify_slider_step_frequency", || t::notify("slider", "step-frequency", "notify::step-frequency", &[Value::F64(5.0)])),
     ("notify_slider_tick_frequency", || t::notify("slider", "tick-frequency", "notify::tick-frequency", &[Value::F64(12.0), Value::F64(24.0)])),
     ("notify_slider_tick_placement", || t::notify("slider", "tick-placement", "notify::tick-placement", &[Value::Str("TopLeft".into()), Value::Str("None".into())])),
+    ("event_split_button_click", || t::connect("split-button", "click")),
+    ("event_split_view_pane_closed", || t::connect("split-view", "pane-closed")),
+    ("event_split_view_pane_closing", || t::connect("split-view", "pane-closing")),
+    ("event_split_view_pane_opened", || t::connect("split-view", "pane-opened")),
+    ("event_split_view_pane_opening", || t::connect("split-view", "pane-opening")),
+    ("notify_split_view_compact_pane_length", || t::notify("split-view", "compact-pane-length", "notify::compact-pane-length", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_split_view_display_mode", || t::notify("split-view", "display-mode", "notify::display-mode", &[Value::Str("Inline".into()), Value::Str("Overlay".into())])),
+    ("notify_split_view_is_pane_open", || t::notify("split-view", "is-pane-open", "notify::is-pane-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_split_view_light_dismiss_overlay_mode", || t::notify("split-view", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_split_view_open_pane_length", || t::notify("split-view", "open-pane-length", "notify::open-pane-length", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_split_view_pane_background", || t::notify("split-view", "pane-background", "notify::pane-background", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_split_view_pane_placement", || t::notify("split-view", "pane-placement", "notify::pane-placement", &[Value::Str("Right".into()), Value::Str("Left".into())])),
     ("event_stack_panel_horizontal_snap_points_changed", || t::connect("stack-panel", "horizontal-snap-points-changed")),
     ("event_stack_panel_vertical_snap_points_changed", || t::connect("stack-panel", "vertical-snap-points-changed")),
     ("notify_stack_panel_are_scroll_snap_points_regular", || t::notify("stack-panel", "are-scroll-snap-points-regular", "notify::are-scroll-snap-points-regular", &[Value::Bool(true), Value::Bool(false)])),
     ("notify_stack_panel_background_sizing", || t::notify("stack-panel", "background-sizing", "notify::background-sizing", &[Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())])),
+    ("notify_stack_panel_border_brush", || t::notify("stack-panel", "border-brush", "notify::border-brush", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
     ("notify_stack_panel_border_thickness", || t::notify("stack-panel", "border-thickness", "notify::border-thickness", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_stack_panel_corner_radius", || t::notify("stack-panel", "corner-radius", "notify::corner-radius", &[Value::Str("4".into()), Value::Str("1,2,3,4".into())])),
     ("notify_stack_panel_orientation", || t::notify("stack-panel", "orientation", "notify::orientation", &[Value::Str("Horizontal".into())])),
     ("notify_stack_panel_padding", || t::notify("stack-panel", "padding", "notify::padding", &[Value::Str("2,4".into())])),
     ("notify_stack_panel_spacing", || t::notify("stack-panel", "spacing", "notify::spacing", &[Value::F64(8.0)])),
+    ("notify_symbol_icon_symbol", || t::notify("symbol-icon", "symbol", "notify::symbol", &[Value::Str("Next".into()), Value::Str("Previous".into())])),
+    ("event_tab_view_add_tab_button_click", || t::connect("tab-view", "add-tab-button-click")),
+    ("event_tab_view_external_torn_out_tabs_dropped", || t::connect("tab-view", "external-torn-out-tabs-dropped")),
+    ("event_tab_view_external_torn_out_tabs_dropping", || t::connect("tab-view", "external-torn-out-tabs-dropping")),
+    ("event_tab_view_selection_changed", || t::connect("tab-view", "selection-changed")),
+    ("event_tab_view_tab_close_requested", || t::connect("tab-view", "tab-close-requested")),
+    ("event_tab_view_tab_drag_completed", || t::connect("tab-view", "tab-drag-completed")),
+    ("event_tab_view_tab_drag_starting", || t::connect("tab-view", "tab-drag-starting")),
+    ("event_tab_view_tab_dropped_outside", || t::connect("tab-view", "tab-dropped-outside")),
+    ("event_tab_view_tab_items_changed", || t::connect("tab-view", "tab-items-changed")),
+    ("event_tab_view_tab_strip_drag_over", || t::connect("tab-view", "tab-strip-drag-over")),
+    ("event_tab_view_tab_strip_drop", || t::connect("tab-view", "tab-strip-drop")),
+    ("event_tab_view_tab_tear_out_requested", || t::connect("tab-view", "tab-tear-out-requested")),
+    ("event_tab_view_tab_tear_out_window_requested", || t::connect("tab-view", "tab-tear-out-window-requested")),
+    ("notify_tab_view_allow_drop_tabs", || t::notify("tab-view", "allow-drop-tabs", "notify::allow-drop-tabs", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_tab_view_can_drag_tabs", || t::notify("tab-view", "can-drag-tabs", "notify::can-drag-tabs", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_tab_view_can_reorder_tabs", || t::notify("tab-view", "can-reorder-tabs", "notify::can-reorder-tabs", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_tab_view_can_tear_out_tabs", || t::notify("tab-view", "can-tear-out-tabs", "notify::can-tear-out-tabs", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_tab_view_close_button_overlay_mode", || t::notify("tab-view", "close-button-overlay-mode", "notify::close-button-overlay-mode", &[Value::Str("OnPointerOver".into()), Value::Str("Auto".into())])),
+    ("notify_tab_view_is_add_tab_button_visible", || t::notify("tab-view", "is-add-tab-button-visible", "notify::is-add-tab-button-visible", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_tab_view_selected_index", || t::notify("tab-view", "selected-index", "notify::selected-index", &[Value::I64(-1)])),
+    ("notify_tab_view_tab_width_mode", || t::notify("tab-view", "tab-width-mode", "notify::tab-width-mode", &[Value::Str("SizeToContent".into()), Value::Str("Equal".into())])),
+    ("event_tab_view_item_close_requested", || t::connect("tab-view-item", "close-requested")),
+    ("notify_tab_view_item_is_closable", || t::notify("tab-view-item", "is-closable", "notify::is-closable", &[Value::Bool(true), Value::Bool(false)])),
+    ("event_teaching_tip_action_button_click", || t::connect("teaching-tip", "action-button-click")),
+    ("event_teaching_tip_close_button_click", || t::connect("teaching-tip", "close-button-click")),
+    ("event_teaching_tip_closed", || t::connect("teaching-tip", "closed")),
+    ("event_teaching_tip_closing", || t::connect("teaching-tip", "closing")),
+    ("notify_teaching_tip_hero_content_placement", || t::notify("teaching-tip", "hero-content-placement", "notify::hero-content-placement", &[Value::Str("Top".into()), Value::Str("Auto".into())])),
+    ("notify_teaching_tip_is_light_dismiss_enabled", || t::notify("teaching-tip", "is-light-dismiss-enabled", "notify::is-light-dismiss-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_teaching_tip_is_open", || t::notify("teaching-tip", "is-open", "notify::is-open", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_teaching_tip_placement_margin", || t::notify("teaching-tip", "placement-margin", "notify::placement-margin", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_teaching_tip_preferred_placement", || t::notify("teaching-tip", "preferred-placement", "notify::preferred-placement", &[Value::Str("Top".into()), Value::Str("Auto".into())])),
+    ("notify_teaching_tip_should_constrain_to_root_bounds", || t::notify("teaching-tip", "should-constrain-to-root-bounds", "notify::should-constrain-to-root-bounds", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_teaching_tip_subtitle", || t::notify("teaching-tip", "subtitle", "notify::subtitle", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_teaching_tip_tail_visibility", || t::notify("teaching-tip", "tail-visibility", "notify::tail-visibility", &[Value::Str("Visible".into()), Value::Str("Auto".into())])),
+    ("notify_teaching_tip_title", || t::notify("teaching-tip", "title", "notify::title", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
     ("event_text_block_context_menu_opening", || t::connect("text-block", "context-menu-opening")),
     ("event_text_block_is_text_trimmed_changed", || t::connect("text-block", "is-text-trimmed-changed")),
     ("event_text_block_selection_changed", || t::connect("text-block", "selection-changed")),
     ("notify_text_block_character_spacing", || t::notify("text-block", "character-spacing", "notify::character-spacing", &[Value::I64(3), Value::I64(7)])),
+    ("notify_text_block_font_family", || t::notify("text-block", "font-family", "notify::font-family", &[Value::Str("Consolas".into()), Value::Str("Segoe UI".into())])),
     ("notify_text_block_font_size", || t::notify("text-block", "font-size", "notify::font-size", &[Value::F64(18.0)])),
     ("notify_text_block_font_stretch", || t::notify("text-block", "font-stretch", "notify::font-stretch", &[Value::Str("UltraCondensed".into()), Value::Str("Undefined".into())])),
     ("notify_text_block_font_style", || t::notify("text-block", "font-style", "notify::font-style", &[Value::Str("Oblique".into()), Value::Str("Normal".into())])),
+    ("notify_text_block_font_weight", || t::notify("text-block", "font-weight", "notify::font-weight", &[Value::I64(700), Value::I64(300)])),
+    ("notify_text_block_foreground", || t::notify("text-block", "foreground", "notify::foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
     ("notify_text_block_horizontal_text_alignment", || t::notify("text-block", "horizontal-text-alignment", "notify::horizontal-text-alignment", &[Value::Str("Left".into()), Value::Str("Center".into())])),
     ("notify_text_block_is_color_font_enabled", || t::notify("text-block", "is-color-font-enabled", "notify::is-color-font-enabled", &[Value::Bool(true), Value::Bool(false)])),
     ("notify_text_block_is_text_scale_factor_enabled", || t::notify("text-block", "is-text-scale-factor-enabled", "notify::is-text-scale-factor-enabled", &[Value::Bool(true), Value::Bool(false)])),
@@ -832,6 +2335,7 @@ pub static TESTS: &[(&str, fn())] = &[
     ("notify_text_block_max_lines", || t::notify("text-block", "max-lines", "notify::max-lines", &[Value::I64(2)])),
     ("notify_text_block_optical_margin_alignment", || t::notify("text-block", "optical-margin-alignment", "notify::optical-margin-alignment", &[Value::Str("TrimSideBearings".into()), Value::Str("None".into())])),
     ("notify_text_block_padding", || t::notify("text-block", "padding", "notify::padding", &[Value::Str("1,2,3,4".into()), Value::Str("5".into())])),
+    ("notify_text_block_selection_highlight_color", || t::notify("text-block", "selection-highlight-color", "notify::selection-highlight-color", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
     ("notify_text_block_text", || t::notify("text-block", "text", "notify::text", &[Value::Str("Count: 1".into())])),
     ("notify_text_block_text_alignment", || t::notify("text-block", "text-alignment", "notify::text-alignment", &[Value::Str("Left".into()), Value::Str("Center".into())])),
     ("notify_text_block_text_line_bounds", || t::notify("text-block", "text-line-bounds", "notify::text-line-bounds", &[Value::Str("TrimToCapHeight".into()), Value::Str("Full".into())])),
@@ -856,141 +2360,177 @@ pub static TESTS: &[(&str, fn())] = &[
     ("notify_text_box_is_spell_check_enabled", || t::notify("text-box", "is-spell-check-enabled", "notify::is-spell-check-enabled", &[Value::Bool(true), Value::Bool(false)])),
     ("notify_text_box_is_text_prediction_enabled", || t::notify("text-box", "is-text-prediction-enabled", "notify::is-text-prediction-enabled", &[Value::Bool(true), Value::Bool(false)])),
     ("notify_text_box_max_length", || t::notify("text-box", "max-length", "notify::max-length", &[Value::I64(12)])),
+    ("notify_text_box_placeholder_foreground", || t::notify("text-box", "placeholder-foreground", "notify::placeholder-foreground", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
     ("notify_text_box_placeholder_text", || t::notify("text-box", "placeholder-text", "notify::placeholder-text", &[Value::Str("Name".into())])),
     ("notify_text_box_prevent_keyboard_display_on_programmatic_focus", || t::notify("text-box", "prevent-keyboard-display-on-programmatic-focus", "notify::prevent-keyboard-display-on-programmatic-focus", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_text_box_selection_highlight_color", || t::notify("text-box", "selection-highlight-color", "notify::selection-highlight-color", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
+    ("notify_text_box_selection_highlight_color_when_not_focused", || t::notify("text-box", "selection-highlight-color-when-not-focused", "notify::selection-highlight-color-when-not-focused", &[Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())])),
     ("notify_text_box_text", || t::notify("text-box", "text", "notify::text", &[Value::Str("typed".into())])),
     ("notify_text_box_text_alignment", || t::notify("text-box", "text-alignment", "notify::text-alignment", &[Value::Str("Left".into()), Value::Str("Center".into())])),
     ("notify_text_box_text_wrapping", || t::notify("text-box", "text-wrapping", "notify::text-wrapping", &[Value::Str("Wrap".into())])),
-    ("event_check_box_indeterminate", || t::connect("check-box", "indeterminate")),
-    ("notify_check_box_is_checked", || t::notify("check-box", "is-checked", "notify::is-checked", &[Value::Bool(true)])),
-    ("notify_check_box_is_three_state", || t::notify("check-box", "is-three-state", "notify::is-three-state", &[Value::Bool(true)])),
-    ("event_button_access_key_display_dismissed", || t::connect("button", "access-key-display-dismissed")),
-    ("event_button_access_key_display_requested", || t::connect("button", "access-key-display-requested")),
-    ("event_button_access_key_invoked", || t::connect("button", "access-key-invoked")),
-    ("event_button_bring_into_view_requested", || t::connect("button", "bring-into-view-requested")),
-    ("event_button_character_received", || t::connect("button", "character-received")),
-    ("event_button_context_canceled", || t::connect("button", "context-canceled")),
-    ("event_button_context_requested", || t::connect("button", "context-requested")),
-    ("event_button_double_tapped", || t::connect("button", "double-tapped")),
-    ("event_button_drag_enter", || t::connect("button", "drag-enter")),
-    ("event_button_drag_leave", || t::connect("button", "drag-leave")),
-    ("event_button_drag_over", || t::connect("button", "drag-over")),
-    ("event_button_drag_starting", || t::connect("button", "drag-starting")),
-    ("event_button_drop", || t::connect("button", "drop")),
-    ("event_button_drop_completed", || t::connect("button", "drop-completed")),
-    ("event_button_getting_focus", || t::connect("button", "getting-focus")),
-    ("event_button_got_focus", || t::connect("button", "got-focus")),
-    ("event_button_holding", || t::connect("button", "holding")),
-    ("event_button_key_up", || t::connect("button", "key-up")),
-    ("event_button_losing_focus", || t::connect("button", "losing-focus")),
-    ("event_button_lost_focus", || t::connect("button", "lost-focus")),
-    ("event_button_manipulation_completed", || t::connect("button", "manipulation-completed")),
-    ("event_button_manipulation_delta", || t::connect("button", "manipulation-delta")),
-    ("event_button_manipulation_inertia_starting", || t::connect("button", "manipulation-inertia-starting")),
-    ("event_button_manipulation_started", || t::connect("button", "manipulation-started")),
-    ("event_button_manipulation_starting", || t::connect("button", "manipulation-starting")),
-    ("event_button_no_focus_candidate_found", || t::connect("button", "no-focus-candidate-found")),
-    ("event_button_pointer_canceled", || t::connect("button", "pointer-canceled")),
-    ("event_button_pointer_capture_lost", || t::connect("button", "pointer-capture-lost")),
-    ("event_button_pointer_entered", || t::connect("button", "pointer-entered")),
-    ("event_button_pointer_exited", || t::connect("button", "pointer-exited")),
-    ("event_button_pointer_moved", || t::connect("button", "pointer-moved")),
-    ("event_button_pointer_pressed", || t::connect("button", "pointer-pressed")),
-    ("event_button_pointer_released", || t::connect("button", "pointer-released")),
-    ("event_button_pointer_wheel_changed", || t::connect("button", "pointer-wheel-changed")),
-    ("event_button_preview_key_down", || t::connect("button", "preview-key-down")),
-    ("event_button_preview_key_up", || t::connect("button", "preview-key-up")),
-    ("event_button_process_keyboard_accelerators", || t::connect("button", "process-keyboard-accelerators")),
-    ("event_button_right_tapped", || t::connect("button", "right-tapped")),
-    ("event_button_tapped", || t::connect("button", "tapped")),
-    ("notify_button_access_key", || t::notify("button", "access-key", "notify::access-key", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
-    ("notify_button_can_be_scroll_anchor", || t::notify("button", "can-be-scroll-anchor", "notify::can-be-scroll-anchor", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_composite_mode", || t::notify("button", "composite-mode", "notify::composite-mode", &[Value::Str("SourceOver".into()), Value::Str("Inherit".into())])),
-    ("notify_button_exit_display_mode_on_access_key_invoked", || t::notify("button", "exit-display-mode-on-access-key-invoked", "notify::exit-display-mode-on-access-key-invoked", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_is_access_key_scope", || t::notify("button", "is-access-key-scope", "notify::is-access-key-scope", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_is_double_tap_enabled", || t::notify("button", "is-double-tap-enabled", "notify::is-double-tap-enabled", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_is_hit_test_visible", || t::notify("button", "is-hit-test-visible", "notify::is-hit-test-visible", &[Value::Bool(false)])),
-    ("notify_button_is_holding_enabled", || t::notify("button", "is-holding-enabled", "notify::is-holding-enabled", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_is_right_tap_enabled", || t::notify("button", "is-right-tap-enabled", "notify::is-right-tap-enabled", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_is_tab_stop", || t::notify("button", "is-tab-stop", "notify::is-tab-stop", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_is_tap_enabled", || t::notify("button", "is-tap-enabled", "notify::is-tap-enabled", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_key_tip_horizontal_offset", || t::notify("button", "key-tip-horizontal-offset", "notify::key-tip-horizontal-offset", &[Value::F64(12.0), Value::F64(24.0)])),
-    ("notify_button_key_tip_placement_mode", || t::notify("button", "key-tip-placement-mode", "notify::key-tip-placement-mode", &[Value::Str("Bottom".into()), Value::Str("Auto".into())])),
-    ("notify_button_key_tip_vertical_offset", || t::notify("button", "key-tip-vertical-offset", "notify::key-tip-vertical-offset", &[Value::F64(12.0), Value::F64(24.0)])),
-    ("notify_button_keyboard_accelerator_placement_mode", || t::notify("button", "keyboard-accelerator-placement-mode", "notify::keyboard-accelerator-placement-mode", &[Value::Str("Hidden".into()), Value::Str("Auto".into())])),
-    ("notify_button_opacity", || t::notify("button", "opacity", "notify::opacity", &[Value::F64(0.5)])),
-    ("notify_button_tab_focus_navigation", || t::notify("button", "tab-focus-navigation", "notify::tab-focus-navigation", &[Value::Str("Cycle".into()), Value::Str("Local".into())])),
-    ("notify_button_tab_index", || t::notify("button", "tab-index", "notify::tab-index", &[Value::I64(3), Value::I64(7)])),
-    ("notify_button_use_layout_rounding", || t::notify("button", "use-layout-rounding", "notify::use-layout-rounding", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_use_system_focus_visuals", || t::notify("button", "use-system-focus-visuals", "notify::use-system-focus-visuals", &[Value::Bool(true), Value::Bool(false)])),
-    ("notify_button_visibility", || t::notify("button", "visibility", "notify::visibility", &[Value::Str("Collapsed".into())])),
-    ("notify_button_xy_focus_down_navigation_strategy", || t::notify("button", "xy-focus-down-navigation-strategy", "notify::xy-focus-down-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
-    ("notify_button_xy_focus_keyboard_navigation", || t::notify("button", "xy-focus-keyboard-navigation", "notify::xy-focus-keyboard-navigation", &[Value::Str("Enabled".into()), Value::Str("Auto".into())])),
-    ("notify_button_xy_focus_left_navigation_strategy", || t::notify("button", "xy-focus-left-navigation-strategy", "notify::xy-focus-left-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
-    ("notify_button_xy_focus_right_navigation_strategy", || t::notify("button", "xy-focus-right-navigation-strategy", "notify::xy-focus-right-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
-    ("notify_button_xy_focus_up_navigation_strategy", || t::notify("button", "xy-focus-up-navigation-strategy", "notify::xy-focus-up-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
+    ("event_time_picker_selected_time_changed", || t::connect("time-picker", "selected-time-changed")),
+    ("event_time_picker_time_changed", || t::connect("time-picker", "time-changed")),
+    ("notify_time_picker_clock_identifier", || t::notify("time-picker", "clock-identifier", "notify::clock-identifier", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_time_picker_light_dismiss_overlay_mode", || t::notify("time-picker", "light-dismiss-overlay-mode", "notify::light-dismiss-overlay-mode", &[Value::Str("On".into()), Value::Str("Auto".into())])),
+    ("notify_time_picker_minute_increment", || t::notify("time-picker", "minute-increment", "notify::minute-increment", &[Value::I64(3), Value::I64(7)])),
+    ("notify_time_picker_selected_time", || t::notify("time-picker", "selected-time", "notify::selected-time", &[Value::F64(3600000.0), Value::Null])),
+    ("notify_time_picker_time", || t::notify("time-picker", "time", "notify::time", &[Value::F64(3600000.0), Value::F64(7200000.0)])),
+    ("event_app_bar_toggle_button_indeterminate", || t::connect("app-bar-toggle-button", "indeterminate")),
+    ("notify_app_bar_toggle_button_is_checked", || t::notify("app-bar-toggle-button", "is-checked", "notify::is-checked", &[Value::Bool(true)])),
+    ("notify_app_bar_toggle_button_is_three_state", || t::notify("app-bar-toggle-button", "is-three-state", "notify::is-three-state", &[Value::Bool(true)])),
+    ("notify_toggle_menu_flyout_item_is_checked", || t::notify("toggle-menu-flyout-item", "is-checked", "notify::is-checked", &[Value::Bool(true), Value::Bool(false)])),
+    ("event_toggle_switch_toggled", || t::connect("toggle-switch", "toggled")),
+    ("notify_toggle_switch_is_on", || t::notify("toggle-switch", "is-on", "notify::is-on", &[Value::Bool(true), Value::Bool(false)])),
+    ("event_app_bar_button_access_key_display_dismissed", || t::connect("app-bar-button", "access-key-display-dismissed")),
+    ("event_app_bar_button_access_key_display_requested", || t::connect("app-bar-button", "access-key-display-requested")),
+    ("event_app_bar_button_access_key_invoked", || t::connect("app-bar-button", "access-key-invoked")),
+    ("event_app_bar_button_bring_into_view_requested", || t::connect("app-bar-button", "bring-into-view-requested")),
+    ("event_app_bar_button_character_received", || t::connect("app-bar-button", "character-received")),
+    ("event_app_bar_button_context_canceled", || t::connect("app-bar-button", "context-canceled")),
+    ("event_app_bar_button_context_requested", || t::connect("app-bar-button", "context-requested")),
+    ("event_app_bar_button_double_tapped", || t::connect("app-bar-button", "double-tapped")),
+    ("event_app_bar_button_drag_enter", || t::connect("app-bar-button", "drag-enter")),
+    ("event_app_bar_button_drag_leave", || t::connect("app-bar-button", "drag-leave")),
+    ("event_app_bar_button_drag_over", || t::connect("app-bar-button", "drag-over")),
+    ("event_app_bar_button_drag_starting", || t::connect("app-bar-button", "drag-starting")),
+    ("event_app_bar_button_drop", || t::connect("app-bar-button", "drop")),
+    ("event_app_bar_button_drop_completed", || t::connect("app-bar-button", "drop-completed")),
+    ("event_app_bar_button_getting_focus", || t::connect("app-bar-button", "getting-focus")),
+    ("event_app_bar_button_got_focus", || t::connect("app-bar-button", "got-focus")),
+    ("event_app_bar_button_holding", || t::connect("app-bar-button", "holding")),
+    ("event_app_bar_button_key_up", || t::connect("app-bar-button", "key-up")),
+    ("event_app_bar_button_losing_focus", || t::connect("app-bar-button", "losing-focus")),
+    ("event_app_bar_button_lost_focus", || t::connect("app-bar-button", "lost-focus")),
+    ("event_app_bar_button_manipulation_completed", || t::connect("app-bar-button", "manipulation-completed")),
+    ("event_app_bar_button_manipulation_delta", || t::connect("app-bar-button", "manipulation-delta")),
+    ("event_app_bar_button_manipulation_inertia_starting", || t::connect("app-bar-button", "manipulation-inertia-starting")),
+    ("event_app_bar_button_manipulation_started", || t::connect("app-bar-button", "manipulation-started")),
+    ("event_app_bar_button_manipulation_starting", || t::connect("app-bar-button", "manipulation-starting")),
+    ("event_app_bar_button_no_focus_candidate_found", || t::connect("app-bar-button", "no-focus-candidate-found")),
+    ("event_app_bar_button_pointer_canceled", || t::connect("app-bar-button", "pointer-canceled")),
+    ("event_app_bar_button_pointer_capture_lost", || t::connect("app-bar-button", "pointer-capture-lost")),
+    ("event_app_bar_button_pointer_entered", || t::connect("app-bar-button", "pointer-entered")),
+    ("event_app_bar_button_pointer_exited", || t::connect("app-bar-button", "pointer-exited")),
+    ("event_app_bar_button_pointer_moved", || t::connect("app-bar-button", "pointer-moved")),
+    ("event_app_bar_button_pointer_pressed", || t::connect("app-bar-button", "pointer-pressed")),
+    ("event_app_bar_button_pointer_released", || t::connect("app-bar-button", "pointer-released")),
+    ("event_app_bar_button_pointer_wheel_changed", || t::connect("app-bar-button", "pointer-wheel-changed")),
+    ("event_app_bar_button_preview_key_down", || t::connect("app-bar-button", "preview-key-down")),
+    ("event_app_bar_button_preview_key_up", || t::connect("app-bar-button", "preview-key-up")),
+    ("event_app_bar_button_process_keyboard_accelerators", || t::connect("app-bar-button", "process-keyboard-accelerators")),
+    ("event_app_bar_button_right_tapped", || t::connect("app-bar-button", "right-tapped")),
+    ("event_app_bar_button_tapped", || t::connect("app-bar-button", "tapped")),
+    ("notify_app_bar_button_access_key", || t::notify("app-bar-button", "access-key", "notify::access-key", &[Value::Str("svelters".into()), Value::Str("winui".into())])),
+    ("notify_app_bar_button_can_be_scroll_anchor", || t::notify("app-bar-button", "can-be-scroll-anchor", "notify::can-be-scroll-anchor", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_composite_mode", || t::notify("app-bar-button", "composite-mode", "notify::composite-mode", &[Value::Str("SourceOver".into()), Value::Str("Inherit".into())])),
+    ("notify_app_bar_button_exit_display_mode_on_access_key_invoked", || t::notify("app-bar-button", "exit-display-mode-on-access-key-invoked", "notify::exit-display-mode-on-access-key-invoked", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_is_access_key_scope", || t::notify("app-bar-button", "is-access-key-scope", "notify::is-access-key-scope", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_is_double_tap_enabled", || t::notify("app-bar-button", "is-double-tap-enabled", "notify::is-double-tap-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_is_hit_test_visible", || t::notify("app-bar-button", "is-hit-test-visible", "notify::is-hit-test-visible", &[Value::Bool(false)])),
+    ("notify_app_bar_button_is_holding_enabled", || t::notify("app-bar-button", "is-holding-enabled", "notify::is-holding-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_is_right_tap_enabled", || t::notify("app-bar-button", "is-right-tap-enabled", "notify::is-right-tap-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_is_tab_stop", || t::notify("app-bar-button", "is-tab-stop", "notify::is-tab-stop", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_is_tap_enabled", || t::notify("app-bar-button", "is-tap-enabled", "notify::is-tap-enabled", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_key_tip_horizontal_offset", || t::notify("app-bar-button", "key-tip-horizontal-offset", "notify::key-tip-horizontal-offset", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_app_bar_button_key_tip_placement_mode", || t::notify("app-bar-button", "key-tip-placement-mode", "notify::key-tip-placement-mode", &[Value::Str("Bottom".into()), Value::Str("Auto".into())])),
+    ("notify_app_bar_button_key_tip_vertical_offset", || t::notify("app-bar-button", "key-tip-vertical-offset", "notify::key-tip-vertical-offset", &[Value::F64(12.0), Value::F64(24.0)])),
+    ("notify_app_bar_button_keyboard_accelerator_placement_mode", || t::notify("app-bar-button", "keyboard-accelerator-placement-mode", "notify::keyboard-accelerator-placement-mode", &[Value::Str("Hidden".into()), Value::Str("Auto".into())])),
+    ("notify_app_bar_button_opacity", || t::notify("app-bar-button", "opacity", "notify::opacity", &[Value::F64(0.5)])),
+    ("notify_app_bar_button_tab_focus_navigation", || t::notify("app-bar-button", "tab-focus-navigation", "notify::tab-focus-navigation", &[Value::Str("Cycle".into()), Value::Str("Local".into())])),
+    ("notify_app_bar_button_tab_index", || t::notify("app-bar-button", "tab-index", "notify::tab-index", &[Value::I64(3), Value::I64(7)])),
+    ("notify_app_bar_button_use_layout_rounding", || t::notify("app-bar-button", "use-layout-rounding", "notify::use-layout-rounding", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_use_system_focus_visuals", || t::notify("app-bar-button", "use-system-focus-visuals", "notify::use-system-focus-visuals", &[Value::Bool(true), Value::Bool(false)])),
+    ("notify_app_bar_button_visibility", || t::notify("app-bar-button", "visibility", "notify::visibility", &[Value::Str("Collapsed".into())])),
+    ("notify_app_bar_button_xy_focus_down_navigation_strategy", || t::notify("app-bar-button", "xy-focus-down-navigation-strategy", "notify::xy-focus-down-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
+    ("notify_app_bar_button_xy_focus_keyboard_navigation", || t::notify("app-bar-button", "xy-focus-keyboard-navigation", "notify::xy-focus-keyboard-navigation", &[Value::Str("Enabled".into()), Value::Str("Auto".into())])),
+    ("notify_app_bar_button_xy_focus_left_navigation_strategy", || t::notify("app-bar-button", "xy-focus-left-navigation-strategy", "notify::xy-focus-left-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
+    ("notify_app_bar_button_xy_focus_right_navigation_strategy", || t::notify("app-bar-button", "xy-focus-right-navigation-strategy", "notify::xy-focus-right-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
+    ("notify_app_bar_button_xy_focus_up_navigation_strategy", || t::notify("app-bar-button", "xy-focus-up-navigation-strategy", "notify::xy-focus-up-navigation-strategy", &[Value::Str("Projection".into()), Value::Str("Auto".into())])),
+    ("notify_viewbox_stretch", || t::notify("viewbox", "stretch", "notify::stretch", &[Value::Str("Fill".into()), Value::Str("None".into())])),
+    ("notify_viewbox_stretch_direction", || t::notify("viewbox", "stretch-direction", "notify::stretch-direction", &[Value::Str("DownOnly".into()), Value::Str("UpOnly".into())])),
     ("event_window_activated", || t::connect("window", "activated")),
+    ("method_content_dialog_show_async", || t::content_dialog_show()),
+    ("method_menu_flyout_hide", || t::call0("menu-flyout", "hide")),
+    ("method_grid_view_complete_view_change", || t::call0("grid-view", "complete-view-change")),
+    ("method_grid_view_initialize_view_change", || t::call0("grid-view", "initialize-view-change")),
+    ("method_grid_view_is_drag_source", || t::call0("grid-view", "is-drag-source")),
+    ("method_grid_view_select_all", || t::call0("grid-view", "select-all")),
+    ("method_password_box_select_all", || t::call0("password-box", "select-all")),
+    ("method_scroll_viewer_invalidate_scroll_info", || t::call0("scroll-viewer", "invalidate-scroll-info")),
     ("method_text_block_select_all", || t::call0("text-block", "select-all")),
     ("method_text_box_clear_undo_redo_history", || t::call0("text-box", "clear-undo-redo-history")),
     ("method_text_box_redo", || t::call0("text-box", "redo")),
     ("method_text_box_undo", || t::call0("text-box", "undo")),
-    ("method_button_invalidate_arrange", || t::call0("button", "invalidate-arrange")),
-    ("method_button_invalidate_measure", || t::call0("button", "invalidate-measure")),
-    ("method_button_update_layout", || t::call0("button", "update-layout")),
-    ("observe_button_click_mode", || t::observe("button", "click-mode", t::ObsCheck::Change(vec![Value::Str("Press".into()), Value::Str("Release".into())]), t::Fires::Any)),
-    ("observe_button_is_pointer_over", || t::observe("button", "is-pointer-over", t::ObsCheck::Connect, t::Fires::Any)),
-    ("observe_button_is_pressed", || t::observe("button", "is-pressed", t::ObsCheck::Connect, t::Fires::Any)),
-    ("observe_button_content", || t::observe("button", "content", t::ObsCheck::Change(vec![Value::Str("hello".into())]), t::Fires::Any)),
-    ("observe_button_is_enabled", || t::observe("button", "is-enabled", t::ObsCheck::Change(vec![Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_font_size", || t::observe("button", "font-size", t::ObsCheck::Change(vec![Value::F64(20.0)]), t::Fires::Any)),
-    ("observe_button_padding", || t::observe("button", "padding", t::ObsCheck::Change(vec![Value::Str("4".into())]), t::Fires::Any)),
-    ("observe_button_background_sizing", || t::observe("button", "background-sizing", t::ObsCheck::Change(vec![Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())]), t::Fires::Any)),
-    ("observe_button_border_thickness", || t::observe("button", "border-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
-    ("observe_button_character_spacing", || t::observe("button", "character-spacing", t::ObsCheck::Change(vec![Value::I64(3), Value::I64(7)]), t::Fires::Any)),
-    ("observe_button_element_sound_mode", || t::observe("button", "element-sound-mode", t::ObsCheck::Change(vec![Value::Str("FocusOnly".into()), Value::Str("Default".into())]), t::Fires::Any)),
-    ("observe_button_font_stretch", || t::observe("button", "font-stretch", t::ObsCheck::Change(vec![Value::Str("UltraCondensed".into()), Value::Str("Undefined".into())]), t::Fires::Any)),
-    ("observe_button_font_style", || t::observe("button", "font-style", t::ObsCheck::Change(vec![Value::Str("Oblique".into()), Value::Str("Normal".into())]), t::Fires::Any)),
-    ("observe_button_horizontal_content_alignment", || t::observe("button", "horizontal-content-alignment", t::ObsCheck::Change(vec![Value::Str("Center".into()), Value::Str("Left".into())]), t::Fires::Any)),
-    ("observe_button_is_focus_engagement_enabled", || t::observe("button", "is-focus-engagement-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_is_text_scale_factor_enabled", || t::observe("button", "is-text-scale-factor-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_requires_pointer", || t::observe("button", "requires-pointer", t::ObsCheck::Change(vec![Value::Str("WhenEngaged".into()), Value::Str("Never".into())]), t::Fires::Any)),
-    ("observe_button_tab_navigation", || t::observe("button", "tab-navigation", t::ObsCheck::Change(vec![Value::Str("Cycle".into()), Value::Str("Local".into())]), t::Fires::Any)),
-    ("observe_button_vertical_content_alignment", || t::observe("button", "vertical-content-alignment", t::ObsCheck::Change(vec![Value::Str("Center".into()), Value::Str("Top".into())]), t::Fires::Any)),
-    ("observe_button_width", || t::observe("button", "width", t::ObsCheck::Change(vec![Value::F64(120.0)]), t::Fires::Any)),
-    ("observe_button_height", || t::observe("button", "height", t::ObsCheck::Change(vec![Value::F64(40.0)]), t::Fires::Any)),
-    ("observe_button_min_width", || t::observe("button", "min-width", t::ObsCheck::Change(vec![Value::F64(10.0)]), t::Fires::Any)),
-    ("observe_button_min_height", || t::observe("button", "min-height", t::ObsCheck::Change(vec![Value::F64(10.0)]), t::Fires::Any)),
-    ("observe_button_margin", || t::observe("button", "margin", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into())]), t::Fires::Any)),
-    ("observe_button_horizontal_alignment", || t::observe("button", "horizontal-alignment", t::ObsCheck::Change(vec![Value::Str("Center".into())]), t::Fires::Any)),
-    ("observe_button_vertical_alignment", || t::observe("button", "vertical-alignment", t::ObsCheck::Change(vec![Value::Str("Bottom".into())]), t::Fires::Any)),
-    ("observe_button_name", || t::observe("button", "name", t::ObsCheck::Change(vec![Value::Str("first".into())]), t::Fires::Any)),
-    ("observe_button_actual_width", || t::observe("button", "actual-width", t::ObsCheck::Cross(t::Trig::Resize), t::Fires::Any)),
-    ("observe_button_actual_height", || t::observe("button", "actual-height", t::ObsCheck::Cross(t::Trig::Resize), t::Fires::Any)),
-    ("observe_button_actual_theme", || t::observe("button", "actual-theme", t::ObsCheck::Cross(t::Trig::Theme), t::Fires::Any)),
-    ("observe_button_allow_focus_on_interaction", || t::observe("button", "allow-focus-on-interaction", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_allow_focus_when_disabled", || t::observe("button", "allow-focus-when-disabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_flow_direction", || t::observe("button", "flow-direction", t::ObsCheck::Change(vec![Value::Str("RightToLeft".into()), Value::Str("LeftToRight".into())]), t::Fires::Any)),
-    ("observe_button_focus_visual_margin", || t::observe("button", "focus-visual-margin", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
-    ("observe_button_focus_visual_primary_thickness", || t::observe("button", "focus-visual-primary-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
-    ("observe_button_focus_visual_secondary_thickness", || t::observe("button", "focus-visual-secondary-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
-    ("observe_button_is_loaded", || t::observe("button", "is-loaded", t::ObsCheck::Cross(t::Trig::Mount), t::Fires::Any)),
-    ("observe_button_language", || t::observe("button", "language", t::ObsCheck::Change(vec![Value::Str("de-DE".into()), Value::Str("en-US".into())]), t::Fires::Any)),
-    ("observe_button_max_height", || t::observe("button", "max-height", t::ObsCheck::Change(vec![Value::F64(48.0), Value::F64(24.0)]), t::Fires::Any)),
-    ("observe_button_max_width", || t::observe("button", "max-width", t::ObsCheck::Change(vec![Value::F64(48.0), Value::F64(24.0)]), t::Fires::Any)),
-    ("observe_button_requested_theme", || t::observe("button", "requested-theme", t::ObsCheck::Change(vec![Value::Str("Light".into()), Value::Str("Default".into())]), t::Fires::Any)),
+    ("method_app_bar_button_invalidate_arrange", || t::call0("app-bar-button", "invalidate-arrange")),
+    ("method_app_bar_button_invalidate_measure", || t::call0("app-bar-button", "invalidate-measure")),
+    ("method_app_bar_button_update_layout", || t::call0("app-bar-button", "update-layout")),
+    ("observe_app_bar_button_click_mode", || t::observe("app-bar-button", "click-mode", t::ObsCheck::Change(vec![Value::Str("Press".into()), Value::Str("Release".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_is_pointer_over", || t::observe("app-bar-button", "is-pointer-over", t::ObsCheck::Connect, t::Fires::Any)),
+    ("observe_app_bar_button_is_pressed", || t::observe("app-bar-button", "is-pressed", t::ObsCheck::Connect, t::Fires::Any)),
+    ("observe_app_bar_button_content", || t::observe("app-bar-button", "content", t::ObsCheck::Change(vec![Value::Str("hello".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_is_enabled", || t::observe("app-bar-button", "is-enabled", t::ObsCheck::Change(vec![Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_font_size", || t::observe("app-bar-button", "font-size", t::ObsCheck::Change(vec![Value::F64(20.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_padding", || t::observe("app-bar-button", "padding", t::ObsCheck::Change(vec![Value::Str("4".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_background", || t::observe("app-bar-button", "background", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_background_sizing", || t::observe("app-bar-button", "background-sizing", t::ObsCheck::Change(vec![Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_border_brush", || t::observe("app-bar-button", "border-brush", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_border_thickness", || t::observe("app-bar-button", "border-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_character_spacing", || t::observe("app-bar-button", "character-spacing", t::ObsCheck::Change(vec![Value::I64(3), Value::I64(7)]), t::Fires::Any)),
+    ("observe_app_bar_button_corner_radius", || t::observe("app-bar-button", "corner-radius", t::ObsCheck::Change(vec![Value::Str("4".into()), Value::Str("1,2,3,4".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_default_style_resource_uri", || t::observe("app-bar-button", "default-style-resource-uri", t::ObsCheck::Change(vec![Value::Str("https://example.com/a".into()), Value::Str("https://example.org/b".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_element_sound_mode", || t::observe("app-bar-button", "element-sound-mode", t::ObsCheck::Change(vec![Value::Str("FocusOnly".into()), Value::Str("Default".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_font_family", || t::observe("app-bar-button", "font-family", t::ObsCheck::Change(vec![Value::Str("Consolas".into()), Value::Str("Segoe UI".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_font_stretch", || t::observe("app-bar-button", "font-stretch", t::ObsCheck::Change(vec![Value::Str("UltraCondensed".into()), Value::Str("Undefined".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_font_style", || t::observe("app-bar-button", "font-style", t::ObsCheck::Change(vec![Value::Str("Oblique".into()), Value::Str("Normal".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_font_weight", || t::observe("app-bar-button", "font-weight", t::ObsCheck::Change(vec![Value::I64(700), Value::I64(300)]), t::Fires::Any)),
+    ("observe_app_bar_button_foreground", || t::observe("app-bar-button", "foreground", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_horizontal_content_alignment", || t::observe("app-bar-button", "horizontal-content-alignment", t::ObsCheck::Change(vec![Value::Str("Center".into()), Value::Str("Left".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_is_focus_engagement_enabled", || t::observe("app-bar-button", "is-focus-engagement-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_is_text_scale_factor_enabled", || t::observe("app-bar-button", "is-text-scale-factor-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_requires_pointer", || t::observe("app-bar-button", "requires-pointer", t::ObsCheck::Change(vec![Value::Str("WhenEngaged".into()), Value::Str("Never".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_tab_navigation", || t::observe("app-bar-button", "tab-navigation", t::ObsCheck::Change(vec![Value::Str("Cycle".into()), Value::Str("Local".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_vertical_content_alignment", || t::observe("app-bar-button", "vertical-content-alignment", t::ObsCheck::Change(vec![Value::Str("Center".into()), Value::Str("Top".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_width", || t::observe("app-bar-button", "width", t::ObsCheck::Change(vec![Value::F64(120.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_height", || t::observe("app-bar-button", "height", t::ObsCheck::Change(vec![Value::F64(40.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_min_width", || t::observe("app-bar-button", "min-width", t::ObsCheck::Change(vec![Value::F64(10.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_min_height", || t::observe("app-bar-button", "min-height", t::ObsCheck::Change(vec![Value::F64(10.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_margin", || t::observe("app-bar-button", "margin", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_horizontal_alignment", || t::observe("app-bar-button", "horizontal-alignment", t::ObsCheck::Change(vec![Value::Str("Center".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_vertical_alignment", || t::observe("app-bar-button", "vertical-alignment", t::ObsCheck::Change(vec![Value::Str("Bottom".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_name", || t::observe("app-bar-button", "name", t::ObsCheck::Change(vec![Value::Str("first".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_actual_width", || t::observe("app-bar-button", "actual-width", t::ObsCheck::Cross(t::Trig::Resize), t::Fires::Any)),
+    ("observe_app_bar_button_actual_height", || t::observe("app-bar-button", "actual-height", t::ObsCheck::Cross(t::Trig::Resize), t::Fires::Any)),
+    ("observe_app_bar_button_actual_theme", || t::observe("app-bar-button", "actual-theme", t::ObsCheck::Cross(t::Trig::Theme), t::Fires::Any)),
+    ("observe_app_bar_button_allow_focus_on_interaction", || t::observe("app-bar-button", "allow-focus-on-interaction", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_allow_focus_when_disabled", || t::observe("app-bar-button", "allow-focus-when-disabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_base_uri", || t::observe("app-bar-button", "base-uri", t::ObsCheck::Unsupported, t::Fires::Any)),
+    ("observe_app_bar_button_flow_direction", || t::observe("app-bar-button", "flow-direction", t::ObsCheck::Change(vec![Value::Str("RightToLeft".into()), Value::Str("LeftToRight".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_focus_visual_margin", || t::observe("app-bar-button", "focus-visual-margin", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_focus_visual_primary_brush", || t::observe("app-bar-button", "focus-visual-primary-brush", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_focus_visual_primary_thickness", || t::observe("app-bar-button", "focus-visual-primary-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_focus_visual_secondary_brush", || t::observe("app-bar-button", "focus-visual-secondary-brush", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_focus_visual_secondary_thickness", || t::observe("app-bar-button", "focus-visual-secondary-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_is_loaded", || t::observe("app-bar-button", "is-loaded", t::ObsCheck::Cross(t::Trig::Mount), t::Fires::Any)),
+    ("observe_app_bar_button_language", || t::observe("app-bar-button", "language", t::ObsCheck::Change(vec![Value::Str("de-DE".into()), Value::Str("en-US".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_max_height", || t::observe("app-bar-button", "max-height", t::ObsCheck::Change(vec![Value::F64(48.0), Value::F64(24.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_max_width", || t::observe("app-bar-button", "max-width", t::ObsCheck::Change(vec![Value::F64(48.0), Value::F64(24.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_requested_theme", || t::observe("app-bar-button", "requested-theme", t::ObsCheck::Change(vec![Value::Str("Light".into()), Value::Str("Default".into())]), t::Fires::Any)),
     ("observe_grid_row_spacing", || t::observe("grid", "row-spacing", t::ObsCheck::Change(vec![Value::F64(4.0)]), t::Fires::Any)),
     ("observe_grid_column_spacing", || t::observe("grid", "column-spacing", t::ObsCheck::Change(vec![Value::F64(4.0)]), t::Fires::Any)),
     ("observe_grid_padding", || t::observe("grid", "padding", t::ObsCheck::Change(vec![Value::Str("8".into())]), t::Fires::Any)),
     ("observe_grid_row_definitions", || t::observe("grid", "row-definitions", t::ObsCheck::Unsupported, t::Fires::Any)),
     ("observe_grid_column_definitions", || t::observe("grid", "column-definitions", t::ObsCheck::Unsupported, t::Fires::Any)),
     ("observe_grid_background_sizing", || t::observe("grid", "background-sizing", t::ObsCheck::Change(vec![Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())]), t::Fires::Any)),
+    ("observe_grid_border_brush", || t::observe("grid", "border-brush", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
     ("observe_grid_border_thickness", || t::observe("grid", "border-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
-    ("observe_grid_is_items_host", || t::observe("grid", "is-items-host", t::ObsCheck::Connect, t::Fires::Any)),
-    ("observe_slider_minimum", || t::observe("slider", "minimum", t::ObsCheck::Change(vec![Value::F64(5.0)]), t::Fires::Any)),
-    ("observe_slider_maximum", || t::observe("slider", "maximum", t::ObsCheck::Change(vec![Value::F64(50.0)]), t::Fires::Any)),
-    ("observe_slider_value", || t::observe("slider", "value", t::ObsCheck::Change(vec![Value::F64(7.0)]), t::Fires::Any)),
-    ("observe_slider_small_change", || t::observe("slider", "small-change", t::ObsCheck::Change(vec![Value::F64(2.0)]), t::Fires::Any)),
-    ("observe_slider_large_change", || t::observe("slider", "large-change", t::ObsCheck::Change(vec![Value::F64(20.0)]), t::Fires::Any)),
+    ("observe_grid_corner_radius", || t::observe("grid", "corner-radius", t::ObsCheck::Change(vec![Value::Str("4".into()), Value::Str("1,2,3,4".into())]), t::Fires::Any)),
+    ("observe_canvas_background", || t::observe("canvas", "background", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
+    ("observe_canvas_is_items_host", || t::observe("canvas", "is-items-host", t::ObsCheck::Connect, t::Fires::Any)),
+    ("observe_progress_bar_minimum", || t::observe("progress-bar", "minimum", t::ObsCheck::Change(vec![Value::F64(5.0)]), t::Fires::Any)),
+    ("observe_progress_bar_maximum", || t::observe("progress-bar", "maximum", t::ObsCheck::Change(vec![Value::F64(50.0)]), t::Fires::Any)),
+    ("observe_progress_bar_value", || t::observe("progress-bar", "value", t::ObsCheck::Change(vec![Value::F64(7.0)]), t::Fires::Any)),
+    ("observe_progress_bar_small_change", || t::observe("progress-bar", "small-change", t::ObsCheck::Change(vec![Value::F64(2.0)]), t::Fires::Any)),
+    ("observe_progress_bar_large_change", || t::observe("progress-bar", "large-change", t::ObsCheck::Change(vec![Value::F64(20.0)]), t::Fires::Any)),
     ("observe_slider_step_frequency", || t::observe("slider", "step-frequency", t::ObsCheck::Change(vec![Value::F64(5.0)]), t::Fires::Any)),
     ("observe_slider_orientation", || t::observe("slider", "orientation", t::ObsCheck::Change(vec![Value::Str("Vertical".into())]), t::Fires::Any)),
     ("observe_slider_header", || t::observe("slider", "header", t::ObsCheck::Change(vec![Value::Str("Volume".into())]), t::Fires::Any)),
@@ -1007,7 +2547,9 @@ pub static TESTS: &[(&str, fn())] = &[
     ("observe_stack_panel_are_scroll_snap_points_regular", || t::observe("stack-panel", "are-scroll-snap-points-regular", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
     ("observe_stack_panel_are_vertical_snap_points_regular", || t::observe("stack-panel", "are-vertical-snap-points-regular", t::ObsCheck::Unsupported, t::Fires::Any)),
     ("observe_stack_panel_background_sizing", || t::observe("stack-panel", "background-sizing", t::ObsCheck::Change(vec![Value::Str("OuterBorderEdge".into()), Value::Str("InnerBorderEdge".into())]), t::Fires::Any)),
+    ("observe_stack_panel_border_brush", || t::observe("stack-panel", "border-brush", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
     ("observe_stack_panel_border_thickness", || t::observe("stack-panel", "border-thickness", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
+    ("observe_stack_panel_corner_radius", || t::observe("stack-panel", "corner-radius", t::ObsCheck::Change(vec![Value::Str("4".into()), Value::Str("1,2,3,4".into())]), t::Fires::Any)),
     ("observe_text_block_text", || t::observe("text-block", "text", t::ObsCheck::Change(vec![Value::Str("Count: 1".into())]), t::Fires::Any)),
     ("observe_text_block_font_size", || t::observe("text-block", "font-size", t::ObsCheck::Change(vec![Value::F64(18.0)]), t::Fires::Any)),
     ("observe_text_block_text_wrapping", || t::observe("text-block", "text-wrapping", t::ObsCheck::Change(vec![Value::Str("Wrap".into())]), t::Fires::Any)),
@@ -1015,8 +2557,11 @@ pub static TESTS: &[(&str, fn())] = &[
     ("observe_text_block_max_lines", || t::observe("text-block", "max-lines", t::ObsCheck::Change(vec![Value::I64(2)]), t::Fires::Any)),
     ("observe_text_block_baseline_offset", || t::observe("text-block", "baseline-offset", t::ObsCheck::Unsupported, t::Fires::Any)),
     ("observe_text_block_character_spacing", || t::observe("text-block", "character-spacing", t::ObsCheck::Change(vec![Value::I64(3), Value::I64(7)]), t::Fires::Any)),
+    ("observe_text_block_font_family", || t::observe("text-block", "font-family", t::ObsCheck::Change(vec![Value::Str("Consolas".into()), Value::Str("Segoe UI".into())]), t::Fires::Any)),
     ("observe_text_block_font_stretch", || t::observe("text-block", "font-stretch", t::ObsCheck::Change(vec![Value::Str("UltraCondensed".into()), Value::Str("Undefined".into())]), t::Fires::Any)),
     ("observe_text_block_font_style", || t::observe("text-block", "font-style", t::ObsCheck::Change(vec![Value::Str("Oblique".into()), Value::Str("Normal".into())]), t::Fires::Any)),
+    ("observe_text_block_font_weight", || t::observe("text-block", "font-weight", t::ObsCheck::Change(vec![Value::I64(700), Value::I64(300)]), t::Fires::Any)),
+    ("observe_text_block_foreground", || t::observe("text-block", "foreground", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
     ("observe_text_block_horizontal_text_alignment", || t::observe("text-block", "horizontal-text-alignment", t::ObsCheck::Change(vec![Value::Str("Left".into()), Value::Str("Center".into())]), t::Fires::Any)),
     ("observe_text_block_is_color_font_enabled", || t::observe("text-block", "is-color-font-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
     ("observe_text_block_is_text_scale_factor_enabled", || t::observe("text-block", "is-text-scale-factor-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
@@ -1026,6 +2571,7 @@ pub static TESTS: &[(&str, fn())] = &[
     ("observe_text_block_optical_margin_alignment", || t::observe("text-block", "optical-margin-alignment", t::ObsCheck::Change(vec![Value::Str("TrimSideBearings".into()), Value::Str("None".into())]), t::Fires::Any)),
     ("observe_text_block_padding", || t::observe("text-block", "padding", t::ObsCheck::Change(vec![Value::Str("1,2,3,4".into()), Value::Str("5".into())]), t::Fires::Any)),
     ("observe_text_block_selected_text", || t::observe("text-block", "selected-text", t::ObsCheck::Cross(t::Trig::SelectAll), t::Fires::Any)),
+    ("observe_text_block_selection_highlight_color", || t::observe("text-block", "selection-highlight-color", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
     ("observe_text_block_text_alignment", || t::observe("text-block", "text-alignment", t::ObsCheck::Change(vec![Value::Str("Left".into()), Value::Str("Center".into())]), t::Fires::Any)),
     ("observe_text_block_text_line_bounds", || t::observe("text-block", "text-line-bounds", t::ObsCheck::Change(vec![Value::Str("TrimToCapHeight".into()), Value::Str("Full".into())]), t::Fires::Any)),
     ("observe_text_block_text_trimming", || t::observe("text-block", "text-trimming", t::ObsCheck::Change(vec![Value::Str("CharacterEllipsis".into()), Value::Str("None".into())]), t::Fires::Any)),
@@ -1040,46 +2586,51 @@ pub static TESTS: &[(&str, fn())] = &[
     ("observe_text_box_can_redo", || t::observe("text-box", "can-redo", t::ObsCheck::Connect, t::Fires::Any)),
     ("observe_text_box_can_undo", || t::observe("text-box", "can-undo", t::ObsCheck::Connect, t::Fires::Any)),
     ("observe_text_box_character_casing", || t::observe("text-box", "character-casing", t::ObsCheck::Change(vec![Value::Str("Lower".into()), Value::Str("Normal".into())]), t::Fires::Any)),
+    ("observe_text_box_description", || t::observe("text-box", "description", t::ObsCheck::Change(vec![Value::Str("svelters".into()), Value::Str("winui".into())]), t::Fires::Any)),
     ("observe_text_box_desired_candidate_window_alignment", || t::observe("text-box", "desired-candidate-window-alignment", t::ObsCheck::Change(vec![Value::Str("BottomEdge".into()), Value::Str("Default".into())]), t::Fires::Any)),
     ("observe_text_box_horizontal_text_alignment", || t::observe("text-box", "horizontal-text-alignment", t::ObsCheck::Change(vec![Value::Str("Left".into()), Value::Str("Center".into())]), t::Fires::Any)),
     ("observe_text_box_is_color_font_enabled", || t::observe("text-box", "is-color-font-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
     ("observe_text_box_is_spell_check_enabled", || t::observe("text-box", "is-spell-check-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
     ("observe_text_box_is_text_prediction_enabled", || t::observe("text-box", "is-text-prediction-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_text_box_placeholder_foreground", || t::observe("text-box", "placeholder-foreground", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
     ("observe_text_box_prevent_keyboard_display_on_programmatic_focus", || t::observe("text-box", "prevent-keyboard-display-on-programmatic-focus", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
     ("observe_text_box_selected_text", || t::observe("text-box", "selected-text", t::ObsCheck::Cross(t::Trig::Select), t::Fires::Any)),
+    ("observe_text_box_selection_highlight_color", || t::observe("text-box", "selection-highlight-color", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
+    ("observe_text_box_selection_highlight_color_when_not_focused", || t::observe("text-box", "selection-highlight-color-when-not-focused", t::ObsCheck::Change(vec![Value::Str("#ff0000".into()), Value::Str("#00ff0080".into())]), t::Fires::Any)),
     ("observe_text_box_selection_length", || t::observe("text-box", "selection-length", t::ObsCheck::Cross(t::Trig::Select), t::Fires::Any)),
     ("observe_text_box_selection_start", || t::observe("text-box", "selection-start", t::ObsCheck::Cross(t::Trig::Select), t::Fires::Any)),
     ("observe_text_box_text_alignment", || t::observe("text-box", "text-alignment", t::ObsCheck::Change(vec![Value::Str("Left".into()), Value::Str("Center".into())]), t::Fires::Any)),
-    ("observe_check_box_is_checked", || t::observe("check-box", "is-checked", t::ObsCheck::Change(vec![Value::Bool(true)]), t::Fires::Any)),
-    ("observe_check_box_is_three_state", || t::observe("check-box", "is-three-state", t::ObsCheck::Change(vec![Value::Bool(true)]), t::Fires::Any)),
-    ("observe_button_visibility", || t::observe("button", "visibility", t::ObsCheck::Change(vec![Value::Str("Collapsed".into())]), t::Fires::Any)),
-    ("observe_button_opacity", || t::observe("button", "opacity", t::ObsCheck::Change(vec![Value::F64(0.5)]), t::Fires::Any)),
-    ("observe_button_is_hit_test_visible", || t::observe("button", "is-hit-test-visible", t::ObsCheck::Change(vec![Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_access_key", || t::observe("button", "access-key", t::ObsCheck::Change(vec![Value::Str("svelters".into()), Value::Str("winui".into())]), t::Fires::Any)),
-    ("observe_button_can_be_scroll_anchor", || t::observe("button", "can-be-scroll-anchor", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_composite_mode", || t::observe("button", "composite-mode", t::ObsCheck::Change(vec![Value::Str("SourceOver".into()), Value::Str("Inherit".into())]), t::Fires::Any)),
-    ("observe_button_exit_display_mode_on_access_key_invoked", || t::observe("button", "exit-display-mode-on-access-key-invoked", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_focus_state", || t::observe("button", "focus-state", t::ObsCheck::Connect, t::Fires::Any)),
-    ("observe_button_is_access_key_scope", || t::observe("button", "is-access-key-scope", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_is_double_tap_enabled", || t::observe("button", "is-double-tap-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_is_holding_enabled", || t::observe("button", "is-holding-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_is_right_tap_enabled", || t::observe("button", "is-right-tap-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_is_tab_stop", || t::observe("button", "is-tab-stop", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_is_tap_enabled", || t::observe("button", "is-tap-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_key_tip_horizontal_offset", || t::observe("button", "key-tip-horizontal-offset", t::ObsCheck::Change(vec![Value::F64(12.0), Value::F64(24.0)]), t::Fires::Any)),
-    ("observe_button_key_tip_placement_mode", || t::observe("button", "key-tip-placement-mode", t::ObsCheck::Change(vec![Value::Str("Bottom".into()), Value::Str("Auto".into())]), t::Fires::Any)),
-    ("observe_button_key_tip_vertical_offset", || t::observe("button", "key-tip-vertical-offset", t::ObsCheck::Change(vec![Value::F64(12.0), Value::F64(24.0)]), t::Fires::Any)),
-    ("observe_button_keyboard_accelerator_placement_mode", || t::observe("button", "keyboard-accelerator-placement-mode", t::ObsCheck::Change(vec![Value::Str("Hidden".into()), Value::Str("Auto".into())]), t::Fires::Any)),
-    ("observe_button_rasterization_scale", || t::observe("button", "rasterization-scale", t::ObsCheck::Unsupported, t::Fires::Any)),
-    ("observe_button_tab_focus_navigation", || t::observe("button", "tab-focus-navigation", t::ObsCheck::Change(vec![Value::Str("Cycle".into()), Value::Str("Local".into())]), t::Fires::Any)),
-    ("observe_button_tab_index", || t::observe("button", "tab-index", t::ObsCheck::Change(vec![Value::I64(3), Value::I64(7)]), t::Fires::Any)),
-    ("observe_button_use_layout_rounding", || t::observe("button", "use-layout-rounding", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_use_system_focus_visuals", || t::observe("button", "use-system-focus-visuals", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
-    ("observe_button_xy_focus_down_navigation_strategy", || t::observe("button", "xy-focus-down-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
-    ("observe_button_xy_focus_keyboard_navigation", || t::observe("button", "xy-focus-keyboard-navigation", t::ObsCheck::Change(vec![Value::Str("Enabled".into()), Value::Str("Auto".into())]), t::Fires::Any)),
-    ("observe_button_xy_focus_left_navigation_strategy", || t::observe("button", "xy-focus-left-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
-    ("observe_button_xy_focus_right_navigation_strategy", || t::observe("button", "xy-focus-right-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
-    ("observe_button_xy_focus_up_navigation_strategy", || t::observe("button", "xy-focus-up-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
+    ("observe_app_bar_toggle_button_is_checked", || t::observe("app-bar-toggle-button", "is-checked", t::ObsCheck::Change(vec![Value::Bool(true)]), t::Fires::Any)),
+    ("observe_app_bar_toggle_button_is_three_state", || t::observe("app-bar-toggle-button", "is-three-state", t::ObsCheck::Change(vec![Value::Bool(true)]), t::Fires::Any)),
+    ("observe_app_bar_button_visibility", || t::observe("app-bar-button", "visibility", t::ObsCheck::Change(vec![Value::Str("Collapsed".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_opacity", || t::observe("app-bar-button", "opacity", t::ObsCheck::Change(vec![Value::F64(0.5)]), t::Fires::Any)),
+    ("observe_app_bar_button_is_hit_test_visible", || t::observe("app-bar-button", "is-hit-test-visible", t::ObsCheck::Change(vec![Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_access_key", || t::observe("app-bar-button", "access-key", t::ObsCheck::Change(vec![Value::Str("svelters".into()), Value::Str("winui".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_can_be_scroll_anchor", || t::observe("app-bar-button", "can-be-scroll-anchor", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_composite_mode", || t::observe("app-bar-button", "composite-mode", t::ObsCheck::Change(vec![Value::Str("SourceOver".into()), Value::Str("Inherit".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_exit_display_mode_on_access_key_invoked", || t::observe("app-bar-button", "exit-display-mode-on-access-key-invoked", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_focus_state", || t::observe("app-bar-button", "focus-state", t::ObsCheck::Connect, t::Fires::Any)),
+    ("observe_app_bar_button_is_access_key_scope", || t::observe("app-bar-button", "is-access-key-scope", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_is_double_tap_enabled", || t::observe("app-bar-button", "is-double-tap-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_is_holding_enabled", || t::observe("app-bar-button", "is-holding-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_is_right_tap_enabled", || t::observe("app-bar-button", "is-right-tap-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_is_tab_stop", || t::observe("app-bar-button", "is-tab-stop", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_is_tap_enabled", || t::observe("app-bar-button", "is-tap-enabled", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_key_tip_horizontal_offset", || t::observe("app-bar-button", "key-tip-horizontal-offset", t::ObsCheck::Change(vec![Value::F64(12.0), Value::F64(24.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_key_tip_placement_mode", || t::observe("app-bar-button", "key-tip-placement-mode", t::ObsCheck::Change(vec![Value::Str("Bottom".into()), Value::Str("Auto".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_key_tip_vertical_offset", || t::observe("app-bar-button", "key-tip-vertical-offset", t::ObsCheck::Change(vec![Value::F64(12.0), Value::F64(24.0)]), t::Fires::Any)),
+    ("observe_app_bar_button_keyboard_accelerator_placement_mode", || t::observe("app-bar-button", "keyboard-accelerator-placement-mode", t::ObsCheck::Change(vec![Value::Str("Hidden".into()), Value::Str("Auto".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_rasterization_scale", || t::observe("app-bar-button", "rasterization-scale", t::ObsCheck::Unsupported, t::Fires::Any)),
+    ("observe_app_bar_button_rotation", || t::observe("app-bar-button", "rotation", t::ObsCheck::Unsupported, t::Fires::Any)),
+    ("observe_app_bar_button_tab_focus_navigation", || t::observe("app-bar-button", "tab-focus-navigation", t::ObsCheck::Change(vec![Value::Str("Cycle".into()), Value::Str("Local".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_tab_index", || t::observe("app-bar-button", "tab-index", t::ObsCheck::Change(vec![Value::I64(3), Value::I64(7)]), t::Fires::Any)),
+    ("observe_app_bar_button_use_layout_rounding", || t::observe("app-bar-button", "use-layout-rounding", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_use_system_focus_visuals", || t::observe("app-bar-button", "use-system-focus-visuals", t::ObsCheck::Change(vec![Value::Bool(true), Value::Bool(false)]), t::Fires::Any)),
+    ("observe_app_bar_button_xy_focus_down_navigation_strategy", || t::observe("app-bar-button", "xy-focus-down-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_xy_focus_keyboard_navigation", || t::observe("app-bar-button", "xy-focus-keyboard-navigation", t::ObsCheck::Change(vec![Value::Str("Enabled".into()), Value::Str("Auto".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_xy_focus_left_navigation_strategy", || t::observe("app-bar-button", "xy-focus-left-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_xy_focus_right_navigation_strategy", || t::observe("app-bar-button", "xy-focus-right-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
+    ("observe_app_bar_button_xy_focus_up_navigation_strategy", || t::observe("app-bar-button", "xy-focus-up-navigation-strategy", t::ObsCheck::Change(vec![Value::Str("Projection".into()), Value::Str("Auto".into())]), t::Fires::Any)),
     ("observe_window_title", || t::observe("window", "title", t::ObsCheck::Unsupported, t::Fires::Any)),
     ("observe_window_visible", || t::observe("window", "visible", t::ObsCheck::Cross(t::Trig::Activate), t::Fires::Any)),
 ];

@@ -1,0 +1,22 @@
+# WP-W: a group of radio buttons with one selection (GTK CheckButton groups, Qt QButtonGroup)
+class: Microsoft.UI.Xaml.Controls.RadioButtons
+element: {}
+slots:
+  - name: items
+    prop: Items
+    default: true
+    child: radio-button
+    provenance: "[ContentProperty(Name=\"Items\")] on RadioButtons (winmd); Items: IVector<object> (radio-button elements or strings)"
+props:
+  - { name: Header, as: string, test: "Size", provenance: "RadioButtons.Header: object (winmd); text header as boxed HSTRING" }
+  - { name: SelectedIndex, test: -1, provenance: "RadioButtons.SelectedIndex DP: i32 (winmd); -1 = no selection (the only index valid with no items)" }
+bindings:
+  - name: selected-index
+    direction: two_way
+    property: selected-index
+    type: { ref: i32, nullable: false }
+    change: { signal: selection-changed, role: any_change, value: prop }
+    write: { natively_normalizes: false }
+    echo: { strategy: compare, compare_before_set: true, read_back: true }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "RadioButtons.SelectionChanged (SelectionChangedEventHandler, winmd) follows every SelectedIndex change, user or code; the renderer reads selected-index back and compares before set"

@@ -1,0 +1,372 @@
+{
+ "bindings:allow-drop-tabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::allow-drop-tabs",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:can-drag-tabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::can-drag-tabs",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:can-reorder-tabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::can-reorder-tabs",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:can-tear-out-tabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::can-tear-out-tabs",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:close-button-overlay-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::close-button-overlay-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-add-tab-button-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-add-tab-button-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:selected-index": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::selected-index",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:tab-width-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::tab-width-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TabViewWidthMode>"
+  },
+  "rule": "B1"
+ },
+ "events:AddTabButtonClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ExternalTornOutTabsDropped": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ExternalTornOutTabsDropping": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SelectionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabCloseRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabDragCompleted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabDragStarting": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabDroppedOutside": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewTabDroppedOutsideEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabDroppedOutsideEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabItemsChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Windows.Foundation.Collections.IVectorChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Windows.Foundation.Collections.IVectorChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabStripDragOver": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DragEventArgs",
+   "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabStripDrop": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.DragEventArgs",
+   "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabTearOutRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TabTearOutWindowRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:AllowDropTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AllowDropTabsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CanDragTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CanDragTabsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CanReorderTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CanReorderTabsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CanTearOutTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CanTearOutTabsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CloseButtonOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CloseButtonOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsAddTabButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsAddTabButtonVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedIndexProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:TabWidthMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TabWidthModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TabViewWidthMode>"
+  },
+  "rule": "O6"
+ },
+ "props:AllowDropTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CanDragTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CanReorderTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CanTearOutTabs": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CloseButtonOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+   "samples": [
+    "OnPointerOver",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsAddTabButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TabWidthMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+   "samples": [
+    "SizeToContent",
+    "Equal"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.TabViewWidthMode>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

@@ -1,0 +1,155 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.ContentControl",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IExpanderFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Content",
+  "content_property_declared": null,
+  "dependency_properties": [
+    "ExpandDirectionProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "HeaderTemplateSelectorProperty",
+    "IsExpandedProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Expander",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.Expander",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "Expander"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "ExpandDirection",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ExpandDirection",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ExpandDirection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "HeaderTemplateSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.DataTemplateSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.DataTemplateSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "IsExpanded",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "TemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ExpanderTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.ExpanderTemplateSettings>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ExpanderCollapsedEventArgs",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Expander, Microsoft.UI.Xaml.Controls.ExpanderCollapsedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "Collapsed",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.Expander"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ExpanderExpandingEventArgs",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Expander, Microsoft.UI.Xaml.Controls.ExpanderExpandingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IExpander",
+      "name": "Expanding",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.Expander"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

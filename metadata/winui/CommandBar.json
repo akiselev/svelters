@@ -1,0 +1,171 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.AppBar",
+    "Microsoft.UI.Xaml.Controls.ContentControl",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.ICommandBarFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "PrimaryCommands",
+  "content_property_declared": "PrimaryCommands",
+  "dependency_properties": [
+    "CommandBarOverflowPresenterStyleProperty",
+    "DefaultLabelPositionProperty",
+    "IsDynamicOverflowEnabledProperty",
+    "OverflowButtonVisibilityProperty",
+    "PrimaryCommandsProperty",
+    "SecondaryCommandsProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CommandBar",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.CommandBar",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "CommandBar"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "CommandBarOverflowPresenterStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "CommandBarTemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.CommandBarTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.CommandBarTemplateSettings>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "DefaultLabelPosition",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.CommandBarDefaultLabelPosition",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.CommandBarDefaultLabelPosition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "IsDynamicOverflowEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "OverflowButtonVisibility",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.CommandBarOverflowButtonVisibility",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.CommandBarOverflowButtonVisibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "PrimaryCommands",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IObservableVector<Microsoft.UI.Xaml.Controls.ICommandBarElement>",
+        "ref": "object<Windows.Foundation.Collections.IObservableVector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "SecondaryCommands",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IObservableVector<Microsoft.UI.Xaml.Controls.ICommandBarElement>",
+        "ref": "object<Windows.Foundation.Collections.IObservableVector>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.DynamicOverflowItemsChangingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DynamicOverflowItemsChangingEventArgs",
+          "name": "Action",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.CommandBarDynamicOverflowAction",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.CommandBarDynamicOverflowAction>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.CommandBar, Microsoft.UI.Xaml.Controls.DynamicOverflowItemsChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+      "name": "DynamicOverflowItemsChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.CommandBar"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

@@ -1,0 +1,245 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.ISplitViewFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Content",
+  "content_property_declared": "Content",
+  "dependency_properties": [
+    "CompactPaneLengthProperty",
+    "ContentProperty",
+    "DisplayModeProperty",
+    "IsPaneOpenProperty",
+    "LightDismissOverlayModeProperty",
+    "OpenPaneLengthProperty",
+    "PaneBackgroundProperty",
+    "PanePlacementProperty",
+    "PaneProperty",
+    "TemplateSettingsProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.SplitView",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "SplitView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "CompactPaneLength",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "Content",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "DisplayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.SplitViewDisplayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.SplitViewDisplayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "IsPaneOpen",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "LightDismissOverlayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.LightDismissOverlayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "OpenPaneLength",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "Pane",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "PaneBackground",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "PanePlacement",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.SplitViewPanePlacement",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.SplitViewPanePlacement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "TemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.SplitViewTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.SplitViewTemplateSettings>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "PaneClosed",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.SplitView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.SplitViewPaneClosingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.SplitViewPaneClosingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, Microsoft.UI.Xaml.Controls.SplitViewPaneClosingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "PaneClosing",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.SplitView"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "PaneOpened",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.SplitView"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+      "name": "PaneOpening",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.SplitView"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

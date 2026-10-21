@@ -1,0 +1,359 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.INumberBoxFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "AcceptsExpressionProperty",
+    "DescriptionProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "IsWrapEnabledProperty",
+    "LargeChangeProperty",
+    "MaximumProperty",
+    "MinimumProperty",
+    "NumberFormatterProperty",
+    "PlaceholderTextProperty",
+    "PreventKeyboardDisplayOnProgrammaticFocusProperty",
+    "SelectionFlyoutProperty",
+    "SelectionHighlightColorProperty",
+    "SmallChangeProperty",
+    "SpinButtonPlacementModeProperty",
+    "TextProperty",
+    "TextReadingOrderProperty",
+    "ValidationModeProperty",
+    "ValueProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.NumberBox",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "NumberBox"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "AcceptsExpression",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "Description",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "IsWrapEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "LargeChange",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "Maximum",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "Minimum",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "NumberFormatter",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Globalization.NumberFormatting.INumberFormatter2",
+        "ref": "object<Windows.Globalization.NumberFormatting.INumberFormatter2>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "PlaceholderText",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "PreventKeyboardDisplayOnProgrammaticFocus",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "SelectionFlyout",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "SelectionHighlightColor",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+        "ref": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "SmallChange",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "SpinButtonPlacementMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "Text",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "TextReadingOrder",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextReadingOrder",
+        "ref": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "ValidationMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NumberBoxValidationMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "Value",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs",
+          "name": "NewValue",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs",
+          "name": "OldValue",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NumberBox, Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INumberBox",
+      "name": "ValueChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NumberBox"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

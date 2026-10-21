@@ -1,0 +1,5 @@
+# WP-W: GTK Switch / Qt checkable switch; IsOn is the state
+class: Microsoft.UI.Xaml.Controls.ToggleSwitch
+element: {}
+props:
+  - { name: Header, as: string, test: "Wi-Fi", provenance: "ToggleSwitch.Header: object (winmd); text header as boxed HSTRING" }

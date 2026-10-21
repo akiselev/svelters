@@ -1,0 +1,4 @@
+# WP-W: GTK MenuButton / Qt QToolButton with a menu; the flyout slot is Button's
+class: Microsoft.UI.Xaml.Controls.DropDownButton
+element:
+  text_prop: Content

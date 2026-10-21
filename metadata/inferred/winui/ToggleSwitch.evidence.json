@@ -1,0 +1,63 @@
+{
+ "bindings:is-on": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-on",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "events:Toggled": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:IsOn": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsOnProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IsOn": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IToggleSwitch",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OffContent": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:OnContent": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ }
+}

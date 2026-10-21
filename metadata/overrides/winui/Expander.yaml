@@ -1,0 +1,5 @@
+# WP-W: GTK Expander; the header is a string (Header: object as a boxed HSTRING), the content slot is ContentControl's
+class: Microsoft.UI.Xaml.Controls.Expander
+element: {}
+props:
+  - { name: Header, as: string, test: "Details", provenance: "Expander.Header: object (winmd); text header as boxed HSTRING" }

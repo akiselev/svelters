@@ -1,0 +1,5 @@
+# WP-W: GTK SearchEntry / Qt QLineEdit with a QCompleter
+class: Microsoft.UI.Xaml.Controls.AutoSuggestBox
+element: {}
+props:
+  - { name: Header, as: string, test: "Search", provenance: "AutoSuggestBox.Header: object (winmd); text header as boxed HSTRING" }

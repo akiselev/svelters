@@ -16,11 +16,21 @@ props:
   - InnerBorderEdge
   provenance: 'rule P1: StackPanel.BackgroundSizing: enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>, read-write DP (winmd); written and read
     back'
+- name: BorderBrush
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: StackPanel.BorderBrush: object<Microsoft.UI.Xaml.Media.Brush>, read-write DP (winmd); written and read back'
 - name: BorderThickness
   test:
   - 1,2,3,4
   - '5'
   provenance: 'rule P1: StackPanel.BorderThickness: value<Microsoft.UI.Xaml.Thickness>, read-write DP (winmd); written and read back'
+- name: CornerRadius
+  test:
+  - '4'
+  - 1,2,3,4
+  provenance: 'rule P1: StackPanel.CornerRadius: value<Microsoft.UI.Xaml.CornerRadius>, read-write DP (winmd); written and read back'
 - name: Orientation
   test:
   - Horizontal
@@ -42,8 +52,12 @@ notify:
     RegisterPropertyChangedCallback'
 - name: BackgroundSizing
   provenance: 'rule O6: StackPanel.BackgroundSizing is a DependencyProperty (StackPanel.BackgroundSizingProperty, winmd): RegisterPropertyChangedCallback'
+- name: BorderBrush
+  provenance: 'rule O6: StackPanel.BorderBrush is a DependencyProperty (StackPanel.BorderBrushProperty, winmd): RegisterPropertyChangedCallback'
 - name: BorderThickness
   provenance: 'rule O6: StackPanel.BorderThickness is a DependencyProperty (StackPanel.BorderThicknessProperty, winmd): RegisterPropertyChangedCallback'
+- name: CornerRadius
+  provenance: 'rule O6: StackPanel.CornerRadius is a DependencyProperty (StackPanel.CornerRadiusProperty, winmd): RegisterPropertyChangedCallback'
 - name: Orientation
   provenance: 'rule O6: StackPanel.Orientation is a DependencyProperty (StackPanel.OrientationProperty, winmd): RegisterPropertyChangedCallback'
 - name: Padding

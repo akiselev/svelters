@@ -1,0 +1,196 @@
+{
+ "bindings:font-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::font-size",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:font-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::font-style",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "B1"
+ },
+ "bindings:glyph": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::glyph",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-text-scale-factor-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-text-scale-factor-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:mirrored-when-right-to-left": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::mirrored-when-right-to-left",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "notify:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontFamilyProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontStyleProperty",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:Glyph": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "GlyphProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTextScaleFactorEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:MirroredWhenRightToLeft": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MirroredWhenRightToLeftProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IFontIcon",
+   "samples": [
+    "Consolas",
+    "Segoe UI"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IFontIcon",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IFontIcon",
+   "samples": [
+    "Oblique",
+    "Normal"
+   ],
+   "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IFontIcon",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Glyph": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IFontIcon",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTextScaleFactorEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IFontIcon",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MirroredWhenRightToLeft": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IFontIcon",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

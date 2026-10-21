@@ -24,7 +24,35 @@ samples:
   string: ["svelters", "winui"]
   thickness: ["1,2,3,4", "5"]
   nullable_bool: [true, false]
+  # WP-W value and object conversions (crates/svelters-winui/src/conv.rs; read back in the form the getter returns)
+  f32: [2.0, 4.0]
+  corner_radius: ["4", "1,2,3,4"]
+  color: ["#ff0000", "#00ff0080"]
+  nullable_color: ["#ff0000", null]
+  brush: ["#ff0000", "#00ff0080"]
+  solid_brush: ["#ff0000", "#00ff0080"]
+  font_weight: [700, 300]
+  font_family: ["Consolas", "Segoe UI"]
+  date_time: ["2024-05-17T00:00:00Z", "2021-01-02T00:00:00Z"]
+  nullable_date_time: ["2024-05-17T00:00:00Z", null]
+  time_span: [3600000.0, 7200000.0]
+  nullable_time_span: [3600000.0, null]
+  nullable_f64: [12.0, null]
+  uri: ["https://example.com/a", "https://example.org/b"]
+  image_source: ["https://example.com/a.png", "https://example.org/b.png"]
+  icon: ["Accept", "Cancel"]
   # enum: the second member, then the first (enums with one member are skipped)
+
+# P1: `object` props exposed as a boxed string (`as: string`) by rule (confidence 0.9); other object props stay in the
+# review band (0.6). Patterns match `<Class>.<Prop>`.
+string_objects:
+  - pattern: '\.(Header|Description|Title|Subtitle|PlaceholderText|OnContent|OffContent|CloseButtonContent|ActionButtonContent|PaneTitle)$'
+    reason: a header, title or description label; text is the common case (an element goes through a slot where one exists)
+
+# M1: arguments for methods with parameters that a new, unmounted element accepts (confidence 0.9, `args` of the
+# generated test). Keys are `<Class>.<Method>`.
+method_args:
+  "TextBox.Select": [1, 2]
 
 # Props never inferred (any section that names them), with the reason.
 deny_props:

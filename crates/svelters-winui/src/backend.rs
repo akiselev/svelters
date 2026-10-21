@@ -13,7 +13,7 @@
 use crate::app::Xaml;
 use crate::bindings::Microsoft::UI::Dispatching::{DispatcherQueue, DispatcherQueueHandler, DispatcherQueueTimer};
 use crate::bindings::Microsoft::UI::Xaml::Media::CompositionTarget;
-use crate::bindings::Microsoft::UI::Xaml::{UIElement, Window};
+use crate::bindings::Microsoft::UI::Xaml::Window;
 use crate::bindings::Windows::Win32::{DispatchMessageW, GetMessageW, MSG, PM_REMOVE, PeekMessageW, PostQuitMessage, TranslateMessage};
 use crate::conv;
 use crate::dispatch::{ATTR_GET, ATTR_SET, CREATE, EVENT_CONNECT, METHOD_CALL, OBSERVE_CONNECT, PROP_GET, PROP_SET, SLOT_OPS, SlotOps};
@@ -27,7 +27,6 @@ use std::rc::{Rc, Weak};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use svelters_abi::*;
-use windows_collections::IVector;
 use windows_core::{EventRevoker, IInspectable, IUnknown, Interface};
 
 thread_local! {
@@ -125,6 +124,21 @@ pub(crate) fn handle_of(o: &IInspectable) -> Option<u64> {
     let inner = current()?;
     let id = identity(o);
     inner.by_ptr.borrow().get(&id).copied()
+}
+
+/// The XamlRoot of the first of our windows that has content (a popup without a tree position, such as a
+/// ContentDialog that was never inserted, shows over it).
+pub(crate) fn first_xaml_root() -> Option<crate::bindings::Microsoft::UI::Xaml::XamlRoot> {
+    let inner = current()?;
+    let mut wins: Vec<(u64, IInspectable)> = inner
+        .handles
+        .borrow()
+        .iter()
+        .filter(|(_, e)| e.life == SVL_LIFE_TOPLEVEL)
+        .map(|(h, e)| (*h, e.obj.clone()))
+        .collect();
+    wins.sort_by_key(|(h, _)| *h);
+    wins.into_iter().find_map(|(_, w)| w.cast::<Window>().ok()?.Content().ok()?.XamlRoot().ok())
 }
 
 pub(crate) fn host_of(inner: &Inner) -> Option<HostRef<'static>> {
@@ -445,12 +459,11 @@ impl WinUiBackend {
         let _ = s;
         match &SLOT_OPS[slot as usize - 1] {
             SlotOps::Single { get, .. } => Ok(get(&obj).into_iter().map(|c| handle_of(&c)).collect()),
-            SlotOps::Many { items } => {
-                let coll = items(&obj).and_then(|c| c.cast::<IVector<UIElement>>()).map_err(conv::err)?;
-                let n = coll.Size().map_err(conv::err)?;
+            SlotOps::Many(ops) => {
+                let n = (ops.len)(&obj).map_err(conv::err)?;
                 let mut out = Vec::new();
                 for i in 0..n {
-                    let c: IInspectable = coll.GetAt(i).map_err(conv::err)?.into();
+                    let c = (ops.get)(&obj, i).map_err(conv::err)?;
                     out.push(handle_of(&c));
                 }
                 Ok(out)
@@ -502,11 +515,15 @@ impl WinUiBackend {
             Ty::Bool => SlotDesc::new(SVL_BOOL),
             Ty::NullableBool => SlotDesc::new(SVL_BOOL).flags(SVL_D_NULLABLE),
             Ty::I32 => SlotDesc::new(SVL_I64).flags(SVL_D_INTEGRAL).range(i32::MIN as f64, i32::MAX as f64),
-            Ty::F64 => SlotDesc::new(SVL_F64),
+            Ty::F64 | Ty::F32 | Ty::TimeSpan => SlotDesc::new(SVL_F64),
+            Ty::NullableF64 | Ty::NullableTimeSpan => SlotDesc::new(SVL_F64).flags(SVL_D_NULLABLE),
+            Ty::FontWeight => SlotDesc::new(SVL_I64).flags(SVL_D_INTEGRAL).range(1.0, 999.0),
             Ty::Str | Ty::Enum(_) | Ty::Custom => SlotDesc::new(SVL_STR),
-            Ty::ObjectString => SlotDesc::new(SVL_STR).flags(SVL_D_NULLABLE),
-            // A number, a string form or a record: converted by the backend.
-            Ty::Thickness => return None,
+            Ty::ObjectString | Ty::Brush | Ty::SolidBrush | Ty::Color | Ty::NullableColor | Ty::FontFamily | Ty::Uri
+            | Ty::ImageSource | Ty::Icon(_) => SlotDesc::new(SVL_STR).flags(SVL_D_NULLABLE),
+            // A number, a string form or a record (Thickness, CornerRadius); a Date, a number or ISO text (DateTime):
+            // converted by the backend.
+            Ty::Thickness | Ty::CornerRadius | Ty::DateTime | Ty::NullableDateTime => return None,
         }
         .named(p.name);
         Some(MemberDesc {
@@ -745,32 +762,29 @@ impl Backend for WinUiBackend {
             Some((p, _)) => return Err(format!("handle {child} is already inserted into {p}; remove it first")),
             None => {}
         }
-        let celem = cobj.cast::<UIElement>().map_err(|_| format!("handle {child} is not a UIElement"))?;
+        // The slot's ops cast the child to the slot's element type (UIElement, MenuBarItem, FlyoutBase, ...).
+        let slot_name = table::slot(slot).map_or("?", |s| s.name);
+        let wrong = |e: windows_core::Error| format!("slot {slot_name:?} does not take handle {child}: {}", conv::err(e));
         match &SLOT_OPS[slot as usize - 1] {
             SlotOps::Single { set, .. } => {
                 if before.is_some() {
-                    return Err(format!("slot {:?} holds one child: `before` does not apply", table::slot(slot).unwrap().name));
+                    return Err(format!("slot {slot_name:?} holds one child: `before` does not apply"));
                 }
                 if let Some(other) = single_occupant(&inner.handles.borrow(), parent, slot) {
-                    return Err(format!("slot {:?} is occupied by {other}; remove it first", table::slot(slot).unwrap().name));
+                    return Err(format!("slot {slot_name:?} is occupied by {other}; remove it first"));
                 }
-                set(&pobj, Some(&cobj)).map_err(conv::err)?;
+                set(&pobj, Some(&cobj)).map_err(wrong)?;
             }
-            SlotOps::Many { items } => {
-                let coll = items(&pobj).and_then(|c| c.cast::<IVector<UIElement>>()).map_err(conv::err)?;
-                match before {
-                    Some(b) => {
-                        let (bobj, _) = inner.get(b)?;
-                        let belem = bobj.cast::<UIElement>().map_err(conv::err)?;
-                        let mut idx = 0u32;
-                        if !coll.IndexOf(&belem, &mut idx).map_err(conv::err)? {
-                            return Err(format!("`before` {b} is not a child of {parent}"));
-                        }
-                        coll.InsertAt(idx, &celem).map_err(conv::err)?;
-                    }
-                    None => coll.Append(&celem).map_err(conv::err)?,
+            SlotOps::Many(ops) => match before {
+                Some(b) => {
+                    let (bobj, _) = inner.get(b)?;
+                    let Some(idx) = (ops.index_of)(&pobj, &bobj).map_err(conv::err)? else {
+                        return Err(format!("`before` {b} is not a child of {parent}"));
+                    };
+                    (ops.insert_at)(&pobj, idx, &cobj).map_err(wrong)?;
                 }
-            }
+                None => (ops.append)(&pobj, &cobj).map_err(wrong)?,
+            },
         }
         let mut handles = inner.handles.borrow_mut();
         let c = handles.get_mut(&child).unwrap();
@@ -793,12 +807,9 @@ impl Backend for WinUiBackend {
         if !table::kind(ckind).is_some_and(|k| k.toplevel) {
             match &SLOT_OPS[slot as usize - 1] {
                 SlotOps::Single { set, .. } => set(&pobj, None).map_err(conv::err)?,
-                SlotOps::Many { items } => {
-                    let coll = items(&pobj).and_then(|c| c.cast::<IVector<UIElement>>()).map_err(conv::err)?;
-                    let elem = cobj.cast::<UIElement>().map_err(conv::err)?;
-                    let mut idx = 0u32;
-                    if coll.IndexOf(&elem, &mut idx).map_err(conv::err)? {
-                        coll.RemoveAt(idx).map_err(conv::err)?;
+                SlotOps::Many(ops) => {
+                    if let Some(idx) = (ops.index_of)(&pobj, &cobj).map_err(conv::err)? {
+                        (ops.remove_at)(&pobj, idx).map_err(conv::err)?;
                     }
                 }
             }
@@ -1019,7 +1030,11 @@ impl Backend for WinUiBackend {
             Some(e) if e.parent == Some(parent) && e.slot == a.slot => {}
             _ => return Err(format!("handle {child} is not in the {:?} slot of {parent}", table::slot(a.slot).map_or("?", |s| s.name))),
         }
-        let v = if matches!(v, Value::Null) { Value::I64(a.default) } else { v.clone() };
+        let v = match (v, a.ty) {
+            (Value::Null, Ty::F64) => Value::F64(a.default),
+            (Value::Null, _) => Value::I64(a.default as i64),
+            _ => v.clone(),
+        };
         ATTR_SET[attr as usize - 1](&cobj, &v).map_err(|e| format!("{}: {e}", a.name))
     }
 

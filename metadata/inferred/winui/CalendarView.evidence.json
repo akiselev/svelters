@@ -1,0 +1,1774 @@
+{
+ "bindings:calendar-identifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::calendar-identifier",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:day-item-font-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::day-item-font-size",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:day-item-font-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::day-item-font-style",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "B1"
+ },
+ "bindings:day-of-week-format": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::day-of-week-format",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:display-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::display-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:first-day-of-week": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::first-day-of-week",
+   "type": "enum<Windows.Globalization.DayOfWeek>"
+  },
+  "rule": "B1"
+ },
+ "bindings:first-of-month-label-font-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::first-of-month-label-font-size",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:first-of-month-label-font-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::first-of-month-label-font-style",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "B1"
+ },
+ "bindings:first-of-year-decade-label-font-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::first-of-year-decade-label-font-size",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:first-of-year-decade-label-font-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::first-of-year-decade-label-font-style",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-day-item-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-day-item-alignment",
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-first-of-month-label-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-first-of-month-label-alignment",
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-group-label-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-group-label-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-out-of-scope-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-out-of-scope-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-today-highlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-today-highlighted",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:month-year-item-font-size": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::month-year-item-font-size",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:month-year-item-font-style": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::month-year-item-font-style",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "B1"
+ },
+ "bindings:number-of-weeks-in-view": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::number-of-weeks-in-view",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:selection-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::selection-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewSelectionMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:vertical-day-item-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::vertical-day-item-alignment",
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:vertical-first-of-month-label-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::vertical-first-of-month-label-alignment",
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+  },
+  "rule": "B1"
+ },
+ "events:CalendarViewDayItemChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.CalendarView, Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SelectedDatesChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.CalendarViewSelectedDatesChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.CalendarView, Microsoft.UI.Xaml.Controls.CalendarViewSelectedDatesChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:BlackoutBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BlackoutBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:BlackoutForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BlackoutForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:BlackoutStrikethroughBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BlackoutStrikethroughBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarIdentifierProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemBorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemBorderThicknessProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemCornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemCornerRadiusProperty",
+   "type": "value<Microsoft.UI.Xaml.CornerRadius>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemDisabledBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemDisabledBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemHoverBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemHoverBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:CalendarItemPressedBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarItemPressedBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:DayItemFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayItemFontFamilyProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+  },
+  "rule": "O6"
+ },
+ "notify:DayItemFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayItemFontSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:DayItemFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayItemFontStyleProperty",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:DayItemFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayItemFontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:DayItemMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayItemMarginProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:DayOfWeekFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayOfWeekFormatProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:DisabledForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DisabledForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:DisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DisplayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstDayOfWeek": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstDayOfWeekProperty",
+   "type": "enum<Windows.Globalization.DayOfWeek>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfMonthLabelFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfMonthLabelFontFamilyProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfMonthLabelFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfMonthLabelFontSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfMonthLabelFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfMonthLabelFontStyleProperty",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfMonthLabelFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfMonthLabelFontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfMonthLabelMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfMonthLabelMarginProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfYearDecadeLabelFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfYearDecadeLabelFontFamilyProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfYearDecadeLabelFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfYearDecadeLabelFontSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfYearDecadeLabelFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfYearDecadeLabelFontStyleProperty",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfYearDecadeLabelFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfYearDecadeLabelFontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstOfYearDecadeLabelMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstOfYearDecadeLabelMarginProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:FocusBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FocusBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalDayItemAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalDayItemAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalFirstOfMonthLabelAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalFirstOfMonthLabelAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:HoverBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HoverBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsGroupLabelVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsGroupLabelVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsOutOfScopeEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsOutOfScopeEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTodayHighlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTodayHighlightedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxDateProperty",
+   "type": "value<Windows.Foundation.DateTime>"
+  },
+  "rule": "O6"
+ },
+ "notify:MinDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinDateProperty",
+   "type": "value<Windows.Foundation.DateTime>"
+  },
+  "rule": "O6"
+ },
+ "notify:MonthYearItemFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MonthYearItemFontFamilyProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>"
+  },
+  "rule": "O6"
+ },
+ "notify:MonthYearItemFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MonthYearItemFontSizeProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:MonthYearItemFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MonthYearItemFontStyleProperty",
+   "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:MonthYearItemFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MonthYearItemFontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:MonthYearItemMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MonthYearItemMarginProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:NumberOfWeeksInView": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "NumberOfWeeksInViewProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:OutOfScopeBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OutOfScopeBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:OutOfScopeForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OutOfScopeForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:OutOfScopeHoverForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OutOfScopeHoverForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:OutOfScopePressedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OutOfScopePressedForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:PressedBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PressedBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:PressedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PressedForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedDisabledBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedDisabledBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedDisabledForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedDisabledForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedHoverBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedHoverBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedHoverForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedHoverForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedPressedBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedPressedBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedPressedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedPressedForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectionMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectionModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewSelectionMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayBlackoutBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayBlackoutBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayBlackoutForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayBlackoutForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayDisabledBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayDisabledBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayFontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayHoverBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayHoverBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodayPressedBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodayPressedBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:TodaySelectedInnerBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TodaySelectedInnerBorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalDayItemAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalDayItemAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalFirstOfMonthLabelAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalFirstOfMonthLabelAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>"
+  },
+  "rule": "O6"
+ },
+ "props:BlackoutBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BlackoutForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BlackoutStrikethroughBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemBorderThickness": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemCornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "4",
+    "1,2,3,4"
+   ],
+   "type": "value<Microsoft.UI.Xaml.CornerRadius>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemDisabledBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemHoverBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CalendarItemPressedBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayItemFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Consolas",
+    "Segoe UI"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayItemFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayItemFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Oblique",
+    "Normal"
+   ],
+   "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayItemFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayItemMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayOfWeekFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DisabledForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Year",
+    "Month"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstDayOfWeek": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Monday",
+    "Sunday"
+   ],
+   "type": "enum<Windows.Globalization.DayOfWeek>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfMonthLabelFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Consolas",
+    "Segoe UI"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfMonthLabelFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfMonthLabelFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Oblique",
+    "Normal"
+   ],
+   "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfMonthLabelFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfMonthLabelMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfYearDecadeLabelFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Consolas",
+    "Segoe UI"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfYearDecadeLabelFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfYearDecadeLabelFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Oblique",
+    "Normal"
+   ],
+   "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfYearDecadeLabelFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstOfYearDecadeLabelMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FocusBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalDayItemAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Center",
+    "Left"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalFirstOfMonthLabelAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Center",
+    "Left"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.HorizontalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HoverBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsGroupLabelVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsOutOfScopeEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTodayHighlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    "2021-01-02T00:00:00Z"
+   ],
+   "type": "value<Windows.Foundation.DateTime>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    "2021-01-02T00:00:00Z"
+   ],
+   "type": "value<Windows.Foundation.DateTime>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MonthYearItemFontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Consolas",
+    "Segoe UI"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MonthYearItemFontSize": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MonthYearItemFontStyle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Oblique",
+    "Normal"
+   ],
+   "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MonthYearItemFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MonthYearItemMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:NumberOfWeeksInView": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OutOfScopeBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OutOfScopeForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OutOfScopeHoverForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OutOfScopePressedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PressedBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PressedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedDisabledBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedDisabledForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedHoverBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedHoverForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedPressedBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedPressedForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Single",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewSelectionMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayBlackoutBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayBlackoutForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayDisabledBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayFontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayHoverBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodayPressedBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TodaySelectedInnerBorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalDayItemAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Center",
+    "Top"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalFirstOfMonthLabelAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarView",
+   "samples": [
+    "Center",
+    "Top"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.VerticalAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

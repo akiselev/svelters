@@ -39,6 +39,8 @@ mod dispatch;
 #[cfg(windows)]
 mod sink;
 #[cfg(windows)]
+mod slots;
+#[cfg(windows)]
 pub mod testing;
 
 #[cfg(windows)]

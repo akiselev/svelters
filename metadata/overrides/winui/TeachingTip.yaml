@@ -1,0 +1,7 @@
+# WP-W: a popup tip (GTK Popover); IsOpen shows it, the content slot is ContentControl's
+class: Microsoft.UI.Xaml.Controls.TeachingTip
+element: {}
+slots:
+  - name: hero-content
+    prop: HeroContent
+    provenance: "TeachingTip.HeroContent: UIElement (winmd), single child"

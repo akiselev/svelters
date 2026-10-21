@@ -60,14 +60,28 @@ SCALAR = {"bool", "i32", "f64", "string"}
 BINDABLE = SCALAR | {"nullable<bool>"}
 
 
+def _snake(name: str) -> str:
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+
+
+def _value_types() -> dict[str, str]:
+    """The generator's value and object conversions (gen_backend.VALUE_TYPES), as wire class names (`corner_radius`)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("svelters_winui_gen_i", HERE / "gen_backend.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return {ref: _snake(t) for ref, t in mod.VALUE_TYPES.items()}
+
+
+VALUE_WIRES = _value_types()
+
+
 def wire(ref: str, types: dict) -> str | None:
     """The generator's wire class of a type ref (gen_backend.ty_of), or None when it has no conversion."""
-    if ref in SCALAR:
+    if ref in SCALAR or ref == "f32":
         return ref
-    if ref == "value<Microsoft.UI.Xaml.Thickness>":
-        return "thickness"
-    if ref == "nullable<bool>":
-        return "nullable_bool"
+    if ref in VALUE_WIRES:
+        return VALUE_WIRES[ref]
     m = re.fullmatch(r"enum<(.+)>", ref)
     if m and (types.get(m.group(1)) or {}).get("category") == "enum":
         return "enum"
@@ -85,6 +99,8 @@ class Rules:
         self.deny_events = [(re.compile(r["pattern"]), r["reason"]) for r in d.get("deny_events", [])]
         self.result_props = list(d.get("result_props", []))
         self.triggers = [(re.compile(r["pattern"]), r["trigger"]) for r in d.get("triggers", [])]
+        self.string_objects = [(re.compile(r["pattern"]), r["reason"]) for r in d.get("string_objects", [])]
+        self.method_args = dict(d.get("method_args") or {})
 
     @staticmethod
     def first(pats, name: str):
@@ -147,10 +163,13 @@ class Klass:
                 continue
             if w is None:
                 if ref == "variant" and p["access"]["write"]:
-                    # Content, Header, Tag, ...: exposing an object prop as a boxed string (`as: string`) is a choice.
+                    # Content, Header, Tag, ...: exposing an object prop as a boxed string (`as: string`) is a choice;
+                    # the rules' `string_objects` names make it (headers, titles, descriptions), the rest wait for review.
+                    why = Rules.first(self.rules.string_objects, full)
                     self.add("props", {"name": p["name"], "as": "string", "test": ["svelters", "winui"],
-                                       "provenance": f"rule P1: {full}: object, as a boxed string (winmd)"},
-                             0.6, "P1", {"type": ref}, "prop:object-as-string")
+                                       "provenance": f"rule P1: {full}: object, as a boxed string (winmd)"
+                                                     + (f"; string_objects: {why}" if why else "")},
+                             0.9 if why else 0.6, "P1", {"type": ref}, "prop:object-as-string")
                 else:
                     self.skip(f"prop:type:{ref.split('<')[0]}")
                 continue
@@ -253,7 +272,12 @@ class Klass:
                 continue
             rec = {"name": m["name"], "provenance": f"rule M1: {full}({', '.join(p['type']['ref'] for p in m['params'])}) -> "
                                                     f"{'void' if void else ret['ref']} (winmd)"}
-            if m["params"]:
+            if m["params"] and full in self.rules.method_args:
+                # The rules name arguments the call accepts on a new, unmounted element.
+                rec = {**rec, "args": list(self.rules.method_args[full])}
+                self.add("methods", rec, 0.9, "M1", {"params": [p["type"]["ref"] for p in m["params"]], "args": rec["args"]},
+                         "method:sampled-args")
+            elif m["params"]:
                 self.add("methods", rec, 0.6, "M1", {"params": [p["type"]["ref"] for p in m["params"]]}, "method:scalar-args")
             else:
                 self.add("methods", rec, 0.9, "M1", {"returns": None if void else ret["ref"]},

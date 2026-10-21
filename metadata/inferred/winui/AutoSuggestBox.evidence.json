@@ -1,0 +1,308 @@
+{
+ "bindings:auto-maximize-suggestion-area": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::auto-maximize-suggestion-area",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-suggestion-list-open": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-suggestion-list-open",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:light-dismiss-overlay-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::light-dismiss-overlay-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-suggestion-list-height": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-suggestion-list-height",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:placeholder-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::placeholder-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:text-member-path": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text-member-path",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:update-text-on-select": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::update-text-on-select",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "events:QuerySubmitted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.AutoSuggestBoxQuerySubmittedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.AutoSuggestBox, Microsoft.UI.Xaml.Controls.AutoSuggestBoxQuerySubmittedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SuggestionChosen": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.AutoSuggestBoxSuggestionChosenEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.AutoSuggestBox, Microsoft.UI.Xaml.Controls.AutoSuggestBoxSuggestionChosenEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TextChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.AutoSuggestBoxTextChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.AutoSuggestBox, Microsoft.UI.Xaml.Controls.AutoSuggestBoxTextChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:AutoMaximizeSuggestionArea": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AutoMaximizeSuggestionAreaProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsSuggestionListOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsSuggestionListOpenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LightDismissOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxSuggestionListHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxSuggestionListHeightProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlaceholderTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:QueryIcon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "QueryIconProperty",
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>"
+  },
+  "rule": "O6"
+ },
+ "notify:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:TextMemberPath": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextMemberPathProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:UpdateTextOnSelect": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "UpdateTextOnSelectProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:AutoMaximizeSuggestionArea": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Description": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IsSuggestionListOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    "On",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxSuggestionListHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:QueryIcon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    "Accept",
+    "Cancel"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TextMemberPath": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:UpdateTextOnSelect": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAutoSuggestBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

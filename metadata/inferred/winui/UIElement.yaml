@@ -90,6 +90,11 @@ props:
   - 12.0
   - 24.0
   provenance: 'rule P1: UIElement.RasterizationScale: f64, read-write (winmd); written and read back'
+- name: Rotation
+  test:
+  - 2.0
+  - 4.0
+  provenance: 'rule P1: UIElement.Rotation: f32, read-write (winmd); written and read back'
 - name: TabFocusNavigation
   test:
   - Cycle

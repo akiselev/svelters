@@ -1,0 +1,255 @@
+{
+ "events:Closed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closing": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBaseClosingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase, Microsoft.UI.Xaml.Controls.Primitives.FlyoutBaseClosingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Opened": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Opening": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "methods:Hide": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "notify:AllowFocusOnInteraction": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AllowFocusOnInteractionProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:AllowFocusWhenDisabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AllowFocusWhenDisabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:AreOpenCloseAnimationsEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AreOpenCloseAnimationsEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:ElementSoundMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ElementSoundModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.ElementSoundMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LightDismissOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:Placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlacementProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:ShouldConstrainToRootBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ShouldConstrainToRootBoundsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:ShowMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ShowModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode>"
+  },
+  "rule": "O6"
+ },
+ "props:AllowFocusOnInteraction": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:AllowFocusWhenDisabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:AreOpenCloseAnimationsEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ElementSoundMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    "FocusOnly",
+    "Default"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.ElementSoundMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:InputDevicePrefersPrimaryCommands": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:IsConstrainedToRootBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:IsOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    "On",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    "Bottom",
+    "Top"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ShouldConstrainToRootBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ShowMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+   "samples": [
+    "Standard",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

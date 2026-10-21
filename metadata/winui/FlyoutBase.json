@@ -1,0 +1,400 @@
+{
+  "abstract": true,
+  "attached": [
+    {
+      "accessors": {
+        "get": "GetAttachedFlyout",
+        "set": "SetAttachedFlyout"
+      },
+      "dependency_property": true,
+      "name": "AttachedFlyout",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.FrameworkElement",
+        "ref": "object<Microsoft.UI.Xaml.FrameworkElement>"
+      },
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    }
+  ],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "AllowFocusOnInteractionProperty",
+    "AllowFocusWhenDisabledProperty",
+    "AreOpenCloseAnimationsEnabledProperty",
+    "AttachedFlyoutProperty",
+    "ElementSoundModeProperty",
+    "InputDevicePrefersPrimaryCommandsProperty",
+    "IsOpenProperty",
+    "LightDismissOverlayModeProperty",
+    "OverlayInputPassThroughElementProperty",
+    "PlacementProperty",
+    "ShouldConstrainToRootBoundsProperty",
+    "ShowModeProperty",
+    "SystemBackdropProperty",
+    "TargetProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "ShowAt",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "placementTarget",
+          "type": {
+            "native": "Microsoft.UI.Xaml.FrameworkElement",
+            "ref": "object<Microsoft.UI.Xaml.FrameworkElement>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "ShowAt",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "placementTarget",
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        },
+        {
+          "name": "showOptions",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions",
+            "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowOptions>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "Hide",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "TryInvokeKeyboardAccelerator",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "args",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+            "ref": "object<Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+    "namespace": "Microsoft.UI.Xaml.Controls.Primitives",
+    "short": "FlyoutBase"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "AllowFocusOnInteraction",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "AllowFocusWhenDisabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "AreOpenCloseAnimationsEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "ElementSoundMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.ElementSoundMode",
+        "ref": "enum<Microsoft.UI.Xaml.ElementSoundMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "InputDevicePrefersPrimaryCommands",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "IsConstrainedToRootBounds",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "IsOpen",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "LightDismissOverlayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.LightDismissOverlayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "OverlayInputPassThroughElement",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "Placement",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "ShouldConstrainToRootBounds",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "ShowMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase2",
+      "name": "SystemBackdrop",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SystemBackdrop",
+        "ref": "object<Microsoft.UI.Xaml.Media.SystemBackdrop>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "Target",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.FrameworkElement",
+        "ref": "object<Microsoft.UI.Xaml.FrameworkElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "XamlRoot",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.XamlRoot",
+        "ref": "object<Microsoft.UI.Xaml.XamlRoot>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "Closed",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBaseClosingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBaseClosingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase, Microsoft.UI.Xaml.Controls.Primitives.FlyoutBaseClosingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "Closing",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "Opened",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.IFlyoutBase",
+      "name": "Opening",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

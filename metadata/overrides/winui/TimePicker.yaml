@@ -1,0 +1,4 @@
+class: Microsoft.UI.Xaml.Controls.TimePicker
+element: {}
+props:
+  - { name: Header, as: string, test: "Time", provenance: "TimePicker.Header: object (winmd); text header as boxed HSTRING" }

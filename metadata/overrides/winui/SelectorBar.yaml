@@ -1,0 +1,9 @@
+# WP-W: GTK StackSwitcher / a Qt tab bar without pages
+class: Microsoft.UI.Xaml.Controls.SelectorBar
+element: {}
+slots:
+  - name: items
+    prop: Items
+    default: true
+    child: selector-bar-item
+    provenance: "[ContentProperty(Name=\"Items\")] on SelectorBar (winmd); Items: IVector<SelectorBarItem>"

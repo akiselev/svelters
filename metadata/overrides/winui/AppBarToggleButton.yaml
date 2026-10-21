@@ -1,0 +1,5 @@
+class: Microsoft.UI.Xaml.Controls.AppBarToggleButton
+element:
+  text_prop: Label
+props:
+  - { name: Label, test: "svelters", provenance: "AppBarToggleButton.Label DP: string (winmd); the command's text" }

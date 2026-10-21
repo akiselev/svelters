@@ -8,6 +8,11 @@ props:
   - 3
   - 7
   provenance: 'rule P1: TextBlock.CharacterSpacing: i32, read-write DP (winmd); written and read back'
+- name: FontFamily
+  test:
+  - Consolas
+  - Segoe UI
+  provenance: 'rule P1: TextBlock.FontFamily: object<Microsoft.UI.Xaml.Media.FontFamily>, read-write DP (winmd); written and read back'
 - name: FontSize
   test:
   - 48.0
@@ -23,6 +28,16 @@ props:
   - Oblique
   - Normal
   provenance: 'rule P1: TextBlock.FontStyle: enum<Windows.UI.Text.FontStyle>, read-write DP (winmd); written and read back'
+- name: FontWeight
+  test:
+  - 700
+  - 300
+  provenance: 'rule P1: TextBlock.FontWeight: value<Windows.UI.Text.FontWeight>, read-write DP (winmd); written and read back'
+- name: Foreground
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: TextBlock.Foreground: object<Microsoft.UI.Xaml.Media.Brush>, read-write DP (winmd); written and read back'
 - name: HorizontalTextAlignment
   test:
   - Left
@@ -74,6 +89,12 @@ props:
   provenance: 'rule P1: TextBlock.Padding: value<Microsoft.UI.Xaml.Thickness>, read-write DP (winmd); written and read back'
 - name: SelectedText
   provenance: 'rule P1: TextBlock.SelectedText: string, read-only (winmd); read test'
+- name: SelectionHighlightColor
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: TextBlock.SelectionHighlightColor: object<Microsoft.UI.Xaml.Media.SolidColorBrush>, read-write DP (winmd); written and
+    read back'
 - name: Text
   test:
   - svelters
@@ -107,12 +128,18 @@ props:
 notify:
 - name: CharacterSpacing
   provenance: 'rule O6: TextBlock.CharacterSpacing is a DependencyProperty (TextBlock.CharacterSpacingProperty, winmd): RegisterPropertyChangedCallback'
+- name: FontFamily
+  provenance: 'rule O6: TextBlock.FontFamily is a DependencyProperty (TextBlock.FontFamilyProperty, winmd): RegisterPropertyChangedCallback'
 - name: FontSize
   provenance: 'rule O6: TextBlock.FontSize is a DependencyProperty (TextBlock.FontSizeProperty, winmd): RegisterPropertyChangedCallback'
 - name: FontStretch
   provenance: 'rule O6: TextBlock.FontStretch is a DependencyProperty (TextBlock.FontStretchProperty, winmd): RegisterPropertyChangedCallback'
 - name: FontStyle
   provenance: 'rule O6: TextBlock.FontStyle is a DependencyProperty (TextBlock.FontStyleProperty, winmd): RegisterPropertyChangedCallback'
+- name: FontWeight
+  provenance: 'rule O6: TextBlock.FontWeight is a DependencyProperty (TextBlock.FontWeightProperty, winmd): RegisterPropertyChangedCallback'
+- name: Foreground
+  provenance: 'rule O6: TextBlock.Foreground is a DependencyProperty (TextBlock.ForegroundProperty, winmd): RegisterPropertyChangedCallback'
 - name: HorizontalTextAlignment
   provenance: 'rule O6: TextBlock.HorizontalTextAlignment is a DependencyProperty (TextBlock.HorizontalTextAlignmentProperty, winmd): RegisterPropertyChangedCallback'
 - name: IsColorFontEnabled
@@ -131,6 +158,8 @@ notify:
   provenance: 'rule O6: TextBlock.OpticalMarginAlignment is a DependencyProperty (TextBlock.OpticalMarginAlignmentProperty, winmd): RegisterPropertyChangedCallback'
 - name: Padding
   provenance: 'rule O6: TextBlock.Padding is a DependencyProperty (TextBlock.PaddingProperty, winmd): RegisterPropertyChangedCallback'
+- name: SelectionHighlightColor
+  provenance: 'rule O6: TextBlock.SelectionHighlightColor is a DependencyProperty (TextBlock.SelectionHighlightColorProperty, winmd): RegisterPropertyChangedCallback'
 - name: Text
   provenance: 'rule O6: TextBlock.Text is a DependencyProperty (TextBlock.TextProperty, winmd): RegisterPropertyChangedCallback'
 - name: TextAlignment

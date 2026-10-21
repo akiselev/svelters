@@ -83,6 +83,16 @@
       ],
       "name": "Microsoft.UI.Input.PointerDeviceType"
     },
+    "Microsoft.UI.WindowId": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "Value",
+          "type": "u64"
+        }
+      ],
+      "name": "Microsoft.UI.WindowId"
+    },
     "Microsoft.UI.Xaml.BringIntoViewRequestedEventArgs": {
       "category": "class",
       "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
@@ -130,6 +140,104 @@
         }
       ]
     },
+    "Microsoft.UI.Xaml.Controls.AnchorRequestedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Anchor",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.UIElement"
+        },
+        {
+          "name": "AnchorCandidates",
+          "settable": false,
+          "type": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.UIElement>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.AppBarClosedDisplayMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Compact",
+          0
+        ],
+        [
+          "Minimal",
+          1
+        ],
+        [
+          "Hidden",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.AppBarClosedDisplayMode"
+    },
+    "Microsoft.UI.Xaml.Controls.AutoSuggestBoxQuerySubmittedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.DependencyObject",
+      "methods": [],
+      "props": [
+        {
+          "name": "ChosenSuggestion",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "QueryText",
+          "settable": false,
+          "type": "string"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.AutoSuggestBoxSuggestionChosenEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.DependencyObject",
+      "methods": [],
+      "props": [
+        {
+          "name": "SelectedItem",
+          "settable": false,
+          "type": "object"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.AutoSuggestBoxTextChangedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.DependencyObject",
+      "methods": [
+        "CheckCurrent"
+      ],
+      "props": [
+        {
+          "name": "Reason",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Controls.AutoSuggestionBoxTextChangeReason"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.AutoSuggestionBoxTextChangeReason": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "UserInput",
+          0
+        ],
+        [
+          "ProgrammaticChange",
+          1
+        ],
+        [
+          "SuggestionChosen",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.AutoSuggestionBoxTextChangeReason"
+    },
     "Microsoft.UI.Xaml.Controls.BackgroundSizing": {
       "category": "enum",
       "flags": false,
@@ -144,6 +252,102 @@
         ]
       ],
       "name": "Microsoft.UI.Xaml.Controls.BackgroundSizing"
+    },
+    "Microsoft.UI.Xaml.Controls.CalendarDatePickerDateChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewDate",
+          "settable": false,
+          "type": "Windows.Foundation.IReference<Windows.Foundation.DateTime>"
+        },
+        {
+          "name": "OldDate",
+          "settable": false,
+          "type": "Windows.Foundation.IReference<Windows.Foundation.DateTime>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [
+        "RegisterUpdateCallback"
+      ],
+      "props": [
+        {
+          "name": "InRecycleQueue",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "Item",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.CalendarViewDayItem"
+        },
+        {
+          "name": "Phase",
+          "settable": false,
+          "type": "u32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Month",
+          0
+        ],
+        [
+          "Year",
+          1
+        ],
+        [
+          "Decade",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode"
+    },
+    "Microsoft.UI.Xaml.Controls.CalendarViewSelectedDatesChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "AddedDates",
+          "settable": false,
+          "type": "Windows.Foundation.Collections.IVectorView<Windows.Foundation.DateTime>"
+        },
+        {
+          "name": "RemovedDates",
+          "settable": false,
+          "type": "Windows.Foundation.Collections.IVectorView<Windows.Foundation.DateTime>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.CalendarViewSelectionMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Single",
+          1
+        ],
+        [
+          "Multiple",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CalendarViewSelectionMode"
     },
     "Microsoft.UI.Xaml.Controls.CandidateWindowAlignment": {
       "category": "enum",
@@ -191,6 +395,55 @@
       ],
       "name": "Microsoft.UI.Xaml.Controls.CharacterCasing"
     },
+    "Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Group",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "GroupHeaderContainer",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Controls.ListViewBaseHeaderItem"
+        },
+        {
+          "name": "GroupIndex",
+          "settable": false,
+          "type": "i32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "IsContainerPrepared",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Item",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "ItemContainer",
+          "settable": true,
+          "type": "Microsoft.UI.Xaml.Controls.Primitives.SelectorItem"
+        },
+        {
+          "name": "ItemIndex",
+          "settable": false,
+          "type": "i32"
+        }
+      ]
+    },
     "Microsoft.UI.Xaml.Controls.ClickMode": {
       "category": "enum",
       "flags": false,
@@ -209,6 +462,301 @@
         ]
       ],
       "name": "Microsoft.UI.Xaml.Controls.ClickMode"
+    },
+    "Microsoft.UI.Xaml.Controls.ColorChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewColor",
+          "settable": false,
+          "type": "Windows.UI.Color"
+        },
+        {
+          "name": "OldColor",
+          "settable": false,
+          "type": "Windows.UI.Color"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ColorSpectrumComponents": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "HueValue",
+          0
+        ],
+        [
+          "ValueHue",
+          1
+        ],
+        [
+          "HueSaturation",
+          2
+        ],
+        [
+          "SaturationHue",
+          3
+        ],
+        [
+          "SaturationValue",
+          4
+        ],
+        [
+          "ValueSaturation",
+          5
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ColorSpectrumComponents"
+    },
+    "Microsoft.UI.Xaml.Controls.ColorSpectrumShape": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Box",
+          0
+        ],
+        [
+          "Ring",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ColorSpectrumShape"
+    },
+    "Microsoft.UI.Xaml.Controls.ComboBoxSelectionChangedTrigger": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Committed",
+          0
+        ],
+        [
+          "Always",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ComboBoxSelectionChangedTrigger"
+    },
+    "Microsoft.UI.Xaml.Controls.ComboBoxTextSubmittedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Text",
+          "settable": false,
+          "type": "string"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.CommandBarDefaultLabelPosition": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Bottom",
+          0
+        ],
+        [
+          "Right",
+          1
+        ],
+        [
+          "Collapsed",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CommandBarDefaultLabelPosition"
+    },
+    "Microsoft.UI.Xaml.Controls.CommandBarDynamicOverflowAction": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "AddingToOverflow",
+          0
+        ],
+        [
+          "RemovingFromOverflow",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CommandBarDynamicOverflowAction"
+    },
+    "Microsoft.UI.Xaml.Controls.CommandBarLabelPosition": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Default",
+          0
+        ],
+        [
+          "Collapsed",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CommandBarLabelPosition"
+    },
+    "Microsoft.UI.Xaml.Controls.CommandBarOverflowButtonVisibility": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Visible",
+          1
+        ],
+        [
+          "Collapsed",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.CommandBarOverflowButtonVisibility"
+    },
+    "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [
+        "RegisterUpdateCallback"
+      ],
+      "props": [
+        {
+          "name": "Handled",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "InRecycleQueue",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "Item",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "ItemContainer",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.Primitives.SelectorItem"
+        },
+        {
+          "name": "ItemIndex",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "Phase",
+          "settable": false,
+          "type": "u32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ContentDialogButton": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Primary",
+          1
+        ],
+        [
+          "Secondary",
+          2
+        ],
+        [
+          "Close",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ContentDialogButton"
+    },
+    "Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [
+        "GetDeferral"
+      ],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ContentDialogClosedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Result",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.ContentDialogResult"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ContentDialogClosingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [
+        "GetDeferral"
+      ],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Result",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.ContentDialogResult"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ContentDialogOpenedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.ContentDialogResult": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Primary",
+          1
+        ],
+        [
+          "Secondary",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ContentDialogResult"
     },
     "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs": {
       "category": "class",
@@ -232,6 +780,145 @@
         }
       ]
     },
+    "Microsoft.UI.Xaml.Controls.DatePickerSelectedValueChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewDate",
+          "settable": false,
+          "type": "Windows.Foundation.IReference<Windows.Foundation.DateTime>"
+        },
+        {
+          "name": "OldDate",
+          "settable": false,
+          "type": "Windows.Foundation.IReference<Windows.Foundation.DateTime>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.DatePickerValueChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewDate",
+          "settable": false,
+          "type": "Windows.Foundation.DateTime"
+        },
+        {
+          "name": "OldDate",
+          "settable": false,
+          "type": "Windows.Foundation.DateTime"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.DisabledFormattingAccelerators": {
+      "category": "enum",
+      "flags": true,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Bold",
+          1
+        ],
+        [
+          "Italic",
+          2
+        ],
+        [
+          "Underline",
+          4
+        ],
+        [
+          "All",
+          4294967295
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.DisabledFormattingAccelerators"
+    },
+    "Microsoft.UI.Xaml.Controls.DragItemsCompletedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "DropResult",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+        },
+        {
+          "name": "Items",
+          "settable": false,
+          "type": "Windows.Foundation.Collections.IVectorView<object>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.DragItemsStartingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Data",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackage"
+        },
+        {
+          "name": "Items",
+          "settable": false,
+          "type": "Windows.Foundation.Collections.IVector<object>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.DynamicOverflowItemsChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Action",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.CommandBarDynamicOverflowAction"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ExpandDirection": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Down",
+          0
+        ],
+        [
+          "Up",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ExpandDirection"
+    },
+    "Microsoft.UI.Xaml.Controls.ExpanderCollapsedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.ExpanderExpandingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
     "Microsoft.UI.Xaml.Controls.FocusDisengagedEventArgs": {
       "category": "class",
       "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
@@ -250,11 +937,445 @@
         }
       ]
     },
+    "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Edge",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger"
+    },
+    "Microsoft.UI.Xaml.Controls.InfoBarCloseReason": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "CloseButton",
+          0
+        ],
+        [
+          "Programmatic",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.InfoBarCloseReason"
+    },
+    "Microsoft.UI.Xaml.Controls.InfoBarClosedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Reason",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.InfoBarCloseReason"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.InfoBarClosingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Reason",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.InfoBarCloseReason"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.InfoBarSeverity": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Informational",
+          0
+        ],
+        [
+          "Success",
+          1
+        ],
+        [
+          "Warning",
+          2
+        ],
+        [
+          "Error",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.InfoBarSeverity"
+    },
     "Microsoft.UI.Xaml.Controls.IsTextTrimmedChangedEventArgs": {
       "category": "class",
       "extends": "System.Object",
       "methods": [],
       "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.ItemClickEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "ClickedItem",
+          "settable": false,
+          "type": "object"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.LightDismissOverlayMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "On",
+          1
+        ],
+        [
+          "Off",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.LightDismissOverlayMode"
+    },
+    "Microsoft.UI.Xaml.Controls.ListViewReorderMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Disabled",
+          0
+        ],
+        [
+          "Enabled",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ListViewReorderMode"
+    },
+    "Microsoft.UI.Xaml.Controls.ListViewSelectionMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Single",
+          1
+        ],
+        [
+          "Multiple",
+          2
+        ],
+        [
+          "Extended",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ListViewSelectionMode"
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Collapsed",
+          0
+        ],
+        [
+          "Visible",
+          1
+        ],
+        [
+          "Auto",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible"
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Minimal",
+          0
+        ],
+        [
+          "Compact",
+          1
+        ],
+        [
+          "Expanded",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode"
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "DisplayMode",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewItemCollapsedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "CollapsedItem",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "CollapsedItemContainer",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewItemExpandingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "ExpandingItem",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "ExpandingItemContainer",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "InvokedItem",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "InvokedItemContainer",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase"
+        },
+        {
+          "name": "IsSettingsInvoked",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "RecommendedNavigationTransitionInfo",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "MoreLabel",
+          0
+        ],
+        [
+          "NoLabel",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode"
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewPaneClosingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Left",
+          1
+        ],
+        [
+          "Top",
+          2
+        ],
+        [
+          "LeftCompact",
+          3
+        ],
+        [
+          "LeftMinimal",
+          4
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode"
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "IsSettingsSelected",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "RecommendedNavigationTransitionInfo",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo"
+        },
+        {
+          "name": "SelectedItem",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "SelectedItemContainer",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Disabled",
+          0
+        ],
+        [
+          "Enabled",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus"
+    },
+    "Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "WhenSelectionFollowsFocus",
+          0
+        ],
+        [
+          "Always",
+          1
+        ],
+        [
+          "Never",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled"
+    },
+    "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Hidden",
+          0
+        ],
+        [
+          "Compact",
+          1
+        ],
+        [
+          "Inline",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NumberBoxSpinButtonPlacementMode"
+    },
+    "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "InvalidInputOverwritten",
+          0
+        ],
+        [
+          "Disabled",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.NumberBoxValidationMode"
+    },
+    "Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewValue",
+          "settable": false,
+          "type": "f64"
+        },
+        {
+          "name": "OldValue",
+          "settable": false,
+          "type": "f64"
+        }
+      ]
     },
     "Microsoft.UI.Xaml.Controls.Orientation": {
       "category": "enum",
@@ -270,6 +1391,135 @@
         ]
       ],
       "name": "Microsoft.UI.Xaml.Controls.Orientation"
+    },
+    "Microsoft.UI.Xaml.Controls.PasswordBoxPasswordChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "IsContentChanging",
+          "settable": false,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.PasswordRevealMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Peek",
+          0
+        ],
+        [
+          "Hidden",
+          1
+        ],
+        [
+          "Visible",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.PasswordRevealMode"
+    },
+    "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBaseClosingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Top",
+          0
+        ],
+        [
+          "Bottom",
+          1
+        ],
+        [
+          "Left",
+          2
+        ],
+        [
+          "Right",
+          3
+        ],
+        [
+          "Full",
+          4
+        ],
+        [
+          "TopEdgeAlignedLeft",
+          5
+        ],
+        [
+          "TopEdgeAlignedRight",
+          6
+        ],
+        [
+          "BottomEdgeAlignedLeft",
+          7
+        ],
+        [
+          "BottomEdgeAlignedRight",
+          8
+        ],
+        [
+          "LeftEdgeAlignedTop",
+          9
+        ],
+        [
+          "LeftEdgeAlignedBottom",
+          10
+        ],
+        [
+          "RightEdgeAlignedTop",
+          11
+        ],
+        [
+          "RightEdgeAlignedBottom",
+          12
+        ],
+        [
+          "Auto",
+          13
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutPlacementMode"
+    },
+    "Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Standard",
+          1
+        ],
+        [
+          "Transient",
+          2
+        ],
+        [
+          "TransientWithDismissOnPointerMoveAway",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutShowMode"
     },
     "Microsoft.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs": {
       "category": "class",
@@ -302,6 +1552,25 @@
         ]
       ],
       "name": "Microsoft.UI.Xaml.Controls.Primitives.SliderSnapsTo"
+    },
+    "Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Near",
+          0
+        ],
+        [
+          "Center",
+          1
+        ],
+        [
+          "Far",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment"
     },
     "Microsoft.UI.Xaml.Controls.Primitives.TickPlacement": {
       "category": "enum",
@@ -348,6 +1617,1416 @@
         ]
       ],
       "name": "Microsoft.UI.Xaml.Controls.RequiresPointer"
+    },
+    "Microsoft.UI.Xaml.Controls.RichEditBoxSelectionChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "SelectionLength",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "SelectionStart",
+          "settable": false,
+          "type": "i32"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.RichEditBoxTextChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "IsContentChanging",
+          "settable": false,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.RichEditClipboardFormat": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "AllFormats",
+          0
+        ],
+        [
+          "PlainText",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.RichEditClipboardFormat"
+    },
+    "Microsoft.UI.Xaml.Controls.ScrollBarVisibility": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Disabled",
+          0
+        ],
+        [
+          "Auto",
+          1
+        ],
+        [
+          "Hidden",
+          2
+        ],
+        [
+          "Visible",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ScrollBarVisibility"
+    },
+    "Microsoft.UI.Xaml.Controls.ScrollMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Disabled",
+          0
+        ],
+        [
+          "Enabled",
+          1
+        ],
+        [
+          "Auto",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ScrollMode"
+    },
+    "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "IsIntermediate",
+          "settable": false,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "FinalView",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.ScrollViewerView"
+        },
+        {
+          "name": "IsInertial",
+          "settable": false,
+          "type": "bool"
+        },
+        {
+          "name": "NextView",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.ScrollViewerView"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "AddedItems",
+          "settable": false,
+          "type": "Windows.Foundation.Collections.IVector<object>"
+        },
+        {
+          "name": "RemovedItems",
+          "settable": false,
+          "type": "Windows.Foundation.Collections.IVector<object>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.SelectorBarSelectionChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.SnapPointsType": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Optional",
+          1
+        ],
+        [
+          "Mandatory",
+          2
+        ],
+        [
+          "OptionalSingle",
+          3
+        ],
+        [
+          "MandatorySingle",
+          4
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.SnapPointsType"
+    },
+    "Microsoft.UI.Xaml.Controls.SplitButtonClickEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": []
+    },
+    "Microsoft.UI.Xaml.Controls.SplitViewDisplayMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Overlay",
+          0
+        ],
+        [
+          "Inline",
+          1
+        ],
+        [
+          "CompactOverlay",
+          2
+        ],
+        [
+          "CompactInline",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.SplitViewDisplayMode"
+    },
+    "Microsoft.UI.Xaml.Controls.SplitViewPaneClosingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.SplitViewPanePlacement": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Left",
+          0
+        ],
+        [
+          "Right",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.SplitViewPanePlacement"
+    },
+    "Microsoft.UI.Xaml.Controls.StretchDirection": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "UpOnly",
+          0
+        ],
+        [
+          "DownOnly",
+          1
+        ],
+        [
+          "Both",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.StretchDirection"
+    },
+    "Microsoft.UI.Xaml.Controls.Symbol": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Previous",
+          57600
+        ],
+        [
+          "Next",
+          57601
+        ],
+        [
+          "Play",
+          57602
+        ],
+        [
+          "Pause",
+          57603
+        ],
+        [
+          "Edit",
+          57604
+        ],
+        [
+          "Save",
+          57605
+        ],
+        [
+          "Clear",
+          57606
+        ],
+        [
+          "Delete",
+          57607
+        ],
+        [
+          "Remove",
+          57608
+        ],
+        [
+          "Add",
+          57609
+        ],
+        [
+          "Cancel",
+          57610
+        ],
+        [
+          "Accept",
+          57611
+        ],
+        [
+          "More",
+          57612
+        ],
+        [
+          "Redo",
+          57613
+        ],
+        [
+          "Undo",
+          57614
+        ],
+        [
+          "Home",
+          57615
+        ],
+        [
+          "Up",
+          57616
+        ],
+        [
+          "Forward",
+          57617
+        ],
+        [
+          "Back",
+          57618
+        ],
+        [
+          "Favorite",
+          57619
+        ],
+        [
+          "Camera",
+          57620
+        ],
+        [
+          "Setting",
+          57621
+        ],
+        [
+          "Video",
+          57622
+        ],
+        [
+          "Sync",
+          57623
+        ],
+        [
+          "Download",
+          57624
+        ],
+        [
+          "Mail",
+          57625
+        ],
+        [
+          "Find",
+          57626
+        ],
+        [
+          "Help",
+          57627
+        ],
+        [
+          "Upload",
+          57628
+        ],
+        [
+          "Emoji",
+          57629
+        ],
+        [
+          "TwoPage",
+          57630
+        ],
+        [
+          "LeaveChat",
+          57631
+        ],
+        [
+          "MailForward",
+          57632
+        ],
+        [
+          "Clock",
+          57633
+        ],
+        [
+          "Send",
+          57634
+        ],
+        [
+          "Crop",
+          57635
+        ],
+        [
+          "RotateCamera",
+          57636
+        ],
+        [
+          "People",
+          57637
+        ],
+        [
+          "OpenPane",
+          57638
+        ],
+        [
+          "ClosePane",
+          57639
+        ],
+        [
+          "World",
+          57640
+        ],
+        [
+          "Flag",
+          57641
+        ],
+        [
+          "PreviewLink",
+          57642
+        ],
+        [
+          "Globe",
+          57643
+        ],
+        [
+          "Trim",
+          57644
+        ],
+        [
+          "AttachCamera",
+          57645
+        ],
+        [
+          "ZoomIn",
+          57646
+        ],
+        [
+          "Bookmarks",
+          57647
+        ],
+        [
+          "Document",
+          57648
+        ],
+        [
+          "ProtectedDocument",
+          57649
+        ],
+        [
+          "Page",
+          57650
+        ],
+        [
+          "Bullets",
+          57651
+        ],
+        [
+          "Comment",
+          57652
+        ],
+        [
+          "MailFilled",
+          57653
+        ],
+        [
+          "ContactInfo",
+          57654
+        ],
+        [
+          "HangUp",
+          57655
+        ],
+        [
+          "ViewAll",
+          57656
+        ],
+        [
+          "MapPin",
+          57657
+        ],
+        [
+          "Phone",
+          57658
+        ],
+        [
+          "VideoChat",
+          57659
+        ],
+        [
+          "Switch",
+          57660
+        ],
+        [
+          "Contact",
+          57661
+        ],
+        [
+          "Rename",
+          57662
+        ],
+        [
+          "Pin",
+          57665
+        ],
+        [
+          "MusicInfo",
+          57666
+        ],
+        [
+          "Go",
+          57667
+        ],
+        [
+          "Keyboard",
+          57668
+        ],
+        [
+          "DockLeft",
+          57669
+        ],
+        [
+          "DockRight",
+          57670
+        ],
+        [
+          "DockBottom",
+          57671
+        ],
+        [
+          "Remote",
+          57672
+        ],
+        [
+          "Refresh",
+          57673
+        ],
+        [
+          "Rotate",
+          57674
+        ],
+        [
+          "Shuffle",
+          57675
+        ],
+        [
+          "List",
+          57676
+        ],
+        [
+          "Shop",
+          57677
+        ],
+        [
+          "SelectAll",
+          57678
+        ],
+        [
+          "Orientation",
+          57679
+        ],
+        [
+          "Import",
+          57680
+        ],
+        [
+          "ImportAll",
+          57681
+        ],
+        [
+          "BrowsePhotos",
+          57685
+        ],
+        [
+          "WebCam",
+          57686
+        ],
+        [
+          "Pictures",
+          57688
+        ],
+        [
+          "SaveLocal",
+          57689
+        ],
+        [
+          "Caption",
+          57690
+        ],
+        [
+          "Stop",
+          57691
+        ],
+        [
+          "ShowResults",
+          57692
+        ],
+        [
+          "Volume",
+          57693
+        ],
+        [
+          "Repair",
+          57694
+        ],
+        [
+          "Message",
+          57695
+        ],
+        [
+          "Page2",
+          57696
+        ],
+        [
+          "CalendarDay",
+          57697
+        ],
+        [
+          "CalendarWeek",
+          57698
+        ],
+        [
+          "Calendar",
+          57699
+        ],
+        [
+          "Character",
+          57700
+        ],
+        [
+          "MailReplyAll",
+          57701
+        ],
+        [
+          "Read",
+          57702
+        ],
+        [
+          "Link",
+          57703
+        ],
+        [
+          "Account",
+          57704
+        ],
+        [
+          "ShowBcc",
+          57705
+        ],
+        [
+          "HideBcc",
+          57706
+        ],
+        [
+          "Cut",
+          57707
+        ],
+        [
+          "Attach",
+          57708
+        ],
+        [
+          "Paste",
+          57709
+        ],
+        [
+          "Filter",
+          57710
+        ],
+        [
+          "Copy",
+          57711
+        ],
+        [
+          "Emoji2",
+          57712
+        ],
+        [
+          "Important",
+          57713
+        ],
+        [
+          "MailReply",
+          57714
+        ],
+        [
+          "SlideShow",
+          57715
+        ],
+        [
+          "Sort",
+          57716
+        ],
+        [
+          "Manage",
+          57720
+        ],
+        [
+          "AllApps",
+          57721
+        ],
+        [
+          "DisconnectDrive",
+          57722
+        ],
+        [
+          "MapDrive",
+          57723
+        ],
+        [
+          "NewWindow",
+          57724
+        ],
+        [
+          "OpenWith",
+          57725
+        ],
+        [
+          "ContactPresence",
+          57729
+        ],
+        [
+          "Priority",
+          57730
+        ],
+        [
+          "GoToToday",
+          57732
+        ],
+        [
+          "Font",
+          57733
+        ],
+        [
+          "FontColor",
+          57734
+        ],
+        [
+          "Contact2",
+          57735
+        ],
+        [
+          "Folder",
+          57736
+        ],
+        [
+          "Audio",
+          57737
+        ],
+        [
+          "Placeholder",
+          57738
+        ],
+        [
+          "View",
+          57739
+        ],
+        [
+          "SetLockScreen",
+          57740
+        ],
+        [
+          "SetTile",
+          57741
+        ],
+        [
+          "ClosedCaption",
+          57744
+        ],
+        [
+          "StopSlideShow",
+          57745
+        ],
+        [
+          "Permissions",
+          57746
+        ],
+        [
+          "Highlight",
+          57747
+        ],
+        [
+          "DisableUpdates",
+          57748
+        ],
+        [
+          "UnFavorite",
+          57749
+        ],
+        [
+          "UnPin",
+          57750
+        ],
+        [
+          "OpenLocal",
+          57751
+        ],
+        [
+          "Mute",
+          57752
+        ],
+        [
+          "Italic",
+          57753
+        ],
+        [
+          "Underline",
+          57754
+        ],
+        [
+          "Bold",
+          57755
+        ],
+        [
+          "MoveToFolder",
+          57756
+        ],
+        [
+          "LikeDislike",
+          57757
+        ],
+        [
+          "Dislike",
+          57758
+        ],
+        [
+          "Like",
+          57759
+        ],
+        [
+          "AlignRight",
+          57760
+        ],
+        [
+          "AlignCenter",
+          57761
+        ],
+        [
+          "AlignLeft",
+          57762
+        ],
+        [
+          "Zoom",
+          57763
+        ],
+        [
+          "ZoomOut",
+          57764
+        ],
+        [
+          "OpenFile",
+          57765
+        ],
+        [
+          "OtherUser",
+          57766
+        ],
+        [
+          "Admin",
+          57767
+        ],
+        [
+          "Street",
+          57795
+        ],
+        [
+          "Map",
+          57796
+        ],
+        [
+          "ClearSelection",
+          57797
+        ],
+        [
+          "FontDecrease",
+          57798
+        ],
+        [
+          "FontIncrease",
+          57799
+        ],
+        [
+          "FontSize",
+          57800
+        ],
+        [
+          "CellPhone",
+          57801
+        ],
+        [
+          "ReShare",
+          57802
+        ],
+        [
+          "Tag",
+          57803
+        ],
+        [
+          "RepeatOne",
+          57804
+        ],
+        [
+          "RepeatAll",
+          57805
+        ],
+        [
+          "OutlineStar",
+          57806
+        ],
+        [
+          "SolidStar",
+          57807
+        ],
+        [
+          "Calculator",
+          57808
+        ],
+        [
+          "Directions",
+          57809
+        ],
+        [
+          "Target",
+          57810
+        ],
+        [
+          "Library",
+          57811
+        ],
+        [
+          "PhoneBook",
+          57812
+        ],
+        [
+          "Memo",
+          57813
+        ],
+        [
+          "Microphone",
+          57814
+        ],
+        [
+          "PostUpdate",
+          57815
+        ],
+        [
+          "BackToWindow",
+          57816
+        ],
+        [
+          "FullScreen",
+          57817
+        ],
+        [
+          "NewFolder",
+          57818
+        ],
+        [
+          "CalendarReply",
+          57819
+        ],
+        [
+          "UnSyncFolder",
+          57821
+        ],
+        [
+          "ReportHacked",
+          57822
+        ],
+        [
+          "SyncFolder",
+          57823
+        ],
+        [
+          "BlockContact",
+          57824
+        ],
+        [
+          "SwitchApps",
+          57825
+        ],
+        [
+          "AddFriend",
+          57826
+        ],
+        [
+          "TouchPointer",
+          57827
+        ],
+        [
+          "GoToStart",
+          57828
+        ],
+        [
+          "ZeroBars",
+          57829
+        ],
+        [
+          "OneBar",
+          57830
+        ],
+        [
+          "TwoBars",
+          57831
+        ],
+        [
+          "ThreeBars",
+          57832
+        ],
+        [
+          "FourBars",
+          57833
+        ],
+        [
+          "Scan",
+          58004
+        ],
+        [
+          "Preview",
+          58005
+        ],
+        [
+          "GlobalNavigationButton",
+          59136
+        ],
+        [
+          "Share",
+          59181
+        ],
+        [
+          "Print",
+          59209
+        ],
+        [
+          "XboxOneConsole",
+          59792
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.Symbol"
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "OnPointerOver",
+          1
+        ],
+        [
+          "Always",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode"
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "DropIndex",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "Items",
+          "settable": false,
+          "type": "object[]"
+        },
+        {
+          "name": "Tabs",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement[]"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "AllowDrop",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "DropIndex",
+          "settable": false,
+          "type": "i32"
+        },
+        {
+          "name": "Items",
+          "settable": false,
+          "type": "object[]"
+        },
+        {
+          "name": "Tabs",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement[]"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Item",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "Tab",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.TabViewItem"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "DropResult",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackageOperation"
+        },
+        {
+          "name": "Item",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "Tab",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.TabViewItem"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Data",
+          "settable": false,
+          "type": "Windows.ApplicationModel.DataTransfer.DataPackage"
+        },
+        {
+          "name": "Item",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "Tab",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.TabViewItem"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewTabDroppedOutsideEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Item",
+          "settable": false,
+          "type": "object"
+        },
+        {
+          "name": "Tab",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.TabViewItem"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Items",
+          "settable": false,
+          "type": "object[]"
+        },
+        {
+          "name": "NewWindowId",
+          "settable": false,
+          "type": "Microsoft.UI.WindowId"
+        },
+        {
+          "name": "Tabs",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement[]"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Items",
+          "settable": false,
+          "type": "object[]"
+        },
+        {
+          "name": "NewWindowId",
+          "settable": true,
+          "type": "Microsoft.UI.WindowId"
+        },
+        {
+          "name": "Tabs",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.UIElement[]"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TabViewWidthMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Equal",
+          0
+        ],
+        [
+          "SizeToContent",
+          1
+        ],
+        [
+          "Compact",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.TabViewWidthMode"
+    },
+    "Microsoft.UI.Xaml.Controls.TeachingTipCloseReason": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "CloseButton",
+          0
+        ],
+        [
+          "LightDismiss",
+          1
+        ],
+        [
+          "Programmatic",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.TeachingTipCloseReason"
+    },
+    "Microsoft.UI.Xaml.Controls.TeachingTipClosedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "Reason",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.TeachingTipCloseReason"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TeachingTipClosingEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [
+        "GetDeferral"
+      ],
+      "props": [
+        {
+          "name": "Cancel",
+          "settable": true,
+          "type": "bool"
+        },
+        {
+          "name": "Reason",
+          "settable": false,
+          "type": "Microsoft.UI.Xaml.Controls.TeachingTipCloseReason"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TeachingTipHeroContentPlacementMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Top",
+          1
+        ],
+        [
+          "Bottom",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.TeachingTipHeroContentPlacementMode"
+    },
+    "Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Top",
+          1
+        ],
+        [
+          "Bottom",
+          2
+        ],
+        [
+          "Left",
+          3
+        ],
+        [
+          "Right",
+          4
+        ],
+        [
+          "TopRight",
+          5
+        ],
+        [
+          "TopLeft",
+          6
+        ],
+        [
+          "BottomRight",
+          7
+        ],
+        [
+          "BottomLeft",
+          8
+        ],
+        [
+          "LeftTop",
+          9
+        ],
+        [
+          "LeftBottom",
+          10
+        ],
+        [
+          "RightTop",
+          11
+        ],
+        [
+          "RightBottom",
+          12
+        ],
+        [
+          "Center",
+          13
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode"
+    },
+    "Microsoft.UI.Xaml.Controls.TeachingTipTailVisibility": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Auto",
+          0
+        ],
+        [
+          "Visible",
+          1
+        ],
+        [
+          "Collapsed",
+          2
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.TeachingTipTailVisibility"
     },
     "Microsoft.UI.Xaml.Controls.TextBoxBeforeTextChangingEventArgs": {
       "category": "class",
@@ -492,6 +3171,55 @@
           "type": "bool"
         }
       ]
+    },
+    "Microsoft.UI.Xaml.Controls.TimePickerSelectedValueChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewTime",
+          "settable": false,
+          "type": "Windows.Foundation.IReference<Windows.Foundation.TimeSpan>"
+        },
+        {
+          "name": "OldTime",
+          "settable": false,
+          "type": "Windows.Foundation.IReference<Windows.Foundation.TimeSpan>"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.TimePickerValueChangedEventArgs": {
+      "category": "class",
+      "extends": "System.Object",
+      "methods": [],
+      "props": [
+        {
+          "name": "NewTime",
+          "settable": false,
+          "type": "Windows.Foundation.TimeSpan"
+        },
+        {
+          "name": "OldTime",
+          "settable": false,
+          "type": "Windows.Foundation.TimeSpan"
+        }
+      ]
+    },
+    "Microsoft.UI.Xaml.Controls.ZoomMode": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Disabled",
+          0
+        ],
+        [
+          "Enabled",
+          1
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Controls.ZoomMode"
     },
     "Microsoft.UI.Xaml.CornerRadius": {
       "category": "struct",
@@ -724,6 +3452,18 @@
         ]
       ],
       "name": "Microsoft.UI.Xaml.ElementTheme"
+    },
+    "Microsoft.UI.Xaml.ExceptionRoutedEventArgs": {
+      "category": "class",
+      "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "methods": [],
+      "props": [
+        {
+          "name": "ErrorMessage",
+          "settable": false,
+          "type": "string"
+        }
+      ]
     },
     "Microsoft.UI.Xaml.FlowDirection": {
       "category": "enum",
@@ -1613,6 +4353,29 @@
       ],
       "name": "Microsoft.UI.Xaml.Media.ElementCompositeMode"
     },
+    "Microsoft.UI.Xaml.Media.Stretch": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "None",
+          0
+        ],
+        [
+          "Fill",
+          1
+        ],
+        [
+          "Uniform",
+          2
+        ],
+        [
+          "UniformToFill",
+          3
+        ]
+      ],
+      "name": "Microsoft.UI.Xaml.Media.Stretch"
+    },
     "Microsoft.UI.Xaml.OpticalMarginAlignment": {
       "category": "enum",
       "flags": false,
@@ -1984,6 +4747,16 @@
       ],
       "name": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers"
     },
+    "Windows.Foundation.DateTime": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "UniversalTime",
+          "type": "i64"
+        }
+      ],
+      "name": "Windows.Foundation.DateTime"
+    },
     "Windows.Foundation.Numerics.Matrix4x4": {
       "category": "struct",
       "fields": [
@@ -2135,6 +4908,51 @@
         }
       ],
       "name": "Windows.Foundation.Size"
+    },
+    "Windows.Foundation.TimeSpan": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "Duration",
+          "type": "i64"
+        }
+      ],
+      "name": "Windows.Foundation.TimeSpan"
+    },
+    "Windows.Globalization.DayOfWeek": {
+      "category": "enum",
+      "flags": false,
+      "members": [
+        [
+          "Sunday",
+          0
+        ],
+        [
+          "Monday",
+          1
+        ],
+        [
+          "Tuesday",
+          2
+        ],
+        [
+          "Wednesday",
+          3
+        ],
+        [
+          "Thursday",
+          4
+        ],
+        [
+          "Friday",
+          5
+        ],
+        [
+          "Saturday",
+          6
+        ]
+      ],
+      "name": "Windows.Globalization.DayOfWeek"
     },
     "Windows.System.VirtualKey": {
       "category": "enum",
@@ -2857,6 +5675,28 @@
         ]
       ],
       "name": "Windows.System.VirtualKeyModifiers"
+    },
+    "Windows.UI.Color": {
+      "category": "struct",
+      "fields": [
+        {
+          "name": "A",
+          "type": "u8"
+        },
+        {
+          "name": "R",
+          "type": "u8"
+        },
+        {
+          "name": "G",
+          "type": "u8"
+        },
+        {
+          "name": "B",
+          "type": "u8"
+        }
+      ],
+      "name": "Windows.UI.Color"
     },
     "Windows.UI.Core.CorePhysicalKeyStatus": {
       "category": "struct",

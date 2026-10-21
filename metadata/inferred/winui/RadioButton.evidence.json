@@ -1,0 +1,32 @@
+{
+ "bindings:group-name": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::group-name",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "notify:GroupName": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "GroupNameProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:GroupName": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRadioButton",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

@@ -11,3 +11,8 @@ events:
     result: { prop: Handled }
     payload: [{ from: args, prop: Key, name: key }]
     provenance: "UIElement.KeyDown: KeyEventHandler(sender, KeyRoutedEventArgs) (winmd); KeyRoutedEventArgs.Handled is settable, so preventDefault() marks the key handled"
+slots:
+  - name: context-flyout
+    prop: ContextFlyout
+    child: menu-flyout
+    provenance: "UIElement.ContextFlyout: FlyoutBase (winmd), single child: the menu-flyout shown on right click or the context key (WP-W)"

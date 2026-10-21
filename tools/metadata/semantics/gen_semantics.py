@@ -979,6 +979,21 @@ def winui_spec() -> dict:
             return {"type": "string", "nullable": True}
         if t == "Thickness":
             return {"type": "record", "nullable": False, "of": "Insets", "ref": "value<Microsoft.UI.Xaml.Thickness>", "string_form": True}
+        # WP-W conversions (crates/svelters-winui/src/conv.rs): text forms are strings, numbers numbers; records and
+        # dates keep their native ref and accept the text form in static attributes.
+        if t == "CornerRadius":
+            return {"type": "record", "nullable": False, "of": "CornerRadius", "ref": "value<Microsoft.UI.Xaml.CornerRadius>", "string_form": True}
+        if t in ("DateTime", "NullableDateTime"):
+            return {"type": "record", "nullable": t.startswith("Nullable"), "of": "DateTime", "ref": "value<Windows.Foundation.DateTime>",
+                    "string_form": True}
+        if t in ("Color", "NullableColor", "Brush", "SolidBrush", "FontFamily", "Uri", "ImageSource", "Icon"):
+            return {"type": "string", "nullable": True}
+        if t in ("F32", "TimeSpan"):
+            return {"type": "f64", "nullable": False}
+        if t in ("NullableF64", "NullableTimeSpan"):
+            return {"type": "f64", "nullable": True}
+        if t == "FontWeight":
+            return {"type": "i32", "nullable": False}
         if t == "Enum":
             tt = m.types.get(ty["enum"])
             if not tt or tt["category"] != "enum":
@@ -1023,11 +1038,18 @@ def winui_spec() -> dict:
             # sync events hand `true` (preventDefault/result) to Cancel/Handled (WIN1 notes)
             "handler_result": "bool_stop" if o.get("result") else "none", "sync_required": bool(o.get("sync")),
             "disconnect_on_drop": True}, [])
+    def accepts(s: dict) -> list[str]:
+        # The slot's element type (a kind name when it is a class in the tables), else any element.
+        return [short(s["elem"])] if s["elem"] != "object" and s["elem"] in m.class_index else ["UIElement"]
+
     for i, s in enumerate(m.slots):
         kd = kinds[short(s["class"])]
         ch = kd["children"] or {"policy": "slots", "default_slot": None, "slots": {}}
         kd["children"] = ch
-        ch["slots"][s["name"]] = {"many": s["many"], "accepts": ["UIElement"], "route_by_kind": False,
+        # A slot of a non-UIElement type (context-flyout, flyout: FlyoutBase) takes its child by kind: `<menu-flyout>` needs
+        # no slot= where it is the only such slot.
+        by_kind = not s["many"] and accepts(s) != ["UIElement"] and not m.classes.get(s["elem"], {}).get("bases", []).count("Microsoft.UI.Xaml.UIElement")
+        ch["slots"][s["name"]] = {"many": s["many"], "accepts": accepts(s), "route_by_kind": by_kind,
                                   "order": "native_index" if s["many"] else "none", "attrs": {}}
         if s["default"]:
             ch["default_slot"] = s["name"]
@@ -1038,11 +1060,14 @@ def winui_spec() -> dict:
         kd = kinds[short(a["class"])]
         ch = kd["children"] or {"policy": "slots", "default_slot": None, "slots": {}}
         kd["children"] = ch
-        sl = ch["slots"].setdefault(slot["name"], {"many": slot["many"], "accepts": ["UIElement"], "route_by_kind": False,
+        sl = ch["slots"].setdefault(slot["name"], {"many": slot["many"], "accepts": accepts(slot), "route_by_kind": False,
                                                    "order": "native_index" if slot["many"] else "none", "attrs": {}})
         if slot["default"] and ch["default_slot"] is None:
             ch["default_slot"] = slot["name"]
-        sl["attrs"][a["name"]] = {"type": "i32", "default": a["default"]}
+        if a["ty"]["t"] == "I32":
+            sl["attrs"][a["name"]] = {"type": "i32", "default": int(a["default"])}
+        else:
+            sl["attrs"][a["name"]] = {"type": "f64", "default": float(a["default"])}
     for mt in m.methods:
         kinds[short(mt["class"])]["methods"][mt["name"]] = {
             "dispatch": "generated", "native": mt["native"],

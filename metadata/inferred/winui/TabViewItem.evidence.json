@@ -1,0 +1,49 @@
+{
+ "bindings:is-closable": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-closable",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "events:CloseRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabViewItem, Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:IsClosable": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsClosableProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IsClosable": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITabViewItem",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

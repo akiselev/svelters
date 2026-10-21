@@ -1,0 +1,32 @@
+{
+ "bindings:value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::value",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "notify:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ValueProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "props:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IInfoBadge",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

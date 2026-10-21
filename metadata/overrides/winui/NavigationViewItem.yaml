@@ -1,0 +1,8 @@
+class: Microsoft.UI.Xaml.Controls.NavigationViewItem
+element:
+  text_prop: Content
+slots:
+  - name: menu-items
+    prop: MenuItems
+    child: navigation-view-item
+    provenance: "NavigationViewItem.MenuItems: IVector<object> (winmd); nested navigation-view-item elements"

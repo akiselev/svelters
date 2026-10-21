@@ -1,0 +1,5 @@
+class: Microsoft.UI.Xaml.Controls.MenuFlyoutItem
+element:
+  text_prop: Text
+props:
+  - { name: Text, test: "svelters", provenance: "MenuFlyoutItem.Text DP: string (winmd); the item's label" }

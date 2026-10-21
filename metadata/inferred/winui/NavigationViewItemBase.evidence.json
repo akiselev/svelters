@@ -1,0 +1,24 @@
+{
+ "notify:IsSelected": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsSelectedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:IsSelected": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationViewItemBase2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

@@ -1,0 +1,374 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IColorPickerFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "ColorProperty",
+    "ColorSpectrumComponentsProperty",
+    "ColorSpectrumShapeProperty",
+    "IsAlphaEnabledProperty",
+    "IsAlphaSliderVisibleProperty",
+    "IsAlphaTextInputVisibleProperty",
+    "IsColorChannelTextInputVisibleProperty",
+    "IsColorPreviewVisibleProperty",
+    "IsColorSliderVisibleProperty",
+    "IsColorSpectrumVisibleProperty",
+    "IsHexInputVisibleProperty",
+    "IsMoreButtonVisibleProperty",
+    "MaxHueProperty",
+    "MaxSaturationProperty",
+    "MaxValueProperty",
+    "MinHueProperty",
+    "MinSaturationProperty",
+    "MinValueProperty",
+    "OrientationProperty",
+    "PreviousColorProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.ColorPicker",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "ColorPicker"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "Color",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.UI.Color",
+        "ref": "value<Windows.UI.Color>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "ColorSpectrumComponents",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ColorSpectrumComponents",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumComponents>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "ColorSpectrumShape",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ColorSpectrumShape",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumShape>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsAlphaEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsAlphaSliderVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsAlphaTextInputVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsColorChannelTextInputVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsColorPreviewVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsColorSliderVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsColorSpectrumVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsHexInputVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "IsMoreButtonVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "MaxHue",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "MaxSaturation",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "MaxValue",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "MinHue",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "MinSaturation",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "MinValue",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker2",
+      "name": "Orientation",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Orientation",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "PreviousColor",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.IReference<Windows.UI.Color>",
+        "ref": "nullable<value<Windows.UI.Color>>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ColorChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ColorChangedEventArgs",
+          "name": "NewColor",
+          "settable": false,
+          "type": {
+            "native": "Windows.UI.Color",
+            "ref": "value<Windows.UI.Color>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ColorChangedEventArgs",
+          "name": "OldColor",
+          "settable": false,
+          "type": {
+            "native": "Windows.UI.Color",
+            "ref": "value<Windows.UI.Color>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ColorPicker, Microsoft.UI.Xaml.Controls.ColorChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+      "name": "ColorChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.ColorPicker"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

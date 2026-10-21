@@ -1,0 +1,629 @@
+{
+ "bindings:always-show-header": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::always-show-header",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:compact-mode-threshold-width": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::compact-mode-threshold-width",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:compact-pane-length": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::compact-pane-length",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:expanded-mode-threshold-width": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::expanded-mode-threshold-width",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-back-button-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-back-button-visible",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-back-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-back-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-pane-open": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-pane-open",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-pane-toggle-button-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-pane-toggle-button-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-pane-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-pane-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-settings-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-settings-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-title-bar-auto-padding-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-title-bar-auto-padding-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:open-pane-length": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::open-pane-length",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:overflow-label-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::overflow-label-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:pane-display-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::pane-display-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:pane-title": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::pane-title",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:selection-follows-focus": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::selection-follows-focus",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus>"
+  },
+  "rule": "B1"
+ },
+ "bindings:shoulder-navigation-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::shoulder-navigation-enabled",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled>"
+  },
+  "rule": "B1"
+ },
+ "events:BackRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Collapsed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.NavigationViewItemCollapsedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemCollapsedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DisplayModeChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Expanding": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.NavigationViewItemExpandingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemExpandingEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ItemInvoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PaneClosed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PaneClosing": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.NavigationViewPaneClosingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewPaneClosingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PaneOpened": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PaneOpening": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SelectionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:AlwaysShowHeader": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "AlwaysShowHeaderProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CompactModeThresholdWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CompactModeThresholdWidthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:CompactPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CompactPaneLengthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:ExpandedModeThresholdWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ExpandedModeThresholdWidthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:IsBackButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsBackButtonVisibleProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsBackEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsBackEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsPaneOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsPaneOpenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsPaneToggleButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsPaneToggleButtonVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsPaneVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsPaneVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsSettingsVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsSettingsVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTitleBarAutoPaddingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTitleBarAutoPaddingEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:OpenPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OpenPaneLengthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:OverflowLabelMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OverflowLabelModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:PaneDisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PaneDisplayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:PaneTitle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PaneTitleProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectionFollowsFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectionFollowsFocusProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus>"
+  },
+  "rule": "O6"
+ },
+ "notify:ShoulderNavigationEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ShoulderNavigationEnabledProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled>"
+  },
+  "rule": "O6"
+ },
+ "props:AlwaysShowHeader": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CompactModeThresholdWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CompactPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode>",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ExpandedModeThresholdWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IsBackButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    "Visible",
+    "Collapsed"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsBackEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsPaneOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsPaneToggleButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsPaneVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsSettingsVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTitleBarAutoPaddingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OpenPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OverflowLabelMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    "NoLabel",
+    "MoreLabel"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PaneDisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    "Left",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PaneTitle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionFollowsFocus": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    "Enabled",
+    "Disabled"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ShoulderNavigationEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+   "samples": [
+    "Always",
+    "WhenSelectionFollowsFocus"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

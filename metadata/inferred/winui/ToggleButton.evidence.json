@@ -1,4 +1,20 @@
 {
+ "bindings:is-checked": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-checked",
+   "type": "nullable<bool>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-three-state": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-three-state",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
  "events:Checked": {
   "confidence": 0.9,
   "evidence": {
