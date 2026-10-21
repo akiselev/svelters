@@ -95,7 +95,8 @@ or input at the toolkit's default priority must not keep it from running. Wakes 
 time). Per backend: GTK, a `G_PRIORITY_DEFAULT` idle (the priority of GDK events and timeouts), with a
 redraw guard: after 4 wakes in a row at `DEFAULT`, the next one waits just below `GDK_PRIORITY_REDRAW`, with
 a 4 ms backup at `DEFAULT`; Qt, a queued call (a posted event: the GLib dispatcher's post-event source at
-`G_PRIORITY_DEFAULT`, or the start of every turn on the Unix dispatcher); AppKit, a version-0
+`G_PRIORITY_DEFAULT`, or the start of every turn on the Unix dispatcher), one pending at a time since FU3 (an
+atomic ticket cleared before the checkpoint runs); AppKit, a version-0
 `CFRunLoopSource` (every signalled source0 runs on each run-loop pass); WinUI, `DispatcherQueue.TryEnqueue`
 at `Normal` (FIFO with the queue's timers); egui, a flag read at the start of the next pass plus
 `request_repaint`. Details in `plans/milestones/FU2-gtk-wake-priority.md`.

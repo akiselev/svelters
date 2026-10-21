@@ -205,7 +205,7 @@ struct Core {
   std::atomic<QObject *> waker{nullptr};
   QTimer *wake_timer = nullptr;  // schedule_wake's single-shot timer; main thread only
   std::atomic<bool> wake_pending{false};
-  std::atomic<bool> queued{false};  // a checkpoint is already queued on the loop
+  std::atomic<bool> queued{false};  // wake's posted checkpoint is pending (cleared when it runs)
   // Frame clock (request_frame). Main thread only.
   bool frame_pending = false;
   QTimer *frame_timer = nullptr;      // fallback / watchdog for a frame the window does not deliver
@@ -267,8 +267,14 @@ void ensure_app() {
 }
 
 void run_checkpoint() {
-  g.queued.store(false);
   if (g.host && g.host->checkpoint) g.host->checkpoint(g.host->self);
+}
+
+// The posted checkpoint of `wake` (FU3): one is pending at a time. The ticket is cleared before the
+// checkpoint runs, so a wake requested during the checkpoint posts a checkpoint of its own.
+void wake_checkpoint() {
+  g.queued.store(false);
+  run_checkpoint();
 }
 
 Entry *find(svl_handle h) {
@@ -1304,10 +1310,9 @@ int b_run(void *, const svl_host *host) {
   g.host = host;
   ensure_app();
   // Like GTK's `activate`: one checkpoint when the loop starts, whether or not a wake was pending.
-  if (g.wake_pending.exchange(false) || !g.queued.load()) {
-    g.queued.store(true);
-    QMetaObject::invokeMethod(g.waker.load(), [] { run_checkpoint(); }, Qt::QueuedConnection);
-  }
+  g.wake_pending.store(false);
+  if (!g.queued.exchange(true))
+    QMetaObject::invokeMethod(g.waker.load(), [] { wake_checkpoint(); }, Qt::QueuedConnection);
   const int rc = QCoreApplication::exec();
   // The host vtable is only guaranteed while `run` is on the stack; late timers must not use it.
   g.host = nullptr;
@@ -1320,8 +1325,9 @@ void b_wake(void *) {
     g.wake_pending.store(true);
     return;
   }
-  g.queued.store(true);
-  QMetaObject::invokeMethod(w, [] { run_checkpoint(); }, Qt::QueuedConnection);
+  // Coalesced (FU3, as GTK's FU2 wake): while a posted checkpoint is pending, more wakes add nothing.
+  if (g.queued.exchange(true)) return;
+  QMetaObject::invokeMethod(w, [] { wake_checkpoint(); }, Qt::QueuedConnection);
 }
 
 // ABI v2.7: attaches the host without running the loop (the caller pumps Qt's events, or `run` follows);
