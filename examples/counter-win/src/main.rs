@@ -2,12 +2,18 @@
 //!
 //! ```text
 //! counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]
+//! counter-win --start-test <start-with|run-with|preattach> [--report <json>]
 //! ```
 //!
 //! Without `--selftest` it opens the window and runs until the user closes it. `--selftest`
 //! (counter-win fixture; `--fixture winui-types` has its own checks, N4) drives the app through the real toolkit: clicks the button three
 //! times through UI Automation, types a name, moves the slider, checks the box, then reads the
 //! native widgets back and prints a JSON report (also written to `--report`). Exit code 0 = pass.
+//!
+//! `--start-test` (G0, ABI v2.7 `start`, FU1) checks one host order on the counter-win bundle and
+//! reports the same way: `start-with` mounts in `Host::start_with`'s hook while it pumps messages
+//! (no `run`), then `stop` detaches; `run-with` mounts in `Host::run_with`'s hook from inside `run`;
+//! `preattach` is the desktop order without `attach_host` (`load_bundle` attaches before mount).
 //!
 //! Build the bundle first: `pnpm install && pnpm --filter ./fixtures/counter-win build`.
 //! Setup on Windows: docs/notes/windows-setup.md.
@@ -39,10 +45,11 @@ mod win {
         selftest: bool,
         report: Option<PathBuf>,
         timeout: f64,
+        start_test: Option<String>,
     }
 
     fn parse() -> Result<Args, String> {
-        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0 };
+        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None };
         let mut it = std::env::args().skip(1);
         while let Some(x) = it.next() {
             match x.as_str() {
@@ -50,6 +57,7 @@ mod win {
                 "--selftest" => a.selftest = true,
                 "--report" => a.report = Some(it.next().ok_or("--report needs a value")?.into()),
                 "--timeout" => a.timeout = it.next().ok_or("--timeout needs seconds")?.parse().map_err(|_| "bad --timeout")?,
+                "--start-test" => a.start_test = Some(it.next().ok_or("--start-test needs a mode")?),
                 "-h" | "--help" => return Err("usage: counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]".into()),
                 other => return Err(format!("unknown argument {other:?}")),
             }
@@ -93,6 +101,131 @@ mod win {
         }
     }
 
+    /// The counter's "Count: n" text and its button, from the first window of `host`.
+    fn counter_parts(b: &WinUiBackend, host: &Host<'_>) -> Result<(u64, u64), String> {
+        let root = *host.toplevel_handles().first().ok_or("no window")?;
+        let mut all = Vec::new();
+        walk(b, root, &mut all);
+        let find = |tag: &str| all.iter().find(|(_, t)| *t == tag).map(|(h, _)| *h).ok_or(format!("no <{tag}>"));
+        Ok((find("text-block")?, find("button")?))
+    }
+
+    /// `--start-test <mode>` (G0): one host order on the counter-win bundle; a JSON report like `--selftest`.
+    fn start_test(mode: &str, b: &WinUiBackend, vt: &'static BackendVtable, args: &Args) -> i32 {
+        let path = bundle(&args.fixture);
+        let mut failures: Vec<String> = Vec::new();
+        let console: Vec<String>;
+        {
+            let host = match Host::new(vt.backend_ref(), HostConfig::default()) {
+                Ok(h) => h,
+                Err(e) => {
+                    eprintln!("[counter-win] host: {e}");
+                    return 3;
+                }
+            };
+            let br = vt.backend_ref();
+            let mut check = |ok: bool, what: &str| {
+                if !ok {
+                    failures.push(what.to_string());
+                }
+            };
+            let count = |b: &WinUiBackend, host: &Host<'_>| -> String {
+                match counter_parts(b, host).and_then(|(t, _)| prop(b, t, "text")) {
+                    Ok(Value::Str(s)) => s,
+                    other => format!("{other:?}"),
+                }
+            };
+            let click = |b: &WinUiBackend, host: &Host<'_>| -> Result<(), String> {
+                let (_, button) = counter_parts(b, host)?;
+                b.invoke(button)?;
+                b.pump(300);
+                Ok(())
+            };
+            check(br.has_start(), "the vtable publishes start");
+            match mode {
+                "start-with" => {
+                    let fired = Rc::new(std::cell::Cell::new(0));
+                    let (f, p) = (fired.clone(), path.clone());
+                    let r = host.start_with(move |h| {
+                        f.set(f.get() + 1);
+                        if let Err(e) = h.load_bundle(&p) {
+                            eprintln!("[counter-win] load: {e}");
+                        }
+                    });
+                    check(r.is_ok(), &format!("start_with: {r:?}"));
+                    check(fired.get() == 1, "the hook ran when start returned");
+                    check(host.is_started(), "is_started after start");
+                    let before = host.checkpoint_count();
+                    b.pump(300);
+                    check(host.checkpoint_count() > before, "start queued a checkpoint for the first pump");
+                    let c = count(b, &host);
+                    check(c == "Count: 0", &format!("mounted: {c}"));
+                    let r = click(b, &host);
+                    check(r.is_ok(), &format!("click: {r:?}"));
+                    let c = count(b, &host);
+                    check(c == "Count: 1", &format!("click reached the started host: {c}"));
+                    host.stop();
+                    check(!host.is_started(), "not started after stop");
+                    let before = host.checkpoint_count();
+                    br.wake();
+                    b.pump(200);
+                    check(host.checkpoint_count() == before, "no checkpoint after stop");
+                    let _ = click(b, &host);
+                    let c = count(b, &host);
+                    check(c == "Count: 1", &format!("no event after stop: {c}"));
+                }
+                "run-with" => {
+                    let fired = Rc::new(std::cell::Cell::new(0));
+                    let (f, p, d) = (fired.clone(), path.clone(), b.clone());
+                    let r = host.run_with(move |h| {
+                        f.set(f.get() + 1);
+                        if !h.is_started() {
+                            eprintln!("[counter-win] the hook ran before started");
+                        }
+                        if let Err(e) = h.load_bundle(&p) {
+                            eprintln!("[counter-win] load: {e}");
+                        }
+                        d.quit();
+                    });
+                    check(r.is_ok(), &format!("run_with: {r:?}"));
+                    check(fired.get() == 1, &format!("the hook fired once (got {})", fired.get()));
+                    check(!host.is_started(), "not started after run returned");
+                    let c = count(b, &host);
+                    check(c == "Count: 0", &format!("mounted: {c}"));
+                }
+                "preattach" => {
+                    let r = host.load_bundle(&path);
+                    check(r.is_ok(), &format!("load_bundle: {:?}", r.err().map(|e| e.to_string())));
+                    check(!host.is_started(), "the pre-attach does not count as started");
+                    let before = host.checkpoint_count();
+                    br.wake();
+                    b.pump(200);
+                    check(host.checkpoint_count() > before, "a wake before run reaches the host");
+                    let r = click(b, &host);
+                    check(r.is_ok(), &format!("click: {r:?}"));
+                    let c = count(b, &host);
+                    check(c == "Count: 1", &format!("click reached the pre-attached host: {c}"));
+                }
+                other => {
+                    eprintln!("[counter-win] unknown --start-test mode {other:?}");
+                    return 2;
+                }
+            }
+            failures.extend(host.take_errors().iter().map(|e| format!("js error: {e}")));
+            console = host.take_console().iter().map(|l| format!("[{}] {}", l.level, l.text)).collect();
+            // Drop detaches the host (start(NULL)): later wakes and timers reach nobody.
+        }
+        vt.backend_ref().wake();
+        b.pump(50);
+        b.shutdown();
+        let rep = json!({ "backend": "winui", "start_test": mode, "ok": failures.is_empty(), "failures": failures, "console": console });
+        if let Some(p) = &args.report {
+            let _ = std::fs::write(p, serde_json::to_string_pretty(&rep).unwrap());
+        }
+        println!("{}", serde_json::to_string_pretty(&rep).unwrap());
+        if rep["ok"] == json!(true) { 0 } else { 1 }
+    }
+
     pub fn main() -> i32 {
         let args = match parse() {
             Ok(a) => a,
@@ -115,6 +248,9 @@ mod win {
         };
         let driver = backend.clone();
         let vt: &'static BackendVtable = Box::leak(Box::new(BackendVtable::new(backend)));
+        if let Some(mode) = &args.start_test {
+            return start_test(mode, &driver, vt, &args);
+        }
         let host = match Host::new(vt.backend_ref(), HostConfig::default()) {
             Ok(h) => Rc::new(h),
             Err(e) => {

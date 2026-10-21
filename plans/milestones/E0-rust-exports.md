@@ -156,7 +156,8 @@ See "ABI v2.7 additive (G0)" in `plans/architecture/backend-abi.md`.
 - **Backends:** GTK `b_start` stores the host pointer (GTK is initialised by `GtkBackend::new`); `b_wake`'s idle
   re-reads the pointer when it fires, so a wake after `stop`/the end of `run` reaches nobody. Qt `b_start` sets
   the host, creates the app and delivers a wake that came before the waker existed. The log backend supports
-  `start` (an `attached` flag). AppKit and WinUI keep NULL (their `attach_host` still works).
+  `start` (an `attached` flag). AppKit and WinUI kept NULL here; FU1 implemented `start` on both
+  (`plans/milestones/FU1-gtk-panic-start.md`), so all four desktop backends implement it.
 
 ## Tests
 

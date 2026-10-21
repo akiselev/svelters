@@ -129,7 +129,7 @@ pub(crate) fn handle_of(o: &IInspectable) -> Option<u64> {
 
 pub(crate) fn host_of(inner: &Inner) -> Option<HostRef<'static>> {
     let p = inner.host.get();
-    // SAFETY: set from `run` (or a test harness) and cleared before the host goes away.
+    // SAFETY: set from `run`/`start` (or a test harness) and cleared before the host goes away.
     (!p.is_null()).then(|| unsafe { HostRef::from_raw(p) })
 }
 
@@ -185,6 +185,16 @@ pub(crate) fn emit_changed(h: u64, prop: u32) {
     if let Some(host) = host_of(&inner) {
         drop(inner);
         host.prop_changed(h, prop);
+    }
+}
+
+/// Queues one `on_wake` on the dispatcher queue (coalesced while one is pending). Thread-safe.
+fn wake_shared(shared: &WakeShared) {
+    if !shared.pending.swap(true, Ordering::SeqCst) {
+        let _ = shared.queue.TryEnqueue(&DispatcherQueueHandler::new(|| {
+            on_wake();
+            Ok(())
+        }));
     }
 }
 
@@ -937,16 +947,28 @@ impl Backend for WinUiBackend {
         result
     }
 
+    fn supports_start(&self) -> bool {
+        true
+    }
+
+    /// ABI v2.7: attaches the host without running the loop (`WinUiBackend::new` already
+    /// initialised XAML and the dispatcher queue); the caller pumps messages (`pump`) or calls
+    /// `run` later. Type events raised before are posted now, and a checkpoint is queued for the
+    /// first pump, as `run` does. NULL detaches: wakes, timers and frames read the host when they
+    /// fire, so none reaches a detached host.
+    fn start(&self, host: Option<&HostRef<'_>>) -> StrResult<()> {
+        let inner = &self.inner;
+        inner.host.set(host.map_or(std::ptr::null(), |h| h.as_raw()));
+        if host.is_some() {
+            types::ops::flush_early(inner);
+            wake_shared(&inner.wake);
+        }
+        Ok(())
+    }
+
     fn waker(&self) -> Waker {
         let shared = self.inner.wake.clone();
-        Arc::new(move || {
-            if !shared.pending.swap(true, Ordering::SeqCst) {
-                let _ = shared.queue.TryEnqueue(&DispatcherQueueHandler::new(|| {
-                    on_wake();
-                    Ok(())
-                }));
-            }
-        })
+        Arc::new(move || wake_shared(&shared))
     }
 
     fn quit(&self) {
