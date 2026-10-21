@@ -140,7 +140,29 @@ tests file is `examples/counter-mac/tests/gallery.rs`. `pnpm test` runs it for `
 
 ## Completion record
 
-(Filled in below after the final gates.)
+Code head **bd7be261** on `ci/wp-appkit` (WP-A commits merged with origin/master d548492d, E3). This record is a
+docs-only commit on top.
+
+Local gates, all re-run on that tree, `SVELTERS_SLOT_JOBS=4`:
+
+- `cargo check --workspace --all-targets`: clean (pre-existing warnings only).
+- `cargo check -p svelters-apple -p svelters-appkit --all-targets --target aarch64-apple-darwin`: clean; with the
+  stub C compiler (above), `-p counter-mac` too, so every macOS test target (generated, gallery, backend,
+  counter, types, types_core) type-checks.
+- `cargo nextest run --workspace --test-threads 4` (headless, under the shared nextest lock): **2464/2464 passed**,
+  10 skipped.
+- `pnpm -r build` (after `cargo build -p svelters-compiler` and `python3 tools/docs/build_ir.py`), `pnpm test`
+  (incl. `PASS gallery-appkit (6 pages)`, `test:meta` 155 passed / 1 skipped, `ledger.py check`: appkit 398 manual
+  and 998 inferred verified, 4 parked; `coverage.py --check`), `pnpm docs:test` (python 11 OK / 1 skipped, node
+  17/17): all exit 0.
+
+CI on bd7be261, all success: macos-appkit 39687197077 (generated, gallery 7/7, probe, ledger dry run), js
+39687197093, linux-gtk 39687197103, linux-qt 39687197099, windows-winui 39687197175.
+
+CI history of the lane: 39673353659 and 39674344149 (ingest rounds), 39676947193 (first run of the new tests: 6
+failing; the probe used here), 39680099443 (5 generated + 3 gallery failures, fixed), 39681421950 (only the 4
+facts that were later parked failing; the ledger was imported from this run), 39682526997 (all generated tests
+passing; one intermittent gallery failure, see open items).
 
 ## Open items
 
@@ -158,6 +180,10 @@ tests file is `examples/counter-mac/tests/gallery.rs`. `pnpm test` runs it for `
 - **Stringification.** `write_through` passes list items as strings (combo box `object-values` become strings).
 - **Mutual exclusion.** On a pop-up button, `item-titles` (via `removeAllItems`) and a `menu` child exclude each
   other; `remove-all-items` is marked dangerous.
+- **One intermittent gallery failure.** In run 39682526997, `appkit_02_text` found the scroll view's document view
+  was not the text view; the runs before and after it passed. The case now asserts with the scroll view count,
+  the document view's class, and the text view's enclosing scroll view, so a recurrence says what happened.
+  The cause is not known.
 - **Real hardware.** Everything ran on CI runners only (macOS 26, SDK 26.1 for metadata).
 
 ## Conflict risks
