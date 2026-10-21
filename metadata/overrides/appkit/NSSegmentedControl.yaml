@@ -1,0 +1,80 @@
+class: NSSegmentedControl
+element:
+  tag: segmented-control
+  lifetime: owned
+  construct: new
+  test_setup:
+    - {name: labels, value: ["Day", "Week", "Month"]}
+  provenance: "NSSegmentedControl.h: -init gives a control with no segments; `labels` sets the segment count and one label per segment"
+props:
+  - name: segment-count
+    sample: 4
+    provenance: "NSSegmentedControl.segmentCount (NSInteger)"
+  - name: selected-segment
+    sample: 2
+    provenance: "NSSegmentedControl.selectedSegment (NSInteger, -1 for none)"
+  - name: tracking-mode
+    sample: select-any
+    provenance: "NSSegmentedControl.trackingMode (NSSegmentSwitchTracking)"
+  - name: segment-style
+    sample: rounded
+    provenance: "NSSegmentedControl.segmentStyle (NSSegmentStyle)"
+setters:
+  - name: labels
+    selector: "setLabel:forSegment:"
+    count: "setSegmentCount:"
+    type: list
+    sample: ["Day", "Week", "Month"]
+    provenance: "NSSegmentedControl.h: -setSegmentCount: then -setLabel:forSegment: per index (no labels property): `labels={[...]}` makes one segment per string"
+methods:
+  - name: set-label-for-segment
+    selector: "setLabel:forSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h"
+  - name: label-for-segment
+    selector: "labelForSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h"
+  - name: set-width-for-segment
+    selector: "setWidth:forSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h: 0 sizes the segment to fit"
+  - name: set-image-for-segment
+    selector: "setImage:forSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h: an image handle, or an image/SF Symbol name"
+  - name: set-enabled-for-segment
+    selector: "setEnabled:forSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h"
+  - name: is-enabled-for-segment
+    selector: "isEnabledForSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h"
+  - name: set-selected-for-segment
+    selector: "setSelected:forSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h"
+  - name: is-selected-for-segment
+    selector: "isSelectedForSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h"
+  - name: set-tool-tip-for-segment
+    selector: "setToolTip:forSegment:"
+    test: false
+    provenance: "NSSegmentedControl.h"
+  - name: select-segment-with-tag
+    selector: "selectSegmentWithTag:"
+    test: false
+    provenance: "NSSegmentedControl.h: returns whether a segment has the tag"
+bindings:
+  - name: selected-segment
+    direction: two_way
+    property: selected-segment
+    type: { ref: i64, nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: true }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    observability: { class: partial, missed: [programmatic] }
+    provenance: "two-way bind:selected-segment: the control sends its action after a click on a segment (the index is read back); setting selectedSegment never sends it. Set labels first (attribute order) so the segment exists."

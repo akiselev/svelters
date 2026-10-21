@@ -1,0 +1,55 @@
+class: NSSplitView
+element:
+  tag: split-view
+  lifetime: owned
+  construct: new
+  provenance: "NSSplitView.h: -init gives a split view whose panes stack top to bottom (vertical NO); with vertical YES the dividers are vertical and the panes sit side by side"
+props:
+  - name: vertical
+    sample: true
+    provenance: "NSSplitView.vertical (BOOL, getter isVertical)"
+  - name: divider-style
+    sample: pane-splitter
+    provenance: "NSSplitView.dividerStyle (NSSplitViewDividerStyle)"
+slots:
+  - name: arranged-subviews
+    default: true
+    cardinality: many
+    ops:
+      append: "addArrangedSubview:"
+      insert_at: "insertArrangedSubview:atIndex:"
+      list: arrangedSubviews
+      remove: ["removeArrangedSubview:"]
+      detach: ["removeFromSuperview"]
+    provenance: "NSSplitView.h (10.11+): addArrangedSubview:, insertArrangedSubview:atIndex:, removeArrangedSubview:. With arrangesAllSubviews (the default) the arranged subviews are the subviews; removeArrangedSubview: may leave the view a subview, so removeFromSuperview is sent when it is still attached (like stack-view)."
+methods:
+  - name: adjust-subviews
+    selector: adjustSubviews
+    provenance: "NSSplitView.h: resizes the panes proportionally to fill the split view"
+  - name: set-position-of-divider-at-index
+    selector: "setPosition:ofDividerAtIndex:"
+    test: false
+    provenance: "NSSplitView.h: moves divider `index` to `position` (points along the split axis); covered by the hand-written widgets test on a sized split view"
+  - name: min-possible-position-of-divider-at-index
+    selector: "minPossiblePositionOfDividerAtIndex:"
+    test: false
+    provenance: "NSSplitView.h: the smallest position the divider can take (CGFloat)"
+  - name: max-possible-position-of-divider-at-index
+    selector: "maxPossiblePositionOfDividerAtIndex:"
+    test: false
+    provenance: "NSSplitView.h: the largest position the divider can take (CGFloat)"
+  - name: is-subview-collapsed
+    selector: "isSubviewCollapsed:"
+    test: false
+    provenance: "NSSplitView.h: whether a pane (a view handle) is collapsed"
+signals:
+  - name: split-view-did-resize-subviews
+    via: notification
+    notification: NSSplitViewDidResizeSubviewsNotification
+    verify: post
+    provenance: "NSSplitView.h: NSSplitViewDidResizeSubviewsNotification, object = the split view, posted after a divider moved or the panes were resized"
+  - name: split-view-will-resize-subviews
+    via: notification
+    notification: NSSplitViewWillResizeSubviewsNotification
+    verify: post
+    provenance: "NSSplitView.h: NSSplitViewWillResizeSubviewsNotification, object = the split view"

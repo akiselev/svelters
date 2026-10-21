@@ -1,0 +1,91 @@
+class: NSTabView
+element:
+  tag: tab-view
+  lifetime: owned
+  construct: new
+  provenance: "NSTabView.h: -init gives a top-tabbed view with no items; pages are tab-view-item children"
+props:
+  - name: tab-view-type
+    sample: no-tabs-no-border
+    provenance: "NSTabView.tabViewType (NSTabViewType)"
+  - name: draws-background
+    sample: false
+    provenance: "NSTabView.drawsBackground (BOOL)"
+  - name: allows-truncated-labels
+    sample: true
+    provenance: "NSTabView.allowsTruncatedLabels (BOOL)"
+  - name: selected-tab-view-item
+    write: {selector: "selectTabViewItem:"}
+    provenance: "NSTabView.selectedTabViewItem (readonly): written through -selectTabViewItem: with a tab-view-item handle, so `selected-tab-view-item={item}` selects a page"
+slots:
+  - name: tab-view-items
+    default: true
+    cardinality: many
+    child: tab-view-item
+    ops:
+      append: "addTabViewItem:"
+      insert_at: "insertTabViewItem:atIndex:"
+      list: tabViewItems
+      remove: ["removeTabViewItem:"]
+    provenance: "NSTabView.h: addTabViewItem:, insertTabViewItem:atIndex:, removeTabViewItem:; the tab view retains its items. Items are NSTabViewItem (not views): the page view is the item's `view` slot."
+methods:
+  - name: select-tab-view-item-at-index
+    selector: "selectTabViewItemAtIndex:"
+    test: false
+    provenance: "NSTabView.h: selects the page at an index (NSRangeException out of range, returned as an error)"
+  - name: select-first-tab-view-item
+    selector: "selectFirstTabViewItem:"
+    provenance: "NSTabView.h; `sender` is nil"
+  - name: select-last-tab-view-item
+    selector: "selectLastTabViewItem:"
+    provenance: "NSTabView.h; `sender` is nil"
+  - name: select-next-tab-view-item
+    selector: "selectNextTabViewItem:"
+    provenance: "NSTabView.h; `sender` is nil"
+  - name: select-previous-tab-view-item
+    selector: "selectPreviousTabViewItem:"
+    provenance: "NSTabView.h; `sender` is nil"
+  - name: index-of-tab-view-item
+    selector: "indexOfTabViewItem:"
+    test: false
+    provenance: "NSTabView.h: the index of a tab-view-item handle, or NSNotFound"
+  - name: index-of-tab-view-item-with-identifier
+    selector: "indexOfTabViewItemWithIdentifier:"
+    test: false
+    provenance: "NSTabView.h: the index of the item whose identifier is equal, or NSNotFound"
+  - name: tab-view-item-at-index
+    selector: "tabViewItemAtIndex:"
+    test: false
+    provenance: "NSTabView.h: the item at an index (the tab-view-item handle)"
+signals:
+  - name: tab-view-did-select-tab-view-item
+    via: delegate
+    selector: "tabView:didSelectTabViewItem:"
+    args: [selected-tab-view-item]
+    verify: select_tab
+    provenance: "NSTabViewDelegate: sent after the selection changed, by a click or a select call. The backend installs its own delegate on every tab view (crates/svelters-appkit/src/backend.rs, TabViewDelegate); JS gets the selected tab-view-item handle."
+  - name: tab-view-should-select-tab-view-item
+    via: delegate
+    selector: "tabView:shouldSelectTabViewItem:"
+    delivery: sync
+    result: veto_bool
+    verify: select_tab
+    provenance: "NSTabViewDelegate: asked before a page is selected (BOOL, YES allows). JS stops the selection with e.preventDefault() (result true), so the delegate answers NO; no decision allows; a busy host (JS running) allows, unlike a window close, because a selection is not destructive."
+  - name: tab-view-will-select-tab-view-item
+    via: delegate
+    selector: "tabView:willSelectTabViewItem:"
+    verify: select_tab
+    provenance: "NSTabViewDelegate: sent before the selection changes"
+  - name: tab-view-did-change-number-of-tab-view-items
+    via: delegate
+    selector: "tabViewDidChangeNumberOfTabViewItems:"
+    verify: select_tab
+    provenance: "NSTabViewDelegate: sent after an item was added or removed"
+dangerous:
+  properties:
+    delegate:
+      severity: owned-by-backend
+      reason: >-
+        create() installs the backend's TabViewDelegate on every tab view (crates/svelters-appkit/src/backend.rs, `install_delegate`);
+        replacing it stops the tab-view-* selection events and the vetoable selection.
+      use_instead: The tab-view-did-select-tab-view-item and tab-view-should-select-tab-view-item events.

@@ -1,0 +1,94 @@
+class: NSPopUpButton
+element:
+  tag: pop-up-button
+  lifetime: owned
+  construct: new
+  test_setup:
+    - {name: item-titles, value: ["One", "Two", "Three"]}
+  provenance: "NSPopUpButton.h: -init gives a pop-up (not pull-down) button with an empty menu. Items come from `item-titles` (a list of strings) or from a `menu` child (menu-item children); use one or the other."
+props:
+  - name: pulls-down
+    sample: true
+    provenance: "NSPopUpButton.pullsDown (BOOL)"
+  - name: autoenables-items
+    sample: false
+    provenance: "NSPopUpButton.autoenablesItems (BOOL)"
+  - name: item-titles
+    sample: ["Red", "Green", "Blue"]
+    write: {selector: "addItemsWithTitles:", clear: removeAllItems}
+    provenance: "NSPopUpButton.itemTitles (readonly NSArray<NSString *>): written by -removeAllItems then -addItemsWithTitles:, so the list replaces the items. Duplicate titles collapse (addItemsWithTitles: removes an existing item with the same title)."
+  - name: index-of-selected-item
+    sample: 2
+    write: {selector: "selectItemAtIndex:"}
+    provenance: "NSPopUpButton.indexOfSelectedItem (readonly NSInteger, -1 for none): written through -selectItemAtIndex: (-1 deselects)"
+slots:
+  - name: menu
+    default: true
+    cardinality: one
+    child: menu
+    declared_on: NSResponder
+    ops:
+      set: "setMenu:"
+      get: menu
+      clear: nil
+    provenance: "NSPopUpButton.menu: the pop-up's items are the items of this menu (a menu child with menu-item children). Replacing it replaces the items; clearing installs no menu (an empty pop-up)."
+methods:
+  - name: add-item-with-title
+    selector: "addItemWithTitle:"
+    test: false
+    provenance: "NSPopUpButton.h: appends an item (removes an existing item with that title first)"
+  - name: insert-item-with-title-at-index
+    selector: "insertItemWithTitle:atIndex:"
+    test: false
+    provenance: "NSPopUpButton.h"
+  - name: remove-item-at-index
+    selector: "removeItemAtIndex:"
+    test: false
+    provenance: "NSPopUpButton.h"
+  - name: remove-all-items
+    selector: removeAllItems
+    provenance: "NSPopUpButton.h"
+  - name: select-item-with-title
+    selector: "selectItemWithTitle:"
+    test: false
+    provenance: "NSPopUpButton.h: selects the first item with the title (none: deselects)"
+  - name: select-item-with-tag
+    selector: "selectItemWithTag:"
+    test: false
+    provenance: "NSPopUpButton.h: returns whether an item with the tag exists"
+  - name: item-title-at-index
+    selector: "itemTitleAtIndex:"
+    test: false
+    provenance: "NSPopUpButton.h"
+  - name: index-of-item-with-title
+    selector: "indexOfItemWithTitle:"
+    test: false
+    provenance: "NSPopUpButton.h: -1 if there is none"
+  - name: synchronize-title-and-selected-item
+    selector: synchronizeTitleAndSelectedItem
+    provenance: "NSPopUpButton.h"
+signals:
+  - name: pop-up-button-will-pop-up
+    via: notification
+    notification: NSPopUpButtonWillPopUpNotification
+    verify: post
+    provenance: "NSPopUpButton.h: NSPopUpButtonWillPopUpNotification, object = the button, before the menu shows"
+bindings:
+  - name: index-of-selected-item
+    direction: two_way
+    property: index-of-selected-item
+    type: { ref: i64, nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: true }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    observability: { class: partial, missed: [programmatic] }
+    provenance: "two-way bind:index-of-selected-item: the button sends its action after the user picked an item (the index is read back); -selectItemAtIndex: never sends it. Set item-titles before the binding (attribute order) so the index exists."
+dangerous:
+  methods:
+    removeAllItems:
+      severity: corrupts-tree
+      reason: >-
+        Removes the native menu items behind the renderer when the items are menu-item children of a `menu` child
+        (crates/svelters-appkit/src/backend.rs, slot ops); the item-titles prop uses it on purpose.
+      use_instead: Set item-titles, or remove menu-item children with {#if}/{#each}.

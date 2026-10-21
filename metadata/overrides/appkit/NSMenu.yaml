@@ -1,0 +1,67 @@
+class: NSMenu
+element:
+  tag: menu
+  lifetime: owned
+  construct: new
+  provenance: "NSMenu.h: -init gives an empty, untitled menu that autoenables its items. Not a view: a menu is a submenu of a menu-item, the items of a pop-up-button, or a view's context menu (its `menu` slot)."
+props:
+  - name: title
+    sample: "File"
+    provenance: "NSMenu.title (NSString, copy)"
+  - name: autoenables-items
+    sample: false
+    provenance: "NSMenu.autoenablesItems (BOOL)"
+  - name: minimum-width
+    sample: 200
+    expect: 200.0
+    provenance: "NSMenu.minimumWidth (CGFloat)"
+  - name: shows-state-column
+    sample: false
+    provenance: "NSMenu.showsStateColumn (BOOL)"
+slots:
+  - name: items
+    default: true
+    cardinality: many
+    child: menu-item
+    ops:
+      append: "addItem:"
+      insert_at: "insertItem:atIndex:"
+      list: itemArray
+      remove: ["removeItem:"]
+    provenance: "NSMenu.h: addItem:, insertItem:atIndex:, removeItem:; the menu retains its items and an item belongs to one menu at a time"
+methods:
+  - name: update
+    selector: update
+    provenance: "NSMenu.h: re-validates the items (autoenabling)"
+  - name: cancel-tracking
+    selector: cancelTracking
+    provenance: "NSMenu.h: dismisses the menu if it is open"
+  - name: pop-up-menu-positioning-item-at-location-in-view
+    selector: "popUpMenuPositioningItem:atLocation:inView:"
+    test: false
+    provenance: "NSMenu.h: shows the menu as a context menu at a point of a view ({x, y}; nil view = screen coordinates); runs a nested tracking loop until the menu closes"
+signals:
+  - name: menu-did-send-action
+    via: notification
+    notification: NSMenuDidSendActionNotification
+    verify: post
+    provenance: "NSMenu.h: NSMenuDidSendActionNotification, object = the menu, after one of its items sent its action"
+  - name: menu-did-begin-tracking
+    via: notification
+    notification: NSMenuDidBeginTrackingNotification
+    verify: post
+    provenance: "NSMenu.h: NSMenuDidBeginTrackingNotification, object = the menu"
+  - name: menu-did-end-tracking
+    via: notification
+    notification: NSMenuDidEndTrackingNotification
+    verify: post
+    provenance: "NSMenu.h: NSMenuDidEndTrackingNotification, object = the menu"
+dangerous:
+  methods:
+    removeAllItems:
+      severity: corrupts-tree
+      reason: >-
+        Removes every native item behind the renderer; the menu-item handles in the `items` slot
+        (crates/svelters-appkit/src/backend.rs, slot ops) then point at items the menu no longer has.
+      use_instead: Remove menu-item children with {#if}/{#each}.
+      reachable: true

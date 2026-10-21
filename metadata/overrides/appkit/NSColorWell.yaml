@@ -1,0 +1,29 @@
+class: NSColorWell
+element:
+  tag: color-well
+  lifetime: owned
+  construct: new
+  provenance: "NSColorWell.h: -init gives a bordered well showing white; a click opens the shared color panel"
+props:
+  - name: bordered
+    sample: false
+    provenance: "NSColorWell.bordered (BOOL, getter isBordered)"
+methods:
+  - name: activate
+    selector: "activate:"
+    test: false
+    provenance: "NSColorWell.h: activates the well and opens the shared color panel (exclusive: deactivates other wells); not run on CI (it shows a panel)"
+  - name: deactivate
+    selector: deactivate
+    provenance: "NSColorWell.h"
+bindings:
+  - name: color
+    direction: two_way
+    property: color
+    type: { ref: "object<NSColor>", nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: false }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    observability: { class: partial, missed: [programmatic] }
+    provenance: "two-way bind:color (an NSColor handle, e.g. from svelters:appkit NSColor factories): the well sends its action when the user picks a color in the panel (the color is read back); setting color never sends it"

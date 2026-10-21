@@ -1,0 +1,35 @@
+class: NSStepper
+element:
+  tag: stepper
+  lifetime: owned
+  construct: new
+  provenance: "NSStepper.h: -init gives up/down arrows over 0..59 in steps of 1"
+props:
+  - name: min-value
+    sample: -10
+    expect: -10.0
+    provenance: "NSStepper.minValue (double)"
+  - name: max-value
+    sample: 10
+    expect: 10.0
+    provenance: "NSStepper.maxValue (double)"
+  - name: increment
+    sample: 2.5
+    provenance: "NSStepper.increment (double)"
+  - name: value-wraps
+    sample: false
+    provenance: "NSStepper.valueWraps (BOOL)"
+  - name: autorepeat
+    sample: false
+    provenance: "NSStepper.autorepeat (BOOL)"
+bindings:
+  - name: double-value
+    direction: two_way
+    property: double-value
+    type: { ref: f64, nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: true }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    observability: { class: partial, missed: [programmatic] }
+    provenance: "two-way bind:double-value: the stepper sends its action per step (the value is read back); programmatic sets never send it, min/max changes clamp silently"

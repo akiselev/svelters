@@ -1,0 +1,18 @@
+class: NSPanel
+element:
+  tag: panel
+  lifetime: toplevel
+  construct: window
+  # A utility panel: a small title bar, floats above document windows, hides when the app is inactive.
+  window: {width: 320, height: 200, style_mask: [titled, closable, resizable, utility-window]}
+  provenance: "NSPanel.h: an NSWindow subclass for secondary windows (inspectors, palettes, find panels); made like a window (initWithContentRect:styleMask:backing:defer:, releasedWhenClosed NO, centered). Same events and content-view slot as window."
+props:
+  - name: floating-panel
+    sample: false
+    provenance: "NSPanel.floatingPanel (BOOL, getter isFloatingPanel)"
+  - name: becomes-key-only-if-needed
+    sample: true
+    provenance: "NSPanel.becomesKeyOnlyIfNeeded (BOOL)"
+  - name: works-when-modal
+    sample: true
+    provenance: "NSPanel.worksWhenModal (BOOL)"

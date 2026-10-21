@@ -1,0 +1,37 @@
+class: NSDatePicker
+element:
+  tag: date-picker
+  lifetime: owned
+  construct: new
+  provenance: "NSDatePicker.h: -init gives a text-field-and-stepper picker for year, month, day, hour, minute and second, set to now"
+props:
+  - name: date-picker-style
+    sample: clock-and-calendar
+    provenance: "NSDatePicker.datePickerStyle (NSDatePickerStyle)"
+  - name: date-picker-mode
+    sample: range
+    provenance: "NSDatePicker.datePickerMode (NSDatePickerMode)"
+  - name: date-picker-elements
+    sample: [year-month-day]
+    expect: 224
+    provenance: "NSDatePicker.datePickerElements (NSDatePickerElementFlags options; YearMonthDay = 0x00e0)"
+  - name: time-interval
+    sample: 3600.0
+    provenance: "NSDatePicker.timeInterval (NSTimeInterval, the range length in range mode)"
+  - name: bezeled
+    sample: false
+    provenance: "NSDatePicker.bezeled (BOOL, getter isBezeled)"
+  - name: draws-background
+    sample: true
+    provenance: "NSDatePicker.drawsBackground (BOOL)"
+bindings:
+  - name: date-value
+    direction: two_way
+    property: date-value
+    type: { ref: "object<NSDate>", nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: true }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    observability: { class: partial, missed: [programmatic] }
+    provenance: "two-way bind:date-value (a JS Date; NSDate crosses as a Date): the picker sends its action after a user edit (the date is read back); setting dateValue never sends it; min-date/max-date clamp silently"

@@ -1,0 +1,26 @@
+class: NSTabViewItem
+element:
+  tag: tab-view-item
+  lifetime: owned
+  construct: new
+  text_prop: label
+  provenance: "NSTabViewItem.h: -init gives an item with a nil identifier and an empty label. Not a view: it lives only inside a tab-view's tab-view-items slot; its page is the `view` slot."
+props:
+  - name: label
+    sample: "General"
+    provenance: "NSTabViewItem.label (NSString, copy)"
+  - name: tool-tip
+    sample: "tip"
+    provenance: "NSTabViewItem.toolTip (NSString, copy)"
+  - name: identifier
+    sample: "general"
+    provenance: "NSTabViewItem.identifier (id, strong): any object; a string here"
+slots:
+  - name: view
+    default: true
+    cardinality: one
+    ops:
+      set: "setView:"
+      get: view
+      clear: nil
+    provenance: "NSTabViewItem.view (strong, nullable): the page shown while the item is selected; the tab view resizes it to its content rect"

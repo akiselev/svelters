@@ -1,0 +1,16 @@
+class: NSSearchField
+element:
+  tag: search-field
+  lifetime: owned
+  construct: new
+  provenance: "NSSearchField.h: a text field (NSTextField subclass) with a magnifier and a cancel button; the action is the search (sent while typing unless sends-whole-search-string). The text binds like a text-field (bind:string-value)."
+props:
+  - name: sends-whole-search-string
+    sample: true
+    provenance: "NSSearchField.sendsWholeSearchString (BOOL, 10.10+)"
+  - name: sends-search-string-immediately
+    sample: true
+    provenance: "NSSearchField.sendsSearchStringImmediately (BOOL, 10.10+)"
+  - name: maximum-recents
+    sample: 5
+    provenance: "NSSearchField.maximumRecents (NSInteger, 10.10+)"

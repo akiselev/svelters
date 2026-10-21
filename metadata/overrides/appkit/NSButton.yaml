@@ -41,6 +41,13 @@ methods:
     selector: "performClick:"
     test: false
     provenance: "NSButton.h / NSControl.h: simulates a click, sending the action"
+  - name: set-next-state
+    selector: setNextState
+    provenance: "NSButton.h: advances state (off -> on, or through mixed when allows-mixed-state) without sending the action"
+  - name: highlight
+    selector: "highlight:"
+    args: [true]
+    provenance: "NSButton.h: draws the button highlighted (pressed) or not"
 bindings:
   - name: state
     direction: two_way

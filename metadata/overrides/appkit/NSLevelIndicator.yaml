@@ -1,0 +1,29 @@
+class: NSLevelIndicator
+element:
+  tag: level-indicator
+  lifetime: owned
+  construct: new
+  provenance: "NSLevelIndicator.h: -init gives a continuous-capacity bar over 0..1, not editable"
+props:
+  - name: level-indicator-style
+    sample: rating
+    provenance: "NSLevelIndicator.levelIndicatorStyle (NSLevelIndicatorStyle)"
+  - name: min-value
+    sample: 0
+    expect: 0.0
+    provenance: "NSLevelIndicator.minValue (double)"
+  - name: max-value
+    sample: 5
+    expect: 5.0
+    provenance: "NSLevelIndicator.maxValue (double)"
+  - name: warning-value
+    sample: 3
+    expect: 3.0
+    provenance: "NSLevelIndicator.warningValue (double)"
+  - name: critical-value
+    sample: 4
+    expect: 4.0
+    provenance: "NSLevelIndicator.criticalValue (double)"
+  - name: editable
+    sample: true
+    provenance: "NSLevelIndicator.editable (BOOL, getter isEditable; a rating the user can click)"
