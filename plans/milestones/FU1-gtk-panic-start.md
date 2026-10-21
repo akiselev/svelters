@@ -93,7 +93,18 @@ CI on af52bcaa (code complete; later commits are docs only): js 39625384126, lin
 macos-appkit 39625384143 (counter: `counter_e2e`, `appkit_types_e2e` + the 3 start cases ok),
 windows-winui 39625384098 (counter: both selftests + the 3 start modes ok): all success.
 
-Local gates: see the final section below.
+Local gates on c1cfc2b2 (the code is the same as af52bcaa), all rc 0:
+
+| Gate | Result |
+| --- | --- |
+| `tools/dev/cargo-slot cargo check --workspace --all-targets` | rc 0 (only warnings that were already there) |
+| `tools/dev/headless tools/dev/cargo-slot cargo nextest run --workspace --test-threads 4` | 2392/2392 passed, 8 skipped |
+| `pnpm -r build` (after `cargo build -p svelters-compiler`, `python3 tools/docs/build_ir.py`) | rc 0 |
+| `pnpm test` | rc 0 |
+| `pnpm docs:test` | rc 0 |
+| `python3 tools/metadata/ledger.py check` | rc 0 (gtk 580, qt 634, appkit 205, winui 105 manual facts verified) |
+| `cargo check -p svelters-apple -p svelters-appkit --all-targets --target aarch64-apple-darwin` | rc 0, no warnings |
+| `cargo check -p svelters-winui -p counter-win --tests --bins --target x86_64-pc-windows-gnu` | rc 0, no new warnings |
 
 ## Open items
 
