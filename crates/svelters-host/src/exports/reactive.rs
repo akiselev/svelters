@@ -157,6 +157,9 @@ pub trait StoreState: Send + Sync + Sized + 'static {
 /// back and compares it with what JS wrote); the echo of an accepted write is dropped. An `Err` throws in
 /// JS (`stats.speed = v` throws the `NativeError`) and keeps the old value. The hook may change other
 /// fields too: after a hooked write every field is marked, and the compare drops what did not change.
+///
+/// The hook runs on the JS thread under the store's write lock: work on `self`, and never reach the same
+/// store through its `Store`/`StoreStatic` from inside it (that would wait for the lock it holds).
 pub trait StoreHooks: StoreState {
     fn on_write(&mut self, field: Self::Field) -> Result<(), NativeError>;
 }
