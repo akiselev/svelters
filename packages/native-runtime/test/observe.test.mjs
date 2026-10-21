@@ -44,7 +44,10 @@ test('a native change is delivered only when the value differs from the last one
   const b = h.create('label');
   h.setProp(b, 'label', 'a');
   h.observe(b, 'label', true);
-  assert.equal(th.nativeChange(b, 'label', 'a'), null, 'equal to the baseline');
+  // No baseline (FU3): the first announcement after observe starts is delivered even when it equals
+  // the value written before, then an identical one is dropped.
+  assert.deepEqual(th.nativeChange(b, 'label', 'a'), [b, 'label', 'a'], 'first announcement: no baseline');
+  assert.equal(th.nativeChange(b, 'label', 'a'), null, 'equal to the last one delivered');
   assert.deepEqual(th.nativeChange(b, 'label', 'b'), [b, 'label', 'b']);
   assert.equal(th.nativeChange(b, 'label', 'b'), null);
   h.setProp(b, 'label', 'c');
