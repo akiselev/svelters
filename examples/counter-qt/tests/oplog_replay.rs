@@ -1,7 +1,9 @@
 //! Replays the fixtures' expected op logs (fixtures/*/expected.oplog) against the Qt backend,
 //! the Qt twin of crates/svelters-gtk/tests/oplog_replay.rs. `event` lines are produced natively
 //! (`click`, typing) and must reach the stub host; `attr` lines set a child attribute and read it
-//! back; `listen` lines carry the listener phases (`listen_ex` for `after` / `capture`).
+//! back; `listen` lines carry the listener phases (`listen_ex` for `after` / `capture`); `changed` lines
+//! are produced natively (`QObject::setProperty`) and must be announced (`prop_changed`) exactly when
+//! the pair is observed, as in the GTK replay.
 //!
 //! Fixtures that need more than the Qt backend offers are skipped with the reason: a `sync` line
 //! (a result changes what the toolkit does next), `gone` lines, or a kind / prop / signal / slot /
@@ -15,6 +17,8 @@ use std::sync::Mutex;
 use svelters_abi::*;
 
 static EVENTS: Mutex<Vec<(u64, u32)>> = Mutex::new(Vec::new());
+/// ABI v2.6 announcements (`prop_changed`) since the last `changed` line.
+static CHANGED: Mutex<Vec<(u64, u32)>> = Mutex::new(Vec::new());
 
 unsafe extern "C" fn post_event(_: *mut c_void, h: svl_handle, sig: svl_id, _: *const svl_value, _: usize) {
     EVENTS.lock().unwrap().push((h, sig));
@@ -29,6 +33,9 @@ unsafe extern "C" fn invoke_callback(_: *mut c_void, _: u64, _: *const svl_value
 }
 unsafe extern "C" fn release_callback(_: *mut c_void, _: u64) {}
 unsafe extern "C" fn frame(_: *mut c_void) {}
+unsafe extern "C" fn prop_changed(_: *mut c_void, h: svl_handle, prop: svl_id) {
+    CHANGED.lock().unwrap().push((h, prop));
+}
 
 enum Val {
     Null,
@@ -194,7 +201,10 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
     let mut kinds: HashMap<u64, svl_id> = HashMap::new();
     // Results of construct / static (N2): handles and VALUE handles, by their `#n` in the log.
     let mut vals: HashMap<String, Value> = HashMap::new();
-    let (mut events, mut attrs) = (0, 0);
+    let (mut events, mut attrs, mut changes) = (0, 0, 0);
+    // (handle, prop) pairs observed at this point of the log (the host refcounts; the log shows only the
+    // 0->1 and 1->0 transitions).
+    let mut observing: std::collections::HashSet<(u64, svl_id)> = std::collections::HashSet::new();
     for (n, line) in log.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
         let ctx = format!("{name}:{}: {line}", n + 1);
         let parts: Vec<&str> = line.splitn(4, ' ').collect();
@@ -294,15 +304,37 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 let r = if flags == 0 { b.listen(o, sig, on) } else { b.listen_ex(o, sig, on, flags) };
                 r.unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
             }
-            // ABI v2.6 observation (R2 `bind:` lowering): `observe #h prop on|off` must be accepted
-            // natively. `changed` is a scripted announcement into the op-log host, not a backend call;
-            // the native announcement path is covered by tests/observe.rs and examples/counter.
+            // ABI v2.6 observation (R2 `bind:` lowering): `observe #h prop on|off` must be accepted natively.
             "observe" => {
                 let o = hd(parts[1]);
                 let prop = b.resolve(NameKind::Prop, kind(o), parts[2]);
-                b.observe(o, prop, parts[3].trim() == "on").unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                let on = parts[3].trim() == "on";
+                b.observe(o, prop, on).unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+                if on {
+                    observing.insert((o, prop));
+                } else {
+                    observing.remove(&(o, prop));
+                }
             }
-            "changed" => {}
+            // A scripted native change (FU3, as the GTK replay): produce it natively (`QObject::setProperty`,
+            // not the ABI's `set_prop`) and check the backend announced it exactly when JS observes the
+            // property (a `bind:p|nonreactive` target changes natively without being observed).
+            "changed" => {
+                let o = hd(parts[1]);
+                let prop = b.resolve(NameKind::Prop, kind(o), parts[2]);
+                let Some(v) = parts.get(3) else { panic!("{ctx}: a changed line without a value cannot be produced") };
+                CHANGED.lock().unwrap().clear();
+                counter_qt::hooks::native_set(o, parts[2], &parse_val(v).value()).unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                // Notifiers that hop through the loop (deferred geometry, another thread) get a turn.
+                counter_qt::hooks::pump(20);
+                let got = CHANGED.lock().unwrap().clone();
+                if observing.contains(&(o, prop)) {
+                    assert!(got.contains(&(o, prop)), "{ctx}: change not announced, got {got:?}");
+                } else {
+                    assert!(!got.iter().any(|c| c.0 == o), "{ctx}: an unobserved change was announced: {got:?}");
+                }
+                changes += 1;
+            }
             // ABI v2.2 child attribute: `attr #parent #child name json`.
             "attr" => {
                 let rest: Vec<&str> = line.splitn(5, ' ').collect();
@@ -375,7 +407,7 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
             other => panic!("{ctx}: unknown op {other}"),
         }
     }
-    eprintln!("{name}: replayed, {events} native events delivered, {attrs} attributes set and read back");
+    eprintln!("{name}: replayed, {events} native events delivered, {changes} native changes, {attrs} attributes set and read back");
 }
 
 fn main() {
@@ -383,7 +415,7 @@ fn main() {
 }
 
 fn body() {
-    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame, prop_changed: None };
+    let host = svl_host { self_: std::ptr::null_mut(), post_event, checkpoint, call_sync, on_destroyed, invoke_callback, release_callback, frame, prop_changed: Some(prop_changed) };
     unsafe { counter_qt::set_host(&host) };
     let b = unsafe { BackendRef::from_raw(counter_qt::backend()) }.unwrap();
     let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures");
@@ -401,7 +433,7 @@ fn body() {
         replay(&b, &name, &log);
         replayed.push(name);
     }
-    for must in ["child-attrs-qt", "counter-qt", "qt-types"] {
+    for must in ["bind-observe-qt", "child-attrs-qt", "counter-qt", "qt-types"] {
         assert!(replayed.iter().any(|n| n == must), "fixtures/{must} must replay on Qt, replayed {replayed:?}");
     }
     println!("oplog_replay ok: {replayed:?}");

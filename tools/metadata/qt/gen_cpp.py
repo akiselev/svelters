@@ -981,7 +981,7 @@ def prop_cases(m: Model, setter: bool) -> str:
             out.append("        }")
         out.append("        default: break;\n      }\n      break;")
     out.append("    default: break;\n  }")
-    out.append('  return fail("' + ("set_prop" if setter else "get_prop") + ': unknown property id for this kind");\n}')
+    out.append('  return fail_wrong_kind("' + ("set_prop" if setter else "get_prop") + '", SVL_PROP, prop, e);\n}')
     return "\n".join(out)
 
 
@@ -1071,7 +1071,7 @@ def emit_call(m: Model) -> str:
             out.append("          return 0;\n        }")
         out.append("        default: break;\n      }\n      break;")
     out.append("    default: break;\n  }")
-    out.append('  return fail("call: unknown method id for this kind");\n}')
+    out.append('  return fail_wrong_kind("call", SVL_METHOD, method, e);\n}')
     return "\n".join(out)
 
 
@@ -1528,7 +1528,7 @@ def emit_listen(m: Model) -> str:
             out.append("          return 0;\n        }")
         out.append("        default: break;\n      }\n      break;")
     out.append("    default: break;\n  }")
-    out.append('  return fail("listen: unknown signal id for this kind");\n}')
+    out.append('  return fail_wrong_kind("listen", SVL_SIGNAL, sig, e);\n}')
     return "\n".join(out)
 
 

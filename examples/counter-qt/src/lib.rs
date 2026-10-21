@@ -13,6 +13,7 @@ unsafe extern "C" {
     fn svl_qt_dump(h: u64) -> *const std::ffi::c_char;
     fn svl_qt_test_throw_next();
     fn svl_qt_native_prop(h: u64, name: *const std::ffi::c_char, on_layout: i32) -> *const std::ffi::c_char;
+    fn svl_qt_native_set(h: u64, name: *const std::ffi::c_char, v: *const svelters_abi::svl_value) -> i32;
     fn svl_qt_grab_png(h: u64, path: *const std::ffi::c_char) -> i32;
     fn svl_qt_pixel(h: u64, x: i32, y: i32) -> i32;
     fn svl_qt_palette_color(h: u64, background: i32) -> i32;
@@ -95,6 +96,17 @@ pub mod hooks {
         unsafe { std::ffi::CStr::from_ptr(svl_qt_native_prop(h, n.as_ptr(), on_layout as i32)) }
             .to_string_lossy()
             .into_owned()
+    }
+
+    /// A native change (FU3): sets the Q_PROPERTY for the JS name `name` with `QObject::setProperty`, as
+    /// the toolkit would, not through the backend's `set_prop` (so no own-set echo suppression applies).
+    pub fn native_set(h: u64, name: &str, v: &svelters_abi::Value) -> Result<(), String> {
+        let n = CString::new(name).expect("property name");
+        // SAFETY: `raw` lives for the call; the hook copies what it needs into a QVariant.
+        match v.with_raw(|raw| unsafe { svl_qt_native_set(h, n.as_ptr(), raw) }) {
+            0 => Ok(()),
+            _ => Err(format!("cannot set {name} natively on handle {h}")),
+        }
     }
 
     /// Grabs the widget behind `h`; saves a PNG when `path` is given (otherwise it only forces

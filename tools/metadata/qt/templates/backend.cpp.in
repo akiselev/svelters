@@ -732,6 +732,32 @@ struct Table {
 
 //@@TABLES@@
 
+// A table member id used on a handle whose kind does not have it (FU3, as GTK's FU1 fix): the message names the
+// member (by the first element kind that has the id) and the handle's runtime class and kind.
+std::string kind_label(svl_id kind) {
+  Table kt = table_for(SVL_KIND, 0);
+  for (size_t i = 0; i < kt.n; ++i)
+    if (kt.items[i].id == kind) return std::string(kt.items[i].name);
+  return "#" + std::to_string(kind);
+}
+
+int fail_wrong_kind(const char *op, uint32_t what, svl_id id, const Entry &e) {
+  std::string member = "id " + std::to_string(id);
+  Table kt = table_for(SVL_KIND, 0);
+  for (size_t i = 0; i < kt.n && member[0] == 'i'; ++i) {
+    Table t = table_for(what, kt.items[i].id);
+    for (size_t j = 0; j < t.n; ++j)
+      if (t.items[j].id == id && !t.items[j].name.empty()) {
+        member = std::string(kt.items[i].name) + ":" + std::string(t.items[j].name);
+        break;
+      }
+  }
+  const char *noun = what == SVL_PROP ? "property" : what == SVL_METHOD ? "method" : "signal";
+  const QObject *o = e.obj.data();
+  const std::string cls = o ? o->metaObject()->className() : "a destroyed object";
+  return fail(std::string(op) + ": " + noun + " " + member + " does not belong to " + cls + " (kind " + kind_label(e.kind) + ")");
+}
+
 // ---- generated dispatch ----------------------------------------------------------------------
 
 //@@ENUMS@@
@@ -1709,6 +1735,15 @@ extern "C" void svl_qt_test_throw_next(void) { g_test_throw = true; }
 
 // Reads a Q_PROPERTY of the object behind `h` (or of its layout) as text, for tests that check what the
 // toolkit really holds. Valid until the next call. Empty when the object or property does not exist.
+// Test hook (FU3): a native change, made by the toolkit and not through `set_prop`: `QObject::setProperty` of the
+// Qt property for the JS (kebab-case) name, so the backend's own-set echo suppression does not apply. 0 on
+// success, -1 for an unknown handle or a property Qt refuses.
+extern "C" int svl_qt_native_set(svl_handle h, const char *name, const svl_value *v) {
+  QObject *o = debug_obj(h);
+  if (!o || !name || !v) return -1;
+  return o->setProperty(camel_of(name).c_str(), to_variant(v)) ? 0 : -1;
+}
+
 extern "C" const char *svl_qt_native_prop(svl_handle h, const char *name, int on_layout) {
   static std::string buf;
   buf.clear();
