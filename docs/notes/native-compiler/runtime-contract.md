@@ -81,7 +81,7 @@ Core internals for the block machinery (`src/core/internal.js`, not part of the 
 `reorder(parent, effects)` (keyed-each effect order), `boundary_handler({ parent, transform_error,
 error })` / `boundary_scope(handler)` / `current_boundary()` / `root_boundary(handler)` (error
 boundaries as Svelte's runtime sees them on `effect.b`), `queue_task`, `get_all_contexts`,
-`set_context`, `flush`, `tick`, `clsx`.
+`set_context`, `flush`, `tick`, `clsx`, `init_dev()` (what Svelte's DOM `init_operations` installs in DEV: the `Array.prototype` patches behind `state_proxy_equality_mismatch`; `mount` calls it).
 
 ## API
 

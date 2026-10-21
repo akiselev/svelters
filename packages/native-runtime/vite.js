@@ -54,6 +54,10 @@ export const batchPath = path.join(path.dirname(effectsPath), 'batch.js');
 export const FLAGS_SPECIFIER = 'svelte/internal/flags/index';
 export const flagsPath = path.join(path.dirname(effectsPath), '../../flags/index.js');
 
+/** Svelte's DEV array patches (`state_proxy_equality_mismatch`), installed by Svelte's DOM init. */
+export const EQUALITY_SPECIFIER = 'svelte/internal/client/dev/equality';
+export const equalityPath = path.join(path.dirname(effectsPath), '../dev/equality.js');
+
 /** Svelte's client entry (what `svelte` resolves to with the browser condition), for src/svelte.js. */
 export const SVELTE_CLIENT_SPECIFIER = 'svelte/index-client';
 export const svelteClientPath = path.join(path.dirname(effectsPath), '../../../index-client.js');
@@ -70,6 +74,7 @@ export const HIDDEN_MODULES = {
   [BATCH_SPECIFIER]: batchPath,
   [FLAGS_SPECIFIER]: flagsPath,
   [SVELTE_CLIENT_SPECIFIER]: svelteClientPath,
+  [EQUALITY_SPECIFIER]: equalityPath,
 };
 
 /** What generated code imports when a component uses `$inspect.trace` in dev. */

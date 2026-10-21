@@ -20,6 +20,7 @@ import {
   destroyed as effectDestroyed,
   flush,
   flushing_sync,
+  init_dev,
   queue_task,
   mutable_state,
   trace_item,
@@ -1304,6 +1305,7 @@ export function lis(a) {
  */
 export function mount(Component, { props = {}, target, transformError } = {}) {
   if (!host()) throw new Error('globalThis.__svelters_host is not defined');
+  if (DEV) init_dev();
   globalThis.__svelters_dispatch = dispatch;
   globalThis.__svelters_dispatch_sync = dispatch_sync;
   globalThis.__svelters_gone = gone;

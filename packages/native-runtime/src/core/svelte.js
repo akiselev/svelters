@@ -14,6 +14,7 @@ import { getAllContexts, setContext } from 'svelte/internal/client/context';
 import { capture, unset_context } from 'svelte/internal/client/reactivity/async';
 import * as batches from 'svelte/internal/client/reactivity/batch';
 import { enable_tracing_mode_flag } from 'svelte/internal/flags/index';
+import { init_array_prototype_warnings } from 'svelte/internal/client/dev/equality';
 
 // ---- the compiler-facing contract (docs/notes/native-compiler/runtime-contract.md "Core API") ----
 
@@ -220,4 +221,15 @@ export function reorder(parent, effects) {
   }
   prev.next = null;
   parent.last = prev;
+}
+
+let devInitialized = false;
+/**
+ * What Svelte's DOM `init_operations` installs in DEV besides DOM getters: the `Array.prototype`
+ * patches that warn `state_proxy_equality_mismatch` (`proxy.includes(raw)`). Once per realm.
+ */
+export function init_dev() {
+  if (devInitialized) return;
+  devInitialized = true;
+  init_array_prototype_warnings();
 }
