@@ -38,6 +38,15 @@ pub trait Rewriter {
     }
     /// JS that assigns the JS expression text `value` to the lvalue `target` (bind: setters).
     fn assign(&self, target: &Expression, value: &str) -> String;
+    /// The read of an identifier of the template (`{@debug name}`).
+    fn identifier(&self, id: &crate::estree::Identifier) -> String {
+        id.name.clone()
+    }
+    /// A declaration tag's `let`/`const` declaration, transformed as in a script (runes become
+    /// runtime calls), without a trailing semicolon.
+    fn declaration(&self, _d: &crate::estree::VariableDeclaration) -> String {
+        String::new()
+    }
     /// The JS that reads a directive name (`use:name`, possibly dotted), which the parser keeps
     /// as text rather than an expression.
     fn directive_name(&self, name: &str) -> String {
@@ -203,8 +212,20 @@ impl Codegen<'_, '_> {
         for item in &f.items {
             self.item(item, container);
         }
+        self.debugs(f);
         if DEFER_TEMPLATE_EFFECTS {
             self.deferred_ops(f);
+        }
+    }
+
+    /// `{@debug}` tags of a fragment (Svelte's DebugTag visitor).
+    fn debugs(&mut self, f: &Fragment) {
+        for d in &f.debugs {
+            self.line();
+            self.w.map(d.start);
+            let props: Vec<String> = d.identifiers.iter().map(|i| format!("{}: $.snapshot({})", i.name, self.rw.identifier(i))).collect();
+            let object = if props.is_empty() { "{}".to_string() } else { format!("{{ {} }}", props.join(", ")) };
+            self.w.write(&format!("$.template_effect(() => {{ console.log({object}); debugger; }});"));
         }
     }
 
@@ -307,6 +328,7 @@ impl Codegen<'_, '_> {
             let c = format!("$n.slot({parent}, {})", item.slot().as_deref().map_or("null".to_string(), js_str));
             self.item(item, &c);
         }
+        self.debugs(f);
         if scoped && DEFER_TEMPLATE_EFFECTS {
             self.deferred_ops(f);
         }
@@ -876,6 +898,12 @@ impl Codegen<'_, '_> {
         for k in consts {
             self.line();
             self.w.map(k.span.start);
+            if let Some(d) = k.declaration {
+                let text = self.rw.declaration(d);
+                self.w.write(&format!("{text};"));
+                continue;
+            }
+            let Some(init) = k.init else { continue };
             let name = match k.pattern {
                 Some(_) => {
                     self.tmp += 1;
@@ -884,7 +912,7 @@ impl Codegen<'_, '_> {
                 None => k.name.clone(),
             };
             self.w.write(&format!("const {name} = $.derived(() => "));
-            self.paren_expr(k.init, Mode::Read);
+            self.paren_expr(init, Mode::Read);
             self.w.write(");");
             if let Some(p) = k.pattern {
                 self.destructure(p, &format!("$.get({name})"), Leaf::Source);

@@ -29,7 +29,9 @@ for (const key of Object.getOwnPropertyNames(window)) {
 globalThis.window = window;
 globalThis.document = window.document;
 globalThis.requestAnimationFrame = globalThis.setTimeout;
-window.matchMedia = (media) => ({ matches: false, media, addEventListener() {}, removeEventListener() {} });
+// as Svelte's tests/helpers.js: a `vi.fn` mock, so configs can check the queries
+const { vi } = await import('./shims/vitest.mjs');
+window.matchMedia = vi.fn((media) => ({ matches: false, media, addEventListener() {}, removeEventListener() {} }));
 
 const { assert } = await import('chai');
 const { assert_html_equal, assert_html_equal_with_options } = await import('./shims/html-equal.mjs');

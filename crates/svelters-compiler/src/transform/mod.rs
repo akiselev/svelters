@@ -559,6 +559,25 @@ impl Rewriter for ScopeRewriter<'_> {
         h.impure || (h.calls && h.deps)
     }
 
+    fn identifier(&self, id: &Identifier) -> String {
+        read_text(&self.cx.transform_of_id(id), &id.name)
+    }
+
+    fn declaration(&self, d: &VariableDeclaration) -> String {
+        let mut edits = Edits::new();
+        self.ts_strip.apply(&mut edits, Some(d.span()));
+        // the declaration's bindings live in the scope of its fragment: start there (the binding
+        // whose node is the first declared identifier)
+        let first = d.declarations.first().and_then(|x| crate::svelte::scope::ast_utils::extract_identifiers(&x.id).first().map(|i| i.span()));
+        let scope = first
+            .and_then(|span| self.cx.arena.bindings().find(|(_, b)| b.node.span() == Some(span)).map(|(_, b)| b.scope))
+            .unwrap_or(self.cx.instance_scope.expect("component"));
+        let mut v = visit::Rw::new(&self.cx, &mut edits, Mode::Read, false);
+        Walker::walk(NodeRef::VariableDeclaration(d), &scope, &mut v);
+        let s = d.span();
+        edits.apply(self.cx.src, s.start, s.end).trim_end().trim_end_matches(';').to_string()
+    }
+
     fn directive_name(&self, name: &str) -> String {
         // `parse_directive_name` + visit: the first segment is an identifier read as usual. The
         // scope analysis records directive names as synthetic references, so it is resolved from

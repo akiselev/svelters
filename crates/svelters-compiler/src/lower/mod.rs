@@ -366,11 +366,17 @@ impl<'a> Lower<'a, '_, '_> {
                     }
                     let d = &c.declaration.declarations[0];
                     match (&d.id, &d.init) {
-                        (Pattern::Identifier(id), Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: id.name.clone(), init, pattern: None }),
-                        (pattern, Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: String::new(), init, pattern: Some(pattern) }),
+                        (Pattern::Identifier(id), Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: id.name.clone(), init: Some(init), pattern: None, declaration: None }),
+                        (pattern, Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: String::new(), init: Some(init), pattern: Some(pattern), declaration: None }),
                         // the parser requires an initializer
                         (_, None) => {}
                     }
+                }
+                // `{let x = $state(0)}` / `{const y = ...}`: declared where the fragment's
+                // `{@const}`s are, transformed like a script declaration
+                FragmentNode::DebugTag(d) => out.debugs.push(d),
+                FragmentNode::DeclarationTag(d) => {
+                    out.consts.push(ConstDecl { span: d.span(), name: String::new(), init: None, pattern: None, declaration: Some(&d.declaration) })
                 }
                 other => {
                     let what = unsupported_node_name(other);

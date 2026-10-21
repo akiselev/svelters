@@ -3,7 +3,8 @@
 // - `.svelte` and `.svelte.js` files load the output the runner already compiled with svelters-compile
 //   (`<dir>/_compiled/<file>.js`, see run.mjs);
 // - the imports Svelte's `_config.js` files make into Svelte's test tree (`../../test`,
-//   `../../../helpers.js`, `../../../../src/index-client.js`) go to local shims / the installed Svelte.
+//   `../../../helpers.js`, `../../../../src/index-client.js`, `vitest`) go to local shims / the installed
+//   Svelte.
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -19,6 +20,7 @@ export async function resolve(specifier, context, next) {
   if (/^(\.\.\/)+test(\.js|\.ts)?$/.test(specifier)) return shim('test.mjs');
   if (/^(\.\.\/)+helpers(\.js)?$/.test(specifier)) return shim('helpers.mjs');
   if (/^(\.\.\/)+suite(\.js|\.ts)?$/.test(specifier)) return shim('suite.mjs');
+  if (specifier === 'vitest') return shim('vitest.mjs');
   if (/^(\.\.\/)+src\/index-client(\.js)?$/.test(specifier)) return { url: pathToFileURL(svelteClient).href, shortCircuit: true };
   return next(specifier, context);
 }

@@ -26,6 +26,9 @@ pub struct Fragment<'a> {
     pub consts: Vec<ConstDecl<'a>>,
     pub snippets: Vec<Snippet<'a>>,
     pub items: Vec<Item<'a>>,
+    /// `{@debug a, b}`: `$.template_effect(() => { console.log({ a: $.snapshot(a), .. }); debugger; })`
+    /// after the items (no natives).
+    pub debugs: Vec<&'a crate::svelte::ast::DebugTag>,
 }
 
 #[derive(Debug)]
@@ -222,13 +225,16 @@ pub struct EachBlock<'a> {
 
 /// `{@const name = init}`: a template-scoped derived (`const name = $.derived(() => init)`),
 /// read as `$.get(name)`. `{@const { a, b } = init}` (`pattern`): one derived of `init`, then a
-/// derived per leaf of the pattern (`name` is unused).
+/// derived per leaf of the pattern (`name` is unused). A declaration tag (`{let x = $state(0)}`,
+/// `declaration`) is emitted as the script would emit that declaration (`init` unused); both kinds
+/// keep their source order (Svelte's `state.consts`).
 #[derive(Debug)]
 pub struct ConstDecl<'a> {
     pub span: Span,
     pub name: String,
-    pub init: &'a Expression,
+    pub init: Option<&'a Expression>,
     pub pattern: Option<&'a Pattern>,
+    pub declaration: Option<&'a crate::estree::VariableDeclaration>,
 }
 
 /// A binding a template block introduces: a snippet parameter, `{:then v}`, `{:catch e}`.
