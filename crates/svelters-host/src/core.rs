@@ -576,8 +576,8 @@ impl Core {
         out
     }
 
-    /// Reads (h, prop) to become its `last` value: at the first observation and after our own
-    /// `set_prop`. A value holding `BOXED` handles is released at once and leaves `last` unknown
+    /// Reads (h, prop) to become its `last` value after our own `set_prop` (the first observation
+    /// reads nothing since FU3: `last` starts unknown). A value holding `BOXED` handles is released at once and leaves `last` unknown
     /// (each read mints new handles, so such a value always counts as changed).
     pub(crate) fn read_last(&self, h: svl_handle, p: svl_id) -> Option<Value> {
         let v = self.backend.get_prop(h, p).ok()?;

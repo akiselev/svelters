@@ -236,7 +236,7 @@ fn refcount_reaches_the_backend_on_transitions_only() {
          h.observe(obj, 'value', false), h.observe(obj, 'value', false), h.observe(obj, 'other', true));",
     );
     assert_eq!(out, ["true true true false false false"]);
-    assert_eq!(r.st.take_log(), ["observe #1 value on", "read #1 value", "observe #1 value off"], "baseline read at 0->1 only");
+    assert_eq!(r.st.take_log(), ["observe #1 value on", "observe #1 value off"], "transitions only, and no baseline read (FU3)");
     assert_eq!(r.host.observed_props(), 0);
 }
 
@@ -268,9 +268,12 @@ fn the_batch_comes_before_queued_events_with_no_drain_in_between() {
 #[test]
 fn equal_values_are_dropped_by_compare() {
     let r = Rig::new("h.observe(obj, 'value', true); h.observe(obj, 'count', true);");
-    // The baseline (read at the first observation) is null: a native null is no change.
+    // `last` starts unknown (FU3): the first announcement is delivered whatever the value (here null),
+    // then an identical one is dropped.
     r.st.host().prop_changed(OBJ, P_VALUE);
-    assert!(r.checkpoint().is_empty());
+    assert_eq!(r.checkpoint(), ["changed 1,\"value\",null", "job after changed"]);
+    r.st.host().prop_changed(OBJ, P_VALUE);
+    assert!(r.checkpoint().is_empty(), "null equals null");
     r.st.native_set(OBJ, P_VALUE, Value::F64(f64::NAN), 1);
     assert_eq!(r.checkpoint(), ["changed 1,\"value\",NaN", "job after changed"]);
     r.st.native_set(OBJ, P_VALUE, Value::F64(f64::NAN), 1);
@@ -313,22 +316,44 @@ fn proportional_props_are_never_read_and_always_delivered_as_an_invalidation() {
 }
 
 #[test]
-fn the_first_observation_reads_a_baseline_unless_proportional() {
+fn the_first_observation_reads_nothing() {
+    // FU3: no baseline read (it was not what JS believes; see a_change_back_to_the_value_at_observe_time_is_delivered).
     let r = Rig::new("");
     r.run("h.observe(obj, 'text', true); h.observe(obj, 'value', true);");
-    assert_eq!(r.st.take_log(), ["observe #1 text on", "observe #1 value on", "read #1 value"]);
+    assert_eq!(r.st.take_log(), ["observe #1 text on", "observe #1 value on"]);
+}
+
+/// FU3 (R2 open item "stale observation baselines"): JS wrote 150 before observing and the toolkit took
+/// 100 (a clamp, a latent value, a write the widget ignores until later). A value read when the observation
+/// starts is not what JS believes, so it must not decide what counts as a change: the next announcement
+/// (here: the toolkit changes the value silently and then back to 100, announcing only the second change)
+/// reaches JS even though it equals that read. With the old baseline it was dropped and JS kept 150.
+#[test]
+fn a_change_back_to_the_value_at_observe_time_is_delivered() {
+    let r = Rig::new("");
+    r.run("h.setProp(obj, 'value', 150); h.observe(obj, 'value', true);");
+    r.st.native_set(OBJ, P_VALUE, Value::F64(40.0), 0);
+    r.st.native_set(OBJ, P_VALUE, Value::F64(100.0), 1);
+    assert_eq!(r.checkpoint(), ["changed 1,\"value\",100", "job after changed"]);
+    // From then on `last` is what JS was told: an identical announcement is dropped.
+    r.st.native_set(OBJ, P_VALUE, Value::F64(100.0), 1);
+    assert!(r.checkpoint().is_empty());
 }
 
 #[test]
 fn boxed_values_always_count_as_changed_and_unseen_reads_are_released() {
     let r = Rig::new("");
     r.run("h.observe(obj, 'box', true);");
-    // The baseline read minted #1000, which nobody sees: released at once.
-    assert_eq!(r.st.take_log(), ["observe #1 box on", "read #1 box", "release #1000"]);
+    assert_eq!(r.st.take_log(), ["observe #1 box on"]);
     r.st.host().prop_changed(OBJ, P_BOX);
     assert_eq!(r.checkpoint(), ["changed 1,\"box\",boxed", "job after changed"]);
     r.st.host().prop_changed(OBJ, P_BOX);
     assert_eq!(r.checkpoint(), ["changed 1,\"box\",boxed", "job after changed"], "a new handle each read: never equal");
+    // The read-back after our own write mints a handle nobody sees: released at once.
+    r.st.take_log();
+    r.run("h.setProp(obj, 'box', 7);");
+    let log = r.st.take_log();
+    assert!(log.first().is_some_and(|l| l == "read #1 box") && log.get(1).is_some_and(|l| l.starts_with("release #")), "{log:?}");
 }
 
 #[test]
