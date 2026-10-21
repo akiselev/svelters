@@ -712,7 +712,8 @@ observe:
     ref: 'O3: NOTIFY windowIconChanged(QIcon)'
   verify:
     'on': QtWidgets:QWidget
-    check: connect
+    check: cross
+    native: QPixmap px(4, 4); px.fill(Qt::red); o->setWindowIcon(QIcon(px))
   confidence: 0.9
 - prop: windowIconText
   class: exact

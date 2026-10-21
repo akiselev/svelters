@@ -17,6 +17,9 @@
 #include <QtCore/QTimer>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QCursor>
+#include <QtGui/QColor>
+#include <QtGui/QKeySequence>
+#include <QtCore/QUrl>
 #include <QtGui/QFont>
 #include <QtGui/QPalette>
 #include <QtWidgets/QSizePolicy>
@@ -1010,6 +1013,16 @@ bool next_qvalue(const QMetaProperty &p, const QVariant &cur, QVariant &out) {
       return false;
     }
     case QMetaType::QString: out = cur.toString() + "x"; return true;
+    case QMetaType::QColor: {
+      const QColor c = cur.value<QColor>();
+      out = c == QColor(10, 20, 30) ? QColor(40, 50, 60) : QColor(10, 20, 30);
+      return true;
+    }
+    case QMetaType::QPointF: out = cur.toPointF() + QPointF(7, 5); return true;
+    case QMetaType::QUrl: out = QUrl(cur.toUrl().toString() == "file:///a" ? "file:///b" : "file:///a"); return true;
+    case QMetaType::QKeySequence:
+      out = QKeySequence(cur.value<QKeySequence>() == QKeySequence("Ctrl+K") ? "Ctrl+J" : "Ctrl+K");
+      return true;
     case QMetaType::QRect: {
       const QRect r = cur.toRect();
       out = QRect(r.x() + 7, r.y() + 5, bump(r.width()), bump(r.height()));

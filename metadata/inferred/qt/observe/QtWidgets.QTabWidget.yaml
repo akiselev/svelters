@@ -23,7 +23,9 @@ observe:
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QTabWidget remove the current tab)'
   verify:
     'on': QtWidgets:QTabWidget
-    check: connect
+    check: cross
+    native: 'o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)'
+    setup: o->addTab(new QWidget, "a"); o->addTab(new QWidget, "b")
   confidence: 0.95
 - prop: documentMode
   class: set_only

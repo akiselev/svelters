@@ -21,5 +21,7 @@ observe:
     ref: 'O3: NOTIFY currentChanged(int)'
   verify:
     'on': QtWidgets:QToolBox
-    check: connect
+    check: cross
+    native: 'o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)'
+    setup: o->addItem(new QWidget, "a"); o->addItem(new QWidget, "b")
   confidence: 0.9

@@ -30,7 +30,7 @@ observe:
     ref: 'O3: NOTIFY keySequenceChanged(QKeySequence)'
   verify:
     'on': QtWidgets:QKeySequenceEdit
-    check: connect
+    check: change
   confidence: 0.9
 - prop: maximumSequenceLength
   class: set_only

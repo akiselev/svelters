@@ -27,7 +27,7 @@ observe:
     ref: 'O3: NOTIFY colorChanged(QColor)'
   verify:
     'on': QtWidgets:QGraphicsDropShadowEffect
-    check: connect
+    check: change
   confidence: 0.9
 - prop: offset
   class: exact
@@ -43,7 +43,7 @@ observe:
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsDropShadowEffect:xOffset, set:QtWidgets:QGraphicsDropShadowEffect:yOffset)'
   verify:
     'on': QtWidgets:QGraphicsDropShadowEffect
-    check: connect
+    check: change
   confidence: 0.95
 - prop: xOffset
   class: exact

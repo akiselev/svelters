@@ -53,7 +53,7 @@ observe:
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:backward, scenario:setSource, scenario:setSource (another))'
   verify:
     'on': QtWidgets:QTextBrowser
-    check: connect
+    check: change
   confidence: 0.95
 - prop: sourceType
   class: none

@@ -107,7 +107,8 @@ class Rules:
 
 
 # Value types the generated test (verify.cpp.in next_qvalue) can write a new value of, besides SCALAR_CPP and enums.
-VALUE_CPP = {"QRect", "QRectF", "QSize", "QPoint", "QFont", "QPalette", "QCursor", "QLocale", "QSizePolicy"}
+VALUE_CPP = {"QRect", "QRectF", "QSize", "QPoint", "QFont", "QPalette", "QCursor", "QLocale", "QSizePolicy", "QColor", "QPointF",
+             "QUrl", "QKeySequence"}
 
 
 def o4_table(rules: Rules, o4: dict, cls: str, name: str, widget: bool, writable: bool) -> tuple[list[str] | None, str, dict]:

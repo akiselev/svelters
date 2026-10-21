@@ -21,7 +21,9 @@ observe:
     ref: 'O3: NOTIFY currentRowChanged(int)'
   verify:
     'on': QtWidgets:QListWidget
-    check: connect
+    check: cross
+    native: 'o->setCurrentRow(o->currentRow() == 1 ? 0 : 1)'
+    setup: o->addItem("a"); o->addItem("b")
   confidence: 0.9
 - prop: sortingEnabled
   class: set_only

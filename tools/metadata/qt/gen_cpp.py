@@ -1106,8 +1106,29 @@ def async_type_expr(m: Model, me: dict) -> str:
             f'return t; }})()')
 
 
+def observable_props(m: Model) -> set[tuple[str, str]]:
+    """(element tag, js prop) pairs b_observe can watch: the Q_PROPERTY (the JS name in camelCase, as b_observe finds
+    it) has an exact or partial observe fact with a mechanism (the kObsVia rows) on the element's class or a base.
+    Their descriptors carry SVL_M_OBSERVABLE (ABI v2.6)."""
+    path = m.meta_dir.parent / "observe" / "qt.json"
+    facts = json.loads(path.read_text())["facts"] if path.exists() else {}
+    obs = {(o.split(":", 1)[1], p) for o, props in facts.items() for p, r in props.items()
+           if r["class"] in ("exact", "partial") and any(v["mechanism"] in OV_BITS for v in r.get("via") or [])}
+    out = set()
+    for e in m.elements:
+        chain = m.chain(e["cls"])
+        for it in e.get("props", []):
+            if it.get("target"):
+                continue
+            q = re.sub(r"-(.)", lambda x: x.group(1).upper(), it["js"])
+            if any((c, q) in obs for c in chain):
+                out.add((e["tag"], it["js"]))
+    return out
+
+
 def emit_describe(m: Model) -> str:
     """describe(): one static descriptor per prop and method, built on first request from Conv<T>::slot."""
+    observable = observable_props(m)
     out = ["const svl_member_desc *gen_describe(uint32_t what, svl_id kind, svl_id member) {", "  switch (what) {"]
     for what, key in (("SVL_PROP", "props"), ("SVL_METHOD", "methods")):
         out.append(f"    case {what}:\n      switch (kind) {{")
@@ -1122,13 +1143,14 @@ def emit_describe(m: Model) -> str:
                     pid = f"P_{t}_{cident(it['js'])}"
                     cls = e["layout_cls"] if it.get("target") == "layout" else e["cls"]
                     out.append(f"            case {pid}: {{")
+                    of = "SVL_M_OBSERVABLE" if (e["tag"], it["js"]) in observable else "0"
                     if it["direct"]:
                         out.append(f"              using T = Plain<decltype(std::declval<{cls} *>()->{it['getter']}())>;")
                         out.append(f'              static svl_slot_desc ps[1] = {{Conv<T>::slot("{it["js"]}")}};')
-                        out.append(f'              static svl_member_desc d = {{"{it["js"]}", ps, {0 if it["readonly"] else 1}, ps[0], 0}};')
+                        out.append(f'              static svl_member_desc d = {{"{it["js"]}", ps, {0 if it["readonly"] else 1}, ps[0], {of}}};')
                     else:
                         out.append(f'              static svl_slot_desc ps[1] = {{slot_desc("{it["js"]}", SVL_NULL, SVL_D_NULLABLE)}};')
-                        out.append(f'              static svl_member_desc d = {{"{it["js"]}", ps, 1, ps[0], 0}};')
+                        out.append(f'              static svl_member_desc d = {{"{it["js"]}", ps, 1, ps[0], {of}}};')
                     out.append("              return &d;\n            }")
                 else:
                     mid = f"M_{t}_{cident(it['js'])}"
@@ -1954,6 +1976,33 @@ size_t ty_count() {
         if table == "emits":
             self.facts[fid]["strength"] = "delivery"
 
+    def promote_bindings(self) -> None:
+        """Milestone R3: a `bind:` fact whose property has an `exact` observe fact with a delivery row (change or
+        cross) is verified through that fact as well. R2 lowers such a `bind:` onto observation (REACTIVITY.md §13
+        #8), so the binding fact's tests gain the observe row and its fingerprint follows the row; the binding's own
+        echo test stays, so the signal plan the renderer keeps as a fallback is still checked."""
+        path = self.m.meta_dir.parent / "observe" / "qt.json"
+        facts = json.loads(path.read_text())["facts"] if path.exists() else {}
+        by_cls = {(o.split(":", 1)[1], p): r for o, props in facts.items() for p, r in props.items()}
+        self.promoted = []
+        for e in self.m.elements:
+            for b in e.get("bindings", []):
+                fid = fact_id(e, "binding", b["name"])
+                bf = self.facts.get(fid)
+                if bf is None or b.get("property") is None:
+                    continue
+                q = re.sub(r"-(.)", lambda x: x.group(1).upper(), b["property"])
+                rec = next((by_cls[(c, q)] for c in self.m.chain(e["cls"]) if (c, q) in by_cls), None)
+                if not rec or rec["class"] != "exact":
+                    continue
+                of = self.facts.get(rec["fact"])
+                if not of or of.get("strength") != "change":
+                    continue
+                bf["tests"] = bf["tests"] + [t for t in of["tests"] if t not in bf["tests"]]
+                bf["srcs"] = bf["srcs"] + of["srcs"][:1]
+                bf["record"] = {**bf["record"], "observe": rec["fact"]}
+                self.promoted.append(fid)
+
     def observe_rows(self) -> None:
         """One kObserveRows row per observe fact of metadata/observe/qt.json (milestones R0, R3) with a `verify` block:
         change / cross / silent (a native change, announced or not, plus the identical set, coalescing, the user
@@ -1983,8 +2032,10 @@ size_t ty_count() {
                     kind, is_type, js = hit[0]["tag"], "false", hit[1]["js"]
                 elif on in types and self.m.kind(on) is None:
                     kind, is_type, js = on, "true", prop
-                elif els and not els[0].get("construct", {}).get("composite"):
-                    kind, is_type, js = els[0]["tag"], "false", ""
+                elif any(not x.get("construct", {}).get("composite") for x in els):
+                    # The class's own element when it is plain, else the first plain subclass element (QWidget's
+                    # <widget> is composite: a QLabel carries QWidget::font).
+                    kind, is_type, js = next(x for x in els if not x.get("construct", {}).get("composite"))["tag"], "false", ""
                     flags.append("OB_META")
                 else:
                     continue
@@ -2658,6 +2709,7 @@ def gen_verify(m: Model, digest: str, tmpl: str) -> tuple[str, dict]:
         tests += "\n" + "\n".join(T.src[n0:])
         table += "\n" + "\n".join(f'    {{"{n}", {i}}},' for n, i in T.fns if n.startswith("types/"))
     T.observe_rows()
+    T.promote_bindings()
     if T.errors:
         raise GenError("manual facts without a working generated test (fix or drop them):\n  " + "\n  ".join(T.errors))
     version = (m.kind("QWidget") or {}).get("source", {}).get("qdoc", {}).get("version", "?")

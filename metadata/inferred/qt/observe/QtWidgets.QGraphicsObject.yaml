@@ -58,6 +58,7 @@ observe:
   verify:
     'on': QtWidgets:QGraphicsProxyWidget
     check: unsupported
+    trigger: pos
   confidence: 0.95
 - prop: rotation
   class: exact

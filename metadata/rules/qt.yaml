@@ -157,3 +157,21 @@ observe:
     "QInputDialog:doubleValue": {native: "o->setDoubleValue(o->doubleValue() + 1)"}
     "QInputDialog:textValue": {native: "o->setTextValue(o->textValue() + \"x\")"}
     "QTimer:active": {native: "o->start(100000)"}
+    # Bindings R2 lowers onto observation (their exact facts were only `connect`-checked): a real native change.
+    "QDateTimeEdit:date": {native: "o->setDate(o->date().addDays(1))"}
+    "QDateTimeEdit:dateTime": {native: "o->setDateTime(o->dateTime().addSecs(3600))"}
+    "QListWidget:currentRow": {setup: "o->addItem(\"a\"); o->addItem(\"b\")", native: "o->setCurrentRow(o->currentRow() == 1 ? 0 : 1)"}
+    "QStackedWidget:currentIndex": {setup: "o->addWidget(new QWidget); o->addWidget(new QWidget)", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QTabBar:currentIndex": {setup: "o->addTab(\"a\"); o->addTab(\"b\")", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QTabWidget:currentIndex": {setup: "o->addTab(new QWidget, \"a\"); o->addTab(new QWidget, \"b\")", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QUndoStack:canUndo": {native: "o->push(new QUndoCommand(\"a\"))"}
+    "QUndoStack:clean": {native: "o->push(new QUndoCommand(\"a\"))"}
+    "QUndoStack:undoText": {native: "o->push(new QUndoCommand(\"a\"))"}
+    "QUndoStack:canRedo": {setup: "o->push(new QUndoCommand(\"a\"))", native: "o->undo()"}
+    "QUndoStack:redoText": {setup: "o->push(new QUndoCommand(\"a\"))", native: "o->undo()"}
+    "QStackedLayout:currentIndex": {setup: "o->addWidget(new QWidget); o->addWidget(new QWidget)", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QDataWidgetMapper:currentIndex": {setup: "o->setModel(new QStandardItemModel(2, 1, o))", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QWizard:currentId": {setup: "o->addPage(new QWizardPage); o->addPage(new QWizardPage); o->restart()", native: "o->next()"}
+    "QAction:icon": {native: "QPixmap px(4, 4); px.fill(Qt::red); o->setIcon(QIcon(px))"}
+    "QWidget:windowIcon": {native: "QPixmap px(4, 4); px.fill(Qt::red); o->setWindowIcon(QIcon(px))"}
+    "QToolBox:currentIndex": {setup: "o->addItem(new QWidget, \"a\"); o->addItem(new QWidget, \"b\")", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}

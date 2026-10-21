@@ -12,7 +12,9 @@ observe:
     ref: 'O3: NOTIFY currentIndexChanged(int)'
   verify:
     'on': QtWidgets:QDataWidgetMapper
-    check: connect
+    check: cross
+    native: 'o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)'
+    setup: o->setModel(new QStandardItemModel(2, 1, o))
   confidence: 0.9
 - prop: orientation
   class: set_only

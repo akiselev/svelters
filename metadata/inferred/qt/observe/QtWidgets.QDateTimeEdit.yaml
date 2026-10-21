@@ -39,7 +39,8 @@ observe:
     ref: 'O3: NOTIFY dateChanged(QDate)'
   verify:
     'on': QtWidgets:QDateTimeEdit
-    check: connect
+    check: cross
+    native: o->setDate(o->date().addDays(1))
   confidence: 0.9
 - prop: dateTime
   class: exact
@@ -51,7 +52,8 @@ observe:
     ref: 'O3: NOTIFY dateTimeChanged(QDateTime)'
   verify:
     'on': QtWidgets:QDateTimeEdit
-    check: connect
+    check: cross
+    native: o->setDateTime(o->dateTime().addSecs(3600))
   confidence: 0.9
 - prop: displayFormat
   class: set_only

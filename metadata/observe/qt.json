@@ -1187,10 +1187,12 @@
       "ref": "O3: NOTIFY canRedoChanged"
      }
     ],
-    "record_fp": "36ec84783e0ae310",
+    "record_fp": "f53dacc7219fd6c6",
     "verify": {
-     "check": "connect",
-     "on": "QtGui:QUndoStack"
+     "check": "cross",
+     "native": "o->undo()",
+     "on": "QtGui:QUndoStack",
+     "setup": "o->push(new QUndoCommand(\"a\"))"
     },
     "via": [
      {
@@ -1210,9 +1212,10 @@
       "ref": "O3: NOTIFY canUndoChanged"
      }
     ],
-    "record_fp": "9a1f3b06b3cc0e30",
+    "record_fp": "3895c486c7ded477",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->push(new QUndoCommand(\"a\"))",
      "on": "QtGui:QUndoStack"
     },
     "via": [
@@ -1233,9 +1236,10 @@
       "ref": "O3: NOTIFY cleanChanged"
      }
     ],
-    "record_fp": "ce1bbf57d04750f9",
+    "record_fp": "525c6a79df901f28",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->push(new QUndoCommand(\"a\"))",
      "on": "QtGui:QUndoStack"
     },
     "via": [
@@ -1256,10 +1260,12 @@
       "ref": "O3: NOTIFY redoTextChanged"
      }
     ],
-    "record_fp": "39cef27be63125ce",
+    "record_fp": "5f51b352d4fe8fd9",
     "verify": {
-     "check": "connect",
-     "on": "QtGui:QUndoStack"
+     "check": "cross",
+     "native": "o->undo()",
+     "on": "QtGui:QUndoStack",
+     "setup": "o->push(new QUndoCommand(\"a\"))"
     },
     "via": [
      {
@@ -1296,9 +1302,10 @@
       "ref": "O3: NOTIFY undoTextChanged"
      }
     ],
-    "record_fp": "cc151c1353f4f36d",
+    "record_fp": "c5e06d87c12f389b",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->push(new QUndoCommand(\"a\"))",
      "on": "QtGui:QUndoStack"
     },
     "via": [
@@ -2482,9 +2489,10 @@
       "ref": "O3: NOTIFY changed() (shared by 14 properties)"
      }
     ],
-    "record_fp": "468533f8a794081f",
+    "record_fp": "58c5e969fe5bf27e",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "QPixmap px(4, 4); px.fill(Qt::red); o->setIcon(QIcon(px))",
      "on": "QtWidgets:QAction"
     },
     "via": [
@@ -2627,9 +2635,9 @@
       "ref": "O3: NOTIFY changed() (shared by 14 properties)"
      }
     ],
-    "record_fp": "8303ed32aca73fa1",
+    "record_fp": "9bbe85aaf40935af",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QAction"
     },
     "via": [
@@ -3228,9 +3236,9 @@
       "ref": "O3: NOTIFY currentColorChanged(QColor)"
      }
     ],
-    "record_fp": "50fb7b2cc9f994b3",
+    "record_fp": "3de4ef339e2036f9",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QColorDialog"
     },
     "via": [
@@ -3798,10 +3806,12 @@
       "ref": "O3: NOTIFY currentIndexChanged(int)"
      }
     ],
-    "record_fp": "db7a74ff399c4ba3",
+    "record_fp": "a1f6cc98751d0fb9",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QDataWidgetMapper"
+     "check": "cross",
+     "native": "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)",
+     "on": "QtWidgets:QDataWidgetMapper",
+     "setup": "o->setModel(new QStandardItemModel(2, 1, o))"
     },
     "via": [
      {
@@ -3908,9 +3918,10 @@
       "ref": "O3: NOTIFY dateChanged(QDate)"
      }
     ],
-    "record_fp": "0b9fec12fd5a3d3b",
+    "record_fp": "976b4425e9d23f2d",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setDate(o->date().addDays(1))",
      "on": "QtWidgets:QDateTimeEdit"
     },
     "via": [
@@ -3931,9 +3942,10 @@
       "ref": "O3: NOTIFY dateTimeChanged(QDateTime)"
      }
     ],
-    "record_fp": "716ac6e63abbcc1a",
+    "record_fp": "f322e8292ed8e696",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setDateTime(o->dateTime().addSecs(3600))",
      "on": "QtWidgets:QDateTimeEdit"
     },
     "via": [
@@ -5187,9 +5199,9 @@
       "ref": "O3: NOTIFY colorChanged(QColor)"
      }
     ],
-    "record_fp": "336c07ac6c425ac7",
+    "record_fp": "680546e8a60a935c",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QGraphicsColorizeEffect"
     },
     "via": [
@@ -5263,9 +5275,9 @@
       "ref": "O3: NOTIFY colorChanged(QColor)"
      }
     ],
-    "record_fp": "61c87c2d6aa0e891",
+    "record_fp": "6ce3519199e836c3",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QGraphicsDropShadowEffect"
     },
     "via": [
@@ -5291,9 +5303,9 @@
       "ref": "observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QGraphicsDropShadowEffect:xOffset, set:QtWidgets:QGraphicsDropShadowEffect:yOffset)"
      }
     ],
-    "record_fp": "b32ace8f3dc9015d",
+    "record_fp": "86585c0be79ef85c",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QGraphicsDropShadowEffect"
     },
     "via": [
@@ -5496,10 +5508,11 @@
       "ref": "observe probe Qt 6.11.3: changed unannounced on set:QtWidgets:QGraphicsObject:x, set:QtWidgets:QGraphicsObject:y"
      }
     ],
-    "record_fp": "058c02fb78de5702",
+    "record_fp": "de22c543b733d4bf",
     "verify": {
      "check": "unsupported",
-     "on": "QtWidgets:QGraphicsProxyWidget"
+     "on": "QtWidgets:QGraphicsProxyWidget",
+     "trigger": "pos"
     }
    },
    "rotation": {
@@ -7262,9 +7275,9 @@
       "ref": "O3: NOTIFY keySequenceChanged(QKeySequence)"
      }
     ],
-    "record_fp": "ad1552b1325d4530",
+    "record_fp": "6373bc6dd7cad94b",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QKeySequenceEdit"
     },
     "via": [
@@ -8412,10 +8425,12 @@
       "ref": "O3: NOTIFY currentRowChanged(int)"
      }
     ],
-    "record_fp": "9eeb16e9e66af8e6",
+    "record_fp": "84cf02812490c73c",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QListWidget"
+     "check": "cross",
+     "native": "o->setCurrentRow(o->currentRow() == 1 ? 0 : 1)",
+     "on": "QtWidgets:QListWidget",
+     "setup": "o->addItem(\"a\"); o->addItem(\"b\")"
     },
     "via": [
      {
@@ -10543,10 +10558,12 @@
       "ref": "O3: NOTIFY currentChanged(int)"
      }
     ],
-    "record_fp": "87b2d8b28ba9bb4c",
+    "record_fp": "010c455445f5b038",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QStackedLayout"
+     "check": "cross",
+     "native": "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)",
+     "on": "QtWidgets:QStackedLayout",
+     "setup": "o->addWidget(new QWidget); o->addWidget(new QWidget)"
     },
     "via": [
      {
@@ -10602,10 +10619,12 @@
       "ref": "O3: NOTIFY currentChanged(int)"
      }
     ],
-    "record_fp": "5d735fa4241dc491",
+    "record_fp": "16b7adc2e91b4932",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QStackedWidget"
+     "check": "cross",
+     "native": "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)",
+     "on": "QtWidgets:QStackedWidget",
+     "setup": "o->addWidget(new QWidget); o->addWidget(new QWidget)"
     },
     "via": [
      {
@@ -10803,10 +10822,12 @@
       "ref": "O3: NOTIFY currentChanged(int)"
      }
     ],
-    "record_fp": "5d6652dc53ed39ac",
+    "record_fp": "90cbc15410147e7f",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QTabBar"
+     "check": "cross",
+     "native": "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)",
+     "on": "QtWidgets:QTabBar",
+     "setup": "o->addTab(\"a\"); o->addTab(\"b\")"
     },
     "via": [
      {
@@ -11019,10 +11040,12 @@
       "ref": "observe probe Qt 6.11.3: announced every observed change (scenario:QTabWidget remove the current tab)"
      }
     ],
-    "record_fp": "c5fd31626466dcf6",
+    "record_fp": "6bf7dc13b16e13b1",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QTabWidget"
+     "check": "cross",
+     "native": "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)",
+     "on": "QtWidgets:QTabWidget",
+     "setup": "o->addTab(new QWidget, \"a\"); o->addTab(new QWidget, \"b\")"
     },
     "via": [
      {
@@ -11456,9 +11479,9 @@
       "ref": "observe probe Qt 6.11.3: announced every observed change (scenario:backward, scenario:setSource, scenario:setSource (another))"
      }
     ],
-    "record_fp": "b627b4f3739018dd",
+    "record_fp": "e4c592d1a9e57c5e",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QTextBrowser"
     },
     "via": [
@@ -11511,9 +11534,9 @@
       "ref": "O3: NOTIFY baseUrlChanged(QUrl)"
      }
     ],
-    "record_fp": "33177575e7e4e3f3",
+    "record_fp": "bf1b6d0f4deb4112",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "QtWidgets:QTextDocument"
     },
     "via": [
@@ -12348,10 +12371,12 @@
       "ref": "O3: NOTIFY currentChanged(int)"
      }
     ],
-    "record_fp": "8a123212b61d845c",
+    "record_fp": "8b48286781dccb20",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QToolBox"
+     "check": "cross",
+     "native": "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)",
+     "on": "QtWidgets:QToolBox",
+     "setup": "o->addItem(new QWidget, \"a\"); o->addItem(new QWidget, \"b\")"
     },
     "via": [
      {
@@ -14023,9 +14048,10 @@
       "ref": "O3: NOTIFY windowIconChanged(QIcon)"
      }
     ],
-    "record_fp": "5df249bdfa3a3624",
+    "record_fp": "90e957b54cf966ae",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "QPixmap px(4, 4); px.fill(Qt::red); o->setWindowIcon(QIcon(px))",
      "on": "QtWidgets:QWidget"
     },
     "via": [
@@ -14233,10 +14259,12 @@
       "ref": "O3: NOTIFY currentIdChanged(int)"
      }
     ],
-    "record_fp": "9fc0dbbe94b6a0cd",
+    "record_fp": "c7a989eb57c33dda",
     "verify": {
-     "check": "connect",
-     "on": "QtWidgets:QWizard"
+     "check": "cross",
+     "native": "o->next()",
+     "on": "QtWidgets:QWizard",
+     "setup": "o->addPage(new QWizardPage); o->addPage(new QWizardPage); o->restart()"
     },
     "via": [
      {

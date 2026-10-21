@@ -39,7 +39,9 @@ observe:
     ref: 'O3: NOTIFY currentChanged(int)'
   verify:
     'on': QtWidgets:QTabBar
-    check: connect
+    check: cross
+    native: 'o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)'
+    setup: o->addTab("a"); o->addTab("b")
   confidence: 0.9
 - prop: documentMode
   class: set_only

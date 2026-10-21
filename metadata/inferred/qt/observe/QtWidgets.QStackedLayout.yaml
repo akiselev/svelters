@@ -18,7 +18,9 @@ observe:
     ref: 'O3: NOTIFY currentChanged(int)'
   verify:
     'on': QtWidgets:QStackedLayout
-    check: connect
+    check: cross
+    native: 'o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)'
+    setup: o->addWidget(new QWidget); o->addWidget(new QWidget)
   confidence: 0.9
 - prop: stackingMode
   class: set_only
