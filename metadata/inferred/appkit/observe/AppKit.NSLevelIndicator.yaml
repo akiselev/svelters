@@ -1,0 +1,122 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSLevelIndicator
+observe:
+- prop: critical-fill-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: critical-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `criticalValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: draws-tiered-capacity-levels
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `drawsTieredCapacityLevels` fired on a programmatic set'
+  confidence: 0.9
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set'
+  confidence: 0.9
+- prop: fill-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: level-indicator-style
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `levelIndicatorStyle` fired on a programmatic set'
+  confidence: 0.9
+- prop: max-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maxValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: min-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `minValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: number-of-major-tick-marks
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `numberOfMajorTickMarks` fired on a programmatic set'
+  confidence: 0.9
+- prop: number-of-tick-marks
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `numberOfTickMarks` fired on a programmatic set'
+  confidence: 0.9
+- prop: placeholder-visibility
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `placeholderVisibility` fired on a programmatic set'
+  confidence: 0.9
+- prop: rating-image
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: rating-placeholder-image
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: tick-mark-position
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `tickMarkPosition` fired on a programmatic set'
+  confidence: 0.9
+- prop: warning-fill-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: warning-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `warningValue` fired on a programmatic set'
+  confidence: 0.9

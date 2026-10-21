@@ -1,0 +1,84 @@
+class: NSTextView
+element:
+  tag: text-view
+  lifetime: owned
+  construct: new
+  text_prop: string
+  provenance: "NSTextView.h: -init gives an editable, selectable, rich-text view with its own text container (initWithFrame:NSZeroRect). Put it in a scroll-view as the document view and give it a frame (or set vertically-resizable and an autoresizing mask)."
+props:
+  - name: string
+    sample: "hello\nworld"
+    provenance: "NSText.string (NSString, copy): the plain text"
+  - name: editable
+    sample: false
+    provenance: "NSText.editable (BOOL, getter isEditable)"
+  - name: selectable
+    sample: false
+    provenance: "NSText.selectable (BOOL, getter isSelectable)"
+  - name: rich-text
+    sample: false
+    provenance: "NSText.richText (BOOL, getter isRichText)"
+  - name: draws-background
+    sample: false
+    provenance: "NSText.drawsBackground (BOOL)"
+  - name: vertically-resizable
+    sample: false
+    provenance: "NSText.verticallyResizable (BOOL, getter isVerticallyResizable)"
+  - name: allows-undo
+    sample: true
+    provenance: "NSTextView.allowsUndo (BOOL)"
+  - name: text-container-inset
+    sample: {width: 8, height: 6}
+    provenance: "NSTextView.textContainerInset (NSSize)"
+methods:
+  - name: select-all
+    selector: "selectAll:"
+    provenance: "NSText.h; `sender` is nil"
+  - name: scroll-range-to-visible
+    selector: "scrollRangeToVisible:"
+    test: false
+    provenance: "NSText.h: an NSRange record {location, length}"
+  - name: size-to-fit
+    selector: sizeToFit
+    provenance: "NSText.h"
+signals:
+  - name: text-did-change
+    via: notification
+    notification: NSTextDidChangeNotification
+    args: [string]
+    verify: post
+    provenance: "NSText.h: NSTextDidChangeNotification, object = the text view, after each user edit (not for programmatic sets of string); JS gets the new text"
+  - name: text-did-begin-editing
+    via: notification
+    notification: NSTextDidBeginEditingNotification
+    verify: post
+    provenance: "NSText.h: NSTextDidBeginEditingNotification, object = the text view"
+  - name: text-did-end-editing
+    via: notification
+    notification: NSTextDidEndEditingNotification
+    verify: post
+    provenance: "NSText.h: NSTextDidEndEditingNotification, object = the text view"
+  - name: text-view-did-change-selection
+    via: notification
+    notification: NSTextViewDidChangeSelectionNotification
+    verify: post
+    provenance: "NSTextView.h: NSTextViewDidChangeSelectionNotification, object = the text view"
+bindings:
+  - name: string
+    direction: two_way
+    property: string
+    type: { ref: string, nullable: false }
+    change: { signal: text-did-change, role: user_edit, value: arg0 }
+    write: { natively_normalizes: false }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    observability: { class: partial, missed: [programmatic] }
+    provenance: "two-way bind:string: NSTextDidChangeNotification is posted for every user edit and carries the new text as argument 0 (read from the view); setting string posts nothing, so there is no echo"
+dangerous:
+  properties:
+    delegate:
+      severity: other
+      reason: >-
+        The text view holds its delegate weakly; a JS object cannot be one. Text changes reach JS through
+        NSTextDidChangeNotification on the default center (crates/svelters-appkit/src/backend.rs, listen), not the delegate.
+      use_instead: The text-did-change event or bind:string.

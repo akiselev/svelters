@@ -1,0 +1,47 @@
+{
+ "parked": [
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:bindings:int-value",
+   "kind": "NSSegmentedControl",
+   "message": "called `Result::unwrap()` on an `Err` value: \"intValue: Objective-C exception: -[NSSegmentedCell _segmentsDeselectedBySegment:]: index (3) beyond bounds (2)\" (examples/counter-mac/tests/generated.rs:3914)",
+   "name": "int-value",
+   "record_fp": "c6ad52e91b90b419",
+   "section": "bindings",
+   "test": "bind_nssegmentedcontrol_int_value",
+   "version": "26.1"
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:bindings:integer-value",
+   "kind": "NSSegmentedControl",
+   "message": "called `Result::unwrap()` on an `Err` value: \"integerValue: Objective-C exception: -[NSSegmentedCell _segmentsDeselectedBySegment:]: index (3) beyond bounds (2)\" (examples/counter-mac/tests/generated.rs:3914)",
+   "name": "integer-value",
+   "record_fp": "c3f8a415b5d01e26",
+   "section": "bindings",
+   "test": "bind_nssegmentedcontrol_integer_value",
+   "version": "26.1"
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:props:int-value",
+   "kind": "NSSegmentedControl",
+   "message": "called `Result::unwrap()` on an `Err` value: \"intValue: Objective-C exception: -[NSSegmentedCell _segmentsDeselectedBySegment:]: index (3) beyond bounds (2)\" (examples/counter-mac/tests/generated.rs:3763)",
+   "name": "int-value",
+   "record_fp": "adffdff2f56ae0c6",
+   "section": "props",
+   "test": "prop_nssegmentedcontrol_int_value",
+   "version": "26.1"
+  },
+  {
+   "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:props:integer-value",
+   "kind": "NSSegmentedControl",
+   "message": "called `Result::unwrap()` on an `Err` value: \"integerValue: Objective-C exception: -[NSSegmentedCell _segmentsDeselectedBySegment:]: index (3) beyond bounds (2)\" (examples/counter-mac/tests/generated.rs:3763)",
+   "name": "integer-value",
+   "record_fp": "4fbf3f412bf848b9",
+   "section": "props",
+   "test": "prop_nssegmentedcontrol_integer_value",
+   "version": "26.1"
+  }
+ ],
+ "schema": "svelters-parked/v1",
+ "toolkit": "appkit",
+ "version": "26.1"
+}

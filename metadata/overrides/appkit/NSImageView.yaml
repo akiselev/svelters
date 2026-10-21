@@ -1,0 +1,22 @@
+class: NSImageView
+element:
+  tag: image-view
+  lifetime: owned
+  construct: new
+  provenance: "NSImageView.h: -init gives an empty, non-editable image view. `image` takes an NSImage handle, or a string: an image name, else an SF Symbol name."
+props:
+  - name: image-scaling
+    sample: image-scale-axes-independently
+    provenance: "NSImageView.imageScaling (NSImageScaling)"
+  - name: image-alignment
+    sample: top
+    provenance: "NSImageView.imageAlignment (NSImageAlignment)"
+  - name: image-frame-style
+    sample: photo
+    provenance: "NSImageView.imageFrameStyle (NSImageFrameStyle)"
+  - name: editable
+    sample: true
+    provenance: "NSImageView.editable (BOOL, getter isEditable)"
+  - name: animates
+    sample: false
+    provenance: "NSImageView.animates (BOOL)"

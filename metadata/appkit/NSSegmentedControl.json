@@ -1,0 +1,514 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl",
+  "kind": "object",
+  "methods": [
+    {
+      "availability": {
+        "since": "10.13"
+      },
+      "name": "is-enabled-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "BOOL",
+          "ref": "bool"
+        }
+      },
+      "selector": "isEnabledForSegment:"
+    },
+    {
+      "name": "is-selected-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "BOOL",
+          "ref": "bool"
+        }
+      },
+      "selector": "isSelectedForSegment:"
+    },
+    {
+      "name": "label-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "NSString *",
+          "nullable": true,
+          "ref": "string"
+        }
+      },
+      "selector": "labelForSegment:"
+    },
+    {
+      "name": "select-segment-with-tag",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "tag",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "BOOL",
+          "ref": "bool"
+        }
+      },
+      "selector": "selectSegmentWithTag:"
+    },
+    {
+      "name": "set-enabled-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "enabled",
+          "type": {
+            "native": "BOOL",
+            "ref": "bool"
+          }
+        },
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setEnabled:forSegment:"
+    },
+    {
+      "name": "set-image-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "image",
+          "type": {
+            "native": "NSImage *",
+            "nullable": true,
+            "ref": "object<NSImage>"
+          }
+        },
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setImage:forSegment:"
+    },
+    {
+      "name": "set-label-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "label",
+          "type": {
+            "native": "NSString *",
+            "ref": "string"
+          }
+        },
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setLabel:forSegment:"
+    },
+    {
+      "name": "set-segment-count",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "segmentCount",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setSegmentCount:"
+    },
+    {
+      "name": "set-selected-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "selected",
+          "type": {
+            "native": "BOOL",
+            "ref": "bool"
+          }
+        },
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setSelected:forSegment:"
+    },
+    {
+      "availability": {
+        "since": "10.13"
+      },
+      "name": "set-tool-tip-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "toolTip",
+          "type": {
+            "native": "NSString *",
+            "nullable": true,
+            "ref": "string"
+          }
+        },
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setToolTip:forSegment:"
+    },
+    {
+      "name": "set-width-for-segment",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "width",
+          "type": {
+            "native": "CGFloat",
+            "ref": "f64"
+          }
+        },
+        {
+          "name": "segment",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setWidth:forSegment:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSSegmentedControl.h",
+    "name": "NSSegmentedControl"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "activeCompressionOptions"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "active-compression-options",
+      "memory": "copy",
+      "name": "activeCompressionOptions",
+      "origin": "sdk",
+      "type": {
+        "native": "NSUserInterfaceCompressionOptions *",
+        "ref": "object<NSUserInterfaceCompressionOptions>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "borderShape",
+        "set": "setBorderShape:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "border-shape",
+      "memory": "assign",
+      "name": "borderShape",
+      "origin": "sdk",
+      "type": {
+        "native": "NSControlBorderShape",
+        "ref": "enum<NSControlBorderShape>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "doubleValueForSelectedSegment"
+      },
+      "availability": {
+        "since": "10.10.3"
+      },
+      "js_name": "double-value-for-selected-segment",
+      "memory": "assign",
+      "name": "doubleValueForSelectedSegment",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "indexOfSelectedItem"
+      },
+      "availability": {
+        "since": "10.4"
+      },
+      "js_name": "index-of-selected-item",
+      "memory": "assign",
+      "name": "indexOfSelectedItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "segmentCount",
+        "set": "setSegmentCount:"
+      },
+      "js_name": "segment-count",
+      "memory": "assign",
+      "name": "segmentCount",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "segmentDistribution",
+        "set": "setSegmentDistribution:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "segment-distribution",
+      "memory": "assign",
+      "name": "segmentDistribution",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSegmentDistribution",
+        "ref": "enum<NSSegmentDistribution>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "segmentStyle",
+        "set": "setSegmentStyle:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "segment-style",
+      "memory": "assign",
+      "name": "segmentStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSegmentStyle",
+        "ref": "enum<NSSegmentStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "selectedSegment",
+        "set": "setSelectedSegment:"
+      },
+      "js_name": "selected-segment",
+      "memory": "assign",
+      "name": "selectedSegment",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "selectedSegmentBezelColor",
+        "set": "setSelectedSegmentBezelColor:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "selected-segment-bezel-color",
+      "memory": "copy",
+      "name": "selectedSegmentBezelColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isSpringLoaded",
+        "set": "setSpringLoaded:"
+      },
+      "availability": {
+        "since": "10.10.3"
+      },
+      "js_name": "spring-loaded",
+      "memory": "assign",
+      "name": "springLoaded",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "trackingMode",
+        "set": "setTrackingMode:"
+      },
+      "availability": {
+        "since": "10.10.3"
+      },
+      "js_name": "tracking-mode",
+      "memory": "assign",
+      "name": "trackingMode",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSegmentSwitchTracking",
+        "ref": "enum<NSSegmentSwitchTracking>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nssegmentedcontrol?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

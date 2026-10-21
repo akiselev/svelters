@@ -125,6 +125,8 @@ pub struct Harness {
     pub backend: AppKitBackend,
     rec: Rc<Rec>,
     host: &'static HostVtable,
+    /// `(tag, prop, value)` set right after every create of the tag (the overrides' `test_setup`).
+    setup: RefCell<&'static [(&'static str, &'static str, S)]>,
 }
 
 thread_local! {
@@ -146,7 +148,13 @@ impl Harness {
         });
         let host: &'static HostVtable = Box::leak(Box::new(HostVtable::new(TestHost(rec.clone()))));
         backend.attach_host(host.as_raw());
-        Box::leak(Box::new(Harness { backend, rec, host }))
+        Box::leak(Box::new(Harness { backend, rec, host, setup: RefCell::new(&[]) }))
+    }
+
+    /// Props to set right after every create of a tag (generated from the overrides' `test_setup`: a
+    /// pop-up-button gets items, so an index can be selected).
+    pub fn set_setup(&self, setup: &'static [(&'static str, &'static str, S)]) {
+        *self.setup.borrow_mut() = setup;
     }
 
     /// A guard for one test case: if the case panics, dropping the guard destroys every handle it
@@ -177,7 +185,12 @@ impl Harness {
     pub fn create(&self, tag: &str) -> u64 {
         let k = self.b().resolve(NameKind::Kind, 0, tag);
         assert!(k != 0, "unknown tag <{tag}>");
-        self.b().create(k).unwrap_or_else(|e| panic!("create <{tag}>: {e}"))
+        let h = self.b().create(k).unwrap_or_else(|e| panic!("create <{tag}>: {e}"));
+        let setup = *self.setup.borrow();
+        for (t, prop, v) in setup.iter().filter(|s| s.0 == tag) {
+            self.set(h, prop, v.v()).unwrap_or_else(|e| panic!("test setup <{t}> {prop}: {e}"));
+        }
+        h
     }
 
     pub fn destroy(&self, h: u64) {
@@ -327,10 +340,26 @@ impl Harness {
     /// `[control sendAction:control.action to:control.target]`: what a user gesture does.
     pub fn send_action(&self, h: u64) {
         let o = self.native(h);
+        if !svelters_apple::objc::bridge::responds(&o, objc2::sel!(sendAction:to:)) {
+            // Not a control (a menu item): the application sends the action.
+            return self.app_send_action(h);
+        }
         unsafe {
             let action: Option<Sel> = msg_send![&*o, action];
             let target: Option<Retained<AnyObject>> = msg_send![&*o, target];
             let _: bool = msg_send![&*o, sendAction: action, to: target.as_deref()];
+        }
+    }
+
+    /// `[NSApp sendAction:item.action to:item.target from:item]`: what picking a menu item does (NSMenuItem
+    /// has no -sendAction:to:).
+    pub fn app_send_action(&self, h: u64) {
+        let o = self.native(h);
+        unsafe {
+            let action: Option<Sel> = msg_send![&*o, action];
+            let target: Option<Retained<AnyObject>> = msg_send![&*o, target];
+            let app: Retained<AnyObject> = msg_send![class!(NSApplication), sharedApplication];
+            let _: bool = msg_send![&*app, sendAction: action, to: target.as_deref(), from: &*o];
         }
     }
 

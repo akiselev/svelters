@@ -1,0 +1,79 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSWindow",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSPanel",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSPanel.h",
+    "name": "NSPanel"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "becomesKeyOnlyIfNeeded",
+        "set": "setBecomesKeyOnlyIfNeeded:"
+      },
+      "js_name": "becomes-key-only-if-needed",
+      "memory": "assign",
+      "name": "becomesKeyOnlyIfNeeded",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isFloatingPanel",
+        "set": "setFloatingPanel:"
+      },
+      "js_name": "floating-panel",
+      "memory": "assign",
+      "name": "floatingPanel",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "worksWhenModal",
+        "set": "setWorksWhenModal:"
+      },
+      "js_name": "works-when-modal",
+      "memory": "assign",
+      "name": "worksWhenModal",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nspanel?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

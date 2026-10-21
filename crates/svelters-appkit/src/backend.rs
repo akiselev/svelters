@@ -69,8 +69,8 @@ struct Native {
     obj: Obj,
     /// Receives target-action and notifications for this handle (controls hold targets weakly).
     target: Option<Retained<SveltersTarget>>,
-    /// Window delegate (windows hold delegates weakly).
-    delegate: Option<Retained<WindowDelegate>>,
+    /// The backend's delegate of a window or a tab view (AppKit holds delegates weakly).
+    delegate: Option<Retained<NSObject>>,
     /// Table signal ids JS listens to.
     listening: Vec<u32>,
     /// ABI v2.6 observations and the notification / target-action users they share with `listen`.
@@ -104,6 +104,8 @@ struct PropSpec {
     flags: bool,
     writable: bool,
     setter: &'static str,
+    /// Written through methods, not KVC (`item-titles`, `index-of-selected-item`, `labels`).
+    write: Option<&'static PropWrite>,
     /// Table type `Str`: numbers are stringified, null is "".
     string: bool,
 }
@@ -179,6 +181,51 @@ define_class!(
 
 impl WindowDelegate {
     fn new(mtm: MainThreadMarker, token: u64) -> Retained<WindowDelegate> {
+        let this = Self::alloc(mtm).set_ivars(DelegateIvars { token });
+        unsafe { msg_send![super(this), init] }
+    }
+}
+
+define_class!(
+    // SAFETY: NSObject has no subclassing requirements; TabViewDelegate does not implement Drop.
+    // The NSTabViewDelegate methods are all optional and AppKit asks respondsToSelector:, so the
+    // class does not declare the protocol; every method below is harmless when JS does not listen
+    // (should-select answers YES).
+    #[unsafe(super(NSObject))]
+    #[thread_kind = MainThreadOnly]
+    #[name = "SveltersTabViewDelegate"]
+    #[ivars = DelegateIvars]
+    pub(crate) struct TabViewDelegate;
+
+    impl TabViewDelegate {
+        #[unsafe(method(tabView:shouldSelectTabViewItem:))]
+        fn should_select(&self, _tab_view: &AnyObject, _item: Option<&AnyObject>) -> bool {
+            let token = self.ivars().token;
+            with_current(|i| i.delegate_veto(token, "tabView:shouldSelectTabViewItem:", true)).unwrap_or(true)
+        }
+
+        #[unsafe(method(tabView:willSelectTabViewItem:))]
+        fn will_select(&self, _tab_view: &AnyObject, _item: Option<&AnyObject>) {
+            let token = self.ivars().token;
+            with_current(|i| i.delegate_post(token, "tabView:willSelectTabViewItem:"));
+        }
+
+        #[unsafe(method(tabView:didSelectTabViewItem:))]
+        fn did_select(&self, _tab_view: &AnyObject, _item: Option<&AnyObject>) {
+            let token = self.ivars().token;
+            with_current(|i| i.delegate_post(token, "tabView:didSelectTabViewItem:"));
+        }
+
+        #[unsafe(method(tabViewDidChangeNumberOfTabViewItems:))]
+        fn did_change_number(&self, _tab_view: &AnyObject) {
+            let token = self.ivars().token;
+            with_current(|i| i.delegate_post(token, "tabViewDidChangeNumberOfTabViewItems:"));
+        }
+    }
+);
+
+impl TabViewDelegate {
+    fn new(mtm: MainThreadMarker, token: u64) -> Retained<TabViewDelegate> {
         let this = Self::alloc(mtm).set_ivars(DelegateIvars { token });
         unsafe { msg_send![super(this), init] }
     }
@@ -422,7 +469,7 @@ impl Inner {
             if !lookup::chain(kind).contains(k) && *k != kind && !self.type_chain(kind).contains(k) {
                 return Err("prop does not apply to this kind".into());
             }
-            return Ok(PropSpec { key: p.key.clone(), ty: p.ty.clone(), members: &[], flags: false, writable: p.writable, setter: "", string: false });
+            return Ok(PropSpec { key: p.key.clone(), ty: p.ty.clone(), members: &[], flags: false, writable: p.writable, setter: "", write: None, string: false });
         }
         let info = lookup::prop_info(prop).ok_or("unknown prop id")?;
         if !lookup::chain(kind).contains(&(info.kind as u32)) {
@@ -436,6 +483,7 @@ impl Inner {
             flags,
             writable: info.writable,
             setter: info.setter,
+            write: lookup::prop_write(prop),
             string: info.ty == Ty::Str,
         })
     }
@@ -466,6 +514,9 @@ impl Inner {
             }
         }
         let obj = self.live(h)?;
+        if let Some(w) = spec.write {
+            return self.write_through(&obj, w, &spec, v);
+        }
         if !spec.setter.is_empty() {
             let arg = match (&spec.ty, v) {
                 (enc::Ty::I(_) | enc::Ty::U(_), Value::Str(_)) => match enc::scalar_in(v, &spec.ty, spec.members, spec.flags)? {
@@ -481,6 +532,34 @@ impl Inner {
         let v = if spec.string { stringify(v) } else { v.clone() };
         let boxed = bridge::box_value(&v, &spec.ty, spec.members, spec.flags, self)?;
         bridge::kvc_set(&obj, &spec.key, boxed.as_deref())
+    }
+
+    /// A prop written through methods (`PROP_WRITES`): `clear` then `selector` with the value, or an indexed
+    /// setter (`count` with the list's length, then `selector` with (item, index) per item).
+    fn write_through(&self, obj: &AnyObject, w: &PropWrite, spec: &PropSpec, v: &Value) -> Result<(), String> {
+        if !w.count.is_empty() {
+            let items: Vec<Value> = match v {
+                Value::List(items) => items.clone(),
+                Value::Null => Vec::new(),
+                _ => return Err(format!("{} takes a list", names_of(w.selector))),
+            };
+            bridge::invoke(obj, bridge::sel(w.count), &[Value::I64(items.len() as i64)], self)?;
+            for (i, it) in items.into_iter().enumerate() {
+                let it = if matches!(it, Value::Str(_) | Value::Str16(_) | Value::Handle(_)) { it } else { stringify(&it) };
+                bridge::invoke(obj, bridge::sel(w.selector), &[it, Value::I64(i as i64)], self)?;
+            }
+            return Ok(());
+        }
+        // A list prop takes null as "no items"; a string list stringifies numbers.
+        let v = match (v, &spec.ty) {
+            (Value::Null, enc::Ty::Object(None)) => Value::List(Vec::new()),
+            (Value::List(items), _) => Value::List(items.iter().map(|x| if matches!(x, Value::Handle(_)) { x.clone() } else { stringify(x) }).collect()),
+            _ => v.clone(),
+        };
+        if !w.clear.is_empty() {
+            bridge::send0(obj, w.clear)?;
+        }
+        bridge::invoke(obj, bridge::sel(w.selector), &[v], self).map(|_| ())
     }
 
     fn get_prop(&self, h: u64, prop: u32) -> Result<Value, String> {
@@ -524,12 +603,22 @@ impl Inner {
         let ptr = Retained::as_ptr(&obj) as usize;
         let h = self.table.borrow_mut().mint(Native::strong(obj.clone()), kind, life);
         self.by_ptr.borrow_mut().insert(ptr, h);
-        if info.toplevel {
-            let d = WindowDelegate::new(self.mtm, h);
-            let _: () = unsafe { msg_send![&*obj, setDelegate: &*d] };
-            self.table.borrow_mut().get_mut(h).unwrap().delegate = Some(d);
-        }
+        self.install_delegate(h, kind, &obj, info.toplevel);
         Ok(h)
+    }
+
+    /// The backend's own delegate, installed at create (AppKit holds delegates weakly, so the entry keeps it):
+    /// windows (close cascade, vetoable close) and tab views (selection events, vetoable selection).
+    fn install_delegate(&self, h: u64, kind: u32, obj: &AnyObject, toplevel: bool) {
+        let d: Retained<NSObject> = if toplevel {
+            Retained::into_super(WindowDelegate::new(self.mtm, h))
+        } else if lookup::chain(kind).contains(&lookup::kind_by_class("NSTabView")) {
+            Retained::into_super(TabViewDelegate::new(self.mtm, h))
+        } else {
+            return;
+        };
+        let _: () = unsafe { msg_send![obj, setDelegate: &*d] };
+        self.table.borrow_mut().get_mut(h).unwrap().delegate = Some(d);
     }
 
     fn slot_for(&self, parent_kind: u32, slot: u32) -> Result<(u32, &'static SlotInfo), String> {
@@ -630,6 +719,10 @@ impl Inner {
         }
         for s in info.remove {
             bridge::send_obj(p, s, Some(c))?;
+        }
+        // Children that are not views (tab-view-item, menu-item) have no superview: `remove` was all.
+        if info.detach.is_empty() || !bridge::responds(c, sel!(superview)) {
+            return Ok(());
         }
         let sup: Option<Retained<AnyObject>> = unsafe { msg_send![c, superview] };
         if sup.as_deref().is_some_and(|s| std::ptr::eq(s, p)) {
@@ -822,12 +915,22 @@ impl Inner {
         }
     }
 
-    /// `windowShouldClose:`. A listened `window-should-close` runs JS now (call_sync).
+    /// `windowShouldClose:`. A listened `window-should-close` runs JS now (call_sync); a busy host vetoes.
     fn should_close(&self, h: u64) -> bool {
-        let Some(sig) = self.listened(h, |s| s.via == Via::Delegate && s.native == "windowShouldClose:") else { return true };
+        self.delegate_veto(h, "windowShouldClose:", false)
+    }
+
+    /// A vetoable delegate method (`result: veto_bool`): a listened signal runs JS now (call_sync) and a `true`
+    /// result (`e.preventDefault()`) makes the delegate answer NO. No listener, no host or no decision allows;
+    /// a busy host (JS running, e.g. a select call from JS) answers `busy_allows`.
+    fn delegate_veto(&self, h: u64, selector: &str, busy_allows: bool) -> bool {
+        let Some(sig) = self.listened(h, |s| s.via == Via::Delegate && s.native == selector) else { return true };
         let Some(host) = self.host() else { return true };
+        let info = lookup::signal_info(sig).unwrap();
+        let args = self.signal_args(h, info);
+        let raw = RawValues::new(&args);
         let mut out = svl_value::null();
-        let rc = unsafe { (host.call_sync)(host.self_, h, sig, std::ptr::null(), 0, &mut out) };
+        let rc = unsafe { (host.call_sync)(host.self_, h, sig, raw.as_ptr(), raw.len(), &mut out) };
         match rc {
             SVL_SYNC_OK => {
                 let stop = match out.tag {
@@ -837,8 +940,17 @@ impl Inner {
                 };
                 !stop
             }
-            SVL_SYNC_BUSY => false,
+            SVL_SYNC_BUSY => busy_allows,
             _ => true,
+        }
+    }
+
+    /// A notifying delegate method: posts the listened signal with its `args` (props of the emitter).
+    fn delegate_post(&self, h: u64, selector: &str) {
+        if let Some(sig) = self.listened(h, |s| s.via == Via::Delegate && s.native == selector) {
+            let info = lookup::signal_info(sig).unwrap();
+            let args = self.signal_args(h, info);
+            self.post(h, sig, &args);
         }
     }
 

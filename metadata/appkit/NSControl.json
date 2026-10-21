@@ -9,6 +9,18 @@
   "kind": "object",
   "methods": [
     {
+      "name": "abort-editing",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "native": "BOOL",
+          "ref": "bool"
+        }
+      },
+      "selector": "abortEditing"
+    },
+    {
       "name": "perform-click",
       "origin": "sdk",
       "params": [
@@ -27,6 +39,31 @@
         }
       },
       "selector": "performClick:"
+    },
+    {
+      "name": "size-to-fit",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "sizeToFit"
+    },
+    {
+      "availability": {
+        "since": "10.10"
+      },
+      "name": "validate-editing",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "validateEditing"
     }
   ],
   "native": {

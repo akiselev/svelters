@@ -1,0 +1,341 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSDatePicker",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSDatePicker.h",
+    "name": "NSDatePicker"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundColor",
+        "set": "setBackgroundColor:"
+      },
+      "js_name": "background-color",
+      "memory": "copy",
+      "name": "backgroundColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isBezeled",
+        "set": "setBezeled:"
+      },
+      "js_name": "bezeled",
+      "memory": "assign",
+      "name": "bezeled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isBordered",
+        "set": "setBordered:"
+      },
+      "js_name": "bordered",
+      "memory": "assign",
+      "name": "bordered",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "calendar",
+        "set": "setCalendar:"
+      },
+      "js_name": "calendar",
+      "memory": "copy",
+      "name": "calendar",
+      "origin": "sdk",
+      "type": {
+        "native": "NSCalendar *",
+        "nullable": true,
+        "ref": "object<NSCalendar>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "datePickerElements",
+        "set": "setDatePickerElements:"
+      },
+      "js_name": "date-picker-elements",
+      "memory": "assign",
+      "name": "datePickerElements",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDatePickerElementFlags",
+        "ref": "flags<NSDatePickerElementFlags>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "datePickerMode",
+        "set": "setDatePickerMode:"
+      },
+      "js_name": "date-picker-mode",
+      "memory": "assign",
+      "name": "datePickerMode",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDatePickerMode",
+        "ref": "enum<NSDatePickerMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "datePickerStyle",
+        "set": "setDatePickerStyle:"
+      },
+      "js_name": "date-picker-style",
+      "memory": "assign",
+      "name": "datePickerStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDatePickerStyle",
+        "ref": "enum<NSDatePickerStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "dateValue",
+        "set": "setDateValue:"
+      },
+      "js_name": "date-value",
+      "memory": "copy",
+      "name": "dateValue",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDate *",
+        "ref": "object<NSDate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSDatePickerCellDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "drawsBackground",
+        "set": "setDrawsBackground:"
+      },
+      "js_name": "draws-background",
+      "memory": "assign",
+      "name": "drawsBackground",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "locale",
+        "set": "setLocale:"
+      },
+      "js_name": "locale",
+      "memory": "copy",
+      "name": "locale",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLocale *",
+        "nullable": true,
+        "ref": "object<NSLocale>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxDate",
+        "set": "setMaxDate:"
+      },
+      "js_name": "max-date",
+      "memory": "copy",
+      "name": "maxDate",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDate *",
+        "nullable": true,
+        "ref": "object<NSDate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minDate",
+        "set": "setMinDate:"
+      },
+      "js_name": "min-date",
+      "memory": "copy",
+      "name": "minDate",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDate *",
+        "nullable": true,
+        "ref": "object<NSDate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "presentsCalendarOverlay",
+        "set": "setPresentsCalendarOverlay:"
+      },
+      "availability": {
+        "since": "10.15.4"
+      },
+      "js_name": "presents-calendar-overlay",
+      "memory": "assign",
+      "name": "presentsCalendarOverlay",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "textColor",
+        "set": "setTextColor:"
+      },
+      "js_name": "text-color",
+      "memory": "copy",
+      "name": "textColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "timeInterval",
+        "set": "setTimeInterval:"
+      },
+      "js_name": "time-interval",
+      "memory": "assign",
+      "name": "timeInterval",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTimeInterval",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "timeZone",
+        "set": "setTimeZone:"
+      },
+      "js_name": "time-zone",
+      "memory": "copy",
+      "name": "timeZone",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTimeZone *",
+        "nullable": true,
+        "ref": "object<NSTimeZone>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsdatepicker?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

@@ -1,0 +1,19 @@
+class: NSVisualEffectView
+element:
+  tag: visual-effect-view
+  lifetime: owned
+  construct: new
+  provenance: "NSVisualEffectView.h: a view with a translucent (vibrant) material behind its subviews; children go in the inherited subviews slot"
+props:
+  - name: material
+    sample: sidebar
+    provenance: "NSVisualEffectView.material (NSVisualEffectMaterial)"
+  - name: blending-mode
+    sample: within-window
+    provenance: "NSVisualEffectView.blendingMode (NSVisualEffectBlendingMode)"
+  - name: state
+    sample: active
+    provenance: "NSVisualEffectView.state (NSVisualEffectState)"
+  - name: emphasized
+    sample: true
+    provenance: "NSVisualEffectView.emphasized (BOOL, getter isEmphasized)"

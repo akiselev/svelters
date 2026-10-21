@@ -1,0 +1,238 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSTabViewItem",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "set-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "nullable": true,
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setView:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSTabViewItem.h",
+    "name": "NSTabViewItem"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "color",
+        "set": "setColor:"
+      },
+      "js_name": "color",
+      "memory": "copy",
+      "name": "color",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "identifier",
+        "set": "setIdentifier:"
+      },
+      "js_name": "identifier",
+      "memory": "strong",
+      "name": "identifier",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "image",
+        "set": "setImage:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "image",
+      "memory": "strong",
+      "name": "image",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "initialFirstResponder",
+        "set": "setInitialFirstResponder:"
+      },
+      "js_name": "initial-first-responder",
+      "memory": "weak",
+      "name": "initialFirstResponder",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "label",
+        "set": "setLabel:"
+      },
+      "js_name": "label",
+      "memory": "copy",
+      "name": "label",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "tabState"
+      },
+      "js_name": "tab-state",
+      "memory": "assign",
+      "name": "tabState",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTabState",
+        "ref": "enum<NSTabState>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "tabView"
+      },
+      "js_name": "tab-view",
+      "memory": "assign",
+      "name": "tabView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTabView *",
+        "nullable": true,
+        "ref": "object<NSTabView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "toolTip",
+        "set": "setToolTip:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "tool-tip",
+      "memory": "copy",
+      "name": "toolTip",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "view",
+        "set": "setView:"
+      },
+      "js_name": "view",
+      "memory": "strong",
+      "name": "view",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "viewController",
+        "set": "setViewController:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "view-controller",
+      "memory": "strong",
+      "name": "viewController",
+      "origin": "sdk",
+      "type": {
+        "native": "NSViewController *",
+        "nullable": true,
+        "ref": "object<NSViewController>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nstabviewitem?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

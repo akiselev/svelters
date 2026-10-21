@@ -1,0 +1,343 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSLevelIndicator.h",
+    "name": "NSLevelIndicator"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "criticalFillColor",
+        "set": "setCriticalFillColor:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "critical-fill-color",
+      "memory": "copy",
+      "name": "criticalFillColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "criticalValue",
+        "set": "setCriticalValue:"
+      },
+      "js_name": "critical-value",
+      "memory": "assign",
+      "name": "criticalValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "drawsTieredCapacityLevels",
+        "set": "setDrawsTieredCapacityLevels:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "draws-tiered-capacity-levels",
+      "memory": "assign",
+      "name": "drawsTieredCapacityLevels",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEditable",
+        "set": "setEditable:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "editable",
+      "memory": "assign",
+      "name": "editable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "fillColor",
+        "set": "setFillColor:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "fill-color",
+      "memory": "copy",
+      "name": "fillColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "levelIndicatorStyle",
+        "set": "setLevelIndicatorStyle:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "level-indicator-style",
+      "memory": "assign",
+      "name": "levelIndicatorStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLevelIndicatorStyle",
+        "ref": "enum<NSLevelIndicatorStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxValue",
+        "set": "setMaxValue:"
+      },
+      "js_name": "max-value",
+      "memory": "assign",
+      "name": "maxValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minValue",
+        "set": "setMinValue:"
+      },
+      "js_name": "min-value",
+      "memory": "assign",
+      "name": "minValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "numberOfMajorTickMarks",
+        "set": "setNumberOfMajorTickMarks:"
+      },
+      "js_name": "number-of-major-tick-marks",
+      "memory": "assign",
+      "name": "numberOfMajorTickMarks",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "numberOfTickMarks",
+        "set": "setNumberOfTickMarks:"
+      },
+      "js_name": "number-of-tick-marks",
+      "memory": "assign",
+      "name": "numberOfTickMarks",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "placeholderVisibility",
+        "set": "setPlaceholderVisibility:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "placeholder-visibility",
+      "memory": "assign",
+      "name": "placeholderVisibility",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLevelIndicatorPlaceholderVisibility",
+        "ref": "enum<NSLevelIndicatorPlaceholderVisibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "ratingImage",
+        "set": "setRatingImage:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "rating-image",
+      "memory": "strong",
+      "name": "ratingImage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "ratingPlaceholderImage",
+        "set": "setRatingPlaceholderImage:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "rating-placeholder-image",
+      "memory": "strong",
+      "name": "ratingPlaceholderImage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tickMarkPosition",
+        "set": "setTickMarkPosition:"
+      },
+      "js_name": "tick-mark-position",
+      "memory": "assign",
+      "name": "tickMarkPosition",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTickMarkPosition",
+        "ref": "enum<NSTickMarkPosition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "warningFillColor",
+        "set": "setWarningFillColor:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "warning-fill-color",
+      "memory": "copy",
+      "name": "warningFillColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "warningValue",
+        "set": "setWarningValue:"
+      },
+      "js_name": "warning-value",
+      "memory": "assign",
+      "name": "warningValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nslevelindicator?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

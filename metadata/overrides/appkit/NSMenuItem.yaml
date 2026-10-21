@@ -1,0 +1,76 @@
+class: NSMenuItem
+element:
+  tag: menu-item
+  lifetime: owned
+  construct: new
+  text_prop: title
+  provenance: "NSMenuItem.h: -init gives an enabled item with an empty title and no action (autoenabling disables an item without an action, so listening to `action` enables it)"
+props:
+  - name: title
+    sample: "Open"
+    provenance: "NSMenuItem.title (NSString, copy)"
+  - name: key-equivalent
+    sample: "o"
+    provenance: "NSMenuItem.keyEquivalent (NSString, copy)"
+  - name: key-equivalent-modifier-mask
+    sample: [command, shift]
+    expect: 1179648
+    provenance: "NSMenuItem.keyEquivalentModifierMask (NSEventModifierFlags: command 1<<20 | shift 1<<17)"
+  - name: state
+    sample: "on"
+    provenance: "NSMenuItem.state (NSControlStateValue: an NSInteger typedef with constants)"
+  - name: enabled
+    sample: false
+    provenance: "NSMenuItem.enabled (BOOL, getter isEnabled; only kept when the menu does not autoenable)"
+  - name: hidden
+    sample: true
+    provenance: "NSMenuItem.hidden (BOOL, getter isHidden)"
+  - name: tag
+    sample: 7
+    provenance: "NSMenuItem.tag (NSInteger)"
+  - name: tool-tip
+    sample: "tip"
+    provenance: "NSMenuItem.toolTip (NSString, copy)"
+  - name: indentation-level
+    sample: 2
+    provenance: "NSMenuItem.indentationLevel (NSInteger, 0-15)"
+enums:
+  - prop: state
+    members: {"off": 0, "on": 1, "mixed": -1}
+    provenance: "NSCell.h: NSControlStateValueMixed = -1, Off = 0, On = 1"
+slots:
+  - name: submenu
+    default: true
+    cardinality: one
+    child: menu
+    ops:
+      set: "setSubmenu:"
+      get: submenu
+      clear: nil
+    provenance: "NSMenuItem.submenu (strong, nullable): a menu child opens as a submenu; a menu can be the submenu of one item only"
+  - name: view
+    cardinality: one
+    ops:
+      set: "setView:"
+      get: view
+      clear: nil
+    provenance: "NSMenuItem.view (strong, nullable): a custom view drawn instead of the title (a slider or a row of buttons inside a menu); the view keeps its own frame"
+signals:
+  - name: action
+    via: target_action
+    verify: app_send_action
+    provenance: "NSMenuItem.h: target (weak) + action (SEL), sent through -[NSApplication sendAction:to:from:] when the user picks the item; the backend owns both while JS listens"
+dangerous:
+  properties:
+    menu:
+      severity: corrupts-tree
+      reason: >-
+        The item's parent menu: NSMenu sets it when the item is added (NSMenuItem.h says not to call -setMenu:). The `items` slot of
+        a menu element owns it (crates/svelters-appkit/src/backend.rs, slot ops); setting it moves the item behind the renderer.
+      use_instead: Put the menu-item inside a menu element.
+    target:
+      severity: owned-by-backend
+      reason: >-
+        listen(`action`) points the item's target at the backend's SveltersTarget (crates/svelters-appkit/src/backend.rs, action_use);
+        replacing it stops the action event.
+      use_instead: The action event (onaction).

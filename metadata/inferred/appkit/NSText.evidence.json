@@ -1,0 +1,212 @@
+{
+ "props:alignment": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "natural",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "left",
+   "sample": {
+    "t": "str",
+    "v": "left"
+   }
+  }
+ },
+ "props:base-writing-direction": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "natural",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "left-to-right",
+   "sample": {
+    "t": "str",
+    "v": "left-to-right"
+   }
+  }
+ },
+ "props:draws-background": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:field-editor": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:horizontally-resizable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:imports-graphics": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:max-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     10000000.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     120.0,
+     40.0
+    ]
+   },
+   "sample": {
+    "t": "size",
+    "v": [
+     120.0,
+     40.0
+    ]
+   }
+  }
+ },
+ "props:rich-text": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:selectable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:string": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "",
+   "events": [
+    "text-view-did-change-selection"
+   ],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:uses-font-panel": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:vertically-resizable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ }
+}

@@ -1,0 +1,137 @@
+{
+ "props:allows-context-menu-plug-ins": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:autoenables-items": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:automatically-inserts-writing-tools-items": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:minimum-width": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:presentation-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "regular",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "palette",
+   "sample": {
+    "t": "str",
+    "v": "palette"
+   }
+  }
+ },
+ "props:selection-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "select-one",
+   "sample": {
+    "t": "str",
+    "v": "select-one"
+   }
+  }
+ },
+ "props:shows-state-column": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:title": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:user-interface-layout-direction": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "left-to-right",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "right-to-left",
+   "sample": {
+    "t": "str",
+    "v": "right-to-left"
+   }
+  }
+ }
+}
