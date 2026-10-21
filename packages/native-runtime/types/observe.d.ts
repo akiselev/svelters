@@ -1255,7 +1255,7 @@ interface QtObs_box_layout {
   /** @observable exact on qt (event:EnabledChange) */ "bind:enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enabled|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:focus-policy|nonreactive"?: "click-focus" | "no-focus" | "strong-focus" | "tab-focus" | "wheel-focus";
-  /** @observable exact on qt (event:Resize,Move) */ "bind:geometry"?: Rect;
+  /** @observable exact on qt (event:Move,Resize) */ "bind:geometry"?: Rect;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:geometry|nonreactive"?: Rect;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-height|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-size|nonreactive"?: Size;
@@ -1356,7 +1356,8 @@ interface QtObs_color_dialog {
 interface QtObs_combo_box {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accessible-name|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on qt */ "bind:count|nonreactive"?: number;
-  /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on qt */ "bind:current-data|nonreactive"?: unknown;
+  /** Read-only. @observable partial on qt: misses programmatic changes (signal:currentIndexChanged) */ "bind:current-data"?: unknown;
+  /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:current-data|nonreactive"?: unknown;
   /** @observable exact on qt (notify) */ "bind:current-index"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:current-index|nonreactive"?: number;
   /** @observable exact on qt (notify) */ "bind:current-text"?: string;
@@ -1552,6 +1553,7 @@ interface QtObs_dock_widget {
   /** @observable exact on qt (event:ToolTipChange) */ "bind:tool-tip"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:whats-this|nonreactive"?: string;
+  /** @observable partial on qt: misses side effects of setting other properties (event:WindowTitleChange) */ "bind:window-title"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:window-title|nonreactive"?: string;
 }
 interface QtObs_double_spin_box {
@@ -1722,13 +1724,15 @@ interface QtObs_group_box {
 interface QtObs_input_dialog {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accessible-name|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:cancel-button-text|nonreactive"?: string;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only; observability unknown on qt */ "bind:double-value|nonreactive"?: number;
+  /** @observable exact on qt (signal:doubleValueChanged) */ "bind:double-value"?: number;
+  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:double-value|nonreactive"?: number;
   /** @observable exact on qt (event:EnabledChange) */ "bind:enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enabled|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:input-mode|nonreactive"?: "double-input" | "int-input" | "text-input";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:int-maximum|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:int-minimum|nonreactive"?: number;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only; observability unknown on qt */ "bind:int-value|nonreactive"?: number;
+  /** @observable exact on qt (signal:intValueChanged) */ "bind:int-value"?: number;
+  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:int-value|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:label-text|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-height|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:maximum-width|nonreactive"?: number;
@@ -1740,7 +1744,8 @@ interface QtObs_input_dialog {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:status-tip|nonreactive"?: string;
   /** @observable exact on qt (event:StyleChange) */ "bind:style-sheet"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:style-sheet|nonreactive"?: string;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only; observability unknown on qt */ "bind:text-value|nonreactive"?: string;
+  /** @observable exact on qt (signal:textValueChanged) */ "bind:text-value"?: string;
+  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-value|nonreactive"?: string;
   /** @observable exact on qt (event:ToolTipChange) */ "bind:tool-tip"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:whats-this|nonreactive"?: string;
@@ -2011,7 +2016,8 @@ interface QtObs_plain_text_edit {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:style-sheet|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-changes-focus|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-stop-distance|nonreactive"?: number;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:text-interaction-flags|nonreactive"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+  /** @observable partial on qt: misses programmatic changes (event:ReadOnlyChange) */ "bind:text-interaction-flags"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-interaction-flags|nonreactive"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
   /** @observable exact on qt (event:ToolTipChange) */ "bind:tool-tip"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:undo-redo-enabled|nonreactive"?: boolean;
@@ -2343,7 +2349,8 @@ interface QtObs_text_browser {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:minimum-width|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:open-external-links|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:open-links|nonreactive"?: boolean;
-  /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on qt */ "bind:source|nonreactive"?: unknown;
+  /** Read-only. @observable exact on qt (signal:sourceChanged) */ "bind:source"?: unknown;
+  /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:source|nonreactive"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on qt */ "bind:source-type|nonreactive"?: "html-resource" | "image-resource" | "markdown-resource" | "style-sheet-resource" | "unknown-resource" | "user-resource";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:status-tip|nonreactive"?: string;
   /** @observable exact on qt (event:StyleChange) */ "bind:style-sheet"?: string;
@@ -2353,7 +2360,8 @@ interface QtObs_text_browser {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:whats-this|nonreactive"?: string;
 }
 interface QtObs_text_document {
-  /** @remarks Snapshot: not reactive. Read once after the first layout pass; observability unknown on qt */ "bind:block-count|nonreactive"?: number;
+  /** Read-only. @observable exact on qt (signal:blockCountChanged) */ "bind:block-count"?: number;
+  /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:block-count|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:default-style-sheet|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:document-margin|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:indent-width|nonreactive"?: number;
@@ -2397,7 +2405,8 @@ interface QtObs_text_edit {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:style-sheet|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-changes-focus|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-stop-distance|nonreactive"?: number;
-  /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on qt */ "bind:text-interaction-flags|nonreactive"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+  /** @observable partial on qt: misses programmatic changes (event:ReadOnlyChange) */ "bind:text-interaction-flags"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
+  /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-interaction-flags|nonreactive"?: Array<"links-accessible-by-keyboard" | "links-accessible-by-mouse" | "no-text-interaction" | "text-browser-interaction" | "text-editable" | "text-editor-interaction" | "text-selectable-by-keyboard" | "text-selectable-by-mouse">;
   /** @observable exact on qt (event:ToolTipChange) */ "bind:tool-tip"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:undo-redo-enabled|nonreactive"?: boolean;
