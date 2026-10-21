@@ -29,7 +29,7 @@ mod sourcemap;
 pub mod testing;
 
 pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, Timing};
-pub use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, OpOutcome, OpSettle};
+pub use crate::engine::{BufferStats, ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, OpOutcome, OpSettle};
 pub use crate::reload::ReloadReport;
 
 use crate::core::Core;
@@ -445,6 +445,14 @@ impl<'a> Host<'a> {
     /// once), late results dropped, and the drains' time.
     pub fn offload_stats(&self) -> OffloadStats {
         self.core.offload_stats()
+    }
+
+    /// Counters of the zero-copy buffer paths (E2): transfers, reclaims, buffers handed back, releases
+    /// on the JS thread, views handed out, fallback copies, live transfer tokens.
+    pub fn buffer_stats(&self) -> BufferStats {
+        let mut s = self.engine.borrow().buffer_stats();
+        s.leaked_runtimes = quickjs::leaked_runtimes();
+        s
     }
 
     /// Number of live boxed values held by JS wrappers (released, disposed or collected ones excluded).

@@ -86,6 +86,32 @@ pub enum OpOutcome {
     Progress(Value, &'static SlotDesc),
 }
 
+/// Counters of the zero-copy buffer paths (E2; see [`crate::Host::buffer_stats`]).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct BufferStats {
+    /// JS buffers moved to Rust with `transfer()` (memory stays in the engine).
+    pub transferred: u64,
+    /// Rust-backed JS buffers (`alloc`, or a buffer Rust returned) whose allocation Rust took back.
+    pub reclaimed: u64,
+    /// Transferred buffers handed back to JS as the same memory.
+    pub returned: u64,
+    /// Transferred buffers released on the JS thread after their token was dropped.
+    pub released: u64,
+    /// Rust memory handed to JS as an `ArrayBuffer` (owned results, `alloc`).
+    pub owned_out: u64,
+    /// Read-only views of `Shared` data handed to JS.
+    pub shared_out: u64,
+    /// Views of ours passed back as `Shared` (their `Arc`, no copy).
+    pub shared_in: u64,
+    /// Fallback copies (a `Shared` parameter from a JS array, a buffer from a reloaded runtime).
+    pub copies: u64,
+    pub copied_bytes: u64,
+    /// Transfer tokens alive now (memory Rust holds).
+    pub tokens_live: u64,
+    /// Runtimes leaked process-wide because a worker still held their memory when they went away.
+    pub leaked_runtimes: u64,
+}
+
 /// One entry of an [`JsEngine::settle_ops`] batch.
 #[derive(Clone, Debug)]
 pub struct OpSettle {
@@ -152,5 +178,16 @@ pub trait JsEngine {
     fn settle_ops(&mut self, batch: &[OpSettle]) -> Result<(), JsError> {
         let _ = batch;
         Err(JsError::new(ErrorKind::Host, "this engine does not run offloaded exports"))
+    }
+
+    /// E2: frees transferred buffers whose tokens were dropped (ids the runtime does not know, from an
+    /// older runtime, are ignored). Runs on the JS thread at a checkpoint.
+    fn release_buffers(&mut self, ids: &[u64]) {
+        let _ = ids;
+    }
+
+    /// E2: counters of the buffer paths.
+    fn buffer_stats(&self) -> BufferStats {
+        BufferStats::default()
     }
 }

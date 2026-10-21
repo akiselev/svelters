@@ -622,6 +622,12 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
         engine_ns = t1.elapsed().as_nanos() as u64;
         core.report_all(eng.take_errors());
     }
+    // E2: transferred buffers whose tokens were dropped (late results dropped above included) are
+    // freed here, on the JS thread.
+    let released = t.queue.take_released();
+    if !released.is_empty() {
+        eng.release_buffers(&released);
+    }
     let ns = t0.elapsed().as_nanos() as u64;
     t.stat(|s| {
         s.settled += settled;

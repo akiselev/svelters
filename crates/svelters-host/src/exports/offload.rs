@@ -310,6 +310,8 @@ struct Queue {
     done: VecDeque<(u64, u64, Outcome)>,
     progress: Vec<u64>,
     ready: Vec<u64>,
+    /// E2: transferred buffers whose tokens were dropped: freed on the JS thread at the next drain.
+    released: Vec<u64>,
 }
 
 /// The host's completion queue: finished jobs, progress notifications and woken local futures.
@@ -348,6 +350,17 @@ impl Completions {
     fn push_ready(&self, id: u64) {
         lock(&self.q).ready.push(id);
         self.wake();
+    }
+
+    /// E2: a transfer token was dropped (any thread): its JS memory is freed at the next drain.
+    pub(crate) fn push_release(&self, id: u64) {
+        lock(&self.q).released.push(id);
+        self.wake();
+    }
+
+    /// E2: the released transfers since the last take.
+    pub(crate) fn take_released(&self) -> Vec<u64> {
+        std::mem::take(&mut lock(&self.q).released)
     }
 
     /// The host is going away: no more wakes.
