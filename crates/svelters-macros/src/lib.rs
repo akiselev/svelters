@@ -575,7 +575,7 @@ fn member(
                             }
                             Type::Slice(s) => {
                                 if r.mutability.is_some() {
-                                    return Err(syn::Error::new(r.span(), "`&mut [T]` needs buffers (E2); take `Vec<T>` and return it"));
+                                    return Err(syn::Error::new(r.span(), "`&mut [T]` cannot borrow a JS array: take `svelters::Buffer<T>` (the typed array is moved, zero-copy) and return it"));
                                 }
                                 let e = &s.elem;
                                 ArgKind::ByRef(syn::parse_quote!(::std::vec::Vec<#e>))

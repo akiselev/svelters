@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Tally, Notebook, greet, fib, crunch, crunchBlocking, wordCount, type Summary, type Step } from 'svelters:app/demo';
+  import Dsp from './Dsp.svelte';
 
   const tally = new Tally(5);
   const notes = new Notebook();
@@ -80,5 +81,6 @@
       <button onclicked={startCrunch}>Crunch</button>
       <button onclicked={crunchHere}>Crunch on the UI thread</button>
     {/if}
+    <Dsp />
   </box>
 </window>

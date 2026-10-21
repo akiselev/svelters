@@ -308,12 +308,63 @@
     if (op) Promise.resolve().then(() => (kind === 0 ? op.resolve : op.reject)(v));
   };
   const opsLive = () => ops.size;
+  // E2: typed arrays crossing to Rust exports. The intrinsics are captured before user code runs.
+  // `transfers` keeps the JS buffers whose memory Rust holds (moved with `transfer()`): nothing else
+  // can reach them until Rust hands them back (`transferOut`) or drops them (`transferDrop`).
+  const apply = Reflect.apply;
+  const getter = (o, k) => {
+    const d = o ? Object.getOwnPropertyDescriptor(o, k) : undefined;
+    return d ? d.get : undefined;
+  };
+  const taProto = Object.getPrototypeOf(Uint8Array.prototype);
+  const taBuffer = getter(taProto, 'buffer');
+  const taOffset = getter(taProto, 'byteOffset');
+  const taLength = getter(taProto, 'length');
+  const abDetached = getter(ArrayBuffer.prototype, 'detached');
+  const abResizable = getter(ArrayBuffer.prototype, 'resizable');
+  const sabLength = typeof SharedArrayBuffer === 'function' ? getter(SharedArrayBuffer.prototype, 'byteLength') : undefined;
+  const abTransfer = ArrayBuffer.prototype.transfer;
+  const isSab = (b) => {
+    if (!sabLength) return false;
+    try {
+      apply(sabLength, b, []);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+  // [buffer, byteOffset, length, state]: 0 usable, 1 detached, 3 SharedArrayBuffer, 4 resizable.
+  const viewInfo = (v) => {
+    const b = apply(taBuffer, v, []);
+    if (isSab(b)) return [b, 0, 0, 3];
+    if (abDetached && apply(abDetached, b, [])) return [b, 0, 0, 1];
+    const state = abResizable && apply(abResizable, b, []) ? 4 : 0;
+    return [b, apply(taOffset, v, []), apply(taLength, v, []), state];
+  };
+  const transfers = new Map();
+  const transferIn = (b, id) => {
+    const t = apply(abTransfer, b, []);
+    transfers.set(id, t);
+    return t;
+  };
+  const transferOut = (id) => {
+    const t = transfers.get(id);
+    if (t === undefined) return null;
+    transfers.delete(id);
+    return t;
+  };
+  const transferDrop = (ids) => {
+    let n = 0;
+    for (const id of ids) if (transfers.delete(id)) n++;
+    return n;
+  };
+  const transfersLive = () => transfers.size;
   const isView = (v) => ArrayBuffer.isView(v);
   const dateMs = (v) => (v instanceof Date ? v.getTime() : null);
   const makeDate = (ms) => new Date(ms);
 
   Object.defineProperty(global, '__svelters_internal', {
-    value: { fire, frame: runFrame, makeBoxed, makeNativeError, isView, dateMs, makeDate, makeCompletion, watchAbort, makeOp, settleOps, settleOpSoon, opsLive },
+    value: { fire, frame: runFrame, makeBoxed, makeNativeError, isView, dateMs, makeDate, makeCompletion, watchAbort, makeOp, settleOps, settleOpSoon, opsLive, viewInfo, transferIn, transferOut, transferDrop, transfersLive },
     enumerable: false,
   });
 })
