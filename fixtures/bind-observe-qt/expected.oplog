@@ -3,7 +3,6 @@ set #1 window-title "bind observe"
 create box-layout #2
 set #2 direction "top-to-bottom"
 set #2 spacing 6
-observe #2 size on
 create line-edit #3
 set #3 text "Ann"
 observe #3 text on
@@ -26,7 +25,7 @@ create label #8
 set #8 text "draft Ann"
 insert #2 #8 before=end slot=default
 create label #9
-set #9 text "size none"
+set #9 text "size n/a"
 insert #2 #9 before=end slot=default
 insert #1 #2 before=end slot=default
 call #1 present []

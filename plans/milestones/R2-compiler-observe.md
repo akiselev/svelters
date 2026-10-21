@@ -83,6 +83,10 @@ that the typings and `plan_bind` agree on every tag of the four platforms.
 | Qt | 26 | 2: `group-box checked`, `time-edit time` (`partial`, with a warning) |
 | AppKit, WinUI | none in the repo; `fx1_specs.rs` cases moved to `bind_prop` with their signal fallback | |
 
+New fixtures: `bind-observe` / `bind-observe-qt` (op logs + real host) and `bind-readonly-qt` (real host only; the
+op-log hosts' Qt schema has no read-only props). `menus-qt` gained empty `ontoggled` listeners, so the scripted
+`toggled` events stay deliverable on the log backend and in the Qt replay.
+
 Op logs that changed: `bind-value`, `bind-value-qt`, `buffer-bind`, `menus-qt` and the compiler's `form-binding`
 (`observe #h p on` instead of `listen`; the TestHost and the log backend cannot change a native value from an `event`
 step, so the state no longer follows those steps there; the real toolkits do, `examples/counter/tests/integration.rs`).

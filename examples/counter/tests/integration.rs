@@ -351,7 +351,11 @@ fn bind_observe(backend: &str) {
         let pos = r.labels()[2].clone();
         assert!(pos == "pos 1" || pos == "pos 2", "bind_readonly: the observed cursor position, got {pos}");
     } else {
-        let size = labels[2].strip_prefix("size ").expect("size label");
+        // fixtures/bind-readonly-qt (real-host only: the op-log hosts' Qt schema has no read-only props)
+        let r = run_dir("qt", "bind-readonly-qt", &root().join("fixtures/bind-readonly-qt/script.json"), &[]);
+        r.assert_clean();
+        let label = r.labels()[0].clone();
+        let size = label.strip_prefix("size ").expect("size label");
         let (w, h) = size.split_once('x').unwrap_or_else(|| panic!("bind_readonly: no size read: {size}"));
         assert!(w.parse::<u32>().unwrap() > 0 && h.parse::<u32>().unwrap() > 0, "bind_readonly: a laid-out size, got {size}");
     }

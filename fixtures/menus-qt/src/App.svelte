@@ -8,6 +8,11 @@
   let large = $state(false);
   let recent = $state(['a.txt', 'b.txt']);
   const add = (s) => (log += s + ';');
+  // Since R2 `bind:checked` observes `checked` (exact on Qt) instead of listening to `toggled`; the
+  // empty `ontoggled` keeps the scripted `toggled` events delivered on the log backend and in the Qt
+  // op-log replay. The op-log hosts cannot change `checked` from an `event` step, so the label keeps
+  // the app's values there; the toolkit changes them for real (examples/counter-qt/tests/host_menus.rs).
+  const toggled = () => {};
 </script>
 
 <main-window window-title="Menus">
@@ -15,7 +20,7 @@
     <menu-bar>
       <menu title="File">
         <action text="Open" shortcut="Ctrl+O" ontriggered={() => add('open')} />
-        <action text="Autosave" checkable bind:checked={autosave} />
+        <action text="Autosave" checkable bind:checked={autosave} ontoggled={toggled} />
         <action separator={true} />
         <menu title="Recent">
           {#each recent as r (r)}
@@ -25,8 +30,8 @@
         <action text="Quit" shortcut="Ctrl+Q" ontriggered={() => add('quit')} />
       </menu>
       <menu title="Size">
-        <action text="Small" group="size" bind:checked={small} />
-        <action text="Large" group="size" bind:checked={large} />
+        <action text="Small" group="size" bind:checked={small} ontoggled={toggled} />
+        <action text="Large" group="size" bind:checked={large} ontoggled={toggled} />
       </menu>
     </menu-bar>
     <tool-bar>
