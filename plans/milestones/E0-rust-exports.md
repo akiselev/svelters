@@ -160,11 +160,22 @@ See "ABI v2.7 additive (G0)" in `plans/architecture/backend-abi.md`.
 
 ## Tests
 
-<!-- counts -->
+- New: `crates/svelters/tests/exports.rs` (6: calls/values/errors/panics/poisoning/op log, identity + dispose +
+  GC, GC release, schema + typings + JSON, dump rewrites only changes, unknown module/member errors);
+  `examples/exports/tests/exports.rs` (2 + 1 ignored: the Svelte app on real GTK calling the exports and
+  clicking through them, committed typings current; `per_call_cost` is the benchmark);
+  `crates/svelters-host/tests/started.rs` (5) and `crates/svelters-gtk/tests/host_start.rs` (3) for G0.
+- `examples/exports/app`: `pnpm test` = `vite build` + `svelte-check` against the dumped `app.d.ts`
+  (0 errors; a deliberately mistyped file gives 3 errors, so the typings are enforced).
+- Local gates on the merged tree (c5ce909d): `cargo check --workspace --all-targets` clean;
+  `cargo nextest run --workspace` 2358/2358 passed (8 skipped); `pnpm -r build`, `pnpm test` (incl. `test:meta`),
+  `pnpm docs:test` all exit 0.
 
 ## CI
 
-<!-- runs -->
+Branch `ci/e0`, head c5ce909d (merge of origin/master 3479e2da): js 39598151437, linux-gtk 39598149384
+(gtk 2155/2155, gtk-4-14 1897/1897, portable 48/48), linux-qt 39598149415, macos-appkit 39598149744,
+windows-winui 39598149683: all success.
 
 ## Open items
 
