@@ -31,7 +31,7 @@ Constructors (one JS constructor; the backend picks the overload from the argume
 Getters marked *reactive* re-run the effects (and template expressions) that read them when the property changes natively (Qt announces it, the host delivers it once per event-loop turn); *reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. See [Reactivity](../../../concepts/reactivity/).
 
 - `baseUrl` (value, reactive)
-- `blockCount` (int, read-only)
+- `blockCount` (int, read-only, reactive)
 - `defaultFont` (value, reactive on writes)
 - `defaultStyleSheet` (string, reactive on writes)
 - `documentMargin` (float, reactive on writes)

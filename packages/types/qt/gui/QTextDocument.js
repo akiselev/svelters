@@ -313,7 +313,7 @@ export class QTextDocument extends QObject {
   }
 
   get blockCount() {
-    return getProp(this, 'blockCount');
+    return observed(this, 'blockCount');
   }
 
   get defaultFont() {
