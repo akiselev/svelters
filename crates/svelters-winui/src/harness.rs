@@ -26,11 +26,20 @@ pub fn main(tests: &[(&str, fn())]) -> i32 {
         }
     }
     let selected = |name: &str| filters.is_empty() || filters.iter().any(|f| if exact { name == f } else { name.contains(f.as_str()) });
+    // SVELTERS_TEST_RESUME=1 (with SVELTERS_TEST_RESULTS): skip the tests the results file already has a line for,
+    // so a rerun after a crash continues behind the test that took the process down (whose `start` line stays
+    // without a result: the ledger reads it as a crash).
+    let done = if std::env::var_os("SVELTERS_TEST_RESUME").is_some_and(|v| v == "1") { Results::recorded() } else { Default::default() };
     let mut results = Results::open();
     let mut failed = Vec::new();
     let mut ran = 0;
+    let mut resumed = 0;
     for (name, f) in tests {
         if !selected(name) {
+            continue;
+        }
+        if done.contains(*name) {
+            resumed += 1;
             continue;
         }
         ran += 1;
@@ -48,7 +57,7 @@ pub fn main(tests: &[(&str, fn())]) -> i32 {
             }
         }
     }
-    println!("\ntest result: {}. {} passed; {} failed", if failed.is_empty() { "ok" } else { "FAILED" }, ran - failed.len(), failed.len());
+    println!("\ntest result: {}. {} passed; {} failed; {resumed} skipped (already in the results file)", if failed.is_empty() { "ok" } else { "FAILED" }, ran - failed.len(), failed.len());
     for f in &failed {
         println!("    {f}");
     }
@@ -73,6 +82,12 @@ impl Results {
         Results(file)
     }
 
+    /// The tests the results file already has a line for (start or result).
+    fn recorded() -> std::collections::HashSet<String> {
+        let Some(p) = std::env::var_os("SVELTERS_TEST_RESULTS") else { return Default::default() };
+        std::fs::read_to_string(p).map(|text| text.lines().filter_map(test_of).collect()).unwrap_or_default()
+    }
+
     fn line(&mut self, test: &str, result: &str, message: &str) {
         use std::io::Write;
         if let Some(f) = &mut self.0 {
@@ -80,6 +95,30 @@ impl Results {
             let _ = f.flush();
         }
     }
+}
+
+/// The `test` field of a line this harness wrote (`{"test":"<name>",...}`), unescaping what `json_str` escapes.
+fn test_of(line: &str) -> Option<String> {
+    let rest = line.strip_prefix("{\"test\":\"")?;
+    let mut out = String::new();
+    let mut chars = rest.chars();
+    while let Some(c) = chars.next() {
+        match c {
+            '"' => return Some(out),
+            '\\' => match chars.next()? {
+                'n' => out.push('\n'),
+                'r' => out.push('\r'),
+                't' => out.push('\t'),
+                'u' => {
+                    let hex: String = chars.by_ref().take(4).collect();
+                    out.push(char::from_u32(u32::from_str_radix(&hex, 16).ok()?)?);
+                }
+                c => out.push(c),
+            },
+            c => out.push(c),
+        }
+    }
+    None
 }
 
 fn json_str(s: &str) -> String {
@@ -105,5 +144,14 @@ mod tests {
     #[test]
     fn json_strings_are_escaped() {
         assert_eq!(super::json_str("a\"b\\c\nd\u{1}"), "\"a\\\"b\\\\c\\nd\\u0001\"");
+    }
+
+    #[test]
+    fn test_names_round_trip_through_a_results_line() {
+        for name in ["generated::prop_button_content", "a\"b\\c\nd\u{1}"] {
+            let line = format!("{{\"test\":{},\"result\":\"start\",\"message\":\"\"}}", super::json_str(name));
+            assert_eq!(super::test_of(&line).as_deref(), Some(name));
+        }
+        assert_eq!(super::test_of("not a line"), None);
     }
 }
