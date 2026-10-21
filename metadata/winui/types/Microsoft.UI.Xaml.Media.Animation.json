@@ -1,0 +1,745 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.xaml.media.animation",
+ "namespace": "Microsoft.UI.Xaml.Media.Animation",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Xaml.Media.Animation.AddDeleteThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.BackEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.BasicConnectedAnimationConfiguration": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.BeginStoryboard": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.BounceEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.CircleEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ClockState": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ColorAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ColorAnimationUsingKeyFrames": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ColorKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ColorKeyFrameCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.CommonNavigationTransitionInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ConnectedAnimationComponent": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ConnectedAnimationConfiguration": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ConnectedAnimationService": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ContentThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ContinuumNavigationTransitionInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.CubicEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DirectConnectedAnimationConfiguration": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DiscreteColorKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DiscreteDoubleKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DiscreteObjectKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DiscretePointKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DoubleAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DoubleAnimationUsingKeyFrames": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DoubleKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DoubleKeyFrameCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DragItemThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DragOverThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DrillInNavigationTransitionInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DrillInThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DrillOutThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.DropTargetItemThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EasingColorKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EasingDoubleKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EasingFunctionBase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EasingMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EasingPointKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EdgeUIThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ElasticEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EntranceNavigationTransitionInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.EntranceThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ExponentialEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.FadeInThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.FadeOutThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.FillBehavior": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.GravityConnectedAnimationConfiguration": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IAddDeleteThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBackEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBackEaseStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBasicConnectedAnimationConfiguration": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBasicConnectedAnimationConfigurationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBeginStoryboard": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBeginStoryboardStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBounceEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IBounceEaseStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ICircleEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IColorAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IColorAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IColorAnimationUsingKeyFrames": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IColorAnimationUsingKeyFramesStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IColorKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IColorKeyFrameFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IColorKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ICommonNavigationTransitionInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ICommonNavigationTransitionInfoStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IConnectedAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IConnectedAnimationConfiguration": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IConnectedAnimationConfigurationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IConnectedAnimationService": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IConnectedAnimationServiceStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IContentThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IContentThemeTransitionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IContinuumNavigationTransitionInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IContinuumNavigationTransitionInfoStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ICubicEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDirectConnectedAnimationConfiguration": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDirectConnectedAnimationConfigurationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDiscreteColorKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDiscreteDoubleKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDiscreteObjectKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDiscretePointKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDoubleAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDoubleAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDoubleAnimationUsingKeyFrames": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDoubleAnimationUsingKeyFramesStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDoubleKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDoubleKeyFrameFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDoubleKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDragItemThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDragItemThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDragOverThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDragOverThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDrillInNavigationTransitionInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDrillInThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDrillInThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDrillOutThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDrillOutThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDropTargetItemThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IDropTargetItemThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingColorKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingColorKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingDoubleKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingDoubleKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingFunctionBase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingFunctionBaseFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingFunctionBaseStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingPointKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEasingPointKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEdgeUIThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEdgeUIThemeTransitionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IElasticEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IElasticEaseStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEntranceNavigationTransitionInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEntranceNavigationTransitionInfoStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEntranceThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IEntranceThemeTransitionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IExponentialEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IExponentialEaseStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IFadeInThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IFadeInThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IFadeOutThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IFadeOutThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IGravityConnectedAnimationConfiguration": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IGravityConnectedAnimationConfigurationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IKeySpline": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IKeyTimeHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IKeyTimeHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ILinearColorKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ILinearDoubleKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ILinearPointKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.INavigationThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.INavigationThemeTransitionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.INavigationTransitionInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.INavigationTransitionInfoFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.INavigationTransitionInfoOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IObjectAnimationUsingKeyFrames": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IObjectAnimationUsingKeyFramesStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IObjectKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IObjectKeyFrameFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IObjectKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPaneThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPaneThemeTransitionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointAnimationUsingKeyFrames": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointAnimationUsingKeyFramesStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointKeyFrameFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointerDownThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointerDownThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointerUpThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPointerUpThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPopInThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPopInThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPopOutThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPopOutThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPopupThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPopupThemeTransitionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPowerEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IPowerEaseStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IQuadraticEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IQuarticEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IQuinticEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IReorderThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IRepeatBehaviorHelper": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IRepeatBehaviorHelperStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IRepositionThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IRepositionThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IRepositionThemeTransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IRepositionThemeTransitionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISineEase": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISlideNavigationTransitionInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISlideNavigationTransitionInfoStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplineColorKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplineColorKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplineDoubleKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplineDoubleKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplinePointKeyFrame": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplinePointKeyFrameStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplitCloseThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplitCloseThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplitOpenThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISplitOpenThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IStoryboard": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.IStoryboardStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISuppressNavigationTransitionInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISwipeBackThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISwipeBackThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISwipeHintThemeAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ISwipeHintThemeAnimationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ITimeline": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ITimelineFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ITimelineStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ITransition": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ITransitionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.KeySpline": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.KeyTime": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.KeyTimeHelper": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.LinearColorKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.LinearDoubleKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.LinearPointKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.NavigationThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ObjectAnimationUsingKeyFrames": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ObjectKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ObjectKeyFrameCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PaneThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PointAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PointAnimationUsingKeyFrames": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PointKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PointKeyFrameCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PointerDownThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PointerUpThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PopInThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PopOutThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PopupThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.PowerEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.QuadraticEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.QuarticEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.QuinticEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.ReorderThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.RepeatBehavior": {
+   "category": "record"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.RepeatBehaviorHelper": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.RepeatBehaviorType": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.RepositionThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.RepositionThemeTransition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SineEase": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionEffect": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SlideNavigationTransitionInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SplineColorKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SplineDoubleKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SplinePointKeyFrame": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SplitCloseThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SplitOpenThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.Storyboard": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SuppressNavigationTransitionInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SwipeBackThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.SwipeHintThemeAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.Timeline": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.TimelineCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.Transition": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Animation.TransitionCollection": {
+   "category": "model"
+  }
+ }
+}

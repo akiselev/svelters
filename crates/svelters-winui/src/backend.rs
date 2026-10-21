@@ -20,6 +20,7 @@ use crate::dispatch::{ATTR_GET, ATTR_SET, CREATE, EVENT_CONNECT, METHOD_CALL, OB
 use crate::names::EVENTS;
 use crate::sink::{Registration, Sink};
 use crate::table::{self, ObsClass, Ty};
+use crate::types;
 use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 use std::rc::{Rc, Weak};
@@ -38,50 +39,74 @@ thread_local! {
     static GRAVEYARD: RefCell<Vec<Registration>> = const { RefCell::new(Vec::new()) };
 }
 
-fn current() -> Option<Rc<Inner>> {
+pub(crate) fn current() -> Option<Rc<Inner>> {
     CURRENT.with(|c| c.borrow().upgrade())
 }
 
-struct Entry {
-    obj: IInspectable,
-    kind: u32,
-    parent: Option<u64>,
+pub(crate) struct Entry {
+    pub(crate) obj: IInspectable,
+    pub(crate) kind: u32,
+    pub(crate) parent: Option<u64>,
     /// Slot id the handle was inserted into (0 when not inserted).
-    slot: u32,
-    children: Vec<u64>,
-    listeners: HashMap<(u32, u32), Registration>,
+    pub(crate) slot: u32,
+    pub(crate) children: Vec<u64>,
+    pub(crate) listeners: HashMap<(u32, u32), Registration>,
     /// JS listeners of the close event (window `closed`).
-    close_listeners: u32,
+    pub(crate) close_listeners: u32,
     /// Always-on registrations (the close handler of a toplevel).
-    internal: Vec<Registration>,
+    pub(crate) internal: Vec<Registration>,
     /// ABI v2.6 observations: prop id -> (nesting count, the DP callback and event registrations). Dropping a
     /// registration unregisters it (`UnregisterPropertyChangedCallback` with its token, or the event revoker).
-    observers: HashMap<u32, (u32, Vec<Registration>)>,
+    pub(crate) observers: HashMap<u32, (u32, Vec<Registration>)>,
+    /// `SVL_LIFE_*`: OWNED / TOPLEVEL elements, SHARED type objects (N4).
+    pub(crate) life: u32,
 }
 
-struct WakeShared {
+impl Entry {
+    /// A SHARED handle of a non-GUI type object (N4): no tree, no internal registrations.
+    pub(crate) fn shared(obj: IInspectable, kind: u32) -> Entry {
+        Entry {
+            obj,
+            kind,
+            parent: None,
+            slot: 0,
+            children: Vec::new(),
+            listeners: HashMap::new(),
+            close_listeners: 0,
+            internal: Vec::new(),
+            observers: HashMap::new(),
+            life: SVL_LIFE_SHARED,
+        }
+    }
+}
+
+pub(crate) struct WakeShared {
     queue: DispatcherQueue,
     pending: AtomicBool,
 }
 
 pub(crate) struct Inner {
-    xaml: Xaml,
-    host: Cell<*const svl_host>,
-    handles: RefCell<HashMap<u64, Entry>>,
+    pub(crate) xaml: Xaml,
+    pub(crate) host: Cell<*const svl_host>,
+    pub(crate) handles: RefCell<HashMap<u64, Entry>>,
     /// IUnknown identity -> handle, for objects we created (they are alive while in `handles`).
-    by_ptr: RefCell<HashMap<usize, u64>>,
-    next: Cell<u64>,
-    timer: DispatcherQueueTimer,
-    frame_timer: DispatcherQueueTimer,
-    frame_pending: Cell<bool>,
-    frame_sub: RefCell<Option<EventRevoker>>,
-    timer_subs: RefCell<Vec<EventRevoker>>,
-    wake: Arc<WakeShared>,
-    running: Cell<bool>,
-    quit_early: Cell<bool>,
+    pub(crate) by_ptr: RefCell<HashMap<usize, u64>>,
+    pub(crate) next: Cell<u64>,
+    pub(crate) timer: DispatcherQueueTimer,
+    pub(crate) frame_timer: DispatcherQueueTimer,
+    pub(crate) frame_pending: Cell<bool>,
+    pub(crate) frame_sub: RefCell<Option<EventRevoker>>,
+    pub(crate) timer_subs: RefCell<Vec<EventRevoker>>,
+    pub(crate) wake: Arc<WakeShared>,
+    pub(crate) running: Cell<bool>,
+    pub(crate) quit_early: Cell<bool>,
     /// The (handle, prop) `set_prop` is writing: a proportional prop is not reported for our own write
     /// (REACTIVITY.md 5.4, backend-side echo suppression).
-    setting: Cell<Option<(u64, u32)>>,
+    pub(crate) setting: Cell<Option<(u64, u32)>>,
+    /// N4: async operations in flight, by completion callback id.
+    pub(crate) pending: RefCell<crate::types::ops::PendingMap>,
+    /// N4: type events raised before the host attached, posted when it does.
+    pub(crate) early: RefCell<Vec<(u64, u32, Vec<Value>)>>,
 }
 
 /// The WinUI backend. One per thread; create it on the thread that will call `run`. Clones share
@@ -102,7 +127,7 @@ pub(crate) fn handle_of(o: &IInspectable) -> Option<u64> {
     inner.by_ptr.borrow().get(&id).copied()
 }
 
-fn host_of(inner: &Inner) -> Option<HostRef<'static>> {
+pub(crate) fn host_of(inner: &Inner) -> Option<HostRef<'static>> {
     let p = inner.host.get();
     // SAFETY: set from `run` (or a test harness) and cleared before the host goes away.
     (!p.is_null()).then(|| unsafe { HostRef::from_raw(p) })
@@ -200,7 +225,7 @@ fn on_frame() {
 }
 
 impl Inner {
-    fn get(&self, h: u64) -> StrResult<(IInspectable, u32)> {
+    pub(crate) fn get(&self, h: u64) -> StrResult<(IInspectable, u32)> {
         match self.handles.borrow().get(&h) {
             Some(e) => Ok((e.obj.clone(), e.kind)),
             None => Err(format!("stale or foreign handle {h}")),
@@ -311,15 +336,22 @@ impl WinUiBackend {
             running: Cell::new(false),
             quit_early: Cell::new(false),
             setting: Cell::new(None),
+            pending: RefCell::default(),
+            early: RefCell::default(),
         });
         CURRENT.with(|c| *c.borrow_mut() = Rc::downgrade(&inner));
         Ok(WinUiBackend { inner })
+    }
+
+    pub(crate) fn inner(&self) -> &Inner {
+        &self.inner
     }
 
     /// Point events at `host` without running the loop (test harnesses). The host must outlive
     /// every later call, or be detached with a null pointer.
     pub fn attach_host(&self, host: *const svl_host) {
         self.inner.host.set(host);
+        types::ops::flush_early(&self.inner);
     }
 
     /// Dispatch pending messages for up to `ms` milliseconds (test harnesses; `run` does this forever).
@@ -598,6 +630,10 @@ impl WinUiBackend {
             drop((rev, f));
         }
         GRAVEYARD.with(|g| g.borrow_mut().clear());
+        // N4: async operations in flight and the cached activation factories, while COM is alive.
+        let pending: Vec<_> = inner.pending.borrow_mut().drain().collect();
+        drop(pending);
+        types::rt::clear_factories();
         // Let the closes and releases above run through the queue before it shuts down.
         self.pump(50);
         inner.xaml.shutdown();
@@ -616,6 +652,13 @@ impl Drop for WinUiBackend {
 
 impl Backend for WinUiBackend {
     fn resolve(&self, what: NameKind, kind: svl_id, name: &str) -> svl_id {
+        if matches!(what, NameKind::Kind) {
+            let k = table::kind_by_tag(name);
+            return if k != 0 { k } else { types::ops::resolve(what, 0, name) };
+        }
+        if types::model::is_type_kind(kind) {
+            return types::ops::resolve(what, kind, name);
+        }
         match what {
             NameKind::Kind => table::kind_by_tag(name),
             NameKind::Prop => table::prop_id(kind, name),
@@ -627,6 +670,12 @@ impl Backend for WinUiBackend {
     }
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
+        if types::model::is_type_kind(kind) {
+            return match self.type_construct(kind, &[], &[])? {
+                Value::Handle(h) => Ok(h),
+                other => Err(format!("construct: {other:?}")),
+            };
+        }
         let k = table::kind(kind).ok_or_else(|| format!("unknown kind id {kind}"))?;
         let obj = CREATE[kind as usize - 1]().map_err(|e| format!("create <{}> ({}): {}", k.tag, k.native, conv::err(e)))?;
         let inner = &self.inner;
@@ -653,6 +702,7 @@ impl Backend for WinUiBackend {
                 close_listeners: 0,
                 internal,
                 observers: HashMap::new(),
+                life: if k.toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },
             },
         );
         Ok(h)
@@ -756,6 +806,9 @@ impl Backend for WinUiBackend {
 
     fn destroy(&self, h: svl_handle) {
         let inner = &self.inner;
+        if inner.handles.borrow().get(&h).is_some_and(|e| e.life == SVL_LIFE_SHARED) {
+            return self.destroy_type(h);
+        }
         let Some(parent) = inner.handles.borrow().get(&h).map(|e| e.parent) else { return };
         if let Some(p) = parent {
             let _ = self.remove(p, h);
@@ -788,6 +841,9 @@ impl Backend for WinUiBackend {
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
         let (obj, kind) = self.inner.get(h)?;
+        if types::model::is_type_kind(kind) {
+            return self.type_set(h, prop, v);
+        }
         let p = table::prop(prop).ok_or_else(|| format!("unknown prop id {prop}"))?;
         if !table::applies(kind, p.class) {
             return Err(format!("<{}> has no prop {:?}", table::kind(kind).map_or("?", |k| k.tag), p.name));
@@ -804,11 +860,17 @@ impl Backend for WinUiBackend {
     }
 
     fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> Result<(), ObserveError> {
+        if self.inner.handles.borrow().get(&h).is_some_and(|e| types::model::is_type_kind(e.kind)) {
+            return self.type_observe(h, prop, on);
+        }
         self.observe_impl(h, prop, on)
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
         let (obj, kind) = self.inner.get(h)?;
+        if types::model::is_type_kind(kind) {
+            return self.type_get(h, prop);
+        }
         let p = table::prop(prop).ok_or_else(|| format!("unknown prop id {prop}"))?;
         if !table::applies(kind, p.class) {
             return Err(format!("<{}> has no prop {:?}", table::kind(kind).map_or("?", |k| k.tag), p.name));
@@ -819,6 +881,9 @@ impl Backend for WinUiBackend {
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let (obj, kind) = self.inner.get(h)?;
+        if types::model::is_type_kind(kind) {
+            return self.type_call(h, method, args);
+        }
         let m = table::method(method).ok_or_else(|| format!("unknown method id {method}"))?;
         if !table::applies(kind, m.class) {
             return Err(format!("<{}> has no method {:?}", table::kind(kind).map_or("?", |k| k.tag), m.name));
@@ -827,6 +892,9 @@ impl Backend for WinUiBackend {
     }
 
     fn listen(&self, h: svl_handle, signal: svl_id, on: bool) -> StrResult<()> {
+        if self.inner.handles.borrow().get(&h).is_some_and(|e| types::model::is_type_kind(e.kind)) {
+            return self.type_listen(h, signal, on);
+        }
         self.listen_impl(h, signal, on, 0)
     }
 
@@ -835,14 +903,16 @@ impl Backend for WinUiBackend {
     }
 
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
-        let (_, kind) = self.inner.get(h)?;
-        let top = table::kind(kind).is_some_and(|k| k.toplevel);
-        Ok(svl_handle_info { kind, lifetime: if top { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED }, flags: 0 })
+        match self.inner.handles.borrow().get(&h) {
+            Some(e) => Ok(svl_handle_info { kind: e.kind, lifetime: e.life, flags: 0 }),
+            None => Err(format!("stale or foreign handle {h}")),
+        }
     }
 
     fn run(&self, host: &HostRef<'_>) -> StrResult<()> {
         let inner = &self.inner;
         inner.host.set(host.as_raw());
+        types::ops::flush_early(inner);
         inner.running.set(true);
         if inner.wake.pending.load(Ordering::SeqCst) {
             on_wake();
@@ -946,9 +1016,43 @@ impl Backend for WinUiBackend {
     }
 
     fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        if matches!(what, NameKind::Kind) {
+            return types::ops::describe(what, kind, member);
+        }
+        if types::model::is_type_kind(kind) {
+            return types::ops::describe(what, kind, member);
+        }
         match what {
             NameKind::Prop => self.prop_desc(kind, member),
             _ => None,
         }
+    }
+
+    fn describe_type(&self, ty: svl_id) -> Option<TypeDesc> {
+        types::ops::describe_type(ty)
+    }
+
+    // ---- ABI v2.5 (N4: non-GUI types) ----
+
+    fn supports_construct(&self) -> bool {
+        true
+    }
+
+    fn construct(&self, kind: svl_id, props: &[svl_id], values: &[Value]) -> StrResult<Value> {
+        if !types::model::is_type_kind(kind) {
+            return Err(format!("construct: {kind} is not a type kind (elements are made with `create`)"));
+        }
+        self.type_construct(kind, props, values)
+    }
+
+    fn call_static(&self, kind: svl_id, method: svl_id, args: &[Value]) -> StrResult<Value> {
+        if !types::model::is_type_kind(kind) {
+            return Err(format!("call_static: {kind} is not a type kind"));
+        }
+        self.type_call_static(kind, method, args)
+    }
+
+    fn cancel(&self, callback: u64) -> bool {
+        types::ops::cancel(&self.inner, callback)
     }
 }

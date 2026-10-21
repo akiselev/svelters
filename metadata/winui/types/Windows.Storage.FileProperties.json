@@ -1,0 +1,1819 @@
+{
+ "enums": {
+  "Windows.Storage.FileProperties.PhotoOrientation": {
+   "flags": false,
+   "members": [
+    [
+     "unspecified",
+     0
+    ],
+    [
+     "normal",
+     1
+    ],
+    [
+     "flipHorizontal",
+     2
+    ],
+    [
+     "rotate180",
+     3
+    ],
+    [
+     "flipVertical",
+     4
+    ],
+    [
+     "transpose",
+     5
+    ],
+    [
+     "rotate270",
+     6
+    ],
+    [
+     "transverse",
+     7
+    ],
+    [
+     "rotate90",
+     8
+    ]
+   ],
+   "native": [
+    "Unspecified",
+    "Normal",
+    "FlipHorizontal",
+    "Rotate180",
+    "FlipVertical",
+    "Transpose",
+    "Rotate270",
+    "Transverse",
+    "Rotate90"
+   ],
+   "unsigned": false,
+   "used": true
+  },
+  "Windows.Storage.FileProperties.ThumbnailMode": {
+   "flags": false,
+   "members": [
+    [
+     "picturesView",
+     0
+    ],
+    [
+     "videosView",
+     1
+    ],
+    [
+     "musicView",
+     2
+    ],
+    [
+     "documentsView",
+     3
+    ],
+    [
+     "listView",
+     4
+    ],
+    [
+     "singleItem",
+     5
+    ]
+   ],
+   "native": [
+    "PicturesView",
+    "VideosView",
+    "MusicView",
+    "DocumentsView",
+    "ListView",
+    "SingleItem"
+   ],
+   "unsigned": false,
+   "used": true
+  },
+  "Windows.Storage.FileProperties.ThumbnailOptions": {
+   "flags": true,
+   "members": [
+    [
+     "none",
+     0
+    ],
+    [
+     "returnOnlyIfCached",
+     1
+    ],
+    [
+     "resizeThumbnail",
+     2
+    ],
+    [
+     "useCurrentScale",
+     4
+    ]
+   ],
+   "native": [
+    "None",
+    "ReturnOnlyIfCached",
+    "ResizeThumbnail",
+    "UseCurrentScale"
+   ],
+   "unsigned": true,
+   "used": true
+  },
+  "Windows.Storage.FileProperties.ThumbnailType": {
+   "flags": false,
+   "members": [
+    [
+     "image",
+     0
+    ],
+    [
+     "icon",
+     1
+    ]
+   ],
+   "native": [
+    "Image",
+    "Icon"
+   ],
+   "unsigned": false,
+   "used": true
+  },
+  "Windows.Storage.FileProperties.VideoOrientation": {
+   "flags": false,
+   "members": [
+    [
+     "normal",
+     0
+    ],
+    [
+     "rotate90",
+     90
+    ],
+    [
+     "rotate180",
+     180
+    ],
+    [
+     "rotate270",
+     270
+    ]
+   ],
+   "native": [
+    "Normal",
+    "Rotate90",
+    "Rotate180",
+    "Rotate270"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "js_module": "svelters:winui/windows.storage.fileproperties",
+ "namespace": "Windows.Storage.FileProperties",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Windows.Storage.FileProperties.BasicProperties": {
+   "abstract": true,
+   "blocked": {
+    "RetrievePropertiesAsync/1": "collection-argument",
+    "SavePropertiesAsync/1": "collection-argument"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.FileProperties.IBasicProperties",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.FileProperties.BasicProperties",
+   "hidden": [],
+   "iid": "d05d55db-785e-4a66-be02-9beec58aea81",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.fileproperties",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "savePropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemExtraProperties",
+      "native": "SavePropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "BasicProperties",
+   "namespace": "Windows.Storage.FileProperties",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IBasicProperties",
+      "slot": 7
+     },
+     "name": "dateModified",
+     "native": "DateModified",
+     "set": null,
+     "slot": {
+      "k": "datetime"
+     },
+     "type": "Windows.Foundation.DateTime"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IBasicProperties",
+      "slot": 8
+     },
+     "name": "itemDate",
+     "native": "ItemDate",
+     "set": null,
+     "slot": {
+      "k": "datetime"
+     },
+     "type": "Windows.Foundation.DateTime"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IBasicProperties",
+      "slot": 6
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u64"
+     },
+     "type": "u64"
+    }
+   ],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.FileProperties.DocumentProperties": {
+   "abstract": true,
+   "blocked": {
+    "RetrievePropertiesAsync/1": "collection-argument",
+    "SavePropertiesAsync/1": "collection-argument"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.FileProperties.IDocumentProperties",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.FileProperties.DocumentProperties",
+   "hidden": [],
+   "iid": "7eab19bc-1821-4923-b4a9-0aea404d0070",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.fileproperties",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "savePropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemExtraProperties",
+      "native": "SavePropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "DocumentProperties",
+   "namespace": "Windows.Storage.FileProperties",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IDocumentProperties",
+      "slot": 6
+     },
+     "name": "author",
+     "native": "Author",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IDocumentProperties",
+      "slot": 10
+     },
+     "name": "comment",
+     "native": "Comment",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IDocumentProperties",
+      "slot": 11
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IDocumentProperties",
+      "slot": 9
+     },
+     "name": "keywords",
+     "native": "Keywords",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IDocumentProperties",
+      "slot": 7
+     },
+     "name": "title",
+     "native": "Title",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IDocumentProperties",
+      "slot": 8
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IVector<string>"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.FileProperties.GeotagHelper": {
+   "category": "statics"
+  },
+  "Windows.Storage.FileProperties.IBasicProperties": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.IDocumentProperties": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.IGeotagHelperStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.IImageProperties": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.IMusicProperties": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.IStorageItemContentProperties": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.IStorageItemExtraProperties": {
+   "category": "interface"
+  },
+  "Windows.Storage.FileProperties.IThumbnailProperties": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.IVideoProperties": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.FileProperties.ImageProperties": {
+   "abstract": true,
+   "blocked": {
+    "RetrievePropertiesAsync/1": "collection-argument",
+    "SavePropertiesAsync/1": "collection-argument"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.FileProperties.IImageProperties",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.FileProperties.ImageProperties",
+   "hidden": [],
+   "iid": "523c9424-fcff-4275-afee-ecdb9ab47973",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.fileproperties",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "savePropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemExtraProperties",
+      "native": "SavePropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "ImageProperties",
+   "namespace": "Windows.Storage.FileProperties",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 17
+     },
+     "name": "cameraManufacturer",
+     "native": "CameraManufacturer",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 18
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 19
+     },
+     "name": "cameraModel",
+     "native": "CameraModel",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 20
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 9
+     },
+     "name": "dateTaken",
+     "native": "DateTaken",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 10
+     },
+     "slot": {
+      "k": "datetime"
+     },
+     "type": "Windows.Foundation.DateTime"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 12
+     },
+     "name": "height",
+     "native": "Height",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 8
+     },
+     "name": "keywords",
+     "native": "Keywords",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 15
+     },
+     "name": "latitude",
+     "native": "Latitude",
+     "set": null,
+     "slot": {
+      "k": "nullable",
+      "of": {
+       "k": "float",
+       "t": "f64"
+      },
+      "t": "Windows.Foundation.IReference<f64>"
+     },
+     "type": "Windows.Foundation.IReference<f64>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 16
+     },
+     "name": "longitude",
+     "native": "Longitude",
+     "set": null,
+     "slot": {
+      "k": "nullable",
+      "of": {
+       "k": "float",
+       "t": "f64"
+      },
+      "t": "Windows.Foundation.IReference<f64>"
+     },
+     "type": "Windows.Foundation.IReference<f64>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 21
+     },
+     "name": "orientation",
+     "native": "Orientation",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Storage.FileProperties.PhotoOrientation"
+     },
+     "type": "Windows.Storage.FileProperties.PhotoOrientation"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 22
+     },
+     "name": "peopleNames",
+     "native": "PeopleNames",
+     "set": null,
+     "slot": {
+      "k": "list",
+      "of": {
+       "k": "string"
+      },
+      "t": "Windows.Foundation.Collections.IVectorView<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVectorView<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 6
+     },
+     "name": "rating",
+     "native": "Rating",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 7
+     },
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 13
+     },
+     "name": "title",
+     "native": "Title",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 14
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IImageProperties",
+      "slot": 11
+     },
+     "name": "width",
+     "native": "Width",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IVector<string>",
+    "Windows.Storage.FileProperties.PhotoOrientation"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.FileProperties.MusicProperties": {
+   "abstract": true,
+   "blocked": {
+    "RetrievePropertiesAsync/1": "collection-argument",
+    "SavePropertiesAsync/1": "collection-argument"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.FileProperties.IMusicProperties",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.FileProperties.MusicProperties",
+   "hidden": [],
+   "iid": "bc8aab62-66ec-419a-bc5d-ca65a4cb46da",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.fileproperties",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "savePropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemExtraProperties",
+      "native": "SavePropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "MusicProperties",
+   "namespace": "Windows.Storage.FileProperties",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 6
+     },
+     "name": "album",
+     "native": "Album",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 7
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 19
+     },
+     "name": "albumArtist",
+     "native": "AlbumArtist",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 20
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 8
+     },
+     "name": "artist",
+     "native": "Artist",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 9
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 18
+     },
+     "name": "bitrate",
+     "native": "Bitrate",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 21
+     },
+     "name": "composers",
+     "native": "Composers",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 22
+     },
+     "name": "conductors",
+     "native": "Conductors",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 17
+     },
+     "name": "duration",
+     "native": "Duration",
+     "set": null,
+     "slot": {
+      "k": "timespan"
+     },
+     "type": "Windows.Foundation.TimeSpan"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 10
+     },
+     "name": "genre",
+     "native": "Genre",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 25
+     },
+     "name": "producers",
+     "native": "Producers",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 26
+     },
+     "name": "publisher",
+     "native": "Publisher",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 27
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 15
+     },
+     "name": "rating",
+     "native": "Rating",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 16
+     },
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 23
+     },
+     "name": "subtitle",
+     "native": "Subtitle",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 24
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 13
+     },
+     "name": "title",
+     "native": "Title",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 14
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 11
+     },
+     "name": "trackNumber",
+     "native": "TrackNumber",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 12
+     },
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 28
+     },
+     "name": "writers",
+     "native": "Writers",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 29
+     },
+     "name": "year",
+     "native": "Year",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IMusicProperties",
+      "slot": 30
+     },
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IVector<string>"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.FileProperties.PhotoOrientation": {
+   "category": "enum"
+  },
+  "Windows.Storage.FileProperties.PropertyPrefetchOptions": {
+   "category": "flags"
+  },
+  "Windows.Storage.FileProperties.StorageItemContentProperties": {
+   "abstract": true,
+   "blocked": {
+    "RetrievePropertiesAsync/1": "collection-argument",
+    "SavePropertiesAsync/1": "collection-argument"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.FileProperties.IStorageItemContentProperties",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.FileProperties.StorageItemContentProperties",
+   "hidden": [],
+   "iid": "05294bad-bc38-48bf-85d7-770e0e2ae0ba",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.fileproperties",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "getDocumentPropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemContentProperties",
+      "native": "GetDocumentPropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "object",
+        "t": "Windows.Storage.FileProperties.DocumentProperties"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.DocumentProperties>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.DocumentProperties>",
+      "slot": 9
+     }
+    ],
+    "getImagePropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemContentProperties",
+      "native": "GetImagePropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "object",
+        "t": "Windows.Storage.FileProperties.ImageProperties"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.ImageProperties>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.ImageProperties>",
+      "slot": 8
+     }
+    ],
+    "getMusicPropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemContentProperties",
+      "native": "GetMusicPropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "object",
+        "t": "Windows.Storage.FileProperties.MusicProperties"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.MusicProperties>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.MusicProperties>",
+      "slot": 6
+     }
+    ],
+    "getVideoPropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemContentProperties",
+      "native": "GetVideoPropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "object",
+        "t": "Windows.Storage.FileProperties.VideoProperties"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.VideoProperties>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.VideoProperties>",
+      "slot": 7
+     }
+    ],
+    "savePropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemExtraProperties",
+      "native": "SavePropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "StorageItemContentProperties",
+   "namespace": "Windows.Storage.FileProperties",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.Storage.FileProperties.DocumentProperties",
+    "Windows.Storage.FileProperties.ImageProperties",
+    "Windows.Storage.FileProperties.MusicProperties",
+    "Windows.Storage.FileProperties.VideoProperties"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.FileProperties.StorageItemThumbnail": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.Streams.IRandomAccessStreamWithContentType",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.FileProperties.StorageItemThumbnail",
+   "hidden": [],
+   "iid": "cc254827-4b3d-438f-9232-10c76bc7e038",
+   "implements": [
+    "Windows.Storage.Streams.IInputStream",
+    "Windows.Storage.Streams.IOutputStream",
+    "Windows.Storage.Streams.IRandomAccessStream",
+    "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+   ],
+   "js_module": "svelters:winui/windows.storage.fileproperties",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "cloneStream": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "CloneStream",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IRandomAccessStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 12
+     }
+    ],
+    "close": [
+     {
+      "iface": "Windows.Foundation.IClosable",
+      "native": "Close",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ],
+    "flushAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "FlushAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "bool"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<bool>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<bool>",
+      "slot": 7
+     }
+    ],
+    "getInputStreamAt": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "GetInputStreamAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IInputStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IInputStream",
+      "slot": 8
+     }
+    ],
+    "getOutputStreamAt": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "GetOutputStreamAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IOutputStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IOutputStream",
+      "slot": 9
+     }
+    ],
+    "readAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IInputStream",
+      "native": "ReadAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       },
+       {
+        "name": "count",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "options",
+        "slot": {
+         "k": "flags",
+         "t": "Windows.Storage.Streams.InputStreamOptions"
+        },
+        "type": "Windows.Storage.Streams.InputStreamOptions"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Storage.Streams.IBuffer"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>",
+      "slot": 6
+     }
+    ],
+    "seek": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "Seek",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "writeAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "WriteAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "int",
+        "t": "u32"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "StorageItemThumbnail",
+   "namespace": "Windows.Storage.FileProperties",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 13
+     },
+     "name": "canRead",
+     "native": "CanRead",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 14
+     },
+     "name": "canWrite",
+     "native": "CanWrite",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IContentTypeProvider",
+      "slot": 6
+     },
+     "name": "contentType",
+     "native": "ContentType",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IThumbnailProperties",
+      "slot": 7
+     },
+     "name": "originalHeight",
+     "native": "OriginalHeight",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IThumbnailProperties",
+      "slot": 6
+     },
+     "name": "originalWidth",
+     "native": "OriginalWidth",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 10
+     },
+     "name": "position",
+     "native": "Position",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u64"
+     },
+     "type": "u64"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IThumbnailProperties",
+      "slot": 8
+     },
+     "name": "returnedSmallerCachedSize",
+     "native": "ReturnedSmallerCachedSize",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 6
+     },
+     "name": "size",
+     "native": "Size",
+     "set": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 7
+     },
+     "slot": {
+      "k": "int",
+      "t": "u64"
+     },
+     "type": "u64"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IThumbnailProperties",
+      "slot": 9
+     },
+     "name": "type",
+     "native": "Type",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Storage.FileProperties.ThumbnailType"
+     },
+     "type": "Windows.Storage.FileProperties.ThumbnailType"
+    }
+   ],
+   "refs": [
+    "Windows.Storage.FileProperties.ThumbnailType",
+    "Windows.Storage.Streams.IBuffer",
+    "Windows.Storage.Streams.IInputStream",
+    "Windows.Storage.Streams.IOutputStream",
+    "Windows.Storage.Streams.IRandomAccessStream",
+    "Windows.Storage.Streams.InputStreamOptions"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.FileProperties.ThumbnailMode": {
+   "category": "enum"
+  },
+  "Windows.Storage.FileProperties.ThumbnailOptions": {
+   "category": "flags"
+  },
+  "Windows.Storage.FileProperties.ThumbnailType": {
+   "category": "enum"
+  },
+  "Windows.Storage.FileProperties.VideoOrientation": {
+   "category": "enum"
+  },
+  "Windows.Storage.FileProperties.VideoProperties": {
+   "abstract": true,
+   "blocked": {
+    "RetrievePropertiesAsync/1": "collection-argument",
+    "SavePropertiesAsync/1": "collection-argument"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.FileProperties.IVideoProperties",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.FileProperties.VideoProperties",
+   "hidden": [],
+   "iid": "719ae507-68de-4db8-97de-49998c059f2f",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.fileproperties",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "savePropertiesAsync": [
+     {
+      "iface": "Windows.Storage.FileProperties.IStorageItemExtraProperties",
+      "native": "SavePropertiesAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 8
+     }
+    ]
+   },
+   "name": "VideoProperties",
+   "namespace": "Windows.Storage.FileProperties",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 24
+     },
+     "name": "bitrate",
+     "native": "Bitrate",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 25
+     },
+     "name": "directors",
+     "native": "Directors",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 11
+     },
+     "name": "duration",
+     "native": "Duration",
+     "set": null,
+     "slot": {
+      "k": "timespan"
+     },
+     "type": "Windows.Foundation.TimeSpan"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 10
+     },
+     "name": "height",
+     "native": "Height",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 8
+     },
+     "name": "keywords",
+     "native": "Keywords",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 12
+     },
+     "name": "latitude",
+     "native": "Latitude",
+     "set": null,
+     "slot": {
+      "k": "nullable",
+      "of": {
+       "k": "float",
+       "t": "f64"
+      },
+      "t": "Windows.Foundation.IReference<f64>"
+     },
+     "type": "Windows.Foundation.IReference<f64>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 13
+     },
+     "name": "longitude",
+     "native": "Longitude",
+     "set": null,
+     "slot": {
+      "k": "nullable",
+      "of": {
+       "k": "float",
+       "t": "f64"
+      },
+      "t": "Windows.Foundation.IReference<f64>"
+     },
+     "type": "Windows.Foundation.IReference<f64>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 26
+     },
+     "name": "orientation",
+     "native": "Orientation",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Storage.FileProperties.VideoOrientation"
+     },
+     "type": "Windows.Storage.FileProperties.VideoOrientation"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 18
+     },
+     "name": "producers",
+     "native": "Producers",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 19
+     },
+     "name": "publisher",
+     "native": "Publisher",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 20
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 6
+     },
+     "name": "rating",
+     "native": "Rating",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 7
+     },
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 16
+     },
+     "name": "subtitle",
+     "native": "Subtitle",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 17
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 14
+     },
+     "name": "title",
+     "native": "Title",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 15
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 9
+     },
+     "name": "width",
+     "native": "Width",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 21
+     },
+     "name": "writers",
+     "native": "Writers",
+     "set": null,
+     "slot": {
+      "generic": true,
+      "k": "object",
+      "t": "Windows.Foundation.Collections.IVector<string>"
+     },
+     "type": "Windows.Foundation.Collections.IVector<string>"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 22
+     },
+     "name": "year",
+     "native": "Year",
+     "set": {
+      "iface": "Windows.Storage.FileProperties.IVideoProperties",
+      "slot": 23
+     },
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IVector<string>",
+    "Windows.Storage.FileProperties.VideoOrientation"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  }
+ }
+}

@@ -15,6 +15,7 @@
 pub mod harness;
 pub mod parse;
 pub mod table;
+pub mod types;
 
 #[path = "generated/names.rs"]
 pub mod names;

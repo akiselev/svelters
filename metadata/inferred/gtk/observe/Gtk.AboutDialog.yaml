@@ -11,10 +11,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::artists (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:AboutDialog
-    check: connect
+    check: change
   confidence: 0.9
 - prop: authors
   class: exact
@@ -25,10 +25,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::authors (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:AboutDialog
-    check: connect
+    check: change
   confidence: 0.9
 - prop: comments
   class: exact
@@ -69,10 +69,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::documenters (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:AboutDialog
-    check: connect
+    check: change
   confidence: 0.9
 - prop: license
   class: exact
@@ -118,7 +118,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:AboutDialog
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::Paintable::new_empty(1, 1)
   confidence: 0.9
 - prop: logo-icon-name
   class: exact

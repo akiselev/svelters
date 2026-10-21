@@ -14,5 +14,8 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollbar:adjustment)'
   verify:
     'on': Gtk:Scrollbar
-    check: connect
+    check: change
+    values:
+    - gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)
+    setup: o.downcast_ref::<gtk::Scrollbar>().unwrap().adjustment().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);
   confidence: 0.95

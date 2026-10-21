@@ -45,7 +45,7 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gdk.CicpParams:range)'
   verify:
     'on': Gdk:CicpParams
-    check: connect
+    check: change
   confidence: 0.95
 - prop: transfer-function
   class: exact

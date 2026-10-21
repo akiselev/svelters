@@ -16,10 +16,12 @@
       "ref": "O3: BINDABLE (QUntypedBindable::addNotifier)"
      }
     ],
-    "record_fp": "993f264bf5b6eff4",
+    "record_fp": "35fd8dee558f118f",
     "verify": {
-     "check": "connect",
-     "on": "QtCore:QPauseAnimation"
+     "check": "cross",
+     "native": "o->setCurrentTime(o->currentLoop() == 0 ? 15 : 5)",
+     "on": "QtCore:QPauseAnimation",
+     "setup": "o->setDuration(10); o->setLoopCount(3)"
     },
     "via": [
      {
@@ -42,10 +44,12 @@
       "ref": "O3: BINDABLE (QUntypedBindable::addNotifier)"
      }
     ],
-    "record_fp": "1b0635ba0a98c9b8",
+    "record_fp": "375ee53a540eadec",
     "verify": {
-     "check": "connect",
-     "on": "QtCore:QParallelAnimationGroup"
+     "check": "cross",
+     "native": "o->setCurrentTime(o->currentTime() == 50 ? 20 : 50)",
+     "on": "QtCore:QParallelAnimationGroup",
+     "setup": "o->addAnimation(new QPauseAnimation(100))"
     },
     "via": [
      {
@@ -73,9 +77,10 @@
       "ref": "observe probe Qt 6.11.3: announced every observed change (set:QtCore:QAbstractAnimation:direction)"
      }
     ],
-    "record_fp": "1b4c4845b6d1ccad",
+    "record_fp": "e690aec12b75ed3d",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setDirection(o->direction() == QAbstractAnimation::Forward ? QAbstractAnimation::Backward : QAbstractAnimation::Forward)",
      "on": "QtCore:QParallelAnimationGroup"
     },
     "via": [
@@ -116,9 +121,10 @@
       "ref": "observe probe Qt 6.11.3: announced every observed change (set:QtCore:QAbstractAnimation:loopCount)"
      }
     ],
-    "record_fp": "1ba525b3ff52ce1f",
+    "record_fp": "16bba463ad2c0fe6",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setLoopCount(o->loopCount() + 1)",
      "on": "QtCore:QParallelAnimationGroup"
     },
     "via": [
@@ -142,10 +148,12 @@
       "ref": "O3: BINDABLE (QUntypedBindable::addNotifier)"
      }
     ],
-    "record_fp": "ab07338462a81da6",
+    "record_fp": "13716523079b9fb4",
     "verify": {
-     "check": "connect",
-     "on": "QtCore:QPauseAnimation"
+     "check": "cross",
+     "native": "if (o->state() == QAbstractAnimation::Running) o->stop(); else o->start()",
+     "on": "QtCore:QPauseAnimation",
+     "setup": "o->setDuration(100000)"
     },
     "via": [
      {
@@ -174,9 +182,10 @@
       "ref": "O3: BINDABLE (QUntypedBindable::addNotifier)"
      }
     ],
-    "record_fp": "a117cdf45bd091e8",
+    "record_fp": "e5483852e367cf20",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setSourceModel(new QStandardItemModel(o))",
      "on": "QtCore:QSortFilterProxyModel"
     },
     "via": [
@@ -202,10 +211,12 @@
       "ref": "O3: NOTIFY selectionChanged"
      }
     ],
-    "record_fp": "10cdffc306ef9a52",
+    "record_fp": "5650a935b5e0af11",
     "verify": {
-     "check": "connect",
-     "on": "QtCore:QItemSelectionModel"
+     "check": "cross",
+     "native": "o->select(o->model()->index(o->isSelected(o->model()->index(0, 0)) ? 1 : 0, 0), QItemSelectionModel::ClearAndSelect)",
+     "on": "QtCore:QItemSelectionModel",
+     "setup": "o->setModel(new QStandardItemModel(2, 1, o))"
     },
     "via": [
      {
@@ -291,10 +302,12 @@
       "ref": "O3: BINDABLE (QUntypedBindable::addNotifier)"
      }
     ],
-    "record_fp": "d5b5197c96fea006",
+    "record_fp": "466ae15e27adb774",
     "verify": {
-     "check": "connect",
-     "on": "QtCore:QSequentialAnimationGroup"
+     "check": "cross",
+     "native": "o->setCurrentTime(o->currentTime() < 100 ? 150 : 50)",
+     "on": "QtCore:QSequentialAnimationGroup",
+     "setup": "o->addPause(100); o->addPause(100)"
     },
     "via": [
      {
@@ -445,9 +458,10 @@
       "ref": "observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterCaseSensitivity)"
      }
     ],
-    "record_fp": "8d9af148d600041e",
+    "record_fp": "55cc5e581d6f8394",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setFilterRegularExpression(QRegularExpression(o->filterRegularExpression().pattern() + \"x\"))",
      "on": "QtCore:QSortFilterProxyModel"
     },
     "via": [
@@ -768,10 +782,12 @@
       "ref": "O3: NOTIFY valueChanged"
      }
     ],
-    "record_fp": "bbd1a451f5162fb7",
+    "record_fp": "7aece37183fe1711",
     "verify": {
-     "check": "connect",
-     "on": "QtCore:QVariantAnimation"
+     "check": "cross",
+     "native": "o->setCurrentTime(o->currentTime() == 50 ? 20 : 50)",
+     "on": "QtCore:QVariantAnimation",
+     "setup": "o->setStartValue(0); o->setEndValue(100); o->setDuration(100)"
     },
     "via": [
      {
@@ -817,9 +833,10 @@
       "ref": "O3: BINDABLE (QUntypedBindable::addNotifier)"
      }
     ],
-    "record_fp": "5f4118f7fa2ccb36",
+    "record_fp": "ece5b8d731b747cc",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setEasingCurve(o->easingCurve().type() == QEasingCurve::Linear ? QEasingCurve::InQuad : QEasingCurve::Linear)",
      "on": "QtCore:QVariantAnimation"
     },
     "via": [
@@ -1117,9 +1134,10 @@
       "ref": "O3: NOTIFY regularExpressionChanged"
      }
     ],
-    "record_fp": "cd21cc0e47a01747",
+    "record_fp": "1cd8199d324aa5dc",
     "verify": {
-     "check": "connect",
+     "check": "cross",
+     "native": "o->setRegularExpression(QRegularExpression(o->regularExpression().pattern() + \"x\"))",
      "on": "QtGui:QRegularExpressionValidator"
     },
     "via": [

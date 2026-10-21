@@ -13,6 +13,11 @@ observe:
     ref: 'O1: GObject property, notify::application-id'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gio:Application
+    check: cross
+    rust: let a = o.downcast_ref::<gtk::gio::Application>().unwrap(); let n = if a.application_id().as_deref() == Some("org.svelters.OvA") { "org.svelters.OvB"
+      } else { "org.svelters.OvA" }; a.set_application_id(Some(n));
   confidence: 0.9
 - prop: flags
   class: exact
@@ -24,7 +29,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::flags'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gio:Application
+    check: change
   confidence: 0.9
 - prop: inactivity-timeout
   class: exact
@@ -37,6 +45,9 @@ observe:
     ref: 'O1: GObject property, notify::inactivity-timeout'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gio:Application
+    check: change
   confidence: 0.9
 - prop: resource-base-path
   class: exact
@@ -49,6 +60,11 @@ observe:
     ref: 'O1: GObject property, notify::resource-base-path'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gio:Application
+    check: cross
+    rust: let a = o.downcast_ref::<gtk::gio::Application>().unwrap(); let n = if a.resource_base_path().as_deref() == Some("/org/svelters/a")
+      { "/org/svelters/b" } else { "/org/svelters/a" }; a.set_resource_base_path(Some(n));
   confidence: 0.9
 - prop: version
   class: exact
@@ -60,4 +76,7 @@ observe:
     ref: 'O1: GObject property, notify::version (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gio:Application
+    check: change
   confidence: 0.9

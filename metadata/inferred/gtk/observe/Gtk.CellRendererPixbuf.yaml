@@ -15,7 +15,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:CellRendererPixbuf
-    check: connect
+    check: change
+    values:
+    - gtk::gio::ThemedIcon::new("ov1-a")
+    - gtk::gio::ThemedIcon::new("ov1-b")
   confidence: 0.9
 - prop: icon-name
   class: exact
@@ -60,7 +63,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:CellRendererPixbuf
-    check: connect
+    check: change
+    values:
+    - gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 1, 1).unwrap()
   confidence: 0.9
 - prop: pixbuf-expander-open
   class: exact
@@ -75,7 +80,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:CellRendererPixbuf
-    check: connect
+    check: change
+    values:
+    - gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 1, 1).unwrap()
   confidence: 0.9
 - prop: texture
   class: exact
@@ -90,5 +97,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:CellRendererPixbuf
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::MemoryTexture::new(1, 1, gtk::gdk::MemoryFormat::R8g8b8a8, &gtk::glib::Bytes::from_static(&[0, 0, 0, 255]), 4)
   confidence: 0.9

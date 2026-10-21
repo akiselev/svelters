@@ -1,0 +1,17 @@
+[package]
+name = "egui-exports-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Standalone: not a member of the svelters workspace.
+[workspace]
+
+[dependencies]
+rquickjs = { version = "=0.14.0", default-features = false, features = ["std", "loader", "macro", "array-buffer"] }
+svelters-abi = { path = "../../../../crates/svelters-abi" }
+svelters-host = { path = "../../../../crates/svelters-host" }
+rayon = "1"
+
+[profile.release]
+debug = false

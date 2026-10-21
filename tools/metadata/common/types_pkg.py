@@ -1,6 +1,7 @@
-"""`packages/types/package.json`, shared by the per-toolkit type generators (gtk/gen_types.py, qt/gen_types_js.py).
+"""`packages/types/package.json`, shared by the per-toolkit type generators (gtk/gen_types.py, qt/gen_types_js.py,
+winui/gen_types_winui.py).
 
-Each generator owns the export keys of its toolkit (`./gtk/*` + `./manifest`, `./qt/*` + `./manifest-qt`) and
+Each generator owns the export keys of its toolkit (`./gtk/*` + `./manifest`, `./qt/*` + `./manifest-qt`, `./winui/*` + `./manifest-winui`) and
 keeps the others' keys, so the file is the same whichever generator ran last. Key order is canonical: the fixed
 head keys, then the `./gtk/*` group, then `./qt/*`, then anything else.
 """
@@ -9,8 +10,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-HEAD = ["./core", "./vite", "./manifest", "./manifest-qt"]
-GROUPS = ["./gtk/", "./qt/"]
+HEAD = ["./core", "./vite", "./manifest", "./manifest-qt", "./manifest-appkit", "./manifest-winui"]
+GROUPS = ["./gtk/", "./qt/", "./appkit/", "./winui/"]
 DESCRIPTION = "Native object model and generated non-UI types (svelters:gtk/gio, svelters:qt/core, ...) for Svelters apps"
 
 

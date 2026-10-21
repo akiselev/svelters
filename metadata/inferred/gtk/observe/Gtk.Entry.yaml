@@ -29,7 +29,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::pango::AttrList::from_string("0 1 weight bold").unwrap()
+    - gtk::pango::AttrList::from_string("0 2 style italic").unwrap()
   confidence: 0.9
 - prop: buffer
   class: exact
@@ -43,7 +46,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:buffer)'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::EntryBuffer::new(None::<&str>)
   confidence: 0.95
 - prop: completion
   class: exact
@@ -57,7 +62,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::EntryCompletion::new()
   confidence: 0.9
 - prop: enable-emoji-completion
   class: exact
@@ -86,7 +93,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:extra-menu)'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::gio::Menu::new()
   confidence: 0.95
 - prop: has-frame
   class: exact
@@ -127,10 +136,10 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::input-hints (EXPLICIT_NOTIFY)'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
   confidence: 0.9
 - prop: input-purpose
   class: exact
@@ -283,7 +292,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::gio::ThemedIcon::new("ov1-a")
+    - gtk::gio::ThemedIcon::new("ov1-b")
   confidence: 0.9
 - prop: primary-icon-name
   class: exact
@@ -312,7 +324,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::Paintable::new_empty(1, 1)
   confidence: 0.9
 - prop: primary-icon-sensitive
   class: exact
@@ -442,7 +456,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::gio::ThemedIcon::new("ov1-a")
+    - gtk::gio::ThemedIcon::new("ov1-b")
   confidence: 0.9
 - prop: secondary-icon-name
   class: exact
@@ -473,7 +490,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::Paintable::new_empty(1, 1)
   confidence: 0.9
 - prop: secondary-icon-sensitive
   class: exact
@@ -573,7 +592,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Entry
-    check: connect
+    check: change
+    values:
+    - gtk::pango::TabArray::new(1, true)
+    - gtk::pango::TabArray::new(2, true)
   confidence: 0.9
 - prop: text-length
   class: none

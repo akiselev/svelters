@@ -1,0 +1,2235 @@
+{
+ "namespace": "Windows.Storage.Streams",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.Storage.Streams.Buffer": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.Storage.Streams.IBufferFactory",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Muse": [
+     [
+      100794368
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.Streams.IBufferStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IBuffer",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.Buffer",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.ByteOrder": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "LittleEndian",
+     0
+    ],
+    [
+     "BigEndian",
+     1
+    ]
+   ],
+   "name": "Windows.Storage.Streams.ByteOrder",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Streams.DataReader": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.Storage.Streams.IDataReaderFactory",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.Streams.IDataReaderStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IDataReader",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.DataReader",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.DataReaderLoadOperation": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.IAsyncOperation<u32>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IAsyncInfo",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.DataReaderLoadOperation",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.DataWriter": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.Streams.IDataWriterFactory",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IDataWriter",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.DataWriter",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.DataWriterStoreOperation": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.IAsyncOperation<u32>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IAsyncInfo",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.DataWriterStoreOperation",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.FileInputStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IInputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.FileInputStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.FileOpenDisposition": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "OpenExisting",
+     0
+    ],
+    [
+     "OpenAlways",
+     1
+    ],
+    [
+     "CreateNew",
+     2
+    ],
+    [
+     "CreateAlways",
+     3
+    ],
+    [
+     "TruncateExisting",
+     4
+    ]
+   ],
+   "name": "Windows.Storage.Streams.FileOpenDisposition",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.Streams.FileOutputStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IOutputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.FileOutputStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.FileRandomAccessStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.Streams.IFileRandomAccessStreamStatics",
+      327680,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IRandomAccessStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IOutputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IInputStream",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.FileRandomAccessStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.IBuffer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "905a0fe0-bc53-11df-8c49-001e4fc686da",
+   "methods": [
+    {
+     "name": "get_Capacity",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "get_Length",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "put_Length",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Streams.IBuffer",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IBufferFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.Buffer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "71af914d-c10f-484b-bc50-14bc623b3a27",
+   "methods": [
+    {
+     "name": "Create",
+     "params": [
+      {
+       "name": "capacity",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.Buffer"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IBufferFactory",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IBufferStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.Buffer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e901e65b-d716-475a-a90a-af7229b1e741",
+   "methods": [
+    {
+     "name": "CreateCopyFromMemoryBuffer",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "Windows.Foundation.IMemoryBuffer"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.Buffer"
+    },
+    {
+     "name": "CreateMemoryBufferOverIBuffer",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      }
+     ],
+     "ret": "Windows.Foundation.MemoryBuffer"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IBufferStatics",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IContentTypeProvider": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "97d098a5-3b99-4de9-88a5-e11d2f50c795",
+   "methods": [
+    {
+     "name": "get_ContentType",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Streams.IContentTypeProvider",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IDataReader": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e2b50029-b4c1-4314-a4b8-fb813a2f275e",
+   "methods": [
+    {
+     "name": "get_UnconsumedBufferLength",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "get_UnicodeEncoding",
+     "params": [],
+     "ret": "Windows.Storage.Streams.UnicodeEncoding",
+     "special": true
+    },
+    {
+     "name": "put_UnicodeEncoding",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ByteOrder",
+     "params": [],
+     "ret": "Windows.Storage.Streams.ByteOrder",
+     "special": true
+    },
+    {
+     "name": "put_ByteOrder",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.ByteOrder"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_InputStreamOptions",
+     "params": [],
+     "ret": "Windows.Storage.Streams.InputStreamOptions",
+     "special": true
+    },
+    {
+     "name": "put_InputStreamOptions",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.InputStreamOptions"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "ReadByte",
+     "params": [],
+     "ret": "u8"
+    },
+    {
+     "name": "ReadBytes",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "u8[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "ReadBuffer",
+     "params": [
+      {
+       "name": "length",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.IBuffer"
+    },
+    {
+     "name": "ReadBoolean",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "ReadGuid",
+     "params": [],
+     "ret": "System.Guid"
+    },
+    {
+     "name": "ReadInt16",
+     "params": [],
+     "ret": "i16"
+    },
+    {
+     "name": "ReadInt32",
+     "params": [],
+     "ret": "i32"
+    },
+    {
+     "name": "ReadInt64",
+     "params": [],
+     "ret": "i64"
+    },
+    {
+     "name": "ReadUInt16",
+     "params": [],
+     "ret": "u16"
+    },
+    {
+     "name": "ReadUInt32",
+     "params": [],
+     "ret": "u32"
+    },
+    {
+     "name": "ReadUInt64",
+     "params": [],
+     "ret": "u64"
+    },
+    {
+     "name": "ReadSingle",
+     "params": [],
+     "ret": "f32"
+    },
+    {
+     "name": "ReadDouble",
+     "params": [],
+     "ret": "f64"
+    },
+    {
+     "name": "ReadString",
+     "params": [
+      {
+       "name": "codeUnitCount",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "string"
+    },
+    {
+     "name": "ReadDateTime",
+     "params": [],
+     "ret": "Windows.Foundation.DateTime"
+    },
+    {
+     "name": "ReadTimeSpan",
+     "params": [],
+     "ret": "Windows.Foundation.TimeSpan"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "LoadAsync",
+     "params": [
+      {
+       "name": "count",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.DataReaderLoadOperation"
+    },
+    {
+     "name": "DetachBuffer",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IBuffer"
+    },
+    {
+     "name": "DetachStream",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IInputStream"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IDataReader",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IDataReaderFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.DataReader"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "d7527847-57da-4e15-914c-06806699a098",
+   "methods": [
+    {
+     "name": "CreateDataReader",
+     "params": [
+      {
+       "name": "inputStream",
+       "out": false,
+       "type": "Windows.Storage.Streams.IInputStream"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.DataReader"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IDataReaderFactory",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IDataReaderStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.DataReader"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "11fcbfc8-f93a-471b-b121-f379e349313c",
+   "methods": [
+    {
+     "name": "FromBuffer",
+     "params": [
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.DataReader"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IDataReaderStatics",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IDataWriter": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "64b89265-d341-4922-b38a-dd4af8808c4e",
+   "methods": [
+    {
+     "name": "get_UnstoredBufferLength",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "get_UnicodeEncoding",
+     "params": [],
+     "ret": "Windows.Storage.Streams.UnicodeEncoding",
+     "special": true
+    },
+    {
+     "name": "put_UnicodeEncoding",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ByteOrder",
+     "params": [],
+     "ret": "Windows.Storage.Streams.ByteOrder",
+     "special": true
+    },
+    {
+     "name": "put_ByteOrder",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Storage.Streams.ByteOrder"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "WriteByte",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u8"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteBytes",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u8[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteBuffer"
+       ]
+      ]
+     },
+     "name": "WriteBuffer",
+     "params": [
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteBufferRange"
+       ]
+      ]
+     },
+     "name": "WriteBuffer",
+     "params": [
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      },
+      {
+       "name": "start",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "count",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteBoolean",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteGuid",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "System.Guid"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteInt16",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i16"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteInt32",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteInt64",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i64"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteUInt16",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u16"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteUInt32",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteUInt64",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u64"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteSingle",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f32"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteDouble",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteDateTime",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.DateTime"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteTimeSpan",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.TimeSpan"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "WriteString",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "u32"
+    },
+    {
+     "name": "MeasureString",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "u32"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "StoreAsync",
+     "params": [],
+     "ret": "Windows.Storage.Streams.DataWriterStoreOperation"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "FlushAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<bool>"
+    },
+    {
+     "name": "DetachBuffer",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IBuffer"
+    },
+    {
+     "name": "DetachStream",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IOutputStream"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IDataWriter",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IDataWriterFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.DataWriter"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "338c67c2-8b84-4c2b-9c50-7b8767847a1f",
+   "methods": [
+    {
+     "name": "CreateDataWriter",
+     "params": [
+      {
+       "name": "outputStream",
+       "out": false,
+       "type": "Windows.Storage.Streams.IOutputStream"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.DataWriter"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IDataWriterFactory",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IFileRandomAccessStreamStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.FileRandomAccessStream"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "73550107-3b57-4b5d-8345-554d2fc621f0",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenAsync",
+     "params": [
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "accessMode",
+       "out": false,
+       "type": "Windows.Storage.FileAccessMode"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStream>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenWithOptionsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenAsync",
+     "params": [
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "accessMode",
+       "out": false,
+       "type": "Windows.Storage.FileAccessMode"
+      },
+      {
+       "name": "sharingOptions",
+       "out": false,
+       "type": "Windows.Storage.StorageOpenOptions"
+      },
+      {
+       "name": "openDisposition",
+       "out": false,
+       "type": "Windows.Storage.Streams.FileOpenDisposition"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStream>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenTransactedWriteAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenTransactedWriteAsync",
+     "params": [
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageStreamTransaction>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenTransactedWriteWithOptionsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenTransactedWriteAsync",
+     "params": [
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "openOptions",
+       "out": false,
+       "type": "Windows.Storage.StorageOpenOptions"
+      },
+      {
+       "name": "openDisposition",
+       "out": false,
+       "type": "Windows.Storage.Streams.FileOpenDisposition"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageStreamTransaction>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenForUserAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "accessMode",
+       "out": false,
+       "type": "Windows.Storage.FileAccessMode"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStream>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenForUserWithOptionsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "accessMode",
+       "out": false,
+       "type": "Windows.Storage.FileAccessMode"
+      },
+      {
+       "name": "sharingOptions",
+       "out": false,
+       "type": "Windows.Storage.StorageOpenOptions"
+      },
+      {
+       "name": "openDisposition",
+       "out": false,
+       "type": "Windows.Storage.Streams.FileOpenDisposition"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStream>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenTransactedWriteForUserAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenTransactedWriteForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageStreamTransaction>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenTransactedWriteForUserWithOptionsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenTransactedWriteForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "filePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "openOptions",
+       "out": false,
+       "type": "Windows.Storage.StorageOpenOptions"
+      },
+      {
+       "name": "openDisposition",
+       "out": false,
+       "type": "Windows.Storage.Streams.FileOpenDisposition"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageStreamTransaction>"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IFileRandomAccessStreamStatics",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IInputStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "905a0fe2-bc53-11df-8c49-001e4fc686da",
+   "methods": [
+    {
+     "name": "ReadAsync",
+     "params": [
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      },
+      {
+       "name": "count",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.Streams.InputStreamOptions"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IInputStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable"
+   ]
+  },
+  "Windows.Storage.Streams.IInputStreamReference": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "43929d18-5ec9-4b5a-919c-4205b0c804b6",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenSequentialReadAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IInputStream>"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IInputStreamReference",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IOutputStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "905a0fe6-bc53-11df-8c49-001e4fc686da",
+   "methods": [
+    {
+     "name": "WriteAsync",
+     "params": [
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>"
+    },
+    {
+     "name": "FlushAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<bool>"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IOutputStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable"
+   ]
+  },
+  "Windows.Storage.Streams.IPropertySetSerializer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      851968
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "6e8ebf1c-ef3d-4376-b20e-5be638aeac77",
+   "methods": [
+    {
+     "name": "Serialize",
+     "params": [
+      {
+       "name": "propertySet",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IPropertySet"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.IBuffer"
+    },
+    {
+     "name": "Deserialize",
+     "params": [
+      {
+       "name": "propertySet",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IPropertySet"
+      },
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IPropertySetSerializer",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IRandomAccessStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "905a0fe1-bc53-11df-8c49-001e4fc686da",
+   "methods": [
+    {
+     "name": "get_Size",
+     "params": [],
+     "ret": "u64",
+     "special": true
+    },
+    {
+     "name": "put_Size",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "GetInputStreamAt",
+     "params": [
+      {
+       "name": "position",
+       "out": false,
+       "type": "u64"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.IInputStream"
+    },
+    {
+     "name": "GetOutputStreamAt",
+     "params": [
+      {
+       "name": "position",
+       "out": false,
+       "type": "u64"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.IOutputStream"
+    },
+    {
+     "name": "get_Position",
+     "params": [],
+     "ret": "u64",
+     "special": true
+    },
+    {
+     "name": "Seek",
+     "params": [
+      {
+       "name": "position",
+       "out": false,
+       "type": "u64"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "CloneStream",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IRandomAccessStream"
+    },
+    {
+     "name": "get_CanRead",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_CanWrite",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.Streams.IRandomAccessStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable",
+    "Windows.Storage.Streams.IInputStream",
+    "Windows.Storage.Streams.IOutputStream"
+   ]
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamReference": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "33ee3134-1dd6-4e3a-8067-d1c162e8642b",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenReadAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStreamWithContentType>"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IRandomAccessStreamReference",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamReferenceStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.RandomAccessStreamReference"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "857309dc-3fbf-4e7d-986f-ef3b1a07a964",
+   "methods": [
+    {
+     "name": "CreateFromFile",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.RandomAccessStreamReference"
+    },
+    {
+     "name": "CreateFromUri",
+     "params": [
+      {
+       "name": "uri",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.RandomAccessStreamReference"
+    },
+    {
+     "name": "CreateFromStream",
+     "params": [
+      {
+       "name": "stream",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStream"
+      }
+     ],
+     "ret": "Windows.Storage.Streams.RandomAccessStreamReference"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IRandomAccessStreamReferenceStatics",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.Streams.RandomAccessStream"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "524cedcf-6e29-4ce5-9573-6b753db66c3a",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CopyAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CopyAsync",
+     "params": [
+      {
+       "name": "source",
+       "out": false,
+       "type": "Windows.Storage.Streams.IInputStream"
+      },
+      {
+       "name": "destination",
+       "out": false,
+       "type": "Windows.Storage.Streams.IOutputStream"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperationWithProgress<u64, u64>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CopySizeAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CopyAsync",
+     "params": [
+      {
+       "name": "source",
+       "out": false,
+       "type": "Windows.Storage.Streams.IInputStream"
+      },
+      {
+       "name": "destination",
+       "out": false,
+       "type": "Windows.Storage.Streams.IOutputStream"
+      },
+      {
+       "name": "bytesToCopy",
+       "out": false,
+       "type": "u64"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperationWithProgress<u64, u64>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CopyAndCloseAsync",
+     "params": [
+      {
+       "name": "source",
+       "out": false,
+       "type": "Windows.Storage.Streams.IInputStream"
+      },
+      {
+       "name": "destination",
+       "out": false,
+       "type": "Windows.Storage.Streams.IOutputStream"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperationWithProgress<u64, u64>"
+    }
+   ],
+   "name": "Windows.Storage.Streams.IRandomAccessStreamStatics",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamWithContentType": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cc254827-4b3d-438f-9232-10c76bc7e038",
+   "methods": [],
+   "name": "Windows.Storage.Streams.IRandomAccessStreamWithContentType",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.Streams.IRandomAccessStream",
+    "Windows.Foundation.IClosable",
+    "Windows.Storage.Streams.IInputStream",
+    "Windows.Storage.Streams.IOutputStream",
+    "Windows.Storage.Streams.IContentTypeProvider"
+   ]
+  },
+  "Windows.Storage.Streams.InMemoryRandomAccessStream": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Muse": [
+     [
+      100859904
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IRandomAccessStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IOutputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IInputStream",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.InMemoryRandomAccessStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.InputStreamOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Flags": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Partial",
+     1
+    ],
+    [
+     "ReadAhead",
+     2
+    ]
+   ],
+   "name": "Windows.Storage.Streams.InputStreamOptions",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Windows.Storage.Streams.InputStreamOverStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IInputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.InputStreamOverStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.OutputStreamOverStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IOutputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.OutputStreamOverStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.RandomAccessStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Muse": [
+     [
+      100794368
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.Streams.IRandomAccessStreamStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Storage.Streams.RandomAccessStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.RandomAccessStreamOverStream": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Muse": [
+     [
+      100859904
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IRandomAccessStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IOutputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IInputStream",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.RandomAccessStreamOverStream",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.RandomAccessStreamReference": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Muse": [
+     [
+      100794368
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.Streams.IRandomAccessStreamReferenceStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IRandomAccessStreamReference",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.Streams.RandomAccessStreamReference",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.Streams.UnicodeEncoding": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Utf8",
+     0
+    ],
+    [
+     "Utf16LE",
+     1
+    ],
+    [
+     "Utf16BE",
+     2
+    ]
+   ],
+   "name": "Windows.Storage.Streams.UnicodeEncoding",
+   "namespace": "Windows.Storage.Streams",
+   "origin": "winmd",
+   "underlying": "i32"
+  }
+ }
+}

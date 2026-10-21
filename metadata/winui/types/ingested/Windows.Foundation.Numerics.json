@@ -1,0 +1,299 @@
+{
+ "namespace": "Windows.Foundation.Numerics",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.Foundation.Numerics.Matrix3x2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "M11",
+     "type": "f32"
+    },
+    {
+     "name": "M12",
+     "type": "f32"
+    },
+    {
+     "name": "M21",
+     "type": "f32"
+    },
+    {
+     "name": "M22",
+     "type": "f32"
+    },
+    {
+     "name": "M31",
+     "type": "f32"
+    },
+    {
+     "name": "M32",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Matrix3x2",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Numerics.Matrix4x4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "M11",
+     "type": "f32"
+    },
+    {
+     "name": "M12",
+     "type": "f32"
+    },
+    {
+     "name": "M13",
+     "type": "f32"
+    },
+    {
+     "name": "M14",
+     "type": "f32"
+    },
+    {
+     "name": "M21",
+     "type": "f32"
+    },
+    {
+     "name": "M22",
+     "type": "f32"
+    },
+    {
+     "name": "M23",
+     "type": "f32"
+    },
+    {
+     "name": "M24",
+     "type": "f32"
+    },
+    {
+     "name": "M31",
+     "type": "f32"
+    },
+    {
+     "name": "M32",
+     "type": "f32"
+    },
+    {
+     "name": "M33",
+     "type": "f32"
+    },
+    {
+     "name": "M34",
+     "type": "f32"
+    },
+    {
+     "name": "M41",
+     "type": "f32"
+    },
+    {
+     "name": "M42",
+     "type": "f32"
+    },
+    {
+     "name": "M43",
+     "type": "f32"
+    },
+    {
+     "name": "M44",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Matrix4x4",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Numerics.Plane": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Normal",
+     "type": "Windows.Foundation.Numerics.Vector3"
+    },
+    {
+     "name": "D",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Plane",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Numerics.Quaternion": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "X",
+     "type": "f32"
+    },
+    {
+     "name": "Y",
+     "type": "f32"
+    },
+    {
+     "name": "Z",
+     "type": "f32"
+    },
+    {
+     "name": "W",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Quaternion",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Numerics.Rational": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      393216
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Numerator",
+     "type": "u32"
+    },
+    {
+     "name": "Denominator",
+     "type": "u32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Rational",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Numerics.Vector2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "X",
+     "type": "f32"
+    },
+    {
+     "name": "Y",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Vector2",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Numerics.Vector3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "X",
+     "type": "f32"
+    },
+    {
+     "name": "Y",
+     "type": "f32"
+    },
+    {
+     "name": "Z",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Vector3",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Numerics.Vector4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "X",
+     "type": "f32"
+    },
+    {
+     "name": "Y",
+     "type": "f32"
+    },
+    {
+     "name": "Z",
+     "type": "f32"
+    },
+    {
+     "name": "W",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Numerics.Vector4",
+   "namespace": "Windows.Foundation.Numerics",
+   "origin": "winmd"
+  }
+ }
+}

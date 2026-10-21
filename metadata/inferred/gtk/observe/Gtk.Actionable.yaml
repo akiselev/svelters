@@ -27,8 +27,8 @@ observe:
   - origin: runtime
     ref: 'O1: GObject property, notify::action-target'
   - origin: rule
-    ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
+    ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:Button
-    check: connect
+    check: change
   confidence: 0.9

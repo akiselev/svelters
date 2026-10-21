@@ -517,6 +517,60 @@ added to the header. Conventions a host or test may rely on (`plans/milestones/N
 - **Async.** A `QFuture<T>` result completes the host's one-shot callback (`SVL_M_ASYNC`); no bound Qt 6.11
   member returns one yet, so only the adapter exists (tested through a test hook).
 
+### AppKit non-GUI types (N4, no ABI change)
+
+The AppKit backend now implements the v2.5 members (`construct`, `call_static`, `describe(SVL_KIND)`) and
+`cancel`; nothing is added to the header (`plans/milestones/N4-appkit-types.md` has the design).
+
+- **Kinds.** Any loaded Objective-C class is a kind named by its class (`NSURL`, `NSPasteboard`), ids from
+  `0x10000`, registered on first use; element tags resolve first. An object's kind is the nearest class of the
+  bound scope (`metadata/appkit/types/`) along its class chain, so a cluster's private class reports the public
+  one. `describe(SVL_KIND, 0, k)` answers the class name and its superclass's kind (element kinds too).
+- **Lifetimes.** Every non-widget object crosses as a `SHARED` handle holding one strong reference, one handle
+  per object (identity by pointer). That includes objects element getters return (`font`, `text-color`): only
+  views, windows, cells and other responders stay `BORROWED`. Immutable value classes (`NSURL`, `NSColor`) use
+  the same `SHARED` handles; nothing crosses as `BOXED`.
+- **Members by selector.** `resolve(SVL_METHOD, type_kind, name)` takes the selector itself (`setString:forType:`)
+  for instance or class methods; `call` invokes on the object and `call_static` on the class (`NSInvocation`).
+  `call_static` of an `init…` selector is alloc + init (the result is +1); results of the new/copy families are
+  +1. A selector ending in `error:` hides its `NSError **`: a failure is `Ok(ERROR)`, i.e. a `NativeError`
+  (domain, integer code, `localizedDescription`). Props resolve by KVC key or kebab name (`levelsOfUndo`).
+- **Async.** A member of the generated `ASYNC` table describes itself with `SVL_M_ASYNC` (plus `SVL_M_STATIC`)
+  and a trailing `CALLBACK` slot; the backend builds a completion block of the member's shape, queues its
+  retained arguments from whatever thread runs it, and completes the callback on the main thread with the
+  result or the `NSError`. `cancel` cancels a returned `NSProgress` and rejects at once with
+  `NSCocoaErrorDomain` 3072; destroying the owner drops its operations.
+- **Op-log hosts.** The TestHost answers `callStatic(kind, "init…:")` with a fresh handle, like `new`.
+
+### WinUI non-GUI types (N4, no ABI change)
+
+The WinUI backend implements the v2.5 members (`construct`, `call_static`, `describe(SVL_KIND)`) and `cancel`;
+`plans/milestones/N4-winui-types.md` has the design.
+
+- **Kinds.** Every bound Windows Runtime class or interface (`metadata/winui/types/`) is a kind named by its full
+  native name (`Windows.Foundation.Uri`), ids from `0x20000`; a used generic collection instance is a kind too
+  (`Windows.Foundation.Collections.IVector<string>`). Kind id `0x20000` is `Windows.Foundation.IInspectable`, the
+  root an object of an unbound class wraps as. `describe(SVL_KIND, 0, k)` answers the name and the nearest bound
+  base. Element tags resolve first, so a tag never collides with a type name.
+- **Lifetime.** Every runtime class object is `SHARED` (one COM reference, identity by IUnknown pointer in the same
+  table as the elements, so an element passed back is its element handle). `destroy` drops our reference and never
+  calls `Close()`; `IClosable.Close` is a method (`close`).
+- **Members.** Methods and props are camelCase JS names, events kebab-case; a static that shares its name with an
+  instance method is `static:<name>`; constructors are the static `new`. Every member describes dynamic parameter
+  slots (`SVL_NULL` typed `SVL_T_VARIANT`, optional beyond the narrowest overload), so the host encodes arguments
+  by their JS type, and the backend picks the overload by argument count (trailing nulls, which the host pads,
+  select the narrowest overload that takes every non-null argument). Records are `MAP`s by camelCase field name,
+  enums kebab-case names (native and camelCase names and numbers are accepted), flags lists of names, `DateTime`
+  `SVL_T_DATETIME`, `TimeSpan` milliseconds.
+- **Async.** `IAsyncOperation<T>` / `IAsyncAction` (and the `WithProgress` variants) are `SVL_M_ASYNC`; the
+  completion handler hops to the UI dispatcher queue before anything is converted, then settles the callback with
+  `GetResults` or a `NativeError { domain: 'winrt', code }` (`file-not-found`, `cancelled`, or `0x8xxxxxxx`).
+  `cancel(id)` is `IAsyncInfo.Cancel`; destroying the owner cancels its operations.
+- **Errors.** A failing WinRT call answers `rc -1` with an `ERROR` value in the same shape (`SVL_M_THROWS` on every
+  member).
+- **Threads.** `dispatcher`-class objects (a `DispatcherQueue` property on the class or a base) are refused at
+  minting unless their queue has thread access on the UI thread, and checked on every call in debug builds.
+
 ### ABI v2.6 additive (property observation)
 
 Status: R1a (2026-10-19) added the members; R1 (2026-10-20) implemented the host contract of

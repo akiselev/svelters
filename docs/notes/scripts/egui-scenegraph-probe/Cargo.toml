@@ -1,0 +1,17 @@
+[package]
+name = "egui-scenegraph-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+description = "Probe for docs/notes/egui-scene-graph.md: cost of walking a retained tree into egui, taffy two-pass layout, id stability, deferred events, kittest/AccessKit."
+
+# Standalone: not part of the svelters workspace.
+[workspace]
+
+[dependencies]
+egui = { version = "0.37.0", features = ["default_fonts"] }
+taffy = "0.15.0"
+egui_kittest = "0.37.0"
+
+[profile.release]
+debug = "line-tables-only"

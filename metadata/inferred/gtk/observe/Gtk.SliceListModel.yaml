@@ -23,7 +23,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:SliceListModel
-    check: connect
+    check: change
+    values:
+    - gtk::StringList::new(&["a", "b"])
   confidence: 0.9
 - prop: n-items
   class: exact
@@ -38,7 +40,9 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:SliceListModel
-    check: connect
+    check: cross
+    rust: let m = o.downcast_ref::<gtk::SliceListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let
+      s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append("a");
   confidence: 0.9
 - prop: offset
   class: exact

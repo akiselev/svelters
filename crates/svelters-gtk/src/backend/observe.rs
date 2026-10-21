@@ -232,7 +232,7 @@ impl Inner {
         } else {
             let p = PROPS.get((prop as usize).wrapping_sub(1)).ok_or_else(|| failed("unknown property"))?;
             if !lookup::in_chain(kind, p.kind) {
-                return Err(failed(format!("property {} does not belong to {}", p.name, KINDS[kind as usize - 1].gtype)));
+                return Err(failed(format!("property {} does not belong to {}", p.name, obj.type_().name())));
             }
             crate::compat::require(p.since, &format!("property {}:{}", KINDS[p.kind as usize - 1].gtype, p.name)).map_err(failed)?;
             if p.flags & F_VIRTUAL != 0 {

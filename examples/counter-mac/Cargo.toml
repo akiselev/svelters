@@ -33,3 +33,12 @@ harness = false
 [[test]]
 name = "backend"
 harness = false
+
+# N4: generated non-GUI type facts (tools/metadata/appkit/gen_types.py) and the hand-written type core tests.
+[[test]]
+name = "types"
+harness = false
+
+[[test]]
+name = "types_core"
+harness = false

@@ -14,5 +14,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TreeListRowSorter
-    check: connect
+    check: change
+    values:
+    - gtk::StringSorter::new(None::<gtk::Expression>)
   confidence: 0.9

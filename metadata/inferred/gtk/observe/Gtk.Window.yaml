@@ -28,7 +28,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Window
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: decorated
   class: exact
@@ -72,7 +74,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Window
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: default-width
   class: exact
@@ -131,7 +135,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Window
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::Display::open(None).unwrap()
   confidence: 0.9
 - prop: focus-visible
   class: exact
@@ -160,7 +166,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Window
-    check: connect
+    check: cross
+    rust: let w = o.downcast_ref::<gtk::Window>().unwrap(); let e = w.child().unwrap_or_else(|| { let e = gtk::Entry::new(); w.set_child(Some(&e));
+      e.upcast() }); if gtk::prelude::GtkWindowExt::focus(w).is_some() { gtk::prelude::GtkWindowExt::set_focus(w, None::<&gtk::Widget>); } else
+      { gtk::prelude::GtkWindowExt::set_focus(w, Some(&e)); }
   confidence: 0.9
 - prop: fullscreened
   class: exact
@@ -340,7 +349,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Window
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: transient-for
   class: exact
@@ -354,5 +365,7 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Window
-    check: connect
+    check: change
+    values:
+    - gtk::Window::new()
   confidence: 0.9

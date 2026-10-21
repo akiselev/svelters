@@ -1,0 +1,1582 @@
+{
+ "enums": {
+  "Windows.Foundation.Collections.CollectionChange": {
+   "flags": false,
+   "members": [
+    [
+     "reset",
+     0
+    ],
+    [
+     "itemInserted",
+     1
+    ],
+    [
+     "itemRemoved",
+     2
+    ],
+    [
+     "itemChanged",
+     3
+    ]
+   ],
+   "native": [
+    "Reset",
+    "ItemInserted",
+    "ItemRemoved",
+    "ItemChanged"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {
+  "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>": {
+   "abstract": true,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator"
+   },
+   "category": "collection",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+   "hidden": [],
+   "iid": "e5d2ccfc-825a-5a8e-82aa-095ed5dbd5d1",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "map",
+       "of": {
+        "k": "object",
+        "t": "Windows.Storage.Streams.RandomAccessStreamReference"
+       },
+       "t": "Windows.Foundation.Collections.IMapView<string, Windows.Storage.Streams.RandomAccessStreamReference>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IMapView<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "slot": 9
+     }
+    ],
+    "hasKey": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "native": "HasKey",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ],
+    "insert": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "native": "Insert",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Storage.Streams.RandomAccessStreamReference"
+        },
+        "type": "Windows.Storage.Streams.RandomAccessStreamReference"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "lookup": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "native": "Lookup",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Storage.Streams.RandomAccessStreamReference"
+      },
+      "ret_native": "Windows.Storage.Streams.RandomAccessStreamReference",
+      "slot": 6
+     }
+    ],
+    "remove": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "native": "Remove",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ]
+   },
+   "name": "IMap",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Storage.Streams.RandomAccessStreamReference>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Storage.Streams.RandomAccessStreamReference"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Collections.IMapChangedEventArgs<string>": {
+   "abstract": true,
+   "blocked": {},
+   "category": "collection",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.IMapChangedEventArgs<string>",
+   "hidden": [],
+   "iid": "60141efb-f2f9-5377-96fd-f8c60d9558b5",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "IMapChangedEventArgs",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMapChangedEventArgs<string>",
+      "slot": 6
+     },
+     "name": "collectionChange",
+     "native": "CollectionChange",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Foundation.Collections.CollectionChange"
+     },
+     "type": "Windows.Foundation.Collections.CollectionChange"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMapChangedEventArgs<string>",
+      "slot": 7
+     },
+     "name": "key",
+     "native": "Key",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.CollectionChange"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Collections.IObservableMap<string, object>": {
+   "abstract": true,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator"
+   },
+   "category": "collection",
+   "constructors": [],
+   "curated": false,
+   "events": [
+    {
+     "add": 6,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IObservableMap<string, object>"
+       },
+       "type": "Windows.Foundation.Collections.IObservableMap<string, object>"
+      },
+      {
+       "name": "event",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+       },
+       "type": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+      }
+     ],
+     "delegate": "Windows.Foundation.Collections.MapChangedEventHandler<string, object>",
+     "iface": "Windows.Foundation.Collections.IObservableMap<string, object>",
+     "name": "map-changed",
+     "native": "MapChanged",
+     "remove": 7
+    }
+   ],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.IObservableMap<string, object>",
+   "hidden": [],
+   "iid": "236aac9d-fb12-5c4d-a41c-9e445fb4d7ec",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "map",
+       "of": {
+        "k": "variant"
+       },
+       "t": "Windows.Foundation.Collections.IMapView<string, object>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IMapView<string, object>",
+      "slot": 9
+     }
+    ],
+    "hasKey": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "HasKey",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ],
+    "insert": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Insert",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "variant"
+        },
+        "type": "object"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "lookup": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Lookup",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 6
+     }
+    ],
+    "remove": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Remove",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ]
+   },
+   "name": "IObservableMap",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Collections.IObservableMap<string, string>": {
+   "abstract": true,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator"
+   },
+   "category": "collection",
+   "constructors": [],
+   "curated": false,
+   "events": [
+    {
+     "add": 6,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IObservableMap<string, string>"
+       },
+       "type": "Windows.Foundation.Collections.IObservableMap<string, string>"
+      },
+      {
+       "name": "event",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+       },
+       "type": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+      }
+     ],
+     "delegate": "Windows.Foundation.Collections.MapChangedEventHandler<string, string>",
+     "iface": "Windows.Foundation.Collections.IObservableMap<string, string>",
+     "name": "map-changed",
+     "native": "MapChanged",
+     "remove": 7
+    }
+   ],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.IObservableMap<string, string>",
+   "hidden": [],
+   "iid": "1e036276-2f60-55f6-b7f3-f86079e6900b",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "map",
+       "of": {
+        "k": "string"
+       },
+       "t": "Windows.Foundation.Collections.IMapView<string, string>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IMapView<string, string>",
+      "slot": 9
+     }
+    ],
+    "hasKey": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "HasKey",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ],
+    "insert": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Insert",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "lookup": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Lookup",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ],
+    "remove": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Remove",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ]
+   },
+   "name": "IObservableMap",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Collections.IVector<string>": {
+   "abstract": true,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator",
+    "GetMany/2": "array",
+    "ReplaceAll/1": "array"
+   },
+   "category": "collection",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.IVector<string>",
+   "hidden": [],
+   "iid": "98b9acc1-4b56-532e-ac73-03d5291cca90",
+   "implements": [],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "append": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "Append",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 13
+     }
+    ],
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 15
+     }
+    ],
+    "getAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "GetAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "list",
+       "of": {
+        "k": "string"
+       },
+       "t": "Windows.Foundation.Collections.IVectorView<string>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IVectorView<string>",
+      "slot": 8
+     }
+    ],
+    "indexOf": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "IndexOf",
+      "outs": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 9
+     }
+    ],
+    "insertAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "InsertAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "removeAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "RemoveAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "removeAtEnd": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "RemoveAtEnd",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 14
+     }
+    ],
+    "setAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "native": "SetAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 10
+     }
+    ]
+   },
+   "name": "IVector",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IVector<string>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  }
+ },
+ "js_module": "svelters:winui/windows.foundation.collections",
+ "namespace": "Windows.Foundation.Collections",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Windows.Foundation.Collections.CollectionChange": {
+   "category": "enum"
+  },
+  "Windows.Foundation.Collections.IIterable": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IIterator": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IKeyValuePair": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IMap": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IMapChangedEventArgs": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IMapView": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IObservableMap": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IObservableVector": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IPropertySet": {
+   "category": "interface"
+  },
+  "Windows.Foundation.Collections.IVector": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.IVectorChangedEventArgs": {
+   "category": "interface"
+  },
+  "Windows.Foundation.Collections.IVectorView": {
+   "category": "collection"
+  },
+  "Windows.Foundation.Collections.MapChangedEventHandler": {
+   "category": "callback"
+  },
+  "Windows.Foundation.Collections.PropertySet": {
+   "abstract": false,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator"
+   },
+   "bound": true,
+   "category": "model",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": true,
+   "default_interface": "Windows.Foundation.Collections.IPropertySet",
+   "events": [
+    {
+     "add": 6,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IObservableMap<string, object>"
+       },
+       "type": "Windows.Foundation.Collections.IObservableMap<string, object>"
+      },
+      {
+       "name": "event",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+       },
+       "type": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+      }
+     ],
+     "delegate": "Windows.Foundation.Collections.MapChangedEventHandler<string, object>",
+     "iface": "Windows.Foundation.Collections.IObservableMap<string, object>",
+     "name": "map-changed",
+     "native": "MapChanged",
+     "remove": 7
+    }
+   ],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.PropertySet",
+   "hidden": [],
+   "iid": "8a43ed9f-f4e6-4421-acf9-1dab2986820c",
+   "implements": [
+    "Windows.Foundation.Collections.IObservableMap<string, object>"
+   ],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "map",
+       "of": {
+        "k": "variant"
+       },
+       "t": "Windows.Foundation.Collections.IMapView<string, object>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IMapView<string, object>",
+      "slot": 9
+     }
+    ],
+    "hasKey": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "HasKey",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ],
+    "insert": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Insert",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "variant"
+        },
+        "type": "object"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "lookup": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Lookup",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 6
+     }
+    ],
+    "remove": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Remove",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ]
+   },
+   "name": "PropertySet",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IMapChangedEventArgs<string>",
+    "Windows.Foundation.Collections.IObservableMap<string, object>"
+   ],
+   "root": true,
+   "statics": {},
+   "subject": {
+    "construct": {}
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Collections.StringMap": {
+   "abstract": false,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator"
+   },
+   "bound": true,
+   "category": "model",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Windows.Foundation.Collections.IMap<string, string>",
+   "events": [
+    {
+     "add": 6,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IObservableMap<string, string>"
+       },
+       "type": "Windows.Foundation.Collections.IObservableMap<string, string>"
+      },
+      {
+       "name": "event",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+       },
+       "type": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+      }
+     ],
+     "delegate": "Windows.Foundation.Collections.MapChangedEventHandler<string, string>",
+     "iface": "Windows.Foundation.Collections.IObservableMap<string, string>",
+     "name": "map-changed",
+     "native": "MapChanged",
+     "remove": 7
+    }
+   ],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.StringMap",
+   "hidden": [],
+   "iid": "f6d1f700-49c2-52ae-8154-826f9908773c",
+   "implements": [
+    "Windows.Foundation.Collections.IObservableMap<string, string>"
+   ],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "map",
+       "of": {
+        "k": "string"
+       },
+       "t": "Windows.Foundation.Collections.IMapView<string, string>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IMapView<string, string>",
+      "slot": 9
+     }
+    ],
+    "hasKey": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "HasKey",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ],
+    "insert": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Insert",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "lookup": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Lookup",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ],
+    "remove": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "native": "Remove",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ]
+   },
+   "name": "StringMap",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMap<string, string>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IMapChangedEventArgs<string>",
+    "Windows.Foundation.Collections.IObservableMap<string, string>"
+   ],
+   "root": true,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Collections.ValueSet": {
+   "abstract": false,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator"
+   },
+   "bound": true,
+   "category": "model",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Windows.Foundation.Collections.IPropertySet",
+   "events": [
+    {
+     "add": 6,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IObservableMap<string, object>"
+       },
+       "type": "Windows.Foundation.Collections.IObservableMap<string, object>"
+      },
+      {
+       "name": "event",
+       "slot": {
+        "generic": true,
+        "k": "object",
+        "t": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+       },
+       "type": "Windows.Foundation.Collections.IMapChangedEventArgs<string>"
+      }
+     ],
+     "delegate": "Windows.Foundation.Collections.MapChangedEventHandler<string, object>",
+     "iface": "Windows.Foundation.Collections.IObservableMap<string, object>",
+     "name": "map-changed",
+     "native": "MapChanged",
+     "remove": 7
+    }
+   ],
+   "excluded": {},
+   "full": "Windows.Foundation.Collections.ValueSet",
+   "hidden": [],
+   "iid": "8a43ed9f-f4e6-4421-acf9-1dab2986820c",
+   "implements": [
+    "Windows.Foundation.Collections.IObservableMap<string, object>"
+   ],
+   "js_module": "svelters:winui/windows.foundation.collections",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "map",
+       "of": {
+        "k": "variant"
+       },
+       "t": "Windows.Foundation.Collections.IMapView<string, object>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IMapView<string, object>",
+      "slot": 9
+     }
+    ],
+    "hasKey": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "HasKey",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ],
+    "insert": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Insert",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "k": "variant"
+        },
+        "type": "object"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "lookup": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Lookup",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "variant"
+      },
+      "ret_native": "object",
+      "slot": 6
+     }
+    ],
+    "remove": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "native": "Remove",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ]
+   },
+   "name": "ValueSet",
+   "namespace": "Windows.Foundation.Collections",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMap<string, object>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [
+    "Windows.Foundation.Collections.IMapChangedEventArgs<string>",
+    "Windows.Foundation.Collections.IObservableMap<string, object>"
+   ],
+   "root": true,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Foundation.Collections.VectorChangedEventHandler": {
+   "category": "callback"
+  }
+ }
+}

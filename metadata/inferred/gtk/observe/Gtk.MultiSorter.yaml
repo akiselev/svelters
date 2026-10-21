@@ -24,5 +24,6 @@ observe:
       and Gtk.StringList'
   verify:
     'on': Gtk:MultiSorter
-    check: connect
+    check: cross
+    rust: o.downcast_ref::<gtk::MultiSorter>().unwrap().append(gtk::StringSorter::new(None::<gtk::Expression>));
   confidence: 0.9

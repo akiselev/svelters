@@ -1,0 +1,664 @@
+{
+ "enums": {
+  "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions": {
+   "flags": true,
+   "members": [
+    [
+     "none",
+     0
+    ],
+    [
+     "ignoreImageCache",
+     8
+    ]
+   ],
+   "native": [
+    "None",
+    "IgnoreImageCache"
+   ],
+   "unsigned": true,
+   "used": true
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType": {
+   "flags": false,
+   "members": [
+    [
+     "physical",
+     0
+    ],
+    [
+     "logical",
+     1
+    ]
+   ],
+   "native": [
+    "Physical",
+    "Logical"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.xaml.media.imaging",
+ "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions": {
+   "category": "flags"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.BitmapImage": {
+   "abstract": false,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    },
+    {
+     "composable": false,
+     "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageFactory",
+     "native": "CreateInstanceWithUriSource",
+     "params": [
+      {
+       "name": "uriSource",
+       "slot": {
+        "k": "object",
+        "t": "Windows.Foundation.Uri"
+       },
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+   "events": [
+    {
+     "add": 20,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "variant"
+       },
+       "type": "object"
+      },
+      {
+       "name": "e",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs"
+       },
+       "type": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs"
+      }
+     ],
+     "delegate": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventHandler",
+     "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+     "name": "download-progress",
+     "native": "DownloadProgress",
+     "remove": 21
+    },
+    {
+     "add": 24,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "variant"
+       },
+       "type": "object"
+      },
+      {
+       "name": "e",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Xaml.ExceptionRoutedEventArgs"
+       },
+       "type": "Microsoft.UI.Xaml.ExceptionRoutedEventArgs"
+      }
+     ],
+     "delegate": "Microsoft.UI.Xaml.ExceptionRoutedEventHandler",
+     "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+     "name": "image-failed",
+     "native": "ImageFailed",
+     "remove": 25
+    },
+    {
+     "add": 22,
+     "args": [
+      {
+       "name": "sender",
+       "slot": {
+        "k": "variant"
+       },
+       "type": "object"
+      },
+      {
+       "name": "e",
+       "slot": {
+        "k": "object",
+        "t": "Microsoft.UI.Xaml.RoutedEventArgs"
+       },
+       "type": "Microsoft.UI.Xaml.RoutedEventArgs"
+      }
+     ],
+     "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+     "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+     "name": "image-opened",
+     "native": "ImageOpened",
+     "remove": 23
+    }
+   ],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.Imaging.BitmapImage",
+   "hidden": [
+    "CreateOptionsProperty",
+    "UriSourceProperty",
+    "DecodePixelWidthProperty",
+    "DecodePixelHeightProperty",
+    "DecodePixelTypeProperty",
+    "IsAnimatedBitmapProperty",
+    "IsPlayingProperty",
+    "AutoPlayProperty"
+   ],
+   "iid": "5cc29916-a411-5bc2-a3c5-a00d99a59da8",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media.imaging",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "play": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "native": "Play",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 26
+     }
+    ],
+    "stop": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "native": "Stop",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 27
+     }
+    ]
+   },
+   "name": "BitmapImage",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "parent": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+   "props": [
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 13
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 18
+     },
+     "name": "autoPlay",
+     "native": "AutoPlay",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 19
+     },
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 6
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 6
+     },
+     "name": "createOptions",
+     "native": "CreateOptions",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 7
+     },
+     "slot": {
+      "k": "flags",
+      "t": "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions"
+     },
+     "type": "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 9
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 12
+     },
+     "name": "decodePixelHeight",
+     "native": "DecodePixelHeight",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 13
+     },
+     "slot": {
+      "k": "int",
+      "t": "i32"
+     },
+     "type": "i32"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 10
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 14
+     },
+     "name": "decodePixelType",
+     "native": "DecodePixelType",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 15
+     },
+     "slot": {
+      "k": "enum",
+      "t": "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType"
+     },
+     "type": "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 8
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 10
+     },
+     "name": "decodePixelWidth",
+     "native": "DecodePixelWidth",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 11
+     },
+     "slot": {
+      "k": "int",
+      "t": "i32"
+     },
+     "type": "i32"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 11
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 16
+     },
+     "name": "isAnimatedBitmap",
+     "native": "IsAnimatedBitmap",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 12
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 17
+     },
+     "name": "isPlaying",
+     "native": "IsPlaying",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics",
+      "slot": 7
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 8
+     },
+     "name": "uriSource",
+     "native": "UriSource",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage",
+      "slot": 9
+     },
+     "slot": {
+      "k": "object",
+      "t": "Windows.Foundation.Uri"
+     },
+     "type": "Windows.Foundation.Uri"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Xaml.ExceptionRoutedEventArgs",
+    "Microsoft.UI.Xaml.Media.Imaging.BitmapCreateOptions",
+    "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType",
+    "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs",
+    "Microsoft.UI.Xaml.RoutedEventArgs",
+    "Windows.Foundation.Uri"
+   ],
+   "root": true,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.BitmapSource": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.Imaging.BitmapSource",
+   "hidden": [
+    "PixelWidthProperty",
+    "PixelHeightProperty"
+   ],
+   "iid": "8424269d-9b82-534f-8fea-af5b5ef96bf2",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media.imaging",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "setSource": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource",
+      "native": "SetSource",
+      "outs": [],
+      "params": [
+       {
+        "name": "streamSource",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IRandomAccessStream"
+        },
+        "type": "Windows.Storage.Streams.IRandomAccessStream"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 8
+     }
+    ],
+    "setSourceAsync": [
+     {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource",
+      "native": "SetSourceAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "streamSource",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IRandomAccessStream"
+        },
+        "type": "Windows.Storage.Streams.IRandomAccessStream"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 9
+     }
+    ]
+   },
+   "name": "BitmapSource",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "parent": "Microsoft.UI.Xaml.Media.ImageSource",
+   "props": [
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceStatics",
+      "slot": 7
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource",
+      "slot": 7
+     },
+     "name": "pixelHeight",
+     "native": "PixelHeight",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "i32"
+     },
+     "type": "i32"
+    },
+    {
+     "dp": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceStatics",
+      "slot": 6
+     },
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource",
+      "slot": 6
+     },
+     "name": "pixelWidth",
+     "native": "PixelWidth",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "i32"
+     },
+     "type": "i32"
+    }
+   ],
+   "refs": [
+    "Windows.Storage.Streams.IRandomAccessStream"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Xaml.IDependencyObject",
+    "slot": 14
+   }
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.DecodePixelType": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "args",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Xaml.Media.Imaging.IDownloadProgressEventArgs",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventArgs",
+   "hidden": [],
+   "iid": "9a0ea80b-1a17-50d5-83f3-377738212619",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.xaml.media.imaging",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "DownloadProgressEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Media.Imaging",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IDownloadProgressEventArgs",
+      "slot": 6
+     },
+     "name": "progress",
+     "native": "Progress",
+     "set": {
+      "iface": "Microsoft.UI.Xaml.Media.Imaging.IDownloadProgressEventArgs",
+      "slot": 7
+     },
+     "slot": {
+      "k": "int",
+      "t": "i32"
+     },
+     "type": "i32"
+    }
+   ],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "ui",
+   "thread_getter": null
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.DownloadProgressEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapImage": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapImageStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IBitmapSourceStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IDownloadProgressEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmap": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IRenderTargetBitmapStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISoftwareBitmapSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISurfaceImageSourceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceFailedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceOpenedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.ISvgImageSourceStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSource": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IVirtualSurfaceImageSourceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmap": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IWriteableBitmapFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTask": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.IXamlRenderingBackgroundTaskOverrides": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.RenderTargetBitmap": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SoftwareBitmapSource": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SurfaceImageSource": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSource": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceFailedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceLoadStatus": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.SvgImageSourceOpenedEventArgs": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.VirtualSurfaceImageSource": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.WriteableBitmap": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Media.Imaging.XamlRenderingBackgroundTask": {
+   "category": "statics"
+  }
+ }
+}

@@ -12,4 +12,8 @@ observe:
     ref: 'O1: GObject property, notify::mode (EXPLICIT_NOTIFY)'
   - origin: rule
     ref: no probe row; the generated test sets it natively
+  verify:
+    'on': Gtk:TreeSelection
+    make: borrow:Gtk.TreeView.get_selection
+    check: change
   confidence: 0.9

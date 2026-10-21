@@ -92,9 +92,9 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gdk.CicpParams:range)"
      }
     ],
-    "record_fp": "e5da098e894b5969",
+    "record_fp": "56eaa87d2dd38e39",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gdk:CicpParams"
     },
     "via": [
@@ -435,10 +435,10 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "77b5182b7f528f17",
+    "record_fp": "cfcdb4e24a98c516",
     "via": [
      {
       "mechanism": "notify",
@@ -501,10 +501,10 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "19eb4e2ccf92e6d7",
+    "record_fp": "d82992a758531bbb",
     "via": [
      {
       "mechanism": "notify",
@@ -638,10 +638,10 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "71ec7a3574ad95be",
+    "record_fp": "f65037cd5c9165b5",
     "via": [
      {
       "mechanism": "notify",
@@ -862,7 +862,12 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "0007dbe91dd36467",
+    "record_fp": "e66bd846644760f2",
+    "verify": {
+     "check": "cross",
+     "on": "Gio:Application",
+     "rust": "let a = o.downcast_ref::<gtk::gio::Application>().unwrap(); let n = if a.application_id().as_deref() == Some(\"org.svelters.OvA\") { \"org.svelters.OvB\" } else { \"org.svelters.OvA\" }; a.set_application_id(Some(n));"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -883,10 +888,14 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "b0723fea02b3fac5",
+    "record_fp": "183472a31d99d9bd",
+    "verify": {
+     "check": "change",
+     "on": "Gio:Application"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -910,7 +919,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9926e4a547c4868a",
+    "record_fp": "05345bc6ff7c4837",
+    "verify": {
+     "check": "change",
+     "on": "Gio:Application"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -934,7 +947,12 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "46ec523bb3694654",
+    "record_fp": "4affa26a633d1877",
+    "verify": {
+     "check": "cross",
+     "on": "Gio:Application",
+     "rust": "let a = o.downcast_ref::<gtk::gio::Application>().unwrap(); let n = if a.resource_base_path().as_deref() == Some(\"/org/svelters/a\") { \"/org/svelters/b\" } else { \"/org/svelters/a\" }; a.set_resource_base_path(Some(n));"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -957,7 +975,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "ff683e3c6bec5c8e",
+    "record_fp": "b4af44761da85f56",
+    "verify": {
+     "check": "change",
+     "on": "Gio:Application"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -1369,9 +1391,9 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:password-save)"
      }
     ],
-    "record_fp": "ed171205ad91489e",
+    "record_fp": "8ff1e6d2d56e3dc9",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gio:MountOperation"
     },
     "via": [
@@ -1555,10 +1577,10 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9ec5a2840beb9ed5",
+    "record_fp": "dc096a3447feadd7",
     "verify": {
      "check": "connect",
      "on": "Gio:SimpleAction"
@@ -1699,12 +1721,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "8a8113fd85db37c0",
+    "record_fp": "6550b0f59075dd54",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:AboutDialog"
     },
     "via": [
@@ -1726,12 +1748,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "0bff08d77638f9b4",
+    "record_fp": "d46959ced56807b5",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:AboutDialog"
     },
     "via": [
@@ -1809,12 +1831,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "f87a787fd133b390",
+    "record_fp": "674106697bc74683",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:AboutDialog"
     },
     "via": [
@@ -1898,10 +1920,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "8adbd581461add2b",
+    "record_fp": "add8a8da90f63c06",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:AboutDialog"
+     "check": "change",
+     "on": "Gtk:AboutDialog",
+     "values": [
+      "gtk::gdk::Paintable::new_empty(1, 1)"
+     ]
     },
     "via": [
      {
@@ -2237,12 +2262,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "135f7b4e09f523c5",
+    "record_fp": "6ff8680a11e077a6",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:Button"
     },
     "via": [
@@ -2442,12 +2467,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "46d6bc015b66afd0",
+    "record_fp": "5f27e87ec902599c",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:AlertDialog"
     },
     "via": [
@@ -3001,7 +3026,11 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "82ea7b2468351158",
+    "record_fp": "957b8adc8cd2e14c",
+    "verify": {
+     "check": "connect",
+     "on": "Gtk:Application"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -3025,7 +3054,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "8f278e8d0d374af0",
+    "record_fp": "9f01579b50426e5e",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:Application"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -3080,10 +3113,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2cfea65c3ec4a1d1",
+    "record_fp": "20defa1943670ef1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:AspectFrame"
+     "check": "change",
+     "on": "Gtk:AspectFrame",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -3462,10 +3498,11 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6627b72aaea403ca",
+    "record_fp": "69d80d7d94d261de",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:BoolFilter"
+     "check": "cross",
+     "on": "Gtk:BoolFilter",
+     "rust": "let f = o.downcast_ref::<gtk::BoolFilter>().unwrap(); f.set_expression(Some(gtk::ConstantExpression::new(true)));"
     },
     "via": [
      {
@@ -3748,10 +3785,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6603b6058780046c",
+    "record_fp": "4b1a92f038886653",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Builder"
+     "check": "change",
+     "on": "Gtk:Builder",
+     "values": [
+      "gtk::glib::Object::new::<gtk::glib::Object>()"
+     ]
     },
     "via": [
      {
@@ -3776,10 +3816,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "054f105d92287b2a",
+    "record_fp": "3f8b68acc2d48b40",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Builder"
+     "check": "change",
+     "on": "Gtk:Builder",
+     "values": [
+      "new_type(\"GtkBuilderCScope\")"
+     ]
     },
     "via": [
      {
@@ -3918,11 +3961,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Button:icon-name, set:Gtk.Button:label)"
      }
     ],
-    "record_fp": "4c48e218c928af4e",
+    "record_fp": "39f677d618f97dff",
     "verify": {
-     "check": "cross",
+     "check": "change",
      "on": "Gtk:Button",
-     "trigger": "icon-name"
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -4060,10 +4105,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "7676dd82a116d0a9",
+    "record_fp": "f06606cee9c15ca5",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Calendar"
+     "check": "change",
+     "on": "Gtk:Calendar",
+     "values": [
+      "gtk::glib::DateTime::from_unix_utc(86400).unwrap()",
+      "gtk::glib::DateTime::from_unix_utc(172800).unwrap()"
+     ]
     },
     "via": [
      {
@@ -4258,10 +4307,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "615cffaf202a3cf1",
+    "record_fp": "29e8d096d9aaacc2",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellAreaBox"
+     "check": "change",
+     "on": "Gtk:CellAreaBox",
+     "values": [
+      "gtk::CellRendererToggle::new()"
+     ]
     },
     "via": [
      {
@@ -4367,10 +4419,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "a9495113183344ad",
+    "record_fp": "5823bf1c463a1dcb",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererAccel"
+     "check": "change",
+     "on": "Gtk:CellRendererAccel",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -4784,12 +4840,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "d71ff59c342c152c",
+    "record_fp": "68c62ecccc4d58cc",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:CellRendererAccel"
     },
     "via": [
@@ -4873,10 +4929,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0991a1c5b64983fe",
+    "record_fp": "e051e33fe8055b23",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererCombo"
+     "check": "change",
+     "on": "Gtk:CellRendererCombo",
+     "values": [
+      "gtk::ListStore::new(&[gtk::glib::Type::STRING])"
+     ]
     },
     "via": [
      {
@@ -4931,10 +4990,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "e8100293c8db43f2",
+    "record_fp": "7f46cf2cacbf6f2c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererPixbuf"
+     "check": "change",
+     "on": "Gtk:CellRendererPixbuf",
+     "values": [
+      "gtk::gio::ThemedIcon::new(\"ov1-a\")",
+      "gtk::gio::ThemedIcon::new(\"ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -5015,10 +5078,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9f4af4d2bee3c015",
+    "record_fp": "21a206526176abaf",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererPixbuf"
+     "check": "change",
+     "on": "Gtk:CellRendererPixbuf",
+     "values": [
+      "gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 1, 1).unwrap()"
+     ]
     },
     "via": [
      {
@@ -5043,10 +5109,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "3fb2f6f625058c4d",
+    "record_fp": "5c0da828c202cbbd",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererPixbuf"
+     "check": "change",
+     "on": "Gtk:CellRendererPixbuf",
+     "values": [
+      "gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 1, 1).unwrap()"
+     ]
     },
     "via": [
      {
@@ -5071,10 +5140,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "f29e2019862117a4",
+    "record_fp": "d65eb6ebe79628de",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererPixbuf"
+     "check": "change",
+     "on": "Gtk:CellRendererPixbuf",
+     "values": [
+      "gtk::gdk::MemoryTexture::new(1, 1, gtk::gdk::MemoryFormat::R8g8b8a8, &gtk::glib::Bytes::from_static(&[0, 0, 0, 255]), 4)"
+     ]
     },
     "via": [
      {
@@ -5271,10 +5343,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "54a61402b93060ff",
+    "record_fp": "9f97a43bdc611dc4",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererSpin"
+     "check": "change",
+     "on": "Gtk:CellRendererSpin",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -5498,10 +5573,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "8216403b3ef3a34f",
+    "record_fp": "2e38577c53561466",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererAccel"
+     "check": "change",
+     "on": "Gtk:CellRendererAccel",
+     "values": [
+      "gtk::pango::AttrList::from_string(\"0 1 weight bold\").unwrap()",
+      "gtk::pango::AttrList::from_string(\"0 2 style italic\").unwrap()"
+     ]
     },
     "via": [
      {
@@ -5526,10 +5605,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "7144ce74f4586245",
+    "record_fp": "71714610277f7d0b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererAccel"
+     "check": "change",
+     "on": "Gtk:CellRendererAccel",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -5750,10 +5833,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "d7127a9558925c1d",
+    "record_fp": "e2481adab648b3f7",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererAccel"
+     "check": "change",
+     "on": "Gtk:CellRendererAccel",
+     "values": [
+      "gtk::pango::FontDescription::from_string(\"Sans 13\")",
+      "gtk::pango::FontDescription::from_string(\"Serif 9\")"
+     ]
     },
     "via": [
      {
@@ -5778,10 +5865,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "a80cd4ec1c88cde0",
+    "record_fp": "553878c0f72aab29",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellRendererAccel"
+     "check": "change",
+     "on": "Gtk:CellRendererAccel",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -6795,10 +6886,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "d0f9d6a856d74ca7",
+    "record_fp": "6beb6014b0c93d09",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CellView"
+     "check": "change",
+     "on": "Gtk:CellView",
+     "values": [
+      "gtk::ListStore::new(&[gtk::glib::Type::STRING])"
+     ]
     },
     "via": [
      {
@@ -6852,10 +6946,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "17f2fbb7c3b7ff12",
+    "record_fp": "553e91768c8497e6",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CenterBox"
+     "check": "change",
+     "on": "Gtk:CenterBox",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -6879,10 +6976,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b230dc75a454d838",
+    "record_fp": "fd2f06438c5fd16b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CenterBox"
+     "check": "change",
+     "on": "Gtk:CenterBox",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -6934,10 +7034,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "4fab025dee14a02c",
+    "record_fp": "d4d2754735121d85",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CenterBox"
+     "check": "change",
+     "on": "Gtk:CenterBox",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -7021,10 +7124,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "87dada74aecb51f2",
+    "record_fp": "c71f3821c9e2a52b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:CheckButton"
+     "check": "change",
+     "on": "Gtk:CheckButton",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -7221,10 +7327,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "67f03f2c4328bc35",
+    "record_fp": "a9ac2c371af70af7",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColorButton"
+     "check": "change",
+     "on": "Gtk:ColorButton",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -7424,10 +7534,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColorDialogButton:dialog)"
      }
     ],
-    "record_fp": "f41092da33195b1e",
+    "record_fp": "11cc927cb7761a87",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColorDialogButton"
+     "check": "change",
+     "on": "Gtk:ColorDialogButton",
+     "values": [
+      "new_type(\"GtkColorDialog\")"
+     ]
     },
     "via": [
      {
@@ -7451,10 +7564,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "3f3fe2c3d1e91520",
+    "record_fp": "2a84b82b8a507cc4",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColorDialogButton"
+     "check": "change",
+     "on": "Gtk:ColorDialogButton",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -7525,10 +7642,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:header-factory)"
      }
     ],
-    "record_fp": "9df90f5d0ebe105e",
+    "record_fp": "93cf96b17cb09fd6",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColumnView"
+     "check": "change",
+     "on": "Gtk:ColumnView",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -7552,10 +7672,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:model)"
      }
     ],
-    "record_fp": "1499100f1c0c154b",
+    "record_fp": "74601d75052475a3",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColumnView"
+     "check": "change",
+     "on": "Gtk:ColumnView",
+     "values": [
+      "gtk::SingleSelection::new(Some(gtk::StringList::new(&[\"a\", \"b\"])))"
+     ]
     },
     "via": [
      {
@@ -7607,10 +7730,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ColumnView:row-factory)"
      }
     ],
-    "record_fp": "390379649ae9da7b",
+    "record_fp": "0c52d06e37dc73ca",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColumnView"
+     "check": "change",
+     "on": "Gtk:ColumnView",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -7765,10 +7891,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b83b8343048ce256",
+    "record_fp": "bb14bb84839c2662",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColumnViewCell"
+     "check": "change",
+     "on": "Gtk:ColumnViewCell",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -7850,10 +7979,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b0977e6f52d267b4",
+    "record_fp": "63e45d9459f5df1e",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColumnViewColumn"
+     "check": "change",
+     "on": "Gtk:ColumnViewColumn",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -7905,10 +8037,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "c86699b12f35463a",
+    "record_fp": "0a6e724b2d042e03",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColumnViewColumn"
+     "check": "change",
+     "on": "Gtk:ColumnViewColumn",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -7988,10 +8123,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "4082f10c85be22ad",
+    "record_fp": "cab6a363e3036292",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ColumnViewColumn"
+     "check": "change",
+     "on": "Gtk:ColumnViewColumn",
+     "values": [
+      "gtk::StringSorter::new(None::<gtk::Expression>)"
+     ]
     },
     "via": [
      {
@@ -8214,10 +8352,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "f4d311f8554145dd",
+    "record_fp": "7037d1cbc0e386fd",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ComboBox"
+     "check": "cross",
+     "on": "Gtk:ComboBox",
+     "rust": "let c = o.downcast_ref::<gtk::ComboBox>().unwrap(); if c.model().is_none() { let m = gtk::ListStore::new(&[gtk::glib::Type::STRING]); m.insert_with_values(None, &[(0, &\"a\")]); m.insert_with_values(None, &[(0, &\"b\")]); c.set_model(Some(&m)); c.set_id_column(0); } c.set_active(Some(if c.active() == Some(1) { 0 } else { 1 }));"
     },
     "via": [
      {
@@ -8241,10 +8380,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "ba06fcaf7cb2dda8",
+    "record_fp": "936e13f6c7ec2ee1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ComboBox"
+     "check": "cross",
+     "on": "Gtk:ComboBox",
+     "rust": "let c = o.downcast_ref::<gtk::ComboBox>().unwrap(); if c.model().is_none() { let m = gtk::ListStore::new(&[gtk::glib::Type::STRING]); m.insert_with_values(None, &[(0, &\"a\")]); m.insert_with_values(None, &[(0, &\"b\")]); c.set_model(Some(&m)); c.set_id_column(0); } let n = if c.active_id().as_deref() == Some(\"b\") { \"a\" } else { \"b\" }; c.set_active_id(Some(n));"
     },
     "via": [
      {
@@ -8296,10 +8436,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "bdc48b9eb7e4babf",
+    "record_fp": "021ebdad5b5f04ae",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ComboBox"
+     "check": "change",
+     "on": "Gtk:ComboBox",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -8424,10 +8567,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "714e30ae37a71d58",
+    "record_fp": "9d72aa96edcb2a97",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ComboBox"
+     "check": "change",
+     "on": "Gtk:ComboBox",
+     "values": [
+      "gtk::ListStore::new(&[gtk::glib::Type::STRING])"
+     ]
     },
     "via": [
      {
@@ -8978,10 +9124,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "80091eecab10d881",
+    "record_fp": "0be0c027335203ec",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DirectoryList"
+     "check": "change",
+     "on": "Gtk:DirectoryList",
+     "values": [
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-a\")",
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -9078,10 +9228,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "55d3bdc9220179a1",
+    "record_fp": "fd3cfbff2a7d1114",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DirectoryList"
+     "check": "cross",
+     "on": "Gtk:DirectoryList",
+     "rust": "let d = o.downcast_ref::<gtk::DirectoryList>().unwrap(); let dir = std::env::temp_dir().join(\"svelters-ov1-dir\"); std::fs::create_dir_all(&dir).unwrap(); std::fs::write(dir.join(\"a\"), \"a\").unwrap(); if d.file().is_some() { d.set_file(None::<&gtk::gio::File>); } else { d.set_file(Some(&gtk::gio::File::for_path(&dir))); for _ in 0..200 { if !d.is_loading() { break; } crate::testing::pump(10); } }"
     },
     "via": [
      {
@@ -9129,12 +9280,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "1cc00478430eba90",
+    "record_fp": "caf0260806df6612",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:DragSource"
     },
     "via": [
@@ -9159,10 +9310,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0af36360d8556ce4",
+    "record_fp": "73b89851e276a87b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DragSource"
+     "check": "change",
+     "on": "Gtk:DragSource",
+     "values": [
+      "gtk::gdk::ContentProvider::for_value(&\"ov1\".to_value())"
+     ]
     },
     "via": [
      {
@@ -9287,10 +9441,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "8b5f6aef9d037a41",
+    "record_fp": "95f39939d53186c3",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DropDown"
+     "check": "change",
+     "on": "Gtk:DropDown",
+     "values": [
+      "gtk::ConstantExpression::new(\"ov1\")"
+     ]
     },
     "via": [
      {
@@ -9314,10 +9471,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:factory)"
      }
     ],
-    "record_fp": "e322a0d4a0906738",
+    "record_fp": "8d10ab3cb440b3f6",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DropDown"
+     "check": "change",
+     "on": "Gtk:DropDown",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -9341,10 +9501,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:header-factory)"
      }
     ],
-    "record_fp": "b21d838c5ca97c36",
+    "record_fp": "959fb893cee8a3ed",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DropDown"
+     "check": "change",
+     "on": "Gtk:DropDown",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -9368,10 +9531,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:list-factory)"
      }
     ],
-    "record_fp": "b5ddcd1b46cc381e",
+    "record_fp": "9fca428e48b12d19",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DropDown"
+     "check": "change",
+     "on": "Gtk:DropDown",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -9395,10 +9561,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:model)"
      }
     ],
-    "record_fp": "3c46b61d2e5e34e2",
+    "record_fp": "1ab83776779b1b90",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DropDown"
+     "check": "change",
+     "on": "Gtk:DropDown",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -9450,10 +9619,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "f4dc6f642b778f26",
+    "record_fp": "11c678739f78a1ff",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DropDown"
+     "check": "cross",
+     "on": "Gtk:DropDown",
+     "rust": "let d = o.downcast_ref::<gtk::DropDown>().unwrap(); if d.model().is_none() { d.set_model(Some(&gtk::StringList::new(&[\"a\", \"b\"]))); } d.set_selected(if d.selected() == 1 { 0 } else { 1 });"
     },
     "via": [
      {
@@ -9532,12 +9702,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "0ea5fb71e730ab1f",
+    "record_fp": "441476c24d6052e1",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:DropTarget"
     },
     "via": [
@@ -9606,12 +9776,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "ef6b5a402bdd5471",
+    "record_fp": "c3523f0bc5e52da8",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:DropTargetAsync"
     },
     "via": [
@@ -9636,10 +9806,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b3250ac013f21df3",
+    "record_fp": "71e63db4b1564234",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:DropTargetAsync"
+     "check": "change",
+     "on": "Gtk:DropTargetAsync",
+     "values": [
+      "gtk::gdk::ContentFormats::new(&[\"text/plain\"])",
+      "gtk::gdk::ContentFormats::new(&[\"image/png\"])"
+     ]
     },
     "via": [
      {
@@ -9952,10 +10126,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9d53677e79083358",
+    "record_fp": "4a0435f7d70e7467",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::pango::AttrList::from_string(\"0 1 weight bold\").unwrap()",
+      "gtk::pango::AttrList::from_string(\"0 2 style italic\").unwrap()"
+     ]
     },
     "via": [
      {
@@ -9979,10 +10157,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:buffer)"
      }
     ],
-    "record_fp": "0112c671082aac8a",
+    "record_fp": "2ba71b4feaf663fe",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::EntryBuffer::new(None::<&str>)"
+     ]
     },
     "via": [
      {
@@ -10006,10 +10187,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "d06497ff83a2a189",
+    "record_fp": "f93ad548b40a0546",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::EntryCompletion::new()"
+     ]
     },
     "via": [
      {
@@ -10061,10 +10245,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Entry:extra-menu)"
      }
     ],
-    "record_fp": "ffc24633af34386d",
+    "record_fp": "f29dfd77a2eb2652",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -10141,12 +10328,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "39a8dccaa2abc310",
+    "record_fp": "0d73a0e7ec76a7f5",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:Entry"
     },
     "via": [
@@ -10429,10 +10616,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "c2f8d32f4eb52ef6",
+    "record_fp": "b2a942ad783541a0",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::gio::ThemedIcon::new(\"ov1-a\")",
+      "gtk::gio::ThemedIcon::new(\"ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -10484,10 +10675,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "75696c03b102dfe1",
+    "record_fp": "74d876c22ac8ae18",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::gdk::Paintable::new_empty(1, 1)"
+     ]
     },
     "via": [
      {
@@ -10722,10 +10916,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "3e35a6db8a5db551",
+    "record_fp": "1411b4e0c01afe87",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::gio::ThemedIcon::new(\"ov1-a\")",
+      "gtk::gio::ThemedIcon::new(\"ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -10780,10 +10978,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "87a18f40c766452c",
+    "record_fp": "45a0727da0e00ba7",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::gdk::Paintable::new_empty(1, 1)"
+     ]
     },
     "via": [
      {
@@ -10962,10 +11163,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b8efd0b3b2f1a6e3",
+    "record_fp": "32c308bcc9463de4",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Entry"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::pango::TabArray::new(1, true)",
+      "gtk::pango::TabArray::new(2, true)"
+     ]
     },
     "via": [
      {
@@ -11256,10 +11461,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2cb1b62fd9a3a33d",
+    "record_fp": "1cce474339923fd1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:EntryCompletion"
+     "check": "change",
+     "on": "Gtk:EntryCompletion",
+     "values": [
+      "gtk::ListStore::new(&[gtk::glib::Type::STRING])"
+     ]
     },
     "via": [
      {
@@ -11606,12 +11814,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "815b27fc9c0f8a43",
+    "record_fp": "8ba5d280a4fb332b",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:EventControllerScroll"
     },
     "via": [
@@ -11638,10 +11846,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "a67de3d5652551da",
+    "record_fp": "cc238bf658c72eb4",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Expander"
+     "check": "change",
+     "on": "Gtk:Expander",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -11724,11 +11935,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:label)"
      }
     ],
-    "record_fp": "bdf8befe7284efb0",
+    "record_fp": "c0979b53f28acb0a",
     "verify": {
-     "check": "cross",
+     "check": "change",
      "on": "Gtk:Expander",
-     "trigger": "label"
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -11895,10 +12108,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "c1e8a63c85d47463",
+    "record_fp": "5407d32696c9dae8",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FileChooserDialog"
+     "check": "change",
+     "on": "Gtk:FileChooserDialog",
+     "values": [
+      "gtk::FileFilter::new()"
+     ]
     },
     "via": [
      {
@@ -12099,10 +12315,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "dfe540da9b439315",
+    "record_fp": "36d8e9fd8703b2f1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FileDialog"
+     "check": "change",
+     "on": "Gtk:FileDialog",
+     "values": [
+      "gtk::FileFilter::new()"
+     ]
     },
     "via": [
      {
@@ -12126,10 +12345,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "766a884e707440b0",
+    "record_fp": "8af70409276e7bec",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FileDialog"
+     "check": "change",
+     "on": "Gtk:FileDialog",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -12180,10 +12402,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0ff407c612094f9a",
+    "record_fp": "1e2115f2aaaff05a",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FileDialog"
+     "check": "change",
+     "on": "Gtk:FileDialog",
+     "values": [
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-a\")",
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -12351,10 +12577,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "ab64f70a7c4915cf",
+    "record_fp": "37dff49e85e206a4",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FileLauncher"
+     "check": "change",
+     "on": "Gtk:FileLauncher",
+     "values": [
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-a\")",
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -12408,10 +12638,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "fa0de78c1c609467",
+    "record_fp": "7c5a9dfa7f0de8fb",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FilterListModel"
+     "check": "change",
+     "on": "Gtk:FilterListModel",
+     "values": [
+      "gtk::CustomFilter::new(|_| true)"
+     ]
     },
     "via": [
      {
@@ -12480,10 +12713,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0d77607dbed6fbdc",
+    "record_fp": "9b52bc696b5533bc",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FilterListModel"
+     "check": "change",
+     "on": "Gtk:FilterListModel",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -12507,10 +12743,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "1fc7d88c4ec90c97",
+    "record_fp": "157009992e4d1104",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FilterListModel"
+     "check": "cross",
+     "on": "Gtk:FilterListModel",
+     "rust": "let m = o.downcast_ref::<gtk::FilterListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append(\"a\");"
     },
     "via": [
      {
@@ -12610,10 +12847,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "abaf3bdb706957d5",
+    "record_fp": "d6658aa6512e91fd",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FlattenListModel"
+     "check": "change",
+     "on": "Gtk:FlattenListModel",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -12637,10 +12877,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "4c363d06e0fb93b8",
+    "record_fp": "2e03f6dede3bf5aa",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FlattenListModel"
+     "check": "cross",
+     "on": "Gtk:FlattenListModel",
+     "rust": "let m = o.downcast_ref::<gtk::FlattenListModel>().unwrap(); let s = m.model().and_downcast::<gtk::gio::ListStore>().unwrap_or_else(|| { let s = gtk::gio::ListStore::new::<gtk::StringList>(); m.set_model(Some(&s)); s }); s.append(&gtk::StringList::new(&[\"a\"]));"
     },
     "via": [
      {
@@ -12892,10 +13133,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6f8d77fb79f64163",
+    "record_fp": "cd65f72762e09ea5",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FlowBoxChild"
+     "check": "change",
+     "on": "Gtk:FlowBoxChild",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -13064,10 +13308,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "fe72c4dcffc9920f",
+    "record_fp": "db2669ca94072a8c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FontButton"
+     "check": "change",
+     "on": "Gtk:FontButton",
+     "values": [
+      "gtk::pango::FontDescription::from_string(\"Sans 13\")",
+      "gtk::pango::FontDescription::from_string(\"Serif 9\")"
+     ]
     },
     "via": [
      {
@@ -13116,12 +13364,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "bc88ea54479be9d7",
+    "record_fp": "3b45394341343c49",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:FontButton"
     },
     "via": [
@@ -13223,10 +13471,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "4dc21037144fcf19",
+    "record_fp": "91c5a1288f1e1c98",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FontDialog"
+     "check": "change",
+     "on": "Gtk:FontDialog",
+     "values": [
+      "gtk::CustomFilter::new(|_| true)"
+     ]
     },
     "via": [
      {
@@ -13250,10 +13501,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "80ae233f396fb5b6",
+    "record_fp": "63ffc63f12998264",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FontDialog"
+     "check": "change",
+     "on": "Gtk:FontDialog",
+     "values": [
+      "new_type(\"PangoCairoFcFontMap\")"
+     ]
     },
     "via": [
      {
@@ -13277,10 +13531,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0b034488da4907a1",
+    "record_fp": "6a66f8d7e1a2d85d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FontDialog"
+     "check": "change",
+     "on": "Gtk:FontDialog",
+     "values": [
+      "gtk::pango::Language::from_string(\"de\")",
+      "gtk::pango::Language::from_string(\"fr\")"
+     ]
     },
     "via": [
      {
@@ -13362,10 +13620,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontDialogButton:dialog)"
      }
     ],
-    "record_fp": "c27496ccad29e368",
+    "record_fp": "4f53050ddc3adeee",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FontDialogButton"
+     "check": "change",
+     "on": "Gtk:FontDialogButton",
+     "values": [
+      "new_type(\"GtkFontDialog\")"
+     ]
     },
     "via": [
      {
@@ -13389,10 +13650,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "af12ff90dee6ba2b",
+    "record_fp": "1eae52705048d0de",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FontDialogButton"
+     "check": "change",
+     "on": "Gtk:FontDialogButton",
+     "values": [
+      "gtk::pango::FontDescription::from_string(\"Sans 13\")",
+      "gtk::pango::FontDescription::from_string(\"Serif 9\")"
+     ]
     },
     "via": [
      {
@@ -13444,10 +13709,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "659fac6aae2a5349",
+    "record_fp": "512b03642d96db8c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FontDialogButton"
+     "check": "change",
+     "on": "Gtk:FontDialogButton",
+     "values": [
+      "gtk::pango::Language::from_string(\"de\")",
+      "gtk::pango::Language::from_string(\"fr\")"
+     ]
     },
     "via": [
      {
@@ -13557,10 +13826,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "cbca7aed473795b7",
+    "record_fp": "d7b84b6ce95d8410",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Frame"
+     "check": "change",
+     "on": "Gtk:Frame",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -13615,11 +13887,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Frame:label)"
      }
     ],
-    "record_fp": "ce167d1a40e4cad4",
+    "record_fp": "51cfdb8bc25ca52b",
     "verify": {
-     "check": "cross",
+     "check": "change",
      "on": "Gtk:Frame",
-     "trigger": "label"
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -13676,11 +13950,10 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GLArea:use-es)"
      }
     ],
-    "record_fp": "2b84a2a6b4ad6e89",
+    "record_fp": "783885749297a960",
     "verify": {
-     "check": "cross",
-     "on": "Gtk:GLArea",
-     "trigger": "use-es"
+     "check": "change",
+     "on": "Gtk:GLArea"
     },
     "via": [
      {
@@ -14041,10 +14314,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "ac2d0701ce0b0b6e",
+    "record_fp": "b51f49a251b45803",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:GraphicsOffload"
+     "check": "change",
+     "on": "Gtk:GraphicsOffload",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -14524,10 +14800,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridView:factory)"
      }
     ],
-    "record_fp": "e6a6b51c7829d9c0",
+    "record_fp": "1d2e8344450ea0ec",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:GridView"
+     "check": "change",
+     "on": "Gtk:GridView",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -14607,10 +14886,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.GridView:model)"
      }
     ],
-    "record_fp": "6d67647eb0660807",
+    "record_fp": "c175d23f7ed39aa6",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:GridView"
+     "check": "change",
+     "on": "Gtk:GridView",
+     "values": [
+      "gtk::SingleSelection::new(Some(gtk::StringList::new(&[\"a\", \"b\"])))"
+     ]
     },
     "via": [
      {
@@ -14761,10 +15043,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "86bf436c382afd79",
+    "record_fp": "a87e3c098b1ed460",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:HeaderBar"
+     "check": "change",
+     "on": "Gtk:HeaderBar",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -14815,12 +15100,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "31163d0f227cf494",
+    "record_fp": "0c4130a266b12240",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:IMContextSimple"
     },
     "via": [
@@ -14994,10 +15279,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "aab02b8c64e8e493",
+    "record_fp": "5597e7e00175efc1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:IconTheme"
+     "check": "change",
+     "on": "Gtk:IconTheme",
+     "values": [
+      "gtk::gdk::Display::open(None).unwrap()"
+     ]
     },
     "via": [
      {
@@ -15018,12 +15306,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "aca17e5938083b40",
+    "record_fp": "2c74c7af87148ed9",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:IconTheme"
     },
     "via": [
@@ -15045,12 +15333,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "d6ff0b987a8b326b",
+    "record_fp": "6c80d2469648f309",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:IconTheme"
     },
     "via": [
@@ -15347,10 +15635,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "255639de6de28505",
+    "record_fp": "e7bba9c6cfa4e67c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:IconView"
+     "check": "change",
+     "on": "Gtk:IconView",
+     "values": [
+      "gtk::ListStore::new(&[gtk::glib::Type::STRING])"
+     ]
     },
     "via": [
      {
@@ -15558,10 +15849,13 @@
   },
   "Gtk:Image": {
    "file": {
-    "class": "exact",
+    "class": "partial",
     "fact": "svelters-api:v1:type:gtk:Gtk:Image:prop:file:observe",
     "fires": "on_set",
     "layer": "inferred",
+    "missed": [
+     "programmatic"
+    ],
     "prop": "file",
     "provenance": [
      {
@@ -15569,14 +15863,15 @@
       "ref": "O1: GObject property, notify::file"
      },
      {
-      "origin": "probe",
-      "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file)"
+      "origin": "manual",
+      "ref": "rules observe.missed (OV1): gtk_image_set_from_file with a loadable file changes `file` without notify::file (a property set notifies, through GObject)"
      }
     ],
-    "record_fp": "432114a7a8763619",
+    "record_fp": "fc69bfff30ae6734",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Image"
+     "check": "silent",
+     "on": "Gtk:Image",
+     "rust": "let i = o.downcast_ref::<gtk::Image>().unwrap(); let p = std::env::temp_dir().join(\"svelters-ov1-image.png\"); if !p.exists() { gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb, false, 8, 1, 1).unwrap().savev(&p, \"png\", &[]).unwrap(); } i.set_from_file(Some(&p));"
     },
     "via": [
      {
@@ -15601,10 +15896,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "4e280a26f2584d8a",
+    "record_fp": "e2b51c51af617a2c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Image"
+     "check": "change",
+     "on": "Gtk:Image",
+     "values": [
+      "gtk::gio::ThemedIcon::new(\"ov1-a\")",
+      "gtk::gio::ThemedIcon::new(\"ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -15689,10 +15988,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6b2051ceb31cec42",
+    "record_fp": "504fe96fafe56c5d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Image"
+     "check": "change",
+     "on": "Gtk:Image",
+     "values": [
+      "gtk::gdk::Paintable::new_empty(1, 1)"
+     ]
     },
     "via": [
      {
@@ -15745,10 +16047,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "73e1bc1bba37fce0",
+    "record_fp": "46216613ca6465b2",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Image"
+     "check": "cross",
+     "on": "Gtk:Image",
+     "rust": "let i = o.downcast_ref::<gtk::Image>().unwrap(); if i.resource().is_some() { i.clear(); } else { i.set_resource(Some(\"/org/gtk/libgtk/icons/16x16/status/image-missing.png\")); }"
     },
     "via": [
      {
@@ -15921,10 +16224,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9f32f84d853c8128",
+    "record_fp": "a7f4993bdfd72035",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Inscription"
+     "check": "change",
+     "on": "Gtk:Inscription",
+     "values": [
+      "gtk::pango::AttrList::from_string(\"0 1 weight bold\").unwrap()",
+      "gtk::pango::AttrList::from_string(\"0 2 style italic\").unwrap()"
+     ]
     },
     "via": [
      {
@@ -16239,10 +16546,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "a9d470e95be82b98",
+    "record_fp": "d20c139cf79d3c3b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Label"
+     "check": "change",
+     "on": "Gtk:Label",
+     "values": [
+      "gtk::pango::AttrList::from_string(\"0 1 weight bold\").unwrap()",
+      "gtk::pango::AttrList::from_string(\"0 2 style italic\").unwrap()"
+     ]
     },
     "via": [
      {
@@ -16294,10 +16605,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:extra-menu)"
      }
     ],
-    "record_fp": "74d4138e91261f95",
+    "record_fp": "b715893065ae44ee",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Label"
+     "check": "change",
+     "on": "Gtk:Label",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -16461,10 +16775,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2e7ade4a9eae9360",
+    "record_fp": "53435f0567fe5136",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Label"
+     "check": "change",
+     "on": "Gtk:Label",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -16572,10 +16889,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2716c5c20dded502",
+    "record_fp": "f3f6a67970a4563a",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Label"
+     "check": "change",
+     "on": "Gtk:Label",
+     "values": [
+      "gtk::pango::TabArray::new(1, true)",
+      "gtk::pango::TabArray::new(2, true)"
+     ]
     },
     "via": [
      {
@@ -17236,10 +17557,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "c3ae108f4f77cfa6",
+    "record_fp": "d4891239cd0a5148",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ListBoxRow"
+     "check": "change",
+     "on": "Gtk:ListBoxRow",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -17293,10 +17617,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "5607aa72a09fe820",
+    "record_fp": "d5d1f238a125996b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ListHeader"
+     "check": "change",
+     "on": "Gtk:ListHeader",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -17433,10 +17760,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2793e2a183ad8a16",
+    "record_fp": "1591035082ddbf55",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ListItem"
+     "check": "change",
+     "on": "Gtk:ListItem",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -17546,10 +17876,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:factory)"
      }
     ],
-    "record_fp": "7e778bc54b3ce426",
+    "record_fp": "461103ccdbedfbae",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ListView"
+     "check": "change",
+     "on": "Gtk:ListView",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -17573,10 +17906,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:header-factory)"
      }
     ],
-    "record_fp": "d60aae2d557a7df2",
+    "record_fp": "787de189fa980041",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ListView"
+     "check": "change",
+     "on": "Gtk:ListView",
+     "values": [
+      "gtk::SignalListItemFactory::new()"
+     ]
     },
     "via": [
      {
@@ -17600,10 +17936,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ListView:model)"
      }
     ],
-    "record_fp": "017cc45bfdc375b4",
+    "record_fp": "98fcbcc2b6e890f8",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ListView"
+     "check": "change",
+     "on": "Gtk:ListView",
+     "values": [
+      "gtk::SingleSelection::new(Some(gtk::StringList::new(&[\"a\", \"b\"])))"
+     ]
     },
     "via": [
      {
@@ -17714,10 +18053,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "dbfb2b36ec88acd2",
+    "record_fp": "87b392e4b91c198b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:LockButton"
+     "check": "change",
+     "on": "Gtk:LockButton",
+     "values": [
+      "gtk::gio::SimplePermission::new(true)"
+     ]
     },
     "via": [
      {
@@ -17928,10 +18270,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0d1dc74dd1800eb5",
+    "record_fp": "9f412dbc50baab6d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MapListModel"
+     "check": "change",
+     "on": "Gtk:MapListModel",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -17955,10 +18300,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "64f778d37affbe96",
+    "record_fp": "e6ae7bf4934b4213",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MapListModel"
+     "check": "cross",
+     "on": "Gtk:MapListModel",
+     "rust": "let m = o.downcast_ref::<gtk::MapListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append(\"a\");"
     },
     "via": [
      {
@@ -17984,10 +18330,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "f65978a46763c019",
+    "record_fp": "fd3c920e2db6b930",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MediaControls"
+     "check": "change",
+     "on": "Gtk:MediaControls",
+     "values": [
+      "gtk::MediaFile::new()"
+     ]
     },
     "via": [
      {
@@ -18239,10 +18588,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2580c28dbdb4adb4",
+    "record_fp": "743cccb1ccd465bb",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MenuButton"
+     "check": "change",
+     "on": "Gtk:MenuButton",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -18379,10 +18731,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.MenuButton:menu-model)"
      }
     ],
-    "record_fp": "6fafe5576f14be64",
+    "record_fp": "d9c465fd2526b03f",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MenuButton"
+     "check": "change",
+     "on": "Gtk:MenuButton",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -18407,10 +18762,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "200e6102b9ff15e2",
+    "record_fp": "9c3de61c93eeaf9e",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MenuButton"
+     "check": "change",
+     "on": "Gtk:MenuButton",
+     "values": [
+      "gtk::Popover::new()"
+     ]
     },
     "via": [
      {
@@ -18565,10 +18923,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "38e324f4f0f177f7",
+    "record_fp": "f47014197b00441e",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MessageDialog"
+     "check": "cross",
+     "on": "Gtk:MessageDialog",
+     "rust": "let d = o.downcast_ref::<gtk::MessageDialog>().unwrap(); d.set_secondary_text(Some(\"x\")); d.set_secondary_use_markup(!d.is_secondary_use_markup());"
     },
     "via": [
      {
@@ -18670,7 +19029,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "15f8e54794afa8b0",
+    "record_fp": "73786ef86a38fabb",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:MountOperation",
+     "values": [
+      "gtk::gdk::Display::open(None).unwrap()"
+     ]
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -18694,7 +19060,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "18f9bbd918f03c0f",
+    "record_fp": "e1b6fb4998a80c65",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:MountOperation",
+     "values": [
+      "gtk::Window::new()"
+     ]
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -18736,10 +19109,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "49e246e4a2edf273",
+    "record_fp": "bfe4aa704823cd45",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:AnyFilter"
+     "check": "cross",
+     "on": "Gtk:AnyFilter",
+     "rust": "o.downcast_ref::<gtk::MultiFilter>().unwrap().append(gtk::CustomFilter::new(|_| true));"
     },
     "via": [
      {
@@ -18782,10 +19156,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b4cfbbc679f12c31",
+    "record_fp": "ecb992fa54da0bfa",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MultiSelection"
+     "check": "change",
+     "on": "Gtk:MultiSelection",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -18809,10 +19186,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "6bb9816a568efb76",
+    "record_fp": "8d317f1c6ce13db1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MultiSelection"
+     "check": "cross",
+     "on": "Gtk:MultiSelection",
+     "rust": "let m = o.downcast_ref::<gtk::MultiSelection>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append(\"a\");"
     },
     "via": [
      {
@@ -18855,10 +19233,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "876177e56965e5c5",
+    "record_fp": "be8a384e239fac1c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:MultiSorter"
+     "check": "cross",
+     "on": "Gtk:MultiSorter",
+     "rust": "o.downcast_ref::<gtk::MultiSorter>().unwrap().append(gtk::StringSorter::new(None::<gtk::Expression>));"
     },
     "via": [
      {
@@ -18955,10 +19334,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "113fd67688aaff60",
+    "record_fp": "4908974a1cd2150e",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:FileChooserNative"
+     "check": "change",
+     "on": "Gtk:FileChooserNative",
+     "values": [
+      "gtk::Window::new()"
+     ]
     },
     "via": [
      {
@@ -19028,10 +19410,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9d96cf0f635ea0b5",
+    "record_fp": "25855eda742dab1d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:NoSelection"
+     "check": "change",
+     "on": "Gtk:NoSelection",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -19055,10 +19440,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "de65db2fde060623",
+    "record_fp": "99a3aac990b6dd44",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:NoSelection"
+     "check": "cross",
+     "on": "Gtk:NoSelection",
+     "rust": "let m = o.downcast_ref::<gtk::NoSelection>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append(\"a\");"
     },
     "via": [
      {
@@ -19140,10 +19526,11 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (scenario:Notebook remove the current page, set:Gtk.Notebook:page)"
      }
     ],
-    "record_fp": "2c2dab88f3efe971",
+    "record_fp": "7d5b32a55bede8dd",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Notebook"
+     "check": "cross",
+     "on": "Gtk:Notebook",
+     "rust": "let n = o.downcast_ref::<gtk::Notebook>().unwrap(); if n.n_pages() == 0 { n.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); n.append_page(&gtk::Label::new(None), None::<&gtk::Widget>); } n.set_current_page(Some(if n.current_page() == Some(1) { 0 } else { 1 }));"
     },
     "via": [
      {
@@ -19530,10 +19917,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "73109f97356cdf36",
+    "record_fp": "409bd8a76eccd98d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:NumericSorter"
+     "check": "change",
+     "on": "Gtk:NumericSorter",
+     "values": [
+      "gtk::ConstantExpression::new(\"ov1\")"
+     ]
     },
     "via": [
      {
@@ -19617,10 +20007,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "ca736bced68bc9d7",
+    "record_fp": "3097660e49af49a9",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Overlay"
+     "check": "change",
+     "on": "Gtk:Overlay",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -19740,10 +20133,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "80c5b58c29445f6b",
+    "record_fp": "c3004027a2a96774",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Paned"
+     "check": "change",
+     "on": "Gtk:Paned",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -19938,10 +20334,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "01f2f413e3cac4cc",
+    "record_fp": "34d43abddc6b5181",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Paned"
+     "check": "change",
+     "on": "Gtk:Paned",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -20192,10 +20591,14 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Picture:file)"
      }
     ],
-    "record_fp": "20dc3293061b063f",
+    "record_fp": "c82f4d3efbc6a865",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Picture"
+     "check": "change",
+     "on": "Gtk:Picture",
+     "values": [
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-a\")",
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -20277,10 +20680,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "37825ca3505d2c82",
+    "record_fp": "63c91844dbcc0207",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Picture"
+     "check": "change",
+     "on": "Gtk:Picture",
+     "values": [
+      "gtk::gdk::Paintable::new_empty(1, 1)"
+     ]
     },
     "via": [
      {
@@ -20362,10 +20768,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "bc550236b8af39ee",
+    "record_fp": "b94ae59e6c278d03",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Popover"
+     "check": "change",
+     "on": "Gtk:Popover",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -20389,10 +20798,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "ea0f7780eb9cf220",
+    "record_fp": "836b325ddb62f2b0",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Popover"
+     "check": "change",
+     "on": "Gtk:Popover",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -20473,10 +20885,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "aca7597c2ab51b6b",
+    "record_fp": "432e64c5b67d13c5",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Popover"
+     "check": "change",
+     "on": "Gtk:Popover",
+     "values": [
+      "gtk::gdk::Rectangle::new(1, 2, 3, 4)",
+      "gtk::gdk::Rectangle::new(5, 6, 7, 8)"
+     ]
     },
     "via": [
      {
@@ -20530,10 +20946,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "8f04c2303f9fd88a",
+    "record_fp": "6121a868d78f6c23",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PopoverBin"
+     "check": "change",
+     "on": "Gtk:PopoverBin",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -20585,10 +21004,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PopoverBin:menu-model)"
      }
     ],
-    "record_fp": "5f515d3650d19b6e",
+    "record_fp": "33e79bf5bb4e0433",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PopoverBin"
+     "check": "change",
+     "on": "Gtk:PopoverBin",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -20612,10 +21034,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b7ff7fee1a2110ec",
+    "record_fp": "084b20a68ca909d8",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PopoverBin"
+     "check": "change",
+     "on": "Gtk:PopoverBin",
+     "values": [
+      "gtk::Popover::new()"
+     ]
     },
     "via": [
      {
@@ -20638,12 +21063,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "dc05e1eb750eb251",
+    "record_fp": "47bb69c76b085db2",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:PopoverMenu"
     },
     "via": [
@@ -20669,10 +21094,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PopoverMenu:menu-model)"
      }
     ],
-    "record_fp": "06a234a5e3da21b9",
+    "record_fp": "0b4d580b4971e08c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PopoverMenu"
+     "check": "change",
+     "on": "Gtk:PopoverMenu",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -20697,10 +21125,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "50aea4e893774bd5",
+    "record_fp": "fe5541cb73c957cb",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PopoverMenu"
+     "check": "cross",
+     "on": "Gtk:PopoverMenu",
+     "rust": "let p = o.downcast_ref::<gtk::PopoverMenu>().unwrap(); if p.menu_model().is_none() { let m = gtk::gio::Menu::new(); let sub = gtk::gio::Menu::new(); sub.append(Some(\"x\"), Some(\"ov1.x\")); m.append_submenu(Some(\"Sub\"), &sub); p.set_menu_model(Some(&m)); } let cur: Option<String> = p.property(\"visible-submenu\"); p.set_property(\"visible-submenu\", if cur.as_deref() == Some(\"Sub\") { \"main\" } else { \"Sub\" });"
     },
     "via": [
      {
@@ -20727,10 +21156,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.PopoverMenuBar:menu-model)"
      }
     ],
-    "record_fp": "7daaead6c0b0e522",
+    "record_fp": "ce9920b1dd763ec5",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PopoverMenuBar"
+     "check": "change",
+     "on": "Gtk:PopoverMenuBar",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -20812,10 +21244,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6e4b0505f62f8a4d",
+    "record_fp": "6abfb1f000db1b06",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PrintDialog"
+     "check": "change",
+     "on": "Gtk:PrintDialog",
+     "values": [
+      "gtk::PageSetup::new()"
+     ]
     },
     "via": [
      {
@@ -20839,10 +21274,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "3b0a1703123500e4",
+    "record_fp": "1d1a37cf3899356a",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:PrintDialog"
+     "check": "change",
+     "on": "Gtk:PrintDialog",
+     "values": [
+      "gtk::PrintSettings::new()"
+     ]
     },
     "via": [
      {
@@ -20974,7 +21412,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "4b073075f173cff7",
+    "record_fp": "eab02dafcebf87dc",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -20997,7 +21439,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "e077085f18268867",
+    "record_fp": "65c24edd51b408a9",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21021,7 +21467,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "10cb24848b8ff1de",
+    "record_fp": "daed87724adb8033",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21045,7 +21495,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "2e1eee074c3e2cdf",
+    "record_fp": "942f5067ff1626f0",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation",
+     "values": [
+      "gtk::PageSetup::new()"
+     ]
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21068,7 +21525,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "85f90adeb8a85d4a",
+    "record_fp": "ca5f31315e018e6e",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21092,7 +21553,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "4462a5d9d69720cf",
+    "record_fp": "2f5b0d13ba08677a",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21115,7 +21580,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "d14b79c72e605e48",
+    "record_fp": "87af3ad20287921a",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21139,7 +21608,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "ea5c3b231dda4f78",
+    "record_fp": "411bbc1a677045c0",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21162,7 +21635,12 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "c773e5f519575f61",
+    "record_fp": "3729dea667815536",
+    "verify": {
+     "check": "cross",
+     "on": "Gtk:PrintOperation",
+     "rust": "let p = o.downcast_ref::<gtk::PrintOperation>().unwrap(); let n: i32 = p.property(\"n-pages\"); p.set_n_pages(if n == 2 { 3 } else { 2 });"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21186,7 +21664,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6f784ad2b2171221",
+    "record_fp": "dbbb1f38eb56e9a8",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation",
+     "values": [
+      "gtk::PrintSettings::new()"
+     ]
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21209,7 +21694,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "3066495611c122da",
+    "record_fp": "e61fdf523cc70db0",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21232,7 +21721,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9a4ccce8e3c1b74f",
+    "record_fp": "93fc9fccb8d1c3fe",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21255,7 +21748,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "a9a832837d84d6e0",
+    "record_fp": "f0836b27685f4cbf",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21278,7 +21775,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "73be5ee4f872fe15",
+    "record_fp": "9d43a41461a28da1",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21301,7 +21802,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "09443a13da73ec94",
+    "record_fp": "b150b53ee285140f",
+    "verify": {
+     "check": "change",
+     "on": "Gtk:PrintOperation"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -21396,10 +21901,10 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "223ff329b0faae42",
+    "record_fp": "9e4eb9845dcd5be0",
     "via": [
      {
       "mechanism": "notify",
@@ -21753,10 +22258,14 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Range:adjustment)"
      }
     ],
-    "record_fp": "b14366a89f9fbf1d",
+    "record_fp": "ff4c3139a69b72d6",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Range"
+     "check": "change",
+     "on": "Gtk:Range",
+     "setup": "o.downcast_ref::<gtk::Range>().unwrap().set_range(0.0, 100.0);",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -22129,10 +22638,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "48197689c1414152",
+    "record_fp": "f94faf6208aad8f1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Revealer"
+     "check": "change",
+     "on": "Gtk:Revealer",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -22391,10 +22903,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScaleButton:adjustment)"
      }
     ],
-    "record_fp": "a95e900b0ccd74dc",
+    "record_fp": "2b93954a80d01a0d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ScaleButton"
+     "check": "change",
+     "on": "Gtk:ScaleButton",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -22450,11 +22965,10 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.VolumeButton:use-symbolic)"
      }
     ],
-    "record_fp": "f86e2d5f282d7c22",
+    "record_fp": "d736eb79d9ed484b",
     "verify": {
-     "check": "cross",
-     "on": "Gtk:VolumeButton",
-     "trigger": "use-symbolic"
+     "check": "change",
+     "on": "Gtk:ScaleButton"
     },
     "via": [
      {
@@ -22509,10 +23023,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:hadjustment)"
      }
     ],
-    "record_fp": "cd7ee56f2c6f676f",
+    "record_fp": "b46e683f6ec49471",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextView"
+     "check": "change",
+     "on": "Gtk:TextView",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -22565,10 +23082,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollable:vadjustment)"
      }
     ],
-    "record_fp": "63439cc1330aebe6",
+    "record_fp": "66271281154811d3",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextView"
+     "check": "change",
+     "on": "Gtk:TextView",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -22622,10 +23142,14 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Scrollbar:adjustment)"
      }
     ],
-    "record_fp": "b87ac53fc2878054",
+    "record_fp": "e30265a1b88ec4c1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Scrollbar"
+     "check": "change",
+     "on": "Gtk:Scrollbar",
+     "setup": "o.downcast_ref::<gtk::Scrollbar>().unwrap().adjustment().configure(0.0, 0.0, 100.0, 1.0, 10.0, 0.0);",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -22651,10 +23175,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "bd5bd70e967f3381",
+    "record_fp": "c950552e32f1ebc2",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ScrolledWindow"
+     "check": "change",
+     "on": "Gtk:ScrolledWindow",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -22678,10 +23205,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:hadjustment)"
      }
     ],
-    "record_fp": "17e9da98d75519d9",
+    "record_fp": "93917bf74fc40b86",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ScrolledWindow"
+     "check": "change",
+     "on": "Gtk:ScrolledWindow",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -22985,10 +23515,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.ScrolledWindow:vadjustment)"
      }
     ],
-    "record_fp": "0fad507668ec5837",
+    "record_fp": "884d590817c97ea8",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ScrolledWindow"
+     "check": "change",
+     "on": "Gtk:ScrolledWindow",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -23070,10 +23603,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "857ca11dd07e3ee4",
+    "record_fp": "33e19949a3ac8aa1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SearchBar"
+     "check": "change",
+     "on": "Gtk:SearchBar",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -23097,10 +23633,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "c1c87a053d63cc62",
+    "record_fp": "72d9265281487461",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SearchBar"
+     "check": "change",
+     "on": "Gtk:SearchBar",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -23207,12 +23746,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "8821733995286ddd",
+    "record_fp": "98a70936d2cc6b16",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:SearchEntry"
     },
     "via": [
@@ -23265,10 +23804,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "eabf45869e4f3f8f",
+    "record_fp": "57a40b827b48a89d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SearchEntry"
+     "check": "change",
+     "on": "Gtk:SearchEntry",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -23367,10 +23909,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "1a6e58b82e4e31ad",
+    "record_fp": "36e79689da81d14e",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SelectionFilterModel"
+     "check": "change",
+     "on": "Gtk:SelectionFilterModel",
+     "values": [
+      "gtk::SingleSelection::new(Some(gtk::StringList::new(&[\"a\", \"b\"])))"
+     ]
     },
     "via": [
      {
@@ -23394,10 +23939,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "b237bd0c4cc17c40",
+    "record_fp": "68e0e68a742486a4",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SelectionFilterModel"
+     "check": "cross",
+     "on": "Gtk:SelectionFilterModel",
+     "rust": "let m = o.downcast_ref::<gtk::SelectionFilterModel>().unwrap(); let s = m.model().unwrap_or_else(|| { let s = gtk::MultiSelection::new(Some(gtk::StringList::new(&[\"a\", \"b\"]))).upcast::<gtk::SelectionModel>(); m.set_model(Some(&s)); s }); if m.n_items() == 0 { s.select_all(); } else { s.unselect_all(); }"
     },
     "via": [
      {
@@ -24965,10 +25511,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "cd0f4e5c3c1a5861",
+    "record_fp": "37f8e14255990e15",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Shortcut"
+     "check": "change",
+     "on": "Gtk:Shortcut",
+     "values": [
+      "gtk::ShortcutAction::parse_string(\"action(ov1.a)\").unwrap()",
+      "gtk::ShortcutAction::parse_string(\"action(ov1.b)\").unwrap()"
+     ]
     },
     "via": [
      {
@@ -24989,12 +25539,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "f338ebff0fafbb94",
+    "record_fp": "0ddc61d7b04fb37b",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:Shortcut"
     },
     "via": [
@@ -25019,10 +25569,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "f1028885b80f0f69",
+    "record_fp": "ea5faa1ee145b411",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Shortcut"
+     "check": "change",
+     "on": "Gtk:Shortcut",
+     "values": [
+      "gtk::ShortcutTrigger::parse_string(\"<Control>a\").unwrap()",
+      "gtk::ShortcutTrigger::parse_string(\"<Control>b\").unwrap()"
+     ]
     },
     "via": [
      {
@@ -25062,12 +25616,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "9221a2538b2c0c52",
+    "record_fp": "75f14bae9f78f633",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:ShortcutController"
     },
     "via": [
@@ -25092,10 +25646,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "ccfe13c60941dac2",
+    "record_fp": "100d5ca6fad4b74e",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:ShortcutController"
+     "check": "cross",
+     "on": "Gtk:ShortcutController",
+     "rust": "o.downcast_ref::<gtk::ShortcutController>().unwrap().add_shortcut(gtk::Shortcut::new(gtk::ShortcutTrigger::parse_string(\"<Control>a\"), None::<gtk::ShortcutAction>));"
     },
     "via": [
      {
@@ -25775,10 +26330,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "f968fa16757ba141",
+    "record_fp": "927c76328e76337c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SingleSelection"
+     "check": "change",
+     "on": "Gtk:SingleSelection",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -25802,10 +26360,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "3a9b42bf6e4e754d",
+    "record_fp": "e1dbd41753e58a26",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SingleSelection"
+     "check": "cross",
+     "on": "Gtk:SingleSelection",
+     "rust": "let m = o.downcast_ref::<gtk::SingleSelection>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append(\"a\");"
     },
     "via": [
      {
@@ -25829,10 +26388,11 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (scenario:SingleSelection set_selected)"
      }
     ],
-    "record_fp": "68e48db6d050b9f7",
+    "record_fp": "114e09b4d046df26",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SingleSelection"
+     "check": "cross",
+     "on": "Gtk:SingleSelection",
+     "rust": "let s = o.downcast_ref::<gtk::SingleSelection>().unwrap(); if s.model().is_none() { s.set_model(Some(&gtk::StringList::new(&[\"a\", \"b\"]))); } s.set_selected(if s.selected() == 1 { 0 } else { 1 });"
     },
     "via": [
      {
@@ -25856,10 +26416,11 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (scenario:SingleSelection set_selected)"
      }
     ],
-    "record_fp": "23e127eec4ee4106",
+    "record_fp": "aeb3f8b6908203d5",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SingleSelection"
+     "check": "cross",
+     "on": "Gtk:SingleSelection",
+     "rust": "let s = o.downcast_ref::<gtk::SingleSelection>().unwrap(); if s.model().is_none() { s.set_model(Some(&gtk::StringList::new(&[\"a\", \"b\"]))); } s.set_selected(if s.selected() == 1 { 0 } else { 1 });"
     },
     "via": [
      {
@@ -25932,10 +26493,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "3bef662ae8eae9ad",
+    "record_fp": "732919ef7350f46c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SliceListModel"
+     "check": "change",
+     "on": "Gtk:SliceListModel",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -25959,10 +26523,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "9b013a6ecd35ee89",
+    "record_fp": "c2592a545746efb8",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SliceListModel"
+     "check": "cross",
+     "on": "Gtk:SliceListModel",
+     "rust": "let m = o.downcast_ref::<gtk::SliceListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append(\"a\");"
     },
     "via": [
      {
@@ -26089,10 +26654,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "4bd319d6a04140a2",
+    "record_fp": "219e8c766d2cb86c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SortListModel"
+     "check": "change",
+     "on": "Gtk:SortListModel",
+     "values": [
+      "gtk::StringList::new(&[\"a\", \"b\"])"
+     ]
     },
     "via": [
      {
@@ -26116,10 +26684,11 @@
       "ref": "review pattern :n-items$: GListModel implementations notify n-items with items-changed (GTK 4.8+, GLib 2.74+); the probe saw it on Gio.ListStore and Gtk.StringList"
      }
     ],
-    "record_fp": "c6f7c90327013a2b",
+    "record_fp": "2cecce85732e177f",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SortListModel"
+     "check": "cross",
+     "on": "Gtk:SortListModel",
+     "rust": "let m = o.downcast_ref::<gtk::SortListModel>().unwrap(); let s = m.model().and_downcast::<gtk::StringList>().unwrap_or_else(|| { let s = gtk::StringList::new(&[]); m.set_model(Some(&s)); s }); s.append(\"a\");"
     },
     "via": [
      {
@@ -26143,10 +26712,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "23066110edc51d35",
+    "record_fp": "6226a2bfd5a56436",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SortListModel"
+     "check": "change",
+     "on": "Gtk:SortListModel",
+     "values": [
+      "gtk::StringSorter::new(None::<gtk::Expression>)"
+     ]
     },
     "via": [
      {
@@ -26170,10 +26742,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "49daa48ffa6dbceb",
+    "record_fp": "e1d36d4cd532a40f",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SortListModel"
+     "check": "change",
+     "on": "Gtk:SortListModel",
+     "values": [
+      "gtk::StringSorter::new(None::<gtk::Expression>)"
+     ]
     },
     "via": [
      {
@@ -26228,10 +26803,14 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.SpinButton:adjustment)"
      }
     ],
-    "record_fp": "dfb44fa87cff4799",
+    "record_fp": "314d6732123f960d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:SpinButton"
+     "check": "change",
+     "on": "Gtk:SpinButton",
+     "setup": "o.downcast_ref::<gtk::SpinButton>().unwrap().set_range(0.0, 100.0);",
+     "values": [
+      "gtk::Adjustment::new(0.0, 0.0, 100.0, 1.0, 10.0, 0.0)"
+     ]
     },
     "via": [
      {
@@ -26749,10 +27328,11 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "ce006ad6c3d002b6",
+    "record_fp": "26c140265add14cb",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Stack"
+     "check": "cross",
+     "on": "Gtk:Stack",
+     "rust": "let s = o.downcast_ref::<gtk::Stack>().unwrap(); if s.first_child().is_none() { s.add_named(&gtk::Label::new(None), Some(\"a\")); s.add_named(&gtk::Label::new(None), Some(\"b\")); } let n = if s.visible_child_name().as_deref() == Some(\"b\") { \"a\" } else { \"b\" }; s.set_visible_child_name(n);"
     },
     "via": [
      {
@@ -26776,10 +27356,11 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "750ee9b8d91e8f45",
+    "record_fp": "e0c613180a600769",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Stack"
+     "check": "cross",
+     "on": "Gtk:Stack",
+     "rust": "let s = o.downcast_ref::<gtk::Stack>().unwrap(); if s.first_child().is_none() { s.add_named(&gtk::Label::new(None), Some(\"a\")); s.add_named(&gtk::Label::new(None), Some(\"b\")); } let n = if s.visible_child_name().as_deref() == Some(\"b\") { \"a\" } else { \"b\" }; s.set_visible_child_name(n);"
     },
     "via": [
      {
@@ -26961,10 +27542,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0751999c811b44ea",
+    "record_fp": "2bf91b2e770fac68",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:StackSidebar"
+     "check": "change",
+     "on": "Gtk:StackSidebar",
+     "values": [
+      "gtk::Stack::new()"
+     ]
     },
     "via": [
      {
@@ -26991,10 +27575,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "479e6b1051528b3e",
+    "record_fp": "ffb7dce325134043",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:StackSwitcher"
+     "check": "change",
+     "on": "Gtk:StackSwitcher",
+     "values": [
+      "gtk::Stack::new()"
+     ]
     },
     "via": [
      {
@@ -27020,10 +27607,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9f1cefb2bcf89f21",
+    "record_fp": "d7499d3cbb2c3e6f",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:StringFilter"
+     "check": "change",
+     "on": "Gtk:StringFilter",
+     "values": [
+      "gtk::ConstantExpression::new(\"ov1\")"
+     ]
     },
     "via": [
      {
@@ -27227,10 +27817,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "f532128a706a6638",
+    "record_fp": "96efff901dfeaf5a",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:StringSorter"
+     "check": "change",
+     "on": "Gtk:StringSorter",
+     "values": [
+      "gtk::ConstantExpression::new(\"ov1\")"
+     ]
     },
     "via": [
      {
@@ -27285,10 +27878,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "4adcd6bb690e4d9d",
+    "record_fp": "edae7dc2d080f406",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:StyleContext"
+     "check": "change",
+     "on": "Gtk:StyleContext",
+     "values": [
+      "gtk::gdk::Display::open(None).unwrap()"
+     ]
     },
     "via": [
      {
@@ -27311,12 +27907,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "484186b844da3f40",
+    "record_fp": "f305c00fe7cf33a7",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:Svg"
     },
     "via": [
@@ -27544,10 +28140,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "760cd82a23b55189",
+    "record_fp": "9062aa580d7fbb94",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Text"
+     "check": "change",
+     "on": "Gtk:Text",
+     "values": [
+      "gtk::pango::AttrList::from_string(\"0 1 weight bold\").unwrap()",
+      "gtk::pango::AttrList::from_string(\"0 2 style italic\").unwrap()"
+     ]
     },
     "via": [
      {
@@ -27571,10 +28171,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:buffer)"
      }
     ],
-    "record_fp": "85c1eb8fd8ae6b18",
+    "record_fp": "a7dac840c235fb99",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Text"
+     "check": "change",
+     "on": "Gtk:Text",
+     "values": [
+      "gtk::EntryBuffer::new(None::<&str>)"
+     ]
     },
     "via": [
      {
@@ -27626,10 +28229,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Text:extra-menu)"
      }
     ],
-    "record_fp": "7bf5f0c0754f3d4e",
+    "record_fp": "599b7856be898316",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Text"
+     "check": "change",
+     "on": "Gtk:Text",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -27678,12 +28284,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "f782b0b54e719cdb",
+    "record_fp": "4b2baa4702dc25a8",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:Text"
     },
     "via": [
@@ -27910,10 +28516,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "38305dd10c06a6ae",
+    "record_fp": "ce0cd4f52a37a74c",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Text"
+     "check": "change",
+     "on": "Gtk:Text",
+     "values": [
+      "gtk::pango::TabArray::new(1, true)",
+      "gtk::pango::TabArray::new(2, true)"
+     ]
     },
     "via": [
      {
@@ -27995,10 +28605,11 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (scenario:TextBuffer undo)"
      }
     ],
-    "record_fp": "c58e216831295ef1",
+    "record_fp": "4d9a8bb15e747719",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextBuffer"
+     "check": "cross",
+     "on": "Gtk:TextBuffer",
+     "rust": "let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); if b.can_redo() { b.redo(); } else { b.insert_at_cursor(\"a\"); b.undo(); }"
     },
     "via": [
      {
@@ -28368,10 +28979,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "c50f9ea7b24fbe65",
+    "record_fp": "9071d010750756a1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -28678,10 +29293,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "d2161aedacb2e92f",
+    "record_fp": "e90e81d7e0f8e473",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::pango::FontDescription::from_string(\"Sans 13\")",
+      "gtk::pango::FontDescription::from_string(\"Serif 9\")"
+     ]
     },
     "via": [
      {
@@ -28765,10 +29384,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "7c58c709044f571c",
+    "record_fp": "1f3bfb534bf233d1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -29339,10 +29962,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "6b70a2d47284dd6b",
+    "record_fp": "43f713da70a2db5b",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -29426,10 +30053,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "a3cca4cd070cbcc3",
+    "record_fp": "ee5aaaf12cbfb342",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -29861,12 +30492,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "50dd6f7ae9297ab2",
+    "record_fp": "0b314e8c70da0442",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:TextTag"
     },
     "via": [
@@ -30110,10 +30741,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b88d2ecb8cc3e50b",
+    "record_fp": "d243010b6cf63274",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -30260,10 +30895,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "89d6b6a09a21fc0e",
+    "record_fp": "49643fcf5d12f0ce",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::pango::TabArray::new(1, true)",
+      "gtk::pango::TabArray::new(2, true)"
+     ]
     },
     "via": [
      {
@@ -30403,10 +31042,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "b5023cd6dba2801e",
+    "record_fp": "e974abc6f43769ee",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextTag"
+     "check": "change",
+     "on": "Gtk:TextTag",
+     "values": [
+      "gtk::gdk::RGBA::new(0.1, 0.2, 0.3, 1.0)",
+      "gtk::gdk::RGBA::new(0.4, 0.5, 0.6, 1.0)"
+     ]
     },
     "via": [
      {
@@ -30761,10 +31404,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:buffer)"
      }
     ],
-    "record_fp": "0e7bf7d0aa83eeb9",
+    "record_fp": "5ca6e0993a95b361",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextView"
+     "check": "change",
+     "on": "Gtk:TextView",
+     "values": [
+      "gtk::TextBuffer::new(None)"
+     ]
     },
     "via": [
      {
@@ -30844,10 +31490,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.TextView:extra-menu)"
      }
     ],
-    "record_fp": "d9cf308f8c10c42c",
+    "record_fp": "25d88ab46eb4aaf2",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextView"
+     "check": "change",
+     "on": "Gtk:TextView",
+     "values": [
+      "gtk::gio::Menu::new()"
+     ]
     },
     "via": [
      {
@@ -30924,12 +31573,12 @@
      },
      {
       "origin": "rule",
-      "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
+      "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "6fa1ba5c57aa5678",
+    "record_fp": "70a6b1c5cfe35f95",
     "verify": {
-     "check": "connect",
+     "check": "change",
      "on": "Gtk:TextView"
     },
     "via": [
@@ -31207,10 +31856,14 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "a559367ec11f719d",
+    "record_fp": "35a2b26cd0e977b5",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TextView"
+     "check": "change",
+     "on": "Gtk:TextView",
+     "values": [
+      "gtk::pango::TabArray::new(1, true)",
+      "gtk::pango::TabArray::new(2, true)"
+     ]
     },
     "via": [
      {
@@ -31352,10 +32005,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "1bb121326b5a90a3",
+    "record_fp": "68977b3f6c2dc56f",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TreeExpander"
+     "check": "change",
+     "on": "Gtk:TreeExpander",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -31463,10 +32119,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "1b74440b428ad29c",
+    "record_fp": "3a1fde22488314d0",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TreeExpander"
+     "check": "change",
+     "on": "Gtk:TreeExpander",
+     "values": [
+      "gtk::TreeListModel::new(gtk::StringList::new(&[\"a\"]), false, false, |_| None).row(0).unwrap()"
+     ]
     },
     "via": [
      {
@@ -31646,10 +32305,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9d91ad17ef9ca38f",
+    "record_fp": "0124f4c20d1f15aa",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TreeListRowSorter"
+     "check": "change",
+     "on": "Gtk:TreeListRowSorter",
+     "values": [
+      "gtk::StringSorter::new(None::<gtk::Expression>)"
+     ]
     },
     "via": [
      {
@@ -31730,7 +32392,12 @@
       "ref": "no probe row; the generated test sets it natively"
      }
     ],
-    "record_fp": "ec2d15fa5be8158e",
+    "record_fp": "9ad6c268d771e484",
+    "verify": {
+     "check": "change",
+     "make": "borrow:Gtk.TreeView.get_selection",
+     "on": "Gtk:TreeSelection"
+    },
     "via": [
      {
       "mechanism": "notify",
@@ -31868,10 +32535,11 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "86ad3a33a8c9cb4e",
+    "record_fp": "5e81c96e0f0a3c8f",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TreeView"
+     "check": "cross",
+     "on": "Gtk:TreeView",
+     "rust": "let t = o.downcast_ref::<gtk::TreeView>().unwrap(); while t.n_columns() < 2 { t.append_column(&gtk::TreeViewColumn::new()); } let c0 = t.column(0); let next = if t.expander_column() == c0 { t.column(1) } else { c0 }; t.set_expander_column(next.as_ref());"
     },
     "via": [
      {
@@ -31909,9 +32577,12 @@
     ]
    },
    "headers-clickable": {
-    "class": "exact",
+    "class": "partial",
     "fact": "svelters-api:v1:type:gtk:Gtk:TreeView:prop:headers-clickable:observe",
     "layer": "inferred",
+    "missed": [
+     "cross_prop"
+    ],
     "prop": "headers-clickable",
     "provenance": [
      {
@@ -31919,14 +32590,15 @@
       "ref": "O1: GObject property, notify::headers-clickable (EXPLICIT_NOTIFY)"
      },
      {
-      "origin": "rule",
-      "ref": "no probe row; the generated test sets it natively"
+      "origin": "manual",
+      "ref": "rules observe.missed (OV1): headers-clickable reads whether every column is clickable; appending a column that is not (or changing a column's clickable) changes it without notify"
      }
     ],
-    "record_fp": "55fedd5aff9c0b28",
+    "record_fp": "8d18f9a0602e8471",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TreeView"
+     "check": "silent",
+     "on": "Gtk:TreeView",
+     "rust": "let t = o.downcast_ref::<gtk::TreeView>().unwrap(); t.append_column(&gtk::TreeViewColumn::new());"
     },
     "via": [
      {
@@ -32063,10 +32735,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "c4981338a9b8f252",
+    "record_fp": "c857612b302526c5",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TreeView"
+     "check": "change",
+     "on": "Gtk:TreeView",
+     "values": [
+      "gtk::ListStore::new(&[gtk::glib::Type::STRING])"
+     ]
     },
     "via": [
      {
@@ -32672,10 +33347,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "a19644b989627734",
+    "record_fp": "6b7b75b859ac8cf1",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:TreeViewColumn"
+     "check": "change",
+     "on": "Gtk:TreeViewColumn",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -32759,10 +33437,14 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Video:file)"
      }
     ],
-    "record_fp": "8f14da5e2f1fb167",
+    "record_fp": "1b42ae20d4ef5ddb",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Video"
+     "check": "change",
+     "on": "Gtk:Video",
+     "values": [
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-a\")",
+      "gtk::gio::File::for_path(\"/tmp/svelters-ov1-b\")"
+     ]
     },
     "via": [
      {
@@ -32842,10 +33524,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "88471587c12d39c3",
+    "record_fp": "af5b32d06c6c12e9",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Video"
+     "check": "change",
+     "on": "Gtk:Video",
+     "values": [
+      "gtk::MediaFile::new()"
+     ]
     },
     "via": [
      {
@@ -32871,10 +33556,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "8745144a8bb8d959",
+    "record_fp": "20526bd1d4cc7a2d",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Viewport"
+     "check": "change",
+     "on": "Gtk:Viewport",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -33076,11 +33764,14 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Label:selectable, set:Gtk.Text:im-module, set:Gtk.TextView:im-module)"
      }
     ],
-    "record_fp": "c621f827275cfc68",
+    "record_fp": "8da8e279a52e174d",
     "verify": {
-     "check": "cross",
-     "on": "Gtk:Label",
-     "trigger": "selectable"
+     "check": "change",
+     "on": "Gtk:Entry",
+     "values": [
+      "gtk::gdk::Cursor::from_name(\"pointer\", None).unwrap()",
+      "gtk::gdk::Cursor::from_name(\"text\", None).unwrap()"
+     ]
     },
     "via": [
      {
@@ -33316,10 +34007,13 @@
       "ref": "observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Widget:layout-manager)"
      }
     ],
-    "record_fp": "abff018745193b90",
+    "record_fp": "7803053215ed53dc",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Label"
+     "check": "change",
+     "on": "Gtk:Label",
+     "values": [
+      "gtk::BoxLayout::new(gtk::Orientation::Vertical)"
+     ]
     },
     "via": [
      {
@@ -33861,10 +34555,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "25d90661d11a015b",
+    "record_fp": "0469dc25679a7a10",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:WidgetPaintable"
+     "check": "change",
+     "on": "Gtk:WidgetPaintable",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -33917,10 +34614,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "8ec9e26ad1283723",
+    "record_fp": "a501790954fee202",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Window"
+     "check": "change",
+     "on": "Gtk:Window",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -34000,10 +34700,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "3e8e293437f81f13",
+    "record_fp": "5469a42d50e717ee",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Window"
+     "check": "change",
+     "on": "Gtk:Window",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -34111,10 +34814,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "1b27b3db8898578a",
+    "record_fp": "96bf72423d4f8403",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Window"
+     "check": "change",
+     "on": "Gtk:Window",
+     "values": [
+      "gtk::gdk::Display::open(None).unwrap()"
+     ]
     },
     "via": [
      {
@@ -34166,10 +34872,11 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "39742a9179f6db06",
+    "record_fp": "7435bb74586bff47",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Window"
+     "check": "cross",
+     "on": "Gtk:Window",
+     "rust": "let w = o.downcast_ref::<gtk::Window>().unwrap(); let e = w.child().unwrap_or_else(|| { let e = gtk::Entry::new(); w.set_child(Some(&e)); e.upcast() }); if gtk::prelude::GtkWindowExt::focus(w).is_some() { gtk::prelude::GtkWindowExt::set_focus(w, None::<&gtk::Widget>); } else { gtk::prelude::GtkWindowExt::set_focus(w, Some(&e)); }"
     },
     "via": [
      {
@@ -34503,10 +35210,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "0b1c25bee8eba7ac",
+    "record_fp": "d838a791f7b6d062",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Window"
+     "check": "change",
+     "on": "Gtk:Window",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {
@@ -34530,10 +35240,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "72091d57467e5b7a",
+    "record_fp": "68e9d781a899f122",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:Window"
+     "check": "change",
+     "on": "Gtk:Window",
+     "values": [
+      "gtk::Window::new()"
+     ]
     },
     "via": [
      {
@@ -34645,10 +35358,13 @@
       "ref": "no probe row; not a scalar: the generated test only installs the mechanism"
      }
     ],
-    "record_fp": "9cb1ae1e7de0fb53",
+    "record_fp": "ecf81a83605a11c6",
     "verify": {
-     "check": "connect",
-     "on": "Gtk:WindowHandle"
+     "check": "change",
+     "on": "Gtk:WindowHandle",
+     "values": [
+      "gtk::Label::new(Some(\"ov1\"))"
+     ]
     },
     "via": [
      {

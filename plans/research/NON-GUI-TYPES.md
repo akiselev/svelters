@@ -566,6 +566,33 @@ Where the build deviates from the plan above:
 - **Widget slots.** Widget-typed parameters and returns of non-widget classes are now bound as element handles (`k: widget` in the facts). `FileDialog.open(parent)`, the §7 example, needed this. It unblocked about 90 Gtk members, including the synchronous ones.
 - **Abort of a file dialog** rejects with `gtk-dialog-error-quark` / `cancelled`. `dismissed` is the user closing it. §7's comment assumed `dismissed` for both.
 
+### N4 (AppKit) as built (2026-10-21, `plans/milestones/N4-appkit-types.md`)
+
+Where the build deviates from the plan above:
+
+- **No libffi invoker.** The core reaches members reflectively through `NSInvocation` and KVC (the existing
+  bridge), not a dynamic `objc_msgSend`. Completion blocks are built from a fixed set of shapes (nine; the bound scope
+  uses `(e)` and `(oe)`); a member whose block has another shape stays blocked with its reason.
+- **No VALUE handles on Apple.** Immutable value classes (`NSURL`, `NSColor`, `NSFont`, `NSAttributedString`) are
+  `SHARED` handles like every other non-widget object; the JS classes still have value semantics (`isEqual:`,
+  mutators hidden). Sharing an immutable ObjC object is indistinguishable from copying it.
+- **Read-only properties come from a runtime probe**, not MAC1's libclang pass: objc2 does not mark them. The probe
+  runs on the macOS runner (`class_copyPropertyList`) and its output is committed (`metadata/probe/appkit/types-*.json`).
+- **Methods are called by selector**; the JS name (selector pieces joined in camelCase) is only for typings and docs.
+- **Measured** (`metadata/appkit/types/report.txt`): 73 bound classes from 24 roots; members bound: Foundation 91% of
+  903, AppKit 87% of 1099; 23 async members; 0 naming collisions; residual Q3 hand list 0. Overrides: 2 class
+  corrections (the prototype's NSColor and NSURLSessionTask), `no_construct` (1 class) and `runtime_missing` (5 selectors).
+
+### N4 WinUI as built (2026-10-21, `plans/milestones/N4-winui-types.md`)
+
+Where the build deviates from the plan above:
+
+- **No C++/WinRT and no per-member native code.** The core is Rust over windows-core (`crates/svelters-winui/src/types/`, about 2.6k lines with its unit tests). The generated layer is const data (interface IID index, vtable slot and ABI parameter types per member), and one dynamic invoker calls the slot: on x86_64 the WinRT ABI is the Microsoft x64 convention, which 27 function shapes cover. `bindings.rs` does not grow.
+- **Ingest** is a new `winmd-tool types` subcommand over 21 whole namespaces (1,780 types classified); the classifier is pure over the checked-in dump. Parameterized IIDs are computed by the generator (UUIDv5 over the WinRT type signature).
+- **Classification adds** `args` (event args), `interface` (non-exclusive interfaces bound as kinds), `class-interface` (folded into their class), and generic collection instances as kinds (`IVector<string>`).
+- **Thread class** as §4.1 proposed (`dispatcher` / `ui` / `any`); the minting check is tested with a Compositor made on a second dispatcher thread.
+- **Not bound yet:** delegate parameters, collection and array arguments (JS arrays into `IIterable<T>`), static events, async progress.
+
 ## 10. Decisions (user, 2026-10-17)
 
 - **Q1 — transfer-none returns of non-widget objects are SHARED** (strong references), for now. The `lifetime: borrowed` override stays available for exceptions.

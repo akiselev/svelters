@@ -15,7 +15,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   verify:
     'on': QtCore:QPauseAnimation
-    check: connect
+    check: cross
+    native: 'o->setCurrentTime(o->currentLoop() == 0 ? 15 : 5)'
+    setup: o->setDuration(10); o->setLoopCount(3)
   confidence: 0.9
 - prop: currentTime
   class: exact
@@ -26,7 +28,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   verify:
     'on': QtCore:QParallelAnimationGroup
-    check: connect
+    check: cross
+    native: 'o->setCurrentTime(o->currentTime() == 50 ? 20 : 50)'
+    setup: o->addAnimation(new QPauseAnimation(100))
   confidence: 0.9
 - prop: direction
   class: exact
@@ -44,7 +48,8 @@ observe:
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QAbstractAnimation:direction)'
   verify:
     'on': QtCore:QParallelAnimationGroup
-    check: connect
+    check: cross
+    native: 'o->setDirection(o->direction() == QAbstractAnimation::Forward ? QAbstractAnimation::Backward : QAbstractAnimation::Forward)'
   confidence: 0.95
 - prop: duration
   class: none
@@ -63,7 +68,8 @@ observe:
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QAbstractAnimation:loopCount)'
   verify:
     'on': QtCore:QParallelAnimationGroup
-    check: connect
+    check: cross
+    native: o->setLoopCount(o->loopCount() + 1)
   confidence: 0.95
 - prop: state
   class: exact
@@ -78,5 +84,7 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   verify:
     'on': QtCore:QPauseAnimation
-    check: connect
+    check: cross
+    native: if (o->state() == QAbstractAnimation::Running) o->stop(); else o->start()
+    setup: o->setDuration(100000)
   confidence: 0.9

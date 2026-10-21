@@ -1,0 +1,6653 @@
+{
+ "namespace": "Windows.Storage",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.Storage.AppDataPaths": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IAppDataPathsStatics",
+      327680,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IAppDataPaths",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.AppDataPaths",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.ApplicationData": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IApplicationDataStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IApplicationDataStatics2",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IApplicationData",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IApplicationData2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IApplicationData3",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.ApplicationData",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.ApplicationDataCompositeValue": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IPropertySet",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IObservableMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.ApplicationDataCompositeValue",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.ApplicationDataContainer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IApplicationDataContainer",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.ApplicationDataContainer",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.ApplicationDataContainerSettings": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.Collections.IPropertySet",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IObservableMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IMap<string, object>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, object>>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.ApplicationDataContainerSettings",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.ApplicationDataCreateDisposition": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Always",
+     0
+    ],
+    [
+     "Existing",
+     1
+    ]
+   ],
+   "name": "Windows.Storage.ApplicationDataCreateDisposition",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.ApplicationDataLocality": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Local",
+     0
+    ],
+    [
+     "Roaming",
+     1
+    ],
+    [
+     "Temporary",
+     2
+    ],
+    [
+     "LocalCache",
+     3
+    ],
+    [
+     "SharedLocal",
+     4
+    ]
+   ],
+   "name": "Windows.Storage.ApplicationDataLocality",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.ApplicationDataSetVersionHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "a05791e6-cc9f-4687-acab-a364fd785463",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "setVersionRequest",
+      "out": false,
+      "type": "Windows.Storage.SetVersionRequest"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Storage.ApplicationDataSetVersionHandler",
+   "namespace": "Windows.Storage",
+   "origin": "winmd"
+  },
+  "Windows.Storage.CachedFileManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.ICachedFileManagerStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Storage.CachedFileManager",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.CreationCollisionOption": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "GenerateUniqueName",
+     0
+    ],
+    [
+     "ReplaceExisting",
+     1
+    ],
+    [
+     "FailIfExists",
+     2
+    ],
+    [
+     "OpenIfExists",
+     3
+    ]
+   ],
+   "name": "Windows.Storage.CreationCollisionOption",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.DownloadsFolder": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IDownloadsFolderStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IDownloadsFolderStatics2",
+      131072,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Storage.DownloadsFolder",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.FileAccessMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Read",
+     0
+    ],
+    [
+     "ReadWrite",
+     1
+    ]
+   ],
+   "name": "Windows.Storage.FileAccessMode",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.FileAttributes": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Flags": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "Normal",
+     0
+    ],
+    [
+     "ReadOnly",
+     1
+    ],
+    [
+     "Directory",
+     16
+    ],
+    [
+     "Archive",
+     32
+    ],
+    [
+     "Temporary",
+     256
+    ],
+    [
+     "LocallyIncomplete",
+     512
+    ]
+   ],
+   "name": "Windows.Storage.FileAttributes",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Windows.Storage.FileIO": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IFileIOStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Storage.FileIO",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.IAppDataPaths": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.AppDataPaths"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "7301d60a-79a2-48c9-9ec0-3fda092f79e1",
+   "methods": [
+    {
+     "name": "get_Cookies",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Desktop",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Documents",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Favorites",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_History",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_InternetCache",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_LocalAppData",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ProgramData",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_RoamingAppData",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IAppDataPaths",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IAppDataPathsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.AppDataPaths"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "d8eb2afe-a9d9-4b14-b999-e3921379d903",
+   "methods": [
+    {
+     "name": "GetForUser",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      }
+     ],
+     "ret": "Windows.Storage.AppDataPaths"
+    },
+    {
+     "name": "GetDefault",
+     "params": [],
+     "ret": "Windows.Storage.AppDataPaths"
+    }
+   ],
+   "name": "Windows.Storage.IAppDataPathsStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IApplicationData": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.ApplicationData"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c3da6fb7-b744-4b45-b0b8-223a0938d0dc",
+   "methods": [
+    {
+     "name": "get_Version",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "SetVersionAsync",
+     "params": [
+      {
+       "name": "desiredVersion",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Storage.ApplicationDataSetVersionHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ClearAllAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ClearAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ClearAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ClearAsync",
+     "params": [
+      {
+       "name": "locality",
+       "out": false,
+       "type": "Windows.Storage.ApplicationDataLocality"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "name": "get_LocalSettings",
+     "params": [],
+     "ret": "Windows.Storage.ApplicationDataContainer",
+     "special": true
+    },
+    {
+     "name": "get_RoamingSettings",
+     "params": [],
+     "ret": "Windows.Storage.ApplicationDataContainer",
+     "special": true
+    },
+    {
+     "name": "get_LocalFolder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_RoamingFolder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_TemporaryFolder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "add_DataChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.Storage.ApplicationData, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_DataChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "SignalDataChanged",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "get_RoamingStorageQuota",
+     "params": [],
+     "ret": "u64",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IApplicationData",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IApplicationData2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.ApplicationData"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "9e65cd69-0ba3-4e32-be29-b02de6607638",
+   "methods": [
+    {
+     "name": "get_LocalCacheFolder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IApplicationData2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IApplicationData3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.ApplicationData"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "dc222cf4-2772-4c1d-aa2c-c9f743ade8d1",
+   "methods": [
+    {
+     "name": "GetPublisherCacheFolder",
+     "params": [
+      {
+       "name": "folderName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Storage.StorageFolder"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ClearPublisherCacheFolderAsync",
+     "params": [
+      {
+       "name": "folderName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "name": "get_SharedLocalFolder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IApplicationData3",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IApplicationDataContainer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.ApplicationDataContainer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c5aefd1e-f467-40ba-8566-ab640a441e1d",
+   "methods": [
+    {
+     "name": "get_Name",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Locality",
+     "params": [],
+     "ret": "Windows.Storage.ApplicationDataLocality",
+     "special": true
+    },
+    {
+     "name": "get_Values",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IPropertySet",
+     "special": true
+    },
+    {
+     "name": "get_Containers",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IMapView<string, Windows.Storage.ApplicationDataContainer>",
+     "special": true
+    },
+    {
+     "name": "CreateContainer",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "disposition",
+       "out": false,
+       "type": "Windows.Storage.ApplicationDataCreateDisposition"
+      }
+     ],
+     "ret": "Windows.Storage.ApplicationDataContainer"
+    },
+    {
+     "name": "DeleteContainer",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.IApplicationDataContainer",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IApplicationDataStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.ApplicationData"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5612147b-e843-45e3-94d8-06169e3c8e17",
+   "methods": [
+    {
+     "name": "get_Current",
+     "params": [],
+     "ret": "Windows.Storage.ApplicationData",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IApplicationDataStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IApplicationDataStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.ApplicationData"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cd606211-cf49-40a4-a47c-c7f0dbba8107",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.ApplicationData>"
+    }
+   ],
+   "name": "Windows.Storage.IApplicationDataStatics2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ICachedFileManagerStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.CachedFileManager"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "8ffc224a-e782-495d-b614-654c4f0b2370",
+   "methods": [
+    {
+     "name": "DeferUpdates",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "CompleteUpdatesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Provider.FileUpdateStatus>"
+    }
+   ],
+   "name": "Windows.Storage.ICachedFileManagerStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IDownloadsFolderStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.DownloadsFolder"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "27862ed0-404e-47df-a1e2-e37308be7b37",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFileAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFolderAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileWithCollisionOptionAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFileAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.CreationCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderWithCollisionOptionAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFolderAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.CreationCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    }
+   ],
+   "name": "Windows.Storage.IDownloadsFolderStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IDownloadsFolderStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      131072
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.DownloadsFolder"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e93045bd-8ef8-4f8e-8d15-ac0e265f390d",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileForUserAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFileForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderForUserAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFolderForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileForUserWithCollisionOptionAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFileForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.CreationCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderForUserWithCollisionOptionAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFolderForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.CreationCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    }
+   ],
+   "name": "Windows.Storage.IDownloadsFolderStatics2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IFileIOStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.FileIO"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "887411eb-7f54-4732-a5f0-5e43e3b8c2f5",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadTextAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadTextWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadTextAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteTextAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteTextWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteTextAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "AppendTextAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendTextWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "AppendTextAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadLinesAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadLinesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<string>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadLinesWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadLinesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<string>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteLinesAsync"
+       ]
+      ]
+     },
+     "name": "WriteLinesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteLinesWithEncodingAsync"
+       ]
+      ]
+     },
+     "name": "WriteLinesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendLinesAsync"
+       ]
+      ]
+     },
+     "name": "AppendLinesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendLinesWithEncodingAsync"
+       ]
+      ]
+     },
+     "name": "AppendLinesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadBufferAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IBuffer>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteBufferAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteBytesAsync",
+     "params": [
+      {
+       "name": "file",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "u8[]"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Windows.Storage.IFileIOStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IKnownFoldersCameraRollStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.KnownFolders"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5d115e66-27e8-492f-b8e5-2f90896cd4cd",
+   "methods": [
+    {
+     "name": "get_CameraRoll",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IKnownFoldersCameraRollStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IKnownFoldersPlaylistsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.KnownFolders"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "dad5ecd6-306f-4d6a-b496-46ba8eb106ce",
+   "methods": [
+    {
+     "name": "get_Playlists",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IKnownFoldersPlaylistsStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IKnownFoldersSavedPicturesStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.KnownFolders"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "055c93ea-253d-467c-b6ca-a97da1e9a18d",
+   "methods": [
+    {
+     "name": "get_SavedPictures",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IKnownFoldersSavedPicturesStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IKnownFoldersStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.KnownFolders"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5a2a7520-4802-452d-9ad9-4351ada7ec35",
+   "methods": [
+    {
+     "name": "get_MusicLibrary",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_PicturesLibrary",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_VideosLibrary",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_DocumentsLibrary",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_HomeGroup",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_RemovableDevices",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_MediaServerDevices",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IKnownFoldersStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IKnownFoldersStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.KnownFolders"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "194bd0cd-cf6e-4d07-9d53-e9163a2536e9",
+   "methods": [
+    {
+     "name": "get_Objects3D",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_AppCaptures",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "get_RecordedCalls",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IKnownFoldersStatics2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IKnownFoldersStatics3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      131072
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.KnownFolders"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c5194341-9742-4ed5-823d-fc1401148764",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFolderForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "folderId",
+       "out": false,
+       "type": "Windows.Storage.KnownFolderId"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    }
+   ],
+   "name": "Windows.Storage.IKnownFoldersStatics3",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IKnownFoldersStatics4": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      655360
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.KnownFolders"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "1722e6bf-9ff9-4b21-bed5-90ecb13a192e",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "RequestAccessAsync",
+     "params": [
+      {
+       "name": "folderId",
+       "out": false,
+       "type": "Windows.Storage.KnownFolderId"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.KnownFoldersAccessStatus>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "RequestAccessForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "folderId",
+       "out": false,
+       "type": "Windows.Storage.KnownFolderId"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.KnownFoldersAccessStatus>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFolderAsync",
+     "params": [
+      {
+       "name": "folderId",
+       "out": false,
+       "type": "Windows.Storage.KnownFolderId"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    }
+   ],
+   "name": "Windows.Storage.IKnownFoldersStatics4",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IPathIOStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.PathIO"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "0f2f3758-8ec7-4381-922b-8f6c07d288f3",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadTextAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadTextWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadTextAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<string>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteTextAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteTextWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteTextAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendTextAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "AppendTextAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendTextWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "AppendTextAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "contents",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadLinesAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadLinesAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<string>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "ReadLinesWithEncodingAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadLinesAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVector<string>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteLinesAsync"
+       ]
+      ]
+     },
+     "name": "WriteLinesAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "WriteLinesWithEncodingAsync"
+       ]
+      ]
+     },
+     "name": "WriteLinesAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendLinesAsync"
+       ]
+      ]
+     },
+     "name": "AppendLinesAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "AppendLinesWithEncodingAsync"
+       ]
+      ]
+     },
+     "name": "AppendLinesAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "lines",
+       "out": false,
+       "type": "Windows.Foundation.Collections.IIterable<string>"
+      },
+      {
+       "name": "encoding",
+       "out": false,
+       "type": "Windows.Storage.Streams.UnicodeEncoding"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadBufferAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IBuffer>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteBufferAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "Windows.Storage.Streams.IBuffer"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "WriteBytesAsync",
+     "params": [
+      {
+       "name": "absolutePath",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "buffer",
+       "out": false,
+       "type": "u8[]"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Windows.Storage.IPathIOStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISetVersionDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SetVersionDeferral"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "033508a2-781a-437a-b078-3f32badcfe47",
+   "methods": [
+    {
+     "name": "Complete",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.ISetVersionDeferral",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISetVersionRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SetVersionRequest"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "b9c76b9b-1056-4e69-8330-162619956f9b",
+   "methods": [
+    {
+     "name": "get_CurrentVersion",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "get_DesiredVersion",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "GetDeferral",
+     "params": [],
+     "ret": "Windows.Storage.SetVersionDeferral"
+    }
+   ],
+   "name": "Windows.Storage.ISetVersionRequest",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFile": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "fa3f6186-4214-428c-a64c-14c9ac7315ea",
+   "methods": [
+    {
+     "name": "get_FileType",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ContentType",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenAsync",
+     "params": [
+      {
+       "name": "accessMode",
+       "out": false,
+       "type": "Windows.Storage.FileAccessMode"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStream>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenTransactedWriteAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageStreamTransaction>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CopyOverloadDefaultNameAndOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CopyAsync",
+     "params": [
+      {
+       "name": "destinationFolder",
+       "out": false,
+       "type": "Windows.Storage.IStorageFolder"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CopyOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CopyAsync",
+     "params": [
+      {
+       "name": "destinationFolder",
+       "out": false,
+       "type": "Windows.Storage.IStorageFolder"
+      },
+      {
+       "name": "desiredNewName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CopyOverload"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CopyAsync",
+     "params": [
+      {
+       "name": "destinationFolder",
+       "out": false,
+       "type": "Windows.Storage.IStorageFolder"
+      },
+      {
+       "name": "desiredNewName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.NameCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CopyAndReplaceAsync",
+     "params": [
+      {
+       "name": "fileToReplace",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "MoveOverloadDefaultNameAndOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "MoveAsync",
+     "params": [
+      {
+       "name": "destinationFolder",
+       "out": false,
+       "type": "Windows.Storage.IStorageFolder"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "MoveOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "MoveAsync",
+     "params": [
+      {
+       "name": "destinationFolder",
+       "out": false,
+       "type": "Windows.Storage.IStorageFolder"
+      },
+      {
+       "name": "desiredNewName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "MoveOverload"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "MoveAsync",
+     "params": [
+      {
+       "name": "destinationFolder",
+       "out": false,
+       "type": "Windows.Storage.IStorageFolder"
+      },
+      {
+       "name": "desiredNewName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.NameCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "MoveAndReplaceAsync",
+     "params": [
+      {
+       "name": "fileToReplace",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFile",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.IStorageItem",
+    "Windows.Storage.Streams.IRandomAccessStreamReference",
+    "Windows.Storage.Streams.IInputStreamReference"
+   ]
+  },
+  "Windows.Storage.IStorageFile2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "954e4bcf-0a77-42fb-b777-c2ed58a52e44",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenWithOptionsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenAsync",
+     "params": [
+      {
+       "name": "accessMode",
+       "out": false,
+       "type": "Windows.Storage.FileAccessMode"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.StorageOpenOptions"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStream>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "OpenTransactedWriteWithOptionsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "OpenTransactedWriteAsync",
+     "params": [
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.StorageOpenOptions"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageStreamTransaction>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFile2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFilePropertiesWithAvailability": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "afcbbe9b-582b-4133-9648-e44ca46ee491",
+   "methods": [
+    {
+     "name": "get_IsAvailable",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageFilePropertiesWithAvailability",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFileStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageFile"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5984c710-daf2-43c8-8bb4-a4d3eacfd03f",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFileFromPathAsync",
+     "params": [
+      {
+       "name": "path",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFileFromApplicationUriAsync",
+     "params": [
+      {
+       "name": "uri",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateStreamedFileAsync",
+     "params": [
+      {
+       "name": "displayNameWithExtension",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "dataRequested",
+       "out": false,
+       "type": "Windows.Storage.StreamedFileDataRequestedHandler"
+      },
+      {
+       "name": "thumbnail",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStreamReference"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReplaceWithStreamedFileAsync",
+     "params": [
+      {
+       "name": "fileToReplace",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "dataRequested",
+       "out": false,
+       "type": "Windows.Storage.StreamedFileDataRequestedHandler"
+      },
+      {
+       "name": "thumbnail",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStreamReference"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateStreamedFileFromUriAsync",
+     "params": [
+      {
+       "name": "displayNameWithExtension",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "uri",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      },
+      {
+       "name": "thumbnail",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStreamReference"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReplaceWithStreamedFileFromUriAsync",
+     "params": [
+      {
+       "name": "fileToReplace",
+       "out": false,
+       "type": "Windows.Storage.IStorageFile"
+      },
+      {
+       "name": "uri",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      },
+      {
+       "name": "thumbnail",
+       "out": false,
+       "type": "Windows.Storage.Streams.IRandomAccessStreamReference"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFileStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFileStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      655360
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageFile"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5c76a781-212e-4af9-8f04-740cae108974",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFileFromPathForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "path",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFileStatics2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFolder": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "72d1cb78-b3ef-4f75-a80b-6fd9dae2944b",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileAsyncOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFileAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFileAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFileAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.CreationCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderAsyncOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFolderAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "CreateFolderAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CreateFolderAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.CreationCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFileAsync",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFile>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFolderAsync",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetItemAsync",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.IStorageItem>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFilesAsyncOverloadDefaultOptionsStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFilesAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFile>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFoldersAsyncOverloadDefaultOptionsStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFoldersAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageFolder>>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetItemsAsyncOverloadDefaultStartAndCount"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetItemsAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.IStorageItem>>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFolder",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.IStorageItem"
+   ]
+  },
+  "Windows.Storage.IStorageFolder2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e827e8b9-08d9-4a8e-a0ac-fe5ed3cbbbd3",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "TryGetItemAsync",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.IStorageItem>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFolder2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFolder3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      393216
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageFolder"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "9f617899-bde1-4124-aeb3-b06ad96f98d4",
+   "methods": [
+    {
+     "name": "TryGetChangeTracker",
+     "params": [],
+     "ret": "Windows.Storage.StorageLibraryChangeTracker"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFolder3",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFolderStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageFolder"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "08f327ff-85d5-48b9-aee9-28511e339f9f",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFolderFromPathAsync",
+     "params": [
+      {
+       "name": "path",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFolderStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageFolderStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      655360
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageFolder"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "b4656dc3-71d2-467d-8b29-371f0f62bf6f",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetFolderFromPathForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "path",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageFolderStatics2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageItem": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4207a996-ca2f-42f7-bde8-8b10457a7f30",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RenameAsyncOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "RenameAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RenameAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "RenameAsync",
+     "params": [
+      {
+       "name": "desiredName",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.NameCollisionOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "DeleteAsyncOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "DeleteAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "DeleteAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "DeleteAsync",
+     "params": [
+      {
+       "name": "option",
+       "out": false,
+       "type": "Windows.Storage.StorageDeleteOption"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncAction"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetBasicPropertiesAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.BasicProperties>"
+    },
+    {
+     "name": "get_Name",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Path",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Attributes",
+     "params": [],
+     "ret": "Windows.Storage.FileAttributes",
+     "special": true
+    },
+    {
+     "name": "get_DateCreated",
+     "params": [],
+     "ret": "Windows.Foundation.DateTime",
+     "special": true
+    },
+    {
+     "name": "IsOfType",
+     "params": [
+      {
+       "name": "type",
+       "out": false,
+       "type": "Windows.Storage.StorageItemTypes"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Storage.IStorageItem",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageItem2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "53f926d2-083c-4283-b45b-81c007237e44",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetParentAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    },
+    {
+     "name": "IsEqual",
+     "params": [
+      {
+       "name": "item",
+       "out": false,
+       "type": "Windows.Storage.IStorageItem"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Storage.IStorageItem2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.IStorageItem"
+   ]
+  },
+  "Windows.Storage.IStorageItemProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "86664478-8029-46fe-a789-1c2f3e2ffb5c",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetThumbnailAsyncOverloadDefaultSizeDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetThumbnailAsync",
+     "params": [
+      {
+       "name": "mode",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailMode"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.StorageItemThumbnail>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetThumbnailAsyncOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetThumbnailAsync",
+     "params": [
+      {
+       "name": "mode",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailMode"
+      },
+      {
+       "name": "requestedSize",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.StorageItemThumbnail>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetThumbnailAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetThumbnailAsync",
+     "params": [
+      {
+       "name": "mode",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailMode"
+      },
+      {
+       "name": "requestedSize",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailOptions"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.StorageItemThumbnail>"
+    },
+    {
+     "name": "get_DisplayName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DisplayType",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_FolderRelativeId",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Properties",
+     "params": [],
+     "ret": "Windows.Storage.FileProperties.StorageItemContentProperties",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageItemProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageItemProperties2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "8e86a951-04b9-4bd2-929d-fef3f71621d0",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetScaledImageAsThumbnailAsyncOverloadDefaultSizeDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetScaledImageAsThumbnailAsync",
+     "params": [
+      {
+       "name": "mode",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailMode"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.StorageItemThumbnail>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetScaledImageAsThumbnailAsyncOverloadDefaultOptions"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetScaledImageAsThumbnailAsync",
+     "params": [
+      {
+       "name": "mode",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailMode"
+      },
+      {
+       "name": "requestedSize",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.StorageItemThumbnail>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetScaledImageAsThumbnailAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetScaledImageAsThumbnailAsync",
+     "params": [
+      {
+       "name": "mode",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailMode"
+      },
+      {
+       "name": "requestedSize",
+       "out": false,
+       "type": "u32"
+      },
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.FileProperties.ThumbnailOptions"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.FileProperties.StorageItemThumbnail>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageItemProperties2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.IStorageItemProperties"
+   ]
+  },
+  "Windows.Storage.IStorageItemPropertiesWithProvider": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "861bf39b-6368-4dee-b40e-74684a5ce714",
+   "methods": [
+    {
+     "name": "get_Provider",
+     "params": [],
+     "ret": "Windows.Storage.StorageProvider",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageItemPropertiesWithProvider",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.IStorageItemProperties"
+   ]
+  },
+  "Windows.Storage.IStorageLibrary": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibrary"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "1edd7103-0e5e-4d6c-b5e8-9318983d6a03",
+   "methods": [
+    {
+     "name": "RequestAddFolderAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageFolder>"
+    },
+    {
+     "name": "RequestRemoveFolderAsync",
+     "params": [
+      {
+       "name": "folder",
+       "out": false,
+       "type": "Windows.Storage.StorageFolder"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<bool>"
+    },
+    {
+     "name": "get_Folders",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IObservableVector<Windows.Storage.StorageFolder>",
+     "special": true
+    },
+    {
+     "name": "get_SaveFolder",
+     "params": [],
+     "ret": "Windows.Storage.StorageFolder",
+     "special": true
+    },
+    {
+     "name": "add_DefinitionChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.Storage.StorageLibrary, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_DefinitionChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibrary",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibrary2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibrary"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5b0ce348-fcb3-4031-afb0-a68d7bd44534",
+   "methods": [
+    {
+     "name": "get_ChangeTracker",
+     "params": [],
+     "ret": "Windows.Storage.StorageLibraryChangeTracker",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibrary2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibrary3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibrary"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "8a281291-2154-4201-8113-d2c05ce1ad23",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "AreFolderSuggestionsAvailableAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<bool>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibrary3",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryChange": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryChange"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "00980b23-2be2-4909-aa48-159f5203a51e",
+   "methods": [
+    {
+     "name": "get_ChangeType",
+     "params": [],
+     "ret": "Windows.Storage.StorageLibraryChangeType",
+     "special": true
+    },
+    {
+     "name": "get_Path",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PreviousPath",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "IsOfType",
+     "params": [
+      {
+       "name": "type",
+       "out": false,
+       "type": "Windows.Storage.StorageItemTypes"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetStorageItemAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.IStorageItem>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryChange",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryChangeReader": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryChangeReader"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "f205bc83-fca2-41f9-8954-ee2e991eb96f",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ReadBatchAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<Windows.Storage.StorageLibraryChange>>"
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "AcceptChangesAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryChangeReader",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryChangeReader2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      720896
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryChangeReader"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "abf4868b-fbcc-4a4f-999e-e7ab7c646dbe",
+   "methods": [
+    {
+     "name": "GetLastChangeId",
+     "params": [],
+     "ret": "u64"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryChangeReader2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryChangeTracker": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryChangeTracker"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "9e157316-6073-44f6-9681-7492d1286c90",
+   "methods": [
+    {
+     "name": "GetChangeReader",
+     "params": [],
+     "ret": "Windows.Storage.StorageLibraryChangeReader"
+    },
+    {
+     "name": "Enable",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Reset",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryChangeTracker",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryChangeTracker2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      720896
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryChangeTracker"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cd051c3b-0f9f-42f9-8fb3-158d82e13821",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "EnableWithOptions"
+       ]
+      ]
+     },
+     "name": "Enable",
+     "params": [
+      {
+       "name": "options",
+       "out": false,
+       "type": "Windows.Storage.StorageLibraryChangeTrackerOptions"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "Disable",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryChangeTracker2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryChangeTrackerOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      720896
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryChangeTrackerOptions"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "bb52bcd4-1a6d-59c0-ad2a-823a20532483",
+   "methods": [
+    {
+     "name": "get_TrackChangeDetails",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_TrackChangeDetails",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryChangeTrackerOptions",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryLastChangeId": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      720896
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryLastChangeId"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5281826a-bbe1-53bc-82ca-81cc7f039329",
+   "methods": [],
+   "name": "Windows.Storage.IStorageLibraryLastChangeId",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryLastChangeIdStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      720896
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibraryLastChangeId"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "81a49128-2ca3-5309-b0d1-cf0788e40762",
+   "methods": [
+    {
+     "name": "get_Unknown",
+     "params": [],
+     "ret": "u64",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryLastChangeIdStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibrary"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4208a6db-684a-49c6-9e59-90121ee050d6",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetLibraryAsync",
+     "params": [
+      {
+       "name": "libraryId",
+       "out": false,
+       "type": "Windows.Storage.KnownLibraryId"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageLibrary>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageLibraryStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      131072
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageLibrary"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "ffb08ddc-fa75-4695-b9d1-7f81f97832e3",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "GetLibraryForUserAsync",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      },
+      {
+       "name": "libraryId",
+       "out": false,
+       "type": "Windows.Storage.KnownLibraryId"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Windows.Storage.StorageLibrary>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageLibraryStatics2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageProvider": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageProvider"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e705eed4-d478-47d6-ba46-1a8ebe114a20",
+   "methods": [
+    {
+     "name": "get_Id",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DisplayName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IStorageProvider",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IStorageProvider2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageProvider"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "010d1917-3404-414b-9fd7-cd44472eaa39",
+   "methods": [
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "IsPropertySupportedForPartialFileAsync",
+     "params": [
+      {
+       "name": "propertyCanonicalName",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<bool>"
+    }
+   ],
+   "name": "Windows.Storage.IStorageProvider2",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Storage.IStorageProvider"
+   ]
+  },
+  "Windows.Storage.IStorageStreamTransaction": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.StorageStreamTransaction"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "f67cf363-a53d-4d94-ae2c-67232d93acdd",
+   "methods": [
+    {
+     "name": "get_Stream",
+     "params": [],
+     "ret": "Windows.Storage.Streams.IRandomAccessStream",
+     "special": true
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "CommitAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Windows.Storage.IStorageStreamTransaction",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable"
+   ]
+  },
+  "Windows.Storage.IStreamedFileDataRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "1673fcce-dabd-4d50-beee-180b8a8191b6",
+   "methods": [
+    {
+     "name": "FailAndClose",
+     "params": [
+      {
+       "name": "failureMode",
+       "out": false,
+       "type": "Windows.Storage.StreamedFileFailureMode"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Storage.IStreamedFileDataRequest",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemAudioProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemAudioProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "3f8f38b7-308c-47e1-924d-8645348e5db7",
+   "methods": [
+    {
+     "name": "get_EncodingBitrate",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemAudioProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemDataPaths": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemDataPaths"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e32abf70-d8fa-45ec-a942-d2e26fb60ba5",
+   "methods": [
+    {
+     "name": "get_Fonts",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ProgramData",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Public",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PublicDesktop",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PublicDocuments",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PublicDownloads",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PublicMusic",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PublicPictures",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PublicVideos",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_System",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_SystemHost",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_SystemX86",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_SystemX64",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_SystemArm",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_UserProfiles",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Windows",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemDataPaths",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemDataPathsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemDataPaths"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "e0f96fd0-9920-4bca-b379-f96fdf7caad8",
+   "methods": [
+    {
+     "name": "GetDefault",
+     "params": [],
+     "ret": "Windows.Storage.SystemDataPaths"
+    }
+   ],
+   "name": "Windows.Storage.ISystemDataPathsStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemGPSProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemGPSProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c0f46eb4-c174-481a-bc25-921986f6a6f3",
+   "methods": [
+    {
+     "name": "get_LatitudeDecimal",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_LongitudeDecimal",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemGPSProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemImageProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemImageProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "011b2e30-8b39-4308-bea1-e8aa61e47826",
+   "methods": [
+    {
+     "name": "get_HorizontalSize",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_VerticalSize",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemImageProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemMediaProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemMediaProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "a42b3316-8415-40dc-8c44-98361d235430",
+   "methods": [
+    {
+     "name": "get_Duration",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Producer",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Publisher",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_SubTitle",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Writer",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Year",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemMediaProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemMusicProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemMusicProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "b47988d5-67af-4bc3-8d39-5b89022026a1",
+   "methods": [
+    {
+     "name": "get_AlbumArtist",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_AlbumTitle",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Artist",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Composer",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Conductor",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DisplayArtist",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Genre",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_TrackNumber",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemMusicProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemPhotoProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemPhotoProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4734fc3d-ab21-4424-b735-f4353a56c8fc",
+   "methods": [
+    {
+     "name": "get_CameraManufacturer",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_CameraModel",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DateTaken",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Orientation",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_PeopleNames",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemPhotoProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "917a71c1-85f3-4dd1-b001-a50bfd21c8d2",
+   "methods": [
+    {
+     "name": "get_Author",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Comment",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_ItemNameDisplay",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Keywords",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Rating",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Title",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Audio",
+     "params": [],
+     "ret": "Windows.Storage.SystemAudioProperties",
+     "special": true
+    },
+    {
+     "name": "get_GPS",
+     "params": [],
+     "ret": "Windows.Storage.SystemGPSProperties",
+     "special": true
+    },
+    {
+     "name": "get_Media",
+     "params": [],
+     "ret": "Windows.Storage.SystemMediaProperties",
+     "special": true
+    },
+    {
+     "name": "get_Music",
+     "params": [],
+     "ret": "Windows.Storage.SystemMusicProperties",
+     "special": true
+    },
+    {
+     "name": "get_Photo",
+     "params": [],
+     "ret": "Windows.Storage.SystemPhotoProperties",
+     "special": true
+    },
+    {
+     "name": "get_Video",
+     "params": [],
+     "ret": "Windows.Storage.SystemVideoProperties",
+     "special": true
+    },
+    {
+     "name": "get_Image",
+     "params": [],
+     "ret": "Windows.Storage.SystemImageProperties",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.ISystemVideoProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.SystemVideoProperties"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2040f715-67f8-4322-9b80-4fa9fefb83e8",
+   "methods": [
+    {
+     "name": "get_Director",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_FrameHeight",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_FrameWidth",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Orientation",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_TotalBitrate",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.ISystemVideoProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IUserDataPaths": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.UserDataPaths"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "f9c53912-abc4-46ff-8a2b-dc9d7fa6e52f",
+   "methods": [
+    {
+     "name": "get_CameraRoll",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Cookies",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Desktop",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Documents",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Downloads",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Favorites",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_History",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_InternetCache",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_LocalAppData",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_LocalAppDataLow",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Music",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Pictures",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Profile",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Recent",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_RoamingAppData",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_SavedPictures",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Screenshots",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Templates",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Videos",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Storage.IUserDataPaths",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.IUserDataPathsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Storage.UserDataPaths"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "01b29def-e062-48a1-8b0c-f2c7a9ca56c0",
+   "methods": [
+    {
+     "name": "GetForUser",
+     "params": [
+      {
+       "name": "user",
+       "out": false,
+       "type": "Windows.System.User"
+      }
+     ],
+     "ret": "Windows.Storage.UserDataPaths"
+    },
+    {
+     "name": "GetDefault",
+     "params": [],
+     "ret": "Windows.Storage.UserDataPaths"
+    }
+   ],
+   "name": "Windows.Storage.IUserDataPathsStatics",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Storage.KnownFolderId": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      131072
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "AppCaptures",
+     0
+    ],
+    [
+     "CameraRoll",
+     1
+    ],
+    [
+     "DocumentsLibrary",
+     2
+    ],
+    [
+     "HomeGroup",
+     3
+    ],
+    [
+     "MediaServerDevices",
+     4
+    ],
+    [
+     "MusicLibrary",
+     5
+    ],
+    [
+     "Objects3D",
+     6
+    ],
+    [
+     "PicturesLibrary",
+     7
+    ],
+    [
+     "Playlists",
+     8
+    ],
+    [
+     "RecordedCalls",
+     9
+    ],
+    [
+     "RemovableDevices",
+     10
+    ],
+    [
+     "SavedPictures",
+     11
+    ],
+    [
+     "Screenshots",
+     12
+    ],
+    [
+     "VideosLibrary",
+     13
+    ],
+    [
+     "AllAppMods",
+     14
+    ],
+    [
+     "CurrentAppMods",
+     15
+    ],
+    [
+     "DownloadsFolder",
+     16
+    ]
+   ],
+   "name": "Windows.Storage.KnownFolderId",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.KnownFolders": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IKnownFoldersCameraRollStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IKnownFoldersPlaylistsStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IKnownFoldersSavedPicturesStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IKnownFoldersStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IKnownFoldersStatics2",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IKnownFoldersStatics3",
+      131072,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IKnownFoldersStatics4",
+      655360,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Storage.KnownFolders",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.KnownFoldersAccessStatus": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      655360
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "DeniedBySystem",
+     0
+    ],
+    [
+     "NotDeclaredByApp",
+     1
+    ],
+    [
+     "DeniedByUser",
+     2
+    ],
+    [
+     "UserPromptRequired",
+     3
+    ],
+    [
+     "Allowed",
+     4
+    ],
+    [
+     "AllowedPerAppFolder",
+     5
+    ]
+   ],
+   "name": "Windows.Storage.KnownFoldersAccessStatus",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.KnownLibraryId": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Music",
+     0
+    ],
+    [
+     "Pictures",
+     1
+    ],
+    [
+     "Videos",
+     2
+    ],
+    [
+     "Documents",
+     3
+    ]
+   ],
+   "name": "Windows.Storage.KnownLibraryId",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.NameCollisionOption": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "GenerateUniqueName",
+     0
+    ],
+    [
+     "ReplaceExisting",
+     1
+    ],
+    [
+     "FailIfExists",
+     2
+    ]
+   ],
+   "name": "Windows.Storage.NameCollisionOption",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.PathIO": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IPathIOStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Storage.PathIO",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SetVersionDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISetVersionDeferral",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SetVersionDeferral",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SetVersionRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISetVersionRequest",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SetVersionRequest",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageDeleteOption": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Default",
+     0
+    ],
+    [
+     "PermanentDelete",
+     1
+    ]
+   ],
+   "name": "Windows.Storage.StorageDeleteOption",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.StorageFile": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Muse": [
+     [
+      100794368
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IStorageFileStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IStorageFileStatics2",
+      655360,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageFile",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IInputStreamReference",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Streams.IRandomAccessStreamReference",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItem",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItemProperties",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItemProperties2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItem2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItemPropertiesWithProvider",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageFilePropertiesWithAvailability",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageFile2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageFile",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageFolder": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IStorageFolderStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IStorageFolderStatics2",
+      655360,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageFolder",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItem",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.Search.IStorageFolderQueryOperations",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItemProperties",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItemProperties2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItem2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageFolder2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageItemPropertiesWithProvider",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageFolder3",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageFolder",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageItemTypes": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Flags": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "File",
+     1
+    ],
+    [
+     "Folder",
+     2
+    ]
+   ],
+   "name": "Windows.Storage.StorageItemTypes",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Windows.Storage.StorageLibrary": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IStorageLibraryStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Storage.IStorageLibraryStatics2",
+      131072,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageLibrary",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageLibrary2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageLibrary3",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageLibrary",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageLibraryChange": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageLibraryChange",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageLibraryChange",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageLibraryChangeReader": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageLibraryChangeReader",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageLibraryChangeReader2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageLibraryChangeReader",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageLibraryChangeTracker": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageLibraryChangeTracker",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageLibraryChangeTracker2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageLibraryChangeTracker",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageLibraryChangeTrackerOptions": {
+   "attributes": {
+    "Activatable": [
+     [
+      720896,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      720896
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageLibraryChangeTrackerOptions",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageLibraryChangeTrackerOptions",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageLibraryChangeType": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      196608
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Created",
+     0
+    ],
+    [
+     "Deleted",
+     1
+    ],
+    [
+     "MovedOrRenamed",
+     2
+    ],
+    [
+     "ContentsChanged",
+     3
+    ],
+    [
+     "MovedOutOfLibrary",
+     4
+    ],
+    [
+     "MovedIntoLibrary",
+     5
+    ],
+    [
+     "ContentsReplaced",
+     6
+    ],
+    [
+     "IndexingStatusChanged",
+     7
+    ],
+    [
+     "EncryptionChanged",
+     8
+    ],
+    [
+     "ChangeTrackingLost",
+     9
+    ]
+   ],
+   "name": "Windows.Storage.StorageLibraryChangeType",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.StorageLibraryLastChangeId": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      720896
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IStorageLibraryLastChangeIdStatics",
+      720896,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageLibraryLastChangeId",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageLibraryLastChangeId",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageOpenOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "Flags": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "AllowOnlyReaders",
+     1
+    ],
+    [
+     "AllowReadersAndWriters",
+     2
+    ]
+   ],
+   "name": "Windows.Storage.StorageOpenOptions",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Windows.Storage.StorageProvider": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.3"
+     ]
+    ],
+    "Muse": [
+     [
+      100859904
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageProvider",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStorageProvider2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageProvider",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StorageStreamTransaction": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IStorageStreamTransaction",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StorageStreamTransaction",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StreamedFileDataRequest": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.Streams.IOutputStream",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Storage.IStreamedFileDataRequest",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.StreamedFileDataRequest",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.StreamedFileDataRequestedHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "fef6a824-2fe1-4d07-a35b-b77c50b5f4cc",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "stream",
+      "out": false,
+      "type": "Windows.Storage.StreamedFileDataRequest"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Storage.StreamedFileDataRequestedHandler",
+   "namespace": "Windows.Storage",
+   "origin": "winmd"
+  },
+  "Windows.Storage.StreamedFileFailureMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Failed",
+     0
+    ],
+    [
+     "CurrentlyUnavailable",
+     1
+    ],
+    [
+     "Incomplete",
+     2
+    ]
+   ],
+   "name": "Windows.Storage.StreamedFileFailureMode",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Storage.SystemAudioProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemAudioProperties",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemAudioProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemDataPaths": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.ISystemDataPathsStatics",
+      327680,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemDataPaths",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemDataPaths",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemGPSProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemGPSProperties",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemGPSProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemImageProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemImageProperties",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemImageProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemMediaProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemMediaProperties",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemMediaProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemMusicProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemMusicProperties",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemMusicProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemPhotoProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemPhotoProperties",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemPhotoProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.ISystemProperties",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Storage.SystemProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.SystemVideoProperties": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.ISystemVideoProperties",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.SystemVideoProperties",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Storage.UserDataPaths": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      327680
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Storage.IUserDataPathsStatics",
+      327680,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Storage.IUserDataPaths",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Storage.UserDataPaths",
+   "namespace": "Windows.Storage",
+   "origin": "winmd",
+   "sealed": true
+  }
+ }
+}

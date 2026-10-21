@@ -1,0 +1,1024 @@
+{
+ "namespace": "Windows.Data.Json",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.Data.Json.IJsonArray": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonArray"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "08c1ddb6-0cbd-4a9a-b5d3-2f852dc37e81",
+   "methods": [
+    {
+     "name": "GetObjectAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonObject"
+    },
+    {
+     "name": "GetArrayAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonArray"
+    },
+    {
+     "name": "GetStringAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "string"
+    },
+    {
+     "name": "GetNumberAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "f64"
+    },
+    {
+     "name": "GetBooleanAt",
+     "params": [
+      {
+       "name": "index",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonArray",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Data.Json.IJsonValue"
+   ]
+  },
+  "Windows.Data.Json.IJsonArrayStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonArray"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "db1434a9-e164-499f-93e2-8a8f49bb90ba",
+   "methods": [
+    {
+     "name": "Parse",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonArray"
+    },
+    {
+     "name": "TryParse",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "result",
+       "out": true,
+       "type": "out Windows.Data.Json.JsonArray"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonArrayStatics",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Data.Json.IJsonErrorStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonError"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "404030da-87d0-436c-83ab-fc7b12c0cc26",
+   "methods": [
+    {
+     "name": "GetJsonStatus",
+     "params": [
+      {
+       "name": "hresult",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonErrorStatus"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonErrorStatics2",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Data.Json.IJsonObject": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonObject"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "064e24dd-29c2-4f83-9ac1-9ee11578beb3",
+   "methods": [
+    {
+     "name": "GetNamedValue",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonValue"
+    },
+    {
+     "name": "SetNamedValue",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Data.Json.IJsonValue"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetNamedObject",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonObject"
+    },
+    {
+     "name": "GetNamedArray",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonArray"
+    },
+    {
+     "name": "GetNamedString",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "string"
+    },
+    {
+     "name": "GetNamedNumber",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "f64"
+    },
+    {
+     "name": "GetNamedBoolean",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonObject",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Data.Json.IJsonValue"
+   ]
+  },
+  "Windows.Data.Json.IJsonObjectStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonObject"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "2289f159-54de-45d8-abcc-22603fa066a0",
+   "methods": [
+    {
+     "name": "Parse",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonObject"
+    },
+    {
+     "name": "TryParse",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "result",
+       "out": true,
+       "type": "out Windows.Data.Json.JsonObject"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonObjectStatics",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Data.Json.IJsonObjectWithDefaultValues": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonObject"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d960d2a2-b7f0-4f00-8e44-d82cf415ea13",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetNamedValueOrDefault"
+       ]
+      ]
+     },
+     "name": "GetNamedValue",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "defaultValue",
+       "out": false,
+       "type": "Windows.Data.Json.JsonValue"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonValue"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetNamedObjectOrDefault"
+       ]
+      ]
+     },
+     "name": "GetNamedObject",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "defaultValue",
+       "out": false,
+       "type": "Windows.Data.Json.JsonObject"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonObject"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetNamedStringOrDefault"
+       ]
+      ]
+     },
+     "name": "GetNamedString",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "defaultValue",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "string"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetNamedArrayOrDefault"
+       ]
+      ]
+     },
+     "name": "GetNamedArray",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "defaultValue",
+       "out": false,
+       "type": "Windows.Data.Json.JsonArray"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonArray"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetNamedNumberOrDefault"
+       ]
+      ]
+     },
+     "name": "GetNamedNumber",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "defaultValue",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "f64"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetNamedBooleanOrDefault"
+       ]
+      ]
+     },
+     "name": "GetNamedBoolean",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "defaultValue",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Data.Json.IJsonObject",
+    "Windows.Data.Json.IJsonValue"
+   ]
+  },
+  "Windows.Data.Json.IJsonValue": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a3219ecb-f0b3-4dcd-beee-19d48cd3ed1e",
+   "methods": [
+    {
+     "name": "get_ValueType",
+     "params": [],
+     "ret": "Windows.Data.Json.JsonValueType",
+     "special": true
+    },
+    {
+     "name": "Stringify",
+     "params": [],
+     "ret": "string"
+    },
+    {
+     "name": "GetString",
+     "params": [],
+     "ret": "string"
+    },
+    {
+     "name": "GetNumber",
+     "params": [],
+     "ret": "f64"
+    },
+    {
+     "name": "GetBoolean",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "GetArray",
+     "params": [],
+     "ret": "Windows.Data.Json.JsonArray"
+    },
+    {
+     "name": "GetObject",
+     "params": [],
+     "ret": "Windows.Data.Json.JsonObject"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonValue",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Data.Json.IJsonValueStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonValue"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "5f6b544a-2f53-48e1-91a3-f78b50a6345c",
+   "methods": [
+    {
+     "name": "Parse",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonValue"
+    },
+    {
+     "name": "TryParse",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "result",
+       "out": true,
+       "type": "out Windows.Data.Json.JsonValue"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "CreateBooleanValue",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonValue"
+    },
+    {
+     "name": "CreateNumberValue",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonValue"
+    },
+    {
+     "name": "CreateStringValue",
+     "params": [
+      {
+       "name": "input",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Data.Json.JsonValue"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonValueStatics",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Data.Json.IJsonValueStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Data.Json.JsonValue"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "1d9ecbe4-3fe8-4335-8392-93d8e36865f0",
+   "methods": [
+    {
+     "name": "CreateNullValue",
+     "params": [],
+     "ret": "Windows.Data.Json.JsonValue"
+    }
+   ],
+   "name": "Windows.Data.Json.IJsonValueStatics2",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Data.Json.JsonArray": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Data.Json.IJsonArrayStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Data.Json.IJsonArray",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Data.Json.IJsonValue",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Data.Json.IJsonValue>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IStringable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Data.Json.JsonArray",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Data.Json.JsonError": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Data.Json.IJsonErrorStatics2",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Data.Json.JsonError",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Data.Json.JsonErrorStatus": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Unknown",
+     0
+    ],
+    [
+     "InvalidJsonString",
+     1
+    ],
+    [
+     "InvalidJsonNumber",
+     2
+    ],
+    [
+     "JsonValueNotFound",
+     3
+    ],
+    [
+     "ImplementationLimit",
+     4
+    ]
+   ],
+   "name": "Windows.Data.Json.JsonErrorStatus",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Data.Json.JsonObject": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Data.Json.IJsonObjectStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Data.Json.IJsonObject",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Data.Json.IJsonValue",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.Collections.IKeyValuePair<string, Windows.Data.Json.IJsonValue>>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IStringable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Data.Json.JsonObject",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Data.Json.JsonValue": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Data.Json.IJsonValueStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ],
+     [
+      "Windows.Data.Json.IJsonValueStatics2",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Data.Json.IJsonValue",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IStringable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Data.Json.JsonValue",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Data.Json.JsonValueType": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Null",
+     0
+    ],
+    [
+     "Boolean",
+     1
+    ],
+    [
+     "Number",
+     2
+    ],
+    [
+     "String",
+     3
+    ],
+    [
+     "Array",
+     4
+    ],
+    [
+     "Object",
+     5
+    ]
+   ],
+   "name": "Windows.Data.Json.JsonValueType",
+   "namespace": "Windows.Data.Json",
+   "origin": "winmd",
+   "underlying": "i32"
+  }
+ }
+}

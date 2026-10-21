@@ -9,7 +9,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};
 use svelters_compiler::compile::{CompileOptions, compile};
-use svelters_compiler::semantics::{BindLowering, ElementRef, Observability, Overlay, PlatformSemantics, SpecBackend, plan_bind, spec::ObsClass};
+use svelters_compiler::semantics::{BindLowering, ElementRef, Observability, Overlay, PlatformSemantics, SpecBackend, plan_bind, spec::ObsClass, spec::ObsVerified};
 
 fn dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/r2")
@@ -102,6 +102,11 @@ fn diagnostics_gtk() {
 }
 
 #[test]
+fn unverified_gtk() {
+    golden("unverified-gtk");
+}
+
+#[test]
 fn portability() {
     golden("portability");
 }
@@ -120,6 +125,8 @@ fn a_changed_fact_changes_the_lowering() {
         value_cost: Default::default(),
         timing: Default::default(),
         mechanism: "notify".into(),
+        verified: ObsVerified::Delivery,
+        fact: "Gtk:Entry:text".into(),
     };
     let o = Overlay::new(SpecBackend::builtin("gtk").unwrap()).with_observability("entry", "text", Some(partial));
     let plan = plan_bind(&o, &el, "text", false).unwrap();
@@ -129,6 +136,42 @@ fn a_changed_fact_changes_the_lowering() {
     assert_eq!(plan_bind(&o, &el, "text", false).unwrap().lowering, BindLowering::Signal { signal: "changed".into(), arg: 0 }, "unknown keeps the signal plan");
     let o = Overlay::new(SpecBackend::builtin("gtk").unwrap()).with_observability("entry", "cursor-position", None);
     assert_eq!(plan_bind(&o, &el, "cursor-position", false).unwrap_err().code, "bind_no_plan", "unknown without a plan is an error");
+}
+
+/// OV1: an `exact` fact lowers onto observation only when a generated row saw a native change
+/// delivered. A weakly verified one keeps the declared signal plan, or observes with a warning.
+#[test]
+fn an_unverified_exact_fact_does_not_replace_the_signal_plan() {
+    let gtk = SpecBackend::builtin("gtk").unwrap();
+    let el = gtk.resolve_element("entry").unwrap();
+    let weak = |fact: &str| Observability {
+        class: ObsClass::Exact,
+        missed: vec![],
+        coarse: false,
+        value_cost: Default::default(),
+        timing: Default::default(),
+        mechanism: "notify".into(),
+        verified: ObsVerified::Weak,
+        fact: fact.into(),
+    };
+    let o = Overlay::new(SpecBackend::builtin("gtk").unwrap()).with_observability("entry", "text", Some(weak("Gtk:Editable:text")));
+    let plan = plan_bind(&o, &el, "text", false).unwrap();
+    assert_eq!(plan.lowering, BindLowering::Signal { signal: "changed".into(), arg: 0 }, "a weak exact fact keeps the signal plan");
+    assert!(plan.warnings.is_empty(), "the signal plan needs no warning: {:?}", plan.warnings);
+    let o = Overlay::new(SpecBackend::builtin("gtk").unwrap()).with_observability("entry", "cursor-position", Some(weak("Gtk:Editable:cursor-position")));
+    let plan = plan_bind(&o, &el, "cursor-position", false).unwrap();
+    assert_eq!(plan.lowering, BindLowering::Readonly, "without a signal plan the binding still observes");
+    assert_eq!(plan.warnings.len(), 1);
+    assert_eq!(plan.warnings[0].code, "bind_observation_unverified");
+    assert!(plan.warnings[0].message.contains("Gtk:Editable:cursor-position"), "{}", plan.warnings[0].message);
+    let mut none = weak("Gtk:Editable:cursor-position");
+    none.verified = ObsVerified::None;
+    let o = Overlay::new(SpecBackend::builtin("gtk").unwrap()).with_observability("entry", "cursor-position", Some(none));
+    let plan = plan_bind(&o, &el, "cursor-position", false).unwrap();
+    assert_eq!(plan.warnings[0].code, "bind_observation_unverified", "no passing row: the same warning");
+    // `|nonreactive` reads once: the strength does not matter
+    let plan = plan_bind(&o, &el, "cursor-position", true).unwrap();
+    assert!(plan.warnings.is_empty());
 }
 
 /// observe.d.ts (tools/metadata/semantics/gen_observe_outputs.py) offers exactly the `bind:` keys the

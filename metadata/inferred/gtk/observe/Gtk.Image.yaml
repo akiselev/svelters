@@ -3,19 +3,24 @@ toolkit: gtk
 owner: Gtk:Image
 observe:
 - prop: file
-  class: exact
+  class: partial
   via:
   - mechanism: notify
     signal: notify::file
+  missed:
+  - programmatic
   fires: on_set
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::file'
-  - origin: probe
-    ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Image:file)'
+  - origin: manual
+    ref: 'rules observe.missed (OV1): gtk_image_set_from_file with a loadable file changes `file` without notify::file (a property set notifies,
+      through GObject)'
   verify:
     'on': Gtk:Image
-    check: connect
+    check: silent
+    rust: let i = o.downcast_ref::<gtk::Image>().unwrap(); let p = std::env::temp_dir().join("svelters-ov1-image.png"); if !p.exists() { gtk::gdk_pixbuf::Pixbuf::new(gtk::gdk_pixbuf::Colorspace::Rgb,
+      false, 8, 1, 1).unwrap().savev(&p, "png", &[]).unwrap(); } i.set_from_file(Some(&p));
   confidence: 0.95
 - prop: gicon
   class: exact
@@ -30,7 +35,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Image
-    check: connect
+    check: change
+    values:
+    - gtk::gio::ThemedIcon::new("ov1-a")
+    - gtk::gio::ThemedIcon::new("ov1-b")
   confidence: 0.9
 - prop: icon-name
   class: exact
@@ -78,7 +86,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Image
-    check: connect
+    check: change
+    values:
+    - gtk::gdk::Paintable::new_empty(1, 1)
   confidence: 0.9
 - prop: pixel-size
   class: exact
@@ -108,7 +118,9 @@ observe:
     ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:Image
-    check: connect
+    check: cross
+    rust: let i = o.downcast_ref::<gtk::Image>().unwrap(); if i.resource().is_some() { i.clear(); } else { i.set_resource(Some("/org/gtk/libgtk/icons/16x16/status/image-missing.png"));
+      }
   confidence: 0.9
 - prop: storage-type
   class: exact

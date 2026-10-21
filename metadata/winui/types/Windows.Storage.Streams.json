@@ -1,0 +1,1144 @@
+{
+ "enums": {
+  "Windows.Storage.Streams.InputStreamOptions": {
+   "flags": true,
+   "members": [
+    [
+     "none",
+     0
+    ],
+    [
+     "partial",
+     1
+    ],
+    [
+     "readAhead",
+     2
+    ]
+   ],
+   "native": [
+    "None",
+    "Partial",
+    "ReadAhead"
+   ],
+   "unsigned": true,
+   "used": true
+  },
+  "Windows.Storage.Streams.UnicodeEncoding": {
+   "flags": false,
+   "members": [
+    [
+     "utf8",
+     0
+    ],
+    [
+     "utf16LE",
+     1
+    ],
+    [
+     "utf16BE",
+     2
+    ]
+   ],
+   "native": [
+    "Utf8",
+    "Utf16LE",
+    "Utf16BE"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "js_module": "svelters:winui/windows.storage.streams",
+ "namespace": "Windows.Storage.Streams",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Windows.Storage.Streams.Buffer": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.ByteOrder": {
+   "category": "enum"
+  },
+  "Windows.Storage.Streams.DataReader": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.DataReaderLoadOperation": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.DataWriter": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.DataWriterStoreOperation": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.FileInputStream": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.FileOpenDisposition": {
+   "category": "enum"
+  },
+  "Windows.Storage.Streams.FileOutputStream": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.FileRandomAccessStream": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.IBuffer": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.Streams.IBuffer",
+   "hidden": [],
+   "iid": "905a0fe0-bc53-11df-8c49-001e4fc686da",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.streams",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {},
+   "name": "IBuffer",
+   "namespace": "Windows.Storage.Streams",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IBuffer",
+      "slot": 6
+     },
+     "name": "capacity",
+     "native": "Capacity",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IBuffer",
+      "slot": 7
+     },
+     "name": "length",
+     "native": "Length",
+     "set": {
+      "iface": "Windows.Storage.Streams.IBuffer",
+      "slot": 8
+     },
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    }
+   ],
+   "refs": [],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.Streams.IBufferFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IBufferStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IContentTypeProvider": {
+   "category": "interface"
+  },
+  "Windows.Storage.Streams.IDataReader": {
+   "category": "interface"
+  },
+  "Windows.Storage.Streams.IDataReaderFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IDataReaderStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IDataWriter": {
+   "category": "interface"
+  },
+  "Windows.Storage.Streams.IDataWriterFactory": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IFileRandomAccessStreamStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IInputStream": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.Streams.IInputStream",
+   "hidden": [],
+   "iid": "905a0fe2-bc53-11df-8c49-001e4fc686da",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.streams",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "close": [
+     {
+      "iface": "Windows.Foundation.IClosable",
+      "native": "Close",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ],
+    "readAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IInputStream",
+      "native": "ReadAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       },
+       {
+        "name": "count",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "options",
+        "slot": {
+         "k": "flags",
+         "t": "Windows.Storage.Streams.InputStreamOptions"
+        },
+        "type": "Windows.Storage.Streams.InputStreamOptions"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Storage.Streams.IBuffer"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "IInputStream",
+   "namespace": "Windows.Storage.Streams",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.Storage.Streams.IBuffer",
+    "Windows.Storage.Streams.InputStreamOptions"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.Streams.IInputStreamReference": {
+   "category": "interface"
+  },
+  "Windows.Storage.Streams.IOutputStream": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.Streams.IOutputStream",
+   "hidden": [],
+   "iid": "905a0fe6-bc53-11df-8c49-001e4fc686da",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.streams",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "close": [
+     {
+      "iface": "Windows.Foundation.IClosable",
+      "native": "Close",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ],
+    "flushAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "FlushAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "bool"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<bool>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<bool>",
+      "slot": 7
+     }
+    ],
+    "writeAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "WriteAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "int",
+        "t": "u32"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "IOutputStream",
+   "namespace": "Windows.Storage.Streams",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.Storage.Streams.IBuffer"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.Streams.IPropertySetSerializer": {
+   "category": "interface"
+  },
+  "Windows.Storage.Streams.IRandomAccessStream": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.Streams.IRandomAccessStream",
+   "hidden": [],
+   "iid": "905a0fe1-bc53-11df-8c49-001e4fc686da",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.streams",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "cloneStream": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "CloneStream",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IRandomAccessStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 12
+     }
+    ],
+    "close": [
+     {
+      "iface": "Windows.Foundation.IClosable",
+      "native": "Close",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ],
+    "flushAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "FlushAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "bool"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<bool>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<bool>",
+      "slot": 7
+     }
+    ],
+    "getInputStreamAt": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "GetInputStreamAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IInputStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IInputStream",
+      "slot": 8
+     }
+    ],
+    "getOutputStreamAt": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "GetOutputStreamAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IOutputStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IOutputStream",
+      "slot": 9
+     }
+    ],
+    "readAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IInputStream",
+      "native": "ReadAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       },
+       {
+        "name": "count",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "options",
+        "slot": {
+         "k": "flags",
+         "t": "Windows.Storage.Streams.InputStreamOptions"
+        },
+        "type": "Windows.Storage.Streams.InputStreamOptions"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Storage.Streams.IBuffer"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>",
+      "slot": 6
+     }
+    ],
+    "seek": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "Seek",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "writeAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "WriteAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "int",
+        "t": "u32"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "IRandomAccessStream",
+   "namespace": "Windows.Storage.Streams",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 13
+     },
+     "name": "canRead",
+     "native": "CanRead",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 14
+     },
+     "name": "canWrite",
+     "native": "CanWrite",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 10
+     },
+     "name": "position",
+     "native": "Position",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u64"
+     },
+     "type": "u64"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 6
+     },
+     "name": "size",
+     "native": "Size",
+     "set": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 7
+     },
+     "slot": {
+      "k": "int",
+      "t": "u64"
+     },
+     "type": "u64"
+    }
+   ],
+   "refs": [
+    "Windows.Storage.Streams.IBuffer",
+    "Windows.Storage.Streams.IInputStream",
+    "Windows.Storage.Streams.IOutputStream",
+    "Windows.Storage.Streams.InputStreamOptions"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamReference": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.Streams.IRandomAccessStreamReference",
+   "hidden": [],
+   "iid": "33ee3134-1dd6-4e3a-8067-d1c162e8642b",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.streams",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "openReadAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStreamReference",
+      "native": "OpenReadAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStreamWithContentType>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStreamWithContentType>",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "IRandomAccessStreamReference",
+   "namespace": "Windows.Storage.Streams",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamReferenceStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Storage.Streams.IRandomAccessStreamWithContentType": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.Streams.IRandomAccessStreamWithContentType",
+   "hidden": [],
+   "iid": "cc254827-4b3d-438f-9232-10c76bc7e038",
+   "implements": [],
+   "js_module": "svelters:winui/windows.storage.streams",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "cloneStream": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "CloneStream",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IRandomAccessStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 12
+     }
+    ],
+    "close": [
+     {
+      "iface": "Windows.Foundation.IClosable",
+      "native": "Close",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ],
+    "flushAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "FlushAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "bool"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<bool>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<bool>",
+      "slot": 7
+     }
+    ],
+    "getInputStreamAt": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "GetInputStreamAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IInputStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IInputStream",
+      "slot": 8
+     }
+    ],
+    "getOutputStreamAt": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "GetOutputStreamAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Storage.Streams.IOutputStream"
+      },
+      "ret_native": "Windows.Storage.Streams.IOutputStream",
+      "slot": 9
+     }
+    ],
+    "readAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IInputStream",
+      "native": "ReadAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       },
+       {
+        "name": "count",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "options",
+        "slot": {
+         "k": "flags",
+         "t": "Windows.Storage.Streams.InputStreamOptions"
+        },
+        "type": "Windows.Storage.Streams.InputStreamOptions"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Storage.Streams.IBuffer"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<Windows.Storage.Streams.IBuffer, u32>",
+      "slot": 6
+     }
+    ],
+    "seek": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "native": "Seek",
+      "outs": [],
+      "params": [
+       {
+        "name": "position",
+        "slot": {
+         "k": "int",
+         "t": "u64"
+        },
+        "type": "u64"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "writeAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IOutputStream",
+      "native": "WriteAsync",
+      "outs": [],
+      "params": [
+       {
+        "name": "buffer",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IBuffer"
+        },
+        "type": "Windows.Storage.Streams.IBuffer"
+       }
+      ],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "int",
+        "t": "u32"
+       },
+       "t": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperationWithProgress<u32, u32>",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "IRandomAccessStreamWithContentType",
+   "namespace": "Windows.Storage.Streams",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 13
+     },
+     "name": "canRead",
+     "native": "CanRead",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 14
+     },
+     "name": "canWrite",
+     "native": "CanWrite",
+     "set": null,
+     "slot": {
+      "k": "bool"
+     },
+     "type": "bool"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IContentTypeProvider",
+      "slot": 6
+     },
+     "name": "contentType",
+     "native": "ContentType",
+     "set": null,
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 10
+     },
+     "name": "position",
+     "native": "Position",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u64"
+     },
+     "type": "u64"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 6
+     },
+     "name": "size",
+     "native": "Size",
+     "set": {
+      "iface": "Windows.Storage.Streams.IRandomAccessStream",
+      "slot": 7
+     },
+     "slot": {
+      "k": "int",
+      "t": "u64"
+     },
+     "type": "u64"
+    }
+   ],
+   "refs": [
+    "Windows.Storage.Streams.IBuffer",
+    "Windows.Storage.Streams.IInputStream",
+    "Windows.Storage.Streams.IOutputStream",
+    "Windows.Storage.Streams.IRandomAccessStream",
+    "Windows.Storage.Streams.InputStreamOptions"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.Streams.InMemoryRandomAccessStream": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.InputStreamOptions": {
+   "category": "flags"
+  },
+  "Windows.Storage.Streams.InputStreamOverStream": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.OutputStreamOverStream": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.RandomAccessStream": {
+   "category": "statics"
+  },
+  "Windows.Storage.Streams.RandomAccessStreamOverStream": {
+   "category": "object"
+  },
+  "Windows.Storage.Streams.RandomAccessStreamReference": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Storage.Streams.IRandomAccessStreamReference",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Storage.Streams.RandomAccessStreamReference",
+   "hidden": [],
+   "iid": "33ee3134-1dd6-4e3a-8067-d1c162e8642b",
+   "implements": [
+    "Windows.Storage.Streams.IRandomAccessStreamReference"
+   ],
+   "js_module": "svelters:winui/windows.storage.streams",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "openReadAsync": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStreamReference",
+      "native": "OpenReadAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+       },
+       "t": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStreamWithContentType>"
+      },
+      "ret_native": "Windows.Foundation.IAsyncOperation<Windows.Storage.Streams.IRandomAccessStreamWithContentType>",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "RandomAccessStreamReference",
+   "namespace": "Windows.Storage.Streams",
+   "parent": null,
+   "props": [],
+   "refs": [
+    "Windows.Foundation.Uri",
+    "Windows.Storage.IStorageFile",
+    "Windows.Storage.Streams.IRandomAccessStream",
+    "Windows.Storage.Streams.IRandomAccessStreamWithContentType"
+   ],
+   "root": false,
+   "statics": {
+    "createFromFile": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStreamReferenceStatics",
+      "native": "CreateFromFile",
+      "outs": [],
+      "params": [
+       {
+        "name": "file",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.IStorageFile"
+        },
+        "type": "Windows.Storage.IStorageFile"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Storage.Streams.RandomAccessStreamReference"
+      },
+      "ret_native": "Windows.Storage.Streams.RandomAccessStreamReference",
+      "slot": 6
+     }
+    ],
+    "createFromStream": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStreamReferenceStatics",
+      "native": "CreateFromStream",
+      "outs": [],
+      "params": [
+       {
+        "name": "stream",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Storage.Streams.IRandomAccessStream"
+        },
+        "type": "Windows.Storage.Streams.IRandomAccessStream"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Storage.Streams.RandomAccessStreamReference"
+      },
+      "ret_native": "Windows.Storage.Streams.RandomAccessStreamReference",
+      "slot": 8
+     }
+    ],
+    "createFromUri": [
+     {
+      "iface": "Windows.Storage.Streams.IRandomAccessStreamReferenceStatics",
+      "native": "CreateFromUri",
+      "outs": [],
+      "params": [
+       {
+        "name": "uri",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Foundation.Uri"
+        },
+        "type": "Windows.Foundation.Uri"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Storage.Streams.RandomAccessStreamReference"
+      },
+      "ret_native": "Windows.Storage.Streams.RandomAccessStreamReference",
+      "slot": 7
+     }
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Storage.Streams.UnicodeEncoding": {
+   "category": "enum"
+  }
+ }
+}

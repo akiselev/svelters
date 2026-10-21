@@ -46,6 +46,25 @@ def test_spec_and_mechanism_string():
     assert observe.spec({"prop": "x", "class": "set_only", "provenance": PROV}) == {"class": "set_only", "mechanism": ""}
 
 
+def test_verification_strength():
+    """OV1: the row strength a verify block maps to, and the strength the compiler reads per fact."""
+    assert observe.check_strength({"check": "change"}) == "change"
+    assert observe.check_strength({"check": "cross", "rust": "x"}) == "change"
+    assert observe.check_strength({"check": "connect"}) == "connect"
+    assert observe.check_strength({"check": "unsupported", "trigger": "x"}) == "silent"
+    assert observe.short_fact("svelters-api:v1:type:gtk:Gtk:Entry:prop:text:observe") == "Gtk:Entry:text"
+    s = observe.spec({**rec(), "fact": "svelters-api:v1:type:gtk:Gtk:Entry:prop:text:observe"}, "weak")
+    assert s["verified"] == "weak" and s["fact"] == "Gtk:Entry:text"
+    facts = observe.load("gtk")
+    ver = observe.verification("gtk", facts)
+    assert set(ver.values()) <= set(observe.VERIFIED)
+    # an exact fact whose row only installs the mechanism is never delivery-verified
+    for props in facts.values():
+        for r in props.values():
+            if r["class"] == "exact" and (r.get("verify") or {}).get("check") == "connect":
+                assert ver[r["fact"]] != "delivery", r["fact"]
+
+
 def test_layers_manual_wins_and_parked_inferred_facts_leave(tmp_path: Path):
     inf = tmp_path / "metadata/inferred/gtk/observe"
     man = tmp_path / "metadata/overrides/gtk/observe"

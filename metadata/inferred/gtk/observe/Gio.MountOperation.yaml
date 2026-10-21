@@ -105,7 +105,7 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gio.MountOperation:password-save)'
   verify:
     'on': Gio:MountOperation
-    check: connect
+    check: change
   confidence: 0.95
 - prop: pim
   class: exact

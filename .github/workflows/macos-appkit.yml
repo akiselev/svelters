@@ -112,6 +112,17 @@ jobs:
         run: |
           mkdir -p target/appkit-results && rm -f target/appkit-results/generated.jsonl
           cargo test -p counter-mac --test generated
+      # N4: non-GUI types. The generated facts append to the same results file (one ledger import).
+      - name: counter-mac types
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        env:
+          SVELTERS_TEST_RESULTS: ${{ github.workspace }}/target/appkit-results/generated.jsonl
+        run: cargo test -p counter-mac --test types
+      - name: counter-mac types_core
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-mac --test types_core
       - name: counter-mac counter
         if: ${{ !cancelled() }}
         timeout-minutes: 10
@@ -131,6 +142,15 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 20
         run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/probe.py --out target/appkit-probe'
+      # N4: declared Objective-C properties of the bindable Foundation/AppKit classes (objc2 does not mark
+      # read-only properties); commit the uploaded `types-<SDK>.json` to metadata/probe/appkit/.
+      - name: Probe non-GUI type properties
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: |
+          mkdir -p target/appkit-probe
+          "$RUNNER_TEMP/venv/bin/python" -I tools/metadata/appkit/types_appkit_classify.py --probe-list > target/appkit-probe/types-classes.txt
+          cargo run -p svelters-appkit --example types_probe -- target/appkit-probe/types-classes.txt > "target/appkit-probe/types-$(xcrun --show-sdk-version).json"
       - name: Ledger import (dry run against the committed ledger)
         if: ${{ !cancelled() }}
         run: '"$RUNNER_TEMP/venv/bin/python" -I tools/metadata/ledger.py import --toolkit appkit --dry-run target/appkit-results/generated.jsonl'

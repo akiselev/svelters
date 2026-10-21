@@ -75,7 +75,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TreeView
-    check: connect
+    check: cross
+    rust: let t = o.downcast_ref::<gtk::TreeView>().unwrap(); while t.n_columns() < 2 { t.append_column(&gtk::TreeViewColumn::new()); } let c0
+      = t.column(0); let next = if t.expander_column() == c0 { t.column(1) } else { c0 }; t.set_expander_column(next.as_ref());
   confidence: 0.9
 - prop: fixed-height-mode
   class: exact
@@ -93,19 +95,23 @@ observe:
     check: change
   confidence: 0.95
 - prop: headers-clickable
-  class: exact
+  class: partial
   via:
   - mechanism: notify
     signal: notify::headers-clickable
+  missed:
+  - cross_prop
   provenance:
   - origin: runtime
     ref: 'O1: GObject property, notify::headers-clickable (EXPLICIT_NOTIFY)'
-  - origin: rule
-    ref: no probe row; the generated test sets it natively
+  - origin: manual
+    ref: 'rules observe.missed (OV1): headers-clickable reads whether every column is clickable; appending a column that is not (or changing a
+      column''s clickable) changes it without notify'
   verify:
     'on': Gtk:TreeView
-    check: connect
-  confidence: 0.9
+    check: silent
+    rust: let t = o.downcast_ref::<gtk::TreeView>().unwrap(); t.append_column(&gtk::TreeViewColumn::new());
+  confidence: 0.95
 - prop: headers-visible
   class: exact
   via:
@@ -179,7 +185,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:TreeView
-    check: connect
+    check: change
+    values:
+    - gtk::ListStore::new(&[gtk::glib::Type::STRING])
   confidence: 0.9
 - prop: reorderable
   class: exact

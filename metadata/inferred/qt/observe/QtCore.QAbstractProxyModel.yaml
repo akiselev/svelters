@@ -15,5 +15,6 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   verify:
     'on': QtCore:QSortFilterProxyModel
-    check: connect
+    check: cross
+    native: o->setSourceModel(new QStandardItemModel(o))
   confidence: 0.9

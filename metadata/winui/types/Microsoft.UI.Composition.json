@@ -1,0 +1,1142 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.composition",
+ "namespace": "Microsoft.UI.Composition",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Composition.AmbientLight": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.AnimationController": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.AnimationControllerProgressBehavior": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.AnimationDelayBehavior": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.AnimationDirection": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.AnimationIterationBehavior": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.AnimationPropertyAccessMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.AnimationPropertyInfo": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.AnimationStopBehavior": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.BackEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.BooleanKeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.BounceEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.BounceScalarNaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.BounceVector2NaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.BounceVector3NaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CircleEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.ColorKeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionAnimationGroup": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionApiInformation": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Composition.CompositionBackdropBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionBackfaceVisibility": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionBatchCompletedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Composition.CompositionBatchTypes": {
+   "category": "flags"
+  },
+  "Microsoft.UI.Composition.CompositionBitmapInterpolationMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionBorderMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionCapabilities": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionClip": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionColorBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionColorGradientStop": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionColorGradientStopCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Composition.CompositionColorSpace": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionCommitBatch": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionCompositeMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionContainerShape": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionDrawingSurface": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionDropShadowSourcePolicy": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionEasingFunctionMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionEffectBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionEffectFactory": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionEffectFactoryLoadStatus": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionEffectSourceParameter": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionEllipseGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionEngine": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Composition.CompositionEngineType": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionGeometricClip": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionGetValueStatus": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionGradientBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionGradientExtendMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionGraphicsDevice": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionLight": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionLineGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionLinearGradientBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionMappingMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionMaskBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionMipmapSurface": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionNineGridBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionObject": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionPath": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionPathGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionProjectedShadow": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionProjectedShadowCaster": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionProjectedShadowCasterCollection": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionProjectedShadowReceiver": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionProjectedShadowReceiverUnorderedCollection": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionPropertySet": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionRadialGradientBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionRectangleGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionRoundedRectangleGeometry": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionScopedBatch": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionShadow": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionShape": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionShapeCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Composition.CompositionSpriteShape": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionStretch": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionStrokeCap": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionStrokeDashArray": {
+   "category": "model"
+  },
+  "Microsoft.UI.Composition.CompositionStrokeLineJoin": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Composition.CompositionSurfaceBrush": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionTransform": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionViewBox": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionVirtualDrawingSurface": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CompositionVisualSurface": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.Compositor": {
+   "abstract": false,
+   "blocked": {
+    "CreateAmbientLight/0": "out-of-scope:Microsoft.UI.Composition.AmbientLight",
+    "CreateAnimationController/0": "out-of-scope:Microsoft.UI.Composition.AnimationController",
+    "CreateAnimationGroup/0": "out-of-scope:Microsoft.UI.Composition.CompositionAnimationGroup",
+    "CreateAnimationPropertyInfo/0": "out-of-scope:Microsoft.UI.Composition.AnimationPropertyInfo",
+    "CreateBackdropBrush/0": "out-of-scope:Microsoft.UI.Composition.CompositionBackdropBrush",
+    "CreateBooleanKeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.BooleanKeyFrameAnimation",
+    "CreateBounceScalarAnimation/0": "out-of-scope:Microsoft.UI.Composition.BounceScalarNaturalMotionAnimation",
+    "CreateBounceVector2Animation/0": "out-of-scope:Microsoft.UI.Composition.BounceVector2NaturalMotionAnimation",
+    "CreateBounceVector3Animation/0": "out-of-scope:Microsoft.UI.Composition.BounceVector3NaturalMotionAnimation",
+    "CreateColorBrush/0": "out-of-scope:Microsoft.UI.Composition.CompositionColorBrush",
+    "CreateColorBrush/1": "out-of-scope:Microsoft.UI.Composition.CompositionColorBrush",
+    "CreateColorGradientStop/0": "out-of-scope:Microsoft.UI.Composition.CompositionColorGradientStop",
+    "CreateColorGradientStop/2": "out-of-scope:Microsoft.UI.Composition.CompositionColorGradientStop",
+    "CreateColorKeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.ColorKeyFrameAnimation",
+    "CreateContainerShape/0": "out-of-scope:Microsoft.UI.Composition.CompositionContainerShape",
+    "CreateContainerVisual/0": "out-of-scope:Microsoft.UI.Composition.ContainerVisual",
+    "CreateCubicBezierEasingFunction/2": "out-of-scope:Microsoft.UI.Composition.CubicBezierEasingFunction",
+    "CreateDistantLight/0": "out-of-scope:Microsoft.UI.Composition.DistantLight",
+    "CreateDropShadow/0": "out-of-scope:Microsoft.UI.Composition.DropShadow",
+    "CreateEffectFactory/1": "out-of-scope:Windows.Graphics.Effects.IGraphicsEffect",
+    "CreateEffectFactory/2": "out-of-scope:Windows.Graphics.Effects.IGraphicsEffect",
+    "CreateEllipseGeometry/0": "out-of-scope:Microsoft.UI.Composition.CompositionEllipseGeometry",
+    "CreateExpressionAnimation/0": "out-of-scope:Microsoft.UI.Composition.ExpressionAnimation",
+    "CreateExpressionAnimation/1": "out-of-scope:Microsoft.UI.Composition.ExpressionAnimation",
+    "CreateGeometricClip/0": "out-of-scope:Microsoft.UI.Composition.CompositionGeometricClip",
+    "CreateGeometricClip/1": "out-of-scope:Microsoft.UI.Composition.CompositionGeometry",
+    "CreateImplicitAnimationCollection/0": "out-of-scope:Microsoft.UI.Composition.ImplicitAnimationCollection",
+    "CreateInsetClip/0": "out-of-scope:Microsoft.UI.Composition.InsetClip",
+    "CreateInsetClip/4": "out-of-scope:Microsoft.UI.Composition.InsetClip",
+    "CreateLayerVisual/0": "out-of-scope:Microsoft.UI.Composition.LayerVisual",
+    "CreateLineGeometry/0": "out-of-scope:Microsoft.UI.Composition.CompositionLineGeometry",
+    "CreateLinearEasingFunction/0": "out-of-scope:Microsoft.UI.Composition.LinearEasingFunction",
+    "CreateLinearGradientBrush/0": "out-of-scope:Microsoft.UI.Composition.CompositionLinearGradientBrush",
+    "CreateMaskBrush/0": "out-of-scope:Microsoft.UI.Composition.CompositionMaskBrush",
+    "CreateNineGridBrush/0": "out-of-scope:Microsoft.UI.Composition.CompositionNineGridBrush",
+    "CreatePathGeometry/0": "out-of-scope:Microsoft.UI.Composition.CompositionPathGeometry",
+    "CreatePathGeometry/1": "out-of-scope:Microsoft.UI.Composition.CompositionPath",
+    "CreatePathKeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.PathKeyFrameAnimation",
+    "CreatePointLight/0": "out-of-scope:Microsoft.UI.Composition.PointLight",
+    "CreateProjectedShadow/0": "out-of-scope:Microsoft.UI.Composition.CompositionProjectedShadow",
+    "CreateProjectedShadowCaster/0": "out-of-scope:Microsoft.UI.Composition.CompositionProjectedShadowCaster",
+    "CreateProjectedShadowReceiver/0": "out-of-scope:Microsoft.UI.Composition.CompositionProjectedShadowReceiver",
+    "CreatePropertySet/0": "out-of-scope:Microsoft.UI.Composition.CompositionPropertySet",
+    "CreateQuaternionKeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.QuaternionKeyFrameAnimation",
+    "CreateRadialGradientBrush/0": "out-of-scope:Microsoft.UI.Composition.CompositionRadialGradientBrush",
+    "CreateRectangleClip/0": "out-of-scope:Microsoft.UI.Composition.RectangleClip",
+    "CreateRectangleClip/4": "out-of-scope:Microsoft.UI.Composition.RectangleClip",
+    "CreateRectangleClip/8": "out-of-scope:Microsoft.UI.Composition.RectangleClip",
+    "CreateRectangleGeometry/0": "out-of-scope:Microsoft.UI.Composition.CompositionRectangleGeometry",
+    "CreateRedirectVisual/0": "out-of-scope:Microsoft.UI.Composition.RedirectVisual",
+    "CreateRedirectVisual/1": "out-of-scope:Microsoft.UI.Composition.Visual",
+    "CreateRoundedRectangleGeometry/0": "out-of-scope:Microsoft.UI.Composition.CompositionRoundedRectangleGeometry",
+    "CreateScalarKeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.ScalarKeyFrameAnimation",
+    "CreateScopedBatch/1": "out-of-scope:Microsoft.UI.Composition.CompositionScopedBatch",
+    "CreateShapeVisual/0": "out-of-scope:Microsoft.UI.Composition.ShapeVisual",
+    "CreateSpotLight/0": "out-of-scope:Microsoft.UI.Composition.SpotLight",
+    "CreateSpringScalarAnimation/0": "out-of-scope:Microsoft.UI.Composition.SpringScalarNaturalMotionAnimation",
+    "CreateSpringVector2Animation/0": "out-of-scope:Microsoft.UI.Composition.SpringVector2NaturalMotionAnimation",
+    "CreateSpringVector3Animation/0": "out-of-scope:Microsoft.UI.Composition.SpringVector3NaturalMotionAnimation",
+    "CreateSpriteShape/0": "out-of-scope:Microsoft.UI.Composition.CompositionSpriteShape",
+    "CreateSpriteShape/1": "out-of-scope:Microsoft.UI.Composition.CompositionGeometry",
+    "CreateSpriteVisual/0": "out-of-scope:Microsoft.UI.Composition.SpriteVisual",
+    "CreateStepEasingFunction/0": "out-of-scope:Microsoft.UI.Composition.StepEasingFunction",
+    "CreateStepEasingFunction/1": "out-of-scope:Microsoft.UI.Composition.StepEasingFunction",
+    "CreateSurfaceBrush/0": "out-of-scope:Microsoft.UI.Composition.CompositionSurfaceBrush",
+    "CreateSurfaceBrush/1": "out-of-scope:Microsoft.UI.Composition.ICompositionSurface",
+    "CreateVector2KeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.Vector2KeyFrameAnimation",
+    "CreateVector3KeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.Vector3KeyFrameAnimation",
+    "CreateVector4KeyFrameAnimation/0": "out-of-scope:Microsoft.UI.Composition.Vector4KeyFrameAnimation",
+    "CreateViewBox/0": "out-of-scope:Microsoft.UI.Composition.CompositionViewBox",
+    "CreateVisualSurface/0": "out-of-scope:Microsoft.UI.Composition.CompositionVisualSurface",
+    "GetCommitBatch/1": "out-of-scope:Microsoft.UI.Composition.CompositionCommitBatch"
+   },
+   "bound": true,
+   "category": "object",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Microsoft.UI.Composition.ICompositor",
+   "events": [],
+   "excluded": {},
+   "full": "Microsoft.UI.Composition.Compositor",
+   "hidden": [],
+   "iid": "95213c13-c4cb-57de-b267-d21ab901ae38",
+   "implements": [],
+   "js_module": "svelters:winui/microsoft.ui.composition",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "close": [
+     {
+      "iface": "Windows.Foundation.IClosable",
+      "native": "Close",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 6
+     }
+    ],
+    "requestCommitAsync": [
+     {
+      "iface": "Microsoft.UI.Composition.ICompositor5",
+      "native": "RequestCommitAsync",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "async",
+       "of": {
+        "k": "void"
+       },
+       "t": "Windows.Foundation.IAsyncAction"
+      },
+      "ret_native": "Windows.Foundation.IAsyncAction",
+      "slot": 25
+     }
+    ]
+   },
+   "name": "Compositor",
+   "namespace": "Microsoft.UI.Composition",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Composition.ICompositor5",
+      "slot": 6
+     },
+     "name": "comment",
+     "native": "Comment",
+     "set": {
+      "iface": "Microsoft.UI.Composition.ICompositor5",
+      "slot": 7
+     },
+     "slot": {
+      "k": "string"
+     },
+     "type": "string"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Composition.ICompositor7",
+      "slot": 6
+     },
+     "name": "dispatcherQueue",
+     "native": "DispatcherQueue",
+     "set": null,
+     "slot": {
+      "k": "object",
+      "t": "Microsoft.UI.Dispatching.DispatcherQueue"
+     },
+     "type": "Microsoft.UI.Dispatching.DispatcherQueue"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Microsoft.UI.Composition.ICompositor5",
+      "slot": 8
+     },
+     "name": "globalPlaybackRate",
+     "native": "GlobalPlaybackRate",
+     "set": {
+      "iface": "Microsoft.UI.Composition.ICompositor5",
+      "slot": 9
+     },
+     "slot": {
+      "k": "float",
+      "t": "f32"
+     },
+     "type": "f32"
+    }
+   ],
+   "refs": [
+    "Microsoft.UI.Dispatching.DispatcherQueue"
+   ],
+   "root": true,
+   "statics": {
+    "maxGlobalPlaybackRate": [
+     {
+      "iface": "Microsoft.UI.Composition.ICompositorStatics",
+      "native": "get_MaxGlobalPlaybackRate",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "float",
+       "t": "f32"
+      },
+      "ret_native": "f32",
+      "slot": 6
+     }
+    ],
+    "minGlobalPlaybackRate": [
+     {
+      "iface": "Microsoft.UI.Composition.ICompositorStatics",
+      "native": "get_MinGlobalPlaybackRate",
+      "outs": [],
+      "params": [],
+      "prop": "get",
+      "ret": {
+       "k": "float",
+       "t": "f32"
+      },
+      "ret_native": "f32",
+      "slot": 7
+     }
+    ]
+   },
+   "thread": "dispatcher",
+   "thread_getter": {
+    "iface": "Microsoft.UI.Composition.ICompositor7",
+    "slot": 6
+   }
+  },
+  "Microsoft.UI.Composition.ContainerVisual": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.CubicBezierEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.DistantLight": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.DropShadow": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.ElasticEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.ExponentialEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.ExpressionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.IAmbientLight": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IAmbientLight2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IAnimationController": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IAnimationControllerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IAnimationObject": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Composition.IAnimationPropertyInfo": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IAnimationPropertyInfo2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IBackEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IBooleanKeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IBounceEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IBounceScalarNaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IBounceVector2NaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IBounceVector3NaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICircleEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IColorKeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionAnimation2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionAnimation3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionAnimation4": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionAnimationBase": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Composition.ICompositionAnimationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionAnimationGroup": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionApiInformationStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionBackdropBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionBatchCompletedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionCapabilities": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionClip": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionClip2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionClipFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionColorBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionColorGradientStop": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionColorGradientStopCollection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionCommitBatch": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionContainerShape": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionDrawingSurface": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionDrawingSurface2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionDrawingSurfaceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEasingFunctionFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEasingFunctionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEffectBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEffectFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEffectSourceParameter": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEffectSourceParameterFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEllipseGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionEngineStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGeometricClip": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGeometryFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGradientBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGradientBrush2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGradientBrushFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGraphicsDevice": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGraphicsDevice2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGraphicsDevice3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionGraphicsDevice4": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionLight": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionLight2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionLight3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionLightFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionLineGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionLinearGradientBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionMaskBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionMipmapSurface": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionNineGridBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionObject": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionObject2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionObject3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionObject4": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionObject5": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionObjectFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionObjectStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionPath": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionPathFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionPathGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionProjectedShadow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionProjectedShadowCaster": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionProjectedShadowCasterCollection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionProjectedShadowCasterCollectionStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionProjectedShadowReceiver": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionProjectedShadowReceiverUnorderedCollection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionPropertySet": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionPropertySet2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionRadialGradientBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionRectangleGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionRoundedRectangleGeometry": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionScopedBatch": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionShadow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionShadowFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionShape": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionShapeFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionSpriteShape": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Composition.ICompositionSurface": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Composition.ICompositionSurfaceBrush": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionSurfaceBrush2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionSurfaceBrush3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionSurfaceFacade": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Composition.ICompositionTransform": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionTransformFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionViewBox": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionVirtualDrawingSurface": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionVirtualDrawingSurfaceFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositionVisualSurface": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositor": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositor2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositor4": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositor5": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositor6": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositor7": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositor8": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositorStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositorWithProjectedShadow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositorWithRadialGradient": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICompositorWithVisualSurface": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IContainerVisual": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IContainerVisualFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ICubicBezierEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IDistantLight": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IDistantLight2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IDropShadow": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IDropShadow2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IElasticEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IExponentialEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IExpressionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IImplicitAnimationCollection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IInsetClip": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IKeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IKeyFrameAnimation2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IKeyFrameAnimation3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IKeyFrameAnimationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ILayerVisual": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ILayerVisual2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ILinearEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.INaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.INaturalMotionAnimationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IPathKeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IPointLight": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IPointLight2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IPointLight3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IPowerEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IQuaternionKeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IRectangleClip": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IRedirectVisual": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IRenderingDeviceReplacedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IScalarKeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IScalarNaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IScalarNaturalMotionAnimationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IShapeVisual": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISineEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpotLight": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpotLight2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpotLight3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpringScalarNaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpringVector2NaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpringVector3NaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpriteVisual": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ISpriteVisual2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IStepEasingFunction": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVector2KeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVector2NaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVector2NaturalMotionAnimationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVector3KeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVector3NaturalMotionAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVector3NaturalMotionAnimationFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVector4KeyFrameAnimation": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVisual": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVisual2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVisual3": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVisual4": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVisualCollection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVisualElement": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Composition.IVisualElement2": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Composition.IVisualFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.IVisualUnorderedCollection": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Composition.ImplicitAnimationCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Composition.InitialValueExpressionCollection": {
+   "category": "model"
+  },
+  "Microsoft.UI.Composition.InsetClip": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.KeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.LayerVisual": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.LinearEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.NaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.PathKeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.PointLight": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.PowerEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.QuaternionKeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.RectangleClip": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.RedirectVisual": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.RenderingDeviceReplacedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Composition.ScalarKeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.ScalarNaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.ShapeVisual": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.SineEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.SpotLight": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.SpringScalarNaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.SpringVector2NaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.SpringVector3NaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.SpriteVisual": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.StepEasingFunction": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.Vector2KeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.Vector2NaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.Vector3KeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.Vector3NaturalMotionAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.Vector4KeyFrameAnimation": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.Visual": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.VisualCollection": {
+   "category": "object"
+  },
+  "Microsoft.UI.Composition.VisualUnorderedCollection": {
+   "category": "object"
+  }
+ }
+}

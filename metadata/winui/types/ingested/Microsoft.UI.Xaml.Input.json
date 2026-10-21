@@ -1,0 +1,6179 @@
+{
+ "namespace": "Microsoft.UI.Xaml.Input",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IAccessKeyDisplayDismissedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IAccessKeyDisplayRequestedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IAccessKeyInvokedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.AccessKeyManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics2",
+      327680,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ],
+     [
+      "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IAccessKeyManager",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.AccessKeyManager",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.CanExecuteRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.ICanExecuteRequestedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.CanExecuteRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.ICharacterReceivedRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IContextRequestedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.DoubleTappedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "f7a501b9-e277-5611-87b0-0e0607622183",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.DoubleTappedEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IDoubleTappedRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ExecuteRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IExecuteRequestedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ExecuteRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.FindNextElementOptions": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IFindNextElementOptions",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.FindNextElementOptions",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.FocusInputDeviceKind": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Mouse",
+     1
+    ],
+    [
+     "Touch",
+     2
+    ],
+    [
+     "Pen",
+     3
+    ],
+    [
+     "Keyboard",
+     4
+    ],
+    [
+     "GameController",
+     5
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.FocusManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Input.IFocusManagerStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IFocusManager",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.FocusManager",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.FocusManagerGotFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IFocusManagerGotFocusEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.FocusManagerGotFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.FocusManagerLostFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IFocusManagerLostFocusEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.FocusManagerLostFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.FocusMovementResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IFocusMovementResult",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.FocusMovementResult",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.FocusNavigationDirection": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Next",
+     0
+    ],
+    [
+     "Previous",
+     1
+    ],
+    [
+     "Up",
+     2
+    ],
+    [
+     "Down",
+     3
+    ],
+    [
+     "Left",
+     4
+    ],
+    [
+     "Right",
+     5
+    ],
+    [
+     "None",
+     6
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.FocusNavigationDirection",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.GettingFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IGettingFocusEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.GettingFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.HoldingEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "fe23c5bd-4984-56b6-b92b-fc9d1216b24e",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.HoldingEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IHoldingRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyDisplayDismissedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "125a83d8-7f86-5ea9-9063-b9407e644587",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Input.IAccessKeyDisplayDismissedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyDisplayRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "c4ed84d8-2b27-59b1-9cf0-7f9164de58cb",
+   "methods": [
+    {
+     "name": "get_PressedKeys",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IAccessKeyDisplayRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyInvokedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d00c11a4-f9fb-5707-9692-98b80bb8546d",
+   "methods": [
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IAccessKeyInvokedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.AccessKeyManager"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8f2a4402-a635-53dc-bc17-da911eabaade",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Input.IAccessKeyManager",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.AccessKeyManager"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "3375aef7-742f-5e84-b76f-c187e08253bf",
+   "methods": [
+    {
+     "name": "get_IsDisplayModeEnabled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_AreKeyTipsEnabled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_AreKeyTipsEnabled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_IsDisplayModeEnabledChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<object, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_IsDisplayModeEnabledChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "ExitDisplayMode",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      327680
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.AccessKeyManager"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "512c9f63-24ad-5df2-b8ed-472406db31c0",
+   "methods": [
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "EnterDisplayModeForXamlRoot"
+       ]
+      ]
+     },
+     "name": "EnterDisplayMode",
+     "params": [
+      {
+       "name": "XamlRoot",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.XamlRoot"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics2",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.ICanExecuteRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.CanExecuteRequestedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e4bf6d7d-f6eb-53ca-a2d4-c741ec871e38",
+   "methods": [
+    {
+     "name": "get_Parameter",
+     "params": [],
+     "ret": "object",
+     "special": true
+    },
+    {
+     "name": "get_CanExecute",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_CanExecute",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ICanExecuteRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.ICharacterReceivedRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e26ca5bb-34c3-5c1e-9a16-00b80b07a899",
+   "methods": [
+    {
+     "name": "get_Character",
+     "params": [],
+     "ret": "char16",
+     "special": true
+    },
+    {
+     "name": "get_KeyStatus",
+     "params": [],
+     "ret": "Windows.UI.Core.CorePhysicalKeyStatus",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ICharacterReceivedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.ICommand": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e5af3542-ca67-4081-995b-709dd13792df",
+   "methods": [
+    {
+     "name": "add_CanExecuteChanged",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_CanExecuteChanged",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "CanExecute",
+     "params": [
+      {
+       "name": "parameter",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "Execute",
+     "params": [
+      {
+       "name": "parameter",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ICommand",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IContextRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "bcedcb98-77b5-53c0-802e-fd52f3806e51",
+   "methods": [
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "TryGetPosition",
+     "params": [
+      {
+       "name": "relativeTo",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      },
+      {
+       "name": "point",
+       "out": true,
+       "type": "out Windows.Foundation.Point"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IContextRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IDoubleTappedRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "32b9549d-11d8-53a5-a953-02409537a11f",
+   "methods": [
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "GetPosition",
+     "params": [
+      {
+       "name": "relativeTo",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "Windows.Foundation.Point"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IDoubleTappedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IExecuteRequestedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ExecuteRequestedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e1a9fd0c-34d0-5ae2-8f5d-377e7a8a2708",
+   "methods": [
+    {
+     "name": "get_Parameter",
+     "params": [],
+     "ret": "object",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IExecuteRequestedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IFindNextElementOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.FindNextElementOptions"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "7f88e76b-7417-5447-aed4-2fabd291bdc6",
+   "methods": [
+    {
+     "name": "get_SearchRoot",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_SearchRoot",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ExclusionRect",
+     "params": [],
+     "ret": "Windows.Foundation.Rect",
+     "special": true
+    },
+    {
+     "name": "put_ExclusionRect",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Rect"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_HintRect",
+     "params": [],
+     "ret": "Windows.Foundation.Rect",
+     "special": true
+    },
+    {
+     "name": "put_HintRect",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Rect"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_XYFocusNavigationStrategyOverride",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategyOverride",
+     "special": true
+    },
+    {
+     "name": "put_XYFocusNavigationStrategyOverride",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategyOverride"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IFindNextElementOptions",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManager": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.FocusManager"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "9fd07bc5-d2d4-53fe-a31a-846de8b7a257",
+   "methods": [],
+   "name": "Microsoft.UI.Xaml.Input.IFocusManager",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManagerGotFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.FocusManagerGotFocusEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "50aca341-4519-59cf-83b1-c9c45cfdb816",
+   "methods": [
+    {
+     "name": "get_NewFocusedElement",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "get_CorrelationId",
+     "params": [],
+     "ret": "System.Guid",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IFocusManagerGotFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManagerLostFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.FocusManagerLostFocusEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "fdaf2c3f-a22e-5902-abce-b60758fbed1e",
+   "methods": [
+    {
+     "name": "get_OldFocusedElement",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "get_CorrelationId",
+     "params": [],
+     "ret": "System.Guid",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IFocusManagerLostFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManagerStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.FocusManager"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e73dce04-e23a-5fb3-96ab-7df04c51dff2",
+   "methods": [
+    {
+     "name": "add_GotFocus",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Input.FocusManagerGotFocusEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_GotFocus",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_LostFocus",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Input.FocusManagerLostFocusEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_LostFocus",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_GettingFocus",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Input.GettingFocusEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_GettingFocus",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_LosingFocus",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Input.LosingFocusEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_LosingFocus",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "TryFocusAsync",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.FocusState"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Microsoft.UI.Xaml.Input.FocusMovementResult>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "TryMoveFocusAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "TryMoveFocusAsync",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Microsoft.UI.Xaml.Input.FocusMovementResult>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "TryMoveFocusWithOptionsAsync"
+       ]
+      ],
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "TryMoveFocusAsync",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      },
+      {
+       "name": "focusNavigationOptions",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FindNextElementOptions"
+      }
+     ],
+     "ret": "Windows.Foundation.IAsyncOperation<Microsoft.UI.Xaml.Input.FocusMovementResult>"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "TryMoveFocusWithOptions"
+       ]
+      ]
+     },
+     "name": "TryMoveFocus",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      },
+      {
+       "name": "focusNavigationOptions",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FindNextElementOptions"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "FindNextElement"
+       ]
+      ]
+     },
+     "name": "FindNextElement",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.DependencyObject"
+    },
+    {
+     "name": "FindFirstFocusableElement",
+     "params": [
+      {
+       "name": "searchScope",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.DependencyObject"
+    },
+    {
+     "name": "FindLastFocusableElement",
+     "params": [
+      {
+       "name": "searchScope",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.DependencyObject"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "FindNextElementWithOptions"
+       ]
+      ]
+     },
+     "name": "FindNextElement",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      },
+      {
+       "name": "focusNavigationOptions",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FindNextElementOptions"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.DependencyObject"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "FindNextFocusableElement"
+       ]
+      ]
+     },
+     "name": "FindNextFocusableElement",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "FindNextFocusableElementWithHint"
+       ]
+      ]
+     },
+     "name": "FindNextFocusableElement",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      },
+      {
+       "name": "hintRect",
+       "out": false,
+       "type": "Windows.Foundation.Rect"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.UIElement"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "TryMoveFocus"
+       ]
+      ]
+     },
+     "name": "TryMoveFocus",
+     "params": [
+      {
+       "name": "focusNavigationDirection",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.FocusNavigationDirection"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "attributes": {
+      "Deprecated": [
+       [
+        "GetFocusedElement() is deprecated. Use GetFocusedElement(XamlRoot) instead to ensure correct behavior in multi-window scenarios.",
+        "DeprecationType.0",
+        65536,
+        "Microsoft.UI.Xaml.WinUIContract"
+       ]
+      ],
+      "Overload": [
+       [
+        "GetFocusedElement"
+       ]
+      ]
+     },
+     "name": "GetFocusedElement",
+     "params": [],
+     "ret": "object"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "GetFocusedElementWithRoot"
+       ]
+      ]
+     },
+     "name": "GetFocusedElement",
+     "params": [
+      {
+       "name": "xamlRoot",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.XamlRoot"
+      }
+     ],
+     "ret": "object"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IFocusManagerStatics",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IFocusMovementResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.FocusMovementResult"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a46259fd-3edd-554b-a188-0a47b71e4e1a",
+   "methods": [
+    {
+     "name": "get_Succeeded",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IFocusMovementResult",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IGettingFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.GettingFocusEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "37fd3af0-bd3c-5bf5-a9cd-71a1e87af950",
+   "methods": [
+    {
+     "name": "get_OldFocusedElement",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "get_NewFocusedElement",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_NewFocusedElement",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FocusState",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.FocusState",
+     "special": true
+    },
+    {
+     "name": "get_Direction",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.FocusNavigationDirection",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_InputDevice",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind",
+     "special": true
+    },
+    {
+     "name": "get_Cancel",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Cancel",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_CorrelationId",
+     "params": [],
+     "ret": "System.Guid",
+     "special": true
+    },
+    {
+     "name": "TryCancel",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "TrySetNewFocusedElement",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IGettingFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IHoldingRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "8272a4b2-2221-551e-b0bb-16e29138ab20",
+   "methods": [
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "get_HoldingState",
+     "params": [],
+     "ret": "Microsoft.UI.Input.HoldingState",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "GetPosition",
+     "params": [
+      {
+       "name": "relativeTo",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "Windows.Foundation.Point"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IHoldingRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IInertiaExpansionBehavior": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d60029b7-f0cd-5aea-abe5-7410d09118c6",
+   "methods": [
+    {
+     "name": "get_DesiredDeceleration",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_DesiredDeceleration",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_DesiredExpansion",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_DesiredExpansion",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IInertiaExpansionBehavior",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IInertiaRotationBehavior": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.InertiaRotationBehavior"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "27b4bd03-9149-5691-bce5-fa33b32c4a81",
+   "methods": [
+    {
+     "name": "get_DesiredDeceleration",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_DesiredDeceleration",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_DesiredRotation",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_DesiredRotation",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IInertiaRotationBehavior",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IInertiaTranslationBehavior": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "d4f91cf5-3317-5914-b25a-ea6ee55b96d0",
+   "methods": [
+    {
+     "name": "get_DesiredDeceleration",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_DesiredDeceleration",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_DesiredDisplacement",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_DesiredDisplacement",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IInertiaTranslationBehavior",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IInputScope": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.InputScope"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "76ea58b1-e910-5176-9147-695cc95e7da2",
+   "methods": [
+    {
+     "name": "get_Names",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Input.InputScopeName>",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IInputScope",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IInputScopeName": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.InputScopeName"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "ee99a66d-28d0-53cb-82ee-1b6ee58bcc35",
+   "methods": [
+    {
+     "name": "get_NameValue",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.InputScopeNameValue",
+     "special": true
+    },
+    {
+     "name": "put_NameValue",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.InputScopeNameValue"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IInputScopeName",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IInputScopeNameFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.InputScopeName"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "feec2efd-bc09-5cd6-9b47-6d35d1d87c61",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "nameValue",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.InputScopeNameValue"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Input.InputScopeName"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IInputScopeNameFactory",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IKeyRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "ee357007-a2d6-5c75-9431-05fd66ec7915",
+   "methods": [
+    {
+     "name": "get_Key",
+     "params": [],
+     "ret": "Windows.System.VirtualKey",
+     "special": true
+    },
+    {
+     "name": "get_KeyStatus",
+     "params": [],
+     "ret": "Windows.UI.Core.CorePhysicalKeyStatus",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_OriginalKey",
+     "params": [],
+     "ret": "Windows.System.VirtualKey",
+     "special": true
+    },
+    {
+     "name": "get_DeviceId",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IKeyRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAccelerator": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.KeyboardAccelerator"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "6f8bf1e2-4e91-5cf9-a6be-4770caf3d770",
+   "methods": [
+    {
+     "name": "get_Key",
+     "params": [],
+     "ret": "Windows.System.VirtualKey",
+     "special": true
+    },
+    {
+     "name": "put_Key",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.System.VirtualKey"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Modifiers",
+     "params": [],
+     "ret": "Windows.System.VirtualKeyModifiers",
+     "special": true
+    },
+    {
+     "name": "put_Modifiers",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.System.VirtualKeyModifiers"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsEnabled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsEnabled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_ScopeOwner",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_ScopeOwner",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_Invoked",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Input.KeyboardAccelerator, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Invoked",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IKeyboardAccelerator",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.KeyboardAccelerator"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "ca1d410a-af2a-51b9-a1de-6c0af9f3b598",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Input.KeyboardAccelerator"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorFactory",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorInvokedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "62c9fdb0-b574-527d-97eb-5c7f674441e0",
+   "methods": [
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Element",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "get_KeyboardAccelerator",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.KeyboardAccelerator",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorInvokedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.KeyboardAccelerator"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "73e674ca-73f4-5e77-b8d6-ff7852a63b0b",
+   "methods": [
+    {
+     "name": "get_KeyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ModifiersProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IsEnabledProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_ScopeOwnerProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorStatics",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.ILosingFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.LosingFocusEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "fa0e5ffa-2b1b-52f8-bb66-e35f51e73cf3",
+   "methods": [
+    {
+     "name": "get_OldFocusedElement",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "get_NewFocusedElement",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyObject",
+     "special": true
+    },
+    {
+     "name": "put_NewFocusedElement",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_FocusState",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.FocusState",
+     "special": true
+    },
+    {
+     "name": "get_Direction",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.FocusNavigationDirection",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_InputDevice",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind",
+     "special": true
+    },
+    {
+     "name": "get_Cancel",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Cancel",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_CorrelationId",
+     "params": [],
+     "ret": "System.Guid",
+     "special": true
+    },
+    {
+     "name": "TryCancel",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "TrySetNewFocusedElement",
+     "params": [
+      {
+       "name": "element",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.DependencyObject"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ILosingFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationCompletedRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "e3be9e4e-c5fb-5859-a81d-ce12fc3a2f4d",
+   "methods": [
+    {
+     "name": "get_Container",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.UIElement",
+     "special": true
+    },
+    {
+     "name": "get_Position",
+     "params": [],
+     "ret": "Windows.Foundation.Point",
+     "special": true
+    },
+    {
+     "name": "get_IsInertial",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_Cumulative",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationDelta",
+     "special": true
+    },
+    {
+     "name": "get_Velocities",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationVelocities",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationCompletedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationDeltaRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "51369745-960f-54ac-93fa-763d22910dea",
+   "methods": [
+    {
+     "name": "get_Container",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.UIElement",
+     "special": true
+    },
+    {
+     "name": "get_Position",
+     "params": [],
+     "ret": "Windows.Foundation.Point",
+     "special": true
+    },
+    {
+     "name": "get_IsInertial",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_Delta",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationDelta",
+     "special": true
+    },
+    {
+     "name": "get_Cumulative",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationDelta",
+     "special": true
+    },
+    {
+     "name": "get_Velocities",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationVelocities",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "Complete",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationDeltaRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationInertiaStartingRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "17d510be-5514-5952-9afd-959b60ab9394",
+   "methods": [
+    {
+     "name": "get_Container",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.UIElement",
+     "special": true
+    },
+    {
+     "name": "get_ExpansionBehavior",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior",
+     "special": true
+    },
+    {
+     "name": "put_ExpansionBehavior",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_RotationBehavior",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.InertiaRotationBehavior",
+     "special": true
+    },
+    {
+     "name": "put_RotationBehavior",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.InertiaRotationBehavior"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_TranslationBehavior",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior",
+     "special": true
+    },
+    {
+     "name": "put_TranslationBehavior",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "get_Delta",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationDelta",
+     "special": true
+    },
+    {
+     "name": "get_Cumulative",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationDelta",
+     "special": true
+    },
+    {
+     "name": "get_Velocities",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationVelocities",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationInertiaStartingRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationPivot": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationPivot"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "286baba4-313d-507c-adc5-f739732cea27",
+   "methods": [
+    {
+     "name": "get_Center",
+     "params": [],
+     "ret": "Windows.Foundation.Point",
+     "special": true
+    },
+    {
+     "name": "put_Center",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Point"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Radius",
+     "params": [],
+     "ret": "f64",
+     "special": true
+    },
+    {
+     "name": "put_Radius",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationPivot",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationPivotFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationPivot"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "67143ccd-ea6c-5fe2-bef2-adcbd7af52fd",
+   "methods": [
+    {
+     "name": "CreateInstanceWithCenterAndRadius",
+     "params": [
+      {
+       "name": "center",
+       "out": false,
+       "type": "Windows.Foundation.Point"
+      },
+      {
+       "name": "radius",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Input.ManipulationPivot"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationPivotFactory",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "61857950-5821-5652-9fdf-c6277c5886f5",
+   "methods": [
+    {
+     "name": "get_Container",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.UIElement",
+     "special": true
+    },
+    {
+     "name": "get_Position",
+     "params": [],
+     "ret": "Windows.Foundation.Point",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "get_Cumulative",
+     "params": [],
+     "ret": "Microsoft.UI.Input.ManipulationDelta",
+     "special": true
+    },
+    {
+     "name": "Complete",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgsFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "5681b0de-3fa7-503e-9c46-a80339760292",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgsFactory",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationStartingRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "93a99f86-f5a0-5326-91b0-851c897af79f",
+   "methods": [
+    {
+     "name": "get_Mode",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.ManipulationModes",
+     "special": true
+    },
+    {
+     "name": "put_Mode",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.ManipulationModes"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Container",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.UIElement",
+     "special": true
+    },
+    {
+     "name": "put_Container",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Pivot",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.ManipulationPivot",
+     "special": true
+    },
+    {
+     "name": "put_Pivot",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.ManipulationPivot"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IManipulationStartingRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.INoFocusCandidateFoundEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a2d7153a-cd2a-59cb-a574-ac82e30b9201",
+   "methods": [
+    {
+     "name": "get_Direction",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.FocusNavigationDirection",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_InputDevice",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.FocusInputDeviceKind",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.INoFocusCandidateFoundEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IPointer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.Pointer"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "1f9afbf5-11a3-5e68-aa1b-72febfa0ab23",
+   "methods": [
+    {
+     "name": "get_PointerId",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "get_IsInContact",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_IsInRange",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IPointer",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IPointerRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "66e78a9a-1bec-5f92-b1a1-ea6334ee511c",
+   "methods": [
+    {
+     "name": "get_Pointer",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.Pointer",
+     "special": true
+    },
+    {
+     "name": "get_KeyModifiers",
+     "params": [],
+     "ret": "Windows.System.VirtualKeyModifiers",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsGenerated",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "GetCurrentPoint",
+     "params": [
+      {
+       "name": "relativeTo",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "Microsoft.UI.Input.PointerPoint"
+    },
+    {
+     "name": "GetIntermediatePoints",
+     "params": [
+      {
+       "name": "relativeTo",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "Windows.Foundation.Collections.IVector<Microsoft.UI.Input.PointerPoint>"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IPointerRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IProcessKeyboardAcceleratorEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "9be0d058-3d26-5811-b50a-3bb80ca766c9",
+   "methods": [
+    {
+     "name": "get_Key",
+     "params": [],
+     "ret": "Windows.System.VirtualKey",
+     "special": true
+    },
+    {
+     "name": "get_Modifiers",
+     "params": [],
+     "ret": "Windows.System.VirtualKeyModifiers",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IProcessKeyboardAcceleratorEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IRightTappedRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "3972fafb-2915-5c62-bb6b-54ad84ff400d",
+   "methods": [
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "GetPosition",
+     "params": [
+      {
+       "name": "relativeTo",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "Windows.Foundation.Point"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IRightTappedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IStandardUICommand": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.StandardUICommand"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "5f395d50-5449-59ab-9cb2-4e3700033f03",
+   "methods": [
+    {
+     "name": "get_Kind",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.StandardUICommandKind",
+     "special": true
+    },
+    {
+     "name": "put_Kind",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.StandardUICommandKind"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IStandardUICommand",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IStandardUICommandFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.StandardUICommand"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "5800f099-3746-5bcf-b1ce-af3d6bf8e83f",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Input.StandardUICommand"
+    },
+    {
+     "name": "CreateInstanceWithKind",
+     "params": [
+      {
+       "name": "kind",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.StandardUICommandKind"
+      },
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Input.StandardUICommand"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IStandardUICommandFactory",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IStandardUICommandStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.StandardUICommand"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "ab80c197-85cc-5d36-81aa-156cd63be31a",
+   "methods": [
+    {
+     "name": "get_KindProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IStandardUICommandStatics",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.ITappedRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "73f74b8c-3709-547e-8e0c-51c03c89126a",
+   "methods": [
+    {
+     "name": "get_PointerDeviceType",
+     "params": [],
+     "ret": "Microsoft.UI.Input.PointerDeviceType",
+     "special": true
+    },
+    {
+     "name": "get_Handled",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_Handled",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "GetPosition",
+     "params": [
+      {
+       "name": "relativeTo",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.UIElement"
+      }
+     ],
+     "ret": "Windows.Foundation.Point"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ITappedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IXamlUICommand": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.XamlUICommand"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "a457f2cb-51e0-541c-9c42-dd1dcbdf58fb",
+   "methods": [
+    {
+     "name": "get_Label",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Label",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IconSource",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Controls.IconSource",
+     "special": true
+    },
+    {
+     "name": "put_IconSource",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Controls.IconSource"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_KeyboardAccelerators",
+     "params": [],
+     "ret": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Input.KeyboardAccelerator>",
+     "special": true
+    },
+    {
+     "name": "get_AccessKey",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_AccessKey",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Description",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "put_Description",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Command",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.Input.ICommand",
+     "special": true
+    },
+    {
+     "name": "put_Command",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Microsoft.UI.Xaml.Input.ICommand"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_ExecuteRequested",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Input.XamlUICommand, Microsoft.UI.Xaml.Input.ExecuteRequestedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ExecuteRequested",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_CanExecuteRequested",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Input.XamlUICommand, Microsoft.UI.Xaml.Input.CanExecuteRequestedEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_CanExecuteRequested",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "NotifyCanExecuteChanged",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IXamlUICommand",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IXamlUICommandFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.XamlUICommand"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "f1f80a20-0e31-5505-8bc3-cdd1f0947f1d",
+   "methods": [
+    {
+     "name": "CreateInstance",
+     "params": [
+      {
+       "name": "baseInterface",
+       "out": false,
+       "type": "object"
+      },
+      {
+       "name": "innerInterface",
+       "out": true,
+       "type": "out object"
+      }
+     ],
+     "ret": "Microsoft.UI.Xaml.Input.XamlUICommand"
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IXamlUICommandFactory",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.IXamlUICommandStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Xaml.Input.XamlUICommand"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "981dbda6-cdcb-5e35-b24b-c4f60ba148d9",
+   "methods": [
+    {
+     "name": "get_LabelProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_IconSourceProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_KeyboardAcceleratorsProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_AccessKeyProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_DescriptionProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    },
+    {
+     "name": "get_CommandProperty",
+     "params": [],
+     "ret": "Microsoft.UI.Xaml.DependencyProperty",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.IXamlUICommandStatics",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IInertiaExpansionBehavior",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.InertiaRotationBehavior": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IInertiaRotationBehavior",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.InertiaRotationBehavior",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IInertiaTranslationBehavior",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.InputScope": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IInputScope",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.InputScope",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.InputScopeName": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ],
+     [
+      "Microsoft.UI.Xaml.Input.IInputScopeNameFactory",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IInputScopeName",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.InputScopeName",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.InputScopeNameValue": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Default",
+     0
+    ],
+    [
+     "Url",
+     1
+    ],
+    [
+     "EmailSmtpAddress",
+     5
+    ],
+    [
+     "PersonalFullName",
+     7
+    ],
+    [
+     "CurrencyAmountAndSymbol",
+     20
+    ],
+    [
+     "CurrencyAmount",
+     21
+    ],
+    [
+     "DateMonthNumber",
+     23
+    ],
+    [
+     "DateDayNumber",
+     24
+    ],
+    [
+     "DateYear",
+     25
+    ],
+    [
+     "Digits",
+     28
+    ],
+    [
+     "Number",
+     29
+    ],
+    [
+     "Password",
+     31
+    ],
+    [
+     "TelephoneNumber",
+     32
+    ],
+    [
+     "TelephoneCountryCode",
+     33
+    ],
+    [
+     "TelephoneAreaCode",
+     34
+    ],
+    [
+     "TelephoneLocalNumber",
+     35
+    ],
+    [
+     "TimeHour",
+     37
+    ],
+    [
+     "TimeMinutesOrSeconds",
+     38
+    ],
+    [
+     "NumberFullWidth",
+     39
+    ],
+    [
+     "AlphanumericHalfWidth",
+     40
+    ],
+    [
+     "AlphanumericFullWidth",
+     41
+    ],
+    [
+     "Hiragana",
+     44
+    ],
+    [
+     "KatakanaHalfWidth",
+     45
+    ],
+    [
+     "KatakanaFullWidth",
+     46
+    ],
+    [
+     "Hanja",
+     47
+    ],
+    [
+     "HangulHalfWidth",
+     48
+    ],
+    [
+     "HangulFullWidth",
+     49
+    ],
+    [
+     "Search",
+     50
+    ],
+    [
+     "Formula",
+     51
+    ],
+    [
+     "SearchIncremental",
+     52
+    ],
+    [
+     "ChineseHalfWidth",
+     53
+    ],
+    [
+     "ChineseFullWidth",
+     54
+    ],
+    [
+     "NativeScript",
+     55
+    ],
+    [
+     "Text",
+     57
+    ],
+    [
+     "Chat",
+     58
+    ],
+    [
+     "NameOrPhoneNumber",
+     59
+    ],
+    [
+     "EmailNameOrAddress",
+     60
+    ],
+    [
+     "Maps",
+     62
+    ],
+    [
+     "NumericPassword",
+     63
+    ],
+    [
+     "NumericPin",
+     64
+    ],
+    [
+     "AlphanumericPin",
+     65
+    ],
+    [
+     "FormulaNumber",
+     67
+    ],
+    [
+     "ChatWithoutEmoji",
+     68
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.InputScopeNameValue",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.KeyEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "db68e7cc-9a2b-527d-9989-25284daccc03",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.KeyEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IKeyRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.KeyTipPlacementMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Auto",
+     0
+    ],
+    [
+     "Bottom",
+     1
+    ],
+    [
+     "Top",
+     2
+    ],
+    [
+     "Left",
+     3
+    ],
+    [
+     "Right",
+     4
+    ],
+    [
+     "Center",
+     5
+    ],
+    [
+     "Hidden",
+     6
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.KeyTipPlacementMode",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardAccelerator": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IKeyboardAccelerator",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.KeyboardAccelerator",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorInvokedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Auto",
+     0
+    ],
+    [
+     "Hidden",
+     1
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardNavigationMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Local",
+     0
+    ],
+    [
+     "Cycle",
+     1
+    ],
+    [
+     "Once",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.KeyboardNavigationMode",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.LosingFocusEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.ILosingFocusEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.LosingFocusEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationCompletedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "d51df8db-71cd-5bfd-8426-767218ee55ec",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.ManipulationCompletedEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IManipulationCompletedRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationDeltaEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "83f2d4ce-105f-5392-a38a-b7467b7c2ea5",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.ManipulationDeltaEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IManipulationDeltaRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "5de296bd-6f1c-5f60-9180-10705282576c",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IManipulationInertiaStartingRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationModes": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "Flags": [
+     []
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "TranslateX",
+     1
+    ],
+    [
+     "TranslateY",
+     2
+    ],
+    [
+     "TranslateRailsX",
+     4
+    ],
+    [
+     "TranslateRailsY",
+     8
+    ],
+    [
+     "Rotate",
+     16
+    ],
+    [
+     "Scale",
+     32
+    ],
+    [
+     "TranslateInertia",
+     64
+    ],
+    [
+     "RotateInertia",
+     128
+    ],
+    [
+     "ScaleInertia",
+     256
+    ],
+    [
+     "All",
+     65535
+    ],
+    [
+     "System",
+     65536
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ManipulationModes",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationPivot": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ],
+     [
+      "Microsoft.UI.Xaml.Input.IManipulationPivotFactory",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IManipulationPivot",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ManipulationPivot",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "41060669-304c-53ac-9d43-bc311235aae4",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.ManipulationStartedEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgsFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartingEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "44f528f1-f0e4-505c-a0bb-0c4839b29df5",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.ManipulationStartingEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IManipulationStartingRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.INoFocusCandidateFoundEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.Pointer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IPointer",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.Pointer",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.PointerEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "a48a71e1-8bb4-5597-9e31-903a3f6a04fb",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.PointerEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IPointerRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IProcessKeyboardAcceleratorEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.RightTappedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "5070e32f-3dc7-56cf-8fdd-de1b40d0b472",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.RightTappedEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IRightTappedRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.StandardUICommand": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Input.IStandardUICommandFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Input.IStandardUICommandStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.Input.XamlUICommand",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IStandardUICommand",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.StandardUICommand",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": false
+  },
+  "Microsoft.UI.Xaml.Input.StandardUICommandKind": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Cut",
+     1
+    ],
+    [
+     "Copy",
+     2
+    ],
+    [
+     "Paste",
+     3
+    ],
+    [
+     "SelectAll",
+     4
+    ],
+    [
+     "Delete",
+     5
+    ],
+    [
+     "Share",
+     6
+    ],
+    [
+     "Save",
+     7
+    ],
+    [
+     "Open",
+     8
+    ],
+    [
+     "Close",
+     9
+    ],
+    [
+     "Pause",
+     10
+    ],
+    [
+     "Play",
+     11
+    ],
+    [
+     "Stop",
+     12
+    ],
+    [
+     "Forward",
+     13
+    ],
+    [
+     "Backward",
+     14
+    ],
+    [
+     "Undo",
+     15
+    ],
+    [
+     "Redo",
+     16
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.StandardUICommandKind",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.TappedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "delegate",
+   "guid": "b60074f3-125b-534e-8f9c-9769bd3f0f64",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "e",
+      "out": false,
+      "type": "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Xaml.Input.TappedEventHandler",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs": {
+   "attributes": {
+    "Activatable": [
+     [
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.ITappedRoutedEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Auto",
+     0
+    ],
+    [
+     "Enabled",
+     1
+    ],
+    [
+     "Disabled",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Auto",
+     0
+    ],
+    [
+     "Projection",
+     1
+    ],
+    [
+     "NavigationDirectionDistance",
+     2
+    ],
+    [
+     "RectilinearDistance",
+     3
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategyOverride": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "Auto",
+     1
+    ],
+    [
+     "Projection",
+     2
+    ],
+    [
+     "NavigationDirectionDistance",
+     3
+    ],
+    [
+     "RectilinearDistance",
+     4
+    ]
+   ],
+   "name": "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategyOverride",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Xaml.Input.XamlUICommand": {
+   "attributes": {
+    "Composable": [
+     [
+      "Microsoft.UI.Xaml.Input.IXamlUICommandFactory",
+      "CompositionType.2",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.UI.Xaml.WinUIContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Xaml.Input.IXamlUICommandStatics",
+      65536,
+      "Microsoft.UI.Xaml.WinUIContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "Microsoft.UI.Xaml.DependencyObject",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Xaml.Input.IXamlUICommand",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Xaml.Input.ICommand",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Xaml.Input.XamlUICommand",
+   "namespace": "Microsoft.UI.Xaml.Input",
+   "origin": "winmd",
+   "sealed": false
+  }
+ }
+}

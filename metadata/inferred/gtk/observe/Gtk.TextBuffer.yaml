@@ -14,7 +14,8 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (scenario:TextBuffer undo)'
   verify:
     'on': Gtk:TextBuffer
-    check: connect
+    check: cross
+    rust: let b = o.downcast_ref::<gtk::TextBuffer>().unwrap(); if b.can_redo() { b.redo(); } else { b.insert_at_cursor("a"); b.undo(); }
   confidence: 0.95
 - prop: can-undo
   class: exact

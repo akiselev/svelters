@@ -12,5 +12,6 @@ observe:
     ref: 'O3: NOTIFY regularExpressionChanged'
   verify:
     'on': QtGui:QRegularExpressionValidator
-    check: connect
+    check: cross
+    native: o->setRegularExpression(QRegularExpression(o->regularExpression().pattern() + "x"))
   confidence: 0.9

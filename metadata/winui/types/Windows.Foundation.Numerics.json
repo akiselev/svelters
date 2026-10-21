@@ -1,0 +1,34 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/windows.foundation.numerics",
+ "namespace": "Windows.Foundation.Numerics",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Windows.Foundation.Numerics.Matrix3x2": {
+   "category": "record"
+  },
+  "Windows.Foundation.Numerics.Matrix4x4": {
+   "category": "record"
+  },
+  "Windows.Foundation.Numerics.Plane": {
+   "category": "record"
+  },
+  "Windows.Foundation.Numerics.Quaternion": {
+   "category": "record"
+  },
+  "Windows.Foundation.Numerics.Rational": {
+   "category": "record"
+  },
+  "Windows.Foundation.Numerics.Vector2": {
+   "category": "record"
+  },
+  "Windows.Foundation.Numerics.Vector3": {
+   "category": "record"
+  },
+  "Windows.Foundation.Numerics.Vector4": {
+   "category": "record"
+  }
+ }
+}

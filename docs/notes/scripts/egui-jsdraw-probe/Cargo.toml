@@ -1,0 +1,31 @@
+[package]
+name = "egui-jsdraw-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+description = "Measures JS->Rust draw-call cost (rquickjs/QuickJS-NG) for an egui backend; see docs/notes/egui-js-widgets.md"
+
+# Standalone: not part of the svelters workspace.
+[workspace]
+
+[dependencies]
+# Same engine and features as the host (Cargo.toml: rquickjs 0.14.0 = QuickJS-NG 0.16.2+).
+rquickjs_stock = { package = "rquickjs", version = "=0.14.0", default-features = false, features = ["std"], optional = true }
+# longbridge/quickjs-jit: a Cranelift JIT packaged as an rquickjs fork, 0.14.1 tracks rquickjs 0.14 / NG 0.16.2+.
+rquickjs_jit = { package = "quickjs-jit", version = "=0.14.1", default-features = false, features = ["std"], optional = true }
+quickjs_jit_runtime = { package = "quickjs-jit-runtime", version = "=0.14.1", features = ["compiler"], optional = true }
+egui = { version = "=0.37.0", default-features = false, features = ["default_fonts"] }
+serde_json = "1"
+libc = "0.2"
+
+[features]
+default = ["stock"]
+stock = ["dep:rquickjs_stock"]
+# QuickJS C asserts off (rquickjs `disable-assertions`; the host builds with them on today).
+ndebug = ["rquickjs_stock?/disable-assertions"]
+# Build against quickjs-jit instead: --no-default-features --features jit
+jit = ["dep:rquickjs_jit", "dep:quickjs_jit_runtime"]
+
+[profile.release]
+debug = false
+codegen-units = 16

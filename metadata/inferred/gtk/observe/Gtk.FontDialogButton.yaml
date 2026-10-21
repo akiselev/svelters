@@ -14,7 +14,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.FontDialogButton:dialog)'
   verify:
     'on': Gtk:FontDialogButton
-    check: connect
+    check: change
+    values:
+    - new_type("GtkFontDialog")
   confidence: 0.95
 - prop: font-desc
   class: exact
@@ -28,7 +30,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:FontDialogButton
-    check: connect
+    check: change
+    values:
+    - gtk::pango::FontDescription::from_string("Sans 13")
+    - gtk::pango::FontDescription::from_string("Serif 9")
   confidence: 0.9
 - prop: font-features
   class: exact
@@ -57,7 +62,10 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:FontDialogButton
-    check: connect
+    check: change
+    values:
+    - gtk::pango::Language::from_string("de")
+    - gtk::pango::Language::from_string("fr")
   confidence: 0.9
 - prop: level
   class: exact

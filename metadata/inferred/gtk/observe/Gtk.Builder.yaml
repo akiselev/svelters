@@ -15,7 +15,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Builder
-    check: connect
+    check: change
+    values:
+    - gtk::glib::Object::new::<gtk::glib::Object>()
   confidence: 0.9
 - prop: scope
   class: exact
@@ -30,7 +32,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Builder
-    check: connect
+    check: change
+    values:
+    - new_type("GtkBuilderCScope")
   confidence: 0.9
 - prop: translation-domain
   class: exact

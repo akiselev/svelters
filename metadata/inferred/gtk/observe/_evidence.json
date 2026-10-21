@@ -9621,7 +9621,7 @@
     "readback": "ignored"
    }
   },
-  "pattern": "observe:exact-probe"
+  "pattern": "observe:partial-missed-rule"
  },
  "Gtk:Image:gicon": {
   "confidence": 0.9,
@@ -19596,7 +19596,7 @@
   "pattern": "observe:exact-probe"
  },
  "Gtk:TreeView:headers-clickable": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": [
     "READABLE",
@@ -19610,7 +19610,7 @@
     "readback": "ignored"
    }
   },
-  "pattern": "observe:exact-writable-rule"
+  "pattern": "observe:partial-missed-rule"
  },
  "Gtk:TreeView:headers-visible": {
   "confidence": 0.95,

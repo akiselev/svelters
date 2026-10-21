@@ -29,7 +29,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:DropDown
-    check: connect
+    check: change
+    values:
+    - gtk::ConstantExpression::new("ov1")
   confidence: 0.9
 - prop: factory
   class: exact
@@ -43,7 +45,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:factory)'
   verify:
     'on': Gtk:DropDown
-    check: connect
+    check: change
+    values:
+    - gtk::SignalListItemFactory::new()
   confidence: 0.95
 - prop: header-factory
   class: exact
@@ -57,7 +61,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:header-factory)'
   verify:
     'on': Gtk:DropDown
-    check: connect
+    check: change
+    values:
+    - gtk::SignalListItemFactory::new()
   confidence: 0.95
 - prop: list-factory
   class: exact
@@ -71,7 +77,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:list-factory)'
   verify:
     'on': Gtk:DropDown
-    check: connect
+    check: change
+    values:
+    - gtk::SignalListItemFactory::new()
   confidence: 0.95
 - prop: model
   class: exact
@@ -85,7 +93,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.DropDown:model)'
   verify:
     'on': Gtk:DropDown
-    check: connect
+    check: change
+    values:
+    - gtk::StringList::new(&["a", "b"])
   confidence: 0.95
 - prop: search-match-mode
   class: exact
@@ -114,7 +124,9 @@ observe:
     ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:DropDown
-    check: connect
+    check: cross
+    rust: let d = o.downcast_ref::<gtk::DropDown>().unwrap(); if d.model().is_none() { d.set_model(Some(&gtk::StringList::new(&["a", "b"])));
+      } d.set_selected(if d.selected() == 1 { 0 } else { 1 });
   confidence: 0.9
 - prop: selected-item
   class: exact

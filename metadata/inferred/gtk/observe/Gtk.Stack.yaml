@@ -89,7 +89,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Stack
-    check: connect
+    check: cross
+    rust: let s = o.downcast_ref::<gtk::Stack>().unwrap(); if s.first_child().is_none() { s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None),
+      Some("b")); } let n = if s.visible_child_name().as_deref() == Some("b") { "a" } else { "b" }; s.set_visible_child_name(n);
   confidence: 0.9
 - prop: visible-child-name
   class: exact
@@ -103,5 +105,7 @@ observe:
     ref: no probe row; the generated test sets it natively
   verify:
     'on': Gtk:Stack
-    check: connect
+    check: cross
+    rust: let s = o.downcast_ref::<gtk::Stack>().unwrap(); if s.first_child().is_none() { s.add_named(&gtk::Label::new(None), Some("a")); s.add_named(&gtk::Label::new(None),
+      Some("b")); } let n = if s.visible_child_name().as_deref() == Some("b") { "a" } else { "b" }; s.set_visible_child_name(n);
   confidence: 0.9

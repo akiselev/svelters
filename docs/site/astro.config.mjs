@@ -58,6 +58,8 @@ export default defineConfig({
         },
         { label: 'Non-UI types (GTK)', items: [{ autogenerate: { directory: 'types/gtk' } }] },
         { label: 'Non-UI types (Qt)', items: [{ autogenerate: { directory: 'types/qt' } }] },
+        { label: 'Non-UI types (AppKit)', items: [{ autogenerate: { directory: 'types/appkit' } }] },
+        { label: 'Non-UI types (WinUI)', items: [{ autogenerate: { directory: 'types/winui' } }] },
         { label: 'Project', items: [guide('about/licensing', 'Licensing of documentation text')] },
       ],
     }),

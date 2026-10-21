@@ -14,7 +14,9 @@ observe:
     ref: 'no probe row; not a scalar: the generated test only installs the mechanism'
   verify:
     'on': Gtk:Expander
-    check: connect
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.9
 - prop: expanded
   class: exact
@@ -60,8 +62,9 @@ observe:
     ref: 'observe probe GTK 4.22.4: notified on every observed change (set:Gtk.Expander:label)'
   verify:
     'on': Gtk:Expander
-    check: cross
-    trigger: label
+    check: change
+    values:
+    - gtk::Label::new(Some("ov1"))
   confidence: 0.95
 - prop: resize-toplevel
   class: exact
