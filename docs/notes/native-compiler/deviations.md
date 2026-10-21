@@ -212,6 +212,9 @@ span edits over the user's source instead of an AST reprint.
    `{snippet}` throws `snippet_without_render_tag` and a direct call `invalid_snippet_arguments`
    (the anchor must be a runtime container, not a DOM `Node`). `$n.snippet` throws
    `invalid_snippet` on a nullish snippet when esm-env's `DEV` is set, as Svelte's snippet block.
+   A non-inline event handler goes through `$n.apply(() => handler, this, $$args, event, loc, ...)`
+   (Svelte's `$.apply`, `event_handler_invalid`), with the event name and `file:line:column`
+   static instead of read from the DOM event and `Component[FILENAME]`.
    `$inspect.trace`'s location label is `file:line:column` (1-based line, 0-based column).
 5. **Not supported** (diagnostics): async `$derived` (`await` inside, `unsupported_feature`),
    `$host()` (`host_invalid_placement`: no custom elements), re-exports from the instance

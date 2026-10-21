@@ -571,6 +571,17 @@ impl Rewriter for ScopeRewriter<'_> {
         self.cx.dev
     }
 
+    fn dev_location(&self, pos: u32) -> Option<String> {
+        if !self.cx.dev {
+            return None;
+        }
+        let before = &self.cx.src[..pos as usize];
+        let line = before.matches('\n').count() + 1;
+        let col = before.rsplit('\n').next().map_or(0, |l| l.chars().count());
+        // the filename as given, as Svelte's `component[FILENAME]` and `$inspect.trace` labels
+        Some(format!("{}:{line}:{col}", self.cx.filename))
+    }
+
     fn identifier(&self, id: &Identifier) -> String {
         read_text(&self.cx.transform_of_id(id), &id.name)
     }

@@ -83,6 +83,11 @@ pub trait Rewriter {
     fn dev(&self) -> bool {
         false
     }
+    /// Dev: `file:line:column` of a source offset (1-based line, 0-based column, Svelte's
+    /// `locator`), for runtime warnings; None outside dev.
+    fn dev_location(&self, _pos: u32) -> Option<String> {
+        None
+    }
     /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
@@ -368,10 +373,28 @@ impl Codegen<'_, '_> {
                 self.dynamic_call(&format!("$n.set({n}, {}, ", js_str(prop)), value);
             }
             Op::Listen { signal, handler, flags, span, .. } => {
+                // Svelte's build_event_handler: a handler expression that calls something is
+                // memoized (`onclick={make(x)}` runs `make` once per change, not once per event)
+                let memo = match handler {
+                    Handler::Expr(h) if !is_function(h) && self.rw.has_call(h) => {
+                        self.tmp += 1;
+                        let id = format!("$$handler{}", self.tmp);
+                        self.w.write(&format!("const {id} = $.derived(() => "));
+                        self.paren_expr(h, Mode::Read);
+                        self.w.write(");");
+                        self.line();
+                        Some(id)
+                    }
+                    _ => None,
+                };
                 self.w.map(span.start);
                 self.w.write(&format!("$n.on({n}, {}, ", js_str(signal)));
                 match handler {
-                    Handler::Expr(h) => self.handler(h),
+                    Handler::Expr(h) => {
+                        // the event as Svelte's `$.apply` names it: type, plus `capture`
+                        let event = if flags & 2 != 0 { format!("{signal}capture") } else { signal.clone() };
+                        self.handler(h, memo.as_deref(), &event)
+                    }
                     Handler::Member { object, key } => {
                         // a property of a spread object, read when the event fires
                         self.w.write("function (...$$args) { ");
@@ -751,14 +774,42 @@ impl Codegen<'_, '_> {
         self.w.write("`");
     }
 
-    fn handler(&mut self, h: &Expression) {
-        if matches!(h, Expression::ArrowFunctionExpression(_) | Expression::FunctionExpression(_)) {
+    /// An event handler value; `memo` is the derived holding it (a handler with a call), `event`
+    /// the event name for dev warnings.
+    fn handler(&mut self, h: &Expression, memo: Option<&str>, event: &str) {
+        if is_function(h) {
             self.expr_text(h, Mode::Read);
-        } else {
-            // evaluated at event time, so a reactive handler value is read when the event fires
-            self.w.write("function (...$$args) { ");
-            self.paren_expr(h, Mode::Read);
-            self.w.write("?.apply(this, $$args); }");
+            return;
+        }
+        // evaluated at event time, so a reactive handler value is read when the event fires
+        self.w.write("function (...$$args) { ");
+        match self.rw.dev_location(h.span().start) {
+            // dev: Svelte's `$.apply` (warns `event_handler_invalid` for a value that is not a
+            // function), natively: the event name and location are static
+            Some(loc) => {
+                self.w.write("$n.apply(() => ");
+                match memo {
+                    Some(id) => self.w.write(&format!("$.get({id})")),
+                    None => self.paren_expr(h, Mode::Read),
+                }
+                self.w.write(&format!(", this, $$args, {}, {}", js_str(event), js_str(&loc)));
+                let side = has_side_effects(h);
+                let parens = matches!(unparen(h), Expression::CallExpression(c) if c.arguments.is_empty() && matches!(unparen(&c.callee), Expression::Identifier(_)));
+                if side || parens {
+                    self.w.write(&format!(", {side}"));
+                }
+                if parens {
+                    self.w.write(", true");
+                }
+                self.w.write("); }");
+            }
+            None => {
+                match memo {
+                    Some(id) => self.w.write(&format!("$.get({id})")),
+                    None => self.paren_expr(h, Mode::Read),
+                }
+                self.w.write("?.apply(this, $$args); }");
+            }
         }
     }
 
@@ -1304,4 +1355,24 @@ fn escape_template(s: &str) -> String {
 #[allow(dead_code)]
 fn span_of(s: Span) -> (u32, u32) {
     (s.start, s.end)
+}
+
+fn is_function(h: &Expression) -> bool {
+    matches!(h, Expression::ArrowFunctionExpression(_) | Expression::FunctionExpression(_))
+}
+
+fn unparen(e: &Expression) -> &Expression {
+    match e {
+        Expression::ParenthesizedExpression(p) => unparen(&p.expression),
+        e => e,
+    }
+}
+
+/// Svelte's `has_side_effects` (events.js): a call, `new`, assignment or update, also inside a sequence.
+fn has_side_effects(e: &Expression) -> bool {
+    match unparen(e) {
+        Expression::CallExpression(_) | Expression::NewExpression(_) | Expression::AssignmentExpression(_) | Expression::UpdateExpression(_) => true,
+        Expression::SequenceExpression(s) => s.expressions.iter().any(has_side_effects),
+        _ => false,
+    }
 }

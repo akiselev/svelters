@@ -946,6 +946,32 @@ export function validate_snippet_args(anchor, ...args) {
   }
 }
 
+/**
+ * Dev (`--dev`): an event handler that is not an inline function (Svelte's `$.apply`): calls the
+ * value `thunk()` returns, warning `event_handler_invalid` when it is not a function. `event` and
+ * `loc` (`file:line:column`) are static (Svelte reads the DOM event's type and phase).
+ */
+export function apply(thunk, node, args, event, loc, has_side_effects = false, remove_parens = false) {
+  let handler;
+  let error;
+  try {
+    handler = thunk();
+  } catch (e) {
+    error = e;
+  }
+  if (typeof handler !== 'function' && (has_side_effects || handler != null || error)) {
+    svelteWarn('event_handler_invalid', `\`${event}\` handler at ${loc} should be a function. Did you mean to ${remove_parens ? 'remove the trailing `()`' : 'add a leading `() =>`'}?`);
+    if (error) throw error;
+  }
+  handler?.apply(node, args);
+}
+
+/** Warns as svelte/src/internal/client/warnings.js does. */
+function svelteWarn(code, message) {
+  if (DEV) console.warn(`%c[svelte] ${code}\n%c${message}\nhttps://svelte.dev/e/${code}`, 'font-weight: bold', 'font-weight: normal');
+  else console.warn(`https://svelte.dev/e/${code}`);
+}
+
 /** Throws a Svelte runtime error as svelte/src/internal/{client,shared}/errors.js does. */
 function svelteError(code, message) {
   if (!DEV) throw new Error(`https://svelte.dev/e/${code}`);
