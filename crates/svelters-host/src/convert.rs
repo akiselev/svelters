@@ -16,6 +16,9 @@ use std::fmt::Write as _;
 use std::rc::Rc;
 use svelters_abi::*;
 
+pub(crate) use crate::exports::buffers::Take;
+use crate::exports::buffers;
+
 /// Arrays and records nest at most this deep (guards cyclic structures).
 pub(crate) const MAX_DEPTH: u32 = 16;
 const MAX_SAFE: f64 = 9_007_199_254_740_992.0;
@@ -79,6 +82,17 @@ pub(crate) trait JsReader {
     /// A renderer node standing for a native handle: `None` when `v` is not a node, `Some(None)`
     /// for a node that has no live native object.
     fn node_handle(&self, v: &Self::V) -> Result<Option<Option<f64>>, String>;
+    /// E2: checks that `v` fits a buffer slot (a typed array of `elem`, usable as `take` says) and parks
+    /// it; returns its index. Nothing is moved until [`JsReader::commit_buffers`], so a later argument
+    /// that fails to convert leaves the caller's arrays untouched.
+    fn stage_buffer(&self, _v: &Self::V, elem: Elem, _take: Take) -> Result<usize, String> {
+        Err(format!("this engine cannot pass a {} to a Rust export", elem.js_name()))
+    }
+    /// E2: moves the staged arrays out of JS (transfer, or reclaim of Rust memory) or snapshots them,
+    /// in staging order.
+    fn commit_buffers(&self) -> Result<Vec<BufferValue>, String> {
+        Ok(Vec::new())
+    }
 }
 
 /// What async native methods need from a JS engine.
@@ -114,6 +128,10 @@ pub(crate) trait JsWriter {
     /// A native object handle: the renderer's node for it when one is installed, else the number.
     fn handle(&self, h: svl_handle) -> Result<Self::V, String>;
     fn native_error(&self, domain: &str, code: Self::V, message: &str) -> Result<Self::V, String>;
+    /// E2: a typed array over the buffer's memory (zero-copy where the engine can). The default copies.
+    fn buffer(&self, b: &BufferValue) -> Result<Self::V, String> {
+        b.with_bytes(|bytes| self.bytes(bytes))
+    }
     /// A JS `bigint` (members marked `SVL_D_BIGINT`, e.g. `#[js(bigint)]` app exports).
     fn bigint(&self, i: i64) -> Result<Self::V, String> {
         Err(format!("RangeError: value {i} needs a bigint, which this engine does not support"))
@@ -313,7 +331,10 @@ fn slot_type_name(slot: &SlotDesc, cx: &Cx) -> String {
         SVL_STR => "string".into(),
         SVL_HANDLE => "object handle".into(),
         SVL_LIST => "array".into(),
-        SVL_BYTES => "ArrayBuffer or typed array".into(),
+        SVL_BYTES => match buffers::spec(slot.ty) {
+            Some((elem, _)) => elem.js_name().into(),
+            None => "ArrayBuffer or typed array".into(),
+        },
         SVL_ENUM | SVL_FLAGS | SVL_RECORD | SVL_BOXED => cx
             .types
             .type_info(slot.ty)
@@ -411,6 +432,14 @@ fn encode_at<R: JsReader>(
             Ok(out)
         }
         SVL_BYTES => {
+            if let Some((elem, take)) = buffers::spec(slot.ty) {
+                // E2: a typed array for a `Buffer<T>`/`Shared<[T]>` slot. The raw value only carries
+                // the staging index; `owned` puts the committed buffer there.
+                let i = r.stage_buffer(v, elem, take)?;
+                let mut out = svl_value::new(SVL_BYTES, svl_value_u { bytes: svl_bytes { ptr: std::ptr::null(), len: i } });
+                out.type_ = slot.ty;
+                return Ok(out);
+            }
             if !r.is_bytes(v) {
                 return Err(expected(r, v, "ArrayBuffer or typed array"));
             }
@@ -961,6 +990,7 @@ fn decode_at<W: JsWriter>(w: &W, v: &Value, types: &dyn TypeSource, depth: u32) 
             }
         }
         Value::Bytes(b) => w.bytes(b),
+        Value::Buffer(b) => w.buffer(b),
         Value::Boxed { ty, handle } => {
             let name = types.type_info(*ty).map(|t| t.desc.name.clone()).unwrap_or_default();
             w.boxed(*handle, *ty, &name)
@@ -1015,4 +1045,37 @@ fn decode_slot_at<W: JsWriter>(w: &W, v: &Value, slot: &SlotDesc, types: &dyn Ty
         }
         _ => decode_at(w, v, types, depth),
     }
+}
+
+// ---- E2: owned values with buffers ----
+
+/// Copies an encoded raw value into an owned [`Value`], putting committed buffers where their staged
+/// slots are (`encode` left a staging index there).
+pub(crate) fn owned(raw: &svl_value, bufs: &mut [Option<BufferValue>]) -> Value {
+    // SAFETY (all arms): `raw` was built by `encode` and its arena is still alive.
+    unsafe {
+        match raw.tag {
+            SVL_BYTES if buffers::spec(raw.type_).is_some() => {
+                let i = raw.u.bytes.len;
+                bufs.get_mut(i).and_then(Option::take).map_or(Value::Null, Value::Buffer)
+            }
+            SVL_LIST => Value::List(owned_list(raw.u.l, bufs)),
+            SVL_RECORD => Value::Record { ty: raw.type_, fields: owned_list(raw.u.l, bufs) },
+            _ => Value::from_raw(raw),
+        }
+    }
+}
+
+unsafe fn owned_list(l: svl_list, bufs: &mut [Option<BufferValue>]) -> Vec<Value> {
+    if l.ptr.is_null() || l.len == 0 {
+        return Vec::new();
+    }
+    // SAFETY: the list was built by `encode` (arena alive).
+    unsafe { std::slice::from_raw_parts(l.ptr, l.len) }.iter().map(|x| owned(x, bufs)).collect()
+}
+
+/// Commits the arrays staged while `raws` were encoded and copies `raws` into owned values.
+pub(crate) fn owned_all<R: JsReader>(r: &R, raws: &[svl_value]) -> Result<Vec<Value>, String> {
+    let mut bufs: Vec<Option<BufferValue>> = r.commit_buffers()?.into_iter().map(Some).collect();
+    Ok(raws.iter().map(|x| owned(x, &mut bufs)).collect())
 }

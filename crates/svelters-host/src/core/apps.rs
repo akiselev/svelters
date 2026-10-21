@@ -98,17 +98,19 @@ impl Core {
         }
         let mut ar = Arena::new();
         let cx = Cx { types: self, utf16: false, callbacks: None, owner: 0 };
-        let mut out = Vec::with_capacity(slots.len());
+        let mut raws = Vec::with_capacity(slots.len());
         for (i, slot) in slots.iter().enumerate() {
             if i >= given {
-                out.push(Value::Null);
+                raws.push(svl_value::null());
                 continue;
             }
             let v = JsReader::index(e, args, i)?;
             let raw = convert::encode(e, &v, slot, &cx, &mut ar)
                 .map_err(|c| self.conv_err(&format!("{}({})", prefix(), slot.name.as_deref().unwrap_or("arg")), c))?;
-            out.push(unsafe { Value::from_raw(&raw) });
+            raws.push(raw);
         }
+        // Every argument converted: only now are typed arrays moved out of JS (E2).
+        let out = convert::owned_all(e, &raws).map_err(|m| type_err(format!("{}: {m}", prefix())))?;
         drop(ar);
         Ok(out)
     }
@@ -241,7 +243,7 @@ impl Core {
         let mut ar = Arena::new();
         let cx = Cx { types: self, utf16: false, callbacks: None, owner: 0 };
         let raw = convert::encode(r, v, &slot, &cx, &mut ar).map_err(|c| self.conv_err(&format!("{}.{}", kname(), p.name), c))?;
-        let value = unsafe { Value::from_raw(&raw) };
+        let value = convert::owned_all(r, &[raw]).map_err(|m| type_err(format!("{}.{}: {m}", kname(), p.name)))?.pop().unwrap_or(Value::Null);
         drop(ar);
         self.note_op(|| format!("set {} {}.{} {}", tag(h), kname(), p.name, svelters_backend_log::json_string(&value)));
         self.app_invoke(Some(h), kind, set, recv, vec![value]).map(|_| ())

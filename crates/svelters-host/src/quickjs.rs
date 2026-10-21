@@ -20,8 +20,18 @@ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::time::{Duration, Instant};
 use svelters_abi::{NameKind, Value as AV};
 
+mod buffers;
 mod conv;
 use conv::QjsConv;
+
+/// Runtimes leaked on this thread because Rust still held one of their transferred buffers (E2).
+pub(crate) fn leaked_runtimes() -> u64 {
+    buffers::LEAKED_RUNTIMES.with(std::cell::Cell::get)
+}
+
+/// How long dropping a runtime waits for workers to drop its transferred buffers before it leaks the
+/// runtime instead (freeing it would free memory a worker is using).
+const TRANSFER_GRACE: Duration = Duration::from_secs(1);
 
 const PRELUDE: &str = include_str!("prelude.js");
 
@@ -58,6 +68,8 @@ pub(crate) struct QjsCallbacks {
     ctx: Context,
     core: Weak<Core>,
     pub(crate) funcs: RefCell<std::collections::HashMap<u64, rquickjs::Persistent<Function<'static>>>>,
+    /// E2: this runtime's transfer tokens.
+    pub(crate) home: Arc<buffers::QjsHome>,
 }
 
 impl crate::core::CallbackEngine for QjsCallbacks {
@@ -169,6 +181,7 @@ impl QjsEngine {
             ctx: ctx.clone(),
             core: Rc::downgrade(core),
             funcs: RefCell::default(),
+            home: buffers::QjsHome::new(core.ops.queue.clone()),
         });
         core.set_callback_engine(callbacks.clone());
         let cbs = callbacks.clone();
@@ -387,8 +400,10 @@ impl JsEngine for QjsEngine {
 
     fn settle_ops(&mut self, batch: &[crate::engine::OpSettle]) -> Result<(), JsError> {
         let core = self.core.clone();
+        // The callback store gives the converter this runtime's buffer counters (E2 results).
+        let cbs = self.callbacks.clone();
         self.call_guarded(|ctx| {
-            let conv = QjsConv::new(ctx.clone(), core.clone(), None);
+            let conv = QjsConv::new(ctx.clone(), core.clone(), Some(cbs));
             let arr = rquickjs::Array::new(ctx.clone())?;
             let mut i = 0;
             for s in batch {
@@ -406,6 +421,48 @@ impl JsEngine for QjsEngine {
 
     fn take_errors(&mut self) -> Vec<JsError> {
         std::mem::take(&mut *self.async_errors.borrow_mut())
+    }
+
+    fn release_buffers(&mut self, ids: &[u64]) {
+        let home = self.callbacks.home.clone();
+        let r = self.ctx.with(|ctx| buffers::release(&ctx, &home, ids).map_err(|e| js_err(&ctx, e)));
+        if let Err(e) = r {
+            self.core.report(e);
+        }
+    }
+
+    fn buffer_stats(&self) -> crate::engine::BufferStats {
+        self.callbacks.home.snapshot()
+    }
+}
+
+impl Drop for QjsEngine {
+    fn drop(&mut self) {
+        // E2: a worker may still use a transferred buffer of this runtime (its call was cancelled, but
+        // it has not looked yet). Wait a little; past that, leak the runtime rather than free memory
+        // under the worker (`docs/notes/egui-rust-exports.md` §8, shutdown order).
+        let home = self.callbacks.home.clone();
+        if home.live.load(Ordering::Acquire) == 0 {
+            return;
+        }
+        let end = Instant::now() + TRANSFER_GRACE;
+        loop {
+            // A worker that stops returns its buffer as a result nobody waits for: dropped here.
+            self.core.ops_reap();
+            if home.live.load(Ordering::Acquire) == 0 || Instant::now() >= end {
+                break;
+            }
+            std::thread::sleep(Duration::from_millis(1));
+        }
+        let live = home.live.load(Ordering::Acquire);
+        if live > 0 {
+            buffers::LEAKED_RUNTIMES.with(|n| n.set(n.get() + 1));
+            eprintln!(
+                "[svelters] {live} transferred buffer(s) of a JS runtime that is going away are still held by Rust                  (a worker that ignores cancellation, or a stored Buffer<T>): the runtime is leaked instead of freed"
+            );
+            // A context reference that is never dropped keeps the runtime (and the memory) alive.
+            std::mem::forget(self.ctx.clone());
+        }
     }
 }
 
@@ -898,6 +955,24 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                     op(&ctx, r)
                 },
             )?,
+        )?;
+        // E2: `alloc(Float32Array, n)` (`@svelters/types/core`): a typed array over a Rust allocation,
+        // which a `Buffer<T>` parameter takes back without a copy.
+        let cb = cbs.clone();
+        host.set(
+            "alloc",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, name: String, n: f64| -> Res<Value<'js>> {
+                let elem = svelters_abi::Elem::from_js_name(&name).ok_or_else(|| {
+                    Exception::throw_type(&ctx, &format!("alloc: {name} is not a typed array a Rust export takes (Uint8Array, Int8Array, Uint16Array, Int16Array, Uint32Array, Int32Array, BigUint64Array, BigInt64Array, Float32Array, Float64Array)"))
+                })?;
+                if !(n >= 0.0 && n.fract() == 0.0 && n < 9_007_199_254_740_992.0) {
+                    return Err(Exception::throw_range(&ctx, &format!("alloc: invalid length {n}")));
+                }
+                buffers::alloc(&ctx, &cb.home, elem, n as usize).map_err(|m| match m.strip_prefix("RangeError: ") {
+                    Some(r) => Exception::throw_range(&ctx, r),
+                    None => Exception::throw_message(&ctx, &m),
+                })
+            })?,
         )?;
     }
     globals.set("__svelters_host", host)?;
