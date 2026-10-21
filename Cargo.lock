@@ -3438,6 +3438,7 @@ dependencies = [
  "egui_kittest",
  "serde_json",
  "svelters-abi",
+ "svelters-egui",
  "svelters-host",
  "taffy",
 ]
