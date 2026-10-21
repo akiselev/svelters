@@ -1,15 +1,22 @@
-//! Backend semantic specifications (`metadata/semantics/*.json`) and the `BackendSemantics`
-//! trait. Owner: agent G.
+//! Platform semantic specifications (`metadata/semantics/*.json`) and the [`PlatformSemantics`]
+//! trait (renamed from `BackendSemantics` in R2, plans/research/REACTIVITY.md section 9 and decision
+//! 13 #11; `BackendSemantics` stays as an alias). Owner: agent G.
 //!
-//! The compiler asks a [`BackendSemantics`] what an element, attribute, event, binding, child
+//! The compiler asks a [`PlatformSemantics`] what an element, attribute, event, binding, child
 //! placement or style declaration means on one backend, and gets typed answers or an
 //! [`Unresolved`] with a stable diagnostic code. [`SpecBackend`] answers from a generated spec
 //! (format: docs/notes/native-compiler/semantic-spec.md).
 
 mod backend;
+mod observe;
+mod overlay;
 pub mod spec;
+pub mod types;
 
 pub use backend::SpecBackend;
+pub use observe::{BindLowering, BindPlan, Observability, plan_bind};
+pub use overlay::Overlay;
+pub use types::{TypeProp, TypeRef, TypeTable};
 pub use spec::{
     AttrSpec, AttrType, MethodSpec, ParamSpec, TypeSpec, BindingDirection, BindingValue, Echo, HandlerResult, Lifetime, ObsClass, ObsTiming,
     ObserveSpec, PropType, PropertySpec, SignalSpec, SlotOrder, Spec,
@@ -37,6 +44,16 @@ pub mod codes {
     pub const CHILD_ATTR_BAD_VALUE: &str = "child_attr_bad_value";
     pub const LISTEN_PHASE_UNSUPPORTED: &str = "listen_phase_unsupported";
     pub const UNKNOWN_METHOD: &str = "unknown_method";
+    // R2: observability (plans/research/REACTIVITY.md section 8.4)
+    pub const BIND_NOT_OBSERVABLE: &str = "bind_not_observable";
+    pub const BIND_SET_ONLY: &str = "bind_set_only";
+    pub const BIND_PARTIALLY_OBSERVED: &str = "bind_partially_observed";
+    pub const NATIVE_READ_NOT_OBSERVABLE: &str = "native_read_not_observable";
+    pub const BIND_MODIFIER_INVALID: &str = "bind_modifier_invalid";
+    pub const NONREACTIVE_REDUNDANT: &str = "nonreactive_redundant";
+    pub const OBSERVABILITY_DIFFERS: &str = "observability_differs";
+    /// The warnings `--strict-native` turns into errors (decision 13 #5).
+    pub const STRICT_NATIVE: &[&str] = &[BIND_PARTIALLY_OBSERVED, NATIVE_READ_NOT_OBSERVABLE, NONREACTIVE_REDUNDANT, OBSERVABILITY_DIFFERS];
 }
 
 /// Why a question has no answer on this backend.
@@ -80,6 +97,12 @@ impl Unresolved {
     /// Record as a backend error at `span`.
     pub fn report(&self, diags: &mut Diagnostics, span: (u32, u32)) {
         let d = diags.native_error(self.code, span, self.message.clone());
+        d.help = self.help_text();
+    }
+
+    /// Record as a backend warning at `span` (`--strict-native` makes the R2 ones errors).
+    pub fn report_warning(&self, diags: &mut Diagnostics, span: (u32, u32)) {
+        let d = diags.native_warning(self.code, span, self.message.clone());
         d.help = self.help_text();
     }
 }
@@ -238,8 +261,13 @@ pub enum StyleLowering {
     ChildAttr { attr: String, value: StaticValue },
 }
 
-/// Native semantics of one backend, as the compiler needs them.
-pub trait BackendSemantics {
+/// The pre-R2 name of [`PlatformSemantics`].
+pub use self::PlatformSemantics as BackendSemantics;
+
+/// What a template means on one GUI platform (gtk, qt, appkit, winui; dom for conformance), as the
+/// compiler needs it. Generated specs answer it ([`SpecBackend`]); [`Overlay`] overrides parts in Rust.
+/// Object-safe: one `svelters-compile` binary serves every platform from JSON loaded at run time.
+pub trait PlatformSemantics {
     /// `gtk`, `qt`, ...
     fn backend(&self) -> &str;
     fn framework(&self) -> &str;
@@ -312,6 +340,28 @@ pub trait BackendSemantics {
     /// Parse with HTML rules (spec `html_syntax`; the DOM conformance backend only).
     fn html_syntax(&self) -> bool {
         false
+    }
+
+    /// The platform id (`gtk`, `qt`, ...): the same as [`backend`](Self::backend).
+    fn id(&self) -> &str {
+        self.backend()
+    }
+    /// Whether and how a native change of `prop` of `el` is announced on this platform (R0 facts).
+    /// `None`: no fact, i.e. unknown. The compiler never lowers onto observation then.
+    fn observability(&self, _el: &ElementRef, prop: &PropertySpec) -> Option<Observability> {
+        prop.observe.as_ref().map(Observability::from)
+    }
+    /// Directive modifiers `bind:` accepts on native elements of this platform.
+    fn bind_modifiers(&self) -> &[&'static str] {
+        &["nonreactive"]
+    }
+    /// A non-GUI class exported by a `svelters:<tk>/<ns>` module (`TextBuffer` of `svelters:gtk/gtk`).
+    fn native_type(&self, _module: &str, _export: &str) -> Option<TypeRef> {
+        None
+    }
+    /// A property of a non-GUI class by its JS getter name (`cursorPosition`), with its observability.
+    fn type_property(&self, _ty: &TypeRef, _prop: &str) -> Option<TypeProp> {
+        None
     }
 }
 

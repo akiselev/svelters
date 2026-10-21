@@ -5,7 +5,8 @@
 use crate::codegen::component::generate;
 use crate::diag::{Diagnostic, Diagnostics};
 use crate::lower::lower;
-use crate::semantics::BackendSemantics;
+use crate::semantics::PlatformSemantics;
+use crate::target::{QuickJsHost, RuntimeTarget};
 use crate::style::parse_style;
 use crate::svelte::errors::CompileError;
 use crate::svelte::parse::{ParseOptions, parse};
@@ -17,18 +18,25 @@ use std::time::Instant;
 pub struct CompileOptions<'b> {
     /// Used in diagnostics and the source map; also names the component (`App.svelte` -> `App`).
     pub filename: String,
-    pub backend: &'b dyn BackendSemantics,
+    pub backend: &'b dyn PlatformSemantics,
     /// Svelte's `dev` option: `$inspect` / `$inspect.trace` are kept and sources are labelled
     /// (`$.tag`); otherwise they are stripped.
     pub dev: bool,
     /// The scope class of the component's X6 sheets (the Vite plugin compiles the `<style>` with
     /// Svelte and this `cssHash`): every native element gets it, so the scoped selectors match.
     pub css_scope: Option<String>,
+    /// What the emitted module runs on (runtime imports, specifiers, dev hooks).
+    pub target: &'b dyn RuntimeTarget,
+    /// `--strict-native`: the observability warnings (`codes::STRICT_NATIVE`) are errors (decision 13 #5).
+    pub strict_native: bool,
+    /// Portability mode (`--backend gtk,qt,...`): the other platforms the same component is checked
+    /// against; their answers only add `observability_differs` warnings (output stays per platform).
+    pub portability: Vec<&'b dyn PlatformSemantics>,
 }
 
 impl<'b> CompileOptions<'b> {
-    pub fn new(filename: impl Into<String>, backend: &'b dyn BackendSemantics) -> Self {
-        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None }
+    pub fn new(filename: impl Into<String>, backend: &'b dyn PlatformSemantics) -> Self {
+        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new() }
     }
 }
 
@@ -115,12 +123,21 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     let is_setter = |name: &str| opts.backend.is_setter_property(name);
     let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags, &is_setter));
     let ir = lower(&root, opts.backend, sheet.as_ref(), opts.css_scope.as_deref(), &mut diags);
+    crate::lower::native_reads::check(&root, opts.backend, &mut diags);
+    if !opts.portability.is_empty() {
+        let mut all: Vec<&dyn PlatformSemantics> = vec![opts.backend];
+        all.extend(opts.portability.iter().copied());
+        crate::lower::portability::check(&root, &all, &mut diags);
+    }
+    if opts.strict_native {
+        diags.promote(crate::semantics::codes::STRICT_NATIVE);
+    }
     timings.lower_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
     let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename);
     rw.strip_typescript(ts_strip);
-    let (code, map) = generate(src, &ir, &rw, &component_name(&opts.filename), &opts.filename);
+    let (code, map) = generate(src, &ir, &rw, &component_name(&opts.filename), &opts.filename, &opts.target.runtime_imports());
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;
     if diags.has_errors() {

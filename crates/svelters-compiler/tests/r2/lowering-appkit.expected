@@ -1,0 +1,6 @@
+== appkit
+lowering-appkit.svelte:8:17: warning[bind_partially_observed] (appkit): bind:int-value on <text-field>: `int-value` is only partially observed on appkit: user edits are not announced, so the bound value can go stale after them
+  help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`
+$n.bind_prop($$n3, "string-value", () => $.get(s), ($$value) => { $.set(s, $$value); }, "control-text-did-change", 0);
+$n.bind($$n4, "int-value", "control-text-did-change", -1, () => $.get(n), ($$value) => { $.set(n, $$value); });
+$n.bind_prop($$n5, "double-value", () => $.get(v), ($$value) => { $.set(v, $$value); }, "action", -1);

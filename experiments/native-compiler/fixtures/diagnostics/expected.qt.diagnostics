@@ -1,7 +1,7 @@
 [plugin svelters-native-compiler] experiments/native-compiler/fixtures/diagnostics/qt/App.svelte:9:14
 bad_attribute_value (qt): `direction`: "diagonal" is not one of bottom-to-top, left-to-right, right-to-left, top-to-bottom
   App.svelte:9:48: text_not_allowed: <box-layout> cannot contain text on qt
-  App.svelte:11:12: bind_no_plan: bind:text is not supported on <label> (qt): QLabel::text has no change notification
+  App.svelte:11:12: bind_set_only: bind:text on <label>: `text` is set_only on qt: nothing but your code changes it, so there is nothing to bind back
   App.svelte:12:18: unknown_event: <push-button> has no event `klick` on qt
   App.svelte:13:16: unknown_property: <line-edit> has no property `colour` on qt (only annotated properties exist on qt: metadata/overrides/qt)
   App.svelte:14:6: unknown_element: <frobnicator> is not an element of the qt backend

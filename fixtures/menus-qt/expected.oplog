@@ -13,8 +13,9 @@ insert #4 #5 before=end slot=default
 create action #6
 set #6 text "Autosave"
 set #6 checkable true
-set #6 checked false
 listen #6 toggled on
+set #6 checked false
+observe #6 checked on
 insert #4 #6 before=end slot=default
 create action #7
 set #7 separator true
@@ -41,14 +42,16 @@ set #12 title "Size"
 create action #13
 set #13 text "Small"
 set #13 group "size"
-set #13 checked true
 listen #13 toggled on
+set #13 checked true
+observe #13 checked on
 insert #12 #13 before=end slot=default
 create action #14
 set #14 text "Large"
 set #14 group "size"
-set #14 checked false
 listen #14 toggled on
+set #14 checked false
+observe #14 checked on
 insert #12 #14 before=end slot=default
 insert #3 #12 before=end slot=default
 insert #2 #3 before=end slot=default
@@ -81,7 +84,7 @@ event #5 triggered [false]
 event #6 toggled [true]
 event #13 toggled [false]
 event #14 toggled [true]
-set #18 text "S:open;|true|false|true"
+set #18 text "S:open;|false|true|false"
 event #17 clicked []
 remove #8 #9
 destroy #9

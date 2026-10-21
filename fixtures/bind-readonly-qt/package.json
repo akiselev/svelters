@@ -1,0 +1,21 @@
+{
+  "name": "@svelters-fixtures/bind-readonly-qt",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "svelters": {
+    "toolkit": "qt"
+  },
+  "scripts": {
+    "build": "vite build",
+    "test": "vite build && echo 'SKIP bind-readonly-qt op log (real-host only: examples/counter/tests/integration.rs)'",
+    "watch": "svelters-build --watch"
+  },
+  "dependencies": {
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "vite": "8.3.4"
+  }
+}

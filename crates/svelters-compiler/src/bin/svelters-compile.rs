@@ -1,14 +1,17 @@
-//! `svelters-compile --backend gtk|qt|appkit|winui [--spec path.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
+//! `svelters-compile --backend gtk|qt|appkit|winui[,...] [--spec path.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
 //!
 //! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
+//! `--backend gtk,qt,appkit,winui` is the portability mode: the output is for the first platform, the
+//! others add `observability_differs` warnings. `--strict-native` makes the observability warnings errors.
 //! Prints the generated JS (or, with `--json`, `{js, map, diagnostics, backend, timings}`).
 //! Diagnostics go to stderr; exit status 1 when there are errors.
 
 use std::io::Read;
 use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile_module};
 use svelters_compiler::semantics::SpecBackend;
+use svelters_compiler::target::builtin_target;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui [--spec spec.json] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui[,...] [--spec spec.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
 
 fn main() {
     let mut backend = "gtk".to_string();
@@ -18,6 +21,8 @@ fn main() {
     let mut dev = false;
     let mut module = false;
     let mut css_scope: Option<String> = None;
+    let mut strict_native = false;
+    let mut target = "quickjs-host".to_string();
     let mut input: Option<String> = None;
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
@@ -29,6 +34,8 @@ fn main() {
             "--dev" => dev = true,
             "--module" => module = true,
             "--css-scope" => css_scope = args.next(),
+            "--strict-native" => strict_native = true,
+            "--target" => target = args.next().expect("--target needs a value"),
             "-h" | "--help" => {
                 eprintln!("{USAGE}");
                 return;
@@ -49,15 +56,26 @@ fn main() {
     let res = if is_module {
         compile_module(&src, &ModuleOptions { filename: filename.clone(), dev })
     } else {
-        let sem = match &spec {
-            Some(p) => SpecBackend::from_path(p),
-            None => SpecBackend::builtin(&backend),
-        }
-        .unwrap_or_else(|e| {
+        let fail = |e: String| -> ! {
             eprintln!("svelters-compile: {e}");
             std::process::exit(2)
-        });
-        compile(&src, &CompileOptions { filename: filename.clone(), backend: &sem, dev, css_scope })
+        };
+        let mut ids = backend.split(',').map(str::trim).filter(|b| !b.is_empty());
+        let first = ids.next().unwrap_or("gtk");
+        let sem = match &spec {
+            Some(p) => SpecBackend::from_path(p),
+            None => SpecBackend::builtin(first),
+        }
+        .unwrap_or_else(|e| fail(e));
+        let others: Vec<SpecBackend> = ids.map(|b| SpecBackend::builtin(b).unwrap_or_else(|e| fail(e))).collect();
+        let target = builtin_target(&target).unwrap_or_else(|| fail(format!("unknown --target {target:?} (known: quickjs-host, node-vite)")));
+        let mut opts = CompileOptions::new(filename.clone(), &sem);
+        opts.dev = dev;
+        opts.css_scope = css_scope;
+        opts.strict_native = strict_native;
+        opts.target = target;
+        opts.portability = others.iter().map(|o| o as &dyn svelters_compiler::semantics::PlatformSemantics).collect();
+        compile(&src, &opts)
     };
     for d in &res.diagnostics {
         eprintln!("{}", d.render(&filename));

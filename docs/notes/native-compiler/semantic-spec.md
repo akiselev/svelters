@@ -2,8 +2,16 @@
 
 The NC1 compiler does not hard-code widget knowledge. Each backend has a checked-in spec,
 `metadata/semantics/gtk.json` and `metadata/semantics/qt.json`. The compiler reads a spec through
-`svelters_compiler::semantics::BackendSemantics`, which `SpecBackend` implements
-(`SpecBackend::builtin("gtk")` embeds the checked-in file; `from_path`/`from_json` load others).
+`svelters_compiler::semantics::PlatformSemantics` (named `BackendSemantics` before R2; the old name
+is an alias), which `SpecBackend` implements (`SpecBackend::builtin("gtk")` embeds the checked-in file;
+`from_path`/`from_json` load others) and `Overlay<P>` wraps to override single answers in Rust.
+
+R2 (plans/milestones/R2-compiler-observe.md): `PlatformSemantics::observability(el, prop)` answers from
+each prop's `observe` fact (`None` = no fact = unknown), and `semantics::plan_bind` turns it into the
+`bind:` lowering (`$n.bind_prop` / `bind_readonly` / `bind_once` / the signal-based `$n.bind`) and the
+section 8.4 diagnostics. `native_type` / `type_property` answer from `metadata/semantics/types/<tk>.json`
+(GTK and Qt non-GUI classes, `tools/metadata/semantics/gen_observe_outputs.py`), for
+`native_read_not_observable`. The compile-time runtime side is `svelters_compiler::target::RuntimeTarget`.
 
 ## Generated vs hand-written
 

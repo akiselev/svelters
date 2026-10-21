@@ -24,7 +24,7 @@ export default function input($$anchor, $$props) {
 	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
 	const $$n2 = $n.element("entry");
-	$n.bind($$n2, "text", "changed", 0, () => $user().name, ($$value) => { $.store_mutate(user, $.untrack($user).name = $$value, $.untrack($user)); });
+	$n.bind_prop($$n2, "text", () => $user().name, ($$value) => { $.store_mutate(user, $.untrack($user).name = $$value, $.untrack($user)); }, "changed", 0);
 	$n.append($$anchor, $$n2);
 	$.pop();
 	$$cleanup();

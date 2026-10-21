@@ -80,6 +80,9 @@ fn replay(name: &str, log: String) {
         let h = Harness::new();
         let mut map: HashMap<String, u64> = HashMap::new();
         let mut events = 0;
+        // (handle, prop) pairs observed at this point of the log (refcounted by the host: the log shows
+        // only the 0->1 and 1->0 transitions)
+        let mut observing: std::collections::HashSet<(u64, String)> = std::collections::HashSet::new();
         let mut gone_queue: Vec<(u64, u32)> = Vec::new();
         for (n, line) in log.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
             let ctx = format!("{name}:{}: {line}", n + 1);
@@ -278,9 +281,15 @@ fn replay(name: &str, log: String) {
                         _ => panic!("{ctx}: expected on|off"),
                     };
                     h.observe(hd(parts[1]), parts[2], on).unwrap_or_else(|e| panic!("{ctx}: {e:?}"));
+                    if on {
+                        observing.insert((hd(parts[1]), parts[2].to_string()));
+                    } else {
+                        observing.remove(&(hd(parts[1]), parts[2].to_string()));
+                    }
                 }
-                // A scripted native change of an observed property: produce it natively (a set the
-                // toolkit makes, not one through the ABI) and check the backend announced it.
+                // A scripted native change: produce it natively (a set the toolkit makes, not one through
+                // the ABI) and check the backend announced it exactly when JS observes the property (a
+                // `bind:p|nonreactive` target changes natively without being observed).
                 "changed" => {
                     let (o, prop) = (hd(parts[1]), parts[2]);
                     h.take_changed();
@@ -294,7 +303,11 @@ fn replay(name: &str, log: String) {
                         (v, _) => panic!("{ctx}: cannot produce a change to {:?}", v.is_some()),
                     }
                     let got = h.take_changed();
-                    assert!(got.iter().any(|c| c.0 == o), "{ctx}: change not announced, got {got:?}");
+                    if observing.contains(&(o, prop.to_string())) {
+                        assert!(got.iter().any(|c| c.0 == o), "{ctx}: change not announced, got {got:?}");
+                    } else {
+                        assert!(!got.iter().any(|c| c.0 == o), "{ctx}: an unobserved change was announced: {got:?}");
+                    }
                 }
                 other => panic!("{ctx}: unknown op {other}"),
             }

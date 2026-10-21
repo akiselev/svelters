@@ -322,6 +322,69 @@ fn native_close_qt() {
     native_close("qt");
 }
 
+// ---- R2: bind: lowered from the observe facts (fixtures/bind-observe, bind-observe-qt) ----
+
+fn bind_observe(backend: &str) {
+    // Typing into both edits natively: A (`bind:text`, exact: `$n.bind_prop`, observed through the
+    // host's `observe`) follows, B (`bind:text|nonreactive`: `$n.bind_once`) does not. The read-only
+    // binding (`$n.bind_readonly`) reads the GTK cursor position as it moves, and the Qt layout size
+    // (no Qt event observation before R3: the values at creation and after the first layout pass).
+    let typed = write_script(
+        &format!("{backend}-bind-observe-typed.json"),
+        &format!(r#"[{{"checkpoint":true}},{{"event":[3,"{0}",["Zed"]]}},{{"event":[4,"{0}",["Zed"]]}},{{"checkpoint":true}}]"#, changed(backend)),
+    );
+    let r = run_script(backend, "bind-observe", &typed, &[]);
+    r.assert_clean();
+    let labels = r.labels();
+    assert_eq!(labels[0], "name Zed", "bind_prop: a native edit reaches state through observation");
+    assert_eq!(labels[1], "draft Ann", "bind_once: native edits never reach state");
+    assert_eq!(entries(&r), ["Zed", "Zed"], "nothing is written back over the native edits");
+    if backend == "gtk" {
+        // typing through `insert_text` does not move the cursor: the value read at creation
+        assert_eq!(labels[2], "pos 0", "bind_readonly: the cursor position at creation");
+        // "native" selects a region of A from JS (`call('selectRegion', 1, 2)`): GTK moves the cursor
+        // and announces `cursor-position`, which the read-only binding observes
+        let select = write_script("gtk-bind-observe-select.json", r#"[{"checkpoint":true},{"event":[5,"clicked",[]]},{"checkpoint":true}]"#);
+        let r = run_script(backend, "bind-observe", &select, &[]);
+        r.assert_clean();
+        // (GTK puts the cursor at one end of the region: 1 on 4.24, the version decides which)
+        let pos = r.labels()[2].clone();
+        assert!(pos == "pos 1" || pos == "pos 2", "bind_readonly: the observed cursor position, got {pos}");
+    } else {
+        // fixtures/bind-readonly-qt (real-host only: the op-log hosts' Qt schema has no read-only props)
+        let r = run_dir("qt", "bind-readonly-qt", &root().join("fixtures/bind-readonly-qt/script.json"), &[]);
+        r.assert_clean();
+        let label = r.labels()[0].clone();
+        let size = label.strip_prefix("size ").expect("size label");
+        let (w, h) = size.split_once('x').unwrap_or_else(|| panic!("bind_readonly: no size read: {size}"));
+        assert!(w.parse::<u32>().unwrap() > 0 && h.parse::<u32>().unwrap() > 0, "bind_readonly: a laid-out size, got {size}");
+    }
+
+    // ... then the app writes both: state reaches native through both bindings, and the write is
+    // not echoed back as a change (the label shows the app's value).
+    let both = write_script(
+        &format!("{backend}-bind-observe-state.json"),
+        &format!(
+            r#"[{{"checkpoint":true}},{{"event":[3,"{0}",["Zed"]]}},{{"event":[4,"{0}",["Zed"]]}},{{"checkpoint":true}},{{"event":[6,"clicked",[]]}},{{"checkpoint":true}}]"#,
+            changed(backend)
+        ),
+    );
+    let r = run_script(backend, "bind-observe", &both, &[]);
+    r.assert_clean();
+    assert_eq!(&r.labels()[..2], ["name Bob", "draft Bob"]);
+    assert_eq!(entries(&r), ["Bob", "Bob"], "state to native through bind_prop and bind_once");
+}
+
+#[test]
+fn bind_observe_gtk() {
+    bind_observe("gtk");
+}
+
+#[test]
+fn bind_observe_qt() {
+    bind_observe("qt");
+}
+
 // ---- bind:this: native access through the bound node ----
 
 fn entries(r: &Run) -> Vec<String> {

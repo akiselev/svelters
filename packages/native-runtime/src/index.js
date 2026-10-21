@@ -31,6 +31,8 @@ import { parseSetterValue, propOf } from '@svelters/style/runtime';
 // ABI v2.6 property observation (REACTIVITY.md section 7): installs `__svelters_changed` and the
 // `@svelters/types` tracker when the runtime loads.
 export { observeProp, trackProp, trackLocal, invalidateProp } from './observe.js';
+// R2: `bind:` lowered onto observation (./bind-observe.js, over the tracker API of ./observe.js).
+export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');

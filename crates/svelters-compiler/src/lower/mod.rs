@@ -15,10 +15,12 @@ pub mod ir;
 mod native_attrs;
 pub use native_attrs::HELPERS_MODULE;
 mod lists;
+pub mod native_reads;
+pub mod portability;
 
 use crate::diag::Diagnostics;
 use crate::estree::{ArrayElement, Expression, Pattern, Span, Spanned};
-use crate::semantics::{BackendSemantics, ElementRef, Lifetime, StyleLowering, Unresolved};
+use crate::semantics::{BindLowering, ElementRef, Lifetime, PlatformSemantics, StyleLowering, Unresolved, codes, plan_bind};
 use crate::style::{Combinator, ComplexSelector, Compound, StyleSheet, parse_value, split_declarations};
 use crate::svelte::ast::{
     Attribute, AttributeLike, AttributeValue, Element as AstElement, ExpressionTagNode, Fragment as AstFragment, FragmentNode, RenderTag,
@@ -34,7 +36,7 @@ pub const SLOT_PROXY: &str = "sv-slot";
 
 /// `css_scope`: the class the X6 sheets of this component are scoped with (the Vite plugin's
 /// Svelte-compiled CSS); every native element of the component carries it.
-pub fn lower<'a>(root: &'a Root, sem: &dyn BackendSemantics, styles: Option<&'a StyleSheet>, css_scope: Option<&str>, diags: &mut Diagnostics) -> Component<'a> {
+pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a StyleSheet>, css_scope: Option<&str>, diags: &mut Diagnostics) -> Component<'a> {
     let mut snippet_roots = HashMap::new();
     collect_snippets(&root.fragment, &mut snippet_roots);
     let mut l = Lower {
@@ -93,7 +95,7 @@ struct StyleSubject<'a> {
 }
 
 struct Lower<'a, 's, 'd> {
-    sem: &'s dyn BackendSemantics,
+    sem: &'s dyn PlatformSemantics,
     diags: &'d mut Diagnostics,
     next_id: usize,
     styles: Option<&'a StyleSheet>,
@@ -408,6 +410,41 @@ impl<'a> Lower<'a, '_, '_> {
     }
 
     /// `{:then value}` / `{:catch error}`: only plain identifiers.
+    /// The modifiers of a native element's `bind:` (REACTIVITY.md section 8.2): `Some(nonreactive)`,
+    /// or `None` after reporting `bind_modifier_invalid` for an unknown or repeated modifier (stock
+    /// Svelte ignores them silently; the native compiler must not).
+    fn native_bind_modifiers(&mut self, d: &crate::svelte::ast::Directive) -> Option<bool> {
+        let allowed = self.sem.bind_modifiers();
+        let mut nonreactive = false;
+        let mut ok = true;
+        for m in &d.modifiers {
+            if m == "nonreactive" && allowed.contains(&"nonreactive") && !nonreactive {
+                nonreactive = true;
+                continue;
+            }
+            ok = false;
+            let msg = if m == "nonreactive" && nonreactive {
+                format!("`bind:{}`: `|nonreactive` is given twice", d.name)
+            } else if allowed.is_empty() {
+                format!("`bind:{}|{m}`: bindings take no modifiers on {}", d.name, self.sem.backend())
+            } else {
+                format!("`bind:{}|{m}`: unknown binding modifier `{m}` (native bindings take {})", d.name, allowed.iter().map(|a| format!("`|{a}`")).collect::<Vec<_>>().join(", "))
+            };
+            self.diags.native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), msg);
+        }
+        ok.then_some(nonreactive)
+    }
+
+    /// `bind:this` and component bindings take no modifiers: `|nonreactive` has no meaning there.
+    fn no_bind_modifiers(&mut self, d: &crate::svelte::ast::Directive, what: &str) {
+        if let Some(m) = d.modifiers.first() {
+            let why = if m == "nonreactive" { "has no meaning" } else { "is not a binding modifier" };
+            self.diags
+                .native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), format!("`bind:{}|{}`: `|{m}` {why} on {what}", d.name, d.modifiers.join("|")))
+                .help("`|nonreactive` applies to bindings of native element properties only");
+        }
+    }
+
     fn simple_binding(&mut self, p: &Pattern, what: &str) -> Option<String> {
         match p {
             Pattern::Identifier(id) => Some(id.name.clone()),
@@ -806,14 +843,25 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 AttributeLike::BindDirective(d) if d.name == "this" => {
                     let Some(target) = &d.expression else { unreachable!("the parser synthesises bind:x shorthands") };
+                    self.no_bind_modifiers(d, "bind:this");
                     ops.push(Op::BindThis { target, span: d.span() });
                 }
                 AttributeLike::BindDirective(d) => {
                     let Some(target) = &d.expression else { unreachable!("the parser synthesises bind:x shorthands") };
-                    match self.sem.plan_binding(&er, &d.name) {
+                    let Some(nonreactive) = self.native_bind_modifiers(d) else { continue };
+                    match plan_bind(self.sem, &er, &d.name, nonreactive) {
                         Ok(plan) => {
+                            for w in &plan.warnings {
+                                w.report_warning(self.diags, sp(d.span()));
+                            }
                             bound_props.push(plan.prop.clone());
-                            ops.push(Op::Bind { prop: plan.prop.clone(), signal: plan.signal.clone(), arg: plan.arg_operand(), target, span: d.span() });
+                            let (prop, span) = (plan.prop, d.span());
+                            ops.push(match plan.lowering {
+                                BindLowering::Prop { fallback } => Op::BindProp { prop, fallback, target, span },
+                                BindLowering::Readonly => Op::BindReadonly { prop, target, span },
+                                BindLowering::Once { readonly } => Op::BindOnce { prop, readonly, target, span },
+                                BindLowering::Signal { signal, arg } => Op::Bind { prop, signal, arg, target, span },
+                            });
                         }
                         Err(u) => u.report(self.diags, sp(d.span())),
                     }
@@ -861,7 +909,8 @@ impl<'a> Lower<'a, '_, '_> {
         // Bindings write their value after the element's other attributes (as Svelte's own bindings,
         // and the retired renderer, did): a bound value must not be written before the props that
         // constrain it (`<scale bind:value lower upper>`: GTK clamps to the adjustment's range).
-        let (binds, rest): (Vec<_>, Vec<_>) = ops.into_iter().partition(|o| matches!(o, Op::Bind { .. }));
+        let (binds, rest): (Vec<_>, Vec<_>) =
+            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. }));
         ops = rest;
         ops.extend(binds);
 
@@ -1355,6 +1404,7 @@ impl<'a> Lower<'a, '_, '_> {
                 },
                 AttributeLike::BindDirective(d) => {
                     let Some(target) = &d.expression else { unreachable!() };
+                    self.no_bind_modifiers(d, "a component binding");
                     // Svelte pushes bindings after the other props, so a spread cannot override them
                     binds.push(ComponentProp::Bind { name: d.name.clone(), target });
                 }

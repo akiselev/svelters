@@ -294,6 +294,15 @@ fn replay(b: &BackendRef, name: &str, log: &str) {
                 let r = if flags == 0 { b.listen(o, sig, on) } else { b.listen_ex(o, sig, on, flags) };
                 r.unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
             }
+            // ABI v2.6 observation (R2 `bind:` lowering): `observe #h prop on|off` must be accepted
+            // natively. `changed` is a scripted announcement into the op-log host, not a backend call;
+            // the native announcement path is covered by tests/observe.rs and examples/counter.
+            "observe" => {
+                let o = hd(parts[1]);
+                let prop = b.resolve(NameKind::Prop, kind(o), parts[2]);
+                b.observe(o, prop, parts[3].trim() == "on").unwrap_or_else(|e| panic!("{ctx}: {}", e.message));
+            }
+            "changed" => {}
             // ABI v2.2 child attribute: `attr #parent #child name json`.
             "attr" => {
                 let rest: Vec<&str> = line.splitn(5, ' ').collect();
