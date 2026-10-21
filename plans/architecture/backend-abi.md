@@ -651,10 +651,10 @@ SVL_M_PROPORTIONAL = 128  /* R1: reading costs O(size) (whole-text props): inval
 
 | Rule | Implementation |
 |---|---|
-| refcount | `host.observe(h, prop, on)` counts per (h, prop id) and calls the backend on 0→1 and 1→0 only, so wrapper getters, `observeProp` callbacks and element bindings share one native connection. It answers `true` while observed and `false` when the backend has no mechanism (or no member). At 0→1 a non-proportional prop is read once as the baseline `last`. |
+| refcount | `host.observe(h, prop, on)` counts per (h, prop id) and calls the backend on 0→1 and 1→0 only, so wrapper getters, `observeProp` callbacks and element bindings share one native connection. It answers `true` while observed and `false` when the backend has no mechanism (or no member). At 0→1 nothing is read: `last` starts unknown, so the first announcement after observation starts is always delivered (FU3; a value read then is not what JS believes when JS wrote one the toolkit clamped, kept latent or ignored, and comparing against it dropped a later change back to it). |
 | coalescing | `prop_changed` inserts (h, prop) into an ordered, deduplicated dirty set (first-announcement order) and wakes the backend on the first insert into an empty set. Unobserved pairs are ignored. Nothing is read here. |
 | read | at the checkpoint each dirty pair still observed is read with `get_prop` (no JS), unless it is proportional. A failed read (the object died) delivers nothing. |
-| compare | with `last`, the last value delivered or read back after our own `set_prop`. Equal values are dropped. Handles compare by id, strings by content (UTF-8 and UTF-16 alike), lists, records and maps deeply, f64 by bits (NaN equals NaN, -0 differs from 0). A value holding a `BOXED` handle always counts as changed and is never kept as `last`; a read whose value nobody will see is released at once. |
+| compare | with `last`, the last value delivered or read back after our own `set_prop` (unknown before either: nothing compares equal to it). Equal values are dropped. Handles compare by id, strings by content (UTF-8 and UTF-16 alike), lists, records and maps deeply, f64 by bits (NaN equals NaN, -0 differs from 0). A value holding a `BOXED` handle always counts as changed and is never kept as `last`; a read whose value nobody will see is released at once. |
 | batch | one `globalThis.__svelters_changed([h, prop, value, h, prop, value, ...])` per checkpoint (prop as JS first named it; `value` undefined for proportional props), **before** the queued signal events, with no job drain between the batch and the first event. Svelte then flushes once for the whole batch. |
 | set path | after a successful `set_prop` on an observed, non-proportional (h, prop) the host reads it back once and stores it as `last`: the native echo of our write is dropped. If the read-back differs from the value written (the toolkit normalized it), the pair is forced dirty and the normalized value is delivered once at the next checkpoint. |
 | sync handlers | before `call_sync` runs JS, the dirty set is read, compared and delivered as a batch (no drain), so `$derived` values the handler reads are fresh. |
@@ -685,7 +685,7 @@ R1 replaced R1a's per-notification `__svelters_prop_changed(h, prop)` path: no r
 `observe #h prop on|off` (the transitions) and `changed #h prop <json>` (a scripted native change; the
 value is omitted when the step has none). Scripts take `{"changed": [h, prop, value?]}`: the value becomes
 the property's native value, then the change is announced. The log backend stores it, logs the line, calls
-`host.prop_changed` and checkpoints; the Node TestHost implements the same compare (baseline at the first
+`host.prop_changed` and checkpoints; the Node TestHost implements the same compare (`last` unknown at the first
 observation, read-back after `setProp`, deep equality) and calls `__svelters_changed([h, prop, value])` when the
 value differs. Neither has proportional props. `tools/oplog-compare.mjs` keeps the observed props per node in
 the compared state and treats `changed` as a boundary.
