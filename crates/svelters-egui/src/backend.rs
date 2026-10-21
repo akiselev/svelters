@@ -628,8 +628,7 @@ impl Backend for EguiBackend {
     fn run(&self, host: &HostRef<'_>) -> StrResult<()> {
         self.0.host.set(host.as_raw());
         self.0.quitting.set(false);
-        let r = crate::runner::run_eframe(self);
-        r
+        crate::runner::run_eframe(self)
     }
 
     fn waker(&self) -> Waker {
