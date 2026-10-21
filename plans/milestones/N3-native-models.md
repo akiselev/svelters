@@ -81,4 +81,115 @@ Use the array path for app data that lives in JS; use a native model for data th
 
 ## Completion record
 
-(filled in below)
+Branch `worktree-agent-afa611f6f60aa462b`, pushed as `ci/n3` (not merged).
+
+### Commits
+
+| commit | what |
+| --- | --- |
+| 0cb1bb59 | ABI text; GTK model mode (`model` prop, forwarding, `bind` item + epoch, `moved`); `ListController` model mode + Node tests; host: `call_sync` adopts handles, queued events pin their handles; GCompareDataFunc over list items; shadowing fix (`get_item`); `DirectoryList:loading` observe fact; `tests/gtk-types-models` + `lists_models.rs` |
+| 2841e85c | Qt model mode (`vlist.hpp.in` `attach_model`), Qt test hooks follow the shown model, `tests/qt-types-lists` in model mode, Qt twin `tests/qt-types-models` + `examples/counter-qt/tests/lists_models.rs` |
+| 816b9457 | `@svelters/lists` typings, aliases in the GTK typings, six curated model kinds |
+| dff8ccdc | ledger refresh (gtk), guide "Native models in lists", this file |
+| 3a59147b | coverage/semantics regenerated for the observe fact; `@svelters/types` test uses `get_item` |
+| 854840a0 | test harness `has_prop` asks the running class (GTK 4.14 has no `FilterListModel:watch-items`) |
+
+### Acceptance
+
+- **10k-item `Gtk.DirectoryList` scrolls on the real host** (`svelters-gtk::lists_models`): the test generates 10,000
+  files in a temp directory and types the path into the app. It waits for `n=10000 ... loading=false` in a label
+  (reactive `nItems` and `loading`, no mirror). Scrolling to the end, the middle and the start keeps 205 row slots.
+  That is the same count as the array path; it is M5 open item 7, GTK's first-layout pool.
+- **`Gio.ListStore` mutated from JS updates rows minimally.** Each JS mutation raises exactly one native
+  `items-changed` (asserted): fill `(0,0,10)`, insert `(2,0,1)`, remove `(0,1,0)`, splice `(1,2,3)`, `sort`
+  `(0,11,11)`. Bound rows keep their item and follow it: after the insert, the row that showed `2 S2` shows `3 S2`;
+  after the sort, rows show their new index through `moved`.
+- **A filter/sort chain works.** `FilterListModel(SortListModel(store, CustomSorter.new(fn)), CustomFilter.new(fn))`:
+  initial rows, an append to the base store, and a refilter (`filter.changed('different')`). Reactive item getters:
+  a native `Adjustment.set_value` on an item re-renders its row. An app-owned `SingleSelection` is shown as is and
+  its `selected` is reactive.
+- **Qt uses the same contract and passes.** `counter-qt::host_types native_models_feed_lists` now runs in model mode,
+  with two `<ListView items={model}>` and no JS copy of the rows. `counter-qt::lists_models` covers a
+  `QStringListModel` mutated from JS: reset, `I 2 1;C 2 1;`, `R 0 1;`, `C 0 1;`, and `layout;` for a sort, each
+  asserted. It also covers a `QSortFilterProxyModel` chain, activation and selection, and 10k/100k models with
+  12 pooled rows.
+- **The TextBuffer no-mirror example passes on master (R1).** `fixtures/gtk-types` and `fixtures/qt-types` (op logs),
+  plus `svelters-gtk::host_types the_gtk_types_fixture_runs_on_the_real_host` and
+  `counter-qt::host_types qt_types_fixture`: a native edit shows up as `19 characters` with no `$state`.
+
+### Gates (at 854840a0 unless noted)
+
+- `tools/dev/headless tools/dev/cargo-slot cargo nextest run --workspace --no-fail-fast`: **2352 passed, 0 failed,
+  7 skipped**. The same count at 3a59147b, before the last edit.
+- `python3 tools/metadata/ledger.py refresh --toolkit gtk` and `--toolkit qt` (at 816b9457): gtk 2709 facts,
+  2734 tests, 0 manual and 0 inferred not passing, 5 parked (the same 5 as before). qt 1252 facts, 2361 tests,
+  0 / 0, 0 parked. `ledger.py check`: gtk 580 manual verified (+30: six curated kinds × 5 groups), inferred 2129
+  (+1: `DirectoryList:loading`); qt 634 / 631; appkit 79 / 491; winui 60 / 480 (8 parked).
+- `pnpm -r build` (at 3a59147b; no JS changes after it): ok.
+- `pnpm test`, including `test:meta`, at 3a59147b: ok. Pytest 140 passed / 1 skipped. Native-runtime Node tests 88/88
+  (3 new model-mode tests). `@svelters/types` 19/19 plus strict `tsc`, which now includes `lists_usage.ts`.
+  `ledger.py check` reran after 854840a0: ok.
+- `python3 tools/docs/build_ir.py` then `pnpm docs:test`: unittest 11 OK (1 skipped), site tests 17/17.
+
+**CI on `ci/n3` @ 854840a0:** js 39585932504, linux-gtk 39585932540 (GTK 4.24: 2163/2163; GTK 4.14: 1920/1920 with
+`counter::integration bind_this_gtk` flaky once, passed on retry), linux-qt 39585932631 (96/96), macos-appkit
+39585932533, windows-winui 39585932625. All five succeeded. At 3a59147b, linux-gtk failed on GTK 4.14
+(`types_verify gtk_filterlistmodel_props`: `watch-items` needs 4.20); 854840a0 fixes that.
+
+### Performance (debug test profile, shared machine; ms from the click to the condition, 15 ms polling)
+
+Same run, same fixture, native model vs JS array (GTK: `lists_models.rs`; Qt: `lists_models.rs`):
+
+| step | GTK native | GTK array | Qt native | Qt array |
+| --- | --- | --- | --- | --- |
+| 10k: first rows shown | 975 (StringList) | 741 | 44 | 346 |
+| 100k: first rows shown | 963 | 1362 | 266 | 2052 |
+| 10k scroll end / mid / start | 423 / 353 / 248 | 124 / 101 / 23 | 20 / 23 / 24 | 16 / 16 / 19 |
+| 100k scroll end / mid / start | 292 / 281 / 266 | 124 / 101 / 84 | 17 / 16 / 16 | 19 / 16 / 16 |
+| DirectoryList 10k: loaded (`n=10000`, `loading=false`) | 648 | | | |
+| DirectoryList 10k scroll end / mid / start | 274 / 235 / 257 | | | |
+| row slots while scrolling | 205 | 205-206 | 12 | 12 |
+
+- A native model's cost does not grow with its size: 10k and 100k fill in the same time, while the array path
+  pays an O(n) keyed diff (100k: 1.4 s GTK, 2.1 s Qt).
+- GTK scrolling in model mode costs more per rebound row than the array path (about 2-3x here). Each bind adopts
+  the item's handle, creates or looks up its wrapper, reads `item.string` natively, and GTK's position notifies
+  post `moved` events. The cost is per visible row, not per item. Qt scrolling is cheap in both modes.
+
+### ABI
+
+No `svl_backend`/`svl_host` change. The `virtual-list` widget protocol gained, additively, a `model` prop, two
+trailing `bind` arguments (`epoch`, `item`), and the `items-changed`, `data-changed` and `moved` signals. Id mode is
+unchanged: the id-mode op logs did not change, and model mode listens to the new signals only when it is entered.
+The host gained two behaviours: `call_sync` adopts handles in its arguments, and handles in queued events are
+pinned against `destroy`. Text: `backend-abi.md`, "Native models (N3)".
+
+### Shared files touched outside the lane
+
+- `packages/types/test/core.test.mjs` (fake host answers `get_item`).
+- `packages/types/test/types/{tsconfig.json,lists_usage.ts}`.
+- `tools/metadata/gtk/{types_facts.py,gen_types.py,test_types.py}`, `metadata/overrides/gtk/types/gtk-types.yaml`,
+  `metadata/rules/gtk.yaml`. This also regenerated the GTK typings, facts and docs cards, coverage, and semantics.
+- `crates/svelters-host/src/core.rs` and `core/ops.rs`.
+- `crates/svelters-gtk/src/{gi.rs,testing.rs}`.
+- `tools/metadata/qt/templates/backend.cpp.in` (test hooks).
+- Not touched: `packages/types/src/core.js`, `types_pkg.py`, `vite.js`.
+
+### Open items
+
+1. **Callbacks before `run` (GTK):** the GTK backend learns the host pointer only in `run` (or `attach_host`), so a JS
+   callback invoked while the bundle mounts (a `CustomFilter` evaluated at construction) gets "no host" and returns
+   the zero value. The tests call `attach_host` first, as `host_types`/`common` already did. A real app that builds a
+   filter model at startup would see an empty model until the next change. This belongs with the host start-order
+   change (STATUS "Next" 2).
+2. GTK model-mode scrolling is about 2-3x the array path per rebound row: wrapper and handle per bind, and `moved`
+   events for every position notify. Possible fixes: report `moved` only for bound rows whose position really changed,
+   and cache wrappers per item.
+3. `itemClass` is needed for items made natively: there is no runtime class registry, by design, to keep tree
+   shaking. A registry filled by imported classes would remove it.
+4. Qt's `rowCount()` has no change signal; `tests/qt-types-lists` keeps a count-only `$state` updated from the row
+   signals. A reactive `rowCount` (`observedSignal`) would remove it.
+5. Qt trees (child rows) and columns beyond 0 are not shown; GTK `TreeListModel` works as a flat `GListModel`
+   (expanders not rendered).
+6. `Gio.ListStore.find_with_equal_func(_full)` stay blocked (`GEqualFunc` has no user-data pointer to tell the item
+   pointers apart; the allow list is for `GCompareDataFunc`).
