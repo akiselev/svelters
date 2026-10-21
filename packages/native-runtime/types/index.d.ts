@@ -8,11 +8,13 @@ import type { GtkElements } from './gtk';
 import type { QtElementDescriptors } from './qt';
 import type { BindableProps, ToplevelAttrs, ToplevelTag } from './bindings';
 import type { MenuElements } from './menus';
+import type { GtkObservedBindings } from './observe';
 
 export type { GtkElements, QtElementDescriptors };
 export type { GtkDangerousMethods } from './gtk';
 export type { BindableProps } from './bindings';
 export type { MenuElements } from './menus';
+export type { AppkitObservedBindings, GtkObservedBindings, QtObservedBindings, WinuiObservedBindings } from './observe';
 export type { NativeElement, StaleHandleError } from './native';
 export type { ClassValue, StyleAttrs };
 
@@ -27,12 +29,14 @@ type StyleAttrs = {
   [directive: `style:${string}`]: string | number | null | undefined;
 };
 
-// `bind:<name>` attributes per tag, from the binding metadata (bindings.d.ts).
+// `bind:<name>` attributes per tag, from the binding metadata (bindings.d.ts), plus the ones the
+// observe facts allow and `bind:<name>|nonreactive` (observe.d.ts, milestone R2).
 type WithBindings<E> = {
   [K in keyof E]: StyleAttrs &
     (K extends keyof BindableProps
       ? E[K] & { [N in keyof BindableProps[K] as `bind:${N & string}`]?: BindableProps[K][N] }
       : E[K]) &
+    (K extends keyof GtkObservedBindings ? GtkObservedBindings[K] : unknown) &
     (K extends ToplevelTag ? ToplevelAttrs : unknown);
 };
 

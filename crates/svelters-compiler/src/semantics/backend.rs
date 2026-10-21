@@ -1,4 +1,5 @@
-//! [`SpecBackend`]: [`BackendSemantics`] answered from a generated `svelters-semantics/v0` spec.
+//! [`SpecBackend`]: [`PlatformSemantics`] answered from a generated `svelters-semantics/v0` spec
+//! (plus, for GTK and Qt, the non-GUI type table `metadata/semantics/types/<tk>.json`).
 
 use super::spec::*;
 use super::*;
@@ -8,15 +9,24 @@ const GTK_JSON: &str = include_str!("../../../../metadata/semantics/gtk.json");
 const QT_JSON: &str = include_str!("../../../../metadata/semantics/qt.json");
 const APPKIT_JSON: &str = include_str!("../../../../metadata/semantics/appkit.json");
 const WINUI_JSON: &str = include_str!("../../../../metadata/semantics/winui.json");
+const GTK_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/gtk.json");
+const QT_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/qt.json");
 
 #[derive(Debug, Clone)]
 pub struct SpecBackend {
     spec: Spec,
+    types: Option<TypeTable>,
 }
 
 impl SpecBackend {
     pub fn from_json(json: &str) -> Result<SpecBackend, String> {
-        Ok(SpecBackend { spec: Spec::parse(json)? })
+        Ok(SpecBackend { spec: Spec::parse(json)?, types: None })
+    }
+
+    /// Answer `native_type` / `type_property` from a type table (`metadata/semantics/types/<tk>.json`).
+    pub fn with_types(mut self, json: &str) -> Result<SpecBackend, String> {
+        self.types = Some(TypeTable::parse(json)?);
+        Ok(self)
     }
 
     pub fn from_path(path: impl AsRef<Path>) -> Result<SpecBackend, String> {
@@ -28,8 +38,8 @@ impl SpecBackend {
     /// The checked-in spec of a built-in backend (`gtk`, `qt`, `appkit` or `winui`), embedded at build time.
     pub fn builtin(backend: &str) -> Result<SpecBackend, String> {
         match backend {
-            "gtk" => SpecBackend::from_json(GTK_JSON),
-            "qt" => SpecBackend::from_json(QT_JSON),
+            "gtk" => SpecBackend::from_json(GTK_JSON)?.with_types(GTK_TYPES_JSON),
+            "qt" => SpecBackend::from_json(QT_JSON)?.with_types(QT_TYPES_JSON),
             "appkit" => SpecBackend::from_json(APPKIT_JSON),
             "winui" => SpecBackend::from_json(WINUI_JSON),
             other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui)")),
@@ -190,7 +200,20 @@ fn parse_int(s: &str) -> Option<i64> {
     t.parse::<i64>().ok()
 }
 
-impl BackendSemantics for SpecBackend {
+impl PlatformSemantics for SpecBackend {
+    fn bind_modifiers(&self) -> &[&'static str] {
+        // the DOM conformance spec has no native bindings to opt out of
+        if self.spec.html_syntax { &[] } else { &["nonreactive"] }
+    }
+
+    fn native_type(&self, module: &str, export: &str) -> Option<TypeRef> {
+        self.types.as_ref()?.native_type(module, export)
+    }
+
+    fn type_property(&self, ty: &TypeRef, prop: &str) -> Option<TypeProp> {
+        self.types.as_ref()?.type_property(ty, prop)
+    }
+
     fn backend(&self) -> &str {
         &self.spec.backend
     }

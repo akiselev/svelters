@@ -28,6 +28,8 @@ import {
 import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty } from './style.js';
 import { ROW_OUTLETS, TOPLEVELS } from './bindings.generated.js';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
+// R2: `bind:` lowered onto observation (./bind-observe.js, over the tracker API of ./observe.js).
+export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');

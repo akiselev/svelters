@@ -111,6 +111,31 @@ impl Codegen<'_, '_> {
         }
     }
 
+    /// `get, set` of a binding: the functions of `bind:x={get, set}` (Svelte >= 5.9), else accessors
+    /// of the bound lvalue.
+    fn bind_accessors(&mut self, target: &Expression) {
+        if let Some((get, set)) = function_binding(target) {
+            self.paren_expr(get, Mode::Read);
+            self.w.write(", ");
+            self.paren_expr(set, Mode::Read);
+        } else {
+            self.w.write("() => ");
+            self.expr_text(target, Mode::Read);
+            let set = self.rw.assign(target, "$$value");
+            self.w.write(&format!(", ($$value) => {{ {set}; }}"));
+        }
+    }
+
+    /// The `set` half of a binding (read-only bindings never read the target).
+    fn bind_setter(&mut self, target: &Expression) {
+        if let Some((_, set)) = function_binding(target) {
+            self.paren_expr(set, Mode::Read);
+        } else {
+            let set = self.rw.assign(target, "$$value");
+            self.w.write(&format!("($$value) => {{ {set}; }}"));
+        }
+    }
+
     fn json(&mut self, v: &Json) {
         self.w.write(&v.to_string());
     }
@@ -439,6 +464,27 @@ impl Codegen<'_, '_> {
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!(", ($$value) => {{ {set}; }});"));
                 }
+            }
+            Op::BindProp { prop, fallback, target, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.bind_prop({n}, {}, ", js_str(prop)));
+                self.bind_accessors(target);
+                if let Some((signal, arg)) = fallback {
+                    self.w.write(&format!(", {}, {arg}", js_str(signal)));
+                }
+                self.w.write(");");
+            }
+            Op::BindReadonly { prop, target, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.bind_readonly({n}, {}, ", js_str(prop)));
+                self.bind_setter(target);
+                self.w.write(");");
+            }
+            Op::BindOnce { prop, readonly, target, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.bind_once({n}, {}, ", js_str(prop)));
+                self.bind_accessors(target);
+                self.w.write(&format!(", {readonly});"));
             }
             Op::BindThis { target, span } => {
                 self.w.map(span.start);

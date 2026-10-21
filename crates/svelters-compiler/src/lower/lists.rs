@@ -78,6 +78,7 @@ impl<'a> Lower<'a, '_, '_> {
                     }
                 }
                 AttributeLike::SpreadAttribute(_) => has_row = true, // may carry `row`
+                AttributeLike::BindDirective(d) if !d.modifiers.is_empty() => self.no_bind_modifiers(d, &format!("<{}>", el.name)),
                 AttributeLike::BindDirective(d) if d.name != "selected" && d.name != "this" => {
                     self.diags.error(
                         "list_bind_invalid",

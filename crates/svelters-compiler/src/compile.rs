@@ -5,7 +5,7 @@
 use crate::codegen::component::generate;
 use crate::diag::{Diagnostic, Diagnostics};
 use crate::lower::lower;
-use crate::semantics::BackendSemantics;
+use crate::semantics::PlatformSemantics;
 use crate::style::parse_style;
 use crate::svelte::errors::CompileError;
 use crate::svelte::parse::{ParseOptions, parse};
@@ -17,7 +17,7 @@ use std::time::Instant;
 pub struct CompileOptions<'b> {
     /// Used in diagnostics and the source map; also names the component (`App.svelte` -> `App`).
     pub filename: String,
-    pub backend: &'b dyn BackendSemantics,
+    pub backend: &'b dyn PlatformSemantics,
     /// Svelte's `dev` option: `$inspect` / `$inspect.trace` are kept and sources are labelled
     /// (`$.tag`); otherwise they are stripped.
     pub dev: bool,
@@ -27,7 +27,7 @@ pub struct CompileOptions<'b> {
 }
 
 impl<'b> CompileOptions<'b> {
-    pub fn new(filename: impl Into<String>, backend: &'b dyn BackendSemantics) -> Self {
+    pub fn new(filename: impl Into<String>, backend: &'b dyn PlatformSemantics) -> Self {
         CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None }
     }
 }

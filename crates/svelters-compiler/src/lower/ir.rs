@@ -104,6 +104,13 @@ pub enum Op<'a> {
     ChildAttr { name: String, value: AttrValue<'a>, span: Span },
     /// `$n.bind(node, prop, signal, arg, get, set)`; `target` is the bound lvalue.
     Bind { prop: String, signal: String, arg: i64, target: &'a Expression, span: Span },
+    /// `$n.bind_prop(node, prop, get, set[, signal, arg])`: two-way on observation (R2); the signal
+    /// plan is the fallback the runtime uses only when the host cannot observe the prop.
+    BindProp { prop: String, fallback: Option<(String, i64)>, target: &'a Expression, span: Span },
+    /// `$n.bind_readonly(node, prop, set)`: a read-only observable prop.
+    BindReadonly { prop: String, target: &'a Expression, span: Span },
+    /// `$n.bind_once(node, prop, get, set, readonly)`: `bind:prop|nonreactive`.
+    BindOnce { prop: String, readonly: bool, target: &'a Expression, span: Span },
     /// `bind:this={target}`: Svelte's `$.bind_this(node, set, get)` with the runtime node.
     BindThis { target: &'a Expression, span: Span },
     /// `$n.track(node, prop, signal, arg)` for a one-way prop the native side also edits.

@@ -1,4 +1,4 @@
-//! BackendSemantics over the real generated specs (metadata/semantics/{gtk,qt}.json): the
+//! PlatformSemantics over the real generated specs (metadata/semantics/{gtk,qt}.json): the
 //! elements of the counter / if-toggle / keyed-list / native-close fixtures, bindings, slots and
 //! native style lowering on both backends.
 
