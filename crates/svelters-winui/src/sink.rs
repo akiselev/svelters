@@ -14,6 +14,8 @@ pub enum Registration {
     /// `UnregisterPropertyChangedCallback` with the same property and token. The object reference is
     /// the element itself, which the handle table already holds.
     Property { obj: DependencyObject, dp: DependencyProperty, token: i64 },
+    /// N4: an event of a type object through the dynamic invoker: `remove_X(token)` on the event's interface.
+    Dynamic { iface: windows_core::IUnknown, remove: u16, token: i64 },
 }
 
 impl From<EventRevoker> for Registration {
@@ -24,8 +26,15 @@ impl From<EventRevoker> for Registration {
 
 impl Drop for Registration {
     fn drop(&mut self) {
-        if let Registration::Property { obj, dp, token } = self {
-            let _ = obj.UnregisterPropertyChangedCallback(&*dp, *token);
+        match self {
+            Registration::Property { obj, dp, token } => {
+                let _ = obj.UnregisterPropertyChangedCallback(&*dp, *token);
+            }
+            Registration::Dynamic { iface, remove, token } => {
+                // SAFETY: `remove_X(EventRegistrationToken)`: the 8-byte token passes as an integer.
+                let _ = unsafe { crate::types::rt::vcall(iface, *remove, &[crate::types::invoke::Word::I(*token as u64)]) };
+            }
+            Registration::Event(_) => {}
         }
     }
 }

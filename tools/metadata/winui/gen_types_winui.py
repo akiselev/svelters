@@ -335,10 +335,11 @@ def rust_tables(facts: dict) -> str:
            f"pub static ENUMS: &[EnumT] = &[\n" + "".join(f"    {r},\n" for r in enum_rows) + "];", "",
            f"pub static RECORDS: &[RecordT] = &[\n" + "".join(f"    {r},\n" for r in rec_rows) + "];", "",
            core, ]
+    consts = f"/// Rows of `TYS` the core reads with.\npub const TY_U32: TyId = {tb.ty('u32')};\npub const TY_STR: TyId = {tb.ty('string')};\n"
     tys = f"pub static TYS: &[Ty] = &[\n" + "".join(f"    {e}, // {n}\n" for n, e in zip(sorted(tb.ty_ix, key=tb.ty_ix.get), tb.tys)) + "];\n"
     iids = f"/// Interface IDs (index 0: none), as u128 (`GUID::from_u128`).\npub static IIDS: &[u128] = &[\n" + "".join(
         f"    {iid_lit(g)},\n" for g in tb.iids) + "];\n"
-    return "\n".join(out) + "\n" + tys + "\n" + iids
+    return "\n".join(out) + "\n" + consts + "\n" + tys + "\n" + iids
 
 
 def write_all(files: dict[Path, str], check: bool, owned_globs: list[tuple[Path, str]]) -> int:

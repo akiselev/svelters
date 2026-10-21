@@ -1825,6 +1825,10 @@ pub static CORE: Core = Core {
     status_error: 3,
 };
 
+/// Rows of `TYS` the core reads with.
+pub const TY_U32: TyId = 30;
+pub const TY_STR: TyId = 3;
+
 pub static TYS: &[Ty] = &[
     Ty::Void, // void
     Ty::U8, // u8

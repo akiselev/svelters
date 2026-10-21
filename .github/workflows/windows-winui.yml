@@ -91,6 +91,17 @@ jobs:
           $code = $LASTEXITCODE
           Get-Content logs\generated.log
           exit $code
+      - name: svelters-winui types (N4 non-GUI types)
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        # Appends to the same results file as `generated` (the type facts are in the same ledger, winui).
+        run: |
+          New-Item -ItemType Directory -Force logs/winui-ledger | Out-Null
+          $env:SVELTERS_TEST_RESULTS = "$pwd\logs\winui-ledger\winui-results.jsonl"
+          cmd /c "cargo test -p svelters-winui --test types_core > logs\types_core.log 2>&1"
+          $code = $LASTEXITCODE
+          Get-Content logs\types_core.log
+          exit $code
       - name: counter-win selftest
         if: ${{ !cancelled() }}
         timeout-minutes: 10

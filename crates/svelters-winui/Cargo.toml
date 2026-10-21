@@ -26,3 +26,8 @@ svelters-host.workspace = true
 [[test]]
 name = "generated"
 harness = false
+
+# N4 non-GUI types: hand-written core checks and the generated ledger tests (same STA rule).
+[[test]]
+name = "types_core"
+harness = false
