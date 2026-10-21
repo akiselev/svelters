@@ -71,6 +71,15 @@ impl Diagnostics {
         self.list.last_mut().unwrap()
     }
 
+    /// Turns the warnings with one of `codes` into errors (`--strict-native`).
+    pub fn promote(&mut self, codes: &[&str]) {
+        for d in &mut self.list {
+            if d.severity == Severity::Warning && codes.contains(&d.code) {
+                d.severity = Severity::Error;
+            }
+        }
+    }
+
     pub fn has_errors(&self) -> bool {
         self.list.iter().any(|d| d.severity == Severity::Error)
     }

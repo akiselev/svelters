@@ -1,0 +1,9 @@
+== qt
+lowering-qt.svelte:11:43: warning[bind_partially_observed] (qt): bind:checked on <group-box>: `checked` is only partially observed on qt: side effects of setting other properties are not announced, so the bound value can go stale after them
+  help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`
+$n.bind_readonly($$n2, "size", ($$value) => { $.set(size, $$value); });
+$n.bind_once($$n3, "size", () => $.get(size0), ($$value) => { $.set(size0, $$value); }, true);
+$n.bind_prop($$n4, "text", () => $.get(text), ($$value) => { $.set(text, $$value); }, "text-changed", 0);
+$n.bind_once($$n5, "text", () => $.get(once), ($$value) => { $.set(once, $$value); }, false);
+$n.bind_prop($$n6, "plain-text", () => $.get(plain), ($$value) => { $.set(plain, $$value); }, "text-changed", -1);
+$n.bind($$n7, "checked", "toggled", 0, () => $.get(checked), ($$value) => { $.set(checked, $$value); });

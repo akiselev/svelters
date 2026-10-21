@@ -1,0 +1,10 @@
+== gtk
+$n.bind_prop($$n3, "text", () => $.get(text), ($$value) => { $.set(text, $$value); }, "changed", 0);
+$n.bind_prop($$n4, "active", () => $.get(active), ($$value) => { $.set(active, $$value); }, "toggled", -1);
+$n.bind_readonly($$n5, "cursor-position", ($$value) => { $.set(pos, $$value); });
+$n.bind_once($$n6, "text", () => $.get(once), ($$value) => { $.set(once, $$value); }, false);
+$n.bind_once($$n7, "cursor-position", () => $.get(pos0), ($$value) => { $.set(pos0, $$value); }, true);
+$n.bind_prop($$n8, "text", (() => $.get(view)), ((v) => ($.set(view, v, true))), "changed", 0);
+$n.bind_prop($$n9, "value", () => $.get(value), ($$value) => { $.set(value, $$value); }, "value-changed", -1);
+$n.bind($$n12, "checked", "toggled", 0, () => $.get(checked), ($$value) => { $.set(checked, $$value); });
+$n.bind_prop($$n13, "value", () => $.get(level), ($$value) => { $.set(level, $$value); }, "notify::value", -1);

@@ -1,0 +1,48 @@
+== gtk
+diagnostics-gtk.svelte:8:23: warning[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+diagnostics-gtk.svelte:13:12: error[bind_not_observable] (gtk): bind:text-length on <entry>: `text-length` is none on gtk: its native changes are not announced
+  help: read it when you need it (`bind:text-length|nonreactive` or node.getProp), or listen to an event
+diagnostics-gtk.svelte:14:12: error[bind_not_observable] (gtk): bind:css-name on <entry>: `css-name` is constant on gtk: it never changes after construction
+  help: set it once with `css-name={...}`
+diagnostics-gtk.svelte:15:17: error[bind_set_only] (gtk): bind:title on <header-bar>: `title` is set_only on gtk: nothing but your code changes it, so there is nothing to bind back
+  help: use `title={...}`
+diagnostics-gtk.svelte:16:17: warning[nonreactive_redundant] (gtk): bind:title|nonreactive on <header-bar>: `title` is set_only on gtk: only your own writes change it, so `|nonreactive` changes nothing
+  help: use `title={...}`
+diagnostics-gtk.svelte:17:12: error[bind_no_plan] (gtk): bind:has-focus is not supported on <entry> (gtk): whether native changes of `has-focus` are announced is unknown (no observe fact in metadata/observe/gtk.json) and no binding is declared
+  help: set the property one way and listen to an event instead, or read it once with `bind:has-focus|nonreactive`
+diagnostics-gtk.svelte:18:12: warning[bind_partially_observed] (gtk): bind:progress-pulse-step on <entry>: `progress-pulse-step` is only partially observed on gtk: side effects of setting other properties are not announced, so the bound value can go stale after them
+  help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`
+diagnostics-gtk.svelte:19:12: error[bind_modifier_invalid] (gtk): `bind:text|bogus`: unknown binding modifier `bogus` (native bindings take `|nonreactive`)
+diagnostics-gtk.svelte:20:12: error[bind_modifier_invalid] (gtk): `bind:text`: `|nonreactive` is given twice
+diagnostics-gtk.svelte:22:12: error[bind_modifier_invalid] (gtk): `bind:this|nonreactive`: `|nonreactive` has no meaning on bind:this
+  help: `|nonreactive` applies to bindings of native element properties only
+diagnostics-gtk.svelte:22:47: warning[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+diagnostics-gtk.svelte:24:12: error[bind_modifier_invalid] (gtk): `bind:value|nonreactive`: `|nonreactive` has no meaning on a component binding
+  help: `|nonreactive` applies to bindings of native element properties only
+(no output: errors)
+== gtk --strict-native
+diagnostics-gtk.svelte:8:23: error[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+diagnostics-gtk.svelte:13:12: error[bind_not_observable] (gtk): bind:text-length on <entry>: `text-length` is none on gtk: its native changes are not announced
+  help: read it when you need it (`bind:text-length|nonreactive` or node.getProp), or listen to an event
+diagnostics-gtk.svelte:14:12: error[bind_not_observable] (gtk): bind:css-name on <entry>: `css-name` is constant on gtk: it never changes after construction
+  help: set it once with `css-name={...}`
+diagnostics-gtk.svelte:15:17: error[bind_set_only] (gtk): bind:title on <header-bar>: `title` is set_only on gtk: nothing but your code changes it, so there is nothing to bind back
+  help: use `title={...}`
+diagnostics-gtk.svelte:16:17: error[nonreactive_redundant] (gtk): bind:title|nonreactive on <header-bar>: `title` is set_only on gtk: only your own writes change it, so `|nonreactive` changes nothing
+  help: use `title={...}`
+diagnostics-gtk.svelte:17:12: error[bind_no_plan] (gtk): bind:has-focus is not supported on <entry> (gtk): whether native changes of `has-focus` are announced is unknown (no observe fact in metadata/observe/gtk.json) and no binding is declared
+  help: set the property one way and listen to an event instead, or read it once with `bind:has-focus|nonreactive`
+diagnostics-gtk.svelte:18:12: error[bind_partially_observed] (gtk): bind:progress-pulse-step on <entry>: `progress-pulse-step` is only partially observed on gtk: side effects of setting other properties are not announced, so the bound value can go stale after them
+  help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`
+diagnostics-gtk.svelte:19:12: error[bind_modifier_invalid] (gtk): `bind:text|bogus`: unknown binding modifier `bogus` (native bindings take `|nonreactive`)
+diagnostics-gtk.svelte:20:12: error[bind_modifier_invalid] (gtk): `bind:text`: `|nonreactive` is given twice
+diagnostics-gtk.svelte:22:12: error[bind_modifier_invalid] (gtk): `bind:this|nonreactive`: `|nonreactive` has no meaning on bind:this
+  help: `|nonreactive` applies to bindings of native element properties only
+diagnostics-gtk.svelte:22:47: error[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+diagnostics-gtk.svelte:24:12: error[bind_modifier_invalid] (gtk): `bind:value|nonreactive`: `|nonreactive` has no meaning on a component binding
+  help: `|nonreactive` applies to bindings of native element properties only
+(no output: errors)

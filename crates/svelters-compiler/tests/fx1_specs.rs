@@ -1,4 +1,5 @@
-//! FX1: the AppKit and WinUI specs as compile targets, with their `bind:` targets. The runtime
+//! FX1: the AppKit and WinUI specs as compile targets, with their `bind:` targets (lowered onto
+//! observation since R2, with the signal plan as the runtime fallback). The runtime
 //! side: experiments/native-compiler/compiled `counter-mac` / `counter-win`.
 
 use svelters_compiler::compile::{CompileOptions, CompileResult, compile};
@@ -44,17 +45,18 @@ fn appkit_and_winui_two_way_bindings() {
         "<script>let s = $state('off'); let v = $state(0); let t = $state('');</script>\
          <window><stack-view><button bind:state={s} /><slider bind:double-value={v} /><text-field bind:string-value={t} /></stack-view></window>",
     );
-    assert!(mac.contains(r#"$n.bind($$n3, "state", "action", -1"#), "{mac}");
-    assert!(mac.contains(r#"$n.bind($$n4, "double-value", "action", -1"#), "{mac}");
-    assert!(mac.contains(r#"$n.bind($$n5, "string-value", "control-text-did-change", 0"#), "{mac}");
+    assert!(mac.contains(r#"$n.bind_prop($$n3, "state", () => $.get(s), ($$value) => { $.set(s, $$value); }, "action", -1);"#), "{mac}");
+    assert!(mac.contains(r#"$n.bind_prop($$n4, "double-value", () => $.get(v), ($$value) => { $.set(v, $$value); }, "action", -1);"#), "{mac}");
+    assert!(mac.contains(r#"$n.bind_prop($$n5, "string-value", () => $.get(t), ($$value) => { $.set(t, $$value); }, "control-text-did-change", 0);"#), "{mac}");
     let win = js(
         "winui",
         "<script>let c = $state(false); let v = $state(0); let t = $state('');</script>\
          <window><stack-panel><check-box bind:is-checked={c} /><slider bind:value={v} /><text-box bind:text={t} /></stack-panel></window>",
     );
-    assert!(win.contains(r#"$n.bind($$n3, "is-checked", "click", -1"#), "{win}");
-    assert!(win.contains(r#"$n.bind($$n4, "value", "value-changed", 0"#), "{win}");
-    assert!(win.contains(r#"$n.bind($$n5, "text", "text-changed", 0"#), "{win}");
-    let r = run("winui", "<script>let v = $state(0);</script><window><slider bind:minimum={v} /></window>");
-    assert!(!errors(&r).is_empty(), "minimum is not bindable");
+    assert!(win.contains(r#"$n.bind_prop($$n3, "is-checked", () => $.get(c), ($$value) => { $.set(c, $$value); }, "click", -1);"#), "{win}");
+    assert!(win.contains(r#"$n.bind_prop($$n4, "value", () => $.get(v), ($$value) => { $.set(v, $$value); }, "value-changed", 0);"#), "{win}");
+    assert!(win.contains(r#"$n.bind_prop($$n5, "text", () => $.get(t), ($$value) => { $.set(t, $$value); }, "text-changed", 0);"#), "{win}");
+    // R2 (decision 13 #8): an `exact` prop binds on observation without a declared binding
+    let r = js("winui", "<script>let v = $state(0);</script><window><slider bind:minimum={v} /></window>");
+    assert!(r.contains(r#"$n.bind_prop($$n2, "minimum", () => $.get(v), ($$value) => { $.set(v, $$value); });"#), "{r}");
 }

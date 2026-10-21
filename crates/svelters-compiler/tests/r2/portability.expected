@@ -1,0 +1,12 @@
+== gtk
+$n.bind_prop($$n1, "title", () => $.get(title), ($$value) => { $.set(title, $$value); });
+$n.bind_prop($$n1, "visible", () => $.get(visible), ($$value) => { $.set(visible, $$value); });
+$n.bind_once($$n2, "title", () => $.get(title), ($$value) => { $.set(title, $$value); }, false);
+== --backend gtk,qt,appkit,winui
+portability.svelte:5:9: warning[observability_differs]: bind:title on <window>: observability differs across platforms: exact (notify) on gtk; exact (notify) on appkit; set_only on winui
+  help: where it is not exact the bound value can go stale; read it explicitly there, or use `|nonreactive`
+portability.svelte:5:20: warning[observability_differs]: bind:visible on <window>: observability differs across platforms: exact (notify) on gtk; none on appkit; exact (event:VisibilityChanged) on winui
+  help: where it is not exact the bound value can go stale; read it explicitly there, or use `|nonreactive`
+$n.bind_prop($$n1, "title", () => $.get(title), ($$value) => { $.set(title, $$value); });
+$n.bind_prop($$n1, "visible", () => $.get(visible), ($$value) => { $.set(visible, $$value); });
+$n.bind_once($$n2, "title", () => $.get(title), ($$value) => { $.set(title, $$value); }, false);

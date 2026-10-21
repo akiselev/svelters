@@ -12,4 +12,5 @@ pub mod lower;
 pub mod semantics;
 pub mod style;
 pub mod svelte;
+pub mod target;
 pub mod transform;
