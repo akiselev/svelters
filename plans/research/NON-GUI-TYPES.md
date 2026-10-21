@@ -566,6 +566,17 @@ Where the build deviates from the plan above:
 - **Widget slots.** Widget-typed parameters and returns of non-widget classes are now bound as element handles (`k: widget` in the facts). `FileDialog.open(parent)`, the §7 example, needed this. It unblocked about 90 Gtk members, including the synchronous ones.
 - **Abort of a file dialog** rejects with `gtk-dialog-error-quark` / `cancelled`. `dismissed` is the user closing it. §7's comment assumed `dismissed` for both.
 
+### N3 as built (2026-10-21, `plans/milestones/N3-native-models.md`)
+
+- `<ListView items={model}>` takes any GTK `GListModel` / Qt `QAbstractItemModel`; the toolkit's view reads it
+  directly and JS keeps no copy. §7's sketch works with `itemClass={FileInfo}` (native-made items have no class
+  to infer) and without `key` (identity and native positions replace keys).
+- Not ABI-free after all, but no vtable change: the `virtual-list` protocol gained a `model` prop, two `bind`
+  arguments and three signals (`backend-abi.md`, "Native models (N3)"). The host pins handles carried by queued
+  events.
+- Reactive accessors were R1's; the TextBuffer example needs no mirror on master (`host_types` on both toolkits).
+  N3 added the `DirectoryList:loading` observe fact.
+
 ## 10. Decisions (user, 2026-10-17)
 
 - **Q1 — transfer-none returns of non-widget objects are SHARED** (strong references), for now. The `lifetime: borrowed` override stays available for exceptions.

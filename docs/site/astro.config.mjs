@@ -29,6 +29,7 @@ export default defineConfig({
             guide('guides/architecture', 'Architecture'),
             guide('guides/svelte-support', 'Svelte feature support'),
             guide('guides/lists-and-snippets', 'Snippets, lists, virtual lists'),
+            guide('guides/native-models', 'Native models in lists'),
             guide('guides/events', 'Events and modifiers'),
             guide('guides/bindings', 'Bindings'),
             guide('guides/styling', 'Styling'),
