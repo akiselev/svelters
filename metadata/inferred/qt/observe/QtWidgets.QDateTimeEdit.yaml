@@ -7,6 +7,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
   confidence: 0.9
 - prop: currentSection
   class: none
@@ -22,6 +25,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
   confidence: 0.9
 - prop: date
   class: exact
@@ -52,6 +58,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
   confidence: 0.9
 - prop: displayedSections
   class: none
@@ -76,6 +85,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
   confidence: 0.9
 - prop: maximumTime
   class: none
@@ -91,12 +103,18 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
   confidence: 0.9
 - prop: minimumDateTime
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
   confidence: 0.9
 - prop: minimumTime
   class: none
@@ -137,6 +155,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDateTimeEdit
+    check: unsupported
   confidence: 0.9
 - prop: timeZone
   class: none

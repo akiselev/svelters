@@ -10,6 +10,2827 @@
    "scenario": "hidden QWidget resize"
   }
  ],
+ "o4": {
+  "QAbstractSpinBox:text": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ],
+   "changes": 7,
+   "driven": false,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ]
+  },
+  "QFrame:frameRect": {
+   "causes": [
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QTextEdit/set:QWidget:geometry",
+    "QTextEdit/set:QWidget:geometry:back",
+    "QTextEdit/set:QWidget:size",
+    "QTextEdit/set:QWidget:size:back"
+   ],
+   "changes": 8,
+   "driven": false,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QTextEdit/set:QWidget:geometry",
+    "QTextEdit/set:QWidget:geometry:back",
+    "QTextEdit/set:QWidget:size",
+    "QTextEdit/set:QWidget:size:back"
+   ]
+  },
+  "QLineEdit:alignment": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:alignment",
+    "QLineEdit/set:QLineEdit:alignment:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:alignment",
+    "QLineEdit/set:QLineEdit:alignment:back"
+   ]
+  },
+  "QLineEdit:clearButtonEnabled": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:clearButtonEnabled",
+    "QLineEdit/set:QLineEdit:clearButtonEnabled:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:clearButtonEnabled",
+    "QLineEdit/set:QLineEdit:clearButtonEnabled:back"
+   ]
+  },
+  "QLineEdit:cursorMoveStyle": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:cursorMoveStyle",
+    "QLineEdit/set:QLineEdit:cursorMoveStyle:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:cursorMoveStyle",
+    "QLineEdit/set:QLineEdit:cursorMoveStyle:back"
+   ]
+  },
+  "QLineEdit:cursorPosition": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:text",
+    "QLineEdit/set:QLineEdit:text:back"
+   ],
+   "changes": 2,
+   "driven": false,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:text",
+    "QLineEdit/set:QLineEdit:text:back"
+   ]
+  },
+  "QLineEdit:displayText": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back",
+    "QLineEdit/set:QLineEdit:text",
+    "QLineEdit/set:QLineEdit:text:back"
+   ],
+   "changes": 4,
+   "driven": false,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back",
+    "QLineEdit/set:QLineEdit:text",
+    "QLineEdit/set:QLineEdit:text:back"
+   ]
+  },
+  "QLineEdit:dragEnabled": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:dragEnabled",
+    "QLineEdit/set:QLineEdit:dragEnabled:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:dragEnabled",
+    "QLineEdit/set:QLineEdit:dragEnabled:back"
+   ]
+  },
+  "QLineEdit:echoMode": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:echoMode",
+    "QLineEdit/set:QLineEdit:echoMode:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:echoMode",
+    "QLineEdit/set:QLineEdit:echoMode:back"
+   ]
+  },
+  "QLineEdit:frame": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back"
+   ]
+  },
+  "QLineEdit:inputMask": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back"
+   ]
+  },
+  "QLineEdit:maxLength": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back",
+    "QLineEdit/set:QLineEdit:maxLength",
+    "QLineEdit/set:QLineEdit:maxLength:back"
+   ],
+   "changes": 4,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back",
+    "QLineEdit/set:QLineEdit:maxLength",
+    "QLineEdit/set:QLineEdit:maxLength:back"
+   ]
+  },
+  "QLineEdit:modified": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:modified",
+    "QLineEdit/set:QLineEdit:modified:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:modified",
+    "QLineEdit/set:QLineEdit:modified:back"
+   ]
+  },
+  "QLineEdit:placeholderText": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:placeholderText",
+    "QLineEdit/set:QLineEdit:placeholderText:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:placeholderText",
+    "QLineEdit/set:QLineEdit:placeholderText:back"
+   ]
+  },
+  "QLineEdit:readOnly": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:readOnly",
+    "QLineEdit/set:QLineEdit:readOnly:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [
+    "ReadOnlyChange"
+   ],
+   "specificity": {
+    "ReadOnlyChange": 0.333
+   }
+  },
+  "QLineEdit:text": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:text",
+    "QLineEdit/set:QLineEdit:text:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:text",
+    "QLineEdit/set:QLineEdit:text:back"
+   ]
+  },
+  "QPlainTextEdit:backgroundVisible": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:backgroundVisible",
+    "QPlainTextEdit/set:QPlainTextEdit:backgroundVisible:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:backgroundVisible",
+    "QPlainTextEdit/set:QPlainTextEdit:backgroundVisible:back"
+   ]
+  },
+  "QPlainTextEdit:centerOnScroll": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:centerOnScroll",
+    "QPlainTextEdit/set:QPlainTextEdit:centerOnScroll:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:centerOnScroll",
+    "QPlainTextEdit/set:QPlainTextEdit:centerOnScroll:back"
+   ]
+  },
+  "QPlainTextEdit:cursorWidth": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:cursorWidth",
+    "QPlainTextEdit/set:QPlainTextEdit:cursorWidth:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:cursorWidth",
+    "QPlainTextEdit/set:QPlainTextEdit:cursorWidth:back"
+   ]
+  },
+  "QPlainTextEdit:documentTitle": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:documentTitle",
+    "QPlainTextEdit/set:QPlainTextEdit:documentTitle:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:documentTitle",
+    "QPlainTextEdit/set:QPlainTextEdit:documentTitle:back"
+   ]
+  },
+  "QPlainTextEdit:lineWrapMode": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:lineWrapMode",
+    "QPlainTextEdit/set:QPlainTextEdit:lineWrapMode:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:lineWrapMode",
+    "QPlainTextEdit/set:QPlainTextEdit:lineWrapMode:back"
+   ]
+  },
+  "QPlainTextEdit:maximumBlockCount": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount",
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount",
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount:back"
+   ]
+  },
+  "QPlainTextEdit:overwriteMode": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:overwriteMode",
+    "QPlainTextEdit/set:QPlainTextEdit:overwriteMode:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:overwriteMode",
+    "QPlainTextEdit/set:QPlainTextEdit:overwriteMode:back"
+   ]
+  },
+  "QPlainTextEdit:placeholderText": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:placeholderText",
+    "QPlainTextEdit/set:QPlainTextEdit:placeholderText:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:placeholderText",
+    "QPlainTextEdit/set:QPlainTextEdit:placeholderText:back"
+   ]
+  },
+  "QPlainTextEdit:plainText": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:plainText",
+    "QPlainTextEdit/set:QPlainTextEdit:plainText:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:plainText",
+    "QPlainTextEdit/set:QPlainTextEdit:plainText:back"
+   ]
+  },
+  "QPlainTextEdit:readOnly": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:readOnly",
+    "QPlainTextEdit/set:QPlainTextEdit:readOnly:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [
+    "ReadOnlyChange"
+   ],
+   "specificity": {
+    "ReadOnlyChange": 0.333
+   }
+  },
+  "QPlainTextEdit:tabChangesFocus": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:tabChangesFocus",
+    "QPlainTextEdit/set:QPlainTextEdit:tabChangesFocus:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:tabChangesFocus",
+    "QPlainTextEdit/set:QPlainTextEdit:tabChangesFocus:back"
+   ]
+  },
+  "QPlainTextEdit:tabStopDistance": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:tabStopDistance",
+    "QPlainTextEdit/set:QPlainTextEdit:tabStopDistance:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:tabStopDistance",
+    "QPlainTextEdit/set:QPlainTextEdit:tabStopDistance:back"
+   ]
+  },
+  "QPlainTextEdit:textInteractionFlags": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:readOnly",
+    "QPlainTextEdit/set:QPlainTextEdit:readOnly:back",
+    "QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags",
+    "QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags:back"
+   ],
+   "changes": 4,
+   "driven": true,
+   "events": [
+    "ReadOnlyChange"
+   ],
+   "specificity": {
+    "ReadOnlyChange": 0.333
+   },
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags",
+    "QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags:back"
+   ]
+  },
+  "QPlainTextEdit:undoRedoEnabled": {
+   "causes": [
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount",
+    "QPlainTextEdit/set:QPlainTextEdit:undoRedoEnabled",
+    "QPlainTextEdit/set:QPlainTextEdit:undoRedoEnabled:back"
+   ],
+   "changes": 3,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount",
+    "QPlainTextEdit/set:QPlainTextEdit:undoRedoEnabled",
+    "QPlainTextEdit/set:QPlainTextEdit:undoRedoEnabled:back"
+   ]
+  },
+  "QSpinBox:cleanText": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ],
+   "changes": 3,
+   "driven": false,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ]
+  },
+  "QSpinBox:displayIntegerBase": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:displayIntegerBase",
+    "QSpinBox/set:QSpinBox:displayIntegerBase:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:displayIntegerBase",
+    "QSpinBox/set:QSpinBox:displayIntegerBase:back"
+   ]
+  },
+  "QSpinBox:maximum": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back"
+   ]
+  },
+  "QSpinBox:minimum": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:minimum:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:minimum:back"
+   ]
+  },
+  "QSpinBox:prefix": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back"
+   ]
+  },
+  "QSpinBox:singleStep": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:singleStep",
+    "QSpinBox/set:QSpinBox:singleStep:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:singleStep",
+    "QSpinBox/set:QSpinBox:singleStep:back"
+   ]
+  },
+  "QSpinBox:stepType": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:stepType",
+    "QSpinBox/set:QSpinBox:stepType:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:stepType",
+    "QSpinBox/set:QSpinBox:stepType:back"
+   ]
+  },
+  "QSpinBox:suffix": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back"
+   ]
+  },
+  "QSpinBox:value": {
+   "causes": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ],
+   "changes": 3,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ]
+  },
+  "QTextEdit:acceptRichText": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:acceptRichText",
+    "QTextEdit/set:QTextEdit:acceptRichText:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:acceptRichText",
+    "QTextEdit/set:QTextEdit:acceptRichText:back"
+   ]
+  },
+  "QTextEdit:autoFormatting": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:autoFormatting",
+    "QTextEdit/set:QTextEdit:autoFormatting:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:autoFormatting",
+    "QTextEdit/set:QTextEdit:autoFormatting:back"
+   ]
+  },
+  "QTextEdit:cursorWidth": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:cursorWidth",
+    "QTextEdit/set:QTextEdit:cursorWidth:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:cursorWidth",
+    "QTextEdit/set:QTextEdit:cursorWidth:back"
+   ]
+  },
+  "QTextEdit:documentTitle": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:documentTitle",
+    "QTextEdit/set:QTextEdit:documentTitle:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:documentTitle",
+    "QTextEdit/set:QTextEdit:documentTitle:back"
+   ]
+  },
+  "QTextEdit:html": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:documentTitle",
+    "QTextEdit/set:QTextEdit:documentTitle:back",
+    "QTextEdit/set:QTextEdit:html",
+    "QTextEdit/set:QTextEdit:html:back",
+    "QTextEdit/set:QTextEdit:markdown",
+    "QTextEdit/set:QTextEdit:markdown:back",
+    "QTextEdit/set:QTextEdit:plainText",
+    "QTextEdit/set:QTextEdit:plainText:back",
+    "QTextEdit/set:QWidget:font",
+    "QTextEdit/set:QWidget:font:back"
+   ],
+   "changes": 10,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:documentTitle",
+    "QTextEdit/set:QTextEdit:documentTitle:back",
+    "QTextEdit/set:QTextEdit:html",
+    "QTextEdit/set:QTextEdit:html:back",
+    "QTextEdit/set:QTextEdit:markdown",
+    "QTextEdit/set:QTextEdit:markdown:back",
+    "QTextEdit/set:QTextEdit:plainText",
+    "QTextEdit/set:QTextEdit:plainText:back",
+    "QTextEdit/set:QWidget:font",
+    "QTextEdit/set:QWidget:font:back"
+   ]
+  },
+  "QTextEdit:lineWrapColumnOrWidth": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:lineWrapColumnOrWidth",
+    "QTextEdit/set:QTextEdit:lineWrapColumnOrWidth:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:lineWrapColumnOrWidth",
+    "QTextEdit/set:QTextEdit:lineWrapColumnOrWidth:back"
+   ]
+  },
+  "QTextEdit:lineWrapMode": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:lineWrapMode",
+    "QTextEdit/set:QTextEdit:lineWrapMode:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:lineWrapMode",
+    "QTextEdit/set:QTextEdit:lineWrapMode:back"
+   ]
+  },
+  "QTextEdit:markdown": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:html",
+    "QTextEdit/set:QTextEdit:html:back",
+    "QTextEdit/set:QTextEdit:markdown",
+    "QTextEdit/set:QTextEdit:markdown:back",
+    "QTextEdit/set:QTextEdit:plainText",
+    "QTextEdit/set:QTextEdit:plainText:back"
+   ],
+   "changes": 6,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:html",
+    "QTextEdit/set:QTextEdit:html:back",
+    "QTextEdit/set:QTextEdit:markdown",
+    "QTextEdit/set:QTextEdit:markdown:back",
+    "QTextEdit/set:QTextEdit:plainText",
+    "QTextEdit/set:QTextEdit:plainText:back"
+   ]
+  },
+  "QTextEdit:overwriteMode": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:overwriteMode",
+    "QTextEdit/set:QTextEdit:overwriteMode:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:overwriteMode",
+    "QTextEdit/set:QTextEdit:overwriteMode:back"
+   ]
+  },
+  "QTextEdit:placeholderText": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:placeholderText",
+    "QTextEdit/set:QTextEdit:placeholderText:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:placeholderText",
+    "QTextEdit/set:QTextEdit:placeholderText:back"
+   ]
+  },
+  "QTextEdit:plainText": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:html",
+    "QTextEdit/set:QTextEdit:html:back",
+    "QTextEdit/set:QTextEdit:markdown",
+    "QTextEdit/set:QTextEdit:markdown:back",
+    "QTextEdit/set:QTextEdit:plainText",
+    "QTextEdit/set:QTextEdit:plainText:back"
+   ],
+   "changes": 6,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:html",
+    "QTextEdit/set:QTextEdit:html:back",
+    "QTextEdit/set:QTextEdit:markdown",
+    "QTextEdit/set:QTextEdit:markdown:back",
+    "QTextEdit/set:QTextEdit:plainText",
+    "QTextEdit/set:QTextEdit:plainText:back"
+   ]
+  },
+  "QTextEdit:readOnly": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:readOnly",
+    "QTextEdit/set:QTextEdit:readOnly:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [
+    "ReadOnlyChange"
+   ],
+   "specificity": {
+    "ReadOnlyChange": 0.333
+   }
+  },
+  "QTextEdit:tabChangesFocus": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:tabChangesFocus",
+    "QTextEdit/set:QTextEdit:tabChangesFocus:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:tabChangesFocus",
+    "QTextEdit/set:QTextEdit:tabChangesFocus:back"
+   ]
+  },
+  "QTextEdit:tabStopDistance": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:tabStopDistance",
+    "QTextEdit/set:QTextEdit:tabStopDistance:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:tabStopDistance",
+    "QTextEdit/set:QTextEdit:tabStopDistance:back"
+   ]
+  },
+  "QTextEdit:textInteractionFlags": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:readOnly",
+    "QTextEdit/set:QTextEdit:readOnly:back",
+    "QTextEdit/set:QTextEdit:textInteractionFlags",
+    "QTextEdit/set:QTextEdit:textInteractionFlags:back"
+   ],
+   "changes": 4,
+   "driven": true,
+   "events": [
+    "ReadOnlyChange"
+   ],
+   "specificity": {
+    "ReadOnlyChange": 0.333
+   },
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:textInteractionFlags",
+    "QTextEdit/set:QTextEdit:textInteractionFlags:back"
+   ]
+  },
+  "QTextEdit:undoRedoEnabled": {
+   "causes": [
+    "QTextEdit/set:QTextEdit:undoRedoEnabled",
+    "QTextEdit/set:QTextEdit:undoRedoEnabled:back"
+   ],
+   "changes": 2,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:undoRedoEnabled",
+    "QTextEdit/set:QTextEdit:undoRedoEnabled:back"
+   ]
+  },
+  "QWidget:acceptDrops": {
+   "causes": [
+    "QLineEdit/set:QWidget:acceptDrops",
+    "QLineEdit/set:QWidget:acceptDrops:back",
+    "QPlainTextEdit/set:QWidget:acceptDrops",
+    "QPlainTextEdit/set:QWidget:acceptDrops:back",
+    "QSpinBox/set:QWidget:acceptDrops",
+    "QSpinBox/set:QWidget:acceptDrops:back",
+    "QTextEdit/set:QWidget:acceptDrops",
+    "QTextEdit/set:QWidget:acceptDrops:back",
+    "QWidget(child)/set:QWidget:acceptDrops",
+    "QWidget(child)/set:QWidget:acceptDrops:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [
+    "AcceptDropsChange"
+   ],
+   "specificity": {
+    "AcceptDropsChange": 1.0
+   }
+  },
+  "QWidget:accessibleDescription": {
+   "causes": [
+    "QLineEdit/set:QWidget:accessibleDescription",
+    "QLineEdit/set:QWidget:accessibleDescription:back",
+    "QPlainTextEdit/set:QWidget:accessibleDescription",
+    "QPlainTextEdit/set:QWidget:accessibleDescription:back",
+    "QSpinBox/set:QWidget:accessibleDescription",
+    "QSpinBox/set:QWidget:accessibleDescription:back",
+    "QTextEdit/set:QWidget:accessibleDescription",
+    "QTextEdit/set:QWidget:accessibleDescription:back",
+    "QWidget(child)/set:QWidget:accessibleDescription",
+    "QWidget(child)/set:QWidget:accessibleDescription:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:accessibleDescription",
+    "QLineEdit/set:QWidget:accessibleDescription:back",
+    "QPlainTextEdit/set:QWidget:accessibleDescription",
+    "QPlainTextEdit/set:QWidget:accessibleDescription:back",
+    "QSpinBox/set:QWidget:accessibleDescription",
+    "QSpinBox/set:QWidget:accessibleDescription:back",
+    "QTextEdit/set:QWidget:accessibleDescription",
+    "QTextEdit/set:QWidget:accessibleDescription:back",
+    "QWidget(child)/set:QWidget:accessibleDescription",
+    "QWidget(child)/set:QWidget:accessibleDescription:back",
+    "QWidget/set:QWidget:accessibleDescription",
+    "QWidget/set:QWidget:accessibleDescription:back"
+   ]
+  },
+  "QWidget:accessibleIdentifier": {
+   "causes": [
+    "QLineEdit/set:QWidget:accessibleIdentifier",
+    "QLineEdit/set:QWidget:accessibleIdentifier:back",
+    "QPlainTextEdit/set:QWidget:accessibleIdentifier",
+    "QPlainTextEdit/set:QWidget:accessibleIdentifier:back",
+    "QSpinBox/set:QWidget:accessibleIdentifier",
+    "QSpinBox/set:QWidget:accessibleIdentifier:back",
+    "QTextEdit/set:QWidget:accessibleIdentifier",
+    "QTextEdit/set:QWidget:accessibleIdentifier:back",
+    "QWidget(child)/set:QWidget:accessibleIdentifier",
+    "QWidget(child)/set:QWidget:accessibleIdentifier:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:accessibleIdentifier",
+    "QLineEdit/set:QWidget:accessibleIdentifier:back",
+    "QPlainTextEdit/set:QWidget:accessibleIdentifier",
+    "QPlainTextEdit/set:QWidget:accessibleIdentifier:back",
+    "QSpinBox/set:QWidget:accessibleIdentifier",
+    "QSpinBox/set:QWidget:accessibleIdentifier:back",
+    "QTextEdit/set:QWidget:accessibleIdentifier",
+    "QTextEdit/set:QWidget:accessibleIdentifier:back",
+    "QWidget(child)/set:QWidget:accessibleIdentifier",
+    "QWidget(child)/set:QWidget:accessibleIdentifier:back",
+    "QWidget/set:QWidget:accessibleIdentifier",
+    "QWidget/set:QWidget:accessibleIdentifier:back"
+   ]
+  },
+  "QWidget:accessibleName": {
+   "causes": [
+    "QLineEdit/set:QWidget:accessibleName",
+    "QLineEdit/set:QWidget:accessibleName:back",
+    "QPlainTextEdit/set:QWidget:accessibleName",
+    "QPlainTextEdit/set:QWidget:accessibleName:back",
+    "QSpinBox/set:QWidget:accessibleName",
+    "QSpinBox/set:QWidget:accessibleName:back",
+    "QTextEdit/set:QWidget:accessibleName",
+    "QTextEdit/set:QWidget:accessibleName:back",
+    "QWidget(child)/set:QWidget:accessibleName",
+    "QWidget(child)/set:QWidget:accessibleName:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:accessibleName",
+    "QLineEdit/set:QWidget:accessibleName:back",
+    "QPlainTextEdit/set:QWidget:accessibleName",
+    "QPlainTextEdit/set:QWidget:accessibleName:back",
+    "QSpinBox/set:QWidget:accessibleName",
+    "QSpinBox/set:QWidget:accessibleName:back",
+    "QTextEdit/set:QWidget:accessibleName",
+    "QTextEdit/set:QWidget:accessibleName:back",
+    "QWidget(child)/set:QWidget:accessibleName",
+    "QWidget(child)/set:QWidget:accessibleName:back",
+    "QWidget/set:QWidget:accessibleName",
+    "QWidget/set:QWidget:accessibleName:back"
+   ]
+  },
+  "QWidget:autoFillBackground": {
+   "causes": [
+    "QLineEdit/set:QWidget:autoFillBackground",
+    "QLineEdit/set:QWidget:autoFillBackground:back",
+    "QPlainTextEdit/set:QWidget:autoFillBackground",
+    "QPlainTextEdit/set:QWidget:autoFillBackground:back",
+    "QSpinBox/set:QWidget:autoFillBackground",
+    "QSpinBox/set:QWidget:autoFillBackground:back",
+    "QTextEdit/set:QWidget:autoFillBackground",
+    "QTextEdit/set:QWidget:autoFillBackground:back",
+    "QWidget(child)/set:QWidget:autoFillBackground",
+    "QWidget(child)/set:QWidget:autoFillBackground:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:autoFillBackground",
+    "QLineEdit/set:QWidget:autoFillBackground:back",
+    "QPlainTextEdit/set:QWidget:autoFillBackground",
+    "QPlainTextEdit/set:QWidget:autoFillBackground:back",
+    "QSpinBox/set:QWidget:autoFillBackground",
+    "QSpinBox/set:QWidget:autoFillBackground:back",
+    "QTextEdit/set:QWidget:autoFillBackground",
+    "QTextEdit/set:QWidget:autoFillBackground:back",
+    "QWidget(child)/set:QWidget:autoFillBackground",
+    "QWidget(child)/set:QWidget:autoFillBackground:back",
+    "QWidget/set:QWidget:autoFillBackground",
+    "QWidget/set:QWidget:autoFillBackground:back"
+   ]
+  },
+  "QWidget:baseSize": {
+   "causes": [
+    "QLineEdit/set:QWidget:baseSize",
+    "QLineEdit/set:QWidget:baseSize:back",
+    "QPlainTextEdit/set:QWidget:baseSize",
+    "QPlainTextEdit/set:QWidget:baseSize:back",
+    "QSpinBox/set:QWidget:baseSize",
+    "QSpinBox/set:QWidget:baseSize:back",
+    "QTextEdit/set:QWidget:baseSize",
+    "QTextEdit/set:QWidget:baseSize:back",
+    "QWidget(child)/set:QWidget:baseSize",
+    "QWidget(child)/set:QWidget:baseSize:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:baseSize",
+    "QLineEdit/set:QWidget:baseSize:back",
+    "QPlainTextEdit/set:QWidget:baseSize",
+    "QPlainTextEdit/set:QWidget:baseSize:back",
+    "QSpinBox/set:QWidget:baseSize",
+    "QSpinBox/set:QWidget:baseSize:back",
+    "QTextEdit/set:QWidget:baseSize",
+    "QTextEdit/set:QWidget:baseSize:back",
+    "QWidget(child)/set:QWidget:baseSize",
+    "QWidget(child)/set:QWidget:baseSize:back",
+    "QWidget/set:QWidget:baseSize",
+    "QWidget/set:QWidget:baseSize:back"
+   ]
+  },
+  "QWidget:childrenRect": {
+   "causes": [
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QSpinBox/set:QWidget:geometry",
+    "QSpinBox/set:QWidget:geometry:back",
+    "QSpinBox/set:QWidget:layoutDirection",
+    "QSpinBox/set:QWidget:layoutDirection:back",
+    "QSpinBox/set:QWidget:size",
+    "QSpinBox/set:QWidget:size:back"
+   ],
+   "changes": 14,
+   "driven": false,
+   "events": [
+    "Resize"
+   ],
+   "specificity": {
+    "Resize": 0.364
+   },
+   "uncovered": [
+    "QSpinBox/set:QWidget:layoutDirection",
+    "QSpinBox/set:QWidget:layoutDirection:back"
+   ]
+  },
+  "QWidget:childrenRegion": {
+   "causes": [
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QSpinBox/set:QWidget:geometry",
+    "QSpinBox/set:QWidget:geometry:back",
+    "QSpinBox/set:QWidget:layoutDirection",
+    "QSpinBox/set:QWidget:layoutDirection:back",
+    "QSpinBox/set:QWidget:size",
+    "QSpinBox/set:QWidget:size:back"
+   ],
+   "changes": 14,
+   "driven": false,
+   "events": [
+    "Resize"
+   ],
+   "specificity": {
+    "Resize": 0.364
+   },
+   "uncovered": [
+    "QSpinBox/set:QWidget:layoutDirection",
+    "QSpinBox/set:QWidget:layoutDirection:back"
+   ]
+  },
+  "QWidget:contextMenuPolicy": {
+   "causes": [
+    "QLineEdit/set:QWidget:contextMenuPolicy",
+    "QLineEdit/set:QWidget:contextMenuPolicy:back",
+    "QPlainTextEdit/set:QWidget:contextMenuPolicy",
+    "QPlainTextEdit/set:QWidget:contextMenuPolicy:back",
+    "QSpinBox/set:QWidget:contextMenuPolicy",
+    "QSpinBox/set:QWidget:contextMenuPolicy:back",
+    "QTextEdit/set:QWidget:contextMenuPolicy",
+    "QTextEdit/set:QWidget:contextMenuPolicy:back",
+    "QWidget(child)/set:QWidget:contextMenuPolicy",
+    "QWidget(child)/set:QWidget:contextMenuPolicy:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:contextMenuPolicy",
+    "QLineEdit/set:QWidget:contextMenuPolicy:back",
+    "QPlainTextEdit/set:QWidget:contextMenuPolicy",
+    "QPlainTextEdit/set:QWidget:contextMenuPolicy:back",
+    "QSpinBox/set:QWidget:contextMenuPolicy",
+    "QSpinBox/set:QWidget:contextMenuPolicy:back",
+    "QTextEdit/set:QWidget:contextMenuPolicy",
+    "QTextEdit/set:QWidget:contextMenuPolicy:back",
+    "QWidget(child)/set:QWidget:contextMenuPolicy",
+    "QWidget(child)/set:QWidget:contextMenuPolicy:back",
+    "QWidget/set:QWidget:contextMenuPolicy",
+    "QWidget/set:QWidget:contextMenuPolicy:back"
+   ]
+  },
+  "QWidget:cursor": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:readOnly",
+    "QLineEdit/set:QLineEdit:readOnly:back",
+    "QLineEdit/set:QWidget:cursor",
+    "QLineEdit/set:QWidget:cursor:back",
+    "QPlainTextEdit/set:QWidget:cursor",
+    "QPlainTextEdit/set:QWidget:cursor:back",
+    "QSpinBox/set:QWidget:cursor",
+    "QSpinBox/set:QWidget:cursor:back",
+    "QTextEdit/set:QWidget:cursor",
+    "QTextEdit/set:QWidget:cursor:back"
+   ],
+   "changes": 14,
+   "driven": true,
+   "events": [
+    "CursorChange"
+   ],
+   "specificity": {
+    "CursorChange": 0.583
+   }
+  },
+  "QWidget:enabled": {
+   "causes": [
+    "QLineEdit/scenario:parent setEnabled(false)",
+    "QLineEdit/scenario:parent setEnabled(true)",
+    "QLineEdit/set:QWidget:enabled",
+    "QLineEdit/set:QWidget:enabled:back",
+    "QPlainTextEdit/set:QWidget:enabled",
+    "QPlainTextEdit/set:QWidget:enabled:back",
+    "QSpinBox/set:QWidget:enabled",
+    "QSpinBox/set:QWidget:enabled:back",
+    "QTextEdit/set:QWidget:enabled",
+    "QTextEdit/set:QWidget:enabled:back"
+   ],
+   "changes": 14,
+   "driven": true,
+   "events": [
+    "EnabledChange"
+   ],
+   "specificity": {
+    "EnabledChange": 1.0
+   }
+  },
+  "QWidget:focus": {
+   "causes": [
+    "QLineEdit/scenario:another window activated again",
+    "QLineEdit/scenario:focus moved away",
+    "QLineEdit/scenario:inactive parent show()",
+    "QLineEdit/scenario:its window activated",
+    "QLineEdit/set:QWidget:enabled",
+    "QLineEdit/set:QWidget:visible",
+    "QPlainTextEdit/set:QWidget:enabled",
+    "QPlainTextEdit/set:QWidget:visible",
+    "QSpinBox/set:QWidget:enabled",
+    "QSpinBox/set:QWidget:visible"
+   ],
+   "changes": 12,
+   "driven": false,
+   "events": [
+    "FocusIn",
+    "FocusOut"
+   ],
+   "specificity": {
+    "FocusIn": 1.0,
+    "FocusOut": 1.0
+   }
+  },
+  "QWidget:focusPolicy": {
+   "causes": [
+    "QLineEdit/set:QWidget:focusPolicy",
+    "QLineEdit/set:QWidget:focusPolicy:back",
+    "QPlainTextEdit/set:QWidget:focusPolicy",
+    "QPlainTextEdit/set:QWidget:focusPolicy:back",
+    "QSpinBox/set:QWidget:focusPolicy",
+    "QSpinBox/set:QWidget:focusPolicy:back",
+    "QTextEdit/set:QWidget:focusPolicy",
+    "QTextEdit/set:QWidget:focusPolicy:back",
+    "QWidget(child)/set:QWidget:focusPolicy",
+    "QWidget(child)/set:QWidget:focusPolicy:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:focusPolicy",
+    "QLineEdit/set:QWidget:focusPolicy:back",
+    "QPlainTextEdit/set:QWidget:focusPolicy",
+    "QPlainTextEdit/set:QWidget:focusPolicy:back",
+    "QSpinBox/set:QWidget:focusPolicy",
+    "QSpinBox/set:QWidget:focusPolicy:back",
+    "QTextEdit/set:QWidget:focusPolicy",
+    "QTextEdit/set:QWidget:focusPolicy:back",
+    "QWidget(child)/set:QWidget:focusPolicy",
+    "QWidget(child)/set:QWidget:focusPolicy:back",
+    "QWidget/set:QWidget:focusPolicy",
+    "QWidget/set:QWidget:focusPolicy:back"
+   ]
+  },
+  "QWidget:font": {
+   "causes": [
+    "QLineEdit/scenario:parent setFont",
+    "QLineEdit/set:QWidget:font",
+    "QLineEdit/set:QWidget:font:back",
+    "QPlainTextEdit/set:QWidget:font",
+    "QPlainTextEdit/set:QWidget:font:back",
+    "QSpinBox/set:QWidget:font",
+    "QSpinBox/set:QWidget:font:back",
+    "QTextEdit/set:QWidget:font",
+    "QTextEdit/set:QWidget:font:back",
+    "QWidget(child)/set:QWidget:font"
+   ],
+   "changes": 13,
+   "driven": true,
+   "events": [
+    "FontChange"
+   ],
+   "specificity": {
+    "FontChange": 1.0
+   }
+  },
+  "QWidget:frameGeometry": {
+   "causes": [
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:pos",
+    "QLineEdit/set:QWidget:pos:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:pos"
+   ],
+   "changes": 47,
+   "driven": false,
+   "events": [
+    "Move",
+    "Resize"
+   ],
+   "specificity": {
+    "Move": 0.964,
+    "Resize": 0.97
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden move",
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:frameSize": {
+   "causes": [
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QSpinBox/set:QWidget:geometry"
+   ],
+   "changes": 33,
+   "driven": false,
+   "events": [
+    "Resize"
+   ],
+   "specificity": {
+    "Resize": 0.97
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:fullScreen": {
+   "causes": [
+    "QWidget/scenario:showFullScreen",
+    "QWidget/scenario:showNormal after fullScreen"
+   ],
+   "changes": 2,
+   "driven": false,
+   "events": [
+    "WindowStateChange"
+   ],
+   "specificity": {
+    "WindowStateChange": 0.25
+   }
+  },
+  "QWidget:geometry": {
+   "causes": [
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:pos",
+    "QLineEdit/set:QWidget:pos:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:pos"
+   ],
+   "changes": 47,
+   "driven": true,
+   "events": [
+    "Move",
+    "Resize"
+   ],
+   "specificity": {
+    "Move": 0.964,
+    "Resize": 0.97
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden move",
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:height": {
+   "causes": [
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QSpinBox/set:QWidget:geometry"
+   ],
+   "changes": 33,
+   "driven": false,
+   "events": [
+    "Resize"
+   ],
+   "specificity": {
+    "Resize": 0.97
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:inputMethodHints": {
+   "causes": [
+    "QLineEdit/set:QLineEdit:echoMode",
+    "QLineEdit/set:QLineEdit:echoMode:back",
+    "QLineEdit/set:QWidget:inputMethodHints",
+    "QLineEdit/set:QWidget:inputMethodHints:back",
+    "QPlainTextEdit/set:QWidget:inputMethodHints",
+    "QPlainTextEdit/set:QWidget:inputMethodHints:back",
+    "QSpinBox/set:QWidget:inputMethodHints",
+    "QSpinBox/set:QWidget:inputMethodHints:back",
+    "QTextEdit/set:QWidget:inputMethodHints",
+    "QTextEdit/set:QWidget:inputMethodHints:back"
+   ],
+   "changes": 14,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:echoMode",
+    "QLineEdit/set:QLineEdit:echoMode:back",
+    "QLineEdit/set:QWidget:inputMethodHints",
+    "QLineEdit/set:QWidget:inputMethodHints:back",
+    "QPlainTextEdit/set:QWidget:inputMethodHints",
+    "QPlainTextEdit/set:QWidget:inputMethodHints:back",
+    "QSpinBox/set:QWidget:inputMethodHints",
+    "QSpinBox/set:QWidget:inputMethodHints:back",
+    "QTextEdit/set:QWidget:inputMethodHints",
+    "QTextEdit/set:QWidget:inputMethodHints:back",
+    "QWidget(child)/set:QWidget:inputMethodHints",
+    "QWidget(child)/set:QWidget:inputMethodHints:back",
+    "QWidget/set:QWidget:inputMethodHints",
+    "QWidget/set:QWidget:inputMethodHints:back"
+   ]
+  },
+  "QWidget:isActiveWindow": {
+   "causes": [
+    "QLineEdit/scenario:another window activated again",
+    "QLineEdit/scenario:inactive parent show()",
+    "QLineEdit/scenario:its window activated",
+    "QLineEdit/scenario:parent hide()",
+    "QLineEdit/set:QWidget:visible",
+    "QPlainTextEdit/set:QWidget:visible",
+    "QSpinBox/set:QWidget:visible",
+    "QTextEdit/set:QWidget:visible",
+    "QWidget/scenario:activateWindow",
+    "QWidget/scenario:hide"
+   ],
+   "changes": 11,
+   "driven": false,
+   "events": [
+    "ActivationChange",
+    "WindowActivate",
+    "WindowDeactivate"
+   ],
+   "specificity": {
+    "ActivationChange": 1.0,
+    "WindowActivate": 1.0,
+    "WindowDeactivate": 1.0
+   }
+  },
+  "QWidget:layoutDirection": {
+   "causes": [
+    "QLineEdit/scenario:parent setLayoutDirection",
+    "QLineEdit/set:QWidget:layoutDirection",
+    "QLineEdit/set:QWidget:layoutDirection:back",
+    "QPlainTextEdit/set:QWidget:layoutDirection",
+    "QPlainTextEdit/set:QWidget:layoutDirection:back",
+    "QSpinBox/set:QWidget:layoutDirection",
+    "QSpinBox/set:QWidget:layoutDirection:back",
+    "QTextEdit/set:QWidget:layoutDirection",
+    "QTextEdit/set:QWidget:layoutDirection:back",
+    "QWidget(child)/set:QWidget:layoutDirection"
+   ],
+   "changes": 13,
+   "driven": true,
+   "events": [
+    "LayoutDirectionChange"
+   ],
+   "specificity": {
+    "LayoutDirectionChange": 1.0
+   }
+  },
+  "QWidget:locale": {
+   "causes": [
+    "QLineEdit/scenario:parent setLocale",
+    "QLineEdit/set:QWidget:locale",
+    "QLineEdit/set:QWidget:locale:back",
+    "QPlainTextEdit/set:QWidget:locale",
+    "QPlainTextEdit/set:QWidget:locale:back",
+    "QSpinBox/set:QWidget:locale",
+    "QSpinBox/set:QWidget:locale:back",
+    "QTextEdit/set:QWidget:locale",
+    "QTextEdit/set:QWidget:locale:back",
+    "QWidget(child)/set:QWidget:locale"
+   ],
+   "changes": 13,
+   "driven": true,
+   "events": [
+    "LocaleChange"
+   ],
+   "specificity": {
+    "LocaleChange": 1.0
+   }
+  },
+  "QWidget:maximized": {
+   "causes": [
+    "QWidget/scenario:setWindowState(maximized)",
+    "QWidget/scenario:setWindowState(none)",
+    "QWidget/scenario:showMaximized",
+    "QWidget/scenario:showNormal after maximized"
+   ],
+   "changes": 4,
+   "driven": false,
+   "events": [
+    "WindowStateChange"
+   ],
+   "specificity": {
+    "WindowStateChange": 0.5
+   }
+  },
+  "QWidget:maximumHeight": {
+   "causes": [
+    "QLineEdit/set:QWidget:maximumSize",
+    "QLineEdit/set:QWidget:maximumSize:back",
+    "QPlainTextEdit/set:QWidget:maximumSize",
+    "QPlainTextEdit/set:QWidget:maximumSize:back",
+    "QSpinBox/set:QWidget:maximumSize",
+    "QSpinBox/set:QWidget:maximumSize:back",
+    "QTextEdit/set:QWidget:maximumSize",
+    "QTextEdit/set:QWidget:maximumSize:back",
+    "QWidget(child)/set:QWidget:maximumSize",
+    "QWidget(child)/set:QWidget:maximumSize:back"
+   ],
+   "changes": 12,
+   "driven": false,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:maximumSize",
+    "QLineEdit/set:QWidget:maximumSize:back",
+    "QPlainTextEdit/set:QWidget:maximumSize",
+    "QPlainTextEdit/set:QWidget:maximumSize:back",
+    "QSpinBox/set:QWidget:maximumSize",
+    "QSpinBox/set:QWidget:maximumSize:back",
+    "QTextEdit/set:QWidget:maximumSize",
+    "QTextEdit/set:QWidget:maximumSize:back",
+    "QWidget(child)/set:QWidget:maximumSize",
+    "QWidget(child)/set:QWidget:maximumSize:back",
+    "QWidget/set:QWidget:maximumSize",
+    "QWidget/set:QWidget:maximumSize:back"
+   ]
+  },
+  "QWidget:maximumSize": {
+   "causes": [
+    "QLineEdit/set:QWidget:maximumSize",
+    "QLineEdit/set:QWidget:maximumSize:back",
+    "QPlainTextEdit/set:QWidget:maximumSize",
+    "QPlainTextEdit/set:QWidget:maximumSize:back",
+    "QSpinBox/set:QWidget:maximumSize",
+    "QSpinBox/set:QWidget:maximumSize:back",
+    "QTextEdit/set:QWidget:maximumSize",
+    "QTextEdit/set:QWidget:maximumSize:back",
+    "QWidget(child)/set:QWidget:maximumSize",
+    "QWidget(child)/set:QWidget:maximumSize:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:maximumSize",
+    "QLineEdit/set:QWidget:maximumSize:back",
+    "QPlainTextEdit/set:QWidget:maximumSize",
+    "QPlainTextEdit/set:QWidget:maximumSize:back",
+    "QSpinBox/set:QWidget:maximumSize",
+    "QSpinBox/set:QWidget:maximumSize:back",
+    "QTextEdit/set:QWidget:maximumSize",
+    "QTextEdit/set:QWidget:maximumSize:back",
+    "QWidget(child)/set:QWidget:maximumSize",
+    "QWidget(child)/set:QWidget:maximumSize:back",
+    "QWidget/set:QWidget:maximumSize",
+    "QWidget/set:QWidget:maximumSize:back"
+   ]
+  },
+  "QWidget:maximumWidth": {
+   "causes": [
+    "QLineEdit/set:QWidget:maximumSize",
+    "QLineEdit/set:QWidget:maximumSize:back",
+    "QPlainTextEdit/set:QWidget:maximumSize",
+    "QPlainTextEdit/set:QWidget:maximumSize:back",
+    "QSpinBox/set:QWidget:maximumSize",
+    "QSpinBox/set:QWidget:maximumSize:back",
+    "QTextEdit/set:QWidget:maximumSize",
+    "QTextEdit/set:QWidget:maximumSize:back",
+    "QWidget(child)/set:QWidget:maximumSize",
+    "QWidget(child)/set:QWidget:maximumSize:back"
+   ],
+   "changes": 12,
+   "driven": false,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:maximumSize",
+    "QLineEdit/set:QWidget:maximumSize:back",
+    "QPlainTextEdit/set:QWidget:maximumSize",
+    "QPlainTextEdit/set:QWidget:maximumSize:back",
+    "QSpinBox/set:QWidget:maximumSize",
+    "QSpinBox/set:QWidget:maximumSize:back",
+    "QTextEdit/set:QWidget:maximumSize",
+    "QTextEdit/set:QWidget:maximumSize:back",
+    "QWidget(child)/set:QWidget:maximumSize",
+    "QWidget(child)/set:QWidget:maximumSize:back",
+    "QWidget/set:QWidget:maximumSize",
+    "QWidget/set:QWidget:maximumSize:back"
+   ]
+  },
+  "QWidget:minimized": {
+   "causes": [
+    "QWidget/scenario:showMinimized",
+    "QWidget/scenario:showNormal after minimized"
+   ],
+   "changes": 2,
+   "driven": false,
+   "events": [
+    "WindowStateChange"
+   ],
+   "specificity": {
+    "WindowStateChange": 0.25
+   }
+  },
+  "QWidget:minimumHeight": {
+   "causes": [
+    "QLineEdit/set:QWidget:minimumHeight",
+    "QLineEdit/set:QWidget:minimumHeight:back",
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumHeight",
+    "QPlainTextEdit/set:QWidget:minimumHeight:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QSpinBox/set:QWidget:minimumHeight",
+    "QSpinBox/set:QWidget:minimumHeight:back"
+   ],
+   "changes": 24,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:minimumHeight",
+    "QLineEdit/set:QWidget:minimumHeight:back",
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumHeight",
+    "QPlainTextEdit/set:QWidget:minimumHeight:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QSpinBox/set:QWidget:minimumHeight",
+    "QSpinBox/set:QWidget:minimumHeight:back",
+    "QSpinBox/set:QWidget:minimumSize",
+    "QSpinBox/set:QWidget:minimumSize:back",
+    "QTextEdit/set:QWidget:minimumHeight",
+    "QTextEdit/set:QWidget:minimumHeight:back",
+    "QTextEdit/set:QWidget:minimumSize",
+    "QTextEdit/set:QWidget:minimumSize:back",
+    "QWidget(child)/set:QWidget:minimumHeight",
+    "QWidget(child)/set:QWidget:minimumHeight:back",
+    "QWidget(child)/set:QWidget:minimumSize",
+    "QWidget(child)/set:QWidget:minimumSize:back",
+    "QWidget/set:QWidget:minimumHeight",
+    "QWidget/set:QWidget:minimumHeight:back",
+    "QWidget/set:QWidget:minimumSize",
+    "QWidget/set:QWidget:minimumSize:back"
+   ]
+  },
+  "QWidget:minimumSize": {
+   "causes": [
+    "QLineEdit/set:QWidget:minimumHeight",
+    "QLineEdit/set:QWidget:minimumHeight:back",
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QLineEdit/set:QWidget:minimumWidth",
+    "QLineEdit/set:QWidget:minimumWidth:back",
+    "QPlainTextEdit/set:QWidget:minimumHeight",
+    "QPlainTextEdit/set:QWidget:minimumHeight:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back"
+   ],
+   "changes": 36,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:minimumHeight",
+    "QLineEdit/set:QWidget:minimumHeight:back",
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QLineEdit/set:QWidget:minimumWidth",
+    "QLineEdit/set:QWidget:minimumWidth:back",
+    "QPlainTextEdit/set:QWidget:minimumHeight",
+    "QPlainTextEdit/set:QWidget:minimumHeight:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumWidth",
+    "QPlainTextEdit/set:QWidget:minimumWidth:back",
+    "QSpinBox/set:QWidget:minimumHeight",
+    "QSpinBox/set:QWidget:minimumHeight:back",
+    "QSpinBox/set:QWidget:minimumSize",
+    "QSpinBox/set:QWidget:minimumSize:back",
+    "QSpinBox/set:QWidget:minimumWidth",
+    "QSpinBox/set:QWidget:minimumWidth:back",
+    "QTextEdit/set:QWidget:minimumHeight",
+    "QTextEdit/set:QWidget:minimumHeight:back",
+    "QTextEdit/set:QWidget:minimumSize",
+    "QTextEdit/set:QWidget:minimumSize:back",
+    "QTextEdit/set:QWidget:minimumWidth",
+    "QTextEdit/set:QWidget:minimumWidth:back",
+    "QWidget(child)/set:QWidget:minimumHeight",
+    "QWidget(child)/set:QWidget:minimumHeight:back",
+    "QWidget(child)/set:QWidget:minimumSize",
+    "QWidget(child)/set:QWidget:minimumSize:back",
+    "QWidget(child)/set:QWidget:minimumWidth",
+    "QWidget(child)/set:QWidget:minimumWidth:back",
+    "QWidget/set:QWidget:minimumHeight",
+    "QWidget/set:QWidget:minimumHeight:back",
+    "QWidget/set:QWidget:minimumSize",
+    "QWidget/set:QWidget:minimumSize:back",
+    "QWidget/set:QWidget:minimumWidth",
+    "QWidget/set:QWidget:minimumWidth:back"
+   ]
+  },
+  "QWidget:minimumSizeHint": {
+   "causes": [
+    "QLineEdit/scenario:parent setFont",
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back",
+    "QLineEdit/set:QWidget:font",
+    "QLineEdit/set:QWidget:font:back",
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QWidget:font"
+   ],
+   "changes": 13,
+   "driven": false,
+   "events": [
+    "FontChange"
+   ],
+   "specificity": {
+    "FontChange": 0.385
+   },
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back",
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QWidget:styleSheet",
+    "QSpinBox/set:QWidget:styleSheet:back"
+   ]
+  },
+  "QWidget:minimumWidth": {
+   "causes": [
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QLineEdit/set:QWidget:minimumWidth",
+    "QLineEdit/set:QWidget:minimumWidth:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumWidth",
+    "QPlainTextEdit/set:QWidget:minimumWidth:back",
+    "QSpinBox/set:QWidget:minimumSize",
+    "QSpinBox/set:QWidget:minimumSize:back"
+   ],
+   "changes": 24,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QLineEdit/set:QWidget:minimumWidth",
+    "QLineEdit/set:QWidget:minimumWidth:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumWidth",
+    "QPlainTextEdit/set:QWidget:minimumWidth:back",
+    "QSpinBox/set:QWidget:minimumSize",
+    "QSpinBox/set:QWidget:minimumSize:back",
+    "QSpinBox/set:QWidget:minimumWidth",
+    "QSpinBox/set:QWidget:minimumWidth:back",
+    "QTextEdit/set:QWidget:minimumSize",
+    "QTextEdit/set:QWidget:minimumSize:back",
+    "QTextEdit/set:QWidget:minimumWidth",
+    "QTextEdit/set:QWidget:minimumWidth:back",
+    "QWidget(child)/set:QWidget:minimumSize",
+    "QWidget(child)/set:QWidget:minimumSize:back",
+    "QWidget(child)/set:QWidget:minimumWidth",
+    "QWidget(child)/set:QWidget:minimumWidth:back",
+    "QWidget/set:QWidget:minimumSize",
+    "QWidget/set:QWidget:minimumSize:back",
+    "QWidget/set:QWidget:minimumWidth",
+    "QWidget/set:QWidget:minimumWidth:back"
+   ]
+  },
+  "QWidget:mouseTracking": {
+   "causes": [
+    "QLineEdit/set:QWidget:mouseTracking",
+    "QLineEdit/set:QWidget:mouseTracking:back",
+    "QPlainTextEdit/set:QWidget:mouseTracking",
+    "QPlainTextEdit/set:QWidget:mouseTracking:back",
+    "QSpinBox/set:QWidget:mouseTracking",
+    "QSpinBox/set:QWidget:mouseTracking:back",
+    "QTextEdit/set:QWidget:mouseTracking",
+    "QTextEdit/set:QWidget:mouseTracking:back",
+    "QWidget(child)/set:QWidget:mouseTracking",
+    "QWidget(child)/set:QWidget:mouseTracking:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [
+    "MouseTrackingChange"
+   ],
+   "specificity": {
+    "MouseTrackingChange": 1.0
+   }
+  },
+  "QWidget:normalGeometry": {
+   "causes": [
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:pos",
+    "QLineEdit/set:QWidget:pos:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:pos",
+    "QPlainTextEdit/set:QWidget:pos:back"
+   ],
+   "changes": 34,
+   "driven": false,
+   "events": [
+    "Move",
+    "Resize"
+   ],
+   "specificity": {
+    "Move": 0.75,
+    "Resize": 0.636
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden move",
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:palette": {
+   "causes": [
+    "QLineEdit/scenario:parent setPalette",
+    "QLineEdit/scenario:parent setStyleSheet",
+    "QLineEdit/set:QWidget:palette",
+    "QLineEdit/set:QWidget:palette:back",
+    "QPlainTextEdit/set:QWidget:palette",
+    "QPlainTextEdit/set:QWidget:palette:back",
+    "QSpinBox/set:QWidget:palette",
+    "QSpinBox/set:QWidget:palette:back",
+    "QTextEdit/set:QWidget:palette",
+    "QTextEdit/set:QWidget:palette:back"
+   ],
+   "changes": 14,
+   "driven": true,
+   "events": [
+    "PaletteChange"
+   ],
+   "specificity": {
+    "PaletteChange": 1.0
+   }
+  },
+  "QWidget:pos": {
+   "causes": [
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:pos",
+    "QLineEdit/set:QWidget:pos:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:pos",
+    "QPlainTextEdit/set:QWidget:pos:back",
+    "QSpinBox/set:QWidget:geometry",
+    "QSpinBox/set:QWidget:geometry:back"
+   ],
+   "changes": 26,
+   "driven": true,
+   "events": [
+    "Move"
+   ],
+   "specificity": {
+    "Move": 0.893
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden move"
+   ]
+  },
+  "QWidget:rect": {
+   "causes": [
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QSpinBox/set:QWidget:geometry"
+   ],
+   "changes": 33,
+   "driven": false,
+   "events": [
+    "Resize"
+   ],
+   "specificity": {
+    "Resize": 0.97
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:size": {
+   "causes": [
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QSpinBox/set:QWidget:geometry"
+   ],
+   "changes": 33,
+   "driven": true,
+   "events": [
+    "Resize"
+   ],
+   "specificity": {
+    "Resize": 0.97
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:sizeHint": {
+   "causes": [
+    "QLineEdit/scenario:parent setFont",
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back",
+    "QLineEdit/set:QWidget:font",
+    "QLineEdit/set:QWidget:font:back",
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QSpinBox:suffix"
+   ],
+   "changes": 15,
+   "driven": false,
+   "events": [
+    "FontChange"
+   ],
+   "specificity": {
+    "FontChange": 0.385
+   },
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back",
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back",
+    "QSpinBox/set:QWidget:styleSheet",
+    "QSpinBox/set:QWidget:styleSheet:back"
+   ]
+  },
+  "QWidget:sizeIncrement": {
+   "causes": [
+    "QLineEdit/set:QWidget:sizeIncrement",
+    "QLineEdit/set:QWidget:sizeIncrement:back",
+    "QPlainTextEdit/set:QWidget:sizeIncrement",
+    "QPlainTextEdit/set:QWidget:sizeIncrement:back",
+    "QSpinBox/set:QWidget:sizeIncrement",
+    "QSpinBox/set:QWidget:sizeIncrement:back",
+    "QTextEdit/set:QWidget:sizeIncrement",
+    "QTextEdit/set:QWidget:sizeIncrement:back",
+    "QWidget(child)/set:QWidget:sizeIncrement",
+    "QWidget(child)/set:QWidget:sizeIncrement:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:sizeIncrement",
+    "QLineEdit/set:QWidget:sizeIncrement:back",
+    "QPlainTextEdit/set:QWidget:sizeIncrement",
+    "QPlainTextEdit/set:QWidget:sizeIncrement:back",
+    "QSpinBox/set:QWidget:sizeIncrement",
+    "QSpinBox/set:QWidget:sizeIncrement:back",
+    "QTextEdit/set:QWidget:sizeIncrement",
+    "QTextEdit/set:QWidget:sizeIncrement:back",
+    "QWidget(child)/set:QWidget:sizeIncrement",
+    "QWidget(child)/set:QWidget:sizeIncrement:back",
+    "QWidget/set:QWidget:sizeIncrement",
+    "QWidget/set:QWidget:sizeIncrement:back"
+   ]
+  },
+  "QWidget:sizePolicy": {
+   "causes": [
+    "QLineEdit/set:QWidget:sizePolicy",
+    "QLineEdit/set:QWidget:sizePolicy:back",
+    "QPlainTextEdit/set:QWidget:sizePolicy",
+    "QPlainTextEdit/set:QWidget:sizePolicy:back",
+    "QSpinBox/set:QWidget:sizePolicy",
+    "QSpinBox/set:QWidget:sizePolicy:back",
+    "QTextEdit/set:QWidget:sizePolicy",
+    "QTextEdit/set:QWidget:sizePolicy:back",
+    "QWidget(child)/set:QWidget:sizePolicy",
+    "QWidget(child)/set:QWidget:sizePolicy:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:sizePolicy",
+    "QLineEdit/set:QWidget:sizePolicy:back",
+    "QPlainTextEdit/set:QWidget:sizePolicy",
+    "QPlainTextEdit/set:QWidget:sizePolicy:back",
+    "QSpinBox/set:QWidget:sizePolicy",
+    "QSpinBox/set:QWidget:sizePolicy:back",
+    "QTextEdit/set:QWidget:sizePolicy",
+    "QTextEdit/set:QWidget:sizePolicy:back",
+    "QWidget(child)/set:QWidget:sizePolicy",
+    "QWidget(child)/set:QWidget:sizePolicy:back",
+    "QWidget/set:QWidget:sizePolicy",
+    "QWidget/set:QWidget:sizePolicy:back"
+   ]
+  },
+  "QWidget:statusTip": {
+   "causes": [
+    "QLineEdit/set:QWidget:statusTip",
+    "QLineEdit/set:QWidget:statusTip:back",
+    "QPlainTextEdit/set:QWidget:statusTip",
+    "QPlainTextEdit/set:QWidget:statusTip:back",
+    "QSpinBox/set:QWidget:statusTip",
+    "QSpinBox/set:QWidget:statusTip:back",
+    "QTextEdit/set:QWidget:statusTip",
+    "QTextEdit/set:QWidget:statusTip:back",
+    "QWidget(child)/set:QWidget:statusTip",
+    "QWidget(child)/set:QWidget:statusTip:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:statusTip",
+    "QLineEdit/set:QWidget:statusTip:back",
+    "QPlainTextEdit/set:QWidget:statusTip",
+    "QPlainTextEdit/set:QWidget:statusTip:back",
+    "QSpinBox/set:QWidget:statusTip",
+    "QSpinBox/set:QWidget:statusTip:back",
+    "QTextEdit/set:QWidget:statusTip",
+    "QTextEdit/set:QWidget:statusTip:back",
+    "QWidget(child)/set:QWidget:statusTip",
+    "QWidget(child)/set:QWidget:statusTip:back",
+    "QWidget/set:QWidget:statusTip",
+    "QWidget/set:QWidget:statusTip:back"
+   ]
+  },
+  "QWidget:styleSheet": {
+   "causes": [
+    "QLineEdit/set:QWidget:styleSheet",
+    "QLineEdit/set:QWidget:styleSheet:back",
+    "QPlainTextEdit/set:QWidget:styleSheet",
+    "QPlainTextEdit/set:QWidget:styleSheet:back",
+    "QSpinBox/set:QWidget:styleSheet",
+    "QSpinBox/set:QWidget:styleSheet:back",
+    "QTextEdit/set:QWidget:styleSheet",
+    "QTextEdit/set:QWidget:styleSheet:back",
+    "QWidget(child)/set:QWidget:styleSheet",
+    "QWidget(child)/set:QWidget:styleSheet:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [
+    "StyleChange"
+   ],
+   "specificity": {
+    "StyleChange": 0.923
+   }
+  },
+  "QWidget:tabletTracking": {
+   "causes": [
+    "QLineEdit/set:QWidget:tabletTracking",
+    "QLineEdit/set:QWidget:tabletTracking:back",
+    "QPlainTextEdit/set:QWidget:tabletTracking",
+    "QPlainTextEdit/set:QWidget:tabletTracking:back",
+    "QSpinBox/set:QWidget:tabletTracking",
+    "QSpinBox/set:QWidget:tabletTracking:back",
+    "QTextEdit/set:QWidget:tabletTracking",
+    "QTextEdit/set:QWidget:tabletTracking:back",
+    "QWidget(child)/set:QWidget:tabletTracking",
+    "QWidget(child)/set:QWidget:tabletTracking:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [
+    "TabletTrackingChange"
+   ],
+   "specificity": {
+    "TabletTrackingChange": 1.0
+   }
+  },
+  "QWidget:toolTip": {
+   "causes": [
+    "QLineEdit/set:QWidget:toolTip",
+    "QLineEdit/set:QWidget:toolTip:back",
+    "QPlainTextEdit/set:QWidget:toolTip",
+    "QPlainTextEdit/set:QWidget:toolTip:back",
+    "QSpinBox/set:QWidget:toolTip",
+    "QSpinBox/set:QWidget:toolTip:back",
+    "QTextEdit/set:QWidget:toolTip",
+    "QTextEdit/set:QWidget:toolTip:back",
+    "QWidget(child)/set:QWidget:toolTip",
+    "QWidget(child)/set:QWidget:toolTip:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [
+    "ToolTipChange"
+   ],
+   "specificity": {
+    "ToolTipChange": 1.0
+   }
+  },
+  "QWidget:toolTipDuration": {
+   "causes": [
+    "QLineEdit/set:QWidget:toolTipDuration",
+    "QLineEdit/set:QWidget:toolTipDuration:back",
+    "QPlainTextEdit/set:QWidget:toolTipDuration",
+    "QPlainTextEdit/set:QWidget:toolTipDuration:back",
+    "QSpinBox/set:QWidget:toolTipDuration",
+    "QSpinBox/set:QWidget:toolTipDuration:back",
+    "QTextEdit/set:QWidget:toolTipDuration",
+    "QTextEdit/set:QWidget:toolTipDuration:back",
+    "QWidget(child)/set:QWidget:toolTipDuration",
+    "QWidget(child)/set:QWidget:toolTipDuration:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:toolTipDuration",
+    "QLineEdit/set:QWidget:toolTipDuration:back",
+    "QPlainTextEdit/set:QWidget:toolTipDuration",
+    "QPlainTextEdit/set:QWidget:toolTipDuration:back",
+    "QSpinBox/set:QWidget:toolTipDuration",
+    "QSpinBox/set:QWidget:toolTipDuration:back",
+    "QTextEdit/set:QWidget:toolTipDuration",
+    "QTextEdit/set:QWidget:toolTipDuration:back",
+    "QWidget(child)/set:QWidget:toolTipDuration",
+    "QWidget(child)/set:QWidget:toolTipDuration:back",
+    "QWidget/set:QWidget:toolTipDuration",
+    "QWidget/set:QWidget:toolTipDuration:back"
+   ]
+  },
+  "QWidget:updatesEnabled": {
+   "causes": [
+    "QLineEdit/set:QWidget:updatesEnabled",
+    "QLineEdit/set:QWidget:updatesEnabled:back",
+    "QPlainTextEdit/set:QWidget:updatesEnabled",
+    "QPlainTextEdit/set:QWidget:updatesEnabled:back",
+    "QSpinBox/set:QWidget:updatesEnabled",
+    "QSpinBox/set:QWidget:updatesEnabled:back",
+    "QTextEdit/set:QWidget:updatesEnabled",
+    "QTextEdit/set:QWidget:updatesEnabled:back",
+    "QWidget(child)/set:QWidget:updatesEnabled",
+    "QWidget(child)/set:QWidget:updatesEnabled:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:updatesEnabled",
+    "QLineEdit/set:QWidget:updatesEnabled:back",
+    "QPlainTextEdit/set:QWidget:updatesEnabled",
+    "QPlainTextEdit/set:QWidget:updatesEnabled:back",
+    "QSpinBox/set:QWidget:updatesEnabled",
+    "QSpinBox/set:QWidget:updatesEnabled:back",
+    "QTextEdit/set:QWidget:updatesEnabled",
+    "QTextEdit/set:QWidget:updatesEnabled:back",
+    "QWidget(child)/set:QWidget:updatesEnabled",
+    "QWidget(child)/set:QWidget:updatesEnabled:back",
+    "QWidget/set:QWidget:updatesEnabled",
+    "QWidget/set:QWidget:updatesEnabled:back"
+   ]
+  },
+  "QWidget:visible": {
+   "causes": [
+    "QLineEdit/scenario:inactive parent hide()",
+    "QLineEdit/scenario:inactive parent show()",
+    "QLineEdit/scenario:parent hide()",
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:visible",
+    "QLineEdit/set:QWidget:visible:back",
+    "QPlainTextEdit/set:QWidget:visible",
+    "QPlainTextEdit/set:QWidget:visible:back",
+    "QSpinBox/set:QWidget:visible",
+    "QSpinBox/set:QWidget:visible:back"
+   ],
+   "changes": 18,
+   "driven": true,
+   "events": [
+    "Hide",
+    "HideToParent",
+    "ShowToParent"
+   ],
+   "specificity": {
+    "Hide": 0.9,
+    "HideToParent": 1.0,
+    "ShowToParent": 1.0
+   }
+  },
+  "QWidget:whatsThis": {
+   "causes": [
+    "QLineEdit/set:QWidget:whatsThis",
+    "QLineEdit/set:QWidget:whatsThis:back",
+    "QPlainTextEdit/set:QWidget:whatsThis",
+    "QPlainTextEdit/set:QWidget:whatsThis:back",
+    "QSpinBox/set:QWidget:whatsThis",
+    "QSpinBox/set:QWidget:whatsThis:back",
+    "QTextEdit/set:QWidget:whatsThis",
+    "QTextEdit/set:QWidget:whatsThis:back",
+    "QWidget(child)/set:QWidget:whatsThis",
+    "QWidget(child)/set:QWidget:whatsThis:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:whatsThis",
+    "QLineEdit/set:QWidget:whatsThis:back",
+    "QPlainTextEdit/set:QWidget:whatsThis",
+    "QPlainTextEdit/set:QWidget:whatsThis:back",
+    "QSpinBox/set:QWidget:whatsThis",
+    "QSpinBox/set:QWidget:whatsThis:back",
+    "QTextEdit/set:QWidget:whatsThis",
+    "QTextEdit/set:QWidget:whatsThis:back",
+    "QWidget(child)/set:QWidget:whatsThis",
+    "QWidget(child)/set:QWidget:whatsThis:back",
+    "QWidget/set:QWidget:whatsThis",
+    "QWidget/set:QWidget:whatsThis:back"
+   ]
+  },
+  "QWidget:width": {
+   "causes": [
+    "QLineEdit/scenario:parent show()",
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:size",
+    "QLineEdit/set:QWidget:size:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:size",
+    "QPlainTextEdit/set:QWidget:size:back",
+    "QSpinBox/set:QWidget:geometry"
+   ],
+   "changes": 33,
+   "driven": false,
+   "events": [
+    "Resize"
+   ],
+   "specificity": {
+    "Resize": 0.97
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden resize"
+   ]
+  },
+  "QWidget:windowFilePath": {
+   "causes": [
+    "QLineEdit/set:QWidget:windowFilePath",
+    "QLineEdit/set:QWidget:windowFilePath:back",
+    "QPlainTextEdit/set:QWidget:windowFilePath",
+    "QPlainTextEdit/set:QWidget:windowFilePath:back",
+    "QSpinBox/set:QWidget:windowFilePath",
+    "QSpinBox/set:QWidget:windowFilePath:back",
+    "QTextEdit/set:QWidget:windowFilePath",
+    "QTextEdit/set:QWidget:windowFilePath:back",
+    "QWidget(child)/set:QWidget:windowFilePath",
+    "QWidget(child)/set:QWidget:windowFilePath:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:windowFilePath",
+    "QLineEdit/set:QWidget:windowFilePath:back",
+    "QPlainTextEdit/set:QWidget:windowFilePath",
+    "QPlainTextEdit/set:QWidget:windowFilePath:back",
+    "QSpinBox/set:QWidget:windowFilePath",
+    "QSpinBox/set:QWidget:windowFilePath:back",
+    "QTextEdit/set:QWidget:windowFilePath",
+    "QTextEdit/set:QWidget:windowFilePath:back",
+    "QWidget(child)/set:QWidget:windowFilePath",
+    "QWidget(child)/set:QWidget:windowFilePath:back",
+    "QWidget/set:QWidget:windowFilePath",
+    "QWidget/set:QWidget:windowFilePath:back"
+   ]
+  },
+  "QWidget:windowIconText": {
+   "causes": [
+    "QLineEdit/set:QWidget:windowIconText",
+    "QLineEdit/set:QWidget:windowIconText:back",
+    "QPlainTextEdit/set:QWidget:windowIconText",
+    "QPlainTextEdit/set:QWidget:windowIconText:back",
+    "QSpinBox/set:QWidget:windowIconText",
+    "QSpinBox/set:QWidget:windowIconText:back",
+    "QTextEdit/set:QWidget:windowIconText",
+    "QTextEdit/set:QWidget:windowIconText:back",
+    "QWidget(child)/set:QWidget:windowIconText",
+    "QWidget(child)/set:QWidget:windowIconText:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [
+    "IconTextChange"
+   ],
+   "specificity": {
+    "IconTextChange": 1.0
+   }
+  },
+  "QWidget:windowModality": {
+   "causes": [
+    "QLineEdit/set:QWidget:windowModality",
+    "QLineEdit/set:QWidget:windowModality:back",
+    "QPlainTextEdit/set:QWidget:windowModality",
+    "QPlainTextEdit/set:QWidget:windowModality:back",
+    "QSpinBox/set:QWidget:windowModality",
+    "QSpinBox/set:QWidget:windowModality:back",
+    "QTextEdit/set:QWidget:windowModality",
+    "QTextEdit/set:QWidget:windowModality:back",
+    "QWidget(child)/set:QWidget:windowModality",
+    "QWidget(child)/set:QWidget:windowModality:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [],
+   "specificity": {},
+   "uncovered": [
+    "QLineEdit/set:QWidget:windowModality",
+    "QLineEdit/set:QWidget:windowModality:back",
+    "QPlainTextEdit/set:QWidget:windowModality",
+    "QPlainTextEdit/set:QWidget:windowModality:back",
+    "QSpinBox/set:QWidget:windowModality",
+    "QSpinBox/set:QWidget:windowModality:back",
+    "QTextEdit/set:QWidget:windowModality",
+    "QTextEdit/set:QWidget:windowModality:back",
+    "QWidget(child)/set:QWidget:windowModality",
+    "QWidget(child)/set:QWidget:windowModality:back",
+    "QWidget/set:QWidget:windowModality",
+    "QWidget/set:QWidget:windowModality:back"
+   ]
+  },
+  "QWidget:windowModified": {
+   "causes": [
+    "QLineEdit/set:QWidget:windowModified",
+    "QLineEdit/set:QWidget:windowModified:back",
+    "QPlainTextEdit/set:QWidget:windowModified",
+    "QPlainTextEdit/set:QWidget:windowModified:back",
+    "QSpinBox/set:QWidget:windowModified",
+    "QSpinBox/set:QWidget:windowModified:back",
+    "QTextEdit/set:QWidget:windowModified",
+    "QTextEdit/set:QWidget:windowModified:back",
+    "QWidget(child)/set:QWidget:windowModified",
+    "QWidget(child)/set:QWidget:windowModified:back"
+   ],
+   "changes": 12,
+   "driven": true,
+   "events": [
+    "ModifiedChange"
+   ],
+   "specificity": {
+    "ModifiedChange": 1.0
+   }
+  },
+  "QWidget:windowTitle": {
+   "causes": [
+    "QLineEdit/set:QWidget:windowFilePath",
+    "QLineEdit/set:QWidget:windowFilePath:back",
+    "QLineEdit/set:QWidget:windowTitle",
+    "QLineEdit/set:QWidget:windowTitle:back",
+    "QPlainTextEdit/set:QWidget:windowFilePath",
+    "QPlainTextEdit/set:QWidget:windowFilePath:back",
+    "QPlainTextEdit/set:QWidget:windowTitle",
+    "QPlainTextEdit/set:QWidget:windowTitle:back",
+    "QSpinBox/set:QWidget:windowFilePath",
+    "QSpinBox/set:QWidget:windowFilePath:back"
+   ],
+   "changes": 24,
+   "driven": true,
+   "events": [
+    "WindowTitleChange"
+   ],
+   "specificity": {
+    "WindowTitleChange": 1.0
+   },
+   "uncovered": [
+    "QLineEdit/set:QWidget:windowFilePath",
+    "QLineEdit/set:QWidget:windowFilePath:back",
+    "QPlainTextEdit/set:QWidget:windowFilePath",
+    "QPlainTextEdit/set:QWidget:windowFilePath:back",
+    "QSpinBox/set:QWidget:windowFilePath",
+    "QSpinBox/set:QWidget:windowFilePath:back",
+    "QTextEdit/set:QWidget:windowFilePath",
+    "QTextEdit/set:QWidget:windowFilePath:back",
+    "QWidget(child)/set:QWidget:windowFilePath",
+    "QWidget(child)/set:QWidget:windowFilePath:back",
+    "QWidget/set:QWidget:windowFilePath",
+    "QWidget/set:QWidget:windowFilePath:back"
+   ]
+  },
+  "QWidget:x": {
+   "causes": [
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:pos",
+    "QLineEdit/set:QWidget:pos:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:pos",
+    "QPlainTextEdit/set:QWidget:pos:back",
+    "QSpinBox/set:QWidget:geometry",
+    "QSpinBox/set:QWidget:geometry:back"
+   ],
+   "changes": 26,
+   "driven": false,
+   "events": [
+    "Move"
+   ],
+   "specificity": {
+    "Move": 0.893
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden move"
+   ]
+  },
+  "QWidget:y": {
+   "causes": [
+    "QLineEdit/set:QWidget:geometry",
+    "QLineEdit/set:QWidget:geometry:back",
+    "QLineEdit/set:QWidget:pos",
+    "QLineEdit/set:QWidget:pos:back",
+    "QPlainTextEdit/set:QWidget:geometry",
+    "QPlainTextEdit/set:QWidget:geometry:back",
+    "QPlainTextEdit/set:QWidget:pos",
+    "QPlainTextEdit/set:QWidget:pos:back",
+    "QSpinBox/set:QWidget:geometry",
+    "QSpinBox/set:QWidget:geometry:back"
+   ],
+   "changes": 26,
+   "driven": false,
+   "events": [
+    "Move"
+   ],
+   "specificity": {
+    "Move": 0.893
+   },
+   "uncovered": [
+    "QWidget/scenario:hidden move"
+   ]
+  }
+ },
+ "pairs": {
+  "QtWidgets:QComboBox:currentData": [
+   {
+    "cause": "setCurrentIndex",
+    "changed": true,
+    "signals": [
+     "currentIndexChanged",
+     "currentTextChanged",
+     "highlighted",
+     "textHighlighted"
+    ]
+   },
+   {
+    "cause": "setItemData(current)",
+    "changed": true,
+    "signals": []
+   },
+   {
+    "cause": "removeItem(current)",
+    "changed": true,
+    "signals": [
+     "currentIndexChanged",
+     "currentTextChanged",
+     "highlighted",
+     "textHighlighted"
+    ]
+   },
+   {
+    "cause": "setCurrentText",
+    "changed": false,
+    "signals": []
+   }
+  ],
+  "QtWidgets:QGraphicsScene:sceneRect": [
+   {
+    "cause": "addRect (grows the unset rect)",
+    "changed": true,
+    "signals": [
+     "changed",
+     "sceneRectChanged"
+    ]
+   },
+   {
+    "cause": "setSceneRect",
+    "changed": true,
+    "signals": [
+     "sceneRectChanged"
+    ]
+   },
+   {
+    "cause": "addRect (fixed rect)",
+    "changed": false,
+    "signals": [
+     "changed"
+    ]
+   }
+  ],
+  "QtWidgets:QInputDialog:doubleValue": [
+   {
+    "cause": "setDoubleValue",
+    "changed": true,
+    "signals": [
+     "doubleValueChanged"
+    ]
+   },
+   {
+    "cause": "setDoubleMaximum below value",
+    "changed": true,
+    "signals": [
+     "doubleValueChanged"
+    ]
+   },
+   {
+    "cause": "keyClicks",
+    "changed": true,
+    "signals": [
+     "doubleValueChanged"
+    ]
+   }
+  ],
+  "QtWidgets:QInputDialog:intValue": [
+   {
+    "cause": "setIntValue",
+    "changed": true,
+    "signals": [
+     "intValueChanged"
+    ]
+   },
+   {
+    "cause": "setIntMaximum below value",
+    "changed": true,
+    "signals": [
+     "intValueChanged"
+    ]
+   },
+   {
+    "cause": "keyClicks",
+    "changed": true,
+    "signals": [
+     "intValueChanged"
+    ]
+   }
+  ],
+  "QtWidgets:QInputDialog:textValue": [
+   {
+    "cause": "setTextValue",
+    "changed": true,
+    "signals": [
+     "textValueChanged"
+    ]
+   },
+   {
+    "cause": "keyClicks",
+    "changed": true,
+    "signals": [
+     "textValueChanged"
+    ]
+   }
+  ],
+  "QtWidgets:QLineEdit:hasSelectedText": [
+   {
+    "cause": "setSelection",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "setText clears the selection",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "typing over the selection (user)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   }
+  ],
+  "QtWidgets:QLineEdit:redoAvailable": [
+   {
+    "cause": "undo",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   },
+   {
+    "cause": "redo",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   },
+   {
+    "cause": "undo (user ctrl+z)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   },
+   {
+    "cause": "typing (user)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   }
+  ],
+  "QtWidgets:QLineEdit:selectedText": [
+   {
+    "cause": "setSelection",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "selectAll",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "deselect",
+    "changed": true,
+    "signals": [
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "shift+left (user)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   }
+  ],
+  "QtWidgets:QMainWindow:iconSize": [
+   {
+    "cause": "setIconSize",
+    "changed": true,
+    "signals": [
+     "iconSizeChanged"
+    ]
+   },
+   {
+    "cause": "setIconSize(invalid): back to the style's",
+    "changed": true,
+    "signals": [
+     "iconSizeChanged"
+    ]
+   }
+  ],
+  "QtWidgets:QPlainTextEdit:blockCount": [
+   {
+    "cause": "appendPlainText",
+    "changed": false,
+    "signals": [
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   },
+   {
+    "cause": "setPlainText",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   },
+   {
+    "cause": "Return (user)",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   },
+   {
+    "cause": "clear",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   }
+  ],
+  "QtWidgets:QTextBrowser:source": [
+   {
+    "cause": "setSource",
+    "changed": true,
+    "signals": [
+     "backwardAvailable",
+     "cursorPositionChanged",
+     "forwardAvailable",
+     "historyChanged",
+     "sourceChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "setSource (another)",
+    "changed": true,
+    "signals": [
+     "backwardAvailable",
+     "cursorPositionChanged",
+     "forwardAvailable",
+     "historyChanged",
+     "sourceChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "backward",
+    "changed": true,
+    "signals": [
+     "backwardAvailable",
+     "cursorPositionChanged",
+     "forwardAvailable",
+     "historyChanged",
+     "sourceChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "clear",
+    "changed": false,
+    "signals": [
+     "cursorPositionChanged",
+     "textChanged"
+    ]
+   }
+  ],
+  "QtWidgets:QTextDocument:blockCount": [
+   {
+    "cause": "setPlainText",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "contentsChange",
+     "contentsChanged",
+     "cursorPositionChanged",
+     "modificationChanged"
+    ]
+   },
+   {
+    "cause": "Return in its editor (user)",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "contentsChange",
+     "contentsChanged",
+     "cursorPositionChanged",
+     "undoAvailable",
+     "undoCommandAdded"
+    ]
+   },
+   {
+    "cause": "undo",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "contentsChange",
+     "contentsChanged",
+     "cursorPositionChanged",
+     "redoAvailable",
+     "undoAvailable"
+    ]
+   }
+  ]
+ },
  "props": {
   "QtCore:QAbstractAnimation:currentLoop": {
    "flags": {

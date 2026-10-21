@@ -7,12 +7,18 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: unsupported
   confidence: 0.9
 - prop: dockNestingEnabled
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: unsupported
   confidence: 0.9
 - prop: dockOptions
   class: none
@@ -22,18 +28,39 @@ observe:
   verify:
     'on': QtWidgets:QMainWindow
     check: unsupported
+    trigger: dockOptions
   confidence: 0.95
 - prop: documentMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: unsupported
   confidence: 0.9
+- prop: iconSize
+  class: exact
+  via:
+  - mechanism: signal
+    signal: iconSizeChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal iconSizeChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:setIconSize, scenario:setIconSize(invalid): back to the style''s)'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: change
+  confidence: 0.95
 - prop: tabShape
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: unsupported
   confidence: 0.9
 - prop: toolButtonStyle
   class: exact
@@ -45,10 +72,16 @@ observe:
     ref: 'O5: name-paired signal toolButtonStyleChanged'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QMainWindow:toolButtonStyle)'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: change
   confidence: 0.95
 - prop: unifiedTitleAndToolBarOnMac
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QMainWindow
+    check: unsupported
   confidence: 0.9

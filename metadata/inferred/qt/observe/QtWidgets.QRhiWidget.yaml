@@ -33,7 +33,7 @@ observe:
     ref: 'O3: NOTIFY fixedColorBufferSizeChanged(QSize)'
   verify:
     'on': QtWidgets:QRhiWidget
-    check: connect
+    check: change
   confidence: 0.9
 - prop: mirrorVertically
   class: exact

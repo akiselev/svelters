@@ -80,11 +80,14 @@ KEYS = {"prop", "class", "via", "missed", "fires", "derived_from", "value_cost",
 #            silent   set `trigger` or run `rust`: this property changes and is NOT announced (none, partial)
 #            connect  the mechanism installs and uninstalls (no native trigger known: `verified: connect`)
 #            refused  observe is refused (constant)
-#            unsupported  observe answers SVL_OBSERVE_UNSUPPORTED: the backend has no mechanism (none)
+#            unsupported  observe answers SVL_OBSERVE_UNSUPPORTED: the backend has no mechanism (none); with a
+#                     `trigger` (Qt), the native change happens and nothing could announce it (a verified `none`)
+#   setup / native / user (Qt): C++ statements on `o` (the subject class) run before observing, as the native
+#            trigger, and as the user-path synthesizer (key/mouse events) whose change must be announced too
 VERIFY_CHECKS = ("change", "cross", "via", "silent", "connect", "refused", "unsupported")
 # Key order of a written record.
 ORDER = ("prop", "class", "via", "missed", "fires", "derived_from", "value_cost", "timing", "provenance", "verify", "confidence")
-VERIFY_KEYS = {"on", "check", "trigger", "rust", "native", "setup"}
+VERIFY_KEYS = {"on", "check", "trigger", "rust", "native", "setup", "user"}
 MECH_KEYS = {"notify": {"signal", "coarse"}, "bindable": set(), "signal": {"signal"}, "event": {"events"},
              "notification": {"name"}, "target_action": set(), "via": {"object", "prop"}}
 MECH_REQUIRED = {"signal": {"signal"}, "event": {"events"}, "notification": {"name"}, "via": {"object", "prop"}}
@@ -142,8 +145,8 @@ def validate(rec: dict, where: str = "") -> list[str]:
     if v is not None:
         if not isinstance(v, dict) or set(v) - VERIFY_KEYS or v.get("check") not in VERIFY_CHECKS or ":" not in str(v.get("on", "")):
             errs.append(w + f"verify must be {{on: <Ns>:<Type>, check: {'|'.join(VERIFY_CHECKS)}, trigger?, rust?, native?}}")
-        elif v["check"] == "silent" and not (v.get("trigger") or v.get("rust")):
-            errs.append(w + "verify silent needs a trigger or rust")
+        elif v["check"] == "silent" and not (v.get("trigger") or v.get("rust") or v.get("native")):
+            errs.append(w + "verify silent needs a trigger, rust or native")
     return errs
 
 

@@ -7,6 +7,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: hasSelectedText
   class: none
@@ -22,30 +25,45 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: margin
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: openExternalLinks
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: pixmap
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: scaledContents
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: selectedText
   class: none
@@ -61,22 +79,34 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: textFormat
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: textInteractionFlags
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9
 - prop: wordWrap
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLabel
+    check: unsupported
   confidence: 0.9

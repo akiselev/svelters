@@ -7,12 +7,18 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: changeCurrentOnDrag
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: count
   class: none
@@ -40,58 +46,88 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: drawBase
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: elideMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: expanding
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: iconSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: movable
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: selectionBehaviorOnRemove
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: shape
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: tabsClosable
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9
 - prop: usesScrollButtons
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabBar
+    check: unsupported
   confidence: 0.9

@@ -14,17 +14,38 @@ observe:
     'on': QtWidgets:QTextDocument
     check: connect
   confidence: 0.9
+- prop: blockCount
+  class: exact
+  via:
+  - mechanism: signal
+    signal: blockCountChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal blockCountChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:Return in its editor (user), scenario:setPlainText, scenario:undo)'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: cross
+    native: o->setPlainText("a\nb")
+  confidence: 0.95
 - prop: defaultFont
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9
 - prop: defaultStyleSheet
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9
 - prop: defaultTextOption
   class: set_only
@@ -37,24 +58,36 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9
 - prop: indentWidth
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9
 - prop: layoutEnabled
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9
 - prop: maximumBlockCount
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9
 - prop: modified
   class: exact
@@ -66,6 +99,9 @@ observe:
     ref: 'O5: name-paired signal modificationChanged'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QTextDocument:documentMargin, set:QtWidgets:QTextDocument:modified)'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: change
   confidence: 0.95
 - prop: pageSize
   class: none
@@ -90,6 +126,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9
 - prop: undoRedoEnabled
   class: none
@@ -99,10 +138,14 @@ observe:
   verify:
     'on': QtWidgets:QTextDocument
     check: unsupported
+    trigger: undoRedoEnabled
   confidence: 0.95
 - prop: useDesignMetrics
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextDocument
+    check: unsupported
   confidence: 0.9

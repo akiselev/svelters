@@ -12,17 +12,23 @@ observe:
     ref: 'O3: NOTIFY currentFontChanged(QFont)'
   verify:
     'on': QtWidgets:QFontComboBox
-    check: connect
+    check: change
   confidence: 0.9
 - prop: fontFilters
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: writingSystem
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9

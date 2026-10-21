@@ -7,6 +7,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFormLayout
+    check: unsupported
   confidence: 0.9
 - prop: horizontalSizeConstraint
   class: none
@@ -16,6 +19,7 @@ observe:
   verify:
     'on': QtWidgets:QFormLayout
     check: unsupported
+    trigger: horizontalSizeConstraint
   confidence: 0.95
 - prop: sizeConstraint
   class: none
@@ -25,12 +29,16 @@ observe:
   verify:
     'on': QtWidgets:QFormLayout
     check: unsupported
+    trigger: sizeConstraint
   confidence: 0.95
 - prop: spacing
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFormLayout
+    check: unsupported
   confidence: 0.9
 - prop: verticalSizeConstraint
   class: none
@@ -40,4 +48,5 @@ observe:
   verify:
     'on': QtWidgets:QFormLayout
     check: unsupported
+    trigger: verticalSizeConstraint
   confidence: 0.95

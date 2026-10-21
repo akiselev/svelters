@@ -19,10 +19,16 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDataWidgetMapper
+    check: unsupported
   confidence: 0.9
 - prop: submitPolicy
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QDataWidgetMapper
+    check: unsupported
   confidence: 0.9

@@ -7,30 +7,45 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: autoRepeat
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: autoRepeatDelay
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: autoRepeatInterval
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: checkable
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: checked
   class: exact
@@ -46,6 +61,7 @@ observe:
   verify:
     'on': QtWidgets:QCheckBox
     check: change
+    user: ut_click(o)
   confidence: 0.95
 - prop: down
   class: partial
@@ -61,28 +77,45 @@ observe:
     ref: 'O5: name-paired signal pressed, released'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: the mechanisms missed set:QtWidgets:QAbstractButton:down'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: silent
+    trigger: down
+    user: ut_press(o)
   confidence: 0.95
 - prop: icon
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: iconSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: shortcut
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9
 - prop: text
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QCheckBox
+    check: unsupported
   confidence: 0.9

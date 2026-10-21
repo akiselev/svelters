@@ -11,6 +11,25 @@ observe:
     'on': QtWidgets:QFontComboBox
     check: unsupported
   confidence: 0.95
+- prop: currentData
+  class: partial
+  via:
+  - mechanism: signal
+    signal: currentIndexChanged
+  missed:
+  - programmatic
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal currentIndexChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced scenario:removeItem(current), scenario:setCurrentIndex; missed scenario:setItemData(current)'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: silent
+    native: o->setItemData(o->currentIndex(), o->currentData().toInt() + 7)
+    setup: auto *m = new QStandardItemModel(o); m->appendRow(new QStandardItem("a")); m->appendRow(new QStandardItem("b")); o->setModel(m); o->setCurrentIndex(0);
+      o->setItemData(0, 1)
+  confidence: 0.95
 - prop: currentIndex
   class: exact
   via:
@@ -44,70 +63,106 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: editable
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: frame
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: iconSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: insertPolicy
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: labelDrawingMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: maxCount
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: maxVisibleItems
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: minimumContentsLength
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: modelColumn
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: placeholderText
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9
 - prop: sizeAdjustPolicy
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QFontComboBox
+    check: unsupported
   confidence: 0.9

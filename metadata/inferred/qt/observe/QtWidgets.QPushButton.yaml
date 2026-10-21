@@ -7,12 +7,18 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QPushButton
+    check: unsupported
   confidence: 0.9
 - prop: default
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QPushButton
+    check: unsupported
   confidence: 0.9
 - prop: flat
   class: none
@@ -22,4 +28,5 @@ observe:
   verify:
     'on': QtWidgets:QPushButton
     check: unsupported
+    trigger: flat
   confidence: 0.95

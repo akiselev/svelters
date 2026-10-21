@@ -39,8 +39,16 @@ observe:
     ref: 'O3: NOTIFY topLevelChanged(bool)'
   confidence: 0.9
 - prop: windowTitle
-  class: set_only
+  class: partial
+  via:
+  - mechanism: event
+    events:
+    - WindowTitleChange
+  missed:
+  - cross_prop
   provenance:
-  - origin: rule
-    ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
-  confidence: 0.9
+  - origin: probe
+    ref: 'O4: observe probe Qt 6.11.3 (O4 section): WindowTitleChange announced 12 of 24 changes'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced o4:covered; missed o4:set:QWidget:windowFilePath, o4:set:QWidget:windowFilePath:back'
+  confidence: 0.95

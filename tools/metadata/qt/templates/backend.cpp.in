@@ -72,6 +72,7 @@
 #include <QtCore/QPromise>
 #include <QtCore/QEventLoop>
 #include <QtCore/QMetaMethod>
+#include <QtCore/QProperty>
 //@@INCLUDES@@
 
 // Headers of the value-model converters (serdes.hpp.in is included inside the anonymous namespace).
@@ -166,6 +167,21 @@ struct AsyncOp {
   std::function<void()> cancel;
 };
 
+// ABI v2.6: the native mechanisms of one observed (handle, prop) (see "property observation" below).
+struct Observation {
+  int count = 1;                                // observe calls nest per (handle, prop)
+  std::vector<QObject *> relays;                // NOTIFY and signal relays; deleting one disconnects it
+  std::unique_ptr<QPropertyNotifier> notifier;  // QBindable: QUntypedBindable::addNotifier
+  std::vector<int> events;                      // QEvent types counted in the handle's event filter
+  bool proportional = false;                    // value_cost proportional: our own set_prop is not reported
+  Observation() = default;
+  Observation(Observation &&) = default;
+  Observation &operator=(Observation &&) = default;
+  ~Observation() {
+    for (QObject *r : relays) delete r;
+  }
+};
+
 struct Core {
   const svl_host *host = nullptr;
   std::unordered_map<uint64_t, AsyncOp> asyncs;  // by completion callback id
@@ -175,8 +191,10 @@ struct Core {
   std::unordered_map<QObject *, svl_handle> by_obj;
   std::unordered_map<svl_handle, QVariant> boxed;    // BOXED values (implicitly shared Qt value classes)
   std::map<ListenKey, QMetaObject::Connection> listeners;
-  // ABI v2.6 observations: one PropRelay (see "property observation") per (handle, prop), owned here.
-  std::map<std::pair<svl_handle, svl_id>, QObject *> observers;
+  // ABI v2.6 observations per (handle, prop), and one event filter per handle with event-based ones.
+  std::map<std::pair<svl_handle, svl_id>, Observation> observers;
+  std::unordered_map<svl_handle, QObject *> obs_filters;
+  std::pair<svl_handle, svl_id> setting{0, 0};  // the (handle, prop) b_set_prop is writing (proportional echo)
   // `after` connections: how to make them again, so they can be moved behind a later plain connection.
   std::map<ListenKey, std::function<QMetaObject::Connection()>> after_make;
   bool capture_filter_on = false;
@@ -261,10 +279,13 @@ Entry *find(svl_handle h) {
 
 void drop_listeners(svl_handle h) {
   g.listeners.erase(g.listeners.lower_bound({h, 0, 0}), g.listeners.lower_bound({h + 1, 0, 0}));
-  // Deleting a relay disconnects its NOTIFY connection (ABI v2.6 observations end with the handle).
-  for (auto it = g.observers.lower_bound({h, 0}); it != g.observers.end() && it->first.first == h;) {
-    delete it->second;
-    it = g.observers.erase(it);
+  // ABI v2.6 observations end with the handle: deleting a relay disconnects it, destroying a QPropertyNotifier
+  // unlinks it (also after its object: the property's binding data unlinks its observers when it dies, pinned by
+  // the verification test observe_runtime/bindable_notifier_outlives_object), and the event filter goes.
+  g.observers.erase(g.observers.lower_bound({h, 0}), g.observers.lower_bound({h + 1, 0}));
+  if (auto fit = g.obs_filters.find(h); fit != g.obs_filters.end()) {
+    delete fit->second;
+    g.obs_filters.erase(fit);
   }
   g.after_make.erase(g.after_make.lower_bound({h, 0, 0}), g.after_make.lower_bound({h + 1, 0, 0}));
   svl::drop(h);  // signal relays of the type layer
@@ -741,18 +762,51 @@ T from_int(int v) {
 
 //@@TYPES@@
 
-// ---- property observation (ABI v2.6) --------------------------------------------------------
+// The mechanisms of the observe facts (metadata/observe/qt.json, generated as kObsVia): per Qt class and
+// Q_PROPERTY, the `via` list of an exact or partial fact. Events end with QEvent::None, signals with nullptr.
+enum : unsigned { OV_NOTIFY = 1, OV_BINDABLE = 2, OV_EVENT = 4, OV_SIGNAL = 8, OV_PROPORTIONAL = 16 };
+struct ObsVia {
+  const char *cls, *prop;
+  unsigned mech;
+  const QEvent::Type *events;
+  const char *const *sigs;
+};
+//@@OBSERVE@@
+
+// ---- property observation (ABI v2.6; milestone R3) ------------------------------------------
 //
-// Mechanics only (plans/research/REACTIVITY.md §12 decides the semantics): while (handle, prop) is
-// observed, every emission of the property's NOTIFY signal calls host->prop_changed(h, prop), with no
-// value. A property without a NOTIFY signal (most QWidget properties, and every QBindable-only one) is
-// refused with SVL_OBSERVE_UNSUPPORTED. The Qt property is found by the JS name in camelCase
-// (`tool-tip` -> toolTip) on the object's own metaobject.
+// Mechanics, as plans/research/REACTIVITY.md §5 decides them: while (handle, prop) is observed, every native
+// change the property's mechanisms announce calls host->prop_changed(h, prop), with no value (the host reads and
+// compares). The mechanisms come from the property's observe fact (metadata/observe/qt.json, the generated
+// kObsVia table below), looked up by Qt class along the metaobject's superclass chain, and every one the object
+// supports is installed:
+//   notify    the Q_PROPERTY's NOTIFY signal (a coarse one, QAction::changed(), reports each observed prop)
+//   bindable  a QPropertyNotifier on QMetaProperty::bindable (QTimer::interval, QSortFilterProxyModel, ...)
+//   event     the handle's event filter, QEvent::Type -> prop ids (QWidget::enabled -> EnabledChange, geometry ->
+//             Resize/Move, which Qt sends to a hidden widget only at show(): timing deferred)
+//   signal    another signal of the object (QLineEdit::modified -> textEdited, QTextDocument::modified ->
+//             modificationChanged, QLineEdit::selectedText -> selectionChanged)
+// A property without a fact (reflected type members, NT2 types) falls back to the metaobject: NOTIFY, else
+// bindable. Without any mechanism the observation is refused with SVL_OBSERVE_UNSUPPORTED (set_only, none).
+// The Qt property is found by the JS name in camelCase (`tool-tip` -> toolTip) on the object's own metaobject.
 //
-// One relay object per observation: QMetaObject::connect(sender, notifyIndex, relay, slot) with no
-// receiver metaobject makes Qt call relay->qt_metacall (the QSignalSpy technique), so no moc is needed.
-// The relay holds ids only, never the object; deleting it (last `off`, destroy, native death through
-// drop_listeners) disconnects it, and the sender's death disconnects it too.
+// Ownership: relays hold ids only, never the object; deleting a relay (last `off`, destroy, native death through
+// drop_listeners) disconnects it, and the sender's death disconnects it too. The notifier is destroyed with the
+// observation; the event filter with the last event-based observation of the handle or with the handle.
+// Threads: prop_changed is UI-thread only; notify_prop hops (a queued call) from any other thread.
+
+const ObsVia *obs_via(const QMetaObject *mo, const std::string &prop) {
+  static const std::unordered_map<std::string, const ObsVia *> idx = [] {
+    std::unordered_map<std::string, const ObsVia *> m;
+    for (const ObsVia *v = kObsVia; v->cls; ++v) m.emplace(std::string(v->cls) + ":" + v->prop, v);
+    return m;
+  }();
+  for (; mo; mo = mo->superClass()) {
+    auto it = idx.find(std::string(mo->className()) + ":" + prop);
+    if (it != idx.end()) return it->second;
+  }
+  return nullptr;
+}
 
 void notify_prop(svl_handle h, svl_id prop) {
   QCoreApplication *app = QCoreApplication::instance();
@@ -760,19 +814,38 @@ void notify_prop(svl_handle h, svl_id prop) {
     QMetaObject::invokeMethod(app, [h, prop] { notify_prop(h, prop); }, Qt::QueuedConnection);
     return;
   }
+  // Proportional props (whole text): our own set_prop is not reported (§5.4); the host does not read them back.
+  if (g.setting.first == h && g.setting.second == prop) {
+    auto it = g.observers.find({h, prop});
+    if (it != g.observers.end() && it->second.proportional) return;
+  }
   if (g.host && g.host->prop_changed) g.host->prop_changed(g.host->self, h, prop);
 }
 
 struct PropRelay : QObject {
   svl_handle h;
   svl_id prop;
-  int count = 1;  // observe calls nest per (handle, prop)
   PropRelay(svl_handle h_, svl_id p_) : h(h_), prop(p_) {}
   int qt_metacall(QMetaObject::Call c, int id, void **a) override {
     id = QObject::qt_metacall(c, id, a);
     if (id < 0 || c != QMetaObject::InvokeMetaMethod) return id;
     if (id == 0) notify_prop(h, prop);
     return id - 1;
+  }
+};
+
+// The event filter of one handle: which observed props each QEvent type announces (with a count per prop).
+struct ObsFilter : QObject {
+  svl_handle h;
+  std::map<int, std::map<svl_id, int>> props;
+  explicit ObsFilter(svl_handle h_) : h(h_) {}
+  bool eventFilter(QObject *, QEvent *e) override {
+    auto it = props.find(static_cast<int>(e->type()));
+    if (it == props.end()) return false;
+    std::vector<svl_id> ids;
+    for (const auto &kv : it->second) ids.push_back(kv.first);
+    for (svl_id p : ids) notify_prop(h, p);
+    return false;
   }
 };
 
@@ -795,26 +868,63 @@ int unsupported(const std::string &m) {
   return SVL_OBSERVE_UNSUPPORTED;
 }
 
+// A signal of `mo` by name (any overload: the relay ignores the arguments), as a method index; -1 if none.
+int signal_index(const QMetaObject *mo, const char *name) {
+  for (int i = mo->methodCount() - 1; i >= 0; --i) {
+    const QMetaMethod m = mo->method(i);
+    if (m.methodType() == QMetaMethod::Signal && m.name() == name) return i;
+  }
+  return -1;
+}
+
+bool relay_to(QObject *o, int signal, svl_handle h, svl_id prop, Observation &ob) {
+  auto *r = new PropRelay(h, prop);
+  static const int slot = QObject::staticMetaObject.methodCount();
+  if (!QMetaObject::connect(o, signal, r, slot, Qt::DirectConnection, nullptr)) {
+    delete r;
+    return false;
+  }
+  ob.relays.push_back(r);
+  return true;
+}
+
+// Drops the event-filter entries of one observation (the filter goes with the handle's last one).
+void obs_events_off(svl_handle h, svl_id prop, const Observation &ob) {
+  if (ob.events.empty()) return;
+  auto fit = g.obs_filters.find(h);
+  if (fit == g.obs_filters.end()) return;
+  auto *f = static_cast<ObsFilter *>(fit->second);
+  for (int t : ob.events) {
+    auto it = f->props.find(t);
+    if (it == f->props.end()) continue;
+    if (--it->second[prop] <= 0) it->second.erase(prop);
+    if (it->second.empty()) f->props.erase(it);
+  }
+  if (f->props.empty()) {
+    delete f;  // also removes it from the object's event filters
+    g.obs_filters.erase(fit);
+  }
+}
+
 int b_observe(void *, svl_handle h, svl_id prop, bool on) {
   TimeScope timing_;
   const auto key = std::make_pair(h, prop);
   auto it = g.observers.find(key);
   if (!on) {
     if (it == g.observers.end()) return 0;  // not observed (or the handle is gone): nothing to do
-    auto *r = static_cast<PropRelay *>(it->second);
-    if (--r->count > 0) return 0;
+    if (--it->second.count > 0) return 0;
+    obs_events_off(h, prop, it->second);
     g.observers.erase(it);
-    delete r;
     return 0;
   }
   Entry *e = find(h);
   if (!e) return fail("observe: stale or unknown handle");
   if (it != g.observers.end()) {
-    ++static_cast<PropRelay *>(it->second)->count;
+    ++it->second.count;
     return 0;
   }
   if (e->kind == kVListKind || e->kind == kCanvasKind) return unsupported("observe: virtual-list and canvas properties cannot be observed");
-  // Type-layer props (N2) carry their native name; element props their JS name.
+  // Type-layer props (N2) and metaobject ids carry their native name; element props their JS name.
   const char *pname = svl::is_member_id(prop) ? svl::native_name(prop) : nullptr;
   if (!pname) {
     const svl_member_desc *d = gen_describe(SVL_PROP, e->kind, prop);
@@ -825,19 +935,49 @@ int b_observe(void *, svl_handle h, svl_id prop, bool on) {
   const QMetaObject *mo = o->metaObject();
   const std::string qname = camel_of(pname);
   const int pi = mo->indexOfProperty(qname.c_str());
-  if (pi < 0)
-    return unsupported("observe: " + std::string(pname) + " is not a Q_PROPERTY of " + mo->className() + ", so it has no NOTIFY signal");
-  const QMetaProperty mp = mo->property(pi);
-  if (!mp.isReadable()) return fail("observe: " + qname + " is write-only");
-  if (mp.isConstant()) return fail("observe: " + qname + " is CONSTANT: it never changes");
-  if (!mp.hasNotifySignal()) return unsupported("observe: " + std::string(mo->className()) + "::" + qname + " has no NOTIFY signal");
-  auto *r = new PropRelay(h, prop);
-  static const int slot = QObject::staticMetaObject.methodCount();
-  if (!QMetaObject::connect(o, mp.notifySignalIndex(), r, slot, Qt::DirectConnection, nullptr)) {
-    delete r;
-    return fail("observe: connecting " + qname + "'s NOTIFY signal failed");
+  const ObsVia *via = obs_via(mo, qname);
+  QMetaProperty mp;
+  if (pi >= 0) {
+    mp = mo->property(pi);
+    if (!mp.isReadable()) return fail("observe: " + qname + " is write-only");
+    if (mp.isConstant()) return fail("observe: " + qname + " is CONSTANT: it never changes");
+  } else if (!via) {
+    return unsupported("observe: " + std::string(pname) + " is not a Q_PROPERTY of " + mo->className() +
+                       " and has no observe fact, so nothing announces it");
   }
-  g.observers[key] = r;
+  // Without a fact: the metaobject fallback (NOTIFY, else bindable).
+  const unsigned mech = via ? via->mech : (pi >= 0 && mp.hasNotifySignal() ? OV_NOTIFY : pi >= 0 && mp.isBindable() ? OV_BINDABLE : 0);
+  Observation ob;
+  ob.proportional = via && (via->mech & OV_PROPORTIONAL);
+  if ((mech & OV_NOTIFY) && pi >= 0 && mp.hasNotifySignal() && !relay_to(o, mp.notifySignalIndex(), h, prop, ob))
+    return fail("observe: connecting " + qname + "'s NOTIFY signal failed");
+  if ((mech & OV_BINDABLE) && pi >= 0 && mp.isBindable()) {
+    QUntypedBindable b = mp.bindable(o);
+    if (b.isValid()) ob.notifier = std::make_unique<QPropertyNotifier>(b.addNotifier([h, prop] { notify_prop(h, prop); }));
+  }
+  if ((mech & OV_SIGNAL) && via && via->sigs) {
+    for (const char *const *s = via->sigs; *s; ++s) {
+      const int si = signal_index(mo, *s);
+      if (si >= 0 && !relay_to(o, si, h, prop, ob)) return fail("observe: connecting " + std::string(*s) + " failed");
+    }
+  }
+  if ((mech & OV_EVENT) && via && via->events) {
+    auto fit = g.obs_filters.find(h);
+    ObsFilter *f = fit == g.obs_filters.end() ? nullptr : static_cast<ObsFilter *>(fit->second);
+    if (!f) {
+      f = new ObsFilter(h);
+      o->installEventFilter(f);
+      g.obs_filters[h] = f;
+    }
+    for (const QEvent::Type *t = via->events; *t != QEvent::None; ++t) {
+      ++f->props[static_cast<int>(*t)][prop];
+      ob.events.push_back(static_cast<int>(*t));
+    }
+  }
+  if (ob.relays.empty() && !ob.notifier && ob.events.empty())
+    return unsupported("observe: " + std::string(mo->className()) + "::" + qname +
+                       " has no NOTIFY signal, bindable, event or signal that announces it");
+  g.observers.emplace(key, std::move(ob));
   return 0;
 }
 
@@ -986,6 +1126,11 @@ int b_set_prop(void *, svl_handle h, svl_id prop, const svl_value *v) {
   if (!e) return fail("set_prop: stale or unknown handle");
   if (!v) return fail("set_prop: null value");
   g_in.clear();
+  struct Setting {  // which (handle, prop) we are writing: its proportional observation stays silent (§5.4)
+    std::pair<svl_handle, svl_id> prev = g.setting;
+    Setting(svl_handle h, svl_id p) { g.setting = {h, p}; }
+    ~Setting() { g.setting = prev; }
+  } setting_(h, prop);
   try {
     if (e->kind == kVListKind) return vl_set_prop(*e, prop, v);
     if (e->kind == kCanvasKind) return cv_set_prop(*e, prop, v);
@@ -1458,6 +1603,14 @@ extern "C" void svl_qt_set_host(const svl_host *host) { g.host = host; }
 extern "C" void *svl_qt_debug_object(svl_handle h) {
   Entry *e = find(h);
   return e ? static_cast<void *>(e->obj.data()) : nullptr;
+}
+// The metaobject id of a Q_PROPERTY by its native name (what `resolve` gives NT2 type kinds for an unbound name):
+// lets the generated observe tests reach QWidget properties no element exposes (`font`, `visible`, `width`).
+extern "C" svl_id svl_qt_meta_prop_id(const char *native) { return svl::dyn_id(native); }
+// How many observations and event filters the backend holds (teardown checks of the observe tests).
+extern "C" size_t svl_qt_observations(size_t *filters) {
+  if (filters) *filters = g.obs_filters.size();
+  return g.observers.size();
 }
 
 // ---- tooling hooks (tests and the counter example; not part of the backend ABI) -----------------

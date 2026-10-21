@@ -24,6 +24,9 @@ observe:
   provenance:
   - origin: moc
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  verify:
+    'on': QtCore:QParallelAnimationGroup
+    check: connect
   confidence: 0.9
 - prop: direction
   class: exact
@@ -48,9 +51,6 @@ observe:
   provenance:
   - origin: probe
     ref: 'observe probe Qt 6.11.3: changed unannounced on set:QtCore:QPauseAnimation:duration, set:QtCore:QVariantAnimation:duration'
-  verify:
-    'on': QtCore:QPauseAnimation
-    check: unsupported
   confidence: 0.95
 - prop: loopCount
   class: exact
@@ -61,6 +61,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QAbstractAnimation:loopCount)'
+  verify:
+    'on': QtCore:QParallelAnimationGroup
+    check: connect
   confidence: 0.95
 - prop: state
   class: exact

@@ -16,18 +16,27 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
 - prop: clearButtonEnabled
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
 - prop: cursorMoveStyle
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
 - prop: cursorPosition
   class: exact
@@ -39,6 +48,12 @@ observe:
     ref: 'O5: name-paired signal cursorPositionChanged'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QLineEdit keyClicks, scenario:QLineEdit setText, set:QtWidgets:QLineEdit:text)'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: cross
+    native: o->setCursorPosition(2)
+    setup: o->setText("hello")
+    user: ut_keys(o, "ab")
   confidence: 0.95
 - prop: displayText
   class: exact
@@ -50,30 +65,65 @@ observe:
     ref: 'O5: name-paired signal textChanged'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QLineEdit keyClicks, scenario:QLineEdit setText, set:QtWidgets:QLineEdit:inputMask)'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: cross
+    native: o->setText(o->text() + "x")
+    user: ut_keys(o, "ab")
   confidence: 0.95
 - prop: dragEnabled
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
 - prop: echoMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
 - prop: frame
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
+- prop: hasSelectedText
+  class: exact
+  via:
+  - mechanism: signal
+    signal: selectionChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal selectionChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:setSelection, scenario:setText clears the selection, scenario:typing
+      over the selection (user))'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: cross
+    native: o->setSelection(0, 3)
+    setup: o->setText("hello")
+    user: ut_key(o, Qt::Key_Left, Qt::ShiftModifier)
+  confidence: 0.95
 - prop: inputMask
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
 - prop: maxLength
   class: none
@@ -83,6 +133,7 @@ observe:
   verify:
     'on': QtWidgets:QLineEdit
     check: unsupported
+    trigger: maxLength
   confidence: 0.95
 - prop: modified
   class: partial
@@ -98,12 +149,20 @@ observe:
     ref: 'O5: name-paired signal textEdited, textChanged'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced scenario:QLineEdit keyClicks, scenario:QLineEdit setText; missed set:QtWidgets:QLineEdit:modified'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: silent
+    trigger: modified
+    user: ut_keys(o, "ab")
   confidence: 0.95
 - prop: placeholderText
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: unsupported
   confidence: 0.9
 - prop: readOnly
   class: exact
@@ -112,10 +171,47 @@ observe:
     events:
     - ReadOnlyChange
   provenance:
-  - origin: rule
-    ref: 'O4: QEvent table: ReadOnlyChange'
   - origin: probe
-    ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QLineEdit:readOnly)'
+    ref: 'O4: observe probe Qt 6.11.3 (O4 section): ReadOnlyChange announced 2 of 2 changes'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (o4:covered, set:QtWidgets:QLineEdit:readOnly)'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: change
+  confidence: 0.95
+- prop: redoAvailable
+  class: exact
+  via:
+  - mechanism: signal
+    signal: textChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal textChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:redo, scenario:typing (user), scenario:undo)'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: cross
+    native: o->undo()
+    setup: o->insert("ab")
+    user: ut_key(o, Qt::Key_Z, Qt::ControlModifier)
+  confidence: 0.95
+- prop: selectedText
+  class: exact
+  via:
+  - mechanism: signal
+    signal: selectionChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal selectionChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:deselect, scenario:selectAll, scenario:setSelection)'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: cross
+    native: o->setSelection(0, 3)
+    setup: o->setText("hello")
+    user: ut_key(o, Qt::Key_Left, Qt::ShiftModifier)
   confidence: 0.95
 - prop: text
   class: exact
@@ -131,6 +227,7 @@ observe:
   verify:
     'on': QtWidgets:QLineEdit
     check: change
+    user: ut_keys(o, "ab")
   confidence: 0.95
 - prop: undoAvailable
   class: exact
@@ -142,4 +239,9 @@ observe:
     ref: 'O5: name-paired signal textChanged'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QLineEdit keyClicks, scenario:QLineEdit setText)'
+  verify:
+    'on': QtWidgets:QLineEdit
+    check: cross
+    native: o->insert("b")
+    user: ut_keys(o, "ab")
   confidence: 0.95
