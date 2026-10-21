@@ -64,11 +64,11 @@ export class FilterListModel extends GObject_Object {
   }
 
   getObject(position) {
-    return wrapObject(GObject_Object, call(this, 'get_object', [position]));
+    return wrapObject(GObject_Object, call(this, 'get_item', [position]));
   }
 
   getItem(position) {
-    return wrapObject(GObject_Object, call(this, 'get_object', [position]));
+    return wrapObject(GObject_Object, call(this, 'get_item', [position]));
   }
 
   itemsChanged(position, removed, added) {

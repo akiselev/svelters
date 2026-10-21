@@ -104,6 +104,8 @@ observe:
       reason: notified by g_dbus_message_lock; the generated test locks the message (trigger)
     - pattern: '^Gio:Action:enabled$'
       reason: GSimpleAction notifies enabled in g_simple_action_set_enabled; the generated test toggles it (trigger)
+    - pattern: '^Gtk:DirectoryList:loading$'
+      reason: GtkDirectoryList notifies loading when it starts and stops enumerating (N3, the list's loading indicator); the generated test sets a directory (trigger)
   # Review decisions by pattern: read-only properties the probe never saw change that are fixed for the object's
   # lifetime (documented immutable, or set once while the object is built) -> constant (0.9). The backend still
   # installs `notify` for them (it refuses only CONSTRUCT_ONLY), so these facts have no generated test.
@@ -174,4 +176,5 @@ observe:
     "Gtk:MapListModel:has-map": 'let m = o.downcast_ref::<gtk::MapListModel>().unwrap(); m.set_model(Some(&gtk::StringList::new(&["a"]))); m.set_map_func(|x| x.clone());'
     "Gtk:EventController:widget": 'let c = o.downcast_ref::<gtk::EventController>().unwrap(); if let Some(w) = c.widget() { w.remove_controller(c); } else { let b = gtk::Box::new(gtk::Orientation::Horizontal, 0); b.add_controller(c.clone()); std::mem::forget(b); }'
     "Gio:DBusMessage:locked": 'o.downcast_ref::<gtk::gio::DBusMessage>().unwrap().lock();'
+    "Gtk:DirectoryList:loading": 'o.downcast_ref::<gtk::DirectoryList>().unwrap().set_file(Some(&gtk::gio::File::for_path("/")));'
     "Gio:Action:enabled": 'let a = o.downcast_ref::<gtk::gio::SimpleAction>().unwrap(); a.set_enabled(!gtk::gio::prelude::ActionExt::is_enabled(a));'

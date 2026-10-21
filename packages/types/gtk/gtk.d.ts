@@ -350,7 +350,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -468,7 +468,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -989,6 +989,10 @@ declare module 'svelters:gtk/gtk' {
   export class CustomSorter extends Sorter {
     static readonly native: string;
     constructor(props?: {  });
+      /** `new` */
+      static new(sortFunc?: ((a: Object, b: Object) => number) | null): CustomSorter;
+      /** `set_sort_func` */
+      setSortFunc(sortFunc?: ((a: Object, b: Object) => number) | null): void;
   }
 
   /** `Gtk.DirectoryList`, model */
@@ -1019,7 +1023,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -1260,7 +1264,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -1572,7 +1576,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -1626,7 +1630,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -2199,7 +2203,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -2386,7 +2390,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -2412,7 +2416,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -2465,7 +2469,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -2558,7 +2562,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -3404,7 +3408,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -3427,7 +3431,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -3467,7 +3471,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -3596,7 +3600,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -3693,7 +3697,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -3779,7 +3783,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -3903,7 +3907,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -4050,7 +4054,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -4657,7 +4661,7 @@ declare module 'svelters:gtk/gtk' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;

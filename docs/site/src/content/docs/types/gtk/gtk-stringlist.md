@@ -47,7 +47,7 @@ Getters marked *reactive* re-run the effects (and template expressions) that rea
 - `take(string)`
 - `getItemType()`, since 2.44
 - `getNItems()`, since 2.44
-- `getObject(position)`, since 2.44
+- `getItem(position)`, since 2.44
 - `itemsChanged(position, removed, added)`, since 2.44
 - `getBuildableId()`
 

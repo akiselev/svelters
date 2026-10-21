@@ -63,11 +63,11 @@ export class DirectoryList extends GObject_Object {
   }
 
   getObject(position) {
-    return wrapObject(GObject_Object, call(this, 'get_object', [position]));
+    return wrapObject(GObject_Object, call(this, 'get_item', [position]));
   }
 
   getItem(position) {
-    return wrapObject(GObject_Object, call(this, 'get_object', [position]));
+    return wrapObject(GObject_Object, call(this, 'get_item', [position]));
   }
 
   itemsChanged(position, removed, added) {
@@ -100,7 +100,7 @@ export class DirectoryList extends GObject_Object {
   }
 
   get loading() {
-    return getProp(this, 'loading');
+    return observed(this, 'loading');
   }
 
   get monitored() {

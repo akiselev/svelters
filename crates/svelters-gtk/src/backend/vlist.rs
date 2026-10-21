@@ -7,6 +7,11 @@
 //! and `teardown` signals, which are delivered with `call_sync` so a row has its content before it
 //! is first painted. When JS is already running (our own `splice` makes GTK unbind rows at once)
 //! the host answers busy and queues the event; the `gen` argument lets JS discard a stale unbind.
+//!
+//! Model mode (N3): the `model` prop puts any `GListModel` the app holds as a handle behind the view
+//! instead of the id model. GTK then reads it directly; `bind` carries the item's handle and the
+//! change counter (`epoch`), and the model's `items-changed` is forwarded as the `items-changed`
+//! signal (plans/architecture/backend-abi.md, "Native models (N3)").
 
 use super::*;
 use gtk::gio;
@@ -20,6 +25,7 @@ const P_SELECTION: u32 = 0x4122;
 const P_LAYOUT: u32 = 0x4123;
 const P_ROW_HEIGHT: u32 = 0x4124;
 const P_MIN_HEIGHT: u32 = 0x4125;
+const P_MODEL: u32 = 0x4128;
 const M_SPLICE: u32 = 0x4221;
 const M_COUNT: u32 = 0x4222;
 const M_SCROLL_TO: u32 = 0x4223;
@@ -31,6 +37,9 @@ const S_UNBIND: u32 = 0x4323;
 const S_TEARDOWN: u32 = 0x4324;
 const S_ACTIVATE: u32 = 0x4325;
 const S_SELECT: u32 = 0x4326;
+const S_ITEMS_CHANGED: u32 = 0x4327;
+const S_DATA_CHANGED: u32 = 0x4328;
+const S_MOVED: u32 = 0x4329;
 
 /// Properties, methods and signals live in `0x4121..0x4326`; anything below `0x4000` is a generic
 /// widget member of the underlying `GtkScrolledWindow`.
@@ -45,6 +54,7 @@ pub fn find_member(what: u32, name: &str) -> u32 {
         (SVL_PROP, "layout") => P_LAYOUT,
         (SVL_PROP, "row-height") => P_ROW_HEIGHT,
         (SVL_PROP, "min-height") => P_MIN_HEIGHT,
+        (SVL_PROP, "model") => P_MODEL,
         (SVL_METHOD, "splice") => M_SPLICE,
         (SVL_METHOD, "count") => M_COUNT,
         (SVL_METHOD, "scrollTo") => M_SCROLL_TO,
@@ -56,12 +66,15 @@ pub fn find_member(what: u32, name: &str) -> u32 {
         (SVL_SIGNAL, "teardown") => S_TEARDOWN,
         (SVL_SIGNAL, "activate") => S_ACTIVATE,
         (SVL_SIGNAL, "select") => S_SELECT,
+        (SVL_SIGNAL, "items-changed") => S_ITEMS_CHANGED,
+        (SVL_SIGNAL, "data-changed") => S_DATA_CHANGED,
+        (SVL_SIGNAL, "moved") => S_MOVED,
         _ => 0,
     }
 }
 
 fn signal_bit(signal: u32) -> Option<u32> {
-    (S_SETUP..=S_SELECT).contains(&signal).then(|| 1 << (signal - S_SETUP))
+    (S_SETUP..=S_MOVED).contains(&signal).then(|| 1 << (signal - S_SETUP))
 }
 
 mod item_imp {
@@ -172,6 +185,10 @@ pub(super) struct VList {
     view: RefCell<gtk::Widget>,
     grid: Cell<bool>,
     model: IdModel,
+    /// Model mode: the app's model, shown instead of `model`, and our `items-changed` handler on it.
+    user: RefCell<Option<(gio::ListModel, glib::SignalHandlerId)>>,
+    /// Model mode: the number of `items-changed` the user model has raised (reported with `bind`).
+    epoch: Rc<Cell<u64>>,
     selection: RefCell<gtk::SelectionModel>,
     sel_none: Cell<bool>,
     row_height: Cell<i64>,
@@ -247,6 +264,8 @@ impl Inner {
             view: RefCell::new(gtk::Widget::from(gtk::Label::new(None))),
             grid: Cell::new(false),
             model,
+            user: RefCell::new(None),
+            epoch: Rc::new(Cell::new(0)),
             selection: RefCell::new(selection),
             sel_none: Cell::new(false),
             row_height: Cell::new(32),
@@ -264,6 +283,9 @@ impl Inner {
     pub(super) fn destroy_vlist(&self, h: u64) {
         let Some(vl) = self.vlists.borrow_mut().remove(&h) else { return };
         vl.sw.set_child(None::<&gtk::Widget>);
+        if let Some((m, id)) = vl.user.borrow_mut().take() {
+            m.disconnect(id);
+        }
     }
 
     fn vl_of(&self, h: u64) -> Res<Rc<VList>> {
@@ -272,6 +294,16 @@ impl Inner {
 
     /// Raises a protocol signal if JS listens to it. `sync` signals use `call_sync` (JS runs now).
     fn vl_emit(&self, h: u64, signal: u32, args: &[i64], sync: bool) {
+        let vals: Vec<svl_value> = args.iter().map(|i| int_value(*i)).collect();
+        self.vl_emit_values(h, signal, &vals, sync);
+    }
+
+    fn vl_listens(&self, h: u64, signal: u32) -> bool {
+        let Some(bit) = signal_bit(signal) else { return false };
+        self.vlists.borrow().get(&h).map(|v| v.listened.get() & bit != 0).unwrap_or(false)
+    }
+
+    fn vl_emit_values(&self, h: u64, signal: u32, vals: &[svl_value], sync: bool) {
         let Some(bit) = signal_bit(signal) else { return };
         let listened = self.vlists.borrow().get(&h).map(|v| v.listened.get()).unwrap_or(0);
         if listened & bit == 0 {
@@ -281,7 +313,6 @@ impl Inner {
         if host.is_null() {
             return;
         }
-        let vals: Vec<svl_value> = args.iter().map(|i| int_value(*i)).collect();
         if sync {
             let mut out = convert::null_value();
             unsafe { ((*host).call_sync)((*host).self_, h, signal, vals.as_ptr(), vals.len(), &mut out) };
@@ -311,6 +342,18 @@ impl Inner {
                 item.set_child(Some(&ph));
             }
             vl.rows.borrow_mut().insert(row, RowSlot { item: item.clone(), epoch: 0 });
+            // Model mode: GTK keeps a row on its item when the model moves it (a sort is one
+            // items-changed over the whole range), so the row's index changes without a rebind.
+            let (w2, v2) = (w.clone(), v.clone());
+            item.connect_position_notify(move |li| {
+                let (Some(inner), Some(vl)) = (w2.upgrade(), v2.upgrade()) else { return };
+                if vl.user.borrow().is_none() || li.item().is_none() {
+                    return;
+                }
+                let row = row_of(li);
+                let Some(slot_gen) = vl.rows.borrow().get(&row).map(|s| s.epoch) else { return };
+                inner.vl_emit(h, S_MOVED, &[row as i64, li.position() as i64, slot_gen as i64, vl.epoch.get() as i64], false);
+            });
             inner.vl_emit(h, S_SETUP, &[row as i64], true);
         });
         let w = weak.clone();
@@ -319,14 +362,23 @@ impl Inner {
             let (Some(inner), Some(vl)) = (w.upgrade(), v.upgrade()) else { return };
             let Some(item) = obj.downcast_ref::<gtk::ListItem>() else { return };
             let row = row_of(item);
-            let id = item.item().and_downcast::<IdItem>().map(|i| i.id()).unwrap_or(0);
-            let epoch = {
+            let obj = item.item();
+            let id = obj.as_ref().and_then(|o| o.downcast_ref::<IdItem>()).map(|i| i.id()).unwrap_or(0);
+            let bind_gen = {
                 let mut rows = vl.rows.borrow_mut();
                 let Some(slot) = rows.get_mut(&row) else { return };
                 slot.epoch += 1;
                 slot.epoch
             };
-            inner.vl_emit(h, S_BIND, &[row as i64, item.position() as i64, id as i64, epoch as i64], true);
+            // Model mode: the item crosses as its handle (SHARED for a non-widget object), with the
+            // change counter so JS can order this bind against the `items-changed` it has not seen yet.
+            let user = vl.user.borrow().is_some();
+            let item_v = match (&obj, user) {
+                (Some(o), true) if inner.vl_listens(h, S_BIND) => svl_value::new(SVL_HANDLE, svl_value_u { h: inner.intern(o.clone(), 0, false) }),
+                _ => convert::null_value(),
+            };
+            let vals = [int_value(row as i64), int_value(item.position() as i64), int_value(id as i64), int_value(bind_gen as i64), int_value(vl.epoch.get() as i64), item_v];
+            inner.vl_emit_values(h, S_BIND, &vals, true);
         });
         let w = weak.clone();
         let v = Rc::downgrade(vl);
@@ -392,10 +444,22 @@ impl Inner {
             return;
         }
         vl.sel_none.set(none);
-        let sel: gtk::SelectionModel = if none {
-            gtk::NoSelection::new(Some(vl.model.clone())).upcast()
+        self.vl_rebuild_selection(h, vl);
+    }
+
+    /// The selection model the view shows: the user's own selection model as is, otherwise the
+    /// shown model (user or ids) wrapped per the `selection` prop.
+    fn vl_rebuild_selection(self: &Rc<Self>, h: u64, vl: &Rc<VList>) {
+        let shown: gio::ListModel = match &*vl.user.borrow() {
+            Some((m, _)) => m.clone(),
+            None => vl.model.clone().upcast(),
+        };
+        let sel: gtk::SelectionModel = if let Some(s) = shown.downcast_ref::<gtk::SelectionModel>() {
+            s.clone()
+        } else if vl.sel_none.get() {
+            gtk::NoSelection::new(Some(shown)).upcast()
         } else {
-            let s = gtk::SingleSelection::new(Some(vl.model.clone()));
+            let s = gtk::SingleSelection::new(Some(shown));
             s.set_autoselect(false);
             s.set_can_unselect(true);
             s.upcast()
@@ -403,6 +467,47 @@ impl Inner {
         *vl.selection.borrow_mut() = sel;
         self.vl_build_view(h, vl);
         self.vl_watch_selection(h, vl);
+    }
+
+    /// `model` prop: show the app's `GListModel` (model mode) or, for null, the id model again. The
+    /// id vector is emptied either way: JS starts over from an empty list when it leaves model mode.
+    fn vl_set_model(self: &Rc<Self>, h: u64, vl: &Rc<VList>, m: Option<gio::ListModel>) {
+        let same = match (&*vl.user.borrow(), &m) {
+            (Some((a, _)), Some(b)) => a == b,
+            (None, None) => true,
+            _ => false,
+        };
+        if same {
+            return;
+        }
+        if let Some((old, id)) = vl.user.borrow_mut().take() {
+            old.disconnect(id);
+        }
+        if vl.model.len() > 0 {
+            let _ = vl.model.splice(0, vl.model.len(), &[]);
+        }
+        if let Some(m) = m {
+            // Connected before the view (and our selection wrapper) connect to the model, so the
+            // epoch already counts a change when GTK binds rows inside its emission.
+            let weak = Rc::downgrade(self);
+            let epoch = vl.epoch.clone();
+            let id = m.connect_items_changed(move |_, pos, removed, added| {
+                let e = epoch.get() + 1;
+                epoch.set(e);
+                if let Some(inner) = weak.upgrade() {
+                    inner.vl_emit(h, S_ITEMS_CHANGED, &[pos as i64, removed as i64, added as i64, e as i64], false);
+                }
+            });
+            *vl.user.borrow_mut() = Some((m, id));
+        }
+        self.vl_rebuild_selection(h, vl);
+    }
+
+    fn vl_shown_len(vl: &VList) -> usize {
+        match &*vl.user.borrow() {
+            Some((m, _)) => m.n_items() as usize,
+            None => vl.model.len(),
+        }
     }
 
     pub(super) fn vlist_set_prop(self: &Rc<Self>, h: u64, prop: u32, v: &svl_value) -> Res<()> {
@@ -452,6 +557,19 @@ impl Inner {
                 vl.sw.set_min_content_height(i64_arg(std::slice::from_ref(v), 0, "min-height")?.max(0) as i32);
                 Ok(())
             }
+            P_MODEL => {
+                let m = match v.tag {
+                    SVL_NULL => None,
+                    SVL_HANDLE => {
+                        let (o, _) = self.obj_of(unsafe { v.u.h })?;
+                        let t = o.type_();
+                        Some(o.downcast::<gio::ListModel>().map_err(|_| format!("model: a {} is not a GListModel", t.name()))?)
+                    }
+                    _ => return Err("model: expected a GListModel object or null".into()),
+                };
+                self.vl_set_model(h, &vl, m);
+                Ok(())
+            }
             _ => Err("unknown property".into()),
         }
     }
@@ -469,6 +587,10 @@ impl Inner {
             P_LAYOUT => buf.str_value(if vl.grid.get() { "grid" } else { "list" }),
             P_ROW_HEIGHT => int_value(vl.row_height.get()),
             P_MIN_HEIGHT => int_value(vl.sw.min_content_height() as i64),
+            P_MODEL => match &*vl.user.borrow() {
+                Some((m, _)) => svl_value::new(SVL_HANDLE, svl_value_u { h: self.intern(m.clone().upcast(), 0, false) }),
+                None => convert::null_value(),
+            },
             _ => return Err("unknown property".into()),
         };
         Ok(())
@@ -492,13 +614,16 @@ impl Inner {
                 if pos < 0 || removed < 0 {
                     return Err("splice: negative range".into());
                 }
+                if vl.user.borrow().is_some() {
+                    return Err("splice: the list shows a native model (`model` is set)".into());
+                }
                 // `items-changed` runs GTK's callbacks (rows unbind, selection moves) before this returns.
                 vl.model.splice(pos as usize, removed as usize, &ids)?;
             }
-            M_COUNT => *out = int_value(vl.model.len() as i64),
+            M_COUNT => *out = int_value(Self::vl_shown_len(&vl) as i64),
             M_SCROLL_TO => {
                 let pos = i64_arg(args, 0, "pos")?;
-                if pos < 0 || pos as usize >= vl.model.len() {
+                if pos < 0 || pos as usize >= Self::vl_shown_len(&vl) {
                     return Err(format!("scrollTo: position {pos} is out of range").into());
                 }
                 // `list.scroll-to-item` exists on every GtkListBase since GTK 4.0 (the typed API needs 4.12).

@@ -213,7 +213,7 @@ declare module 'svelters:gtk/pango' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;
@@ -249,7 +249,7 @@ declare module 'svelters:gtk/pango' {
       getItemType(): string | { readonly native: string };
       /** `get_n_items`, since 2.44 */
       getNItems(): number;
-      /** `get_object`, since 2.44 */
+      /** `get_item`, since 2.44 */
       getObject(position: number): Object | null;
       /** `items_changed`, since 2.44 */
       itemsChanged(position: number, removed: number, added: number): void;

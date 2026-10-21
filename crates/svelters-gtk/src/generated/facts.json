@@ -20908,6 +20908,19 @@
    ]
   },
   {
+   "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:loading:observe",
+   "fingerprint": "8ff0ee6e3afe8a3e",
+   "kind": "Gtk:DirectoryList",
+   "name": "loading",
+   "origin": "inferred",
+   "record_fp": "0c03751350e32d4b",
+   "section": "observe",
+   "strength": "change",
+   "tests": [
+    "generated::verify::observe_gtk_directorylist#loading"
+   ]
+  },
+  {
    "fact": "svelters-api:v1:type:gtk:Gtk:DirectoryList:prop:monitored:observe",
    "fingerprint": "01aae90060522086",
    "kind": "Gtk:DirectoryList",

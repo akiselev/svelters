@@ -28422,6 +28422,7 @@ fn observe_gtk_directorylist() {
         Row { prop: "attributes", on: On::Construct("Gtk.DirectoryList"), check: Check::Change, fires: Fires::OnSet, since: (0, 0), setup: None },
         Row { prop: "file", on: On::Construct("Gtk.DirectoryList"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "io-priority", on: On::Construct("Gtk.DirectoryList"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
+        Row { prop: "loading", on: On::Construct("Gtk.DirectoryList"), check: Check::Cross(Trig::Rust(|o: &gtk::glib::Object| { o.downcast_ref::<gtk::DirectoryList>().unwrap().set_file(Some(&gtk::gio::File::for_path("/"))); })), fires: Fires::Any, since: (0, 0), setup: None },
         Row { prop: "monitored", on: On::Construct("Gtk.DirectoryList"), check: Check::Change, fires: Fires::OnChange, since: (0, 0), setup: None },
         Row { prop: "n-items", on: On::Construct("Gtk.DirectoryList"), check: Check::Connect, fires: Fires::Any, since: (0, 0), setup: None },
     ]);

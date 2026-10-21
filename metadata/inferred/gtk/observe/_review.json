@@ -1,7 +1,7 @@
 {
  "inferred": {
   "constant": 149,
-  "exact": 1129,
+  "exact": 1130,
   "none": 3,
   "partial": 16,
   "set_only": 2
@@ -741,16 +741,6 @@
    "band": "middle",
    "class": "exact",
    "confidence": 0.8,
-   "group": "async-io",
-   "owner": "Gtk:DirectoryList",
-   "pattern": "observe:exact-read-only-unprobed",
-   "prop": "loading",
-   "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
-  },
-  {
-   "band": "middle",
-   "class": "exact",
-   "confidence": 0.8,
    "group": "window-input",
    "owner": "Gtk:DropControllerMotion",
    "pattern": "observe:exact-read-only-unprobed",
@@ -1426,7 +1416,7 @@
  "unreviewed": {
   "by_group": {
    "async-io": {
-    "count": 16,
+    "count": 15,
     "reason": "changed by background loading, file IO, a media backend or the icon theme on disk"
    },
    "display-server": {
@@ -1463,10 +1453,10 @@
    }
   },
   "by_pattern": {
-   "middle:observe:exact-read-only-unprobed": 141
+   "middle:observe:exact-read-only-unprobed": 140
   },
   "low": 0,
-  "middle": 141
+  "middle": 140
  },
  "version": "4.22.4"
 }

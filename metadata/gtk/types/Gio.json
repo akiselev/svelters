@@ -10323,7 +10323,7 @@
       "getItem"
      ],
      "js": "getObject",
-     "name": "get_object",
+     "name": "get_item",
      "params": [
       {
        "js": "position",
@@ -10423,9 +10423,7 @@
    "abstract": false,
    "blocked": {
     "find_with_equal_func": "callback: gpointer",
-    "find_with_equal_func_full": "callback: gpointer",
-    "insert_sorted": "callback: gpointer",
-    "sort": "callback: gpointer"
+    "find_with_equal_func_full": "callback: gpointer"
    },
    "builder": false,
    "category": "model",
@@ -10531,6 +10529,56 @@
      "since": "2.44"
     },
     {
+     "js": "insertSorted",
+     "name": "insert_sorted",
+     "params": [
+      {
+       "js": "item",
+       "name": "item",
+       "type": {
+        "k": "object",
+        "t": "GObject.Object"
+       }
+      },
+      {
+       "js": "compareFunc",
+       "name": "compare_func",
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "a",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          },
+          {
+           "name": "b",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "int",
+          "t": "gint"
+         }
+        },
+        "t": "GLib.CompareDataFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "int",
+      "t": "guint"
+     },
+     "since": "2.44"
+    },
+    {
      "js": "remove",
      "name": "remove",
      "params": [
@@ -10556,6 +10604,47 @@
       "k": "void"
      },
      "since": "2.44"
+    },
+    {
+     "js": "sort",
+     "name": "sort",
+     "params": [
+      {
+       "js": "compareFunc",
+       "name": "compare_func",
+       "type": {
+        "k": "callback",
+        "scope": "call",
+        "sig": {
+         "args": [
+          {
+           "name": "a",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          },
+          {
+           "name": "b",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "int",
+          "t": "gint"
+         }
+        },
+        "t": "GLib.CompareDataFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     },
+     "since": "2.46"
     },
     {
      "js": "splice",

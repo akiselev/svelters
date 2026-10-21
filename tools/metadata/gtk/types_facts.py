@@ -348,10 +348,18 @@ def refs_of(t: dict | None) -> set[str]:
     return out
 
 
-def callback_sig(g: Gir, cv: "Conv", cb_full: str) -> dict:
+# Functions whose callback receives the items of a list model through untyped pointers
+# (`GCompareDataFunc` over `gconstpointer`): the pointers cross as GObjects (N3). Same list as
+# OBJECT_POINTER_CALLBACKS in crates/svelters-gtk/src/gi.rs, keyed by C symbol.
+OBJECT_POINTER_CALLBACKS = ("g_list_store_sort", "g_list_store_insert_sorted", "gtk_custom_sorter_new",
+                            "gtk_custom_sorter_set_sort_func")
+
+
+def callback_sig(g: Gir, cv: "Conv", cb_full: str, objects: bool = False) -> dict:
     """The signature of a callback type as crates/svelters-gtk/src/gi.rs `plan_callback` accepts it:
     in-arguments the invoker reads back plus one trailing user-data pointer, no GError, no out
-    arguments, no arrays with a length, no nested callbacks, no list/array return."""
+    arguments, no arrays with a length, no nested callbacks, no list/array return. With `objects`
+    (OBJECT_POINTER_CALLBACKS), other untyped pointers are GObjects."""
     tag, el, ns = g.t[cb_full]
     if el.get("throws") == "1":
         raise Blocked("callback: throws")
@@ -365,7 +373,10 @@ def callback_sig(g: Gir, cv: "Conv", cb_full: str) -> dict:
         if t is not None and t.get("name") in ("gpointer", "gconstpointer"):
             if i + 1 == len(params):
                 continue
-            raise Blocked("callback: gpointer")
+            if not objects:
+                raise Blocked("callback: gpointer")
+            args.append({"name": p.get("name"), "type": {"k": "object", "t": "GObject.Object"}})
+            continue
         a = p.find(C + "array")
         if a is not None and a.get("length") is not None:
             raise Blocked("callback: array with length")
@@ -450,7 +461,8 @@ def sig_of(m: ET.Element, ns: str, cv: Conv, g: Gir, name_over: str | None = Non
                 scope = p.get("scope") or "call"
                 if is_async and scope == "call":
                     raise Blocked("async: call-scope callback")
-                ty = {"k": "callback", "t": tn, "scope": scope, "sig": callback_sig(g, cv, tn)}
+                objects = m.get(CNS + "identifier") in OBJECT_POINTER_CALLBACKS
+                ty = {"k": "callback", "t": tn, "scope": scope, "sig": callback_sig(g, cv, tn, objects)}
             else:
                 ty = cv.slot(p, ns, by_ref=caller_alloc and direction == "out")
             if ty["k"] == "void":
@@ -544,6 +556,9 @@ def callables(g: Gir, full: str, cats: dict[str, str], cv: Conv, ov: dict) -> di
                 continue
             rec = {"name": nm, "js": camel(nm), **sig}
             if m.get("shadows"):
+                # The typelib stores a shadowing function under the name it shadows
+                # (g_list_model_get_object is `get_item` there), so the backend knows only that name.
+                rec["name"] = m.get("shadows")
                 rec["aliases"] = [camel(m.get("shadows"))]
             if m.get("version"):
                 rec["since"] = m.get("version")

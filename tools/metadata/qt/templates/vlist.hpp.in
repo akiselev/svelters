@@ -10,14 +10,21 @@
 // widget per visible item, binding and unbinding pool as the visible range changes. Row widgets
 // are children of the viewport, so QWidget::scroll moves them with the content and a relayout only
 // has to fix the pool that entered or left.
+//
+// Model mode (N3): the `model` prop shows any QAbstractItemModel the app holds as a handle (column 0,
+// root rows) instead of the id model. The view reads it directly; `bind` carries the change counter
+// (`epoch`), the model's row signals are forwarded as `items-changed` / `data-changed`, and a bound row
+// whose item moved (persistent index) is reported with `moved` (plans/architecture/backend-abi.md,
+// "Native models (N3)").
 
 constexpr svl_id kVListKind = 0x4002;
 constexpr svl_id VL_P_SELECTED = 0x4121, VL_P_SELECTION = 0x4122, VL_P_LAYOUT = 0x4123, VL_P_ROW_HEIGHT = 0x4124,
-                 VL_P_MIN_HEIGHT = 0x4125, VL_P_HEXPAND = 0x4126, VL_P_VEXPAND = 0x4127;
+                 VL_P_MIN_HEIGHT = 0x4125, VL_P_HEXPAND = 0x4126, VL_P_VEXPAND = 0x4127, VL_P_MODEL = 0x4128;
 constexpr svl_id VL_M_SPLICE = 0x4221, VL_M_COUNT = 0x4222, VL_M_SCROLL_TO = 0x4223, VL_M_SET_ROW = 0x4224,
                  VL_M_ROW_AT = 0x4225;
 constexpr svl_id VL_S_SETUP = 0x4321, VL_S_BIND = 0x4322, VL_S_UNBIND = 0x4323, VL_S_TEARDOWN = 0x4324,
-                 VL_S_ACTIVATE = 0x4325, VL_S_SELECT = 0x4326;
+                 VL_S_ACTIVATE = 0x4325, VL_S_SELECT = 0x4326, VL_S_ITEMS_CHANGED = 0x4327,
+                 VL_S_DATA_CHANGED = 0x4328, VL_S_MOVED = 0x4329;
 
 struct SvIdModel : QAbstractListModel {
   std::vector<uint64_t> ids;
@@ -72,6 +79,7 @@ struct VlSlot {
   QPersistentModelIndex idx;  // the item this slot shows; follows the model's inserts and removes
   uint64_t gen = 0;
   bool bound = false;
+  int reported = -1;  // model mode: the row JS last heard for this binding (bind or moved)
 };
 
 struct SvVirtualList : QListView {
@@ -87,13 +95,18 @@ struct SvVirtualList : QListView {
   int row_height = 32;
   bool busy = false;
   QTimer *timer = nullptr;
+  QPointer<QAbstractItemModel> user;          // model mode: the app's model, shown instead of `mdl`
+  std::vector<QMetaObject::Connection> mconns;  // our connections to the shown model and its selection
+  uint64_t epoch = 0;                           // model mode: change reports raised so far
+  int count_before = 0;                         // row count before a reset or layout change
+
+  QAbstractItemModel *cur() const { return user ? user.data() : static_cast<QAbstractItemModel *>(mdl); }
 
   SvVirtualList() {
     mdl = new SvIdModel;
     mdl->setParent(this);
     dlg = new SvRowDelegate;
     dlg->setParent(this);
-    setModel(mdl);
     setItemDelegate(dlg);
     setUniformItemSizes(true);
     setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -105,19 +118,85 @@ struct SvVirtualList : QListView {
     timer->setInterval(0);
     QObject::connect(timer, &QTimer::timeout, this, [this] { relayout(); });
     auto sched = [this] { schedule(); };
-    QObject::connect(mdl, &QAbstractItemModel::rowsInserted, this, sched);
-    QObject::connect(mdl, &QAbstractItemModel::rowsRemoved, this, sched);
-    QObject::connect(mdl, &QAbstractItemModel::dataChanged, this, sched);
-    QObject::connect(mdl, &QAbstractItemModel::modelReset, this, sched);
-    QObject::connect(mdl, &QAbstractItemModel::layoutChanged, this, sched);
     QObject::connect(verticalScrollBar(), &QScrollBar::valueChanged, this, sched);
     QObject::connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, sched);
-    QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this,
-                     [this](const QModelIndex &cur, const QModelIndex &) {
-                       if (!quiet) emit_sig(VL_S_SELECT, {cur.isValid() ? cur.row() : -1}, false);
-                     });
     QObject::connect(this, &QAbstractItemView::activated, this,
                      [this](const QModelIndex &i) { if (i.isValid()) emit_sig(VL_S_ACTIVATE, {i.row()}, false); });
+    attach_model(mdl);
+  }
+
+  // Shows `m` (the id model or the app's): every bound slot lets go, the view and our connections move
+  // to `m`. Leaving model mode empties the id model, so JS starts over from an empty list.
+  void attach_model(QAbstractItemModel *m) {
+    for (auto &c : mconns) QObject::disconnect(c);
+    mconns.clear();
+    QPointer<SvVirtualList> self(this);
+    for (auto &s : pool) {
+      unbind(s.get());
+      if (!self) return;
+    }
+    user = m == mdl ? nullptr : m;
+    if (mdl->rowCount() > 0) {
+      std::string er;
+      mdl->splice(0, mdl->rowCount(), {}, er);
+    }
+    QItemSelectionModel *old = selectionModel();
+    setModel(m);
+    if (old && old != selectionModel() && old->parent() == this) old->deleteLater();
+    auto sched = [this] { schedule(); };
+    mconns.push_back(QObject::connect(m, &QAbstractItemModel::rowsInserted, this, sched));
+    mconns.push_back(QObject::connect(m, &QAbstractItemModel::rowsRemoved, this, sched));
+    mconns.push_back(QObject::connect(m, &QAbstractItemModel::rowsMoved, this, sched));
+    mconns.push_back(QObject::connect(m, &QAbstractItemModel::dataChanged, this, sched));
+    mconns.push_back(QObject::connect(m, &QAbstractItemModel::modelReset, this, sched));
+    mconns.push_back(QObject::connect(m, &QAbstractItemModel::layoutChanged, this, sched));
+    mconns.push_back(QObject::connect(selectionModel(), &QItemSelectionModel::currentChanged, this,
+                                      [this](const QModelIndex &c, const QModelIndex &) {
+                                        if (!quiet) emit_sig(VL_S_SELECT, {c.isValid() ? c.row() : -1}, false);
+                                      }));
+    if (user) {
+      // The app's model: its row changes are reported to JS (root rows of column 0 only).
+      auto changed = [this](qint64 pos, qint64 removed, qint64 added) {
+        ++epoch;
+        emit_sig(VL_S_ITEMS_CHANGED, {pos, removed, added, static_cast<qint64>(epoch)}, false);
+      };
+      mconns.push_back(QObject::connect(m, &QAbstractItemModel::rowsInserted, this,
+                                        [changed](const QModelIndex &p, int first, int last) {
+                                          if (!p.isValid()) changed(first, 0, last - first + 1);
+                                        }));
+      mconns.push_back(QObject::connect(m, &QAbstractItemModel::rowsRemoved, this,
+                                        [changed](const QModelIndex &p, int first, int last) {
+                                          if (!p.isValid()) changed(first, last - first + 1, 0);
+                                        }));
+      mconns.push_back(QObject::connect(
+          m, &QAbstractItemModel::rowsMoved, this,
+          [changed](const QModelIndex &sp, int start, int end, const QModelIndex &dp, int dest) {
+            if (sp.isValid() || dp.isValid()) return;
+            const int n = end - start + 1;
+            changed(start, n, 0);
+            changed(dest > start ? dest - n : dest, 0, n);
+          }));
+      mconns.push_back(QObject::connect(m, &QAbstractItemModel::modelAboutToBeReset, this,
+                                        [this] { count_before = user ? user->rowCount() : 0; }));
+      mconns.push_back(QObject::connect(m, &QAbstractItemModel::modelReset, this, [this, changed] {
+        changed(0, count_before, user ? user->rowCount() : 0);
+      }));
+      mconns.push_back(QObject::connect(m, &QAbstractItemModel::layoutAboutToBeChanged, this,
+                                        [this] { count_before = user ? user->rowCount() : 0; }));
+      mconns.push_back(QObject::connect(m, &QAbstractItemModel::layoutChanged, this, [this, changed] {
+        changed(0, count_before, user ? user->rowCount() : 0);
+      }));
+      mconns.push_back(QObject::connect(m, &QAbstractItemModel::dataChanged, this,
+                                        [this](const QModelIndex &tl, const QModelIndex &br) {
+                                          if (tl.parent().isValid()) return;
+                                          emit_sig(VL_S_DATA_CHANGED, {tl.row(), br.row(), static_cast<qint64>(epoch)}, false);
+                                        }));
+      mconns.push_back(QObject::connect(m, &QObject::destroyed, this, [this] {
+        // The app's model died: back to the (empty) id model.
+        QTimer::singleShot(0, this, [this] { if (!user) attach_model(mdl); });
+      }));
+    }
+    schedule();
   }
 
   ~SvVirtualList() override {
@@ -144,7 +223,7 @@ struct SvVirtualList : QListView {
   // before the next paint; a busy host queued the event itself.
   void emit_sig(svl_id sig, std::initializer_list<qint64> args, bool sync) {
     if (!(listened & (1u << (sig - VL_S_SETUP))) || !g.host) return;
-    svl_value vals[4] = {};
+    svl_value vals[6] = {};
     size_t n = 0;
     for (qint64 a : args) {
       vals[n].tag = SVL_I64;
@@ -176,11 +255,14 @@ struct SvVirtualList : QListView {
   }
 
   void bind(VlSlot *s, int r) {
-    s->idx = QPersistentModelIndex(mdl->index(r));
+    s->idx = QPersistentModelIndex(cur()->index(r, 0));
     s->bound = true;
+    s->reported = r;
     ++s->gen;
-    emit_sig(VL_S_BIND,
-             {static_cast<qint64>(s->row), r, static_cast<qint64>(mdl->ids[static_cast<size_t>(r)]), static_cast<qint64>(s->gen)}, true);
+    // Model mode: no id; JS reads the item from the model (the model is consistent here: binds run
+    // from the relayout timer, never inside a model change).
+    const qint64 id = user ? 0 : static_cast<qint64>(mdl->ids[static_cast<size_t>(r)]);
+    emit_sig(VL_S_BIND, {static_cast<qint64>(s->row), r, id, static_cast<qint64>(s->gen), static_cast<qint64>(epoch)}, true);
   }
 
   void teardown_slot(size_t i) {
@@ -209,7 +291,8 @@ struct SvVirtualList : QListView {
     busy = true;
     QPointer<SvVirtualList> self(this);
     executeDelayedItemsLayout();
-    const int n = mdl->rowCount();
+    QAbstractItemModel *m = cur();
+    const int n = m->rowCount();
     int first = 0, last = -1;
     if (n > 0) {
       QModelIndex fi = first_visible();
@@ -218,7 +301,7 @@ struct SvVirtualList : QListView {
         last = first;
         const int vh = viewport()->height();
         for (int r = first + 1; r < n && r < first + 5000; ++r) {
-          if (visualRect(mdl->index(r)).top() > vh) break;
+          if (visualRect(m->index(r, 0)).top() > vh) break;
           last = r;
         }
       }
@@ -252,6 +335,16 @@ struct SvVirtualList : QListView {
       bind(free_slot, r);
       if (!self) return;
       shown[r] = free_slot;
+    }
+    // Model mode: a bound slot keeps its item when the model moves it (a sort is a layout change);
+    // JS hears its new row.
+    if (user) {
+      for (auto &s : pool) {
+        if (!s->bound || !s->idx.isValid() || s->idx.row() == s->reported) continue;
+        s->reported = s->idx.row();
+        emit_sig(VL_S_MOVED, {static_cast<qint64>(s->row), s->reported, static_cast<qint64>(s->gen), static_cast<qint64>(epoch)}, false);
+        if (!self) return;
+      }
     }
     for (auto &s : pool) {
       if (!s->widget) continue;
@@ -296,11 +389,13 @@ svl_id vl_resolve(uint32_t what, std::string_view n) {
   static const Row rows[] = {
       {SVL_PROP, "selected", VL_P_SELECTED}, {SVL_PROP, "selection", VL_P_SELECTION}, {SVL_PROP, "layout", VL_P_LAYOUT},
       {SVL_PROP, "row-height", VL_P_ROW_HEIGHT}, {SVL_PROP, "min-height", VL_P_MIN_HEIGHT},
-      {SVL_PROP, "hexpand", VL_P_HEXPAND}, {SVL_PROP, "vexpand", VL_P_VEXPAND},
+      {SVL_PROP, "hexpand", VL_P_HEXPAND}, {SVL_PROP, "vexpand", VL_P_VEXPAND}, {SVL_PROP, "model", VL_P_MODEL},
       {SVL_METHOD, "splice", VL_M_SPLICE}, {SVL_METHOD, "count", VL_M_COUNT}, {SVL_METHOD, "scrollTo", VL_M_SCROLL_TO},
       {SVL_METHOD, "setRow", VL_M_SET_ROW}, {SVL_METHOD, "rowAt", VL_M_ROW_AT},
       {SVL_SIGNAL, "setup", VL_S_SETUP}, {SVL_SIGNAL, "bind", VL_S_BIND}, {SVL_SIGNAL, "unbind", VL_S_UNBIND},
       {SVL_SIGNAL, "teardown", VL_S_TEARDOWN}, {SVL_SIGNAL, "activate", VL_S_ACTIVATE}, {SVL_SIGNAL, "select", VL_S_SELECT},
+      {SVL_SIGNAL, "items-changed", VL_S_ITEMS_CHANGED}, {SVL_SIGNAL, "data-changed", VL_S_DATA_CHANGED},
+      {SVL_SIGNAL, "moved", VL_S_MOVED},
   };
   for (const Row &r : rows)
     if (r.what == what && r.name == n) return r.id;
@@ -340,11 +435,11 @@ int vl_set_prop(Entry &e, svl_id prop, const svl_value *val) {
       if (val->tag == SVL_NULL) i = -1;
       else if (!vl_i64(val, i)) return fail("selected: expected a number");
       v->quiet = true;
-      if (i < 0 || i >= v->mdl->rowCount()) {
+      if (i < 0 || i >= v->cur()->rowCount()) {
         v->clearSelection();
         v->setCurrentIndex(QModelIndex());
       } else {
-        v->setCurrentIndex(v->mdl->index(static_cast<int>(i)));
+        v->setCurrentIndex(v->cur()->index(static_cast<int>(i), 0));
       }
       v->quiet = false;
       return 0;
@@ -381,6 +476,18 @@ int vl_set_prop(Entry &e, svl_id prop, const svl_value *val) {
       if (!vl_i64(val, i) || i < 0) return fail("min-height: expected a non-negative number");
       v->setMinimumHeight(static_cast<int>(i));
       return 0;
+    case VL_P_MODEL: {
+      QAbstractItemModel *m = v->mdl;
+      if (val->tag == SVL_HANDLE) {
+        Entry *me = find(val->u.h);
+        m = me ? qobject_cast<QAbstractItemModel *>(me->obj.data()) : nullptr;
+        if (!m) return fail("model: expected a QAbstractItemModel handle or null");
+      } else if (val->tag != SVL_NULL) {
+        return fail("model: expected a QAbstractItemModel handle or null");
+      }
+      if (m != v->cur()) v->attach_model(m);
+      return 0;
+    }
     case VL_P_HEXPAND:
     case VL_P_VEXPAND: {
       bool on = false;
@@ -412,6 +519,16 @@ int vl_get_prop(Entry &e, svl_id prop, svl_value *out) {
     case VL_P_LAYOUT: out_str(out, QString::fromUtf8(v->grid ? "grid" : "list")); return 0;
     case VL_P_ROW_HEIGHT: out_i64(out, v->row_height); return 0;
     case VL_P_MIN_HEIGHT: out_i64(out, v->minimumHeight()); return 0;
+    case VL_P_MODEL:
+      if (svl_handle mh = v->user ? handle_of(v->user.data()) : 0) {
+        *out = svl_value{};
+        out->tag = SVL_HANDLE;
+        out->u.h = mh;
+      } else {
+        *out = svl_value{};
+        out->tag = SVL_NULL;
+      }
+      return 0;
     default: break;
   }
   return fail("get_prop: unknown property id for virtual-list");
@@ -433,15 +550,16 @@ int vl_call(Entry &e, svl_id method, const svl_value *args, size_t n, svl_value 
         add.push_back(static_cast<uint64_t>(id));
       }
       std::string er;
+      if (v->user) return fail("splice: the list shows a native model (`model` is set)");
       if (!v->mdl->splice(a, b, add, er)) return fail(er);
       return 0;
     }
-    case VL_M_COUNT: out_i64(out, v->mdl->rowCount()); return 0;
+    case VL_M_COUNT: out_i64(out, v->cur()->rowCount()); return 0;
     case VL_M_SCROLL_TO:
       if (n != 1 || !vl_i64(&args[0], a)) return fail("scrollTo(pos): expected a number");
-      if (a < 0 || a >= v->mdl->rowCount()) return fail("scrollTo: position " + std::to_string(a) + " is out of range");
+      if (a < 0 || a >= v->cur()->rowCount()) return fail("scrollTo: position " + std::to_string(a) + " is out of range");
       v->flush_layout();
-      v->scrollTo(v->mdl->index(static_cast<int>(a)), QAbstractItemView::PositionAtTop);
+      v->scrollTo(v->cur()->index(static_cast<int>(a), 0), QAbstractItemView::PositionAtTop);
       v->schedule();
       return 0;
     case VL_M_SET_ROW: {
@@ -481,7 +599,7 @@ int vl_call(Entry &e, svl_id method, const svl_value *args, size_t n, svl_value 
 int vl_listen(Entry &e, svl_id sig, bool on) {
   SvVirtualList *v = vl_of(e);
   if (!v) return fail("listen: the virtual-list is gone");
-  if (sig < VL_S_SETUP || sig > VL_S_SELECT) return fail("listen: unknown signal id for virtual-list");
+  if (sig < VL_S_SETUP || sig > VL_S_MOVED) return fail("listen: unknown signal id for virtual-list");
   const unsigned bit = 1u << (sig - VL_S_SETUP);
   v->listened = on ? (v->listened | bit) : (v->listened & ~bit);
   return 0;

@@ -5722,14 +5722,14 @@
   "pattern": "observe:constant-read-only"
  },
  "Gtk:DirectoryList:loading": {
-  "confidence": 0.8,
+  "confidence": 0.9,
   "evidence": {
    "flags": [
     "READABLE",
     "EXPLICIT_NOTIFY"
    ]
   },
-  "pattern": "observe:exact-read-only-unprobed"
+  "pattern": "observe:exact-read-only-accepted"
  },
  "Gtk:DirectoryList:monitored": {
   "confidence": 0.95,

@@ -14,7 +14,15 @@
 // Row content lives in recycled *row slots*: one hosted root per slot, mounted at the slot's first
 // bind into an outlet (a native box outside the window tree that the toolkit places in the view),
 // rebound to other items as the view scrolls, destroyed at teardown.
+//
+// Native models (N3, plans/milestones/N3-native-models.md): `items` (or `model`) may instead be a
+// native list model the app holds (a GTK `GListModel`: Gio.ListStore, Gtk.DirectoryList, a filter /
+// sort / selection model...; a Qt `QAbstractItemModel`). The view then reads that model natively:
+// JS keeps no copy, no keys and no ids. The native side reports the model's changes
+// (`items-changed(pos, removed, added, epoch)`, Qt `data-changed(first, last, epoch)`) so bound rows
+// keep their index, and `bind` carries the item (GTK) and the change counter `epoch`.
 import * as $ from './core/index.js';
+import { NativeObject, wrapObject } from '@svelters/types/core';
 // the core's component context functions (Svelte's, through the core adapter)
 import { flush, get_all_contexts as getAllContexts, set_context as setContext } from './core/internal.js';
 import { diffKeys } from './lists-diff.js';
@@ -98,6 +106,13 @@ export class ListController {
     this.slots = new Map(); // row slot -> { outlet, unmountOutlet, unmountRow, item, index, id, pos, gen }
     this.destroyed = false;
     this.splices = 0; // native splice calls issued (tests, benchmarks)
+    this.model = null; // model mode: the native model shown (a wrapper), else null
+    this.modelChanges = 0; // model mode: items-changed reports received (tests, benchmarks)
+  }
+
+  /** `x` is a native list model rather than an array or iterable: an object with a native handle. */
+  static isNativeModel(x) {
+    return x instanceof NativeObject || (x !== null && typeof x === 'object' && typeof x.svlHandle === 'number' && !Array.isArray(x) && typeof x[Symbol.iterator] !== 'function');
   }
 
   attach(view) {
@@ -115,6 +130,11 @@ export class ListController {
    * their keys is tracked, everything after is not.
    */
   update(items) {
+    if (ListController.isNativeModel(items)) {
+      $.untrack(() => this.#setModel(items));
+      return;
+    }
+    if (this.model) $.untrack(() => this.#setModel(null));
     const list = Array.isArray(items) ? items : Array.from(items ?? []);
     const key = this.opts.key;
     const newKeys = new Array(list.length);
@@ -143,6 +163,99 @@ export class ListController {
     }
   }
 
+  /**
+   * Enters model mode with `m` (or leaves it for null). The native list empties its id model either
+   * way, so the id-mode state starts over; bound rows are rebound by the toolkit.
+   */
+  #setModel(m) {
+    if (m === this.model) return;
+    this.keys = [];
+    this.ids = [];
+    this.entries.clear();
+    this.list = [];
+    for (const s of this.slots.values()) s.pos = -1;
+    this.model = m;
+    this.opts.onmodel?.(m);
+  }
+
+  /** The row item at `pos` of the native model, `raw` the item handle the toolkit sent (GTK). */
+  itemAt(pos, raw) {
+    const custom = this.opts.item?.();
+    const m = this.model;
+    if (custom) return custom(m, pos, raw ?? null);
+    if (raw !== null && raw !== undefined) return this.#wrapItem(raw);
+    if (!m) return undefined;
+    if (typeof m.getItem === 'function') return this.#wrapItem(m.getItem(pos));
+    // Qt: a QStandardItemModel's rows are its items; any other model gives the row's QModelIndex.
+    if (typeof m.itemFromIndex === 'function' && typeof m.item === 'function') return m.item(pos);
+    if (typeof m.index === 'function') return m.index(pos, 0);
+    return undefined;
+  }
+
+  #wrapItem(raw) {
+    if (raw === null || raw === undefined) return null;
+    const C = this.opts.itemClass?.();
+    const w = raw instanceof NativeObject ? raw : wrapObject(C ?? NativeObject, raw);
+    return C && w && !(w instanceof C) ? C.from(w) : w;
+  }
+
+  /** Model mode: the native model replaced `removed` items at `pos` with `added` (change number `epoch`). */
+  itemsChanged(pos, removed, added, epoch) {
+    if (this.destroyed || !this.model) return;
+    this.modelChanges++;
+    let moved = false;
+    for (const s of this.slots.values()) {
+      // A slot bound after this change already has the new position.
+      if (s.pos < 0 || s.epoch >= epoch) continue;
+      const before = s.pos;
+      this.#shiftOne(s, pos, removed, added);
+      s.epoch = epoch;
+      if (s.pos !== before && s.pos >= 0 && s.unmountRow) {
+        $.set(s.index, s.pos);
+        moved = true;
+      }
+    }
+    if (moved) flush();
+  }
+
+  /**
+   * Model mode: row slot `row` (binding `gen`) kept its item while the model moved it to `pos` (a
+   * sort, a move); reported by the toolkit after the change numbered `epoch`.
+   */
+  moved(row, pos, gen, epoch) {
+    if (this.destroyed || !this.model) return;
+    const s = this.slots.get(row);
+    if (!s || s.gen !== gen || epoch < s.epoch) return;
+    s.epoch = epoch;
+    if (s.pos === pos) return;
+    s.pos = pos;
+    if (s.unmountRow) {
+      $.set(s.index, pos);
+      flush();
+    }
+  }
+
+  /** Model mode (Qt): the data of rows `first..last` changed; bound rows re-read their item. */
+  dataChanged(first, last, epoch) {
+    if (this.destroyed || !this.model) return;
+    let any = false;
+    for (const s of this.slots.values()) {
+      if (s.pos < first || s.pos > last || s.epoch !== epoch || !s.unmountRow) continue;
+      $.set(s.item, this.itemAt(s.pos, null));
+      $.set(s.ver, s.ver.v + 1);
+      any = true;
+    }
+    if (any) flush();
+  }
+
+  #shiftOne(s, pos, removed, added) {
+    if (removed) {
+      if (s.pos >= pos + removed) s.pos -= removed;
+      else if (s.pos >= pos) s.pos = -1;
+    }
+    if (added && s.pos >= pos) s.pos += added;
+  }
+
   #shiftBound(pos, removed, added) {
     for (const s of this.slots.values()) {
       if (s.pos < 0) continue;
@@ -168,7 +281,7 @@ export class ListController {
 
   setup(row) {
     if (this.destroyed || this.slots.has(row) || !this.view) return;
-    const s = { outlet: null, unmountOutlet: null, unmountRow: null, item: $.state(undefined), index: $.state(-1), id: -1, pos: -1, gen: 0 };
+    const s = { outlet: null, unmountOutlet: null, unmountRow: null, item: $.state(undefined), index: $.state(-1), ver: $.state(0), id: -1, pos: -1, gen: 0, epoch: 0 };
     // The outlet is a root of its own: it belongs to the slot, not to the component tree.
     s.unmountOutlet = mount(() => {
       s.outlet = element(rowOutlet());
@@ -177,10 +290,23 @@ export class ListController {
     this.view.call('setRow', row, s.outlet);
   }
 
-  bind(row, pos, id, gen) {
+  bind(row, pos, id, gen, epoch, item) {
     if (this.destroyed) return;
     const s = this.slots.get(row);
     if (!s) return;
+    if (this.model) {
+      // A deferred bind older than one already applied (a sync bind overtook it) is stale.
+      if (gen < s.gen) return;
+      s.id = -1;
+      s.pos = pos;
+      s.gen = gen;
+      s.epoch = epoch ?? 0;
+      $.set(s.item, this.itemAt(pos, item));
+      $.set(s.index, pos);
+      this.#mountRow(s);
+      flush();
+      return;
+    }
     if (this.ids[pos] !== id) {
       // A deferred bind that arrived after more splices: find where the id is now.
       const at = this.ids.indexOf(id);
@@ -192,20 +318,25 @@ export class ListController {
     s.gen = gen;
     $.set(s.item, this.list[pos]);
     $.set(s.index, pos);
-    if (!s.unmountRow) {
-      const snippet = this.opts.row();
-      const contexts = this.opts.context?.();
-      s.unmountRow = mount(
-        ($$anchor) => {
-          $.push({}, true);
-          if (contexts) for (const [k, v] of contexts) setContext(k, v);
-          snippet?.($$anchor, () => $.get(s.item), () => $.get(s.index));
-          $.pop();
-        },
-        { target: s.outlet },
-      );
-    }
+    this.#mountRow(s);
     flush();
+  }
+
+  #mountRow(s) {
+    if (s.unmountRow) return;
+    const snippet = this.opts.row();
+    const contexts = this.opts.context?.();
+    // `ver` makes a row re-read an item whose data changed in place (a Qt dataChanged).
+    const item = () => ($.get(s.ver), $.get(s.item));
+    s.unmountRow = mount(
+      ($$anchor) => {
+        $.push({}, true);
+        if (contexts) for (const [k, v] of contexts) setContext(k, v);
+        snippet?.($$anchor, item, () => $.get(s.index));
+        $.pop();
+      },
+      { target: s.outlet },
+    );
   }
 
   unbind(row, gen) {
@@ -224,7 +355,7 @@ export class ListController {
   }
 
   activate(pos) {
-    this.opts.onactivate?.(pos, this.list[pos]);
+    this.opts.onactivate?.(pos, this.model ? this.itemAt(pos, null) : this.list[pos]);
   }
 
   /** Position of the first item with `key`, or -1. */
@@ -233,13 +364,18 @@ export class ListController {
   }
 }
 
-const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'key', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
+const OWN_PROPS = new Set(['$$slots', '$$events', '$$legacy', 'items', 'model', 'item', 'itemClass', 'key', 'row', 'layout', 'selection', 'selected', 'row-height', 'onactivate', 'children']);
 
 /**
  * `<ListView items key row layout selection bind:selected row-height onactivate ...rest>`, the
  * component API of @svelters/lists, in the shape the compiler generates for a component
  * (`ListView(container, $$props)`, returns its exports `{ scrollTo, controller }`). Other props go
  * to the native `virtual-list` unchanged (`vexpand`, `min-height`, ...).
+ *
+ * `items` (or `model`) may be a native list model instead of an array (model mode, N3): `key` is
+ * then unused, rows get the model's items (`itemClass` wraps GTK items as that generated class;
+ * `item(model, pos, raw)` overrides how a row's item is found), and the toolkit's view reads the
+ * model directly.
  */
 export function ListView($$anchor, $$props) {
   $.push($$props, true);
@@ -257,7 +393,20 @@ export function ListView($$anchor, $$props) {
     row: () => $$props.row,
     context: () => contexts,
     onactivate: (pos, item) => $$props.onactivate?.(item, pos),
+    itemClass: () => $$props.itemClass,
+    item: () => $$props.item,
+    onmodel: (m) => {
+      if (m && !listeningModel) {
+        // Only lists that show a native model listen: id-mode op logs stay as they were.
+        listeningModel = true;
+        on(view, 'items-changed', (pos, removed, added, epoch) => ctl.itemsChanged(pos, removed, added, epoch));
+        on(view, 'data-changed', (first, last, epoch) => ctl.dataChanged(first, last, epoch));
+        on(view, 'moved', (row, pos, gen, epoch) => ctl.moved(row, pos, gen, epoch));
+      }
+      if (view.handle != null) set(view, 'model', m ?? null);
+    },
   });
+  let listeningModel = false;
   let lastSelected = -1; // last position known natively: a native change is not echoed back
 
   const view = element('virtual-list');
@@ -272,7 +421,7 @@ export function ListView($$anchor, $$props) {
     restKeys = keys;
   });
   on(view, 'setup', lifecycle((r) => ctl.setup(r)));
-  on(view, 'bind', lifecycle((r, pos, id, gen) => ctl.bind(r, pos, id, gen)));
+  on(view, 'bind', lifecycle((r, pos, id, gen, epoch, item) => ctl.bind(r, pos, id, gen, epoch, item)));
   on(view, 'unbind', lifecycle((r, gen) => ctl.unbind(r, gen)));
   on(view, 'teardown', lifecycle((r) => ctl.teardown(r)));
   on(view, 'activate', (pos) => ctl.activate(pos));
@@ -283,7 +432,7 @@ export function ListView($$anchor, $$props) {
   append($$anchor, view);
   ctl.attach(view);
 
-  $.user_effect(() => ctl.update($$props.items));
+  $.user_effect(() => ctl.update($$props.model ?? $$props.items));
   $.user_effect(() => {
     const sel = selected();
     if (sel !== lastSelected) {

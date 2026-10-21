@@ -93,6 +93,7 @@ unsafe extern "C" {
     fn gi_struct_info_find_method(info: Info, name: *const c_char) -> Info;
     fn gi_struct_info_get_size(info: Info) -> usize;
     fn gi_function_info_get_flags(info: Info) -> c_int;
+    fn gi_function_info_get_symbol(info: Info) -> *const c_char;
     fn gi_callable_info_get_n_args(info: Info) -> c_uint;
     fn gi_callable_info_get_arg(info: Info, n: c_uint) -> Info;
     fn gi_callable_info_get_return_type(info: Info) -> Info;
@@ -727,11 +728,16 @@ fn qualified(info: Info) -> String {
     }
 }
 
+/// Functions whose callback compares or receives the *items of a list model* through untyped
+/// pointers (`GCompareDataFunc` over `gconstpointer`): those pointers are `GObject`s, so they cross
+/// as objects (N3). Keyed by C symbol; `tools/metadata/gtk/types_facts.py` has the same list.
+pub(crate) const OBJECT_POINTER_CALLBACKS: &[&str] = &["g_list_store_sort", "g_list_store_insert_sorted", "gtk_custom_sorter_new", "gtk_custom_sorter_set_sort_func"];
+
 /// The signature of a callback type. Supported: arguments the invoker reads back (numbers, strings,
 /// enums, flags, objects, boxed values, GStrv, lists) plus one trailing user-data pointer, and any
 /// return value the invoker can pass in. Out arguments, arrays with a length, `GError` and other
-/// untyped pointers are refused.
-fn plan_callback(cb: &Owned, what: &str) -> Result<CbSig, String> {
+/// untyped pointers are refused, except that `objects` makes untyped pointers `GObject`s.
+fn plan_callback(cb: &Owned, what: &str, objects: bool) -> Result<CbSig, String> {
     unsafe {
         if gi_callable_info_can_throw_gerror(cb.0) != 0 {
             return Err(format!("{what}: callbacks that throw are not supported"));
@@ -749,13 +755,16 @@ fn plan_callback(cb: &Owned, what: &str) -> Result<CbSig, String> {
             if callback_iface(ti.0).is_some() {
                 return Err(format!("{w}: callbacks taking callbacks are not supported"));
             }
-            let ty = type_info_ty(ti.0, &w)?;
+            let mut ty = type_info_ty(ti.0, &w)?;
             if ty == Ty::Void {
                 if i + 1 == n {
                     args.push(None);
                     continue;
                 }
-                return Err(format!("{w}: untyped pointer arguments are not supported"));
+                if !objects {
+                    return Err(format!("{w}: untyped pointer arguments are not supported"));
+                }
+                ty = Ty::Object(glib::Object::static_type());
             }
             if matches!(ty, Ty::Array(_, ArrLen::Arg(_))) {
                 return Err(format!("{w}: arrays with a length argument are not supported in callbacks"));
@@ -819,7 +828,9 @@ fn plan_of(info: &Owned, name: &str) -> Result<Plan, String> {
                         Ty::Internal
                     }
                     _ => {
-                        let sig = plan_callback(&cb, &format!("{what} ({cbname})"))?;
+                        let sym = gi_function_info_get_symbol(info.0);
+                        let objects = !sym.is_null() && OBJECT_POINTER_CALLBACKS.contains(&&*CStr::from_ptr(sym).to_string_lossy());
+                        let sig = plan_callback(&cb, &format!("{what} ({cbname})"), objects)?;
                         callbacks.push(CbSpec {
                             info: Rc::new(cb),
                             name: cbname,

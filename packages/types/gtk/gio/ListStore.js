@@ -30,12 +30,20 @@ export class ListStore extends GObject_Object {
     call(this, 'insert', [position, item]);
   }
 
+  insertSorted(item, compareFunc) {
+    return call(this, 'insert_sorted', [item, (typeof compareFunc === 'function' ? (a0, a1) => compareFunc(wrapObject(GObject_Object, a0), wrapObject(GObject_Object, a1)) : compareFunc)]);
+  }
+
   remove(position) {
     call(this, 'remove', [position]);
   }
 
   removeAll() {
     call(this, 'remove_all', []);
+  }
+
+  sort(compareFunc) {
+    call(this, 'sort', [(typeof compareFunc === 'function' ? (a0, a1) => compareFunc(wrapObject(GObject_Object, a0), wrapObject(GObject_Object, a1)) : compareFunc)]);
   }
 
   splice(position, nRemovals, additions) {
@@ -51,11 +59,11 @@ export class ListStore extends GObject_Object {
   }
 
   getObject(position) {
-    return wrapObject(GObject_Object, call(this, 'get_object', [position]));
+    return wrapObject(GObject_Object, call(this, 'get_item', [position]));
   }
 
   getItem(position) {
-    return wrapObject(GObject_Object, call(this, 'get_object', [position]));
+    return wrapObject(GObject_Object, call(this, 'get_item', [position]));
   }
 
   itemsChanged(position, removed, added) {

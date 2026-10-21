@@ -6350,27 +6350,111 @@
   },
   "CustomSorter": {
    "abstract": false,
-   "blocked": {
-    "new": "callback: gpointer",
-    "set_sort_func": "callback: gpointer"
-   },
+   "blocked": {},
    "builder": false,
    "category": "object",
-   "constructors": [],
+   "constructors": [
+    {
+     "js": "new",
+     "name": "new",
+     "params": [
+      {
+       "js": "sortFunc",
+       "name": "sort_func",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "a",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          },
+          {
+           "name": "b",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "int",
+          "t": "gint"
+         }
+        },
+        "t": "GLib.CompareDataFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "object",
+      "t": "Gtk.CustomSorter"
+     }
+    }
+   ],
    "curated": false,
    "gtype": "GtkCustomSorter",
    "hidden": [],
    "interfaces": [],
    "kind": "class",
    "lifetime": "shared",
-   "methods": [],
+   "methods": [
+    {
+     "js": "setSortFunc",
+     "name": "set_sort_func",
+     "params": [
+      {
+       "js": "sortFunc",
+       "name": "sort_func",
+       "nullable": true,
+       "type": {
+        "k": "callback",
+        "scope": "notified",
+        "sig": {
+         "args": [
+          {
+           "name": "a",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          },
+          {
+           "name": "b",
+           "type": {
+            "k": "object",
+            "t": "GObject.Object"
+           }
+          }
+         ],
+         "ret": {
+          "k": "int",
+          "t": "gint"
+         }
+        },
+        "t": "GLib.CompareDataFunc"
+       }
+      }
+     ],
+     "ret": {
+      "k": "void"
+     }
+    }
+   ],
    "name": "CustomSorter",
    "ns": "Gtk",
    "parent": "Gtk.Sorter",
    "prerequisites": [],
    "properties": [],
    "qualified": "Gtk.CustomSorter",
-   "refs": [],
+   "refs": [
+    "GObject.Object"
+   ],
    "scope": "gtk",
    "signals": [],
    "since": null,
