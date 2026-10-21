@@ -355,9 +355,6 @@ pub fn typescript() -> String {
                 };
                 let _ = writeln!(s, "    on(event: '{}', fn: ({arg}) => void): () => void;", e.name);
             }
-            if !c.events.is_empty() {
-                let _ = writeln!(s, "    on(signal: string, fn: (...args: any[]) => void): () => void;");
-            }
             s.push_str("  }\n");
         }
         for f in &m.functions {

@@ -349,6 +349,16 @@ impl<S: StoreState> Store<S> {
         r
     }
 
+    /// Changes the state under the write lock and marks the given fields dirty.
+    pub fn write_fields<R>(&self, fields: &[S::Field], f: impl FnOnce(&mut S) -> R) -> R {
+        let r = f(&mut self.0.write());
+        for field in fields {
+            let i = S::__index(*field);
+            self.0.each_sub(|s| s.mark(i));
+        }
+        r
+    }
+
     /// Marks `field` dirty without changing anything (state changed through interior mutability).
     pub fn touch(&self, field: S::Field) {
         let i = S::__index(field);

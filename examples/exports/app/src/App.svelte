@@ -1,8 +1,12 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import { Tally, Notebook, greet, fib, crunch, crunchBlocking, wordCount, type Summary, type Step } from 'svelters:app/demo';
+  import { telemetry, setSpeed, burst, burstStore, burstSize, Bursts } from 'svelters:app/telemetry';
+  import { persist } from '@svelters/types/core';
 
   const tally = new Tally(5);
-  const notes = new Notebook();
+  // E3: a persisted object is the same Rust object after a hot reload (the others die with the runtime).
+  const notes = persist('notes', () => new Notebook());
   const first = notes.add('first note');
 
   let count = $state(tally.count);
@@ -61,6 +65,52 @@
   // An async fn on the JS thread (it awaits a worker inside).
   let words = $state(0);
   wordCount('the quick brown fox jumps').then((n) => (words = n));
+
+  // E3: `telemetry` is a Rust store fed by a service thread. Its getters are reactive (no $state mirror),
+  // and `speed` is writable, so the scale binds to it; `on_write` clamps it to 0.5..=10.
+  let speedRuns = $state(0);
+  $effect(() => {
+    telemetry.speed;
+    speedRuns = untrack(() => speedRuns) + 1;
+  });
+
+  // E3 measurement: N worker writes to a store land in one change batch per checkpoint; N events are
+  // delivered one by one (each one a Svelte flush).
+  const N = burstSize();
+  let storeTarget = 0;
+  let storeT0 = 0;
+  let storeRuns = 0;
+  let storeText = $state('');
+  $effect(() => {
+    const v = burst.value;
+    if (storeTarget === 0) return;
+    storeRuns++;
+    if (v === storeTarget) storeText = `store burst: ${N} writes, ${storeRuns} effect run(s), ${(performance.now() - storeT0).toFixed(1)} ms`;
+  });
+  function burstStores() {
+    storeTarget = untrack(() => burst.value) + N;
+    storeRuns = 0;
+    storeT0 = performance.now();
+    burstStore(N);
+  }
+
+  const bursts = new Bursts();
+  let eventValue = $state(0);
+  let eventT0 = 0;
+  let eventRuns = 0;
+  let eventText = $state('');
+  bursts.on('value', (v) => (eventValue = v));
+  $effect(() => {
+    const v = eventValue;
+    if (v === 0) return;
+    eventRuns++;
+    if (v === N) eventText = `event burst: ${N} events, ${eventRuns} effect run(s), ${(performance.now() - eventT0).toFixed(1)} ms`;
+  });
+  function burstEvents() {
+    eventRuns = 0;
+    eventT0 = performance.now();
+    bursts.fire(N);
+  }
 </script>
 
 <window title="Rust exports" default-width={360} default-height={260}>
@@ -80,5 +130,15 @@
       <button onclicked={startCrunch}>Crunch</button>
       <button onclicked={crunchHere}>Crunch on the UI thread</button>
     {/if}
+    <label>samples {telemetry.samples > 0 ? 'flowing' : 'waiting'}</label>
+    <label>speed {telemetry.speed.toFixed(1)}</label>
+    <label>speed runs {speedRuns}</label>
+    <label>{telemetry.log}</label>
+    <scale lower={0} upper={20} step-increment={0.5} page-increment={1} digits={1} draw-value={true} hexpand={true} bind:value={telemetry.speed} />
+    <button onclicked={() => setSpeed(4)}>Speed 4 from Rust</button>
+    <button onclicked={burstStores}>Burst store</button>
+    <button onclicked={burstEvents}>Burst events</button>
+    <label>{storeText}</label>
+    <label>{eventText}</label>
   </box>
 </window>

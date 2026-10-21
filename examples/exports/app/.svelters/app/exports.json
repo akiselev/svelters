@@ -5,6 +5,7 @@
         {
           "constructor": null,
           "docs": "A note shared with worker threads later (E1): `Arc<Self>`.",
+          "events": [],
           "methods": [],
           "name": "Note",
           "native": "app:demo.Note",
@@ -19,7 +20,8 @@
           ],
           "rust": "Note",
           "shared": true,
-          "statics": []
+          "statics": [],
+          "store": false
         },
         {
           "constructor": {
@@ -34,11 +36,13 @@
             "returns": "Notebook",
             "runsOn": "ui",
             "rust": "new",
+            "stream": null,
             "supersede": false,
             "throws": [],
             "writeonly": false
           },
           "docs": "A notebook of shared notes.",
+          "events": [],
           "methods": [
             {
               "async": false,
@@ -58,6 +62,7 @@
               "returns": "Note",
               "runsOn": "ui",
               "rust": "add",
+              "stream": null,
               "supersede": false,
               "throws": [],
               "writeonly": false
@@ -80,6 +85,7 @@
               "returns": "Note | null",
               "runsOn": "ui",
               "rust": "get",
+              "stream": null,
               "supersede": false,
               "throws": [],
               "writeonly": false
@@ -98,7 +104,8 @@
           ],
           "rust": "Notebook",
           "shared": true,
-          "statics": []
+          "statics": [],
+          "store": false
         },
         {
           "constructor": {
@@ -119,11 +126,13 @@
             "returns": "Tally",
             "runsOn": "ui",
             "rust": "new",
+            "stream": null,
             "supersede": false,
             "throws": [],
             "writeonly": false
           },
           "docs": "A counter that lives on the UI thread (`&mut self`).",
+          "events": [],
           "methods": [
             {
               "async": false,
@@ -137,6 +146,7 @@
               "returns": "number",
               "runsOn": "ui",
               "rust": "bump",
+              "stream": null,
               "supersede": false,
               "throws": [
                 "out-of-range"
@@ -161,6 +171,7 @@
               "returns": "Summary",
               "runsOn": "ui",
               "rust": "summary",
+              "stream": null,
               "supersede": false,
               "throws": [],
               "writeonly": false
@@ -186,7 +197,8 @@
           ],
           "rust": "Tally",
           "shared": false,
-          "statics": []
+          "statics": [],
+          "store": false
         }
       ],
       "functions": [
@@ -208,6 +220,7 @@
           "returns": "Crunch",
           "runsOn": "worker",
           "rust": "crunch",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -230,6 +243,7 @@
           "returns": "Crunch",
           "runsOn": "ui",
           "rust": "crunch_blocking",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -252,6 +266,7 @@
           "returns": "number",
           "runsOn": "ui",
           "rust": "fib",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -274,6 +289,7 @@
           "returns": "string",
           "runsOn": "ui",
           "rust": "greet",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -296,6 +312,7 @@
           "returns": "number",
           "runsOn": "ui",
           "rust": "noop",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -318,6 +335,7 @@
           "returns": "number",
           "runsOn": "local",
           "rust": "noop_local",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -340,6 +358,7 @@
           "returns": "number",
           "runsOn": "worker",
           "rust": "noop_worker",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -362,6 +381,7 @@
           "returns": "number",
           "runsOn": "local",
           "rust": "word_count",
+          "stream": null,
           "supersede": false,
           "throws": [],
           "writeonly": false
@@ -425,6 +445,228 @@
           "kind": "record",
           "name": "Crunch",
           "values": []
+        }
+      ],
+      "values": []
+    },
+    {
+      "classes": [
+        {
+          "constructor": null,
+          "docs": "What the burst measurement writes.",
+          "events": [],
+          "methods": [],
+          "name": "Burst",
+          "native": "app:telemetry.Burst",
+          "props": [
+            {
+              "docs": "",
+              "name": "value",
+              "observability": "exact",
+              "proportional": false,
+              "readonly": true,
+              "type": "number",
+              "verified": "delivery"
+            }
+          ],
+          "rust": "Burst",
+          "shared": true,
+          "statics": [],
+          "store": true
+        },
+        {
+          "constructor": {
+            "async": false,
+            "docs": "",
+            "kind": "constructor",
+            "maxInFlight": 0,
+            "name": "new",
+            "params": [],
+            "progress": null,
+            "readonly": false,
+            "returns": "Bursts",
+            "runsOn": "ui",
+            "rust": "new",
+            "stream": null,
+            "supersede": false,
+            "throws": [],
+            "writeonly": false
+          },
+          "docs": "Emits events from worker threads.",
+          "events": [
+            {
+              "docs": "A value.",
+              "latest": false,
+              "name": "value",
+              "payload": "number"
+            }
+          ],
+          "methods": [
+            {
+              "async": true,
+              "docs": "Emits `value` 1..=n on a worker.",
+              "kind": "method",
+              "maxInFlight": 0,
+              "name": "fire",
+              "params": [
+                {
+                  "name": "n",
+                  "optional": false,
+                  "type": "number"
+                }
+              ],
+              "progress": null,
+              "readonly": false,
+              "returns": "number",
+              "runsOn": "worker",
+              "rust": "fire",
+              "stream": null,
+              "supersede": false,
+              "throws": [],
+              "writeonly": false
+            }
+          ],
+          "name": "Bursts",
+          "native": "app:telemetry.Bursts",
+          "props": [],
+          "rust": "Bursts",
+          "shared": true,
+          "statics": [],
+          "store": false
+        },
+        {
+          "constructor": null,
+          "docs": "Live telemetry, published by the `telemetry` service and read by Svelte like `$state`.",
+          "events": [],
+          "methods": [],
+          "name": "Telemetry",
+          "native": "app:telemetry.Telemetry",
+          "props": [
+            {
+              "docs": "The latest sample, in -1..=1.",
+              "name": "last",
+              "observability": "exact",
+              "proportional": false,
+              "readonly": true,
+              "type": "number",
+              "verified": "delivery"
+            },
+            {
+              "docs": "The sampler's recent log line (proportional: delivered as an invalidation, read when shown).",
+              "name": "log",
+              "observability": "exact",
+              "proportional": true,
+              "readonly": true,
+              "type": "string",
+              "verified": "delivery"
+            },
+            {
+              "docs": "Samples taken so far.",
+              "name": "samples",
+              "observability": "exact",
+              "proportional": false,
+              "readonly": true,
+              "type": "number",
+              "verified": "delivery"
+            },
+            {
+              "docs": "Sampling speed: JS may set it (`<scale bind:value={telemetry.speed}>`); `on_write` clamps it to\n0.5..=10.",
+              "name": "speed",
+              "observability": "exact",
+              "proportional": false,
+              "readonly": false,
+              "type": "number",
+              "verified": "delivery"
+            }
+          ],
+          "rust": "Telemetry",
+          "shared": true,
+          "statics": [],
+          "store": true
+        }
+      ],
+      "functions": [
+        {
+          "async": false,
+          "docs": "How many writes or events a burst makes: `SVELTERS_BURST`, else 2000.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "burstSize",
+          "params": [],
+          "progress": null,
+          "readonly": false,
+          "returns": "number",
+          "runsOn": "ui",
+          "rust": "burst_size",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "Writes `BURST.value` `n` times on a worker (each write marks the field dirty; the host delivers the\nlatest value once per checkpoint). Returns the final value.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "burstStore",
+          "params": [
+            {
+              "name": "n",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "number",
+          "runsOn": "worker",
+          "rust": "burst_store",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
+          "docs": "Sets the sampling speed from Rust (no `on_write`: Rust is trusted); a bound slider follows.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "setSpeed",
+          "params": [
+            {
+              "name": "v",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "void",
+          "runsOn": "ui",
+          "rust": "set_speed",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        }
+      ],
+      "name": "telemetry",
+      "specifier": "svelters:app/telemetry",
+      "types": [],
+      "values": [
+        {
+          "docs": "A store for the burst measurement.",
+          "kind": "static",
+          "name": "burst",
+          "rust": "BURST",
+          "type": "Burst"
+        },
+        {
+          "docs": "Samples a signal every 50 ms on a thread of its own, from app start to shutdown; a hot reload of the\nSvelte app keeps it running and keeps its store.",
+          "kind": "service",
+          "name": "telemetry",
+          "rust": "telemetry",
+          "type": "Telemetry"
         }
       ]
     }

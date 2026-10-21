@@ -189,7 +189,8 @@ impl Core {
             }
             return Ok(());
         }
-        let sub = match self.reactive.emits.borrow().get(&h).cloned() {
+        let existing = self.reactive.emits.borrow().get(&h).cloned();
+        let sub = match existing {
             Some(s) => s,
             None => {
                 let get = class.emitter.ok_or_else(|| OpError::from(format!("{} has no emitter", class.native)))?;

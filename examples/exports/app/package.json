@@ -6,7 +6,7 @@
   "description": "E0: Svelte calling the app's Rust exports (svelters:app/demo); typings dumped by `cargo run -p exports-example`",
   "scripts": {
     "build": "vite build",
-    "test": "vite build && svelte-check --workspace . --tsconfig ./tsconfig.json --threshold error"
+    "test": "vite build && svelte-check --workspace . --tsconfig ./tsconfig.json --threshold error --diagnostic-sources js"
   },
   "dependencies": {
     "@svelters/types": "workspace:*",

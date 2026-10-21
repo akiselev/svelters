@@ -15,6 +15,7 @@ pub fn bundle() -> std::path::PathBuf {
 /// Keeps this crate's registrations linked into binaries that only use it through `svelters:app/*`.
 pub fn link() {
     std::hint::black_box(Tally::new as fn(i64) -> Tally);
+    std::hint::black_box(burst_size as fn() -> u32);
 }
 
 /// How a tally counts.
@@ -228,4 +229,132 @@ pub fn noop_worker(x: f64) -> f64 {
 #[svelters::export(module = "demo")]
 pub async fn noop_local(x: f64) -> f64 {
     x
+}
+
+// ---- E3: reactive (svelters:app/telemetry) ----
+
+/// Live telemetry, published by the `telemetry` service and read by Svelte like `$state`.
+#[svelters::store(module = "telemetry")]
+pub struct Telemetry {
+    /// Samples taken so far.
+    pub samples: u64,
+    /// The latest sample, in -1..=1.
+    pub last: f64,
+    /// Sampling speed: JS may set it (`<scale bind:value={telemetry.speed}>`); `on_write` clamps it to
+    /// 0.5..=10.
+    #[store(writable)]
+    pub speed: f64,
+    /// The sampler's recent log line (proportional: delivered as an invalidation, read when shown).
+    #[store(proportional)]
+    pub log: String,
+}
+
+impl svelters::StoreHooks for Telemetry {
+    fn on_write(&mut self, field: TelemetryField) -> Result<(), svelters::NativeError> {
+        if field == TelemetryField::Speed {
+            if !self.speed.is_finite() {
+                return Err(svelters::NativeError {
+                    domain: "app:telemetry".into(),
+                    code: svelters::Value::Str("bad-speed".into()),
+                    message: "speed must be a finite number".into(),
+                });
+            }
+            self.speed = self.speed.clamp(0.5, 10.0);
+        }
+        Ok(())
+    }
+}
+
+/// The telemetry store (Rust code reaches it here; JS imports it as the `telemetry` service's value).
+pub static TELEMETRY: svelters::StoreStatic<Telemetry> =
+    svelters::StoreStatic::with(|| Telemetry { samples: 0, last: 0.0, speed: 1.0, log: String::new() });
+
+/// Samples a signal every 50 ms on a thread of its own, from app start to shutdown; a hot reload of the
+/// Svelte app keeps it running and keeps its store.
+#[svelters::service(module = "telemetry")]
+fn telemetry(cx: svelters::ServiceCx) -> svelters::Store<Telemetry> {
+    let store = TELEMETRY.store().clone();
+    let s = store.clone();
+    cx.thread(move |stop| {
+        let mut phase = 0.0f64;
+        while !stop.wait(std::time::Duration::from_millis(50)) {
+            let speed = s.get(|t| t.speed);
+            phase += 0.05 * speed;
+            s.write_fields(&[TelemetryField::Samples, TelemetryField::Last], |t| {
+                t.samples += 1;
+                t.last = phase.sin();
+            });
+            if s.get(|t| t.samples) % 20 == 0 {
+                s.write(TelemetryField::Log, |t| {
+                    t.log = format!("{} samples, speed {:.1}", t.samples, t.speed);
+                });
+            }
+        }
+    });
+    store
+}
+
+/// Sets the sampling speed from Rust (no `on_write`: Rust is trusted); a bound slider follows.
+#[svelters::export(module = "telemetry")]
+pub fn set_speed(v: f64) {
+    TELEMETRY.write(TelemetryField::Speed, |t| t.speed = v);
+}
+
+/// What the burst measurement writes.
+#[svelters::store(module = "telemetry")]
+#[derive(Default)]
+pub struct Burst {
+    pub value: u64,
+}
+
+/// A store for the burst measurement.
+#[svelters::export(module = "telemetry")]
+pub static BURST: svelters::StoreStatic<Burst> = svelters::StoreStatic::new();
+
+/// Writes `BURST.value` `n` times on a worker (each write marks the field dirty; the host delivers the
+/// latest value once per checkpoint). Returns the final value.
+#[svelters::export(module = "telemetry")]
+#[js(worker)]
+pub fn burst_store(n: u32) -> u64 {
+    let base = BURST.get(|b| b.value);
+    for i in 1..=n as u64 {
+        BURST.write(BurstField::Value, |b| b.value = base + i);
+    }
+    base + n as u64
+}
+
+/// An event per value: the per-event path the store burst is compared with.
+#[derive(svelters::Events, Clone)]
+pub enum BurstEvent {
+    /// A value.
+    Value(u64),
+}
+
+/// Emits events from worker threads.
+#[svelters::object(shared, module = "telemetry")]
+pub struct Bursts {
+    events: svelters::Emitter<BurstEvent>,
+}
+
+#[svelters::export]
+impl Bursts {
+    #[js(constructor)]
+    pub fn new() -> Bursts {
+        Bursts { events: svelters::Emitter::new() }
+    }
+
+    /// Emits `value` 1..=n on a worker.
+    #[js(worker)]
+    pub fn fire(self: Arc<Self>, n: u32) -> u32 {
+        for i in 1..=n as u64 {
+            self.events.emit(BurstEvent::Value(i));
+        }
+        n
+    }
+}
+
+/// How many writes or events a burst makes: `SVELTERS_BURST`, else 2000.
+#[svelters::export(module = "telemetry")]
+pub fn burst_size() -> u32 {
+    std::env::var("SVELTERS_BURST").ok().and_then(|v| v.parse().ok()).unwrap_or(2000)
 }
