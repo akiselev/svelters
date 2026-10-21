@@ -133,6 +133,7 @@
   "legacy-runes-ambiguous-export-$$restProps": {"category": "legacy", "match": {"runtime": ["^\\$\\$restProps is not defined"]}},
   "props-and-slots": {"category": "legacy", "match": {"runtime": ["^\\$\\$slots is not defined"]}},
   "mount-props-updates": {"category": "legacy", "match": {"runtime": ["^target\\.appendChild is not a function"]}, "note": "`createClassComponent` from `svelte/legacy` (Svelte 4 class API) mounts through Svelte's DOM path; `mount` from `svelte` itself is native"},
+  "binding-interop": {"category": "legacy", "match": {"runtime": ["^expected 'foo <button>foo</button> foo <button>…' to deeply equal 'bar <button>bar</button> bar <button>…'"]}, "note": "`Legacy.svelte` has `<svelte:options runes={false} />`: legacy-mode reactivity of plain `let`"},
   "legacy-class-transformation": {"category": "legacy", "match": {"runtime": ["^element\\(\\) outside a mounted component"]}, "note": "`new Inner({ target })` (Svelte 4 class components)"},
 
   "event-attribute-window": "dom-only-element",

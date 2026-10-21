@@ -24,6 +24,11 @@ export async function resolve(specifier, context, next) {
   if (/^(\.\.\/)+helpers(\.js)?$/.test(specifier)) return shim('helpers.mjs');
   if (/^(\.\.\/)+suite(\.js|\.ts)?$/.test(specifier)) return shim('suite.mjs');
   if (specifier === 'vitest') return shim('vitest.mjs');
+  // `./state.svelte` for `state.svelte.js`, as Vite's extension resolution in Svelte's test setup
+  if (/^\.\.?\//.test(specifier) && specifier.endsWith('.svelte') && context.parentURL?.startsWith('file:')) {
+    const file = fileURLToPath(new URL(specifier, context.parentURL));
+    if (!fs.existsSync(file) && fs.existsSync(`${file}.js`)) return { url: pathToFileURL(`${file}.js`).href, shortCircuit: true };
+  }
   if (/^(\.\.\/)+src\/index-client(\.js)?$/.test(specifier)) return { url: pathToFileURL(svelteClient).href, shortCircuit: true };
   return next(specifier, context);
 }
