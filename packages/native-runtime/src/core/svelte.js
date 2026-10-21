@@ -13,6 +13,7 @@ import { queue_micro_task } from 'svelte/internal/client/dom/task';
 import { getAllContexts, setContext } from 'svelte/internal/client/context';
 import { capture, unset_context } from 'svelte/internal/client/reactivity/async';
 import * as batches from 'svelte/internal/client/reactivity/batch';
+import { enable_tracing_mode_flag } from 'svelte/internal/flags/index';
 
 // ---- the compiler-facing contract (docs/notes/native-compiler/runtime-contract.md "Core API") ----
 
@@ -98,6 +99,8 @@ export const queue_task = queue_micro_task;
  */
 export const capture_context = capture;
 export const release_context = () => unset_context(false);
+/** Svelte's `svelte/internal/flags/tracing`: sources record what `$.trace` reports (dev). */
+export const enable_tracing = enable_tracing_mode_flag;
 /** Whether a `flushSync` is running (Svelte's `is_flushing_sync`). */
 export const flushing_sync = () => batches.is_flushing_sync;
 /**
@@ -128,6 +131,13 @@ export function subscriber(start) {
       };
     });
   };
+}
+/**
+ * Links an each item's source to `collection()[index]` for `$inspect.trace` (Svelte's each block
+ * sets `v.trace` in DEV): a traced read of the item reports the collection's sources instead.
+ */
+export function trace_item(source, read) {
+  source.trace = read;
 }
 /** A source whose writes always notify for objects (Svelte's `mutable_source`: `safe_equals`). */
 export const mutable_state = (v) => $.mutable_source(v);

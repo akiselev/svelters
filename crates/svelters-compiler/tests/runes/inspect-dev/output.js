@@ -1,3 +1,4 @@
+import '@svelters/native-runtime/core/tracing';
 import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 

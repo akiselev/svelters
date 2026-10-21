@@ -44,6 +44,7 @@ const hidden = {
   'dom/task.js': ['queue_micro_task'],
   'context.js': ['getAllContexts', 'setContext'],
   'reactivity/async.js': ['capture', 'unset_context'],
+  '../flags/index.js': ['enable_tracing_mode_flag'],
 };
 // a live `let` binding, not a function
 {

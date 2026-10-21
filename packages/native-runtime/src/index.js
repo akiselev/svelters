@@ -21,6 +21,7 @@ import {
   flushing_sync,
   queue_task,
   mutable_state,
+  trace_item,
   capture_context,
   release_context,
   reorder,
@@ -883,7 +884,8 @@ export function each_block(container, collection, key, render, fallback = null, 
         fb = null;
       }
       const mutable = (flags & EACH_ITEM_MUTABLE) !== 0;
-      items = key ? keyed(r, owner, items, arr, key, render, mutable) : indexed(r, owner, items, arr, render, mutable);
+      const item = { render, mutable, collection };
+      items = key ? keyed(r, owner, items, arr, key, item) : indexed(r, owner, items, arr, item);
       if (key) reorder(self, items.map((b) => b.effect));
       if (!arr.length && fallback && !fb) fb = open(r, owner, fallback);
     });
@@ -1151,22 +1153,24 @@ export function classes(value) {
   return new Set(clsx(value).split(/\s+/).filter(Boolean));
 }
 
-function openItem(r, owner, render, b, value, index, mutable) {
-  b.item = mutable ? mutable_state(value) : $.state(value);
+/** `item`: the each block's `render`, `mutable` (EACH_ITEM_MUTABLE) and `collection`. */
+function openItem(r, owner, item, b, value, index) {
+  b.item = item.mutable ? mutable_state(value) : $.state(value);
   b.index = $.state(index);
-  return open(r, owner, (anchor) => render(anchor, b.item, b.index), b);
+  trace_item(b.item, () => item.collection()[$.untrack(() => $.get(b.index))]);
+  return open(r, owner, (anchor) => item.render(anchor, b.item, b.index), b);
 }
 
-function indexed(r, owner, old, arr, render, mutable) {
+function indexed(r, owner, old, arr, item) {
   const n = Math.min(old.length, arr.length);
   for (let i = 0; i < n; i++) $.set(old[i].item, arr[i]);
   for (let i = old.length - 1; i >= arr.length; i--) close(old[i]);
   const out = old.slice(0, n);
-  for (let i = n; i < arr.length; i++) out.push(openItem(r, owner, render, newRegion(r), arr[i], i, mutable));
+  for (let i = n; i < arr.length; i++) out.push(openItem(r, owner, item, newRegion(r), arr[i], i));
   return out;
 }
 
-function keyed(r, owner, old, arr, key, render, mutable) {
+function keyed(r, owner, old, arr, key, item) {
   const keys = arr.map((v, i) => key(v, i));
   if (new Set(keys).size !== keys.length) throw new Error('each_block: duplicate keys');
   const byKey = new Map(old.map((b) => [b.key, b]));
@@ -1191,7 +1195,7 @@ function keyed(r, owner, old, arr, key, render, mutable) {
   // have no natives yet and are skipped by nextNative). Then new items front to back: creation
   // order decides handle numbers, which must follow source order.
   for (let i = next.length - 1; i >= 0; i--) if (next[i].effect && !stay.has(i)) move(next[i]);
-  for (let i = 0; i < next.length; i++) if (!next[i].effect) openItem(r, owner, render, next[i], arr[i], i, mutable);
+  for (let i = 0; i < next.length; i++) if (!next[i].effect) openItem(r, owner, item, next[i], arr[i], i);
   return next;
 }
 

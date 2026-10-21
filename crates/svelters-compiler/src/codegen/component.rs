@@ -73,6 +73,11 @@ pub trait Rewriter {
     fn dynamic_component(&self, _node: &crate::svelte::ast::Element) -> Option<String> {
         None
     }
+    /// Whether the component uses `$inspect.trace` in dev: the module first imports
+    /// `<core>/tracing`, which turns on the dependency recording `$.trace` reports.
+    fn tracing(&self) -> bool {
+        false
+    }
     /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
@@ -113,6 +118,9 @@ pub struct Codegen<'a, 's> {
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports) -> (String, String) {
     let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), _p: std::marker::PhantomData };
+    if rw.tracing() {
+        g.w.write(&format!("import '{}/tracing';\n", imports.core));
+    }
     g.w.write(&format!("import * as $ from '{}';\nimport * as $n from '{}';\n", imports.core, imports.native));
     rw.script(&mut g.w, true);
     let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));

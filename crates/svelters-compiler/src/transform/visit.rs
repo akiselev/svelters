@@ -954,6 +954,7 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 }
             };
             let (aw, asy) = if is_async { ("await ", "async ") } else { ("", "") };
+            self.cx.tracing.set(true);
             self.edits.overwrite(fs.start, fs.end, format!("return {aw}$.trace({label}, {asy}() => {{"));
             self.edits.close(b.end - 1, "});");
         }

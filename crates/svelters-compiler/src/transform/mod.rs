@@ -82,6 +82,9 @@ pub(crate) struct Ctx<'r, 'a> {
     pub hoisted: RefCell<Vec<String>>,
     pub props_id: Cell<Option<BindingId>>,
     pub has_props_rune: Cell<bool>,
+    /// A `$inspect.trace` was emitted (dev): the module imports the core's tracing flag
+    /// (Svelte's `analysis.tracing` -> `import 'svelte/internal/flags/tracing'`).
+    pub tracing: Cell<bool>,
 }
 
 impl<'r, 'a> Ctx<'r, 'a> {
@@ -107,6 +110,7 @@ impl<'r, 'a> Ctx<'r, 'a> {
             hoisted: RefCell::new(Vec::new()),
             props_id: Cell::new(None),
             has_props_rune: Cell::new(false),
+            tracing: Cell::new(false),
         }
     }
 
@@ -557,6 +561,10 @@ impl Rewriter for ScopeRewriter<'_> {
         let mut h = H { cx: &self.cx, impure: false, calls: false, deps: false };
         Walker::walk(expr_ref(e), &(), &mut h);
         h.impure || (h.calls && h.deps)
+    }
+
+    fn tracing(&self) -> bool {
+        self.cx.tracing.get()
     }
 
     fn identifier(&self, id: &Identifier) -> String {

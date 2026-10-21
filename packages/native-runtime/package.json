@@ -8,6 +8,7 @@
   "exports": {
     ".": "./src/index.js",
     "./core": "./src/core/index.js",
+    "./core/tracing": "./src/core/tracing.js",
     "./lists": "./src/lists.js",
     "./style": { "types": "./src/style.d.ts", "default": "./src/style.js" },
     "./bindings": "./src/bindings.generated.js",

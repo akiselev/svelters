@@ -50,6 +50,10 @@ export const asyncPath = path.join(path.dirname(effectsPath), 'async.js');
 export const BATCH_SPECIFIER = 'svelte/internal/client/reactivity/batch';
 export const batchPath = path.join(path.dirname(effectsPath), 'batch.js');
 
+/** Svelte's runtime flags (`enable_tracing_mode_flag`, for `@svelters/native-runtime/core/tracing`). */
+export const FLAGS_SPECIFIER = 'svelte/internal/flags/index';
+export const flagsPath = path.join(path.dirname(effectsPath), '../../flags/index.js');
+
 /** Every hidden Svelte module src/core/svelte.js imports: specifier -> absolute path. */
 export const HIDDEN_MODULES = {
   [EFFECTS_SPECIFIER]: effectsPath,
@@ -57,7 +61,13 @@ export const HIDDEN_MODULES = {
   [CONTEXT_SPECIFIER]: contextPath,
   [ASYNC_SPECIFIER]: asyncPath,
   [BATCH_SPECIFIER]: batchPath,
+  [FLAGS_SPECIFIER]: flagsPath,
 };
+
+/** What generated code imports when a component uses `$inspect.trace` in dev. */
+export const tracingPath = fileURLToPath(new URL('./src/core/tracing.js', import.meta.url));
+
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not
@@ -72,12 +82,12 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
     resolve: {
       conditions: ['browser'],
       alias: [
-        { find: /^svelte\/internal\/client\/reactivity\/effects(\.js)?$/, replacement: effectsPath },
-        { find: /^svelte\/internal\/client\/dom\/task(\.js)?$/, replacement: taskPath },
-        { find: /^svelte\/internal\/client\/context(\.js)?$/, replacement: contextPath },
+        // the hidden Svelte modules of the core adapter
+        ...Object.entries(HIDDEN_MODULES).map(([find, replacement]) => ({ find: new RegExp(`^${escapeRegExp(find)}(\\.js)?$`), replacement })),
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
         { find: /^@svelters\/native-runtime\/core$/, replacement: corePath },
+        { find: /^@svelters\/native-runtime\/core\/tracing$/, replacement: tracingPath },
         // the styling API (`setColorScheme`, `setTokens`), also for apps that do not depend on it
         { find: /^@svelters\/native-runtime\/style$/, replacement: registerPath },
         // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native
