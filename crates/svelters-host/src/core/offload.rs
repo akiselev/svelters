@@ -178,18 +178,17 @@ impl Core {
         }
         let mut ar = Arena::new();
         let cx = Cx { types: self, utf16: false, callbacks: None, owner: 0 };
-        let mut values = Vec::with_capacity(slots.len());
+        let mut raws = Vec::with_capacity(slots.len());
         for (i, slot) in slots.iter().enumerate() {
             if i >= given {
-                values.push(Value::Null);
+                raws.push(svelters_abi::svl_value::null());
                 continue;
             }
             let v = JsReader::index(e, args, i)?;
             let raw = convert::encode(e, &v, slot, &cx, &mut ar)
                 .map_err(|c| self.conv_err(&format!("{}({})", prefix(), slot.name.as_deref().unwrap_or("arg")), c))?;
-            values.push(unsafe { Value::from_raw(&raw) });
+            raws.push(raw);
         }
-        drop(ar);
         let aborted = match &options {
             Some(o) if JsReader::has_field(e, o, "signal")? => {
                 let s = JsReader::field(e, o, "signal")?;
@@ -203,14 +202,24 @@ impl Core {
             _ => false,
         };
 
+        // E2: typed arrays are moved out of JS only for a call that starts (not aborted already, owner
+        // alive), after every argument converted; otherwise the log shows them as null.
+        let live = match this {
+            Some(h) => self.app_check_live(h).map(|_| ()),
+            None => Ok(()),
+        };
+        let values = if aborted || live.is_err() {
+            raws.iter().map(|x| convert::owned(x, &mut [])).collect()
+        } else {
+            convert::owned_all(e, &raws).map_err(|m| type_err(format!("{}: {m}", prefix())))?
+        };
+        drop(ar);
         let kname = || schema().kind_name(kind).unwrap_or_default();
         match this {
             Some(h) => self.note_op(|| format!("call #a{} {}.{} {}", h & !exports::APP_HANDLE_BIT, kname(), m.name, super::apps::json_args(&values))),
             None => self.note_op(|| format!("static {}.{} {}", kname(), m.name, super::apps::json_args(&values))),
         }
-        if let Some(h) = this {
-            self.app_check_live(h)?;
-        }
+        live?;
 
         let t = &self.ops;
         let id = t.next.get() + 1;

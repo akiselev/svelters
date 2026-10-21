@@ -255,6 +255,10 @@ fn write_json(v: &Value, out: &mut String) {
             out.push_str(&serde_json::to_string(&e.message).expect("string serializes"));
             out.push('}');
         }
+        // E2 buffers: the log names the typed array, never its (possibly huge) contents.
+        Value::Buffer(b) => {
+            let _ = write!(out, "\"<{} {}>\"", b.elem().js_name(), b.len());
+        }
     }
 }
 
