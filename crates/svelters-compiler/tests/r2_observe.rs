@@ -118,6 +118,13 @@ fn portability() {
     golden("portability");
 }
 
+/// E3: `bind:` with a Rust store field as the bound value lowers like any other `bind:`: onto observation
+/// (`bind_prop`) where the element prop is exact, with no diagnostic (strict included).
+#[test]
+fn store_field_gtk() {
+    golden("store-field-gtk");
+}
+
 /// The lowering reads the facts: an [`Overlay`] that changes one fact changes the output.
 #[test]
 fn a_changed_fact_changes_the_lowering() {

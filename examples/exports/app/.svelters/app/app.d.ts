@@ -67,3 +67,88 @@ declare module 'svelters:app/demo' {
    */
   export function wordCount(text: string, options?: AsyncOptions): Promise<number>;
 }
+
+declare module 'svelters:app/dsp' {
+  import type { NativeObject, WorkOptions, ReadonlyFloat32Array } from '@svelters/types/core';
+  /** What `smooth` returns: the filtered samples (the input's memory) and the time it took. */
+  export interface Smoothed { samples: Float32Array; ms: number; /** True when the samples are the allocation `noise` made (JS -> worker -> JS without a copy). */ zeroCopy: boolean; }
+  /** Summary statistics of a signal. */
+  export interface SignalStats { len: number; min: number; max: number; mean: number; }
+  /** True if `view` is `waveform()`'s own memory (no copy was made on the way in). */
+  export function isWaveform(view: ReadonlyFloat32Array): boolean;
+  /** `n` samples of uniform noise in -1..1 (a small xorshift generator; deterministic per `seed`). */
+  export function noise(n: number, seed: number): Float32Array;
+  /**
+   * Smooths `samples` in place with `passes` 3-tap moving averages on a worker thread. The caller's
+   * array is detached (moved to Rust) until the result comes back as the same memory.
+   * Runs on a worker thread (rayon). Rejects with NativeError `svelters` `cancelled` on abort, `panic` on a Rust panic.
+   * @param samples moved to Rust: the array is detached (length 0) once the call starts; use the result instead
+   */
+  export function smooth(samples: Float32Array, passes: number, options?: WorkOptions<number>): Promise<Smoothed>;
+  /** Statistics of a signal: a view Rust handed out is read in place, any other array is copied once. */
+  export function stats(signal: ReadonlyFloat32Array): SignalStats;
+  /** A sine table Rust keeps, as a read-only view (no copy; the view holds the `Arc` until JS collects it). */
+  export function waveform(): ReadonlyFloat32Array;
+}
+
+declare module 'svelters:app/telemetry' {
+  import type { NativeObject, AsyncOptions } from '@svelters/types/core';
+  /**
+   * What the burst measurement writes.
+   * A reactive store: its fields are `exact` (reactive reads in effects and templates); writable fields accept `bind:`.
+   */
+  export class Burst extends NativeObject {
+    private constructor();
+    readonly value: number;
+  }
+  /** Emits events from worker threads. */
+  export class Bursts extends NativeObject {
+    constructor();
+    /**
+     * Emits `value` 1..=n on a worker.
+     * Runs on a worker thread (rayon). Rejects with NativeError `svelters` `cancelled` on abort, `panic` on a Rust panic.
+     */
+    fire(n: number, options?: AsyncOptions): Promise<number>;
+    /** A value. */
+    on(event: 'value', fn: (e: number) => void): () => void;
+  }
+  /**
+   * Live telemetry, published by the `telemetry` service and read by Svelte like `$state`.
+   * A reactive store: its fields are `exact` (reactive reads in effects and templates); writable fields accept `bind:`.
+   */
+  export class Telemetry extends NativeObject {
+    private constructor();
+    /** The latest sample, in -1..=1. */
+    readonly last: number;
+    /** The sampler's recent log line (proportional: delivered as an invalidation, read when shown). */
+    readonly log: string;
+    /** Samples taken so far. */
+    readonly samples: number;
+    /**
+     * Sampling speed: JS may set it (`<scale bind:value={telemetry.speed}>`); `on_write` clamps it to
+     * 0.5..=10.
+     */
+    speed: number;
+  }
+  /** How many writes or events a burst makes: `SVELTERS_BURST`, else 2000. */
+  export function burstSize(): number;
+  /**
+   * Writes `BURST.value` `n` times on a worker (each write marks the field dirty; the host delivers the
+   * latest value once per checkpoint). Returns the final value.
+   * Runs on a worker thread (rayon). Rejects with NativeError `svelters` `cancelled` on abort, `panic` on a Rust panic.
+   */
+  export function burstStore(n: number, options?: AsyncOptions): Promise<number>;
+  /** Sets the sampling speed from Rust (no `on_write`: Rust is trusted); a bound slider follows. */
+  export function setSpeed(v: number): void;
+  /**
+   * A store for the burst measurement.
+   * App-wide (a Rust `static`): the same Rust object after a hot reload.
+   */
+  export const burst: Burst;
+  /**
+   * Samples a signal every 50 ms on a thread of its own, from app start to shutdown; a hot reload of the
+   * Svelte app keeps it running and keeps its store.
+   * A service (started with the app, stopped at shutdown): the same Rust object after a hot reload.
+   */
+  export const telemetry: Telemetry;
+}
