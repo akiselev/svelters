@@ -201,7 +201,7 @@ class Tests:
                 body.append(f"assert_eq!(d.params.len(), {max(arities) + (1 if is_async else 0)}, {rs_str(js + ': arity')});")
                 if has_subject and not is_async and 0 in arities and js.startswith(READER_PREFIXES):
                     body.append(f"let v = h.call_keep(w, {rs_str(js)}, &[]).unwrap_or_else(|e| panic!(\"{js}(): {{e}}\"));")
-                    body.append(f"assert!(!matches!(v, Value::Error(_)), \"{js}(): {{v:?}}\");")
+                    body.append(f"assert!(answered(&v), \"{js}(): {{v:?}}\");")
             if len(body) > 1:
                 self.add(n, "methods", body, needs_subject=has_subject and any(l.startswith("let v = h.call_keep(w") for l in body))
             # statics
@@ -222,7 +222,7 @@ class Tests:
                     if any(a is None for a in args):
                         continue
                     body.append(f"let v = h.call_static({rs_str(n)}, {rs_str(wire)}, &[{', '.join(args)}]).unwrap_or_else(|e| panic!(\"{js}: {{e}}\"));")
-                    body.append(f"assert!(!matches!(v, Value::Error(_)), \"{js}: {{v:?}}\");")
+                    body.append(f"assert!(answered(&v), \"{js}: {{v:?}}\");")
             if len(body) > 1:
                 self.add(n, "statics", body, needs_subject=False)
             # events
@@ -284,6 +284,10 @@ class Tests:
                 "    use svelters_abi::{NameKind, SVL_LIFE_SHARED, SVL_M_ASYNC, SVL_M_STATIC, Value};\n"
                 "    use svelters_winui::testing::Harness;\n\n"
                 "    fn s(x: &str) -> Value {\n        Value::Str(x.into())\n    }\n\n"
+                "    /// A call that reached WinRT: a value, or the native error it answered (a WinRT `NativeError`, never a\n"
+                "    /// marshalling failure). Readers run on sample subjects, where some legitimately refuse (`GetArray` of an object).\n"
+                "    fn answered(v: &Value) -> bool {\n        match v {\n            Value::Error(e) => e.domain == \"winrt\",\n"
+                "            _ => true,\n        }\n    }\n\n"
                 "    fn handle(v: Value) -> u64 {\n        match v {\n            Value::Handle(h) => h,\n"
                 "            other => panic!(\"expected a handle, got {other:?}\"),\n        }\n    }\n\n"
                 + "\n".join("    " + l if l else "" for l in body.rstrip().split("\n")) + "\n\n"

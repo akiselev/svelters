@@ -11,7 +11,7 @@ declare module 'svelters:winui/microsoft.ui.composition' {
     static readonly maxGlobalPlaybackRate: number;
     static readonly minGlobalPlaybackRate: number;
     close(): void;
-    requestCommitAsync(options?: AsyncOptions): Promise<void>;
+    requestCommitAsync(asyncOptions?: AsyncOptions): Promise<void>;
     comment: string;
     readonly dispatcherQueue: DispatcherQueue | null;
     globalPlaybackRate: number;

@@ -430,7 +430,7 @@ class Gen:
         else:
             r = self.ts(ns, ret, ext)
         if is_async:
-            ps = (ps + ", " if ps else "") + "options?: AsyncOptions"
+            ps = (ps + ", " if ps else "") + "asyncOptions?: AsyncOptions"
             r = f"Promise<{r}>"
         return f"({ps}): {r}"
 

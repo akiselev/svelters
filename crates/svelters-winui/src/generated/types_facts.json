@@ -90,7 +90,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Media:FontFamily:statics",
-   "fingerprint": "a0e651becde48d2e",
+   "fingerprint": "9d25ed6c3c4e11ba",
    "kind": "Microsoft.UI.Xaml.Media.FontFamily",
    "name": "statics",
    "origin": "manual",
@@ -145,7 +145,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:CornerRadiusHelper:statics",
-   "fingerprint": "2fa5340cee5cd8ca",
+   "fingerprint": "02028701378e9997",
    "kind": "Microsoft.UI.Xaml.CornerRadiusHelper",
    "name": "statics",
    "origin": "manual",
@@ -156,7 +156,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:ThicknessHelper:statics",
-   "fingerprint": "5f44586eeffb15a8",
+   "fingerprint": "ed9a9a4e75e47f4e",
    "kind": "Microsoft.UI.Xaml.ThicknessHelper",
    "name": "statics",
    "origin": "manual",
@@ -167,7 +167,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI:ColorHelper:statics",
-   "fingerprint": "68d0fe4c394e85d8",
+   "fingerprint": "0456073dfd3a2613",
    "kind": "Microsoft.UI.ColorHelper",
    "name": "statics",
    "origin": "manual",
@@ -222,7 +222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Windows.ApplicationModel.DataTransfer:DataPackage:methods",
-   "fingerprint": "17f2e507d3b28e98",
+   "fingerprint": "70e36004962ba272",
    "kind": "Windows.ApplicationModel.DataTransfer.DataPackage",
    "name": "methods",
    "origin": "manual",
@@ -266,7 +266,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Windows.Data.Json:JsonObject:methods",
-   "fingerprint": "cea3152fe65be60d",
+   "fingerprint": "cc33e679aa26a368",
    "kind": "Windows.Data.Json.JsonObject",
    "name": "methods",
    "origin": "manual",
@@ -288,7 +288,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Windows.Data.Json:JsonObject:statics",
-   "fingerprint": "432385b82d6d9bce",
+   "fingerprint": "e7ed2885a2443ad6",
    "kind": "Windows.Data.Json.JsonObject",
    "name": "statics",
    "origin": "manual",
@@ -332,7 +332,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Windows.Foundation.Collections:PropertySet:methods",
-   "fingerprint": "463008e8a0407348",
+   "fingerprint": "f33883fdc7fdd683",
    "kind": "Windows.Foundation.Collections.PropertySet",
    "name": "methods",
    "origin": "manual",
@@ -376,7 +376,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Windows.Foundation:Uri:methods",
-   "fingerprint": "feece3f3841eabd7",
+   "fingerprint": "3f9d9678b877dae4",
    "kind": "Windows.Foundation.Uri",
    "name": "methods",
    "origin": "manual",
@@ -398,7 +398,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Windows.Foundation:Uri:statics",
-   "fingerprint": "6668bed63ca4699e",
+   "fingerprint": "87223ef44aa705aa",
    "kind": "Windows.Foundation.Uri",
    "name": "statics",
    "origin": "manual",

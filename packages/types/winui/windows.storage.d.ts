@@ -27,39 +27,39 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.FileIO`: statics, lifetime SHARED, thread any. */
   export class FileIO {
     static readonly native: string;
-    static appendTextAsync(file: IStorageFile | null, contents: string, options?: AsyncOptions): Promise<void>;
-    static appendTextAsync(file: IStorageFile | null, contents: string, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<void>;
-    static readBufferAsync(file: IStorageFile | null, options?: AsyncOptions): Promise<IBuffer | null>;
-    static readLinesAsync(file: IStorageFile | null, options?: AsyncOptions): Promise<IVector<string> | null>;
-    static readLinesAsync(file: IStorageFile | null, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<IVector<string> | null>;
-    static readTextAsync(file: IStorageFile | null, options?: AsyncOptions): Promise<string>;
-    static readTextAsync(file: IStorageFile | null, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<string>;
-    static writeBufferAsync(file: IStorageFile | null, buffer: IBuffer | null, options?: AsyncOptions): Promise<void>;
-    static writeTextAsync(file: IStorageFile | null, contents: string, options?: AsyncOptions): Promise<void>;
-    static writeTextAsync(file: IStorageFile | null, contents: string, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<void>;
+    static appendTextAsync(file: IStorageFile | null, contents: string, asyncOptions?: AsyncOptions): Promise<void>;
+    static appendTextAsync(file: IStorageFile | null, contents: string, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<void>;
+    static readBufferAsync(file: IStorageFile | null, asyncOptions?: AsyncOptions): Promise<IBuffer | null>;
+    static readLinesAsync(file: IStorageFile | null, asyncOptions?: AsyncOptions): Promise<IVector<string> | null>;
+    static readLinesAsync(file: IStorageFile | null, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<IVector<string> | null>;
+    static readTextAsync(file: IStorageFile | null, asyncOptions?: AsyncOptions): Promise<string>;
+    static readTextAsync(file: IStorageFile | null, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<string>;
+    static writeBufferAsync(file: IStorageFile | null, buffer: IBuffer | null, asyncOptions?: AsyncOptions): Promise<void>;
+    static writeTextAsync(file: IStorageFile | null, contents: string, asyncOptions?: AsyncOptions): Promise<void>;
+    static writeTextAsync(file: IStorageFile | null, contents: string, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<void>;
   }
 
   /** `Windows.Storage.IStorageFile`: interface, lifetime SHARED, thread any. */
   export abstract class IStorageFile extends NativeObject {
     static readonly native: string;
-    copyAndReplaceAsync(fileToReplace: IStorageFile | null, options?: AsyncOptions): Promise<void>;
-    copyAsync(destinationFolder: IStorageFolder | null, options?: AsyncOptions): Promise<StorageFile | null>;
-    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, options?: AsyncOptions): Promise<StorageFile | null>;
-    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<StorageFile | null>;
-    deleteAsync(options?: AsyncOptions): Promise<void>;
-    deleteAsync(option: StorageDeleteOption | number, options?: AsyncOptions): Promise<void>;
-    getBasicPropertiesAsync(options?: AsyncOptions): Promise<BasicProperties | null>;
+    copyAndReplaceAsync(fileToReplace: IStorageFile | null, asyncOptions?: AsyncOptions): Promise<void>;
+    copyAsync(destinationFolder: IStorageFolder | null, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    deleteAsync(asyncOptions?: AsyncOptions): Promise<void>;
+    deleteAsync(option: StorageDeleteOption | number, asyncOptions?: AsyncOptions): Promise<void>;
+    getBasicPropertiesAsync(asyncOptions?: AsyncOptions): Promise<BasicProperties | null>;
     isOfType(type: Array<StorageItemTypes> | number): boolean;
-    moveAndReplaceAsync(fileToReplace: IStorageFile | null, options?: AsyncOptions): Promise<void>;
-    moveAsync(destinationFolder: IStorageFolder | null, options?: AsyncOptions): Promise<void>;
-    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, options?: AsyncOptions): Promise<void>;
-    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<void>;
-    openAsync(accessMode: FileAccessMode | number, options?: AsyncOptions): Promise<IRandomAccessStream | null>;
-    openReadAsync(options?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
-    openSequentialReadAsync(options?: AsyncOptions): Promise<IInputStream | null>;
-    openTransactedWriteAsync(options?: AsyncOptions): Promise<StorageStreamTransaction | null>;
-    renameAsync(desiredName: string, options?: AsyncOptions): Promise<void>;
-    renameAsync(desiredName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<void>;
+    moveAndReplaceAsync(fileToReplace: IStorageFile | null, asyncOptions?: AsyncOptions): Promise<void>;
+    moveAsync(destinationFolder: IStorageFolder | null, asyncOptions?: AsyncOptions): Promise<void>;
+    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, asyncOptions?: AsyncOptions): Promise<void>;
+    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<void>;
+    openAsync(accessMode: FileAccessMode | number, asyncOptions?: AsyncOptions): Promise<IRandomAccessStream | null>;
+    openReadAsync(asyncOptions?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
+    openSequentialReadAsync(asyncOptions?: AsyncOptions): Promise<IInputStream | null>;
+    openTransactedWriteAsync(asyncOptions?: AsyncOptions): Promise<StorageStreamTransaction | null>;
+    renameAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<void>;
     readonly attributes: Array<FileAttributes>;
     readonly contentType: string;
     readonly dateCreated: Date;
@@ -71,22 +71,22 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.IStorageFolder`: interface, lifetime SHARED, thread any. */
   export abstract class IStorageFolder extends NativeObject {
     static readonly native: string;
-    createFileAsync(desiredName: string, options?: AsyncOptions): Promise<StorageFile | null>;
-    createFileAsync(desiredName: string, options: CreationCollisionOption | number, options?: AsyncOptions): Promise<StorageFile | null>;
-    createFolderAsync(desiredName: string, options?: AsyncOptions): Promise<StorageFolder | null>;
-    createFolderAsync(desiredName: string, options: CreationCollisionOption | number, options?: AsyncOptions): Promise<StorageFolder | null>;
-    deleteAsync(options?: AsyncOptions): Promise<void>;
-    deleteAsync(option: StorageDeleteOption | number, options?: AsyncOptions): Promise<void>;
-    getBasicPropertiesAsync(options?: AsyncOptions): Promise<BasicProperties | null>;
-    getFileAsync(name: string, options?: AsyncOptions): Promise<StorageFile | null>;
-    getFilesAsync(options?: AsyncOptions): Promise<Array<StorageFile | null>>;
-    getFolderAsync(name: string, options?: AsyncOptions): Promise<StorageFolder | null>;
-    getFoldersAsync(options?: AsyncOptions): Promise<Array<StorageFolder | null>>;
-    getItemAsync(name: string, options?: AsyncOptions): Promise<IStorageItem | null>;
-    getItemsAsync(options?: AsyncOptions): Promise<Array<IStorageItem | null>>;
+    createFileAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    createFileAsync(desiredName: string, options: CreationCollisionOption | number, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    createFolderAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    createFolderAsync(desiredName: string, options: CreationCollisionOption | number, asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    deleteAsync(asyncOptions?: AsyncOptions): Promise<void>;
+    deleteAsync(option: StorageDeleteOption | number, asyncOptions?: AsyncOptions): Promise<void>;
+    getBasicPropertiesAsync(asyncOptions?: AsyncOptions): Promise<BasicProperties | null>;
+    getFileAsync(name: string, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    getFilesAsync(asyncOptions?: AsyncOptions): Promise<Array<StorageFile | null>>;
+    getFolderAsync(name: string, asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    getFoldersAsync(asyncOptions?: AsyncOptions): Promise<Array<StorageFolder | null>>;
+    getItemAsync(name: string, asyncOptions?: AsyncOptions): Promise<IStorageItem | null>;
+    getItemsAsync(asyncOptions?: AsyncOptions): Promise<Array<IStorageItem | null>>;
     isOfType(type: Array<StorageItemTypes> | number): boolean;
-    renameAsync(desiredName: string, options?: AsyncOptions): Promise<void>;
-    renameAsync(desiredName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<void>;
     readonly attributes: Array<FileAttributes>;
     readonly dateCreated: Date;
     readonly name: string;
@@ -96,12 +96,12 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.IStorageItem`: interface, lifetime SHARED, thread any. */
   export abstract class IStorageItem extends NativeObject {
     static readonly native: string;
-    deleteAsync(options?: AsyncOptions): Promise<void>;
-    deleteAsync(option: StorageDeleteOption | number, options?: AsyncOptions): Promise<void>;
-    getBasicPropertiesAsync(options?: AsyncOptions): Promise<BasicProperties | null>;
+    deleteAsync(asyncOptions?: AsyncOptions): Promise<void>;
+    deleteAsync(option: StorageDeleteOption | number, asyncOptions?: AsyncOptions): Promise<void>;
+    getBasicPropertiesAsync(asyncOptions?: AsyncOptions): Promise<BasicProperties | null>;
     isOfType(type: Array<StorageItemTypes> | number): boolean;
-    renameAsync(desiredName: string, options?: AsyncOptions): Promise<void>;
-    renameAsync(desiredName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<void>;
     readonly attributes: Array<FileAttributes>;
     readonly dateCreated: Date;
     readonly name: string;
@@ -111,53 +111,53 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.PathIO`: statics, lifetime SHARED, thread any. */
   export class PathIO {
     static readonly native: string;
-    static appendTextAsync(absolutePath: string, contents: string, options?: AsyncOptions): Promise<void>;
-    static appendTextAsync(absolutePath: string, contents: string, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<void>;
-    static readBufferAsync(absolutePath: string, options?: AsyncOptions): Promise<IBuffer | null>;
-    static readLinesAsync(absolutePath: string, options?: AsyncOptions): Promise<IVector<string> | null>;
-    static readLinesAsync(absolutePath: string, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<IVector<string> | null>;
-    static readTextAsync(absolutePath: string, options?: AsyncOptions): Promise<string>;
-    static readTextAsync(absolutePath: string, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<string>;
-    static writeBufferAsync(absolutePath: string, buffer: IBuffer | null, options?: AsyncOptions): Promise<void>;
-    static writeTextAsync(absolutePath: string, contents: string, options?: AsyncOptions): Promise<void>;
-    static writeTextAsync(absolutePath: string, contents: string, encoding: UnicodeEncoding | number, options?: AsyncOptions): Promise<void>;
+    static appendTextAsync(absolutePath: string, contents: string, asyncOptions?: AsyncOptions): Promise<void>;
+    static appendTextAsync(absolutePath: string, contents: string, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<void>;
+    static readBufferAsync(absolutePath: string, asyncOptions?: AsyncOptions): Promise<IBuffer | null>;
+    static readLinesAsync(absolutePath: string, asyncOptions?: AsyncOptions): Promise<IVector<string> | null>;
+    static readLinesAsync(absolutePath: string, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<IVector<string> | null>;
+    static readTextAsync(absolutePath: string, asyncOptions?: AsyncOptions): Promise<string>;
+    static readTextAsync(absolutePath: string, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<string>;
+    static writeBufferAsync(absolutePath: string, buffer: IBuffer | null, asyncOptions?: AsyncOptions): Promise<void>;
+    static writeTextAsync(absolutePath: string, contents: string, asyncOptions?: AsyncOptions): Promise<void>;
+    static writeTextAsync(absolutePath: string, contents: string, encoding: UnicodeEncoding | number, asyncOptions?: AsyncOptions): Promise<void>;
   }
 
   /** `Windows.Storage.StorageFile`: object, lifetime SHARED, thread any. */
   export abstract class StorageFile extends NativeObject {
     static readonly native: string;
-    static createStreamedFileFromUriAsync(displayNameWithExtension: string, uri: Uri | null, thumbnail: IRandomAccessStreamReference | null, options?: AsyncOptions): Promise<StorageFile | null>;
-    static getFileFromApplicationUriAsync(uri: Uri | null, options?: AsyncOptions): Promise<StorageFile | null>;
-    static getFileFromPathAsync(path: string, options?: AsyncOptions): Promise<StorageFile | null>;
-    static replaceWithStreamedFileFromUriAsync(fileToReplace: IStorageFile | null, uri: Uri | null, thumbnail: IRandomAccessStreamReference | null, options?: AsyncOptions): Promise<StorageFile | null>;
-    copyAndReplaceAsync(fileToReplace: IStorageFile | null, options?: AsyncOptions): Promise<void>;
-    copyAsync(destinationFolder: IStorageFolder | null, options?: AsyncOptions): Promise<StorageFile | null>;
-    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, options?: AsyncOptions): Promise<StorageFile | null>;
-    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<StorageFile | null>;
-    deleteAsync(options?: AsyncOptions): Promise<void>;
-    deleteAsync(option: StorageDeleteOption | number, options?: AsyncOptions): Promise<void>;
-    getBasicPropertiesAsync(options?: AsyncOptions): Promise<BasicProperties | null>;
-    getParentAsync(options?: AsyncOptions): Promise<StorageFolder | null>;
-    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getThumbnailAsync(mode: ThumbnailMode | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    static createStreamedFileFromUriAsync(displayNameWithExtension: string, uri: Uri | null, thumbnail: IRandomAccessStreamReference | null, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    static getFileFromApplicationUriAsync(uri: Uri | null, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    static getFileFromPathAsync(path: string, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    static replaceWithStreamedFileFromUriAsync(fileToReplace: IStorageFile | null, uri: Uri | null, thumbnail: IRandomAccessStreamReference | null, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    copyAndReplaceAsync(fileToReplace: IStorageFile | null, asyncOptions?: AsyncOptions): Promise<void>;
+    copyAsync(destinationFolder: IStorageFolder | null, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    copyAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    deleteAsync(asyncOptions?: AsyncOptions): Promise<void>;
+    deleteAsync(option: StorageDeleteOption | number, asyncOptions?: AsyncOptions): Promise<void>;
+    getBasicPropertiesAsync(asyncOptions?: AsyncOptions): Promise<BasicProperties | null>;
+    getParentAsync(asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getThumbnailAsync(mode: ThumbnailMode | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
     isEqual(item: IStorageItem | null): boolean;
     isOfType(type: Array<StorageItemTypes> | number): boolean;
-    moveAndReplaceAsync(fileToReplace: IStorageFile | null, options?: AsyncOptions): Promise<void>;
-    moveAsync(destinationFolder: IStorageFolder | null, options?: AsyncOptions): Promise<void>;
-    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, options?: AsyncOptions): Promise<void>;
-    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<void>;
-    openAsync(accessMode: FileAccessMode | number, options?: AsyncOptions): Promise<IRandomAccessStream | null>;
-    openAsync(accessMode: FileAccessMode | number, options: Array<StorageOpenOptions> | number, options?: AsyncOptions): Promise<IRandomAccessStream | null>;
-    openReadAsync(options?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
-    openSequentialReadAsync(options?: AsyncOptions): Promise<IInputStream | null>;
-    openTransactedWriteAsync(options?: AsyncOptions): Promise<StorageStreamTransaction | null>;
-    openTransactedWriteAsync(options: Array<StorageOpenOptions> | number, options?: AsyncOptions): Promise<StorageStreamTransaction | null>;
-    renameAsync(desiredName: string, options?: AsyncOptions): Promise<void>;
-    renameAsync(desiredName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<void>;
+    moveAndReplaceAsync(fileToReplace: IStorageFile | null, asyncOptions?: AsyncOptions): Promise<void>;
+    moveAsync(destinationFolder: IStorageFolder | null, asyncOptions?: AsyncOptions): Promise<void>;
+    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, asyncOptions?: AsyncOptions): Promise<void>;
+    moveAsync(destinationFolder: IStorageFolder | null, desiredNewName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<void>;
+    openAsync(accessMode: FileAccessMode | number, asyncOptions?: AsyncOptions): Promise<IRandomAccessStream | null>;
+    openAsync(accessMode: FileAccessMode | number, options: Array<StorageOpenOptions> | number, asyncOptions?: AsyncOptions): Promise<IRandomAccessStream | null>;
+    openReadAsync(asyncOptions?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
+    openSequentialReadAsync(asyncOptions?: AsyncOptions): Promise<IInputStream | null>;
+    openTransactedWriteAsync(asyncOptions?: AsyncOptions): Promise<StorageStreamTransaction | null>;
+    openTransactedWriteAsync(options: Array<StorageOpenOptions> | number, asyncOptions?: AsyncOptions): Promise<StorageStreamTransaction | null>;
+    renameAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<void>;
     readonly attributes: Array<FileAttributes>;
     readonly contentType: string;
     readonly dateCreated: Date;
@@ -175,41 +175,41 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.StorageFolder`: object, lifetime SHARED, thread any. */
   export abstract class StorageFolder extends NativeObject {
     static readonly native: string;
-    static getFolderFromPathAsync(path: string, options?: AsyncOptions): Promise<StorageFolder | null>;
-    createFileAsync(desiredName: string, options?: AsyncOptions): Promise<StorageFile | null>;
-    createFileAsync(desiredName: string, options: CreationCollisionOption | number, options?: AsyncOptions): Promise<StorageFile | null>;
-    createFolderAsync(desiredName: string, options?: AsyncOptions): Promise<StorageFolder | null>;
-    createFolderAsync(desiredName: string, options: CreationCollisionOption | number, options?: AsyncOptions): Promise<StorageFolder | null>;
-    deleteAsync(options?: AsyncOptions): Promise<void>;
-    deleteAsync(option: StorageDeleteOption | number, options?: AsyncOptions): Promise<void>;
-    getBasicPropertiesAsync(options?: AsyncOptions): Promise<BasicProperties | null>;
-    getFileAsync(name: string, options?: AsyncOptions): Promise<StorageFile | null>;
-    getFilesAsync(options?: AsyncOptions): Promise<Array<StorageFile | null>>;
-    getFilesAsync(query: CommonFileQuery | number, startIndex: number, maxItemsToRetrieve: number, options?: AsyncOptions): Promise<Array<StorageFile | null>>;
-    getFilesAsync(query: CommonFileQuery | number, options?: AsyncOptions): Promise<Array<StorageFile | null>>;
-    getFolderAsync(name: string, options?: AsyncOptions): Promise<StorageFolder | null>;
-    getFoldersAsync(options?: AsyncOptions): Promise<Array<StorageFolder | null>>;
-    getFoldersAsync(query: CommonFolderQuery | number, startIndex: number, maxItemsToRetrieve: number, options?: AsyncOptions): Promise<Array<StorageFolder | null>>;
-    getFoldersAsync(query: CommonFolderQuery | number, options?: AsyncOptions): Promise<Array<StorageFolder | null>>;
-    getIndexedStateAsync(options?: AsyncOptions): Promise<IndexedState>;
-    getItemAsync(name: string, options?: AsyncOptions): Promise<IStorageItem | null>;
-    getItemsAsync(options?: AsyncOptions): Promise<Array<IStorageItem | null>>;
-    getItemsAsync(startIndex: number, maxItemsToRetrieve: number, options?: AsyncOptions): Promise<Array<IStorageItem | null>>;
-    getParentAsync(options?: AsyncOptions): Promise<StorageFolder | null>;
-    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getThumbnailAsync(mode: ThumbnailMode | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
-    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, options?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    static getFolderFromPathAsync(path: string, asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    createFileAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    createFileAsync(desiredName: string, options: CreationCollisionOption | number, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    createFolderAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    createFolderAsync(desiredName: string, options: CreationCollisionOption | number, asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    deleteAsync(asyncOptions?: AsyncOptions): Promise<void>;
+    deleteAsync(option: StorageDeleteOption | number, asyncOptions?: AsyncOptions): Promise<void>;
+    getBasicPropertiesAsync(asyncOptions?: AsyncOptions): Promise<BasicProperties | null>;
+    getFileAsync(name: string, asyncOptions?: AsyncOptions): Promise<StorageFile | null>;
+    getFilesAsync(asyncOptions?: AsyncOptions): Promise<Array<StorageFile | null>>;
+    getFilesAsync(query: CommonFileQuery | number, startIndex: number, maxItemsToRetrieve: number, asyncOptions?: AsyncOptions): Promise<Array<StorageFile | null>>;
+    getFilesAsync(query: CommonFileQuery | number, asyncOptions?: AsyncOptions): Promise<Array<StorageFile | null>>;
+    getFolderAsync(name: string, asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    getFoldersAsync(asyncOptions?: AsyncOptions): Promise<Array<StorageFolder | null>>;
+    getFoldersAsync(query: CommonFolderQuery | number, startIndex: number, maxItemsToRetrieve: number, asyncOptions?: AsyncOptions): Promise<Array<StorageFolder | null>>;
+    getFoldersAsync(query: CommonFolderQuery | number, asyncOptions?: AsyncOptions): Promise<Array<StorageFolder | null>>;
+    getIndexedStateAsync(asyncOptions?: AsyncOptions): Promise<IndexedState>;
+    getItemAsync(name: string, asyncOptions?: AsyncOptions): Promise<IStorageItem | null>;
+    getItemsAsync(asyncOptions?: AsyncOptions): Promise<Array<IStorageItem | null>>;
+    getItemsAsync(startIndex: number, maxItemsToRetrieve: number, asyncOptions?: AsyncOptions): Promise<Array<IStorageItem | null>>;
+    getParentAsync(asyncOptions?: AsyncOptions): Promise<StorageFolder | null>;
+    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getScaledImageAsThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getThumbnailAsync(mode: ThumbnailMode | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
+    getThumbnailAsync(mode: ThumbnailMode | number, requestedSize: number, options: Array<ThumbnailOptions> | number, asyncOptions?: AsyncOptions): Promise<StorageItemThumbnail | null>;
     isCommonFileQuerySupported(query: CommonFileQuery | number): boolean;
     isCommonFolderQuerySupported(query: CommonFolderQuery | number): boolean;
     isEqual(item: IStorageItem | null): boolean;
     isOfType(type: Array<StorageItemTypes> | number): boolean;
-    renameAsync(desiredName: string, options?: AsyncOptions): Promise<void>;
-    renameAsync(desiredName: string, option: NameCollisionOption | number, options?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, asyncOptions?: AsyncOptions): Promise<void>;
+    renameAsync(desiredName: string, option: NameCollisionOption | number, asyncOptions?: AsyncOptions): Promise<void>;
     tryGetChangeTracker(): StorageLibraryChangeTracker | null;
-    tryGetItemAsync(name: string, options?: AsyncOptions): Promise<IStorageItem | null>;
+    tryGetItemAsync(name: string, asyncOptions?: AsyncOptions): Promise<IStorageItem | null>;
     readonly attributes: Array<FileAttributes>;
     readonly dateCreated: Date;
     readonly displayName: string;
@@ -224,7 +224,7 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.StorageLibraryChange`: object, lifetime SHARED, thread any. */
   export abstract class StorageLibraryChange extends NativeObject {
     static readonly native: string;
-    getStorageItemAsync(options?: AsyncOptions): Promise<IStorageItem | null>;
+    getStorageItemAsync(asyncOptions?: AsyncOptions): Promise<IStorageItem | null>;
     isOfType(type: Array<StorageItemTypes> | number): boolean;
     readonly changeType: StorageLibraryChangeType;
     readonly path: string;
@@ -234,9 +234,9 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.StorageLibraryChangeReader`: object, lifetime SHARED, thread any. */
   export abstract class StorageLibraryChangeReader extends NativeObject {
     static readonly native: string;
-    acceptChangesAsync(options?: AsyncOptions): Promise<void>;
+    acceptChangesAsync(asyncOptions?: AsyncOptions): Promise<void>;
     getLastChangeId(): number;
-    readBatchAsync(options?: AsyncOptions): Promise<Array<StorageLibraryChange | null>>;
+    readBatchAsync(asyncOptions?: AsyncOptions): Promise<Array<StorageLibraryChange | null>>;
   }
 
   /** `Windows.Storage.StorageLibraryChangeTracker`: object, lifetime SHARED, thread any. */
@@ -259,7 +259,7 @@ declare module 'svelters:winui/windows.storage' {
   /** `Windows.Storage.StorageProvider`: object, lifetime SHARED, thread any. */
   export abstract class StorageProvider extends NativeObject {
     static readonly native: string;
-    isPropertySupportedForPartialFileAsync(propertyCanonicalName: string, options?: AsyncOptions): Promise<boolean>;
+    isPropertySupportedForPartialFileAsync(propertyCanonicalName: string, asyncOptions?: AsyncOptions): Promise<boolean>;
     readonly displayName: string;
     readonly id: string;
   }
@@ -268,7 +268,7 @@ declare module 'svelters:winui/windows.storage' {
   export abstract class StorageStreamTransaction extends NativeObject {
     static readonly native: string;
     close(): void;
-    commitAsync(options?: AsyncOptions): Promise<void>;
+    commitAsync(asyncOptions?: AsyncOptions): Promise<void>;
     readonly stream: IRandomAccessStream | null;
   }
 }

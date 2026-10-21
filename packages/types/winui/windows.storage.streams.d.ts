@@ -20,15 +20,15 @@ declare module 'svelters:winui/windows.storage.streams' {
   export abstract class IInputStream extends NativeObject {
     static readonly native: string;
     close(): void;
-    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, options?: AsyncOptions): Promise<IBuffer | null>;
+    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, asyncOptions?: AsyncOptions): Promise<IBuffer | null>;
   }
 
   /** `Windows.Storage.Streams.IOutputStream`: interface, lifetime SHARED, thread any. */
   export abstract class IOutputStream extends NativeObject {
     static readonly native: string;
     close(): void;
-    flushAsync(options?: AsyncOptions): Promise<boolean>;
-    writeAsync(buffer: IBuffer | null, options?: AsyncOptions): Promise<number>;
+    flushAsync(asyncOptions?: AsyncOptions): Promise<boolean>;
+    writeAsync(buffer: IBuffer | null, asyncOptions?: AsyncOptions): Promise<number>;
   }
 
   /** `Windows.Storage.Streams.IRandomAccessStream`: interface, lifetime SHARED, thread any. */
@@ -36,12 +36,12 @@ declare module 'svelters:winui/windows.storage.streams' {
     static readonly native: string;
     cloneStream(): IRandomAccessStream | null;
     close(): void;
-    flushAsync(options?: AsyncOptions): Promise<boolean>;
+    flushAsync(asyncOptions?: AsyncOptions): Promise<boolean>;
     getInputStreamAt(position: number): IInputStream | null;
     getOutputStreamAt(position: number): IOutputStream | null;
-    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, options?: AsyncOptions): Promise<IBuffer | null>;
+    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, asyncOptions?: AsyncOptions): Promise<IBuffer | null>;
     seek(position: number): void;
-    writeAsync(buffer: IBuffer | null, options?: AsyncOptions): Promise<number>;
+    writeAsync(buffer: IBuffer | null, asyncOptions?: AsyncOptions): Promise<number>;
     readonly canRead: boolean;
     readonly canWrite: boolean;
     readonly position: number;
@@ -51,7 +51,7 @@ declare module 'svelters:winui/windows.storage.streams' {
   /** `Windows.Storage.Streams.IRandomAccessStreamReference`: interface, lifetime SHARED, thread any. */
   export abstract class IRandomAccessStreamReference extends NativeObject {
     static readonly native: string;
-    openReadAsync(options?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
+    openReadAsync(asyncOptions?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
   }
 
   /** `Windows.Storage.Streams.IRandomAccessStreamWithContentType`: interface, lifetime SHARED, thread any. */
@@ -59,12 +59,12 @@ declare module 'svelters:winui/windows.storage.streams' {
     static readonly native: string;
     cloneStream(): IRandomAccessStream | null;
     close(): void;
-    flushAsync(options?: AsyncOptions): Promise<boolean>;
+    flushAsync(asyncOptions?: AsyncOptions): Promise<boolean>;
     getInputStreamAt(position: number): IInputStream | null;
     getOutputStreamAt(position: number): IOutputStream | null;
-    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, options?: AsyncOptions): Promise<IBuffer | null>;
+    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, asyncOptions?: AsyncOptions): Promise<IBuffer | null>;
     seek(position: number): void;
-    writeAsync(buffer: IBuffer | null, options?: AsyncOptions): Promise<number>;
+    writeAsync(buffer: IBuffer | null, asyncOptions?: AsyncOptions): Promise<number>;
     readonly canRead: boolean;
     readonly canWrite: boolean;
     readonly contentType: string;
@@ -78,6 +78,6 @@ declare module 'svelters:winui/windows.storage.streams' {
     static createFromFile(file: IStorageFile | null): RandomAccessStreamReference | null;
     static createFromStream(stream: IRandomAccessStream | null): RandomAccessStreamReference | null;
     static createFromUri(uri: Uri | null): RandomAccessStreamReference | null;
-    openReadAsync(options?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
+    openReadAsync(asyncOptions?: AsyncOptions): Promise<IRandomAccessStreamWithContentType | null>;
   }
 }

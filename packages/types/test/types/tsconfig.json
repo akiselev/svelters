@@ -10,5 +10,5 @@
     "types": [],
     "paths": { "@svelters/types/core": ["../../src/core.d.ts"] }
   },
-  "include": ["usage.ts", "qt_usage.ts", "../../gtk/*.d.ts", "../../qt/*.d.ts"]
+  "include": ["usage.ts", "qt_usage.ts", "winui_usage.ts", "../../gtk/*.d.ts", "../../qt/*.d.ts", "../../winui/*.d.ts"]
 }

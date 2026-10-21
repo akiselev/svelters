@@ -44,7 +44,7 @@ declare module 'svelters:winui/microsoft.ui.xaml.media.imaging' {
   export abstract class BitmapSource extends ImageSource {
     static readonly native: string;
     setSource(streamSource: IRandomAccessStream | null): void;
-    setSourceAsync(streamSource: IRandomAccessStream | null, options?: AsyncOptions): Promise<void>;
+    setSourceAsync(streamSource: IRandomAccessStream | null, asyncOptions?: AsyncOptions): Promise<void>;
     /** Reactive: a DependencyProperty (WinUI announces its changes). */
     readonly pixelHeight: number;
     /** Reactive: a DependencyProperty (WinUI announces its changes). */

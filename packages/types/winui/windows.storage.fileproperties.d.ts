@@ -18,7 +18,7 @@ declare module 'svelters:winui/windows.storage.fileproperties' {
   /** `Windows.Storage.FileProperties.BasicProperties`: object, lifetime SHARED, thread any. */
   export abstract class BasicProperties extends NativeObject {
     static readonly native: string;
-    savePropertiesAsync(options?: AsyncOptions): Promise<void>;
+    savePropertiesAsync(asyncOptions?: AsyncOptions): Promise<void>;
     readonly dateModified: Date;
     readonly itemDate: Date;
     readonly size: number;
@@ -27,7 +27,7 @@ declare module 'svelters:winui/windows.storage.fileproperties' {
   /** `Windows.Storage.FileProperties.DocumentProperties`: object, lifetime SHARED, thread any. */
   export abstract class DocumentProperties extends NativeObject {
     static readonly native: string;
-    savePropertiesAsync(options?: AsyncOptions): Promise<void>;
+    savePropertiesAsync(asyncOptions?: AsyncOptions): Promise<void>;
     readonly author: IVector<string> | null;
     comment: string;
     readonly keywords: IVector<string> | null;
@@ -37,7 +37,7 @@ declare module 'svelters:winui/windows.storage.fileproperties' {
   /** `Windows.Storage.FileProperties.ImageProperties`: object, lifetime SHARED, thread any. */
   export abstract class ImageProperties extends NativeObject {
     static readonly native: string;
-    savePropertiesAsync(options?: AsyncOptions): Promise<void>;
+    savePropertiesAsync(asyncOptions?: AsyncOptions): Promise<void>;
     cameraManufacturer: string;
     cameraModel: string;
     dateTaken: Date;
@@ -55,7 +55,7 @@ declare module 'svelters:winui/windows.storage.fileproperties' {
   /** `Windows.Storage.FileProperties.MusicProperties`: object, lifetime SHARED, thread any. */
   export abstract class MusicProperties extends NativeObject {
     static readonly native: string;
-    savePropertiesAsync(options?: AsyncOptions): Promise<void>;
+    savePropertiesAsync(asyncOptions?: AsyncOptions): Promise<void>;
     album: string;
     albumArtist: string;
     artist: string;
@@ -77,11 +77,11 @@ declare module 'svelters:winui/windows.storage.fileproperties' {
   /** `Windows.Storage.FileProperties.StorageItemContentProperties`: object, lifetime SHARED, thread any. */
   export abstract class StorageItemContentProperties extends NativeObject {
     static readonly native: string;
-    getDocumentPropertiesAsync(options?: AsyncOptions): Promise<DocumentProperties | null>;
-    getImagePropertiesAsync(options?: AsyncOptions): Promise<ImageProperties | null>;
-    getMusicPropertiesAsync(options?: AsyncOptions): Promise<MusicProperties | null>;
-    getVideoPropertiesAsync(options?: AsyncOptions): Promise<VideoProperties | null>;
-    savePropertiesAsync(options?: AsyncOptions): Promise<void>;
+    getDocumentPropertiesAsync(asyncOptions?: AsyncOptions): Promise<DocumentProperties | null>;
+    getImagePropertiesAsync(asyncOptions?: AsyncOptions): Promise<ImageProperties | null>;
+    getMusicPropertiesAsync(asyncOptions?: AsyncOptions): Promise<MusicProperties | null>;
+    getVideoPropertiesAsync(asyncOptions?: AsyncOptions): Promise<VideoProperties | null>;
+    savePropertiesAsync(asyncOptions?: AsyncOptions): Promise<void>;
   }
 
   /** `Windows.Storage.FileProperties.StorageItemThumbnail`: object, lifetime SHARED, thread any. */
@@ -89,12 +89,12 @@ declare module 'svelters:winui/windows.storage.fileproperties' {
     static readonly native: string;
     cloneStream(): IRandomAccessStream | null;
     close(): void;
-    flushAsync(options?: AsyncOptions): Promise<boolean>;
+    flushAsync(asyncOptions?: AsyncOptions): Promise<boolean>;
     getInputStreamAt(position: number): IInputStream | null;
     getOutputStreamAt(position: number): IOutputStream | null;
-    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, options?: AsyncOptions): Promise<IBuffer | null>;
+    readAsync(buffer: IBuffer | null, count: number, options: Array<InputStreamOptions> | number, asyncOptions?: AsyncOptions): Promise<IBuffer | null>;
     seek(position: number): void;
-    writeAsync(buffer: IBuffer | null, options?: AsyncOptions): Promise<number>;
+    writeAsync(buffer: IBuffer | null, asyncOptions?: AsyncOptions): Promise<number>;
     readonly canRead: boolean;
     readonly canWrite: boolean;
     readonly contentType: string;
@@ -109,7 +109,7 @@ declare module 'svelters:winui/windows.storage.fileproperties' {
   /** `Windows.Storage.FileProperties.VideoProperties`: object, lifetime SHARED, thread any. */
   export abstract class VideoProperties extends NativeObject {
     static readonly native: string;
-    savePropertiesAsync(options?: AsyncOptions): Promise<void>;
+    savePropertiesAsync(asyncOptions?: AsyncOptions): Promise<void>;
     readonly bitrate: number;
     readonly directors: IVector<string> | null;
     readonly duration: number;
