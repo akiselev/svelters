@@ -11,6 +11,7 @@ use objc2_foundation::NSString;
 use std::cell::RefCell;
 use std::rc::Rc;
 use svelters_abi::*;
+pub use svelters_abi::ObserveError;
 
 /// A sample value in a static row table of the generated tests (`Value` itself owns heap data,
 /// so the tables hold this and convert per row).
@@ -54,6 +55,8 @@ struct Rec {
     frames: RefCell<u32>,
     checkpoints: RefCell<u32>,
     on_checkpoint: RefCell<Option<Box<dyn Fn()>>>,
+    /// ABI v2.6 `prop_changed` calls, in order.
+    changed: RefCell<Vec<(u64, u32)>>,
 }
 
 struct TestHost(Rc<Rec>);
@@ -82,6 +85,9 @@ impl HostCallbacks for TestHost {
     }
     fn frame(&self) {
         *self.0.frames.borrow_mut() += 1;
+    }
+    fn prop_changed(&self, h: svl_handle, prop: svl_id) {
+        self.0.changed.borrow_mut().push((h, prop));
     }
 }
 
@@ -125,6 +131,7 @@ impl Harness {
             frames: RefCell::new(0),
             checkpoints: RefCell::new(0),
             on_checkpoint: RefCell::new(None),
+            changed: RefCell::new(Vec::new()),
         });
         let host: &'static HostVtable = Box::leak(Box::new(HostVtable::new(TestHost(rec.clone()))));
         backend.attach_host(host.as_raw());
@@ -334,11 +341,327 @@ impl Harness {
         let _: () = unsafe { msg_send![&*self.native(h), close] };
     }
 
+    // ---- observe (ABI v2.6, milestone R4) ----
+
+    /// The prop id `name` resolves to on `h`.
+    pub fn prop_id(&self, h: u64, name: &str) -> u32 {
+        self.prop(h, name).unwrap_or_else(|e| panic!("{e}"))
+    }
+
+    pub fn observe(&self, h: u64, name: &str, on: bool) -> Result<(), ObserveError> {
+        let p = self.prop(h, name).map_err(ObserveError::Failed)?;
+        self.b().observe(h, p, on)
+    }
+
+    /// A write that is not a host op (no echo marker): what native code changing the prop does.
+    pub fn set_natively(&self, h: u64, name: &str, v: Value) -> Result<(), String> {
+        let p = self.prop(h, name)?;
+        self.backend.set_prop_natively(h, p, &v)
+    }
+
+    /// `prop_changed` calls for (h, prop) since the last call (all recorded calls are taken).
+    pub fn take_changed(&self, h: u64, prop: u32) -> usize {
+        let all = std::mem::take(&mut *self.rec.changed.borrow_mut());
+        all.into_iter().filter(|c| *c == (h, prop)).count()
+    }
+
+    /// The native object of a live handle, retained (tests that outlive the handle).
+    pub fn retain(&self, h: u64) -> Retained<AnyObject> {
+        self.native(h)
+    }
+
+    /// `-[obj observationInfo]`: NULL when no KVO observer is registered on the object.
+    pub fn observation_info(obj: &AnyObject) -> usize {
+        let p: *mut std::ffi::c_void = unsafe { msg_send![obj, observationInfo] };
+        p as usize
+    }
+
+    /// Puts `child` in a new window as its content view and shows the window (key if the app can be active).
+    pub fn mount(&self, child: u64) -> u64 {
+        let w = self.create("window");
+        self.insert(w, child, None, Some("content-view")).unwrap_or_else(|e| panic!("mount: {e}"));
+        self.call(w, "make-key-and-order-front", vec![]).unwrap_or_else(|e| panic!("make-key-and-order-front: {e}"));
+        self.pump(30);
+        w
+    }
+
+    /// Makes `h` the first responder of its window (a text field hands over to its field editor).
+    pub fn focus(&self, h: u64) -> bool {
+        let o = self.native(h);
+        unsafe {
+            let w: Option<Retained<AnyObject>> = msg_send![&*o, window];
+            let w = w.expect("the element is in a window");
+            msg_send![&*w, makeFirstResponder: &*o]
+        }
+    }
+
+    /// Key-down events through `-[NSWindow sendEvent:]` to the first responder of `h`'s window: what a user
+    /// typing does (the field editor inserts the text and posts NSControlTextDidChangeNotification).
+    pub fn type_keys(&self, h: u64, text: &str, key_code: u16) {
+        let o = self.native(h);
+        unsafe {
+            let w: Option<Retained<AnyObject>> = msg_send![&*o, window];
+            let w = w.expect("the element is in a window");
+            let num: isize = msg_send![&*w, windowNumber];
+            for ch in text.chars() {
+                let s = NSString::from_str(&ch.to_string());
+                for ty in [NS_KEY_DOWN, NS_KEY_UP] {
+                    let ev: Option<Retained<AnyObject>> = msg_send![
+                        class!(NSEvent),
+                        keyEventWithType: ty,
+                        location: NsPoint { x: 0.0, y: 0.0 },
+                        modifierFlags: 0usize,
+                        timestamp: 0.0f64,
+                        windowNumber: num,
+                        context: Option::<&AnyObject>::None,
+                        characters: &*s,
+                        charactersIgnoringModifiers: &*s,
+                        isARepeat: false,
+                        keyCode: key_code
+                    ];
+                    let ev = ev.expect("NSEvent keyEventWithType");
+                    let _: () = msg_send![&*w, sendEvent: &*ev];
+                }
+            }
+        }
+    }
+
+    /// `-[NSWindow setFrame:display:]` with a frame that differs from the current one in size and origin.
+    pub fn move_window(&self, w: u64, n: usize) {
+        let o = self.native(w);
+        let d = 10.0 * (n % 5) as f64;
+        let r = NsRect { x: 100.0 + d, y: 100.0 + d, w: 400.0 + d, h: 300.0 + d };
+        let _: () = unsafe { msg_send![&*o, setFrame: r, display: true] };
+    }
+
     /// Dispatches events and run-loop sources for about `ms` milliseconds, then releases dead natives.
     pub fn pump(&self, ms: u64) {
         pump(ms);
         self.backend.drain();
     }
+}
+
+const NS_KEY_DOWN: usize = 10;
+const NS_KEY_UP: usize = 11;
+/// macOS virtual key code of the right arrow (kVK_RightArrow).
+pub const KEY_RIGHT: u16 = 124;
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+struct NsPoint {
+    x: f64,
+    y: f64,
+}
+
+unsafe impl objc2::encode::Encode for NsPoint {
+    const ENCODING: objc2::encode::Encoding =
+        objc2::encode::Encoding::Struct("CGPoint", &[objc2::encode::Encoding::Double, objc2::encode::Encoding::Double]);
+}
+
+#[repr(C)]
+#[derive(Clone, Copy)]
+struct NsRect {
+    x: f64,
+    y: f64,
+    w: f64,
+    h: f64,
+}
+
+unsafe impl objc2::encode::Encode for NsRect {
+    const ENCODING: objc2::encode::Encoding = objc2::encode::Encoding::Struct(
+        "CGRect",
+        &[
+            objc2::encode::Encoding::Struct("CGPoint", &[objc2::encode::Encoding::Double, objc2::encode::Encoding::Double]),
+            objc2::encode::Encoding::Struct("CGSize", &[objc2::encode::Encoding::Double, objc2::encode::Encoding::Double]),
+        ],
+    );
+}
+
+// ---- observe rows (milestone R4; plans/research/REACTIVITY.md 4.5) ----
+
+/// How an observe row checks its fact (`tools/metadata/appkit/gen_backend.py` picks it from the fact).
+#[derive(Clone, Copy, Debug)]
+pub enum ObsCheck {
+    /// Set the sample natively (KVC, not the host op): announced; then identical set, echo, coalescing, teardown.
+    Change,
+    /// A native change that is not a write of the prop (`verify.trigger`).
+    Cross(Trig),
+    /// The mechanisms install and uninstall; nothing triggers them here.
+    Connect,
+    /// `observe` answers SVL_OBSERVE_UNSUPPORTED (class none or set_only).
+    Unsupported,
+    /// `observe` answers -1 (constant).
+    Refused,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum Trig {
+    /// `-[NSWindow setFrame:display:]` (posts DidResize / DidMove).
+    SetFrame,
+}
+
+/// The user path of a fallback mechanism, where the runner can synthesize it.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum User {
+    None,
+    /// Typing into the focused field through `-[NSWindow sendEvent:]` (NSControlTextDidChangeNotification).
+    Type,
+    /// `-[NSButton performClick:]` (the action).
+    Click,
+    /// The right-arrow key through `-[NSWindow sendEvent:]` to the focused control (the action).
+    Key,
+}
+
+pub struct ObserveRow {
+    pub tag: &'static str,
+    pub prop: &'static str,
+    /// The native KVC key; with a KVO mechanism the row checks the registration is gone before the object is.
+    pub kvo: &'static str,
+    pub check: ObsCheck,
+    pub sample: Option<S>,
+    pub user: User,
+    /// The prop is new: a class without this selector (an older macOS) skips the row.
+    pub requires: &'static str,
+}
+
+/// One observe fact through the real ABI v2.6 path (REACTIVITY.md 4.5, backend level):
+/// 1. native change (KVC set, or the trigger): announced (`prop_changed(h, prop)`) synchronously on the main thread;
+/// 2. identical set: logged (KVO re-announces it; the host's compare drops it);
+/// 3. echo: a set through `set_prop` (the host op) is announced unless proportional (backend suppression);
+/// 4. coalescing input: 10 native changes produce between 1 and 10 announcements per mechanism (the host coalesces);
+/// 5. user path of the fallback (typing, click, arrow key): announced;
+/// 6. teardown: nested on/off, nothing after `observe(off)`, and destroying the handle while observed removes the KVO
+///    registration before our reference is released (`observationInfo` is NULL on the object we keep).
+pub fn observe_row(r: &ObserveRow) {
+    let h = Harness::shared();
+    let _g = h.case_guard();
+    let o = h.create(r.tag);
+    if !r.requires.is_empty() && !h.responds(o, r.requires) {
+        eprintln!("skipped: {} has no {} on this macOS", r.tag, r.requires);
+        h.destroy(o);
+        return;
+    }
+    let pid = h.prop_id(o, r.prop);
+    match r.check {
+        ObsCheck::Unsupported | ObsCheck::Refused => {
+            let got = h.observe(o, r.prop, true);
+            h.destroy(o);
+            match (r.check, got) {
+                (ObsCheck::Unsupported, Err(ObserveError::Unsupported(_))) | (ObsCheck::Refused, Err(ObserveError::Failed(_))) => return,
+                (c, g) => panic!("<{}> {}: observe answered {g:?}, want {c:?}", r.tag, r.prop),
+            }
+        }
+        _ => {}
+    }
+    let window = match (r.check, r.user) {
+        (ObsCheck::Cross(Trig::SetFrame), _) => None,
+        (_, User::None) => None,
+        _ => Some(h.mount(o)),
+    };
+    let fresh = Harness::observation_info(&h.retain(o)) == 0;
+    h.observe(o, r.prop, true).unwrap_or_else(|e| panic!("<{}> {}: observe: {e:?}", r.tag, r.prop));
+    assert!(h.backend.is_observed(o, pid));
+    h.take_changed(o, pid);
+    let sample = r.sample.map(|s| s.v());
+    let first = h.get(o, r.prop).unwrap_or(Value::Null);
+    let change = |n: usize| match r.check {
+        ObsCheck::Change => {
+            let v = if n % 2 == 0 { sample.clone().unwrap() } else { first.clone() };
+            h.set_natively(o, r.prop, v).unwrap_or_else(|e| panic!("<{}> {} native set: {e}", r.tag, r.prop));
+        }
+        ObsCheck::Cross(Trig::SetFrame) => h.move_window(o, n + 1),
+        _ => {}
+    };
+    let moves = !matches!(r.check, ObsCheck::Connect);
+    if moves {
+        // 1. one native change
+        change(0);
+        let n1 = h.take_changed(o, pid);
+        assert!(n1 >= 1, "<{}> {}: a native change was not announced", r.tag, r.prop);
+        // 2. identical set (KVO re-announces: decided by the host compare)
+        if let ObsCheck::Change = r.check {
+            let cur = h.get(o, r.prop).unwrap();
+            h.set_natively(o, r.prop, cur).unwrap();
+            println!("observe <{}> {}: identical set announced {} time(s)", r.tag, r.prop, h.take_changed(o, pid));
+            // 3. echo: our own write
+            h.set(o, r.prop, first.clone()).unwrap();
+            let n3 = h.take_changed(o, pid);
+            let proportional = svelters_appkit_proportional(o, r.prop);
+            if proportional {
+                assert_eq!(n3, 0, "<{}> {}: our own write of a proportional prop was announced", r.tag, r.prop);
+            } else {
+                assert!(n3 >= 1, "<{}> {}: our own write was not announced (the host compare drops it, not the backend)", r.tag, r.prop);
+            }
+        }
+        // 4. coalescing input
+        for n in 0..10 {
+            change(n + 1);
+        }
+        h.pump(10);
+        let n4 = h.take_changed(o, pid);
+        assert!((1..=40).contains(&n4), "<{}> {}: 10 native changes announced {n4} times", r.tag, r.prop);
+    }
+    // 5. the user path of the fallback
+    match r.user {
+        User::None => {}
+        User::Type => {
+            assert!(h.focus(o), "<{}>: the field did not become first responder", r.tag);
+            h.take_changed(o, pid);
+            h.type_keys(o, "abc", 0);
+            h.pump(10);
+            let n5 = h.take_changed(o, pid);
+            assert!(n5 >= 1, "<{}> {}: typing was not announced", r.tag, r.prop);
+        }
+        User::Click => {
+            h.take_changed(o, pid);
+            h.perform_click(o);
+            let n5 = h.take_changed(o, pid);
+            assert!(n5 >= 1, "<{}> {}: a click was not announced", r.tag, r.prop);
+        }
+        User::Key => {
+            assert!(h.focus(o), "<{}>: the control did not become first responder", r.tag);
+            h.take_changed(o, pid);
+            h.type_keys(o, "\u{F703}", KEY_RIGHT);
+            h.pump(10);
+            let n5 = h.take_changed(o, pid);
+            assert!(n5 >= 1, "<{}> {}: the arrow key was not announced", r.tag, r.prop);
+        }
+    }
+    // 6. teardown
+    h.observe(o, r.prop, true).unwrap();
+    h.observe(o, r.prop, false).unwrap();
+    assert!(h.backend.is_observed(o, pid), "<{}> {}: a nested off ended the observation", r.tag, r.prop);
+    h.observe(o, r.prop, false).unwrap();
+    assert!(!h.backend.is_observed(o, pid));
+    let kept = h.retain(o);
+    if fresh && !r.kvo.is_empty() {
+        assert_eq!(Harness::observation_info(&kept), 0, "<{}> {}: the KVO registration survived observe(off)", r.tag, r.prop);
+    }
+    h.take_changed(o, pid);
+    if moves {
+        change(1);
+        change(2);
+    }
+    assert_eq!(h.take_changed(o, pid), 0, "<{}> {}: announced after observe(off)", r.tag, r.prop);
+    h.observe(o, r.prop, false).unwrap();
+    h.observe(o, r.prop, true).unwrap();
+    if let Some(w) = window {
+        h.destroy(w);
+    }
+    h.destroy(o);
+    // We still hold the object: the backend must have removed its KVO registration before releasing its reference.
+    if fresh && !r.kvo.is_empty() {
+        assert_eq!(Harness::observation_info(&kept), 0, "<{}> {}: the KVO observer was not removed before the handle released the object", r.tag, r.prop);
+    }
+    h.pump(5);
+    assert_eq!(h.take_changed(o, pid), 0, "<{}> {}: announced after the handle was destroyed", r.tag, r.prop);
+    drop(kept);
+}
+
+fn svelters_appkit_proportional(h: u64, prop: &str) -> bool {
+    let hs = Harness::shared();
+    let kind = hs.kind_of(h);
+    lookup::observe_info(kind, prop).is_some_and(|o| o.proportional)
 }
 
 /// Dispatches AppKit events and run-loop sources (our wake source and timers fire in it) for about

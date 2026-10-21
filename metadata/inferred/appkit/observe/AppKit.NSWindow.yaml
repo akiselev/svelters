@@ -292,6 +292,10 @@ observe:
   provenance:
   - origin: rule
     ref: 'O7: not probed for KVO; the notifications report programmatic and user changes alike'
+  verify:
+    'on': AppKit:NSWindow
+    check: cross
+    trigger: set-frame
   confidence: 0.9
 - prop: frame-autosave-name
   class: none

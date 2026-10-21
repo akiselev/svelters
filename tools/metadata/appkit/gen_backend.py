@@ -310,6 +310,11 @@ ROW_STRUCTS = """    /// `setter`: the native setter; a class without it (a memb
 """
 
 ROW_FNS = {
+    "observe": """    /// Table-driven observe facts: `svelters_appkit::testing::observe_row` (REACTIVITY.md 4.5).
+    pub fn observe_row(i: usize) {
+        svelters_appkit::testing::observe_row(&OBSERVE_ROWS[i]);
+    }
+""",
     "prop": """    /// Table-driven: a prop's sample round-trips through the backend (KVC).
     pub fn prop_row(i: usize) {
         let r = &PROP_ROWS[i];
@@ -413,7 +418,7 @@ class Tests:
     def __init__(self, m: Model):
         self.m = m
         self.cases: list[tuple[str, str, str]] = []      # (name, doc, body): one function per fact
-        self.rows: dict[str, list[tuple[str, str, str]]] = {"prop": [], "signal": [], "bind": []}  # (test, doc, row literal)
+        self.rows: dict[str, list[tuple[str, str, str]]] = {"prop": [], "signal": [], "bind": [], "observe": []}  # (test, doc, row literal)
         self.facts: list[dict] = []
         self.untestable: list[dict] = []
         self.names: set[str] = set()
@@ -613,13 +618,15 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
                   f"sample: {sv}, expect: {ev}, arg0: {str(arg0).lower()}, echo_none: {str(echo_none).lower()} }}",
                   (cls, "bindings", b["name"], b))
 
+    observe_rows(m, t)
+
     o = [HEADER, "//! One test per annotated AppKit fact. macOS only (an empty suite elsewhere):\n",
          "//! `cargo test -p counter-mac --test generated` (cases run in order on the main thread).\n",
          "//! Inferred facts (metadata/inferred/appkit) and bindings are table-driven: one runner per table,\n",
          "//! one named case per row. `SVELTERS_TEST_RESULTS=<file>` records every result for the ledger.\n\n"]
     o.append('#[cfg(target_os = "macos")]\n#[allow(unused_imports, dead_code)]\nmod cases {\n')
     o.append("    use svelters_abi::Value as V;\n    use svelters_abi::{SVL_T_INSETS, SVL_T_POINT, SVL_T_RECT, SVL_T_SIZE};\n")
-    o.append("    use svelters_appkit::testing::{Harness, S};\n")
+    o.append("    use svelters_appkit::testing::{Harness, ObsCheck, ObserveRow, S, Trig, User};\n")
     for name, doc, body in t.cases:
         o.append(f"\n    /// {doc}\n    pub fn {name}() {{\n        let h = Harness::shared();\n")
         o.append("".join("    " + line + "\n" if line else "\n" for line in body.rstrip("\n").split("\n")))
@@ -629,16 +636,16 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
         o.append(f"        ({rs(name)}, {name}),\n")
     o.append("    ];\n\n")
     o.append(ROW_STRUCTS)
-    tables = {"prop": "PROP_ROWS", "signal": "SIGNAL_ROWS", "bind": "BIND_ROWS"}
-    types = {"prop": "PropRow", "signal": "SignalRow", "bind": "BindRow"}
-    for table in ("prop", "signal", "bind"):
+    tables = {"prop": "PROP_ROWS", "signal": "SIGNAL_ROWS", "bind": "BIND_ROWS", "observe": "OBSERVE_ROWS"}
+    types = {"prop": "PropRow", "signal": "SignalRow", "bind": "BindRow", "observe": "ObserveRow"}
+    for table in ("prop", "signal", "bind", "observe"):
         o.append(f"\n    pub static {tables[table]}: &[{types[table]}] = &[\n")
         for name, doc, lit in t.rows[table]:
             o.append(f"        // {name}: {doc}\n        {lit},\n")
         o.append("    ];\n\n")
         o.append(ROW_FNS[table])
     o.append("\n    pub static ROWS: &[(&str, fn(usize), usize)] = &[\n")
-    for table in ("prop", "signal", "bind"):
+    for table in ("prop", "signal", "bind", "observe"):
         for i, (name, _, _) in enumerate(t.rows[table]):
             o.append(f"        ({rs(name)}, {table}_row, {i}),\n")
     o.append("    ];\n}\n\n")
@@ -647,6 +654,57 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
     facts = sorted(t.facts, key=lambda f: f["fact"])
     untestable = sorted(t.untestable, key=lambda f: f["fact"])
     return "".join(o), facts, untestable
+
+
+def observe_rows(m: Model, t: Tests) -> None:
+    """ABI v2.6 observe facts (milestone R4; REACTIVITY.md 4.5): one row per fact of a class an element derives from,
+    run through the real path (`observe` -> KVO / notification / target-action -> host.prop_changed) by
+    `svelters_appkit::testing::observe_row`. The check follows the fact: none/set_only -> unsupported, constant ->
+    refused, a `verify: cross` trigger, a KVC sample -> change, else connect; a fallback mechanism adds its user path
+    where the runner can synthesize it (typing for NSControlTextDidChangeNotification, a click for an NSButton's
+    action, the arrow key for an NSSlider's)."""
+    harness = svmeta.fingerprint({"testing.rs": TESTING_RS.read_text()})
+    for cls in m.classes:
+        tag = m.element_for(cls)
+        if tag is None:
+            continue
+        for js, rec in sorted(m.observe.get(cls, {}).items()):
+            _, meta = m.find_prop(cls, js)
+            via = rec.get("via", [])
+            kvo = meta["name"] if any(v["mechanism"] == "notify" for v in via) else ""
+            smp = find_sample(m, cls, js)
+            sv = s_value(smp[0], meta["type"]["ref"]) if smp else None
+            verify = rec.get("verify") or {}
+            user = "None"
+            if any(v["mechanism"] == "notification" and v["name"] == "NSControlTextDidChangeNotification" for v in via):
+                user = "Type"
+            elif any(v["mechanism"] == "target_action" for v in via):
+                user = "Click" if "NSButton" in m.chain(cls) else "Key" if "NSSlider" in m.chain(cls) else "None"
+            if rec["class"] in ("none", "set_only"):
+                check, strength, user = "ObsCheck::Unsupported", "unsupported", "None"
+            elif rec["class"] == "constant":
+                check, strength, user = "ObsCheck::Refused", "refused", "None"
+            elif verify.get("check") == "cross":
+                trig = "".join(w.title() for w in verify["trigger"].split("-"))
+                check, strength = f"ObsCheck::Cross(Trig::{trig})", "change"
+            elif kvo and sv is not None and meta["access"]["write"]:
+                check, strength = "ObsCheck::Change", "change"
+            else:
+                check, strength = "ObsCheck::Connect", "change" if user != "None" else "connect"
+            acc = meta.get("accessors") or {}
+            requires = acc.get("set", "") if check == "ObsCheck::Change" else acc.get("get", "")
+            name = f"observe_{ident(cls, js)}"
+            lit = (f"ObserveRow {{ tag: {rs(tag)}, prop: {rs(js)}, kvo: {rs(kvo)}, check: {check}, "
+                   f"sample: {f'Some({sv})' if check == 'ObsCheck::Change' else 'None'}, user: User::{user}, requires: {rs(requires)} }}")
+            t._name(name)
+            t.rows["observe"].append((name, f"observe {cls}.{js}: {rec['class']}", lit))
+            record = {k: v for k, v in rec.items() if k not in ("layer", "record_fp")}
+            f = {"fact": rec["fact"], "kind": f"AppKit:{cls}", "section": "observe", "name": js, "origin": rec["layer"],
+                 "tests": [name], "strength": strength,
+                 "fingerprint": svmeta.fingerprint({"record": record, "tests": [lit, ROW_FNS["observe"], harness]})}
+            if rec["layer"] == "inferred":
+                f["record_fp"] = rec["record_fp"]
+            t.facts.append(f)
 
 
 def main() -> int:

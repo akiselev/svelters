@@ -16,6 +16,9 @@ concurrency:
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: "1"
+  # The project's minimum macOS (REACTIVITY.md decision 13.10: KVO on BORROWED objects relies on the 10.13 relaxed
+  # unregistration; display links need 14 and fall back to a timer below it).
+  MACOSX_DEPLOYMENT_TARGET: "11.0"
 
 jobs:
   # metadata/appkit/*.json is derived from Apple's SDK, so it is generated here, on Apple hardware

@@ -2,6 +2,11 @@
 
 Status: written on Linux (2026-10-17). None of this has run on a Mac yet; the point of these steps is to find out what breaks. Background: `docs/notes/mac1-appkit.md`.
 
+**Minimum macOS: 11** (plans/research/REACTIVITY.md decision 13.10; `observe` on borrowed objects relies on the
+macOS 10.13 relaxed KVO unregistration). The macos-appkit CI job and `tools/dev/mac-cross` build with
+`MACOSX_DEPLOYMENT_TARGET=11.0`; set the same when building a release by hand. Newer APIs are checked at run time
+(`CADisplayLink` needs 14 and falls back to a timer).
+
 ## 1. One-time setup
 
 1. **Command Line Tools** (clang, the macOS SDK, `screencapture`). Full Xcode also works.
