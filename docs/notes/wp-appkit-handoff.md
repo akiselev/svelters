@@ -1,5 +1,8 @@
 # WP-A (AppKit widget parity): handoff
 
+**Superseded:** the second agent finished the steps below (probe, ledger import, gallery, milestone). The record is
+`plans/milestones/WP-appkit-widgets.md`; this note is kept as the first agent's state. Its "31 elements" is 30.
+
 Branch `ci/wp-appkit`, based on local master `8e92af95` (E2 merged). Written by the first lane agent when it hit its context
 limit; a fresh agent should continue from here. Lane brief: AppKit widget coverage towards GTK/Qt, milestone record
 `plans/milestones/WP-appkit-widgets.md` (not written yet).
