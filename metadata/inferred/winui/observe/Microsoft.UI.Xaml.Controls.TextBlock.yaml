@@ -199,12 +199,13 @@ observe:
 - prop: SelectedText
   class: exact
   via:
-  - mechanism: notify
+  - mechanism: event
+    events:
+    - SelectionChanged
   provenance:
-  - origin: winmd
-    ref: 'O6: SelectedTextProperty is a DependencyProperty: RegisterPropertyChangedCallback'
   - origin: rule
-    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+    ref: 'O6 deny list: R4 windows-winui CI: the SelectedTextProperty change callback did not fire for SelectAll on a mounted, selectable TextBlock
+      (a read-only computed DP); SelectionChanged reports the selection'
   verify:
     'on': Microsoft.UI.Xaml.Controls:TextBlock
     check: cross

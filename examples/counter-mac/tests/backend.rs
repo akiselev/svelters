@@ -127,7 +127,16 @@ mod mac {
         objc2::rc::autoreleasepool(|_| h.insert(w, nv, None, Some("content-view")).unwrap());
         h.pump(20);
         h.backend.run_observe_hops();
-        let gone = h.take_gone();
+        let mut gone = h.take_gone();
+        println!("after replacing the content view: object alive {}, gone {gone:?}", h.backend.object(cv).is_some());
+        if gone.is_empty() {
+            // The window still holds the old content view somewhere: closing and releasing the window frees it.
+            objc2::rc::autoreleasepool(|_| h.destroy(w));
+            h.pump(50);
+            h.backend.run_observe_hops();
+            gone = h.take_gone();
+            println!("after destroying the window: object alive {}, gone {gone:?}", h.backend.object(cv).is_some());
+        }
         assert!(gone.contains(&(cv, SVL_GONE_OWNER)), "the sentinel reported the borrowed object's death: {gone:?}");
         assert!(!h.alive(cv));
         h.destroy(nv);

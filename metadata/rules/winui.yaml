@@ -44,6 +44,9 @@ no_notify:
   - prop: FrameworkElement.ActualHeight
     use: SizeChanged
     reason: '"do not raise property change notifications" (FrameworkElement.ActualHeight docs); use SizeChanged'
+  - prop: TextBlock.SelectedText
+    use: SelectionChanged
+    reason: 'R4 windows-winui CI: the SelectedTextProperty change callback did not fire for SelectAll on a mounted, selectable TextBlock (a read-only computed DP); SelectionChanged reports the selection'
   - prop: FrameworkElement.ActualTheme
     use: ActualThemeChanged
     reason: computed from RequestedTheme up the tree; ActualThemeChanged reports it

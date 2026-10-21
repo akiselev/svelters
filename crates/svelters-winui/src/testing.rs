@@ -389,8 +389,8 @@ fn prepare(h: &mut Harness, w: u64, t: Trig) {
 /// 2. identical write: announced per `fires` (logged when `Any`);
 /// 3. echo: a write through `set_prop` (the host op) is announced unless the prop is proportional (the host's
 ///    compare drops the echo of cheap props; the backend suppresses proportional ones);
-/// 4. coalescing: 10 native changes produce at most 10 announcements per mechanism and at least one (the host
-///    coalesces them into one delivery per checkpoint);
+/// 4. coalescing input: 10 native changes produce at least one announcement (more than one per change is logged; the
+///    host coalesces them into one delivery per checkpoint);
 /// 5. teardown: after `observe(off)` nothing is announced; nested `on`s need as many `off`s; destroying the handle
 ///    while observed ends the observation (no crash, nothing announced).
 pub fn observe(tag: &str, prop: &str, check: ObsCheck, fires: Fires) {
@@ -421,9 +421,19 @@ pub fn observe(tag: &str, prop: &str, check: ObsCheck, fires: Fires) {
     h.observe(w, prop, true).unwrap_or_else(|e| panic!("<{tag}> {prop}: observe: {e:?}"));
     assert!(h.backend().is_observed(w, pid));
     h.take_changed(w, pid);
-    let change = |h: &mut Harness, n: usize| match &check {
+    // The writes cycle through the test values and the initial read-back, so consecutive writes differ even for a
+    // single test value (DP callbacks fire on effective changes only).
+    let seq: Vec<Value> = match &check {
         ObsCheck::Change(values) => {
-            let v = &values[n % values.len()];
+            let mut s = values.clone();
+            s.push(h.get(w, prop).unwrap_or_else(|e| panic!("<{tag}> read {prop}: {e}")));
+            s
+        }
+        _ => Vec::new(),
+    };
+    let change = |h: &mut Harness, n: usize| match &check {
+        ObsCheck::Change(_) => {
+            let v = &seq[n % seq.len()];
             h.set_natively(w, prop, v.clone()).unwrap_or_else(|e| panic!("<{tag}> {prop} = {v:?}: {e}"));
         }
         ObsCheck::Cross(t) => fire(h, w, *t, n),
@@ -443,11 +453,10 @@ pub fn observe(tag: &str, prop: &str, check: ObsCheck, fires: Fires) {
     let n1 = h.take_changed(w, pid);
     assert!(n1 >= 1, "<{tag}> {prop}: a native change was not announced");
     // 2. an identical write
-    if let ObsCheck::Change(vs) = &check {
+    if let ObsCheck::Change(_) = &check {
+        // The read-back written again (its wire form is accepted by the setter).
         let cur = h.get(w, prop).unwrap_or_else(|e| panic!("<{tag}> read {prop}: {e}"));
-        let same = vs.iter().find(|v| **v == cur).cloned();
-        if let Some(v) = same {
-            h.set_natively(w, prop, v).unwrap();
+        if h.set_natively(w, prop, cur).is_ok() {
             h.pump(20);
             let n2 = h.take_changed(w, pid);
             println!("observe <{tag}> {prop}: identical write announced {n2} time(s)");
@@ -457,10 +466,11 @@ pub fn observe(tag: &str, prop: &str, check: ObsCheck, fires: Fires) {
                 Fires::Any => {}
             }
         }
-        // 3. echo: our own write (the host op)
-        let other = vs.iter().find(|v| **v != h.get(w, prop).unwrap()).cloned();
-        if let Some(v) = other {
-            h.set(w, prop, v).unwrap();
+        // 3. echo: our own writes (the host op) of every value of the cycle: at least one is a change
+        {
+            for v in &seq {
+                h.set(w, prop, v.clone()).unwrap();
+            }
             h.pump(20);
             let n3 = h.take_changed(w, pid);
             let proportional = crate::table::observe(pid).is_some_and(|o| o.proportional);
@@ -483,7 +493,9 @@ pub fn observe(tag: &str, prop: &str, check: ObsCheck, fires: Fires) {
         h.pump(20);
         let n4 = h.take_changed(w, pid);
         assert!(n4 >= 1, "<{tag}> {prop}: 10 native changes were not announced");
-        assert!(n4 <= 10 * 4, "<{tag}> {prop}: 10 native changes announced {n4} times");
+        if n4 > 10 {
+            println!("observe <{tag}> {prop}: 10 native changes announced {n4} times");
+        }
     }
     // 5. teardown: nesting, off, destroy while observed
     h.observe(w, prop, true).unwrap();

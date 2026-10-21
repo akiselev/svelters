@@ -28932,11 +28932,7 @@ pub mod Microsoft {
                             *mut core::ffi::c_void,
                             *mut *mut core::ffi::c_void,
                         ) -> windows_core::HRESULT,
-                    pub SelectedTextProperty: unsafe extern "system" fn(
-                        *mut core::ffi::c_void,
-                        *mut *mut core::ffi::c_void,
-                    )
-                        -> windows_core::HRESULT,
+                    SelectedTextProperty: usize,
                     SelectionHighlightColorProperty: usize,
                     pub MaxLinesProperty: unsafe extern "system" fn(
                         *mut core::ffi::c_void,
@@ -41322,17 +41318,6 @@ pub mod Microsoft {
                         Self::ITextBlockStatics(|this| unsafe {
                             let mut result__ = core::mem::zeroed();
                             (windows_core::Interface::vtable(this).IsTextSelectionEnabledProperty)(
-                                windows_core::Interface::as_raw(this),
-                                &mut result__,
-                            )
-                            .and_then(|| windows_core::imp::Type::from_abi(result__))
-                        })
-                    }
-                    pub fn SelectedTextProperty() -> windows_core::Result<super::DependencyProperty>
-                    {
-                        Self::ITextBlockStatics(|this| unsafe {
-                            let mut result__ = core::mem::zeroed();
-                            (windows_core::Interface::vtable(this).SelectedTextProperty)(
                                 windows_core::Interface::as_raw(this),
                                 &mut result__,
                             )

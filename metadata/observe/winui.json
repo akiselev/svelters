@@ -2085,15 +2085,11 @@
     "prop": "SelectedText",
     "provenance": [
      {
-      "origin": "winmd",
-      "ref": "O6: SelectedTextProperty is a DependencyProperty: RegisterPropertyChangedCallback"
-     },
-     {
       "origin": "rule",
-      "ref": "no probe on Linux; verified by the R4 harness on the windows-winui job"
+      "ref": "O6 deny list: R4 windows-winui CI: the SelectedTextProperty change callback did not fire for SelectAll on a mounted, selectable TextBlock (a read-only computed DP); SelectionChanged reports the selection"
      }
     ],
-    "record_fp": "d73ad66cea7b3056",
+    "record_fp": "4bb5b893ba62f9ee",
     "verify": {
      "check": "cross",
      "on": "Microsoft.UI.Xaml.Controls:TextBlock",
@@ -2101,7 +2097,10 @@
     },
     "via": [
      {
-      "mechanism": "notify"
+      "events": [
+       "SelectionChanged"
+      ],
+      "mechanism": "event"
      }
     ]
    },

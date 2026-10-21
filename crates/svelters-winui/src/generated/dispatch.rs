@@ -1709,7 +1709,9 @@ fn observe_prop87_text_block_padding(o: &IInspectable, h: u64, prop: u32) -> Win
 }
 fn observe_prop88_text_block_selected_text(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {
     Ok(vec![
-        crate::sink::observe_dp(o, &crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock::SelectedTextProperty()?, h, prop)?,
+        Registration::from(o.cast::<crate::bindings::Microsoft::UI::Xaml::Controls::TextBlock>()?.SelectionChanged(move |_s, _a| {
+            crate::backend::emit_changed(h, prop);
+        })?),
     ])
 }
 fn observe_prop89_text_block_text_alignment(o: &IInspectable, h: u64, prop: u32) -> WinResult<Vec<Registration>> {

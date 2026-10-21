@@ -576,9 +576,25 @@ SVL_M_OBSERVABLE = 64
   (`QAction::changed`) reports every observed prop that shares it. No NOTIFY, or not a `Q_PROPERTY`
   (most `QWidget` props, `QLabel:text`, QBindable-only props): `SVL_OBSERVE_UNSUPPORTED`. `CONSTANT`
   and write-only: -1. Relays are deleted with the handle (`drop_listeners`).
-- **AppKit, WinUI:** the member is `NULL` (trait default). WinUI's `RegisterPropertyChangedCallback`
-  for dependency properties is the natural mechanism; AppKit KVO needs the observer removed before
-  the observed object deallocates (REACTIVITY.md §5.5, decision 10), so it waits for that design.
+- **AppKit** (`crates/svelters-appkit/src/observe.rs`, milestone R4): from the prop's observe fact (generated
+  `OBSERVE` table, `metadata/observe/appkit.json`, looked up along the element's chain): KVO on the KVC key through
+  one backend observer object, `context` = a per-registration (h, prop) record; notifications
+  (`NSControlTextDidChangeNotification`, `NSWindowDidResize/DidMove`) and the target-action pair through the
+  handle's target, user-counted together with `listen`. Teardown: OWNED/TOPLEVEL remove KVO in `destroy`/close
+  before the reference is released; BORROWED objects of autonotifying classes are not retained, an identity
+  sentinel (associated object) reports their death (`SVL_GONE_OWNER`), the runtime cleans up the registration
+  (macOS ≥ 10.13; the minimum is 11); other classes are retained while KVO-observed. KVO from another thread is
+  queued, deduplicated and delivered by the next wake. Facts `none`/`set_only` and props without a fact:
+  `SVL_OBSERVE_UNSUPPORTED`; constant and write-only: -1. `SVL_M_OBSERVABLE` is set on the scalar/record props
+  `describe` covers.
+- **WinUI** (`crates/svelters-winui/src/backend.rs`, generated `OBSERVE_CONNECT`, milestone R4): the DP change
+  callback (`RegisterPropertyChangedCallback`, `(dp, token)` per (h, prop)) and event fallbacks (`SizeChanged`,
+  `SelectionChanged`, `Loaded`, `ActualThemeChanged`, `VisibilityChanged`) with their revokers; delegates capture
+  the ids only and reach the backend through its thread-local weak reference. Unregistered by `observe(off)`,
+  `destroy` (before the element reference is released) and native death. UI thread only
+  (`DispatcherQueue.HasThreadAccess`, else -1). Codes as AppKit; `SVL_M_OBSERVABLE` from the facts.
+- **Echo (both):** while `set_prop` writes (h, prop), a `value_cost: proportional` prop is not reported
+  (REACTIVITY.md §5.4); cheap props are reported and the host's compare drops the echo.
 
 ## ABI v3: value model (M3)
 
