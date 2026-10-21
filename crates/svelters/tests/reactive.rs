@@ -266,6 +266,33 @@ impl Counter {
     }
 }
 
+/// Keeps bytes from JS: the JS memory itself (`keep`: pins the runtime that made it) or a copy in Rust
+/// memory (`keep_copy`: `Buffer::into_vec`).
+#[svelters::object(module = "rx")]
+pub struct Keeper {
+    held: Option<svelters::Buffer<u8>>,
+    copy: Vec<u8>,
+}
+
+#[svelters::export]
+impl Keeper {
+    #[js(constructor)]
+    pub fn new() -> Keeper {
+        Keeper { held: None, copy: Vec::new() }
+    }
+
+    pub fn keep(&mut self, b: svelters::Buffer<u8>) -> u32 {
+        let n = b.len() as u32;
+        self.held = Some(b);
+        n
+    }
+
+    pub fn keep_copy(&mut self, b: svelters::Buffer<u8>) -> u32 {
+        self.copy = b.into_vec();
+        self.copy.len() as u32
+    }
+}
+
 // ---- harness ----
 
 fn stage(name: &str, main: &str) -> PathBuf {
@@ -819,6 +846,53 @@ console.log('v2', c.value, c instanceof Counter, appStats.count);
     drop(r);
 }
 
+/// E2 x E3: a persisted object that keeps a JS `Buffer<T>` pins the old runtime's memory, so a reload waits
+/// 1 s and leaks that runtime; the host says so at the reload. Keeping a copy (`into_vec`) avoids both.
+#[test]
+fn a_persisted_object_holding_js_memory_is_diagnosed_at_reload() {
+    pool();
+    let reload = |name: &str, method: &str| -> (Vec<String>, u64, Duration) {
+        let v1 = format!(
+            "import {{ Keeper }} from 'svelters:app/rx';\nimport {{ persist }} from 'svelters:core';\nconst k = persist('keeper', () => new Keeper());\nconsole.log('kept', k.{method}(new Uint8Array(32)));\n"
+        );
+        let dir = stage(name, &v1);
+        let (cfg, _) = fixture_config();
+        let log = LogBackend::new(Vec::new());
+        let vt = log.vtable();
+        let host = Host::new(vt.backend_ref(), cfg).unwrap();
+        host.load_bundle(dir.join("main.js")).unwrap();
+        let mut r = Run { host: &host, lines: Vec::new() };
+        r.turn();
+        assert!(r.has("kept 32"), "{:?}", r.lines);
+        let leaked = host.buffer_stats().leaked_runtimes;
+        std::fs::write(dir.join("main.js"), "import { Keeper } from 'svelters:app/rx';\nimport { persist } from 'svelters:core';\nconsole.log('v2', persist('keeper', () => new Keeper()) instanceof Keeper);\n").unwrap();
+        let rep = std::rc::Rc::new(std::cell::Cell::new(None));
+        let flag = rep.clone();
+        host.on_reload(move |x| flag.set(Some((x.ok, x.elapsed))));
+        host.request_reload();
+        unsafe { svelters_abi::HostRef::from_raw(host.host_callbacks()) }.checkpoint();
+        let (ok, took) = rep.get().expect("reloaded");
+        assert!(ok, "{:#?}", host.take_errors());
+        r.turn();
+        assert!(r.has("v2 true"), "{:?}", r.lines);
+        r.no_errors();
+        let lines = r.lines.clone();
+        (lines, host.buffer_stats().leaked_runtimes - leaked, took)
+    };
+    let warns = |lines: &[String]| lines.iter().filter(|l| l.contains("from the old JS runtime are still held by Rust")).count();
+
+    let (lines, leaked, took) = reload("pin-held", "keep");
+    assert_eq!(warns(&lines), 1, "{lines:?}");
+    assert!(lines.iter().any(|l| l.contains("Buffer::into_vec()")), "{lines:?}");
+    assert_eq!(leaked, 1, "the old runtime is leaked: Rust still holds its memory");
+    assert!(took >= Duration::from_millis(900), "{took:?}");
+
+    let (lines, leaked, took) = reload("pin-copy", "keepCopy");
+    assert_eq!(warns(&lines), 0, "{lines:?}");
+    assert_eq!(leaked, 0);
+    assert!(took < Duration::from_millis(900), "{took:?}");
+}
+
 // ---- typings ----
 
 #[test]
@@ -850,7 +924,7 @@ fn typings_show_stores_values_events_and_streams() {
         "export const appStats = /* @__PURE__ */ ((x) => wrapObject(Stats, x))(callStatic('app:rx', 'appStats', []));",
         "return streamStatic('app:rx', 'countTo', [n, tag], options);",
         "return stream(this, 'upcoming', [n], options);",
-        "registerClass(Counter, Sensor, Stats);",
+        "registerClass(Counter, Keeper, Sensor, Stats);",
     ] {
         assert!(js.contains(want), "stub lacks {want:?}:\n{js}");
     }

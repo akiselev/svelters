@@ -152,6 +152,16 @@ pub fn numbers(&self) -> Stream<u32> { let (tx, rx) = channel(16); /* tx to a th
 - The old runtime's observations of and listeners on app objects are set aside while the new bundle loads:
   dropped if it loads, restored if it fails (so the old runtime keeps getting store changes once, not twice).
   A failed load's persisted objects are dropped (the persist map is restored).
+- **Persisted state and E2 buffers.** A JS-originated `Buffer<T>` kept long-term in Rust (inside a persisted
+  object, a store, a service or a static) pins the JS runtime that allocated it: E2's teardown then waits 1 s at
+  the reload and leaks that runtime. A persisted object is opaque to the host, so E3 cannot copy for it;
+  instead the reload **diagnoses** it: after the old runtime's calls are retired and its stale handles
+  released, and before it is dropped, a live transfer token count above zero logs a console warning naming
+  the cause and the fix (`Buffer::into_vec()` copies JS memory into Rust memory). Tested both ways
+  (`a_persisted_object_holding_js_memory_is_diagnosed_at_reload`: the held buffer warns once, leaks one
+  runtime and waits ≥ 0.9 s; the `into_vec` copy warns nothing, leaks nothing, reloads fast). Persisted objects
+  and stores are also dropped in `Host::drop` before the engine (after E2's app-object release), so shutdown
+  does not hit the leak through them.
 
 ### Typings, stubs, schema
 
@@ -227,7 +237,7 @@ accepted writes deliver nothing, a Rust write delivers once).
 
 ## Tests
 
-- `crates/svelters/tests/reactive.rs` (17): stores (10k writes one batch; `update` + compare drops the
+- `crates/svelters/tests/reactive.rs` (18): stores (10k writes one batch; `update` + compare drops the
   unchanged; clamp delivered once, echo dropped; accepted writes echo nothing, rejected writes throw and keep the
   old value, read-only fields throw; proportional invalidations; getters subscribe through the tracker; a live
   non-scripted host); events (order, `latest`, after the change batch, an unheard event goes nowhere, `off`;
@@ -235,7 +245,8 @@ accepted writes deliver nothing, a Rust write delivers once).
   unread is closed when collected, abort rejects and closes, an error after the items, returned streams and
   `batches()`, a returned stream on a UI object); persist + app-wide store across a failed and a good reload
   (the unpersisted object dies, the persisted one and the store live on, observations counted once, a failed
-  load's persisted object released); typings/stubs/JSON.
+  load's persisted object released); a persisted object holding a JS `Buffer<T>` diagnosed at reload (E2 x E3);
+  typings/stubs/JSON.
 - `crates/svelters/tests/services.rs` (1, its own binary: services are process-wide): eager start with the
   first host, lazy start on import, survives a reload (no restart, the new runtime reads the same store),
   shutdown joins the thread.
@@ -263,6 +274,32 @@ Local gates and CI: see "Completion record" below.
   shared-process mode (a process-wide drop counter raced by a concurrent test); nextest (separate processes, as
   CI runs it) passes. The E3 test binaries pass in both modes and pinned to two cores.
 - Node TestHost: app exports (and so stores, events, streams) remain QuickJS-host only.
+- A "detach to Rust memory" path for JS buffers held across a reload (copy once at reload instead of leaking the
+  runtime, E2's open item) would make the diagnosed case work; E3 only warns. `Shared<[T]>` (an `Arc`) is the
+  right type for buffer-valued store fields.
+- A store field holding a buffer value never compares equal (`same_value` has no buffer arm), so it is
+  delivered whenever it is marked.
+
+## Merge with E2 and FU2
+
+`origin/master` (E2 zero-copy buffers, FU2 GTK wake priority) was merged into `ci/e3` (merge commit bd797eb9).
+Conflicts and how they were resolved:
+
+- `exports/offload.rs`: the completion queue keeps both lists (E3 `items`, E2 `released`) and both method sets.
+- `lib.rs` (`Host::drop`): E2's app-object release first, then E3's `reactive_shutdown` (hub detached,
+  subscriptions and persisted objects dropped), both before the engine.
+- `reload.rs` (success branch): E2's order (calls retired and app objects released before the old runtime is
+  dropped) with E3's generation-aware release (`app_release_stale`: re-received handles survive; E2's
+  `app_release_all(old)` would have killed them) and the buffer diagnostic before the drop.
+- `exports/codegen.rs`: E3's values, events and `NativeStream` import moved into E2's `ts_module_body`.
+- Facade re-exports and prelude, the design note's status line, and the example's `lib.rs`, `App.svelte` and
+  `tests/exports.rs` keep both lanes (E2's DSP panel and test next to E3's telemetry). The generated
+  `.svelters/app` files were regenerated with `--dump` (`committed_typings_are_current` checks `dsp.js` and
+  `telemetry.js`).
+- Auto-merged and checked: `core/offload.rs` `drain` (stream items, then completions, then stream tails, then
+  E2's buffer releases; `ops_reap` only completes settled or retired calls, which never produce stream tails),
+  `core/apps.rs` `app_set_prop` (E2's `owned_all`, then E3's read-back; a `BufferValue` clone is an `Arc`
+  clone), `Value::Buffer` (the compare's catch-all arm treats buffers as never equal).
 
 ## Conflict risks
 
