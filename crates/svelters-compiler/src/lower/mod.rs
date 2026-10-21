@@ -17,6 +17,7 @@ pub use native_attrs::HELPERS_MODULE;
 mod lists;
 pub mod native_reads;
 pub mod portability;
+pub mod template_await;
 
 use crate::diag::Diagnostics;
 use crate::estree::{ArrayElement, Expression, Pattern, Span, Spanned};
