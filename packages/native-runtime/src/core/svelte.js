@@ -69,6 +69,7 @@ export {
   tag_proxy,
   inspect,
   trace,
+  wrap_snippet,
 } from 'svelte/internal/client';
 
 // ---- internals of the block machinery (./internal.js) ----

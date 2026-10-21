@@ -567,6 +567,10 @@ impl Rewriter for ScopeRewriter<'_> {
         self.cx.tracing.get()
     }
 
+    fn dev(&self) -> bool {
+        self.cx.dev
+    }
+
     fn identifier(&self, id: &Identifier) -> String {
         read_text(&self.cx.transform_of_id(id), &id.name)
     }

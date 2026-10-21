@@ -207,6 +207,11 @@ span edits over the user's source instead of an AST reprint.
    `$.tag_proxy` labels; the other dev-only instrumentation is not emitted (`$.push(.., App)`,
    `$.legacy_api()`, `$.check_target`, `App[$.FILENAME]`, `$.log_if_contains_state`,
    `$.track_reactivity_loss`, `$.assign` mutation warnings, ownership validation).
+   Snippets get Svelte's dev shape: `$.wrap_snippet(App, function ($$anchor, ...) {
+   $n.validate_snippet_args(...arguments); ... })`, the implicit `children` snippet wrapped too, so
+   `{snippet}` throws `snippet_without_render_tag` and a direct call `invalid_snippet_arguments`
+   (the anchor must be a runtime container, not a DOM `Node`). `$n.snippet` throws
+   `invalid_snippet` on a nullish snippet when esm-env's `DEV` is set, as Svelte's snippet block.
    `$inspect.trace`'s location label is `file:line:column` (1-based line, 0-based column).
 5. **Not supported** (diagnostics): async `$derived` (`await` inside, `unsupported_feature`),
    `$host()` (`host_invalid_placement`: no custom elements), re-exports from the instance

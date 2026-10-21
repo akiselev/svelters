@@ -6,6 +6,7 @@
 // and no anchors: containers and regions keep just the ordering native insertion needs.
 // Plain ES2022, no globals besides __svelters_host / __svelters_dispatch / __svelters_dispatch_sync /
 // __svelters_gone / __svelters_node.
+import { DEV } from 'esm-env';
 import * as $ from './core/index.js';
 import {
   active,
@@ -922,7 +923,35 @@ export function key_block(container, getKey, render) {
  * function replaces the branch, a nullish one renders nothing. `args` are thunks.
  */
 export function snippet(container, getSnippet, ...args) {
-  swapping(container, getSnippet, (s, anchor) => s(anchor, ...args));
+  // Svelte's snippet block: a nullish snippet is an error in DEV (`{@render f?.()}` compiles to
+  // `?? $.noop` instead), nothing in production
+  const get = DEV
+    ? () => {
+        const s = getSnippet();
+        if (s == null) svelteError('invalid_snippet', 'Could not `{@render}` snippet due to the expression being `null` or `undefined`. Consider using optional chaining `{@render snippet?.()}`');
+        return s;
+      }
+    : getSnippet;
+  swapping(container, get, (s, anchor) => s(anchor, ...args));
+}
+
+/**
+ * Dev (`--dev`): the first statement of every snippet (Svelte's `validate_snippet_args`): a
+ * snippet is only called by `{@render}`, with a container (Svelte: a DOM `Node`) and thunks.
+ */
+export function validate_snippet_args(anchor, ...args) {
+  const container = anchor instanceof Slot || anchor instanceof Region || anchor instanceof Root;
+  if (!container || args.some((a) => typeof a !== 'function')) {
+    svelteError('invalid_snippet_arguments', 'A snippet function was passed invalid arguments. Snippets should only be instantiated via `{@render ...}`');
+  }
+}
+
+/** Throws a Svelte runtime error as svelte/src/internal/{client,shared}/errors.js does. */
+function svelteError(code, message) {
+  if (!DEV) throw new Error(`https://svelte.dev/e/${code}`);
+  const error = new Error(`${code}\n${message}\nhttps://svelte.dev/e/${code}`);
+  error.name = 'Svelte error';
+  throw error;
 }
 
 /**

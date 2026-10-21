@@ -18,6 +18,7 @@
   "dependencies": {
     "@svelters/style": "workspace:*",
     "@svelters/types": "workspace:*",
+    "esm-env": "^1.2.2",
     "svelte": "5.57.2"
   },
   "devDependencies": {

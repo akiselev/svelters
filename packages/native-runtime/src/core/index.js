@@ -55,4 +55,5 @@ export {
   tag_proxy,
   inspect,
   trace,
+  wrap_snippet,
 } from './svelte.js';

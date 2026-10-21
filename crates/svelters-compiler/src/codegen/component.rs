@@ -78,6 +78,11 @@ pub trait Rewriter {
     fn tracing(&self) -> bool {
         false
     }
+    /// Svelte's `dev` option: snippets get Svelte's dev wrapper (`$.wrap_snippet`, argument
+    /// validation, no stringification).
+    fn dev(&self) -> bool {
+        false
+    }
     /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
@@ -112,12 +117,14 @@ pub struct Codegen<'a, 's> {
     /// Expressions memoized as `$.template_effect` dependencies while one effect is written
     /// (address -> the effect parameter that holds its value).
     memo: Vec<(usize, String)>,
+    /// The component function name (`$.wrap_snippet(Name, ...)` in dev).
+    name: &'s str,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports) -> (String, String) {
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), _p: std::marker::PhantomData };
+    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
     if rw.tracing() {
         g.w.write(&format!("import '{}/tracing';\n", imports.core));
     }
@@ -972,8 +979,19 @@ impl Codegen<'_, '_> {
                 }
             }
         }
-        self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
+        // dev (Svelte's SnippetBlock visitor): a function expression, so `arguments` can be
+        // validated, wrapped so the snippet cannot be stringified (`{snippet}` without `{@render}`)
+        let dev = self.rw.dev();
+        if dev {
+            self.w.write(&format!("const {} = $.wrap_snippet({}, function ($$anchor{params}) {{", s.name, self.name));
+        } else {
+            self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
+        }
         self.w.indent();
+        if dev {
+            self.line();
+            self.w.write("$n.validate_snippet_args(...arguments);");
+        }
         for (p, initial) in patterns {
             self.destructure(p, &initial, Leaf::Thunk);
         }
@@ -981,7 +999,7 @@ impl Codegen<'_, '_> {
         self.fragment(&s.body, "$$anchor");
         self.w.dedent();
         self.line();
-        self.w.write("};");
+        self.w.write(if dev { "});" } else { "};" });
     }
 
     fn render(&mut self, r: &RenderCall, container: &str) {
@@ -1162,7 +1180,12 @@ impl Codegen<'_, '_> {
         }
         if let Some(ch) = &c.children {
             self.prop_entry(&mut st);
-            self.w.write("children: ($$anchor, $$slotProps) => {");
+            // dev: Svelte wraps the implicit `children` snippet too (shared/component.js)
+            if self.rw.dev() {
+                self.w.write(&format!("children: $.wrap_snippet({}, ($$anchor, $$slotProps) => {{", self.name));
+            } else {
+                self.w.write("children: ($$anchor, $$slotProps) => {");
+            }
             self.w.indent();
             if boundary {
                 self.consts(&c.consts);
@@ -1170,7 +1193,7 @@ impl Codegen<'_, '_> {
             self.fragment(ch, "$$anchor");
             self.w.dedent();
             self.line();
-            self.w.write("}");
+            self.w.write(if self.rw.dev() { "})" } else { "}" });
             slots.push("default".to_string());
         }
         if !slots.is_empty() {
