@@ -1,0 +1,24 @@
+[package]
+name = "egui-allrust-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+build = "build.rs"
+
+# Standalone: not a member of the svelters workspace (docs/notes/egui-all-rust.md).
+[workspace]
+members = ["svelte-macro", "size-probe"]
+
+[dependencies]
+svelte-macro = { path = "svelte-macro" }
+
+[build-dependencies]
+svelters-compiler = { path = "../../../../crates/svelters-compiler" }
+rquickjs = { version = "0.14.0", default-features = false, features = ["std", "loader"] }
+
+[profile.dev.build-override]
+opt-level = 2
+
+[profile.release]
+strip = true
+lto = "thin"

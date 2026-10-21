@@ -1,0 +1,13 @@
+[package]
+name = "size-probe"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Release size of eframe (glow) + QuickJS-NG + a QuickJS module evaluated per frame.
+[dependencies]
+eframe = { version = "0.37.0", default-features = false, features = ["glow", "default_fonts", "x11", "wayland"] }
+rquickjs = { version = "0.14.0", default-features = false, features = ["std"] }
+
+[features]
+inspection = ["eframe/inspection"]
