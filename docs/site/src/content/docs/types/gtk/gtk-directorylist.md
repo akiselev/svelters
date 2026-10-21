@@ -31,13 +31,15 @@ Construct-time properties (construct-only ones can only be given here): `attribu
 
 ## Properties
 
-- `attributes` (str)
-- `file` (object)
-- `ioPriority` (int)
+Getters marked *reactive* re-run the effects (and template expressions) that read them when the property changes natively; GTK announces the change (`notify`) and the host delivers it once per main-loop turn. *Reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. See [Reactivity](../../../concepts/reactivity/).
+
+- `attributes` (str, reactive)
+- `file` (object, reactive)
+- `ioPriority` (int, reactive)
 - `itemType` (gtype, read-only)
 - `loading` (bool, read-only)
-- `monitored` (bool)
-- `nItems` (int, read-only)
+- `monitored` (bool, reactive)
+- `nItems` (int, read-only, reactive)
 
 ## Methods
 

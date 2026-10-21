@@ -105,10 +105,75 @@ const handleFor = (self) => (BOX in self ? valueHandle(self) : live(self));
 
 /** `host.call` on an object or value. */
 export const call = (self, method, args) => host().call(handleFor(self), method, args);
-/** `host.getProp` on an object. */
+/** `host.getProp` on an object: a snapshot, never reactive. */
 export const getProp = (self, name) => host().getProp(live(self), name);
-/** `host.setProp` on an object. */
-export const setProp = (self, name, value) => host().setProp(live(self), name, value);
+/**
+ * `host.setProp` on an object. Readers of the property re-run in the current flush (a local
+ * invalidation): the host drops the native echo of our own write (REACTIVITY.md section 5.2).
+ */
+export const setProp = (self, name, value) => {
+  const h = live(self);
+  host().setProp(h, name, value);
+  tracker()?.invalidate(h, name);
+};
+
+// ---- reactivity (REACTIVITY.md section 7) ---------------------------------------------------------
+
+const TRACKER = Symbol.for('svelters.types.tracker');
+const tracker = () => globalThis[TRACKER];
+
+/**
+ * Installs the reactivity tracker generated getters use (`@svelters/native-runtime` installs one built
+ * on Svelte's `createSubscriber`): `{ track(h, prop), local(h, prop), invalidate(h, prop), untrack(fn) }`.
+ * `null` uninstalls it. Without a tracker every getter is a plain read.
+ */
+export function installTracker(t) {
+  globalThis[TRACKER] = t ?? undefined;
+}
+
+/**
+ * A reactive read of a property the platform announces changes of (`exact`/`partial`): inside an
+ * effect it subscribes to native changes of (object, prop), then reads live. Outside an effect, or
+ * inside `untrack`, it is `getProp`.
+ */
+export function observed(self, name) {
+  const h = live(self);
+  tracker()?.track(h, name);
+  return host().getProp(h, name);
+}
+
+/**
+ * A reactive read of a `set_only` property: only our own setters change it, so it re-runs on local
+ * writes (no native observation), then reads live.
+ */
+export function observedLocal(self, name) {
+  const h = live(self);
+  tracker()?.local(h, name);
+  return host().getProp(h, name);
+}
+
+/**
+ * A reactive accessor with no native property behind it (Qt `QTextDocument.plainText` is `toPlainText()`):
+ * inside an effect it re-runs when the object emits `signal` (or after `invalidate(self, prop)`), then
+ * returns `read()`.
+ */
+export function observedSignal(self, prop, signal, read) {
+  tracker()?.signal?.(self, prop, signal);
+  return read();
+}
+
+/** Re-runs the readers of (object, prop) now: what every setter does after writing. */
+export function invalidate(self, name) {
+  const n = self?.[NODE];
+  const h = n === null || n === undefined ? null : handleOf(n);
+  if (h !== null) tracker()?.invalidate(h, name);
+}
+
+/** `fn()` with no reactive subscription (Svelte's `untrack` when a tracker is installed). */
+export function untracked(fn) {
+  const t = tracker();
+  return t?.untrack ? t.untrack(fn) : fn();
+}
 /** `host.construct`: a new instance of the native type with construct-time properties. */
 export const construct = (native, props) => host().construct(native, props);
 /** `host.callStatic`: a static function or constructor function of the native type `native`. */
@@ -270,6 +335,14 @@ function shapeArgs(Class, signal, args) {
   });
 }
 
+function hasGetter(obj, key) {
+  for (let p = Object.getPrototypeOf(obj); p && p !== Object.prototype; p = Object.getPrototypeOf(p)) {
+    const d = Object.getOwnPropertyDescriptor(p, key);
+    if (d) return typeof d.get === 'function';
+  }
+  return false;
+}
+
 const kebabSignal = (s) => (s.includes('-') || !/[A-Z]/.test(s) ? s : s.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase()));
 
 /** Base class of every generated object class. */
@@ -338,6 +411,18 @@ export class NativeObject {
         if (cur.signals.size === 0) listening.delete(h);
       }
     };
+  }
+
+  /**
+   * A snapshot of a property: the getter's value (`obj.peek('text')` is `obj.text`) without subscribing
+   * the running effect to its changes. A name the class has no getter for (a native spelling such as
+   * `cursor-position`) is read with `getProp`.
+   */
+  peek(prop) {
+    const name = String(prop);
+    const camel = name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    const key = hasGetter(this, camel) ? camel : hasGetter(this, name) ? name : null;
+    return untracked(() => (key === null ? getProp(this, name) : this[key]));
   }
 
   /** Rewraps this object as `Class` (an unchecked cast: a wrong class fails natively on first use). */

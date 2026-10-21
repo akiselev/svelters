@@ -69,6 +69,10 @@ pub const SVL_M_STATIC: u32 = 16;
 pub const SVL_M_CTOR: u32 = 32;
 /// ABI v2.6: on `SVL_PROP` descriptors, `observe` can watch this property.
 pub const SVL_M_OBSERVABLE: u32 = 64;
+/// ABI v2.6 (R1): on `SVL_PROP` descriptors, reading the value costs time proportional to its size
+/// (whole-text props): the host does not read or compare it after a change, it delivers an
+/// invalidation only, and the backend suppresses the echo of the host's own `set_prop`.
+pub const SVL_M_PROPORTIONAL: u32 = 128;
 
 pub const SVL_CB_CALL: u16 = 1;
 pub const SVL_CB_ASYNC: u16 = 2;

@@ -28,20 +28,23 @@ Constructors (one JS constructor; the backend picks the overload from the argume
 
 ## Properties
 
-- `baseUrl` (value)
+Getters marked *reactive* re-run the effects (and template expressions) that read them when the property changes natively (Qt announces it, the host delivers it once per event-loop turn); *reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. See [Reactivity](../../../concepts/reactivity/).
+
+- `baseUrl` (value, reactive)
 - `blockCount` (int, read-only)
-- `defaultFont` (value)
-- `defaultStyleSheet` (string)
-- `documentMargin` (float)
-- `indentWidth` (float)
-- `layoutEnabled` (bool)
-- `maximumBlockCount` (int)
-- `modified` (bool)
-- `pageSize` (record)
-- `size` (record, read-only)
-- `textWidth` (float)
-- `undoRedoEnabled` (bool)
-- `useDesignMetrics` (bool)
+- `defaultFont` (value, reactive on writes)
+- `defaultStyleSheet` (string, reactive on writes)
+- `documentMargin` (float, reactive on writes)
+- `indentWidth` (float, reactive on writes)
+- `layoutEnabled` (bool, reactive on writes)
+- `maximumBlockCount` (int, reactive on writes)
+- `modified` (bool, reactive)
+- `pageSize` (record, not reactive: changes are not announced)
+- `size` (record, read-only, not reactive: changes are not announced)
+- `textWidth` (float, reactive on writes)
+- `undoRedoEnabled` (bool, not reactive: changes are not announced)
+- `useDesignMetrics` (bool, reactive on writes)
+- `plainText` (string, reactive: `toPlainText()` re-read after `contentsChanged`; each read copies the whole text)
 
 ## Methods
 

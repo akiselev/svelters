@@ -24,7 +24,7 @@ mod sourcemap;
 pub mod testing;
 
 pub use crate::core::{ConsoleLine, HostConfig, Timing};
-pub use crate::engine::{ErrorKind, JobStatus, JsEngine, JsError};
+pub use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError};
 pub use crate::reload::ReloadReport;
 
 use crate::core::Core;
@@ -75,7 +75,8 @@ impl HostCallbacks for Callbacks {
     }
 
     fn prop_changed(&self, h: svl_handle, prop: svl_id) {
-        // Delivered at the next checkpoint, like a posted signal (a live backend expects a wake).
+        // Marks (h, prop) dirty; the next checkpoint reads, compares and delivers it in one batch.
+        // A live backend gets one wake per turn: on the first insert into an empty dirty set.
         if self.core.prop_changed(h, prop) && !self.core.cfg.scripted {
             self.core.backend().wake();
         }

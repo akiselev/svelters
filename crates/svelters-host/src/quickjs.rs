@@ -4,7 +4,7 @@
 
 use crate::convert;
 use crate::core::{Core, Name, OpError, OpKind};
-use crate::engine::{ErrorKind, JobStatus, JsEngine, JsError};
+use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError};
 use rquickjs::function::Opt;
 use rquickjs::loader::{ImportAttributes, Loader, Resolver};
 use rquickjs::module::Declared;
@@ -325,13 +325,27 @@ impl JsEngine for QjsEngine {
         })
     }
 
-    fn dispatch_prop_changed(&mut self, handle: u64, prop: &str) -> Result<(), JsError> {
+    fn dispatch_changed(&mut self, batch: &[ChangedProp]) -> Result<(), JsError> {
+        let core = self.core.clone();
         self.call_guarded(|ctx| {
-            let f: Value = ctx.globals().get("__svelters_prop_changed")?;
+            let f: Value = ctx.globals().get("__svelters_changed")?;
             let Some(f) = f.as_function() else {
                 return Ok(());
             };
-            f.call::<_, Value>((handle as f64, prop)).map(|_| ())
+            let conv = QjsConv::new(ctx.clone(), core, None);
+            let arr = rquickjs::Array::new(ctx.clone())?;
+            let mut i = 0;
+            for c in batch {
+                let v = match &c.value {
+                    Some(v) => convert::decode(&conv, v, &*conv.core).map_err(|m| Exception::throw_message(ctx, &m))?,
+                    None => Value::new_undefined(ctx.clone()),
+                };
+                arr.set(i, c.handle as f64)?;
+                arr.set(i + 1, c.prop.as_str())?;
+                arr.set(i + 2, v)?;
+                i += 3;
+            }
+            f.call::<_, Value>((arr,)).map(|_| ())
         })
     }
 

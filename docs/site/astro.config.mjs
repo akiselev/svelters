@@ -38,7 +38,7 @@ export default defineConfig({
         },
         {
           label: 'Concepts',
-          items: [guide('concepts/ownership', 'Ownership and lifetimes'), guide('concepts/abi', 'Backend ABI reference'), guide('concepts/docs-generator', 'How these docs are made')],
+          items: [guide('concepts/ownership', 'Ownership and lifetimes'), guide('concepts/reactivity', 'Reactivity of native properties'), guide('concepts/abi', 'Backend ABI reference'), guide('concepts/docs-generator', 'How these docs are made')],
         },
         {
           label: 'API reference',

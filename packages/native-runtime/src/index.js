@@ -28,6 +28,9 @@ import {
 import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty } from './style.js';
 import { ROW_OUTLETS, TOPLEVELS } from './bindings.generated.js';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
+// ABI v2.6 property observation (REACTIVITY.md section 7): installs `__svelters_changed` and the
+// `@svelters/types` tracker when the runtime loads.
+export { observeProp, trackProp, trackLocal, invalidateProp } from './observe.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');

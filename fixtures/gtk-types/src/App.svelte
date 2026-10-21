@@ -2,10 +2,9 @@
   import { TextBuffer, StringList } from 'svelters:gtk/gtk';
   import { File, FileIcon } from 'svelters:gtk/gio';
 
-  // One native TextBuffer shared by two views; its `changed` signal drives a counter.
+  // One native TextBuffer shared by two views. `buffer.text` is reactive (R1): the label re-renders when
+  // the text changes natively (GTK notify::text, delivered by the host), with no `$state` mirror.
   const buffer = new TextBuffer({ text: 'Hello' });
-  let length = $state(5);
-  $effect(() => buffer.on('changed', (text) => (length = text.length)));
 
   // A native model built and extended from JS.
   const names = new StringList({ strings: ['one', 'two'] });
@@ -24,7 +23,7 @@
   <box orientation="vertical" spacing={6}>
     <text-view buffer={buffer} />
     <text-view buffer={buffer} monospace />
-    <label label={`${length} characters`} />
+    <label label={`${buffer.text.length} characters`} />
     <image gicon={icon} pixel-size={16} />
   </box>
 </window>

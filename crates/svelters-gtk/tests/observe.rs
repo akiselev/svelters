@@ -1,7 +1,9 @@
 //! ABI v2.6 `observe` / `prop_changed` on GTK: `notify::<prop>` on widgets (generated ids), on
 //! non-widget objects (reflected ids) and on forwarded (`via`) properties; nested on/off; destroy and
-//! native death disconnect; an observation never keeps the object alive. Mechanics only: no value,
-//! no comparison (plans/research/REACTIVITY.md §12 decides the rest). Needs a display (xvfb-run).
+//! native death disconnect; an observation never keeps the object alive; a forwarded property follows
+//! a new target object; descriptor flags from the observe facts; no echo for our own write of a
+//! proportional property. No value and no comparison: that is the host's (REACTIVITY.md §5.2).
+//! Needs a display (xvfb-run).
 
 use gtk::prelude::*;
 use svelters_abi::*;
@@ -256,5 +258,86 @@ fn descriptors_flag_observable_properties() {
         assert_eq!(flags("header-bar", "title") & SVL_M_OBSERVABLE, 0, "virtual");
         assert_ne!(flags("Gtk.TextBuffer", "text") & SVL_M_OBSERVABLE, 0);
         assert_eq!(flags("Gtk.TextBuffer", "tag-table") & SVL_M_OBSERVABLE, 0, "construct-only");
+        // R1: the observe facts decide. A rule-made constant (read-only, not construct-only) and a
+        // `none` fact are not observable although `notify` could be connected.
+        assert_eq!(flags("Gtk.StringList", "item-type") & SVL_M_OBSERVABLE, 0, "constant fact");
+        assert_eq!(flags("entry", "text-length") & SVL_M_OBSERVABLE, 0, "none fact");
+        assert_ne!(flags("entry", "text") & SVL_M_OBSERVABLE, 0);
+        // Whole-text properties are proportional: the host never reads them after a change.
+        assert_ne!(flags("Gtk.TextBuffer", "text") & SVL_M_PROPORTIONAL, 0);
+        assert_ne!(flags("text-view", "text") & SVL_M_PROPORTIONAL, 0);
+        assert_eq!(flags("label", "label") & SVL_M_PROPORTIONAL, 0);
+        assert_eq!(flags("Gtk.TextBuffer", "cursor-position") & SVL_M_PROPORTIONAL, 0);
+    });
+}
+
+#[test]
+fn a_forwarded_property_follows_a_new_target_object() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let sc = h.create("scale");
+        let pid = h.resolve_prop("scale", "value");
+        h.observe(sc, "value", true).unwrap();
+        let range: gtk::Range = h.obj(sc).downcast().unwrap();
+        let old = range.adjustment();
+        // A native swap of the adjustment: the value now comes from the new one (reported once).
+        let new = gtk::Adjustment::new(5.0, 0.0, 100.0, 1.0, 10.0, 0.0);
+        range.set_adjustment(&new);
+        assert!(changed_of(&h, sc, pid) >= 1, "the swap itself is a change of the forwarded value");
+        new.set_value(42.0);
+        assert_eq!(changed_of(&h, sc, pid), 1, "the new adjustment is watched");
+        old.set_value(7.0);
+        assert!(h.take_changed().is_empty(), "the old adjustment is not");
+        // A second swap re-targets again.
+        let third = gtk::Adjustment::new(1.0, 0.0, 10.0, 1.0, 1.0, 0.0);
+        range.set_adjustment(&third);
+        h.take_changed();
+        third.set_value(3.0);
+        assert_eq!(changed_of(&h, sc, pid), 1);
+        new.set_value(1.0);
+        assert!(h.take_changed().is_empty());
+        // `off` disconnects both handlers.
+        h.observe(sc, "value", false).unwrap();
+        third.set_value(4.0);
+        range.set_adjustment(&new);
+        assert!(h.take_changed().is_empty());
+    });
+}
+
+#[test]
+fn our_own_write_of_a_proportional_property_is_not_echoed() {
+    on_gtk(|| {
+        let h = Harness::new();
+        let buf = h.construct("Gtk.TextBuffer", &[("text", s("hello"))]).unwrap();
+        let text = h.resolve_prop("Gtk.TextBuffer", "text");
+        let cursor = h.resolve_prop("Gtk.TextBuffer", "cursor-position");
+        h.observe(buf, "text", true).unwrap();
+        h.observe(buf, "cursor-position", true).unwrap();
+        h.take_changed();
+        // set_prop of the proportional `text`: its own notify is dropped by the backend, a property
+        // cross-notified by the same write (cursor-position) still reports.
+        h.set_str(buf, "text", "x").unwrap();
+        let got = h.take_changed();
+        assert!(!got.contains(&(buf, text)), "{got:?}");
+        assert!(got.contains(&(buf, cursor)), "{got:?}");
+        // A native edit reports as before.
+        let b: gtk::TextBuffer = h.obj(buf).downcast().unwrap();
+        b.insert_at_cursor("y");
+        assert!(h.take_changed().contains(&(buf, text)));
+        // So does the same write on a forwarded proportional property (text-view `text` lives on its buffer).
+        let tv = h.create("text-view");
+        let tv_text = h.resolve_prop("text-view", "text");
+        h.observe(tv, "text", true).unwrap();
+        h.set_str(tv, "text", "abc").unwrap();
+        assert!(!h.take_changed().contains(&(tv, tv_text)));
+        let view: gtk::TextView = h.obj(tv).downcast().unwrap();
+        view.buffer().set_text("native");
+        assert!(h.take_changed().contains(&(tv, tv_text)));
+        // A cheap property is echoed: the host compares it with its read-back.
+        let l = h.create("label");
+        let lp = h.resolve_prop("label", "label");
+        h.observe(l, "label", true).unwrap();
+        h.set_str(l, "label", "z").unwrap();
+        assert_eq!(changed_of(&h, l, lp), 1);
     });
 }

@@ -28,6 +28,23 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+
+# Observability facts (milestone R0, `tools/metadata/common/observe.py`): owner `<Ns>:<Type>` -> prop -> record.
+OBSERVE: dict[str, dict[str, dict]] = json.loads((ROOT / "metadata/observe/gtk.json").read_text())["facts"]
+
+
+def observe_remark(fact: dict | None) -> str | None:
+    """The typings remark of a property that is not fully reactive (REACTIVITY.md section 7)."""
+    cls = (fact or {}).get("class")
+    if cls == "none":
+        return "Not observable on GTK: native changes are not announced, so this getter is a snapshot (not reactive)."
+    if cls == "partial":
+        missed = ", ".join(fact.get("missed") or []) or "some causes"
+        return f"Partly observable on GTK: changes caused by {missed} are not announced, so effects reading it may miss them."
+    if (fact or {}).get("value_cost") == "proportional":
+        return ("Reactive, but each read copies the whole value (its cost grows with its size): prefer a "
+                "length-like property in effects that run often.")
+    return None
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import types_facts as TF  # noqa: E402
 
@@ -191,7 +208,7 @@ class Gen:
                     self.warnings.append(f"{q}: property {p['name']} collides with a method of the same JS name")
                     continue
                 seen_s.add(n)
-                res["properties"].append(p)
+                res["properties"].append({**p, "_owner": src})
             for s in r["signals"]:
                 if s["name"] not in seen_sig:
                     seen_sig.add(s["name"])
@@ -440,11 +457,21 @@ class Gen:
             parts.append(f"{TF.camel(p['name'])}: {self.w_expr(q, p['type'], 'r.' + p['name'], alias)}")
         return "(r) => ({ " + ", ".join(parts) + " })"
 
+    def observe_fact(self, p: dict) -> dict | None:
+        """The observe fact of a property (metadata/observe/gtk.json, owner `<Ns>:<Type>` of the class or
+        interface that declares it); None = unknown."""
+        owner = p.get("_owner", "")
+        return OBSERVE.get(owner.replace(".", ":", 1), {}).get(p["name"])
+
     def prop_js(self, q: str, p: dict, alias: dict[str, str]) -> str:
         n = inst_name(p["js"])
         lines = []
         if p["readable"]:
-            lines.append(f"  get {n}() {{\n    return {self.w_expr(q, p['type'], f'getProp(this, {p['name']!r})', alias)};\n  }}")
+            # REACTIVITY.md section 7 / 13 #3: reactive by default when the platform announces changes;
+            # set_only re-runs on our own writes; constant, none and unknown (no fact) are plain reads.
+            cls = (self.observe_fact(p) or {}).get("class")
+            read = {"exact": "observed", "partial": "observed", "set_only": "observedLocal"}.get(cls, "getProp")
+            lines.append(f"  get {n}() {{\n    return {self.w_expr(q, p['type'], f'{read}(this, {p['name']!r})', alias)};\n  }}")
         if p["writable"] and not p["construct_only"]:
             v = "typeArg(v)" if p["type"]["k"] == "gtype" else "v"
             lines.append(f"  set {n}(v) {{\n    setProp(this, {p['name']!r}, {v});\n  }}")
@@ -518,7 +545,7 @@ class Gen:
         # imports
         core = ["WRAP"] if False else []
         needed = ["NativeValue" if is_value else "NativeObject"] if not parent else []
-        for fn in ("call", "callStatic", "callAsync", "callStaticAsync", "getProp", "setProp", "construct", "constructProps", "typeArg", "wrapObject", "wrapValue", "CONSTRUCT", "NativeObject", "NativeValue"):
+        for fn in ("call", "callStatic", "callAsync", "callStaticAsync", "getProp", "observed", "observedLocal", "setProp", "construct", "constructProps", "typeArg", "wrapObject", "wrapValue", "CONSTRUCT", "NativeObject", "NativeValue"):
             if re.search(r"(?<![\w.])" + re.escape(fn) + r"\b", code.split("\n", 1)[1]) or (fn == "NativeObject" and not parent and not is_value) or (fn == "NativeValue" and not parent and is_value):
                 needed.append(fn)
         needed = sorted(set(needed))
@@ -671,6 +698,9 @@ class Gen:
                 n = inst_name(p["js"])
                 t = self.ts_type(q, p["type"], imports, True)
                 ro = "readonly " if not p["writable"] or p["construct_only"] else ""
+                remark = observe_remark(self.observe_fact(p))
+                if remark and p["readable"]:
+                    lines.append(f"    /** @remarks {remark} */")
                 if p["readable"]:
                     lines.append(f"    {ro}{n}: {t};")
                 else:

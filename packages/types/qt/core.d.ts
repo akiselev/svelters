@@ -27,6 +27,7 @@ declare module 'svelters:qt/core' {
     readonly currentLoop: number;
     currentTime: number;
     direction: 'backward' | 'forward';
+    /** @remarks Not observable on Qt: native changes are not announced, so this getter is a snapshot (not reactive). */
     readonly duration: number;
     loopCount: number;
     readonly state: 'paused' | 'running' | 'stopped';
@@ -1483,6 +1484,7 @@ declare module 'svelters:qt/core' {
     timerId(): number;
     readonly active: boolean;
     interval: number;
+    /** @remarks Not observable on Qt: native changes are not announced, so this getter is a snapshot (not reactive). */
     readonly remainingTime: number;
     singleShot: boolean;
     timerType: 'coarse-timer' | 'precise-timer' | 'very-coarse-timer';

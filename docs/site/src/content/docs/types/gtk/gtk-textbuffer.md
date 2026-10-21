@@ -31,13 +31,15 @@ Construct-time properties (construct-only ones can only be given here): `enableU
 
 ## Properties
 
-- `canRedo` (bool, read-only)
-- `canUndo` (bool, read-only)
-- `cursorPosition` (int, read-only)
-- `enableUndo` (bool)
-- `hasSelection` (bool, read-only)
+Getters marked *reactive* re-run the effects (and template expressions) that read them when the property changes natively; GTK announces the change (`notify`) and the host delivers it once per main-loop turn. *Reactive on writes* re-runs only after your own writes. The other getters are snapshots. To read a reactive getter without subscribing, use `obj.peek('prop')` or Svelte's `untrack(() => obj.prop)`. See [Reactivity](../../../concepts/reactivity/).
+
+- `canRedo` (bool, read-only, reactive)
+- `canUndo` (bool, read-only, reactive)
+- `cursorPosition` (int, read-only, reactive)
+- `enableUndo` (bool, reactive)
+- `hasSelection` (bool, read-only, reactive)
 - `tagTable` (object, construct-only)
-- `text` (str)
+- `text` (str, reactive; each read copies the whole value)
 
 ## Methods
 

@@ -86,6 +86,35 @@ export const active = () => $.active_effect;
 export const destroyed = (effect) => effect !== null && (effect.f & (DESTROYED | DESTROYING)) !== 0;
 /** Runs `fn` in Svelte's microtask queue (drained by flushSync / `flush`). */
 export const queue_task = queue_micro_task;
+/**
+ * Svelte's `createSubscriber` (`svelte/reactivity`, 5.57.2), on the client internals: Node resolves
+ * the public `svelte/reactivity` to its server build (a no-op) without the `browser` condition. When
+ * the returned function is called in a tracking effect, `start(update)` runs for the first subscriber
+ * and its cleanup after the last one is gone (one microtask later); `update()` re-runs the readers.
+ */
+export function subscriber(start) {
+  let subscribers = 0;
+  const version = $.mutable_source(0);
+  let stop;
+  return () => {
+    if (!$.effect_tracking()) return;
+    $.get(version);
+    $.render_effect(() => {
+      if (subscribers === 0) stop = $.untrack(() => start(() => $.update(version)));
+      subscribers += 1;
+      return () => {
+        queue_micro_task(() => {
+          subscribers -= 1;
+          if (subscribers === 0) {
+            stop?.();
+            stop = undefined;
+            $.update(version);
+          }
+        });
+      };
+    });
+  };
+}
 export const get_all_contexts = getAllContexts;
 export const set_context = setContext;
 export const flush = $.flush;

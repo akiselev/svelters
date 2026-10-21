@@ -83,7 +83,7 @@ typedef struct svl_host {
 
 ## Checkpoint semantics
 
-1. Deliver queued native events to JS.
+1. Deliver the batch of changed observed properties (`__svelters_changed`, ABI v2.6), then the queued native events.
 2. Run Svelte effects and QuickJS jobs, up to a bounded number.
 3. Apply the resulting tree/prop operations through the vtable.
 4. If jobs remain, call `backend->wake()` and return to the toolkit loop.
@@ -171,10 +171,10 @@ gone #<h> <reason>                           # the native object died (ABI v2), 
 construct #<h> <Kind> <json-props-object>    # ABI v2.5: a new instance with construct-time properties
 static <Kind>.<method> <json-args-array> [#<h>]  # ABI v2.5: a static call; new/new_*/from_* answer a fresh handle #h
 observe #<h> <prop> on|off                   # ABI v2.6: the backend starts/stops watching a prop (transitions only)
-changed #<h> <prop>                          # ABI v2.6: an injected "prop may have changed" notification (no value)
+changed #<h> <prop> [<json>]                 # ABI v2.6: a scripted native change to <json>, announced to the host
 ```
 
-Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}`, `{"changed": [<handle-number>, <prop>]}` (ABI v2.6) and `{"checkpoint": true}` steps.
+Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}`, `{"changed": [<handle-number>, <prop>, <value>?]}` (ABI v2.6) and `{"checkpoint": true}` steps.
 
 A `sync` step calls `__svelters_dispatch_sync(h, signal, args)` (Node) or `host.call_sync` (log backend) directly and does not checkpoint. The `result` line is the handler result as JSON (`null` = no decision, `true` = stop) or `busy`/`error` when the host refused. Ops the handler issues appear between the two lines; microtasks it queued run at the next `checkpoint` step. Toolkit replays skip fixtures with `sync` lines, because a result changes what the toolkit does next.
 
@@ -517,20 +517,20 @@ added to the header. Conventions a host or test may rely on (`plans/milestones/N
 - **Async.** A `QFuture<T>` result completes the host's one-shot callback (`SVL_M_ASYNC`); no bound Qt 6.11
   member returns one yet, so only the adapter exists (tested through a test hook).
 
-### ABI v2.6 additive (property observation: mechanics only)
+### ABI v2.6 additive (property observation)
 
-Status: the ABI surface and its plumbing are in; the semantics (coalescing, values carried in a
-batch, compare-with-last, echo strategy, default reactivity of getters, `|nonreactive`, polling) are
-the open decisions of `plans/research/REACTIVITY.md` §12 and are not implemented. Everything here is
-additive within v3: both new members are nullable.
+Status: R1a (2026-10-19) added the members; R1 (2026-10-20) implemented the host contract of
+`plans/research/REACTIVITY.md` §5.2 (decisions §13). Everything here is additive within v3: both new
+members are nullable, and the new member flag defaults to 0.
 
 ```c
 /* backend, after call_static. NULL = no property can be observed. */
 int (*observe)(void *self, svl_handle h, svl_id prop, bool on);
 /* host, after frame. NULL = a host that never observes. UI thread only. */
 void (*prop_changed)(void *self, svl_handle h, svl_id prop);
-/* member flag on SVL_PROP descriptors */
-SVL_M_OBSERVABLE = 64
+/* member flags on SVL_PROP descriptors */
+SVL_M_OBSERVABLE = 64     /* observe can watch it, and the platform announces its changes (exact/partial) */
+SVL_M_PROPORTIONAL = 128  /* R1: reading costs O(size) (whole-text props): invalidation only, see below */
 /* observe's answer for a prop with no change notification on this backend (other failures: -1) */
 #define SVL_OBSERVE_UNSUPPORTED (-2)
 ```
@@ -543,39 +543,77 @@ SVL_M_OBSERVABLE = 64
   dead handle or an unknown, write-only or constant (construct-only, `CONSTANT`) prop.
 - **`prop_changed(h, prop)`** says "this may have changed": no value, and not a promise that it did
   (GTK re-notifies identical sets). A backend may report props nobody observes; the host ignores them.
-  UI thread only: a backend hops there first.
-- **`SVL_M_OBSERVABLE`** on a prop descriptor says `observe` can watch it. GTK sets it; Qt does not
-  yet (the generator does not carry NOTIFY facts; `observe` answers per instance).
-- **Host** (`crates/svelters-host`): `host.observe(h, prop, on)` refcounts per (h, prop) and calls the
-  backend's `observe` on the 0→1 and 1→0 transitions only, so several JS layers share one native
-  connection. It answers `true` while observed and `false` when the backend has no mechanism (or no
-  member). `prop_changed` queues an event in the ordinary FIFO, behind the signals posted before it,
-  and wakes the backend; at the checkpoint the host calls
-  `globalThis.__svelters_prop_changed(h, prop)` if the runtime installed it, once per notification,
-  for pairs still observed when the queue is drained. No coalescing, no read-back, no batch: that is
-  the §12 design. `destroy` and `on_destroyed` forget a handle's observations.
-- **Op log:** `observe #h prop on|off` (the transitions) and `changed #h prop` (a scripted
-  notification); scripts take `{"changed": [h, prop]}`. The Node TestHost refcounts like the host
-  and calls `__svelters_prop_changed` for observed pairs; the log backend logs every `observe` call
-  it receives and delivers `changed` steps through `host.prop_changed` plus a checkpoint.
-  `tools/oplog-compare.mjs` keeps the observed props per node in the compared state and treats
-  `changed` as a boundary.
-- **GTK** (`crates/svelters-gtk/src/backend/observe.rs`): `notify::<prop>` on any GObject handle,
-  widgets (generated ids) and non-widgets (reflected ids) alike, and on the object a `via` property is
-  forwarded to (GtkRange `value` on its adjustment, as it was when observation started). The handler
-  captures ids and the host pointer cell only; a `via` target is held weakly. A notify on another
-  thread is moved to the main context with an idle. Refused: virtual (svelters-computed) props, menu,
-  `virtual-list` and service-kind own members (unsupported); write-only and construct-only props (-1).
-  `listen('notify::x')` (detailed reflected signals, master 6bc336f1) stays a separate path: an
-  ordinary listener that posts an event; `observe` connects its own handler with the same canonical
-  property name as the detail, for widgets, non-widgets and `via` targets alike.
-- **Qt** (`tools/metadata/qt/templates/backend.cpp.in`): the prop's JS name in camelCase is looked up
-  on the object's metaobject; a `Q_PROPERTY` with a NOTIFY signal is connected to a per-(h, prop) relay
-  object through `QMetaObject::connect(sender, notifyIndex, relay, slot)` with no receiver metaobject,
-  so Qt calls the relay's `qt_metacall` (the QSignalSpy technique: no moc). A coarse NOTIFY
-  (`QAction::changed`) reports every observed prop that shares it. No NOTIFY, or not a `Q_PROPERTY`
-  (most `QWidget` props, `QLabel:text`, QBindable-only props): `SVL_OBSERVE_UNSUPPORTED`. `CONSTANT`
-  and write-only: -1. Relays are deleted with the handle (`drop_listeners`).
+  UI thread only: a backend hops there first. It never runs JS and may be called while JS runs (a host
+  op that changes the object emits it synchronously).
+- **`SVL_M_OBSERVABLE`** on a prop descriptor: `observe` can watch it and the platform's observe fact
+  (`metadata/observe/<tk>.json`) is `exact` or `partial`. GTK reads the facts (a rule-made `constant`,
+  `set_only` or `none` prop is not observable; a prop without a fact keeps the mechanical rule: readable,
+  not construct-only). Qt does not set it yet (R3); AppKit and WinUI set it from their facts (R4).
+- **`SVL_M_PROPORTIONAL`** on a prop descriptor: the fact's `value_cost: proportional` (GTK
+  `TextBuffer:text`, `TextView:text`). The host never reads or compares such a prop after a change and
+  delivers it as an invalidation (`value` undefined); the backend suppresses the echo of the host's own
+  `set_prop` of it (REACTIVITY.md §5.4), since no compare can drop it.
+
+#### Host contract (crates/svelters-host, R1)
+
+| Rule | Implementation |
+|---|---|
+| refcount | `host.observe(h, prop, on)` counts per (h, prop id) and calls the backend on 0→1 and 1→0 only, so wrapper getters, `observeProp` callbacks and element bindings share one native connection. It answers `true` while observed and `false` when the backend has no mechanism (or no member). At 0→1 a non-proportional prop is read once as the baseline `last`. |
+| coalescing | `prop_changed` inserts (h, prop) into an ordered, deduplicated dirty set (first-announcement order) and wakes the backend on the first insert into an empty set. Unobserved pairs are ignored. Nothing is read here. |
+| read | at the checkpoint each dirty pair still observed is read with `get_prop` (no JS), unless it is proportional. A failed read (the object died) delivers nothing. |
+| compare | with `last`, the last value delivered or read back after our own `set_prop`. Equal values are dropped. Handles compare by id, strings by content (UTF-8 and UTF-16 alike), lists, records and maps deeply, f64 by bits (NaN equals NaN, -0 differs from 0). A value holding a `BOXED` handle always counts as changed and is never kept as `last`; a read whose value nobody will see is released at once. |
+| batch | one `globalThis.__svelters_changed([h, prop, value, h, prop, value, ...])` per checkpoint (prop as JS first named it; `value` undefined for proportional props), **before** the queued signal events, with no job drain between the batch and the first event. Svelte then flushes once for the whole batch. |
+| set path | after a successful `set_prop` on an observed, non-proportional (h, prop) the host reads it back once and stores it as `last`: the native echo of our write is dropped. If the read-back differs from the value written (the toolkit normalized it), the pair is forced dirty and the normalized value is delivered once at the next checkpoint. |
+| sync handlers | before `call_sync` runs JS, the dirty set is read, compared and delivered as a batch (no drain), so `$derived` values the handler reads are fresh. |
+| death | `destroy(h)` and `on_destroyed(h)` drop the observations, `last` values and dirty entries of `h`; `observe(off)` to 0 drops the pair, and its pending dirty entry is skipped. |
+| scripted mode | a `changed` step is delivered like an event: the checkpoint the log backend runs after it delivers the batch, then any events, without draining. |
+
+R1 replaced R1a's per-notification `__svelters_prop_changed(h, prop)` path: no runtime installs it any more.
+
+#### JS runtime
+
+`@svelters/native-runtime` installs `__svelters_changed` and the tracker of `@svelters/types`
+(`installTracker`) when it loads (`src/observe.js`):
+
+- `observeProp(h, prop, fn) -> unsubscribe`: `fn(value)` once per delivered change (`value` undefined for a
+  proportional prop); `unsubscribe.observed` says whether the host observes it natively.
+- `trackProp(h, prop)`: subscribes the running effect (Svelte's `createSubscriber` semantics, through the
+  core adapter's `subscriber`); `trackLocal(h, prop)` for `set_only` props (re-runs on our writes only);
+  `invalidateProp(h, prop)`: re-runs the readers now.
+- The table is keyed by handle number and canonical prop name (`cursor-position` = `cursorPosition`) and never
+  holds a wrapper. The last subscribed effect's teardown (one microtask later) calls `host.observe(off)`.
+- `@svelters/types` core: `observed(self, prop)` (exact/partial getters), `observedLocal` (set_only),
+  `observedSignal(self, prop, signal, read)` (content accessors with no property behind them, Qt
+  `QTextDocument.plainText`), `setProp` invalidates locally, `NativeObject.peek(prop)` is the snapshot read.
+  Without a tracker (plain scripts) every getter is a plain read.
+
+#### Op log and scripts
+
+`observe #h prop on|off` (the transitions) and `changed #h prop <json>` (a scripted native change; the
+value is omitted when the step has none). Scripts take `{"changed": [h, prop, value?]}`: the value becomes
+the property's native value, then the change is announced. The log backend stores it, logs the line, calls
+`host.prop_changed` and checkpoints; the Node TestHost implements the same compare (baseline at the first
+observation, read-back after `setProp`, deep equality) and calls `__svelters_changed([h, prop, value])` when the
+value differs. Neither has proportional props. `tools/oplog-compare.mjs` keeps the observed props per node in
+the compared state and treats `changed` as a boundary.
+
+#### Backends
+
+- **GTK** (`crates/svelters-gtk/src/backend/observe.rs`): `notify::<prop>` on any GObject handle, widgets
+  (generated ids) and non-widgets (reflected ids) alike, and on the object a `via` property is forwarded to
+  (GtkRange `value` on its adjustment). The handler captures ids and the host pointer cell only; a `via` target
+  is held weakly, and the forwarding prop (`adjustment`) is watched too: when it changes, the observation moves
+  to the new target and the prop is reported changed (rule O9). A notify on another thread is moved to the main
+  context with an idle. The descriptor flags come from the observe facts generated into the tables. Refused:
+  virtual (svelters-computed) props, menu, `virtual-list` and service-kind own members (unsupported);
+  write-only and construct-only props (-1). `listen('notify::x')` stays a separate path: an ordinary listener
+  that posts an event.
+- **Qt** (`tools/metadata/qt/templates/backend.cpp.in`): the prop's JS name in camelCase is looked up on the
+  object's metaobject; a `Q_PROPERTY` with a NOTIFY signal is connected to a per-(h, prop) relay object through
+  `QMetaObject::connect(sender, notifyIndex, relay, slot)` with no receiver metaobject, so Qt calls the relay's
+  `qt_metacall` (the QSignalSpy technique: no moc). A coarse NOTIFY (`QAction::changed`) reports every observed
+  prop that shares it. No NOTIFY: `SVL_OBSERVE_UNSUPPORTED` (QBindable, events and signal pairs are R3).
+  `CONSTANT` and write-only: -1. Relays are deleted with the handle (`drop_listeners`).
 - **AppKit** (`crates/svelters-appkit/src/observe.rs`, milestone R4): from the prop's observe fact (generated
   `OBSERVE` table, `metadata/observe/appkit.json`, looked up along the element's chain): KVO on the KVC key through
   one backend observer object, `context` = a per-registration (h, prop) record; notifications
@@ -593,8 +631,9 @@ SVL_M_OBSERVABLE = 64
   the ids only and reach the backend through its thread-local weak reference. Unregistered by `observe(off)`,
   `destroy` (before the element reference is released) and native death. UI thread only
   (`DispatcherQueue.HasThreadAccess`, else -1). Codes as AppKit; `SVL_M_OBSERVABLE` from the facts.
-- **Echo (both):** while `set_prop` writes (h, prop), a `value_cost: proportional` prop is not reported
-  (REACTIVITY.md §5.4); cheap props are reported and the host's compare drops the echo.
+- **Echo (AppKit, WinUI):** while `set_prop` writes (h, prop), a `value_cost: proportional` prop is not reported
+  (REACTIVITY.md §5.4); cheap props are reported and the host's compare drops the echo. They do not set
+  `SVL_M_PROPORTIONAL` yet (no AppKit/WinUI fact is proportional today).
 
 ## ABI v3: value model (M3)
 

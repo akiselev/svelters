@@ -16,6 +16,7 @@ set #8 buffer 1
 set #8 monospace true
 insert #6 #8 before=end slot=default
 create label #9
+observe #1 text on
 set #9 label "5 characters"
 insert #6 #9 before=end slot=default
 create image #10
@@ -24,6 +25,5 @@ set #10 pixel-size 16
 insert #6 #10 before=end slot=default
 insert #5 #6 before=end slot=default
 call #5 present []
-listen #1 changed on
-event #1 changed ["Hello, world"]
+changed #1 text "Hello, world"
 set #9 label "12 characters"

@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE; 2.6 observe, prop_changed, SVL_M_OBSERVABLE). Source of truth: plans/architecture/backend-abi.md
+/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE; 2.6 observe, prop_changed, SVL_M_OBSERVABLE, SVL_M_PROPORTIONAL). Source of truth: plans/architecture/backend-abi.md
  *
  * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
  * lifetime). */
@@ -116,7 +116,8 @@ enum { /* svl_member_desc.flags */
   SVL_M_BLOCKING = 8,
   SVL_M_STATIC = 16, /* ABI v2.5. Reached through call_static only (no receiver handle) */
   SVL_M_CTOR = 32,   /* ABI v2.5. With STATIC: returns a new reference (OWNED/SHARED handle or VALUE) */
-  SVL_M_OBSERVABLE = 64 /* ABI v2.6. On SVL_PROP descriptors: `observe` can watch this property */
+  SVL_M_OBSERVABLE = 64, /* ABI v2.6. On SVL_PROP descriptors: `observe` can watch this property */
+  SVL_M_PROPORTIONAL = 128 /* ABI v2.6 (R1). On SVL_PROP descriptors: reading costs O(size) (whole text); the host delivers an invalidation without reading, the backend drops the echo of our own set_prop */
 };
 
 typedef struct svl_slot_desc {
