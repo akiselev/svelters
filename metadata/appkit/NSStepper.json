@@ -1,0 +1,116 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSStepper",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSStepper.h",
+    "name": "NSStepper"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "autorepeat",
+        "set": "setAutorepeat:"
+      },
+      "js_name": "autorepeat",
+      "memory": "assign",
+      "name": "autorepeat",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "increment",
+        "set": "setIncrement:"
+      },
+      "js_name": "increment",
+      "memory": "assign",
+      "name": "increment",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxValue",
+        "set": "setMaxValue:"
+      },
+      "js_name": "max-value",
+      "memory": "assign",
+      "name": "maxValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minValue",
+        "set": "setMinValue:"
+      },
+      "js_name": "min-value",
+      "memory": "assign",
+      "name": "minValue",
+      "origin": "sdk",
+      "type": {
+        "native": "double",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "valueWraps",
+        "set": "setValueWraps:"
+      },
+      "js_name": "value-wraps",
+      "memory": "assign",
+      "name": "valueWraps",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsstepper?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

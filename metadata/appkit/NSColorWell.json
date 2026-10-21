@@ -1,0 +1,221 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSColorWell",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "activate",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "exclusive",
+          "type": {
+            "native": "BOOL",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "activate:"
+    },
+    {
+      "name": "deactivate",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "deactivate"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSColorWell.h",
+    "name": "NSColorWell"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isActive"
+      },
+      "js_name": "active",
+      "memory": "assign",
+      "name": "active",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "color",
+        "set": "setColor:"
+      },
+      "js_name": "color",
+      "memory": "copy",
+      "name": "color",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "colorWellStyle",
+        "set": "setColorWellStyle:"
+      },
+      "availability": {
+        "since": "13.0"
+      },
+      "js_name": "color-well-style",
+      "memory": "assign",
+      "name": "colorWellStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColorWellStyle",
+        "ref": "enum<NSColorWellStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "image",
+        "set": "setImage:"
+      },
+      "availability": {
+        "since": "13.0"
+      },
+      "js_name": "image",
+      "memory": "strong",
+      "name": "image",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maximumLinearExposure",
+        "set": "setMaximumLinearExposure:"
+      },
+      "availability": {
+        "since": "26.0"
+      },
+      "js_name": "maximum-linear-exposure",
+      "memory": "assign",
+      "name": "maximumLinearExposure",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pulldownAction",
+        "set": "setPulldownAction:"
+      },
+      "availability": {
+        "since": "13.0"
+      },
+      "js_name": "pulldown-action",
+      "memory": "assign",
+      "name": "pulldownAction",
+      "origin": "sdk",
+      "type": {
+        "native": "SEL",
+        "nullable": true,
+        "ref": "selector"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pulldownTarget",
+        "set": "setPulldownTarget:"
+      },
+      "availability": {
+        "since": "13.0"
+      },
+      "js_name": "pulldown-target",
+      "memory": "weak",
+      "name": "pulldownTarget",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "supportsAlpha",
+        "set": "setSupportsAlpha:"
+      },
+      "availability": {
+        "since": "14.0"
+      },
+      "js_name": "supports-alpha",
+      "memory": "assign",
+      "name": "supportsAlpha",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nscolorwell?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

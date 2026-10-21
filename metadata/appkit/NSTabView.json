@@ -1,0 +1,490 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSTabView",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "add-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "tabViewItem",
+          "type": {
+            "native": "NSTabViewItem *",
+            "ref": "object<NSTabViewItem>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addTabViewItem:"
+    },
+    {
+      "name": "index-of-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "tabViewItem",
+          "type": {
+            "native": "NSTabViewItem *",
+            "ref": "object<NSTabViewItem>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "NSInteger",
+          "ref": "i64"
+        }
+      },
+      "selector": "indexOfTabViewItem:"
+    },
+    {
+      "availability": {
+        "deprecated": "10.14"
+      },
+      "name": "index-of-tab-view-item-with-identifier",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "identifier",
+          "type": {
+            "native": "id",
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "NSInteger",
+          "ref": "i64"
+        }
+      },
+      "selector": "indexOfTabViewItemWithIdentifier:"
+    },
+    {
+      "name": "insert-tab-view-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "tabViewItem",
+          "type": {
+            "native": "NSTabViewItem *",
+            "ref": "object<NSTabViewItem>"
+          }
+        },
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "insertTabViewItem:atIndex:"
+    },
+    {
+      "name": "remove-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "tabViewItem",
+          "type": {
+            "native": "NSTabViewItem *",
+            "ref": "object<NSTabViewItem>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeTabViewItem:"
+    },
+    {
+      "name": "select-first-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectFirstTabViewItem:"
+    },
+    {
+      "name": "select-last-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectLastTabViewItem:"
+    },
+    {
+      "name": "select-next-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectNextTabViewItem:"
+    },
+    {
+      "name": "select-previous-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectPreviousTabViewItem:"
+    },
+    {
+      "name": "select-tab-view-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectTabViewItemAtIndex:"
+    },
+    {
+      "name": "tab-view-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "NSTabViewItem *",
+          "ref": "object<NSTabViewItem>"
+        }
+      },
+      "selector": "tabViewItemAtIndex:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSTabView.h",
+    "name": "NSTabView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsTruncatedLabels",
+        "set": "setAllowsTruncatedLabels:"
+      },
+      "js_name": "allows-truncated-labels",
+      "memory": "assign",
+      "name": "allowsTruncatedLabels",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "contentRect"
+      },
+      "js_name": "content-rect",
+      "memory": "assign",
+      "name": "contentRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "controlSize",
+        "set": "setControlSize:"
+      },
+      "js_name": "control-size",
+      "memory": "assign",
+      "name": "controlSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSControlSize",
+        "ref": "enum<NSControlSize>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSTabViewDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "drawsBackground",
+        "set": "setDrawsBackground:"
+      },
+      "js_name": "draws-background",
+      "memory": "assign",
+      "name": "drawsBackground",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "font",
+        "set": "setFont:"
+      },
+      "js_name": "font",
+      "memory": "strong",
+      "name": "font",
+      "origin": "sdk",
+      "type": {
+        "native": "NSFont *",
+        "ref": "object<NSFont>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "minimumSize"
+      },
+      "js_name": "minimum-size",
+      "memory": "assign",
+      "name": "minimumSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "numberOfTabViewItems"
+      },
+      "js_name": "number-of-tab-view-items",
+      "memory": "assign",
+      "name": "numberOfTabViewItems",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "selectedTabViewItem"
+      },
+      "js_name": "selected-tab-view-item",
+      "memory": "strong",
+      "name": "selectedTabViewItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTabViewItem *",
+        "nullable": true,
+        "ref": "object<NSTabViewItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tabPosition",
+        "set": "setTabPosition:"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "tab-position",
+      "memory": "assign",
+      "name": "tabPosition",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTabPosition",
+        "ref": "enum<NSTabPosition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tabViewBorderType",
+        "set": "setTabViewBorderType:"
+      },
+      "availability": {
+        "since": "10.12"
+      },
+      "js_name": "tab-view-border-type",
+      "memory": "assign",
+      "name": "tabViewBorderType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTabViewBorderType",
+        "ref": "enum<NSTabViewBorderType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tabViewItems",
+        "set": "setTabViewItems:"
+      },
+      "js_name": "tab-view-items",
+      "memory": "copy",
+      "name": "tabViewItems",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSTabViewItem *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tabViewType",
+        "set": "setTabViewType:"
+      },
+      "js_name": "tab-view-type",
+      "memory": "assign",
+      "name": "tabViewType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTabViewType",
+        "ref": "enum<NSTabViewType>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nstabview?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

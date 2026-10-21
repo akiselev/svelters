@@ -58,6 +58,11 @@
           }
         },
         "text_prop": {"type": "string", "description": "Prop (kebab-case native name) that Text children of the element set (`<button>Save</button>` sets `title`); the compiler and the renderer fold static and {expr} text into it"},
+        "test_setup": {
+          "description": "Props the generated tests set right after creating this element, in order (a pop-up-button needs items before an index can be selected)",
+          "type": "array",
+          "items": {"type": "object", "additionalProperties": false, "required": ["name", "value"], "properties": {"name": {"type": "string"}, "value": {"$ref": "#/$defs/sample"}}}
+        },
         "provenance": {"$ref": "#/$defs/provenance"}
       }
     },
@@ -71,6 +76,11 @@
           "name": {"type": "string"},
           "sample": {"$ref": "#/$defs/sample"},
           "expect": {"$ref": "#/$defs/sample"},
+          "write": {
+            "description": "A read-only property written through methods: `selector` takes the value (one argument), after `clear` (no arguments) if given. itemTitles: {selector: addItemsWithTitles:, clear: removeAllItems}",
+            "type": "object", "additionalProperties": false, "required": ["selector"],
+            "properties": {"selector": {"$ref": "#/$defs/selector"}, "clear": {"$ref": "#/$defs/selector"}}
+          },
           "provenance": {"$ref": "#/$defs/provenance"}
         }
       }
@@ -86,6 +96,7 @@
           "selector": {"$ref": "#/$defs/selector"},
           "type": {"type": "string"},
           "sample": {"$ref": "#/$defs/sample"},
+          "count": {"$ref": "#/$defs/selector", "description": "An indexed setter: the list's length goes to this selector first, then `selector` (value, index) runs once per item (labels: setSegmentCount: + setLabel:forSegment:)"},
           "provenance": {"$ref": "#/$defs/provenance"}
         }
       }
@@ -117,7 +128,7 @@
           "delivery": {"enum": ["posted", "sync"]},
           "result": {"enum": ["none", "veto_bool"]},
           "args": {"type": "array", "items": {"type": "string"}},
-          "verify": {"enum": ["send_action", "perform_click", "post", "none"]},
+          "verify": {"enum": ["send_action", "perform_click", "post", "select_tab", "app_send_action", "none"]},
           "provenance": {"$ref": "#/$defs/provenance"}
         }
       }
@@ -132,6 +143,8 @@
           "name": {"type": "string"},
           "default": {"type": "boolean"},
           "cardinality": {"enum": ["one", "many"]},
+          "child": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "The element tag of the children when they are not plain views (tab-view-item, menu-item, menu); the generated slot test inserts these"},
+          "declared_on": {"type": "string", "pattern": "^NS[A-Za-z]+$", "description": "The class above the ingested chain that declares the slot's selectors (NSResponder.menu): the generator does not look them up in the ingested metadata, the backend checks respondsToSelector: at run time"},
           "ops": {
             "type": "object",
             "additionalProperties": false,
@@ -160,11 +173,12 @@
         "properties": {
           "name": {"type": "string"},
           "selector": {"$ref": "#/$defs/selector"},
+          "args": {"type": "array", "items": {"$ref": "#/$defs/sample"}, "description": "Arguments the generated test passes"},
           "expect": {
+            "description": "After the call `get` reads back `value`, and/or the call returned `returns`",
             "type": "object",
             "additionalProperties": false,
-            "required": ["get", "value"],
-            "properties": {"get": {"type": "string"}, "value": {"$ref": "#/$defs/sample"}}
+            "properties": {"get": {"type": "string"}, "value": {"$ref": "#/$defs/sample"}, "returns": {"$ref": "#/$defs/sample"}}
           },
           "test": {"type": "boolean"},
           "provenance": {"$ref": "#/$defs/provenance"}

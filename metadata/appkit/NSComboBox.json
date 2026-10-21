@@ -1,0 +1,425 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSTextField",
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSComboBox",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "add-item-with-object-value",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "object",
+          "type": {
+            "native": "id",
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addItemWithObjectValue:"
+    },
+    {
+      "name": "deselect-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "deselectItemAtIndex:"
+    },
+    {
+      "name": "index-of-item-with-object-value",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "object",
+          "type": {
+            "native": "id",
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "NSInteger",
+          "ref": "i64"
+        }
+      },
+      "selector": "indexOfItemWithObjectValue:"
+    },
+    {
+      "name": "insert-item-with-object-value-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "object",
+          "type": {
+            "native": "id",
+            "ref": "object"
+          }
+        },
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "insertItemWithObjectValue:atIndex:"
+    },
+    {
+      "name": "item-object-value-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "id",
+          "ref": "object"
+        }
+      },
+      "selector": "itemObjectValueAtIndex:"
+    },
+    {
+      "name": "note-number-of-items-changed",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "noteNumberOfItemsChanged"
+    },
+    {
+      "name": "remove-all-items",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeAllItems"
+    },
+    {
+      "name": "remove-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeItemAtIndex:"
+    },
+    {
+      "name": "scroll-item-at-index-to-visible",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "scrollItemAtIndexToVisible:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSComboBox.h",
+    "name": "NSComboBox"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isButtonBordered",
+        "set": "setButtonBordered:"
+      },
+      "js_name": "button-bordered",
+      "memory": "assign",
+      "name": "buttonBordered",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "completes",
+        "set": "setCompletes:"
+      },
+      "js_name": "completes",
+      "memory": "assign",
+      "name": "completes",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "dataSource",
+        "set": "setDataSource:"
+      },
+      "js_name": "data-source",
+      "memory": "assign",
+      "name": "dataSource",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSComboBoxDataSource>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSComboBoxDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasVerticalScroller",
+        "set": "setHasVerticalScroller:"
+      },
+      "js_name": "has-vertical-scroller",
+      "memory": "assign",
+      "name": "hasVerticalScroller",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "indexOfSelectedItem"
+      },
+      "js_name": "index-of-selected-item",
+      "memory": "assign",
+      "name": "indexOfSelectedItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "intercellSpacing",
+        "set": "setIntercellSpacing:"
+      },
+      "js_name": "intercell-spacing",
+      "memory": "assign",
+      "name": "intercellSpacing",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "itemHeight",
+        "set": "setItemHeight:"
+      },
+      "js_name": "item-height",
+      "memory": "assign",
+      "name": "itemHeight",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "numberOfItems"
+      },
+      "js_name": "number-of-items",
+      "memory": "assign",
+      "name": "numberOfItems",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "numberOfVisibleItems",
+        "set": "setNumberOfVisibleItems:"
+      },
+      "js_name": "number-of-visible-items",
+      "memory": "assign",
+      "name": "numberOfVisibleItems",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "objectValueOfSelectedItem"
+      },
+      "js_name": "object-value-of-selected-item",
+      "memory": "strong",
+      "name": "objectValueOfSelectedItem",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "objectValues"
+      },
+      "js_name": "object-values",
+      "memory": "copy",
+      "name": "objectValues",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesDataSource",
+        "set": "setUsesDataSource:"
+      },
+      "js_name": "uses-data-source",
+      "memory": "assign",
+      "name": "usesDataSource",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nscombobox?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

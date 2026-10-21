@@ -41,10 +41,6 @@ methods:
   - name: size-to-fit
     selector: sizeToFit
     provenance: "NSText.h"
-  - name: insert-text-replacement-range
-    selector: "insertText:replacementRange:"
-    test: false
-    provenance: "NSTextView.h: inserts text as if typed (posts NSTextDidChangeNotification), replacing a range ({location: NSNotFound} = the selection)"
 signals:
   - name: text-did-change
     via: notification

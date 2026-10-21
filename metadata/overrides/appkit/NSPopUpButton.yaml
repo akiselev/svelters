@@ -26,7 +26,6 @@ slots:
     default: true
     cardinality: one
     child: menu
-    declared_on: NSResponder
     ops:
       set: "setMenu:"
       get: menu

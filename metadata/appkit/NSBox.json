@@ -27,6 +27,17 @@
         }
       },
       "selector": "setContentView:"
+    },
+    {
+      "name": "size-to-fit",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "sizeToFit"
     }
   ],
   "native": {

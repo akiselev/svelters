@@ -48,8 +48,29 @@ slots:
       get: submenu
       clear: nil
     provenance: "NSMenuItem.submenu (strong, nullable): a menu child opens as a submenu; a menu can be the submenu of one item only"
+  - name: view
+    cardinality: one
+    ops:
+      set: "setView:"
+      get: view
+      clear: nil
+    provenance: "NSMenuItem.view (strong, nullable): a custom view drawn instead of the title (a slider or a row of buttons inside a menu); the view keeps its own frame"
 signals:
   - name: action
     via: target_action
     verify: app_send_action
     provenance: "NSMenuItem.h: target (weak) + action (SEL), sent through -[NSApplication sendAction:to:from:] when the user picks the item; the backend owns both while JS listens"
+dangerous:
+  properties:
+    menu:
+      severity: corrupts-tree
+      reason: >-
+        The item's parent menu: NSMenu sets it when the item is added (NSMenuItem.h says not to call -setMenu:). The `items` slot of
+        a menu element owns it (crates/svelters-appkit/src/backend.rs, slot ops); setting it moves the item behind the renderer.
+      use_instead: Put the menu-item inside a menu element.
+    target:
+      severity: owned-by-backend
+      reason: >-
+        listen(`action`) points the item's target at the backend's SveltersTarget (crates/svelters-appkit/src/backend.rs, action_use);
+        replacing it stops the action event.
+      use_instead: The action event (onaction).

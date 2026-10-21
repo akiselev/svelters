@@ -1,0 +1,289 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSPathControl",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "set-menu",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "menu",
+          "type": {
+            "native": "NSMenu *",
+            "nullable": true,
+            "ref": "object<NSMenu>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setMenu:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSPathControl.h",
+    "name": "NSPathControl"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "URL",
+        "set": "setURL:"
+      },
+      "js_name": "url",
+      "memory": "copy",
+      "name": "URL",
+      "origin": "sdk",
+      "type": {
+        "native": "NSURL *",
+        "nullable": true,
+        "ref": "object<NSURL>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowedTypes",
+        "set": "setAllowedTypes:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "allowed-types",
+      "memory": "copy",
+      "name": "allowedTypes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSString *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundColor",
+        "set": "setBackgroundColor:"
+      },
+      "js_name": "background-color",
+      "memory": "copy",
+      "name": "backgroundColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "clickedPathItem"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "clicked-path-item",
+      "memory": "assign",
+      "name": "clickedPathItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSPathControlItem *",
+        "nullable": true,
+        "ref": "object<NSPathControlItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSPathControlDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "doubleAction",
+        "set": "setDoubleAction:"
+      },
+      "js_name": "double-action",
+      "memory": "assign",
+      "name": "doubleAction",
+      "origin": "sdk",
+      "type": {
+        "native": "SEL",
+        "nullable": true,
+        "ref": "selector"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEditable",
+        "set": "setEditable:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "editable",
+      "memory": "assign",
+      "name": "editable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "menu",
+        "set": "setMenu:"
+      },
+      "js_name": "menu",
+      "memory": "strong",
+      "name": "menu",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenu *",
+        "nullable": true,
+        "ref": "object<NSMenu>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pathItems",
+        "set": "setPathItems:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "path-items",
+      "memory": "copy",
+      "name": "pathItems",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSPathControlItem *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pathStyle",
+        "set": "setPathStyle:"
+      },
+      "js_name": "path-style",
+      "memory": "assign",
+      "name": "pathStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSPathStyle",
+        "ref": "enum<NSPathStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "placeholderAttributedString",
+        "set": "setPlaceholderAttributedString:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "placeholder-attributed-string",
+      "memory": "copy",
+      "name": "placeholderAttributedString",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "placeholderString",
+        "set": "setPlaceholderString:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "placeholder-string",
+      "memory": "copy",
+      "name": "placeholderString",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nspathcontrol?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}
