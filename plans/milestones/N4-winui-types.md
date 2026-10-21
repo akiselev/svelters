@@ -35,7 +35,7 @@ facts ─▶ gen_types_winui.py ─▶ crates/svelters-winui/src/generated/types
   when it has no constructor and no instance member, widget when it derives from `UIElement` (elements, not bound),
   args for `*EventArgs`; `IAsyncOperation*`/`IAsyncAction*` -> async; enum (`Flags` -> flags); delegate -> callback;
   `Deprecated` and the override `exclude:` list -> excluded; `ExclusiveTo` interfaces fold into their class.
-- **Scope.** 31 roots (Uri, PropertySet/ValueSet/StringMap, JSON, Colors/ColorHelper, DispatcherQueue(Timer),
+- **Scope.** 30 roots (Uri, PropertySet/ValueSet/StringMap, JSON, Colors/ColorHelper, DispatcherQueue(Timer),
   Thickness/CornerRadius/GridLength helpers, SolidColorBrush/LinearGradientBrush/GradientStop, FontFamily,
   BitmapImage, StorageFile/StorageFolder/FileIO/PathIO, DataPackage/Clipboard, Compositor) plus the signature closure
   of their bound members within 13 scope namespaces, plus bases. A member that mentions a class or interface outside
@@ -145,4 +145,113 @@ carries imports and signature references for the M6 linker; a vite test proves i
 
 ## Completion record
 
-(filled in below)
+Branch `worktree-agent-a4956e8a76f5ce748`, pushed as `ci/n4-winui`, based on master bab98ff2 (master has since only
+gained a STATUS line). Not merged.
+
+### Commits
+
+- 6852249d: `winmd-tool types`, ingest, classifier, facts, generated tables, platform-neutral core (invoker, values,
+  model) with Linux unit tests.
+- ed7f0fa2: the COM core (`rt.rs`, `delegate.rs`, `ops.rs`), backend wiring, `types_core` tests, workflow step.
+- 47b1a87a: JS modules, typings, manifest, docs pages, generated ledger tests and facts, ledger merge.
+- 4deb844b: `fixtures/winui-types`, `counter-win --fixture winui-types`, typings and tree-shaking tests, pytest.
+- 7f5b2e63: counter-win walks toplevel windows (SHARED type handles are host roots too); factories released at
+  shutdown, never by a TLS destructor; backend-abi and NON-GUI-TYPES notes.
+- 16f74f9c: type events raised before the host attaches are queued and posted when it does.
+- 54ce609c: ledger import (run 39573995327) and coverage.
+- The commit after it adds this record only.
+
+### CI (`ci/n4-winui`)
+
+| Head | windows-winui | js | linux-gtk | linux-qt | macos-appkit |
+|---|---|---|---|---|---|
+| ed7f0fa2 | success 39570528975: lib 26/26, generated 495/495, **types_core 8/8** (first run) | failure (`gen_backend` facts stale: testing.rs is in the observe fingerprints) | success | success | success |
+| 47b1a87a | failure 39571527229: types_core 8/8, types_verify 43/45 (two generated reader checks treated a native WinRT refusal as a failure: `JsonObject.getArray`, `parse("svelters")`) | failure (type facts not in the ledger yet) | success | success | success |
+| 4deb844b | failure 39572396616: types_verify 45/45; `winui_types_selftest` read no widgets (counter-win took the first host root, now a SHARED Uri) | failure (ledger) | success | success | success |
+| 7f5b2e63 | failure 39573359763: fixture `size 3, changes 1` (map-changed raised during the script, before `run` attached the host, was dropped) | failure (ledger) | — | — | success |
+| 16f74f9c | **success 39573995327**: lib 26, generated 495, types_core 8, types_verify 45, counter selftest, `winui_types_selftest` | failure (ledger, imported next) | — | — | — |
+| 54ce609c | **success 39574871402** (same counts) | **success 39574871453** (pytest 146 passed / 1 skipped, `ledger winui: 105 manual + 480 inferred verified`) | **success 39574871375** (GTK 2132/2132, GTK 4.14 1889/1889) | **success 39574871417** (95/95) | **success 39574871388** |
+
+The fixture run (`counter-win --fixture winui-types --selftest`, 54ce609c) reads back `example.com:8080/docs` (Uri
+props), `size 3, changes 3` (PropertySet events, including two raised before the loop), `brush 0,0,255 @ 0.5`
+(SolidColorBrush built with props, then recolored by a click: the DependencyProperty getter re-rendered the text with
+no `$state` mirror) and `pasted copied` (DataPackageView.GetTextAsync resolved after the hop).
+
+### Ledger
+
+`ledger.py import --toolkit winui` of 39573995327: 585 facts (540 before), 0 manual / 0 inferred not passing, 0
+pending, 8 parked (pre-N4). The 45 new facts are `svelters-api:v1:type:winui:<Namespace>:<Type>:<group>` for the 12
+curated types (construct, props, methods, statics, events, async, lifetime, thread). `coverage.py` counts them as a
+`types` row. The 145 observe facts re-verified in the same import (their fingerprint covers `testing.rs`, which N4
+extended).
+
+### Gates (local, after the last code change, 16f74f9c; the later commits are ledger, coverage and docs)
+
+| Gate | Result |
+|---|---|
+| `tools/dev/cargo-slot cargo check --workspace --all-targets` | rc 0 |
+| `cargo check -p svelters-winui -p counter-win --tests --target x86_64-pc-windows-gnu` | rc 0 |
+| `cargo test -p svelters-winui --lib` (Linux: invoker, model, values, tables) | 26/26 |
+| `corepack pnpm -r build` (pnpm shim on PATH) | rc 0 (docs site 934 pages; `check-links`: all resolve) |
+| `corepack pnpm test` (with `test:meta`) | rc 0; pytest 146 passed / 1 skipped; `@svelters/types` 25 node tests + strict `tsc` over GTK, Qt and WinUI typings; `ledger.py check` ok |
+| `python3 tools/docs/build_ir.py`, `corepack pnpm docs:test` | rc 0 (11 Python tests, 1 skipped; 17 site tests) |
+
+The msvc cross-check was not run here (the target is not installed on this machine); CI builds with msvc.
+
+### Classification (`metadata/winui/types/report.txt`)
+
+All 1,780 types of the 21 ingested namespaces: record 32, enum 133, flags 14, callback 46, object 385, model 36,
+statics 44, args 67, interface 59, class-interface 930, collection 10, async 5, reference 2, widget 3, internal 2,
+excluded 12, unclassified 0.
+
+Bound: **84 kinds** (30 roots, 5 generic instances): Windows.Storage 13, DataTransfer 12, Xaml.Media 10,
+Foundation.Collections 8, Xaml 7, FileProperties 7, Streams 7, Foundation 5, Data.Json 4, Dispatching 3,
+Xaml.Media.Imaging 3, Microsoft.UI 2, Windows.UI 2, Composition 1. Thread classes: any 63, dispatcher 12, ui 9.
+
+Members of bound kinds: **979 of 1,141 bound (85%)**: Microsoft.UI, Windows.UI, Streams, Imaging 100%; Data.Json
+95%; DataTransfer 91%; Xaml.Media 89%; Storage 88%; Dispatching 88%; Foundation.Collections 87%; FileProperties
+86%; Xaml 84%; Foundation 70%; Composition 10% (Compositor is bound for the thread check; the rest of Composition is
+out of scope on purpose). Blocked 162: out-of-scope 84, array 28, collection argument 22, `IIterator` 13, delegate
+parameter 8, static event 4, struct with a string field 3. Excluded: 3 deprecated, 3 by override. 22
+DependencyProperty statics hidden (the instance props are reactive). Overloads: 649 JS method names, 44 overloaded by
+arity, 0 renamed. Curated: 12 types, 45 ledger facts.
+
+### Code size and build time
+
+- Hand-written core: `src/types/` 2.6k lines (invoke 388, model 485, value 404 with their unit tests; rt 539,
+  ops 567, delegate 185), backend wiring ~130 lines, harness ~280 lines.
+- Generated Rust: `types_tables.rs` 2.2k lines / 240 KB of const data (84 kinds, 1,141 members, 200 IIDs, 166 ABI
+  types); `bindings.rs` unchanged (64.9k lines). Generated tests: `types_verify.rs` 0.9k lines.
+- Leaf crate rebuild (`cargo build -p svelters-winui --lib --target x86_64-pc-windows-gnu`, debug, touch `lib.rs`,
+  three runs each on a shared, loaded machine): master 4.9 / 5.5 / 5.8 s, N4 5.8 / 6.5 / 7.7 s, so about +1 s.
+  Debug rlib 40.5 MB -> 47.7 MB.
+- JS: `packages/types/winui` 664 KB (84 classes, 16 namespace modules incl. types-only ones); a bundle keeps only its
+  imports' signature closure (`fixtures/winui-types` imports 5 classes and bundles 36 of the 84).
+- Facts: ingested winmd dump 2.3 MB, classified facts 0.7 MB (checked in).
+
+### Shared files touched (additive)
+
+`packages/types/vite.js` (`winuiDir`, the `svelters:winui/<ns>` alias), `tools/metadata/common/types_pkg.py` (the
+`./winui/*` group and `./manifest-winui`), `packages/types/package.json` (generated exports),
+`packages/types/test/types/tsconfig.json` (+ `winui_usage.ts`), `packages/types/test/shake-winui.test.mjs`,
+`tools/metadata/ledger.py` (the winui manifest includes the type facts; a CI artifact's facts snapshots merge),
+`.github/workflows/windows-winui.yml` (one step: `types_core` and `types_verify` append to the results file and copy
+`types/facts.json`), `docs/site/astro.config.mjs` (sidebar group), `pnpm-lock.yaml` (the new fixture's importer),
+`plans/architecture/backend-abi.md` and `plans/research/NON-GUI-TYPES.md` (new sections). `packages/types/src/core.js`
+is unchanged: the WinUI helpers live in `packages/types/winui/_rt.js`.
+
+### Open items
+
+- **Arguments not marshalled yet:** JS arrays into `IIterable<T>`/`IVectorView<T>` parameters (22), arrays (28),
+  delegate parameters (8; e.g. `DispatcherQueue.TryEnqueue`), static events (4), structs with string fields (3).
+  Each needs a small core addition (a dynamic `IIterable` object, `CALLBACK` slots with `describe_type`).
+- **aarch64 Windows:** the invoker refuses with an error (ARM64 passes floats and HFAs differently).
+- **Async progress** is not reported; only the result.
+- **Element interop:** an element can be passed where a type member expects a `UIElement`, but element props of
+  object type (`Foreground: Brush`, `Margin` already takes a record) do not accept type handles yet (the element
+  generator has no converter for them).
+- **Element events before `run`** are still dropped (only type events are queued; changing it would change the
+  element op logs).
+- **The thread check per call** runs in debug builds only (section 4.1 rule 3), as planned.
+- The 8 inferred WinUI facts parked before N4 stay parked.
+
