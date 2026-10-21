@@ -48,7 +48,8 @@ fn scenario(module: &Path, defines: &[(&str, String)], label: &str) {
         let t = Instant::now();
         host.checkpoint();
         let dt = t.elapsed();
-        // a second checkpoint reports what the first one's handlers counted
+        // a second checkpoint reports what the first one's handlers counted (after the 1 ms timer floor)
+        std::thread::sleep(std::time::Duration::from_millis(2));
         host.checkpoint();
         for e in host.take_errors() {
             eprintln!("[{label}] error: {e:?}");
